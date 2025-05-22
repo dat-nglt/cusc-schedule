@@ -79,3 +79,49 @@ export default routes;
 ### Kết quả
 - Hệ thống tự động nhận diện và render các route từ cấu hình trong `routes.js`.
 - Các route bảo mật sẽ được kiểm tra xác thực trước khi hiển thị nội dung.
+
+## 9. Các tác vụ đã thực hiện ngày 22/05/2025
+
+### 1. Thiết kế và cập nhật giao diện
+- **Header**:
+  - Thêm logo hoặc tên hệ thống ở bên trái.
+  - Hiển thị tiêu đề trang ở giữa.
+  - Thêm hai nút truy cập nhanh: "Tạo lịch" (màu xanh lá) và "Xuất báo cáo" (màu xanh dương) ở bên phải.
+  - Thiết kế dạng sticky để luôn hiển thị khi người dùng cuộn trang.
+
+- **MainLayout**:
+  - Cập nhật để nhận `children` làm prop, cho phép render các thành phần được truyền từ `DynamicRouter`.
+
+### 2. Thiết kế theme cho hệ thống
+- Tạo file `theme.js` để định nghĩa các màu sắc cơ bản cho giao diện sáng và tối:
+  - **Primary Color**: Xanh dương nhạt (#3B82F6).
+  - **Secondary Color**: Cam nhạt (#F59E0B).
+  - **Background**: Trắng ngà (#F9FAFB) và xám rất nhạt (#F3F4F6).
+  - **Text**: Xám đậm (#111827), xám trung bình (#374151), xám nhạt (#6B7280).
+  - **Trạng thái**: Thành công (xanh lá #10B981), cảnh báo (vàng #FACC15), lỗi (đỏ #EF4444).
+- Tích hợp theme vào hệ thống thông qua `ThemeProvider` trong `App.jsx`.
+
+### 3. Tối ưu hóa thanh cuộn (Scrollbar)
+- Tùy chỉnh thanh cuộn toàn hệ thống trong `GlobalStyle.js`:
+  - Làm cho thanh cuộn nhỏ hơn.
+  - Thêm màu sắc và bo tròn để tăng tính thẩm mỹ.
+
+### 4. Cập nhật ESLint
+- Cấu hình ESLint để bỏ qua cảnh báo khi không sử dụng `setState` trong `useState`.
+
+### 5. Cải thiện luồng xử lý route
+- **DynamicRouter**:
+  - Thêm chú thích chi tiết bằng tiếng Việt để giải thích từng phần của mã.
+  - Đảm bảo các thành phần được bọc bên trong `MainLayout` để hỗ trợ `Outlet`.
+
+### 6. Thiết kế lịch tuần (WeeklyCalendar)
+- Tạo component `WeeklyCalendar` với các tính năng:
+  - Hiển thị lịch tuần với các ngày và khung giờ.
+  - Tích hợp giao diện responsive cho desktop và mobile.
+  - Sử dụng `react-dnd` để hỗ trợ kéo thả.
+
+### 7. Hướng dẫn chạy hệ thống
+- Cài đặt dependencies: `npm install`.
+- Chạy hệ thống: `npm run dev`.
+- Truy cập: `http://localhost:5000`.
+````
