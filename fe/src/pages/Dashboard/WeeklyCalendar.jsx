@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Box,
     Typography,
@@ -19,6 +19,7 @@ import { vi } from 'date-fns/locale';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { TouchBackend } from 'react-dnd-touch-backend';
+import { useTimetable } from '../../contexts/TimetableContext';
 
 // Constants
 const HOURS = Array.from({ length: 16 }, (_, i) => i + 7); // 7h - 22h
@@ -108,26 +109,38 @@ const WeeklyCalendar = ({
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
     const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'));
-    const [currentDate, setCurrentDate] = useState(startOfWeek(initialDate, { weekStartsOn: 1 }));
+    const { currentDate, setCurrentDate, selectedDateByWeekly } = useTimetable();
+    // const [currentDate, setCurrentDate] = useState(startOfWeek(initialDate, { weekStartsOn: 1 }));
 
-    const weekDays = DAYS.map(day => {
-        const date = addDays(currentDate, day);
-        return {
-            day,
-            name: format(date, 'EEEE', { locale: vi }),
-            shortName: format(date, 'EEE', { locale: vi }),
-            date: format(date, 'dd/MM'),
-            fullDate: date
-        };
-    });
+    const [weekDays, setWeekDays] = useState([]);
+
+    useEffect(() => {
+        const newWeekDays = DAYS.map(day => {
+            const date = addDays(currentDate, day);
+            return {
+                day,
+                name: format(date, 'EEEE', { locale: vi }),
+                shortName: format(date, 'EEE', { locale: vi }),
+                date: format(date, 'dd/MM'),
+                fullDate: date
+            };
+        });
+        setWeekDays(newWeekDays);
+    }, [currentDate]);
 
     const handlePrevWeek = () => {
         setCurrentDate(addDays(currentDate, -7));
+        selectedDateByWeekly(currentDate);
     };
-
+    
     const handleNextWeek = () => {
         setCurrentDate(addDays(currentDate, 7));
+        selectedDateByWeekly(currentDate);
     };
+
+    useEffect(() => {
+
+    }, [currentDate]);
 
     const handleToday = () => {
         setCurrentDate(startOfWeek(new Date(), { weekStartsOn: 1 }));

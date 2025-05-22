@@ -4,6 +4,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import GlobalStyle from './assets/styles/GlobalStyle';
 import DynamicRouter from './routes/dynamicRouter';
 import { lightTheme, darkTheme } from '../theme';
+import { TimetableProvider } from './contexts/TimetableContext';
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(false); // Quản lý trạng thái theme
@@ -12,7 +13,9 @@ function App() {
     <ThemeProvider theme={isDarkMode ? darkTheme : lightTheme}>
       <GlobalStyle />
       <BrowserRouter>
-        <DynamicRouter />
+        <TimetableProvider>
+          <DynamicRouter />
+        </TimetableProvider>
       </BrowserRouter>
     </ThemeProvider>
   );

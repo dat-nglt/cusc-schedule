@@ -109,6 +109,7 @@ const Dashboard = () => {
         <Box sx={{ p: 3, zIndex: 10 }}>
             {/* Quick Stats */}
             <QuickStats stats={stats} />
+            
             {/* Main Content */}
             <Box sx={
                 {
