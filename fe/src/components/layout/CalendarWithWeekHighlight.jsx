@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Box,
     Button,
@@ -6,16 +6,13 @@ import {
     Paper,
     Grid,
     IconButton,
-    useTheme
 } from '@mui/material';
 import {
     startOfMonth,
     endOfMonth,
     eachDayOfInterval,
-    isSameMonth,
     isSameDay,
     format,
-    addDays,
     startOfWeek,
     endOfWeek,
     addMonths,
@@ -27,21 +24,34 @@ import {
 } from 'date-fns';
 import ChevronLeft from '@mui/icons-material/ChevronLeft';
 import ChevronRight from '@mui/icons-material/ChevronRight';
+import { useTimetable } from '../../contexts/TimetableContext';
 
 const CalendarWithWeekHighlight = () => {
-    const [currentDate, setCurrentDate] = useState(new Date());
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [weekRange, setWeekRange] = useState([]);
-    const theme = useTheme();
+    const { currentDate, setCurrentDate } = useTimetable();
+
+    const processDate = (date) => {
+        const weekStart = startOfWeek(date, { weekStartsOn: 1 });
+        const weekEnd = endOfWeek(date, { weekStartsOn: 1 });
+        const daysInWeek = eachDayOfInterval({ start: weekStart, end: weekEnd });
+
+        setSelectedDate(date); // Nếu bạn muốn cập nhật cả selectedDate
+        setWeekRange(daysInWeek);
+        setCurrentDate(weekStart); // nếu cần chuẩn hóa lại
+    };
+
 
     // Xử lý khi chọn ngày
     const handleDateClick = (date) => {
-        setSelectedDate(date);
-        const weekStart = startOfWeek(date, { weekStartsOn: 1 }); // Thứ 2 đầu tuần
-        const weekEnd = endOfWeek(date, { weekStartsOn: 1 }); // Chủ nhật cuối tuần
-        const daysInWeek = eachDayOfInterval({ start: weekStart, end: weekEnd });
-        setWeekRange(daysInWeek);
+        processDate(date);
     };
+
+    useEffect(() => {
+        if (currentDate) {
+            processDate(currentDate);
+        }
+    }, [currentDate]);
 
     // Chuyển tháng
     const handlePrevMonth = () => {
@@ -187,12 +197,10 @@ const CalendarWithWeekHighlight = () => {
                                         p: 0,
                                         borderRadius: 1,
                                         textAlign: 'center',
-                                        backgroundColor: dayIsSelected
+                                        backgroundColor: dayIsInSelectedWeek
                                             ? 'primary.main'
-                                            : dayIsInSelectedWeek
-                                                ? 'primary.light'
-                                                : 'transparent',
-                                        color: dayIsSelected ? 'white' : 'inherit',
+                                            : 'transparent',
+                                        color: dayIsInSelectedWeek ? 'white' : 'inherit',
                                         '&:hover': {
                                             backgroundColor: dayIsSelected
                                                 ? 'primary.dark'
@@ -204,7 +212,7 @@ const CalendarWithWeekHighlight = () => {
                                         borderColor: dayIsSelected ? 'primary.dark' : 'none',
                                     }}
                                 >
-                                    <Typography variant="subtitle2" fontWeight={dayIsSelected ? 'bold' : 'normal'}>
+                                    <Typography variant="subtitle2" fontWeight={dayIsInSelectedWeek ? 'bold' : 'normal'}>
                                         {format(day, 'd')}
                                     </Typography>
                                 </Button>
