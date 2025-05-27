@@ -16,7 +16,8 @@ import {
   Paper,
   MenuItem,
   FormControl,
-  Select
+  Select,
+  Switch
 } from '@mui/material';
 import {
   Dashboard as DashboardIcon,
@@ -28,7 +29,9 @@ import {
   FilterList as FilterIcon,
   Today as TodayIcon,
   DateRange as DateRangeIcon,
-  Add as AddIcon
+  Add as AddIcon,
+  LightMode,
+  DarkMode
 } from '@mui/icons-material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -37,6 +40,7 @@ import { styled } from '@mui/material/styles';
 import { format } from 'date-fns';
 import DateSelector from '../../pages/Dashboard/DateSelector';
 import CalendarWithWeekHighlight from './CalendarWithWeekHighlight';
+import { useThemeContext } from '../../contexts/ThemeContext';
 
 const drawerWidth = 350;
 
@@ -57,11 +61,12 @@ const Sidebar = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [filterValue, setFilterValue] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const { isDarkMode, toggleTheme } = useThemeContext();
 
   const navItems = [
-    { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
-    { text: 'Hồ sơ', icon: <PersonIcon />, path: '/profile' },
-    { text: 'Thời khóa biểu', icon: <TimetableIcon />, path: '/timetable' },
+    // { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
+    // { text: 'Hồ sơ', icon: <PersonIcon />, path: '/profile' },
+    // { text: 'Thời khóa biểu', icon: <TimetableIcon />, path: '/timetable' },
     { text: 'Đăng xuất', icon: <LogoutIcon />, path: '/logout' }
   ];
 
@@ -154,7 +159,52 @@ const Sidebar = () => {
         <CalendarWithWeekHighlight />
 
         <Divider sx={{ my: 1 }} />
-
+        <Box
+          sx={{
+            px: 2,
+            py: 1.5,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            bgcolor: 'background.paper',
+            borderRadius: 1,
+            boxShadow: 1
+          }}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: isDarkMode ? 'warning.light' : 'text.secondary'
+              }}
+            >
+              {isDarkMode ? (
+                <LightMode fontSize="small" />
+              ) : (
+                <DarkMode fontSize="small" />
+              )}
+            </Box>
+            {/* <Typography variant="body2" color="text.primary">
+              {isDarkMode ? 'Light Mode' : 'Dark Mode'}
+            </Typography> */}
+          </Box>
+          <Switch
+            checked={isDarkMode}
+            onChange={toggleTheme}
+            size="small"
+            sx={{
+              ml: 1,
+              '& .MuiSwitch-thumb': {
+                color: isDarkMode ? 'warning.light' : 'grey.500'
+              },
+              '& .MuiSwitch-track': {
+                backgroundColor: isDarkMode ? 'warning.dark' : 'grey.300'
+              }
+            }}
+          />
+        </Box>
         {/* Navigation menu */}
         <List sx={{ flexGrow: 1 }}>
           {navItems.map((item) => (

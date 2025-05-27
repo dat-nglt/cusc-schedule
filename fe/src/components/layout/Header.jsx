@@ -108,11 +108,13 @@ const Header = ({ onMenuToggle, pageTitle = 'Quản Lý Thời Khoá Biều - CU
                             color="secondary"
                             sx={{
                                 fontWeight: 700,
-                                display: { xs: 'none', sm: 'block' }
+                                display: { xs: 'none', sm: 'block' },
+                                textShadow: '2px 2px 4px rgba(0, 0, 0, 0.3)' // 👈 thêm bóng chữ
                             }}
                         >
-                            EduSchedule - CUSC
+                            TRUNG TÂM CÔNG NGHỆ PHẦN MỀM - ĐẠI HỌC CẦN THƠ
                         </Typography>
+                            
                     </Box>
                 </Box>
 
@@ -122,35 +124,7 @@ const Header = ({ onMenuToggle, pageTitle = 'Quản Lý Thời Khoá Biều - CU
                     alignItems: 'center',
                     gap: theme.spacing(1)
                 }}>
-                    <Button
-                        variant="contained"
-                        color="success"
-                        startIcon={<AddIcon />}
-                        sx={{
-                            textTransform: 'none',
-                            borderRadius: '8px',
-                            px: 2,
-                            mr: 1,
-                            display: { xs: 'none', sm: 'flex' }
-                        }}
-                    >
-                        Tạo lịch
-                    </Button>
-
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        startIcon={<ExportIcon />}
-                        sx={{
-                            textTransform: 'none',
-                            borderRadius: '8px',
-                            px: 2,
-                            display: { xs: 'none', sm: 'flex' }
-                        }}
-                    >
-                        Xuất báo cáo
-                    </Button>
-
+                   
                     <IconButton
                         size="large"
                         aria-label="show notifications"
