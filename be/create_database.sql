@@ -187,7 +187,7 @@ create table class_schedules (
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	room_id VARCHAR(30) REFERENCES rooms(room_id),                          -- Phòng học
-	break_id VARCHAR(30) REFERENCES rooms(room_id),                         -- Lịch nghỉ (lỗi: đang reference sai bảng)
+	break_id VARCHAR(30) REFERENCES break_schedule(break_id),                         -- Lịch nghỉ 
 	time_slot_id VARCHAR(30) REFERENCES time_slots(slot_id),                -- Ca học
 	class_section_id VARCHAR(30) REFERENCES class_sections(class_section_id), -- Lớp học phần
 	lecturer_id VARCHAR(30) REFERENCES lecturers(lecturer_id)               -- Giảng viên phụ trách
@@ -204,7 +204,7 @@ create table exam_schedules (
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	room_id VARCHAR(30) REFERENCES rooms(room_id),                    -- Phòng thi
-	break_id VARCHAR(30) REFERENCES rooms(room_id),                   -- Lịch nghỉ (lỗi: đang reference sai bảng)
+	break_id VARCHAR(30) REFERENCES break_schedule(break_id),                   -- Lịch nghỉ
 	time_slot_id VARCHAR(30) REFERENCES time_slots(slot_id),          -- Ca thi
 	subject_id VARCHAR(30) REFERENCES subjects(subject_id),           -- Môn thi
 	lecturer_id VARCHAR(30) REFERENCES lecturers(lecturer_id)         -- Giảng viên coi thi/ra đề
