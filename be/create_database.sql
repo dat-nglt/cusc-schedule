@@ -67,7 +67,7 @@ create table notifications (
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Thời gian tạo
 	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Thời gian cập nhật cuối cùng
 	user_id VARCHAR(30) REFERENCES users(user_id)
-)
+);
 
 -- Bảng khóa học - quản lý các khóa học trong trường
 create table courses (
@@ -232,7 +232,7 @@ create table sync_histories(
 	status VARCHAR(30),
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Thời gian tạo tài khoản
 	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP  -- Thời gian cập nhật cuối cùng
-)
+);
 
 -- =====================================================
 -- CÁC HÀM VÀ TRIGGER TỰ ĐỘNG CẬP NHẬT THỜI GIAN
