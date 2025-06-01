@@ -1,9 +1,10 @@
 import express from 'express';
-import { getAllMajor } from '../controllers/majorController.js'; // Add .js extension
+import { getAllMajors } from '../controllers/majorController.js';
+// import authMiddleware from '../middleware/authMiddleware.js';
 
 const majorRoutes = express.Router();
 
 // Get all majors
-majorRoutes.get('/getAll', getAllMajor);
+majorRoutes.get('/getAll', getAllMajors);
 
 export default majorRoutes;

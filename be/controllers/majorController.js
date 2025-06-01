@@ -1,10 +1,10 @@
-import Major from "../models/Major.js";
+import { getAllMajor } from '../services/majorService.js';
 import { successResponse, errorResponse } from '../utils/APIResponse.js';
 
 
-export const getAllMajor = async (req, res) => {
+export const getAllMajors = async (req, res) => {
     try {
-        const majors = await Major.findAll();
+        const majors = await getAllMajor();
         return successResponse(res, majors);
     } catch (error) {
         return errorResponse(res, error.message);

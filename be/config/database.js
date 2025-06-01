@@ -25,7 +25,7 @@ const connectDB = async () => {
 
     // Sync database (create tables if they don't exist)
     await sequelize.sync({ alter: true });
-    console.log('Database synced');
+    console.log('Database synced successfully');
   } catch (error) {
     console.error('Database connection error:', error);
     process.exit(1);
