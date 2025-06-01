@@ -1,8 +1,8 @@
 import { Sequelize } from 'sequelize';
 
 const sequelize = new Sequelize(
-  process.env.DB_NAME || 'schedule_db',
-  process.env.DB_USER || 'postgres',
+  process.env.DB_NAME || 'cusc_db',
+  process.env.DB_USER  || 'postgres',
   process.env.DB_PASSWORD || 'MyPostgreSQL@2025',
   {
     host: process.env.DB_HOST || 'localhost',
