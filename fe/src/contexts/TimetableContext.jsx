@@ -7,7 +7,6 @@ export const TimetableProvider = ({ children }) => {
 
     const [selectedDateByWeekly, setSeletedDateByWeekly] = useState(new Date());
     const [currentDate, setCurrentDate] = useState(startOfWeek(new Date(), { weekStartsOn: 1 }));
-    console.log(currentDate);
 
     return (
         <TimetableContext.Provider value={{ selectedDateByWeekly, setSeletedDateByWeekly, currentDate, setCurrentDate }}>

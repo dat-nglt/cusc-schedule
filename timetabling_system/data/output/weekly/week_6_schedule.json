@@ -1,0 +1,42 @@
+{
+    "week": 6,
+    "schedule": {
+        "C01": [
+            {
+                "day": "Mon",
+                "slot": "T2",
+                "subject": "M01",
+                "type": "theory",
+                "lecturer": "GV01",
+                "room": "LT2"
+            },
+            {
+                "day": "Thu",
+                "slot": "C1",
+                "subject": "M01",
+                "type": "practice",
+                "lecturer": "GV01",
+                "room": "TH1"
+            },
+            {
+                "day": "Fri",
+                "slot": "T1",
+                "subject": "M01",
+                "type": "theory",
+                "lecturer": "GV01",
+                "room": "LT3"
+            }
+        ],
+        "C02": [
+            {
+                "day": "Wed",
+                "slot": "C1",
+                "subject": "M02",
+                "type": "theory",
+                "lecturer": "GV01",
+                "room": "LT1"
+            }
+        ],
+        "C03": []
+    }
+}

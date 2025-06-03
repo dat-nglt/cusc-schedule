@@ -70,7 +70,7 @@ const Dashboard = () => {
     const recentConflicts = [
         { id: 1, type: 'Lớp học', name: 'Lớp Toán A1', time: '2023-10-15 08:00', conflictWith: 'Phòng 301 đã được đặt' },
         { id: 2, type: 'Giảng viên', name: 'TS. Nguyễn Văn A', time: '2023-10-15 09:00', conflictWith: 'Đã có lớp khác' },
-        { id: 3, type: 'Phòng học', name: 'Phòng 202', time: '2023-10-14 14:00', conflictWith: 'Thiết bị đang bảo trì' }
+        { id: 3, type: 'Phòng học', name: 'Phòng 202', time: '2023-10-14 14:00', conflictWith: 'Thiết bị đang bảo trì' },
     ];
 
     // Chart data
@@ -102,6 +102,7 @@ const Dashboard = () => {
         classes: 42,
         teachers: 28,
         rooms: 15,
+        course: 15,
         conflicts: 3
     };
 

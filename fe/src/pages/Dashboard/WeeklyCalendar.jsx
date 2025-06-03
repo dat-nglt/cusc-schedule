@@ -12,7 +12,9 @@ import {
     ChevronLeft,
     ChevronRight,
     Today,
-    Add
+    Add,
+    FileDownload,
+    PostAdd
 } from '@mui/icons-material';
 import { format, startOfWeek, addDays, isSameDay, parseISO } from 'date-fns';
 import { vi } from 'date-fns/locale';
@@ -132,7 +134,7 @@ const WeeklyCalendar = ({
         setCurrentDate(addDays(currentDate, -7));
         selectedDateByWeekly(currentDate);
     };
-    
+
     const handleNextWeek = () => {
         setCurrentDate(addDays(currentDate, 7));
         selectedDateByWeekly(currentDate);
@@ -186,15 +188,60 @@ const WeeklyCalendar = ({
                         alignSelf: { xs: 'flex-end', sm: 'center' }
                     }}>
                         {!isMobile && (
-                            <Button
-                                variant="contained"
-                                startIcon={<Add />}
-                                onClick={onAddNew}
-                                sx={{ textTransform: 'none' }}
-                                size={isTablet ? 'small' : 'medium'}
-                            >
-                                Thêm lịch
-                            </Button>
+                            <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'center' }}>
+                                {/* Nút Thêm lịch - Luôn hiển thị */}
+                                <Button
+                                    variant="contained"
+                                    startIcon={<Add fontSize="small" />}
+                                    onClick={onAddNew}
+                                    sx={{
+                                        textTransform: 'none',
+                                        borderRadius: '8px',
+                                        px: 2,
+                                        minWidth: 'max-content',
+                                        whiteSpace: 'nowrap'
+                                    }}
+                                    size={isTablet ? 'small' : 'medium'}
+                                >
+                                    Thêm lịch
+                                </Button>
+
+                                {/* Nút Tạo lịch - Ẩn trên mobile */}
+                                <Button
+                                    variant="contained"
+                                    color="success"
+                                    startIcon={<PostAdd fontSize="small" />}
+                                    sx={{
+                                        textTransform: 'none',
+                                        borderRadius: '8px',
+                                        px: 2,
+                                        minWidth: 'max-content',
+                                        whiteSpace: 'nowrap',
+                                        display: { xs: 'none', sm: 'inline-flex' }
+                                    }}
+                                    size={isTablet ? 'small' : 'medium'}
+                                >
+                                    Tạo lịch mới
+                                </Button>
+
+                                {/* Nút Xuất báo cáo - Ẩn trên mobile */}
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    startIcon={<FileDownload fontSize="small" />}
+                                    sx={{
+                                        textTransform: 'none',
+                                        borderRadius: '8px',
+                                        px: 2,
+                                        minWidth: 'max-content',
+                                        whiteSpace: 'nowrap',
+                                        display: { xs: 'none', sm: 'inline-flex' }
+                                    }}
+                                    size={isTablet ? 'small' : 'medium'}
+                                >
+                                    Xuất báo cáo
+                                </Button>
+                            </Box>
                         )}
 
                         <Box sx={{ display: 'flex', gap: { xs: 0.5, sm: 1 } }}>
@@ -239,42 +286,56 @@ const WeeklyCalendar = ({
                         lg: '80px repeat(7, minmax(150px, 1fr))'
                     },
                     gap: '1px',
-                    backgroundColor: '#e0e0e0',
-                    border: '1px solid #e0e0e0',
+                    backgroundColor: (theme) => theme.palette.divider,
+                    border: '1px solid',
+                    borderColor: (theme) => theme.palette.divider,
                     overflowX: 'auto',
                     '&::-webkit-scrollbar': {
                         height: '6px'
                     },
                     '&::-webkit-scrollbar-thumb': {
-                        backgroundColor: 'rgba(0,0,0,0.2)',
+                        backgroundColor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)',
                         borderRadius: '3px'
                     }
                 }}>
                     {/* Empty corner */}
                     <Box sx={{
-                        backgroundColor: 'white',
+                        backgroundColor: (theme) => theme.palette.background.default,
                         padding: '8px',
                         textAlign: 'center',
                         position: 'sticky',
                         left: 0,
-                        zIndex: 2
+                        zIndex: 2,
+                        borderRight: '1px solid',
+                        borderBottom: '1px solid',
+                        borderColor: (theme) => theme.palette.divider
                     }} />
 
                     {/* Day headers */}
                     {weekDays.map((day) => (
                         <Box key={day.day} sx={{
-                            backgroundColor: '#f5f5f5',
+                            backgroundColor: (theme) => theme.palette.mode === 'dark'
+                                ? theme.palette.grey[800]
+                                : theme.palette.grey[100],
                             padding: '8px',
                             textAlign: 'center',
                             position: 'sticky',
                             top: 0,
                             zIndex: 1,
-                            minWidth: { xs: '60px', sm: '100px' }
+                            minWidth: { xs: '60px', sm: '100px' },
+                            borderBottom: '1px solid',
+                            borderColor: (theme) => theme.palette.divider
                         }}>
-                            <Typography variant="subtitle2" sx={{ fontSize: { xs: '0.7rem', sm: '0.875rem' } }}>
+                            <Typography variant="subtitle2" sx={{
+                                fontSize: { xs: '0.7rem', sm: '0.875rem' },
+                                color: (theme) => theme.palette.text.primary
+                            }}>
                                 {isMobile ? day.shortName : day.name}
                             </Typography>
-                            <Typography variant="body2" sx={{ fontSize: { xs: '0.6rem', sm: '0.75rem' } }}>
+                            <Typography variant="body2" sx={{
+                                fontSize: { xs: '0.6rem', sm: '0.75rem' },
+                                color: (theme) => theme.palette.text.secondary
+                            }}>
                                 {day.date}
                             </Typography>
                         </Box>
@@ -284,7 +345,9 @@ const WeeklyCalendar = ({
                     {HOURS.map((hour) => (
                         <React.Fragment key={hour}>
                             <Box sx={{
-                                backgroundColor: '#f5f5f5',
+                                backgroundColor: (theme) => theme.palette.mode === 'dark'
+                                    ? theme.palette.grey[800]
+                                    : theme.palette.grey[100],
                                 padding: '4px',
                                 textAlign: 'center',
                                 position: 'sticky',
@@ -292,9 +355,14 @@ const WeeklyCalendar = ({
                                 zIndex: 1,
                                 display: 'flex',
                                 alignItems: 'center',
-                                justifyContent: 'center'
+                                justifyContent: 'center',
+                                borderRight: '1px solid',
+                                borderColor: (theme) => theme.palette.divider
                             }}>
-                                <Typography variant="caption" sx={{ fontSize: { xs: '0.6rem', sm: '0.75rem' } }}>
+                                <Typography variant="caption" sx={{
+                                    fontSize: { xs: '0.6rem', sm: '0.75rem' },
+                                    color: (theme) => theme.palette.text.secondary
+                                }}>
                                     {hour}:00
                                 </Typography>
                             </Box>
@@ -307,6 +375,12 @@ const WeeklyCalendar = ({
                                     date={currentDate}
                                     onDrop={handleDrop}
                                     scheduleItems={scheduleItems}
+                                    sx={{
+                                        backgroundColor: (theme) => theme.palette.background.paper,
+                                        '&:hover': {
+                                            backgroundColor: (theme) => theme.palette.action.hover
+                                        }
+                                    }}
                                 />
                             ))}
                         </React.Fragment>

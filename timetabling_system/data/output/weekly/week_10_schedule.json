@@ -1,0 +1,26 @@
+{
+    "week": 10,
+    "schedule": {
+        "C01": [
+            {
+                "day": "Fri",
+                "slot": "C1",
+                "subject": "M01",
+                "type": "theory",
+                "lecturer": "GV01",
+                "room": "LT1"
+            }
+        ],
+        "C02": [
+            {
+                "day": "Fri",
+                "slot": "T2",
+                "subject": "M02",
+                "type": "theory",
+                "lecturer": "GV01",
+                "room": "LT2"
+            }
+        ],
+        "C03": []
+    }
+}
