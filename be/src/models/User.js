@@ -6,30 +6,44 @@ const User = sequelize.define('users', {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true
-  },
-  name: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    validate: {
-      notEmpty: true,
-      len: [2, 255]
-    }
+  }, name: {
+    type: DataTypes.STRING(50),
+    allowNull: true
   },
   email: {
-    type: DataTypes.STRING,
-    allowNull: false,
+    type: DataTypes.STRING(70),
+    allowNull: true,
+    unique: true
+  }, phone_number: {
+    type: DataTypes.STRING(20),
+    allowNull: true
+  },
+  password: {
+    type: DataTypes.STRING(1000),
+    allowNull: true
+  },
+  day_of_birth: {
+    type: DataTypes.DATEONLY,
+    allowNull: true
+  },
+  gender: {
+    type: DataTypes.STRING(30),
+    allowNull: true
+  },
+  address: {
+    type: DataTypes.STRING(100),
+    allowNull: true
+  },
+  role: {
+    type: DataTypes.STRING(20),
+    allowNull: true,
     validate: {
-      notEmpty: true,
-      len: [2, 255]
+      isIn: [['admin', 'training_officer', 'student', 'lecturer']]
     }
   },
-  phone_number: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    validate: {
-      notEmpty: true,
-      len: [2, 255]
-    }
+  status: {
+    type: DataTypes.STRING(30),
+    allowNull: true
   }
 }, {
   tableName: 'users',
