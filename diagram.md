@@ -19,12 +19,12 @@
 
 ## 2. Thiết Kế Hệ Thống
 
-### ER Diagram (Entity-Relationship)
+### ER Diagram (Entity-Relationship) - Đã thực hiện
 - **Mục đích**: Thiết kế CSDL quan hệ
 - **Thành phần chính**: Entities, Attributes, Relationships
 - **Ví dụ ứng dụng**: Bảng timetables liên kết users (giáo viên) và classes
 
-### Class Diagram
+### Class Diagram - Đã thực hiện
 - **Mục đích**: Mô hình hóa các lớp trong code
 - **Thành phần chính**: Classes, Methods, Relationships
 - **Ví dụ ứng dụng**: Lớp TimetableService phụ thuộc vào TimetableRepository
@@ -34,7 +34,7 @@
 - **Thành phần chính**: Objects, Messages, Lifelines
 - **Ví dụ ứng dụng**: Luồng API GET /timetables từ Controller -> Service -> Repository
 
-### Component Diagram
+### Component Diagram - Đã thực hiện
 - **Mục đích**: Kiến trúc hệ thống tổng thể
 - **Thành phần chính**: Components, Interfaces
 - **Ví dụ ứng dụng**: Tương tác giữa Frontend React ↔ Backend API ↔ Database
@@ -46,7 +46,7 @@
 
 ## 3. Thiết Kế Cơ Sở Dữ Liệu
 
-### Relational Schema
+### Relational Schema - Đã thực hiện
 - **Mục đích**: Chi tiết bảng và quan hệ
 - **Thành phần chính**: Tables, Columns, Foreign Keys
 - **Ví dụ ứng dụng**: Bảng timetables: id, class_id, teacher_id, schedule (JSON)

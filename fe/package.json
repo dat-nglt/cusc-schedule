@@ -17,13 +17,16 @@
     "@mui/x-charts": "^8.3.1",
     "@mui/x-date-pickers": "^8.4.0",
     "date-fns": "^4.1.0",
+    "framer-motion": "^12.12.1",
     "react": "^19.1.0",
+    "react-circular-progressbar": "^2.2.0",
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
     "react-dnd-touch-backend": "^16.0.1",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.6.0",
     "react-spinners": "^0.17.0",
+    "recharts": "^2.15.3",
     "styled-components": "^6.1.18"
   },
   "devDependencies": {

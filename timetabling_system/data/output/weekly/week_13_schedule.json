@@ -1,0 +1,17 @@
+{
+    "week": 13,
+    "schedule": {
+        "C01": [
+            {
+                "day": "Mon",
+                "slot": "C1",
+                "subject": "M01",
+                "type": "theory",
+                "lecturer": "GV01",
+                "room": "LT3"
+            }
+        ],
+        "C02": [],
+        "C03": []
+    }
+}
