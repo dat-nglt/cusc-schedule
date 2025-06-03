@@ -1,0 +1,58 @@
+{
+    "week": 4,
+    "schedule": {
+        "C01": [
+            {
+                "day": "Sat",
+                "slot": "T2",
+                "subject": "M01",
+                "type": "practice",
+                "lecturer": "GV01",
+                "room": "TH1"
+            },
+            {
+                "day": "Sat",
+                "slot": "S1",
+                "subject": "M01",
+                "type": "theory",
+                "lecturer": "GV01",
+                "room": "LT4"
+            },
+            {
+                "day": "Sat",
+                "slot": "C2",
+                "subject": "M01",
+                "type": "theory",
+                "lecturer": "GV01",
+                "room": "LT3"
+            }
+        ],
+        "C02": [
+            {
+                "day": "Fri",
+                "slot": "C2",
+                "subject": "M02",
+                "type": "theory",
+                "lecturer": "GV01",
+                "room": "LT2"
+            },
+            {
+                "day": "Mon",
+                "slot": "C1",
+                "subject": "M02",
+                "type": "practice",
+                "lecturer": "GV01",
+                "room": "TH1"
+            },
+            {
+                "day": "Wed",
+                "slot": "S2",
+                "subject": "M02",
+                "type": "theory",
+                "lecturer": "GV01",
+                "room": "LT4"
+            }
+        ],
+        "C03": []
+    }
+}

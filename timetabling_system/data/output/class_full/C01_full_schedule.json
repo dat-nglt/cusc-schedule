@@ -1,0 +1,328 @@
+{
+    "class_id": "C01",
+    "full_schedule": [
+        {
+            "week": 1,
+            "slots": [
+                {
+                    "day": "Fri",
+                    "slot": "T1",
+                    "subject": "M01",
+                    "type": "theory",
+                    "lecturer": "GV01",
+                    "room": "LT2"
+                },
+                {
+                    "day": "Tue",
+                    "slot": "T1",
+                    "subject": "M01",
+                    "type": "practice",
+                    "lecturer": "GV01",
+                    "room": "TH4"
+                },
+                {
+                    "day": "Tue",
+                    "slot": "S2",
+                    "subject": "M01",
+                    "type": "theory",
+                    "lecturer": "GV01",
+                    "room": "LT2"
+                }
+            ]
+        },
+        {
+            "week": 2,
+            "slots": [
+                {
+                    "day": "Tue",
+                    "slot": "C2",
+                    "subject": "M01",
+                    "type": "theory",
+                    "lecturer": "GV01",
+                    "room": "LT3"
+                },
+                {
+                    "day": "Mon",
+                    "slot": "C1",
+                    "subject": "M01",
+                    "type": "theory",
+                    "lecturer": "GV01",
+                    "room": "LT2"
+                },
+                {
+                    "day": "Sat",
+                    "slot": "T1",
+                    "subject": "M01",
+                    "type": "practice",
+                    "lecturer": "GV01",
+                    "room": "TH1"
+                }
+            ]
+        },
+        {
+            "week": 3,
+            "slots": [
+                {
+                    "day": "Mon",
+                    "slot": "S2",
+                    "subject": "M01",
+                    "type": "theory",
+                    "lecturer": "GV01",
+                    "room": "LT2"
+                },
+                {
+                    "day": "Fri",
+                    "slot": "C1",
+                    "subject": "M01",
+                    "type": "practice",
+                    "lecturer": "GV01",
+                    "room": "TH4"
+                },
+                {
+                    "day": "Mon",
+                    "slot": "T2",
+                    "subject": "M01",
+                    "type": "theory",
+                    "lecturer": "GV01",
+                    "room": "LT1"
+                }
+            ]
+        },
+        {
+            "week": 4,
+            "slots": [
+                {
+                    "day": "Sat",
+                    "slot": "T2",
+                    "subject": "M01",
+                    "type": "practice",
+                    "lecturer": "GV01",
+                    "room": "TH1"
+                },
+                {
+                    "day": "Sat",
+                    "slot": "S1",
+                    "subject": "M01",
+                    "type": "theory",
+                    "lecturer": "GV01",
+                    "room": "LT4"
+                },
+                {
+                    "day": "Sat",
+                    "slot": "C2",
+                    "subject": "M01",
+                    "type": "theory",
+                    "lecturer": "GV01",
+                    "room": "LT3"
+                }
+            ]
+        },
+        {
+            "week": 5,
+            "slots": [
+                {
+                    "day": "Sat",
+                    "slot": "C1",
+                    "subject": "M01",
+                    "type": "practice",
+                    "lecturer": "GV01",
+                    "room": "TH4"
+                },
+                {
+                    "day": "Sat",
+                    "slot": "S2",
+                    "subject": "M01",
+                    "type": "theory",
+                    "lecturer": "GV01",
+                    "room": "LT4"
+                },
+                {
+                    "day": "Mon",
+                    "slot": "S2",
+                    "subject": "M01",
+                    "type": "theory",
+                    "lecturer": "GV01",
+                    "room": "LT1"
+                }
+            ]
+        },
+        {
+            "week": 6,
+            "slots": [
+                {
+                    "day": "Mon",
+                    "slot": "T2",
+                    "subject": "M01",
+                    "type": "theory",
+                    "lecturer": "GV01",
+                    "room": "LT2"
+                },
+                {
+                    "day": "Thu",
+                    "slot": "C1",
+                    "subject": "M01",
+                    "type": "practice",
+                    "lecturer": "GV01",
+                    "room": "TH1"
+                },
+                {
+                    "day": "Fri",
+                    "slot": "T1",
+                    "subject": "M01",
+                    "type": "theory",
+                    "lecturer": "GV01",
+                    "room": "LT3"
+                }
+            ]
+        },
+        {
+            "week": 7,
+            "slots": [
+                {
+                    "day": "Wed",
+                    "slot": "T2",
+                    "subject": "M01",
+                    "type": "theory",
+                    "lecturer": "GV01",
+                    "room": "LT4"
+                },
+                {
+                    "day": "Thu",
+                    "slot": "C2",
+                    "subject": "M01",
+                    "type": "practice",
+                    "lecturer": "GV01",
+                    "room": "TH4"
+                },
+                {
+                    "day": "Thu",
+                    "slot": "T2",
+                    "subject": "M01",
+                    "type": "theory",
+                    "lecturer": "GV01",
+                    "room": "LT1"
+                }
+            ]
+        },
+        {
+            "week": 8,
+            "slots": [
+                {
+                    "day": "Sat",
+                    "slot": "S1",
+                    "subject": "M01",
+                    "type": "practice",
+                    "lecturer": "GV01",
+                    "room": "TH2"
+                },
+                {
+                    "day": "Wed",
+                    "slot": "T2",
+                    "subject": "M01",
+                    "type": "theory",
+                    "lecturer": "GV01",
+                    "room": "LT3"
+                },
+                {
+                    "day": "Mon",
+                    "slot": "T1",
+                    "subject": "M01",
+                    "type": "theory",
+                    "lecturer": "GV01",
+                    "room": "LT1"
+                }
+            ]
+        },
+        {
+            "week": 9,
+            "slots": [
+                {
+                    "day": "Thu",
+                    "slot": "T1",
+                    "subject": "M01",
+                    "type": "theory",
+                    "lecturer": "GV01",
+                    "room": "LT1"
+                }
+            ]
+        },
+        {
+            "week": 10,
+            "slots": [
+                {
+                    "day": "Fri",
+                    "slot": "C1",
+                    "subject": "M01",
+                    "type": "theory",
+                    "lecturer": "GV01",
+                    "room": "LT1"
+                }
+            ]
+        },
+        {
+            "week": 11,
+            "slots": [
+                {
+                    "day": "Wed",
+                    "slot": "S1",
+                    "subject": "M01",
+                    "type": "theory",
+                    "lecturer": "GV01",
+                    "room": "LT4"
+                }
+            ]
+        },
+        {
+            "week": 12,
+            "slots": [
+                {
+                    "day": "Mon",
+                    "slot": "T2",
+                    "subject": "M01",
+                    "type": "theory",
+                    "lecturer": "GV01",
+                    "room": "LT2"
+                }
+            ]
+        },
+        {
+            "week": 13,
+            "slots": [
+                {
+                    "day": "Mon",
+                    "slot": "C1",
+                    "subject": "M01",
+                    "type": "theory",
+                    "lecturer": "GV01",
+                    "room": "LT3"
+                }
+            ]
+        },
+        {
+            "week": 14,
+            "slots": [
+                {
+                    "day": "Thu",
+                    "slot": "C2",
+                    "subject": "M01",
+                    "type": "theory",
+                    "lecturer": "GV01",
+                    "room": "LT2"
+                }
+            ]
+        },
+        {
+            "week": 15,
+            "slots": [
+                {
+                    "day": "Fri",
+                    "slot": "C1",
+                    "subject": "M01",
+                    "type": "theory",
+                    "lecturer": "GV01",
+                    "room": "LT4"
+                }
+            ]
+        }
+    ]
+}
