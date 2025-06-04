@@ -114,6 +114,9 @@ Hệ thống quản lý 20 bảng chính bao gồm:
 - **Express.js**: Framework web cho Node.js
 - **PostgreSQL**: Cơ sở dữ liệu quan hệ
 - **Sequelize**: ORM/Query builder cho PostgreSQL
+- **JWT (jsonwebtoken)**: Xác thực và phân quyền người dùng
+- **bcryptjs**: Mã hóa mật khẩu người dùng
+- **Express Validator**: Validation dữ liệu đầu vào
 - **Babel**: Transpiler ES6+ JavaScript
 - **Cloudinary**: Dịch vụ lưu trữ và xử lý hình ảnh
 - **CORS**: Xử lý Cross-Origin Resource Sharing
@@ -136,13 +139,15 @@ Hệ thống quản lý 20 bảng chính bao gồm:
 
 3. **Cấu hình biến môi trường**:
    Tạo file `.env` trong thư mục gốc và thêm các biến môi trường cần thiết:
-   ```env
-   # Database Configuration
+   ```env   # Database Configuration
    DB_HOST=localhost
    DB_PORT=5432
    DB_NAME=cusc_db
    DB_USER=postgres
    DB_PASSWORD=your_password
+   
+   # JWT Configuration
+   JWT_SECRET=your_very_secure_jwt_secret_key_here
    
    # Server Configuration
    PORT=3000
@@ -195,43 +200,92 @@ Hệ thống quản lý 20 bảng chính bao gồm:
 - ✅ Kết nối PostgreSQL với Sequelize
 - ✅ Cấu trúc thư mục theo mô hình MVC
 - ✅ Database migrations cho 20 bảng
+- ✅ Hệ thống xác thực JWT hoàn chỉnh (login, register, logout)
+- ✅ Mã hóa mật khẩu với bcryptjs
+- ✅ JWT middleware cho bảo vệ routes
+- ✅ Validation dữ liệu với express-validator
+- ✅ API chuẩn hóa response format
 - ✅ API cơ bản cho quản lý người dùng
 - ✅ Middleware xử lý lỗi và CORS
-- ✅ Cấu hình Cloudinary cho upload file
+
 
 **Đang phát triển:**
 - 🔄 API cho thời khóa biểu (timetableController)
-- 🔄 API cho xác thực (authController)
-- 🔄 Validation và error handling
 - 🔄 Unit tests và integration tests
+- 🔄 API documentation với Swagger
 
 **Chưa triển khai:**
-- ❌ JWT authentication middleware
-- ❌ API documentation (Swagger/OpenAPI)
 - ❌ Database seeders
 - ❌ Logging system hoàn chỉnh
 - ❌ Rate limiting và security middleware
+- ❌ Password reset functionality
+- ❌ Cấu hình Cloudinary cho upload file
 
 ## API Endpoints
 
-**Hiện tại chỉ có:**
+### Authentication APIs (✅ Đã hoàn thành)
+- `POST /api/auth/register` - Đăng ký tài khoản mới
+- `POST /api/auth/login` - Đăng nhập hệ thống  
+- `POST /api/auth/logout` - Đăng xuất (yêu cầu authentication)
+
+### User Management APIs
 - `GET /api/user/` - Lấy danh sách tất cả người dùng
 
-**Đang phát triển:**
-- `/api/auth/*` - Xác thực và phân quyền (chưa active)
+### Đang phát triển:
 - `/api/timetable/*` - Quản lý thời khóa biểu (chưa active)
 
-Để biết thông số kỹ thuật API chi tiết, tham khảo thư mục `docs/` (đang được phát triển).
-
 **API base URL:** `http://localhost:3000/api`
+
+### Cách sử dụng Authentication:
+
+1. **Đăng ký:** 
+   ```bash
+   POST /api/auth/register
+   Content-Type: application/json
+   
+   {
+     "name": "Nguyễn Văn A",
+     "email": "example@ctu.edu.vn", 
+     "password": "password123"
+   }
+   ```
+
+2. **Đăng nhập:**
+   ```bash
+   POST /api/auth/login
+   Content-Type: application/json
+   
+   {
+     "email": "example@ctu.edu.vn",
+     "password": "password123"
+   }
+   ```
+
+3. **Sử dụng token cho protected routes:**
+   ```bash
+   Authorization: Bearer <your_jwt_token>
+   ```
 
 ## Lưu ý phát triển
 
 1. **Database**: Đảm bảo PostgreSQL đang chạy trước khi start server
 2. **Migration**: Luôn chạy migration sau khi pull code mới
-3. **Environment**: File `.env` không được commit, cần tạo local
-4. **Babel**: Dự án sử dụng ES6+ modules, cần Babel để transpile
-5. **Hot reload**: Sử dụng `npm run dev` để auto-restart khi code thay đổi
+3. **Environment**: File `.env` không được commit, cần tạo local và bao gồm JWT_SECRET
+4. **JWT Secret**: Sử dụng secret key mạnh cho production (ít nhất 32 ký tự)
+5. **Babel**: Dự án sử dụng ES6+ modules, cần Babel để transpile
+6. **Hot reload**: Sử dụng `npm run dev` để auto-restart khi code thay đổi
+7. **Password Security**: Mật khẩu được hash tự động bằng bcryptjs với salt rounds = 10
+8. **Token Expiry**: JWT tokens hết hạn sau 1 giờ, frontend cần handle refresh
+
+## Security Features
+
+- ✅ **Password Hashing**: Sử dụng bcryptjs với salt rounds 10
+- ✅ **JWT Authentication**: Token-based authentication với expiry
+- ✅ **Input Validation**: Validate email format, password length, required fields  
+- ✅ **Protected Routes**: Middleware kiểm tra JWT token
+- ✅ **Error Handling**: Không expose sensitive info trong error responses
+- ⏳ **Rate Limiting**: Chưa implement
+- ⏳ **HTTPS**: Chưa configure cho production
 
 
 

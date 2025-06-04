@@ -1,21 +1,21 @@
-const jwt = require('jsonwebtoken');
-const { constants } = require('../config/constants');
+import jwt from 'jsonwebtoken';
+import { APIResponse } from '../utils/APIResponse';
 
 const authMiddleware = (req, res, next) => {
     const token = req.headers['authorization']?.split(' ')[1];
 
     if (!token) {
-        return res.status(constants.UNAUTHORIZED).json({ message: 'No token provided' });
+        return APIResponse(res, 401, 'Access denied. No token provided');
     }
 
-    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-        if (err) {
-            return res.status(constants.FORBIDDEN).json({ message: 'Failed to authenticate token' });
-        }
-
-        req.userId = decoded.id;
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.userId = decoded.id; // This will be the user_id from the database
         next();
-    });
+    } catch (error) {
+        console.error('Token verification error:', error);
+        return APIResponse(res, 403, 'Invalid token');
+    }
 };
 
-module.exports = authMiddleware;
+export default authMiddleware;

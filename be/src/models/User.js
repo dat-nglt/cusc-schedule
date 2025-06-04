@@ -1,4 +1,5 @@
 import { DataTypes } from 'sequelize';
+import bcrypt from 'bcryptjs';
 import { sequelize } from '../config/database';
 
 const User = sequelize.define('users', {
@@ -49,7 +50,27 @@ const User = sequelize.define('users', {
   tableName: 'users',
   timestamps: true,
   createdAt: 'created_at',
-  updatedAt: 'updated_at'
+  updatedAt: 'updated_at',
+  hooks: {
+    beforeCreate: async (user) => {
+      if (user.password) {
+        const saltRounds = 10;
+        user.password = await bcrypt.hash(user.password, saltRounds);
+      }
+    },
+    beforeUpdate: async (user) => {
+      if (user.changed('password') && user.password) {
+        const saltRounds = 10;
+        user.password = await bcrypt.hash(user.password, saltRounds);
+      }
+    }
+  }
 });
+
+// Instance method to compare password
+User.prototype.comparePassword = async function (candidatePassword) {
+  if (!this.password) return false;
+  return await bcrypt.compare(candidatePassword, this.password);
+};
 
 export default User;
