@@ -5,12 +5,6 @@ import {
   Typography,
   Card,
   CardContent,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  Button,
   TablePagination,
   TextField,
   Select,
@@ -18,14 +12,23 @@ import {
   FormControl,
   InputLabel,
   InputAdornment,
+  IconButton,
+  Button,
 } from '@mui/material';
-import { Add as AddIcon, Visibility, Edit, Delete, Search as SearchIcon } from '@mui/icons-material';
+import { 
+  Add as AddIcon, 
+  Search as SearchIcon,
+} from '@mui/icons-material';
 import CourseDetailModal from './CourseDetailModal';
 import AddCourseModal from './AddCourseModal';
-import EditCourseModal from './EditCourseModal'; // Import modal chỉnh sửa
+import EditCourseModal from './EditCourseModal';
+import useResponsive from '../../hooks/useResponsive';
+import CourseTable from './CourseTable';
 
 const Course = () => {
-  // Dữ liệu mẫu thực tế cho danh sách khóa học
+  const { isSmallScreen, isMediumScreen } = useResponsive();
+
+  // Dữ liệu mẫu cho danh sách khóa học
   const [courses, setCourses] = useState([
     { id: 1, stt: 1, maKhoaHoc: 'IS2501', tenKhoaHoc: 'Hệ thống thông tin', thoiGianBatDau: '2022-06-10', thoiGianKetThuc: '2024-07-10', thoiGianTao: '2025-05-15 09:00', thoiGianCapNhat: '2025-05-20 14:30' },
     { id: 2, stt: 2, maKhoaHoc: 'FT2501', tenKhoaHoc: 'Công nghệ thực phẩm', thoiGianBatDau: '2025-06-12', thoiGianKetThuc: '2025-07-12', thoiGianTao: '2025-05-16 10:15', thoiGianCapNhat: '2025-05-21 15:00' },
@@ -39,7 +42,7 @@ const Course = () => {
     { id: 10, stt: 10, maKhoaHoc: 'MET2501', tenKhoaHoc: 'Công nghệ kỹ thuật cơ điện tử', thoiGianBatDau: '2025-06-28', thoiGianKetThuc: '2025-07-28', thoiGianTao: '2025-05-24 09:10', thoiGianCapNhat: '2025-05-29 14:50' },
     { id: 11, stt: 11, maKhoaHoc: 'CET2501', tenKhoaHoc: 'Công nghệ kỹ thuật công trình xây dựng', thoiGianBatDau: '2025-07-01', thoiGianKetThuc: '2025-08-01', thoiGianTao: '2025-05-25 10:40', thoiGianCapNhat: '2025-05-30 11:30' },
     { id: 12, stt: 12, maKhoaHoc: 'BT2501', tenKhoaHoc: 'Công nghệ sinh học', thoiGianBatDau: '2025-07-03', thoiGianKetThuc: '2025-08-03', thoiGianTao: '2025-05-26 13:25', thoiGianCapNhat: '2025-06-01 10:45' },
-    { id: 13, stt: 13, maKhoaHoc: 'DS2501', tenKhoaHoc: 'Khoa học dữ liệu', thoiGianBatDau: '2025-07-05', thoiGianKetThuc: '2025-08-05', thoiGianTao: '2025-05-27 15:10', thoiGianCapNhat: '2025-06-02 09:35' },
+    { id: 13, stt: 13, maKhoaHoc: 'DS2501', tenKhoaHoc: 'Khoa học dữ liệu', thoiGianBatDau: '2025-07-05', thoiGianKetThuc: '2025-08-5', thoiGianTao: '2025-05-27 15:10', thoiGianCapNhat: '2025-06-02 09:35' },
     { id: 14, stt: 14, maKhoaHoc: 'LSCM2501', tenKhoaHoc: 'Logistics và quản lý chuỗi cung ứng', thoiGianBatDau: '2025-07-07', thoiGianKetThuc: '2025-08-07', thoiGianTao: '2025-05-28 16:45', thoiGianCapNhat: '2025-06-03 14:15' },
     { id: 15, stt: 15, maKhoaHoc: 'IT2501', tenKhoaHoc: 'Công nghệ thông tin', thoiGianBatDau: '2025-07-09', thoiGianKetThuc: '2025-08-09', thoiGianTao: '2025-05-29 09:30', thoiGianCapNhat: '2025-06-04 11:20' },
     { id: 16, stt: 16, maKhoaHoc: 'EET2501', tenKhoaHoc: 'Công nghệ kỹ thuật năng lượng', thoiGianBatDau: '2025-07-11', thoiGianKetThuc: '2025-08-11', thoiGianTao: '2025-05-30 10:50', thoiGianCapNhat: '2025-06-05 08:40' },
@@ -57,8 +60,8 @@ const Course = () => {
   const [openDetail, setOpenDetail] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [openAddModal, setOpenAddModal] = useState(false);
-  const [openEditModal, setOpenEditModal] = useState(false); // State cho modal chỉnh sửa
-  const [editedCourse, setEditedCourse] = useState(null); // Khóa học đang được chỉnh sửa
+  const [openEditModal, setOpenEditModal] = useState(false);
+  const [editedCourse, setEditedCourse] = useState(null);
 
   // Danh sách năm để lọc
   const years = ['2021', '2022', '2023', '2024', '2025'];
@@ -154,23 +157,33 @@ const Course = () => {
               <Typography variant="h6">
                 Danh sách khóa học
               </Typography>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  startIcon={<AddIcon />}
-                  onClick={handleAddCourse}
-                  sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
-                >
-                  Thêm khóa học
-                </Button>
-                <FormControl sx={{ minWidth: 150 }} variant="outlined">
-                  <InputLabel id="year-filter-label">Lọc theo năm</InputLabel>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                {isSmallScreen ? (
+                  <IconButton
+                    color="primary"
+                    onClick={handleAddCourse}
+                    sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
+                  >
+                    <AddIcon sx={{ color: '#fff' }} />
+                  </IconButton>
+                ) : (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    startIcon={<AddIcon />}
+                    onClick={handleAddCourse}
+                    sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
+                  >
+                    Thêm khóa học
+                  </Button>
+                )}
+                <FormControl sx={{ minWidth: isSmallScreen ? 100 : 150 }} variant="outlined">
+                  <InputLabel id="year-filter-label">{isSmallScreen ? 'Lọc' : 'Lọc theo năm'}</InputLabel>
                   <Select
                     labelId="year-filter-label"
                     value={selectedYear}
                     onChange={(e) => setSelectedYear(e.target.value)}
-                    label="Lọc theo năm"
+                    label={isSmallScreen ? 'Lọc' : 'Lọc theo năm'}
                   >
                     <MenuItem value="">Tất cả</MenuItem>
                     {years.map((year) => (
@@ -203,87 +216,14 @@ const Course = () => {
               <Typography>Không có khóa học nào để hiển thị.</Typography>
             ) : (
               <>
-                <Table sx={{ minWidth: 650, border: '1px solid #e0e0e0' }}>
-                  <TableHead>
-                    <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
-                      <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0' }}>
-                        STT
-                      </TableCell>
-                      <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0' }}>
-                        Mã khóa học
-                      </TableCell>
-                      <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'left', borderRight: '1px solid #e0e0e0' }}>
-                        Tên khóa học
-                      </TableCell>
-                      <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0' }}>
-                        Thời gian bắt đầu
-                      </TableCell>
-                      <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0' }}>
-                        Thời gian kết thúc
-                      </TableCell>
-                      <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0' }}>
-                        Thời gian tạo
-                      </TableCell>
-                      <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0' }}>
-                        Thời gian cập nhật
-                      </TableCell>
-                      <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center' }}>
-                        Thao tác
-                      </TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {displayedCourses.map((course, index) => (
-                      <TableRow
-                        key={course.id}
-                        sx={{
-                          backgroundColor: index % 2 === 0 ? '#fafafa' : '#ffffff',
-                          '&:hover': { backgroundColor: '#e3f2fd', cursor: 'pointer' },
-                          borderBottom: '1px solid #e0e0e0',
-                        }}
-                      >
-                        <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                          {course.stt}
-                        </TableCell>
-                        <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                          {course.maKhoaHoc}
-                        </TableCell>
-                        <TableCell sx={{ textAlign: 'left', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                          {course.tenKhoaHoc}
-                        </TableCell>
-                        <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                          {course.thoiGianBatDau}
-                        </TableCell>
-                        <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                          {course.thoiGianKetThuc}
-                        </TableCell>
-                        <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                          {course.thoiGianTao}
-                        </TableCell>
-                        <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>{course.thoiGianCapNhat}</TableCell>
-                        <TableCell sx={{ textAlign: 'center', py: 1.5 }}>
-                          <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1 }}>
-                            <Visibility
-                              color="primary"
-                              style={{ cursor: 'pointer' }}
-                              onClick={() => handleViewCourse(course.id)}
-                            />
-                            <Edit
-                              color="primary"
-                              style={{ cursor: 'pointer' }}
-                              onClick={() => handleEditCourse(course.id)}
-                            />
-                            <Delete
-                              color="error"
-                              style={{ cursor: 'pointer' }}
-                              onClick={() => handleDeleteCourse(course.id)}
-                            />
-                          </Box>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                <CourseTable
+                  displayedCourses={displayedCourses}
+                  isSmallScreen={isSmallScreen}
+                  isMediumScreen={isMediumScreen}
+                  handleViewCourse={handleViewCourse}
+                  handleEditCourse={handleEditCourse}
+                  handleDeleteCourse={handleDeleteCourse}
+                />
                 <TablePagination
                   component="div"
                   count={filteredCourses.length}
