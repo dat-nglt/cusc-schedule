@@ -1,5 +1,5 @@
 import LayoutJustHeader from "../components/layout/LayoutJustHeader";
-import MainLayout from "../components/layout/MainLayout"; // Import MainLayout
+import MainLayout from "../components/layout/MainLayout";
 
 const routes = [
   {
@@ -8,7 +8,7 @@ const routes = [
     exact: true,
     title: "Trình điều khiển",
     isPrivate: false,
-    layout: MainLayout, // Sử dụng layout MainLayout
+    layout: MainLayout,
   },
   {
     path: "/login",
@@ -23,7 +23,7 @@ const routes = [
     exact: true,
     title: "Hồ sơ cá nhân",
     isPrivate: true,
-    layout: MainLayout, // Sử dụng layout MainLayout
+    layout: MainLayout,
   },
   {
     path: "/student",
@@ -32,6 +32,22 @@ const routes = [
     title: "Hồ sơ cá nhân",
     isPrivate: false,
     layout: LayoutJustHeader,
+  },
+  {
+    path: "/courses",
+    component: "Course",
+    exact: true,
+    title: "Quản lý Khóa học",
+    isPrivate: false,
+    layout: MainLayout,
+  },
+  {
+    path: "/slottime",
+    component: "Slot_time",
+    exact: true,
+    title: "Quản lý Khung giờ",
+    isPrivate: false,
+    layout: MainLayout,
   },
 ];
 
