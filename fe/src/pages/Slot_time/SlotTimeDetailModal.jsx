@@ -35,13 +35,13 @@ const formatDateTime = (dateTime) => {
 // Hàm kiểm tra giá trị và trả về giá trị hoặc thông báo mặc định
 const getValueOrDefault = (value) => value || 'Không có dữ liệu';
 
-const CourseDetailModal = ({ open, onClose, course }) => {
-  if (!course) return null;
+const SlotTimeDetailModal = ({ open, onClose, slotTime }) => {
+  if (!slotTime) return null;
 
-  // Hàm sao chép mã khóa học
-  const handleCopyMaKhoaHoc = () => {
-    navigator.clipboard.writeText(course.maKhoaHoc);
-    alert('Đã sao chép mã khóa học!');
+  // Hàm sao chép mã khung giờ
+  const handleCopyMaKhungGio = () => {
+    navigator.clipboard.writeText(slotTime.maKhungGio);
+    alert('Đã sao chép mã khung giờ!');
   };
 
   return (
@@ -68,11 +68,11 @@ const CourseDetailModal = ({ open, onClose, course }) => {
         }}
       >
         <Typography variant="h6">
-          Chi tiết khóa học {course.maKhoaHoc}
+          Chi tiết khung giờ {slotTime.maKhungGio}
         </Typography>
-        <Tooltip title="Sao chép mã khóa học">
+        <Tooltip title="Sao chép mã khung giờ">
           <IconButton
-            onClick={handleCopyMaKhoaHoc}
+            onClick={handleCopyMaKhungGio}
             sx={{ color: '#fff' }}
           >
             <CodeIcon />
@@ -81,7 +81,7 @@ const CourseDetailModal = ({ open, onClose, course }) => {
       </DialogTitle>
       <DialogContent sx={{ mt: 2, px: 3 }}>
         <Grid container spacing={2}>
-          {/* Mã khóa học */}
+          {/* Mã khung giờ */}
           <Grid item xs={12}>
             <Box
               sx={{
@@ -99,16 +99,16 @@ const CourseDetailModal = ({ open, onClose, course }) => {
                   variant="body2"
                   sx={{ fontWeight: 'bold', color: '#333' }}
                 >
-                  Mã khóa học
+                  Mã khung giờ
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#666' }}>
-                  {getValueOrDefault(course.maKhoaHoc)}
+                  {getValueOrDefault(slotTime.maKhungGio)}
                 </Typography>
               </Box>
             </Box>
           </Grid>
 
-          {/* Tên khóa học */}
+          {/* Tên khung giờ */}
           <Grid item xs={12}>
             <Box
               sx={{
@@ -126,10 +126,37 @@ const CourseDetailModal = ({ open, onClose, course }) => {
                   variant="body2"
                   sx={{ fontWeight: 'bold', color: '#333' }}
                 >
-                  Tên khóa học
+                  Tên khung giờ
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#666' }}>
-                  {getValueOrDefault(course.tenKhoaHoc)}
+                  {getValueOrDefault(slotTime.tenKhungGio)}
+                </Typography>
+              </Box>
+            </Box>
+          </Grid>
+
+          {/* Buổi học */}
+          <Grid item xs={12}>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                bgcolor: '#f9f9f9',
+                p: 2,
+                borderRadius: 1,
+                border: '1px solid #e0e0e0',
+              }}
+            >
+              <ScheduleIcon sx={{ mr: 1, color: '#1976d2' }} />
+              <Box>
+                <Typography
+                  variant="body2"
+                  sx={{ fontWeight: 'bold', color: '#333' }}
+                >
+                  Buổi học
+                </Typography>
+                <Typography variant="body1" sx={{ color: '#666' }}>
+                  {getValueOrDefault(slotTime.buoiHoc)}
                 </Typography>
               </Box>
             </Box>
@@ -156,7 +183,7 @@ const CourseDetailModal = ({ open, onClose, course }) => {
                   Thời gian bắt đầu
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#666' }}>
-                  {formatDateTime(course.thoiGianBatDau)}
+                  {getValueOrDefault(slotTime.thoiGianBatDau)}
                 </Typography>
               </Box>
             </Box>
@@ -183,7 +210,7 @@ const CourseDetailModal = ({ open, onClose, course }) => {
                   Thời gian kết thúc
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#666' }}>
-                  {formatDateTime(course.thoiGianKetThuc)}
+                  {getValueOrDefault(slotTime.thoiGianKetThuc)}
                 </Typography>
               </Box>
             </Box>
@@ -210,7 +237,7 @@ const CourseDetailModal = ({ open, onClose, course }) => {
                   Thời gian tạo
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#666' }}>
-                  {formatDateTime(course.thoiGianTao)}
+                  {formatDateTime(slotTime.thoiGianTao)}
                 </Typography>
               </Box>
             </Box>
@@ -237,7 +264,7 @@ const CourseDetailModal = ({ open, onClose, course }) => {
                   Thời gian cập nhật
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#666' }}>
-                  {formatDateTime(course.thoiGianCapNhat)}
+                  {formatDateTime(slotTime.thoiGianCapNhat)}
                 </Typography>
               </Box>
             </Box>
@@ -263,4 +290,4 @@ const CourseDetailModal = ({ open, onClose, course }) => {
   );
 };
 
-export default CourseDetailModal;
+export default SlotTimeDetailModal;

@@ -41,6 +41,14 @@ const routes = [
     isPrivate: false,
     layout: MainLayout,
   },
+  {
+    path: "/slottime",
+    component: "Slot_time",
+    exact: true,
+    title: "Quản lý Khung giờ",
+    isPrivate: false,
+    layout: MainLayout,
+  },
 ];
 
 export default routes;
