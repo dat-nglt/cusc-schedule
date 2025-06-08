@@ -1,197 +1,238 @@
-# README cho Dự án Backend CUSC Schedule
+# Backend CUSC Schedule Management System
 
-Dự án này là một ứng dụng backend được thiết kế để quản lý hệ thống thời khóa biểu cho trường đại học CUSC (Can Tho University of Science and Technology). Được xây dựng với kiến trúc RESTful API sử dụng Node.js, Express.js và PostgreSQL.
+Dự án backend cho hệ thống quản lý thời khóa biểu của trường đại học CUSC (Can Tho University of Science and Technology). Được xây dựng với kiến trúc RESTful API hiện đại sử dụng Node.js, Express.js và PostgreSQL.
 
-## Tổng Quan Backend
+## 📋 Tổng Quan Hệ Thống
 
-Backend này được xây dựng để hỗ trợ hệ thống quản lý thời khóa biểu toàn diện của trường đại học. Hệ thống cung cấp các API RESTful để xử lý:
+Backend này cung cấp một hệ thống quản lý thời khóa biểu toàn diện với các tính năng chính:
 
-- **Quản lý người dùng**: Hệ thống đa vai trò bao gồm sinh viên, giảng viên, cán bộ đào tạo và quản trị viên
-- **Quản lý thời khóa biểu**: Tạo, cập nhật, xóa và truy vấn thời khóa biểu theo lớp, môn học và phòng học
-- **Quản lý lịch thi**: Tổ chức và quản lý lịch thi cho các kỳ học
-- **Đồng bộ dữ liệu**: Hệ thống sync với các nguồn dữ liệu bên ngoài
-- **Thông báo**: Gửi thông báo về thay đổi lịch học và lịch thi
+- **🔐 Quản lý Xác thực & Phân quyền**: Hệ thống JWT authentication với đa vai trò (Admin, Sinh viên, Giảng viên, Cán bộ đào tạo)
+- **👥 Quản lý Người dùng**: CRUD operations cho tất cả loại người dùng trong hệ thống
+- **📅 Quản lý Thời khóa biểu**: Tạo, cập nhật, xóa và truy vấn lịch học theo nhiều tiêu chí
+- **📊 Quản lý Lịch thi**: Tổ chức và quản lý lịch thi cho các học kỳ
+- **🔄 Đồng bộ Dữ liệu**: Hệ thống sync với các nguồn dữ liệu bên ngoài
+- **🔔 Hệ thống Thông báo**: Gửi thông báo về thay đổi lịch học và lịch thi
 
-## Cấu Trúc Dự Án
+## 🏗️ Kiến Trúc & Cấu Trúc Dự Án
 
 ```
 be/
-├── config/                    # Cấu hình Sequelize CLI
-│   └── config.json           # Cấu hình kết nối database
-├── src/                      # Source code chính
-│   ├── config/              # Cấu hình ứng dụng
-│   │   ├── cloudinary.js    # Cấu hình Cloudinary cho upload file
-│   │   ├── constants.js     # Hằng số ứng dụng
-│   │   └── database.js      # Cấu hình kết nối PostgreSQL với Sequelize
-│   ├── controllers/         # Xử lý logic cho các API endpoints
-│   │   ├── authController.js     # Xác thực và phân quyền
-│   │   ├── timetableController.js # Quản lý thời khóa biểu
-│   │   └── userController.js     # Quản lý người dùng
-│   ├── middleware/          # Middleware cho xử lý request/response
-│   │   ├── authMiddleware.js     # Kiểm tra xác thực JWT
-│   │   └── errorMiddleware.js    # Xử lý lỗi tập trung
-│   ├── models/              # Định nghĩa schema dữ liệu Sequelize
-│   │   ├── User.js          # Model người dùng
-│   │   └── Timetable.js     # Model thời khóa biểu
-│   ├── routes/              # Định nghĩa các API endpoints
-│   │   ├── authRoutes.js    # Routes cho xác thực
-│   │   ├── timetableRoutes.js # Routes cho thời khóa biểu
-│   │   ├── userRoutes.js    # Routes cho quản lý người dùng
-│   │   └── router.js        # Router tổng hợp
-│   ├── services/            # Business logic layer
-│   │   ├── authService.js   # Logic xác thực
-│   │   ├── timetableService.js # Logic thời khóa biểu
-│   │   └── userService.js   # Logic quản lý người dùng
-│   ├── utils/               # Utility functions
-│   │   ├── APIResponse.js   # Chuẩn hóa phản hồi API
-│   │   ├── logger.js        # Logging system
-│   │   └── validation.js    # Validation helpers
-│   ├── tests/               # Unit tests và integration tests
-│   └── server.js            # Entry point của ứng dụng
-├── migrations/              # Database migrations (Sequelize)
-│   ├── 20250603032154-create-users-table.js
-│   ├── 20250603032947-create-training_officers-table.js
-│   ├── 20250603033232-create-lecturers-table.js
-│   ├── 20250603035707-create-students-table.js
-│   ├── 20250603035757-create-admins-table.js
-│   ├── 20250603035819-create-notifications-table.js
-│   ├── 20250603040138-create-courses-table.js
-│   ├── 20250603040147-create-classes-table.js
-│   ├── 20250603040155-create-rooms-table.js
-│   ├── 20250603040200-create-training_programs-table.js
-│   ├── 20250603040213-create-semesters-table.js
-│   ├── 20250603040222-create-subjects-table.js
-│   ├── 20250603040233-create-class_sections-table.js
-│   ├── 20250603040248-create-time_slots-table.js
-│   ├── 20250603040300-create-break_schedule-table.js
-│   ├── 20250603040312-create-class_schedules-table.js
-│   ├── 20250603040324-create-exam_schedules-table.js
-│   ├── 20250603040348-create-lecturer_assignments-table.js
-│   └── 20250603040403-create-sync_histories-table.js
-├── models/                  # Sequelize models index
-│   └── index.js
-├── seeders/                 # Database seeders (đang trống)
-├── docs                     # Tài liệu API (chưa triển khai)
-├── .env                     # Biến môi trường
-├── package.json             # Dependencies và scripts
-└── create_database.sql      # SQL script tạo database
+├── 📁 database/                # Database management với Sequelize
+│   ├── config/
+│   │   └── config.json        # Cấu hình database connections
+│   ├── migrations/            # Database migrations (19 files)
+│   │   ├── 20250603032154-create-users-table.js
+│   │   ├── 20250603032947-create-training_officers-table.js
+│   │   ├── 20250603033232-create-lecturers-table.js
+│   │   ├── 20250603035707-create-students-table.js
+│   │   ├── 20250603035757-create-admins-table.js
+│   │   ├── 20250603035819-create-notifications-table.js
+│   │   ├── 20250603040138-create-courses-table.js
+│   │   ├── 20250603040147-create-classes-table.js
+│   │   ├── 20250603040155-create-rooms-table.js
+│   │   ├── 20250603040200-create-training_programs-table.js
+│   │   ├── 20250603040213-create-semesters-table.js
+│   │   ├── 20250603040222-create-subjects-table.js
+│   │   ├── 20250603040233-create-class_sections-table.js
+│   │   ├── 20250603040248-create-time_slots-table.js
+│   │   ├── 20250603040300-create-break_schedule-table.js
+│   │   ├── 20250603040312-create-class_schedules-table.js
+│   │   ├── 20250603040324-create-exam_schedules-table.js
+│   │   ├── 20250603040348-create-lecturer_assignments-table.js
+│   │   └── 20250603040403-create-sync_histories-table.js
+│   └── models/
+│       └── index.js           # Sequelize models index
+├── 📁 src/                    # Source code chính (ES6+ với Babel)
+│   ├── 📁 config/            # Cấu hình ứng dụng
+│   │   ├── cloudinary.js     # Cloudinary integration
+│   │   ├── constants.js      # App constants & enums
+│   │   └── database.js       # PostgreSQL connection với Sequelize
+│   ├── 📁 controllers/       # Business logic controllers
+│   │   ├── authController.js      # Authentication & Authorization ✅
+│   │   ├── userController.js      # User management ✅
+│   │   └── timetableController.js # Timetable management (commented)
+│   ├── 📁 middleware/        # Express middleware
+│   │   ├── authMiddleware.js      # JWT authentication middleware ✅
+│   │   └── errorMiddleware.js     # Centralized error handling
+│   ├── 📁 models/           # Sequelize data models
+│   │   ├── User.js          # User model với bcrypt hashing ✅
+│   │   └── Timetable.js     # Timetable model (commented out)
+│   ├── 📁 routes/           # API route definitions
+│   │   ├── authRoutes.js    # Authentication routes ✅
+│   │   ├── userRoutes.js    # User management routes ✅
+│   │   ├── timetableRoutes.js # Timetable routes (commented)
+│   │   └── router.js        # Main router setup
+│   ├── 📁 services/         # Business logic services
+│   │   ├── authService.js   # JWT token generation & validation ✅
+│   │   ├── userService.js   # User business logic ✅
+│   │   └── timetableService.js # Timetable services (legacy)
+│   ├── 📁 utils/            # Utility functions
+│   │   ├── APIResponse.js   # Standardized API responses ✅
+│   │   ├── logger.js        # Logging utilities
+│   │   └── validation.js    # Input validation với express-validator ✅
+│   ├── 📁 tests/            # Test suites (placeholder)
+│   ├── server.js            # Application entry point ✅
+│   └── .babelrc            # Babel configuration
+├── 📄 package.json          # Dependencies & scripts
+├── 📄 .sequelizerc         # Sequelize CLI configuration
+├── 📄 console-env.js       # Environment testing utility
+├── 📄 create_database.sql  # Database creation script
+└── 📄 docs/                # API documentation (placeholder)
 ```
 
-## Database Schema
+## 🗄️ Database Schema
 
-Hệ thống quản lý 20 bảng chính bao gồm:
+Hệ thống quản lý **19 bảng dữ liệu** được thiết kế theo chuẩn quan hệ:
 
-### Quản lý người dùng:
-- **users**: Thông tin người dùng cơ bản
-- **students**: Thông tin sinh viên
-- **lecturers**: Thông tin giảng viên  
-- **training_officers**: Cán bộ đào tạo
-- **admins**: Quản trị viên hệ thống
+### 👤 **Quản lý Người dùng (User Management)**
+- **users** - Thông tin người dùng cơ bản với JWT authentication
+- **students** - Thông tin chi tiết sinh viên  
+- **lecturers** - Thông tin giảng viên & chuyên môn
+- **training_officers** - Cán bộ đào tạo & quyền hạn
+- **admins** - Quản trị viên hệ thống
 
-### Quản lý học tập:
-- **training_programs**: Chương trình đào tạo
-- **courses**: Khóa học
-- **subjects**: Môn học
-- **classes**: Lớp học
-- **class_sections**: Nhóm lớp
-- **semesters**: Học kỳ
+### 🎓 **Quản lý Học tập (Academic Management)**  
+- **training_programs** - Chương trình đào tạo & ngành học
+- **courses** - Khóa học theo chương trình
+- **subjects** - Môn học & tín chỉ
+- **classes** - Lớp học & sĩ số
+- **class_sections** - Nhóm lớp & phân chia
+- **semesters** - Học kỳ & năm học
 
-### Quản lý thời khóa biểu:
-- **rooms**: Phòng học
-- **time_slots**: Khung giờ học
-- **class_schedules**: Lịch học lớp
-- **exam_schedules**: Lịch thi
-- **break_schedule**: Lịch nghỉ
-- **lecturer_assignments**: Phân công giảng dạy
+### 📅 **Quản lý Thời khóa biểu (Schedule Management)**
+- **rooms** - Phòng học & trang thiết bị
+- **time_slots** - Khung giờ học chuẩn
+- **class_schedules** - Lịch học hàng tuần
+- **exam_schedules** - Lịch thi & giám sát
+- **break_schedule** - Lịch nghỉ lễ, tết
+- **lecturer_assignments** - Phân công giảng dạy
 
-### Hệ thống:
-- **notifications**: Thông báo
-- **sync_histories**: Lịch sử đồng bộ
+### 🔔 **Hệ thống (System)**
+- **notifications** - Thông báo & alerts
+- **sync_histories** - Lịch sử đồng bộ dữ liệu
 
-## Công Nghệ Sử Dụng
+## 🛠️ Tech Stack & Dependencies
 
-- **Node.js**: Môi trường runtime JavaScript phía server
-- **Express.js**: Framework web cho Node.js
-- **PostgreSQL**: Cơ sở dữ liệu quan hệ
-- **Sequelize**: ORM/Query builder cho PostgreSQL
-- **JWT (jsonwebtoken)**: Xác thực và phân quyền người dùng
-- **bcryptjs**: Mã hóa mật khẩu người dùng
-- **Express Validator**: Validation dữ liệu đầu vào
-- **Babel**: Transpiler ES6+ JavaScript
-- **Cloudinary**: Dịch vụ lưu trữ và xử lý hình ảnh
-- **CORS**: Xử lý Cross-Origin Resource Sharing
-- **Dotenv**: Quản lý biến môi trường
-- **Body-parser**: Middleware xử lý request body
-- **Nodemon**: Auto-restart server khi development
+### **Core Technologies**
+- **Node.js** `20+` - JavaScript runtime environment
+- **Express.js** `^5.1.0` - Web framework cho RESTful APIs
+- **PostgreSQL** `14+` - Relational database management
+- **Sequelize** `^6.37.7` - ORM/Query builder cho PostgreSQL
 
-## Hướng Dẫn Cài Đặt
+### **Authentication & Security**
+- **JWT** `^9.0.2` - Token-based authentication
+- **bcryptjs** `^3.0.2` - Password hashing với salt
+- **express-validator** `^7.2.1` - Input validation & sanitization
+- **CORS** `^2.8.5` - Cross-Origin Resource Sharing
 
-1. **Clone repository**:
-   ```
-   git clone <repository-url>
-   cd be
-   ```
+### **Development Tools**
+- **Babel** `^7.27.x` - ES6+ transpiler cho Node.js
+- **Nodemon** `^3.1.10` - Auto-restart development server
+- **Sequelize-CLI** `^6.6.3` - Database migration management
 
-2. **Cài đặt dependencies**:
-   ```
-   npm install
-   ```
+### **Utilities & Middleware**
+- **dotenv** `^16.5.0` - Environment variables management
+- **body-parser** `^2.2.0` - Request body parsing middleware
+- **multer** `^2.0.1` - File upload handling
+- **cloudinary** `^2.6.1` - Cloud-based image/file storage
 
-3. **Cấu hình biến môi trường**:
-   Tạo file `.env` trong thư mục gốc và thêm các biến môi trường cần thiết:
-   ```env   # Database Configuration
-   DB_HOST=localhost
-   DB_PORT=5432
-   DB_NAME=cusc_db
-   DB_USER=postgres
-   DB_PASSWORD=your_password
-   
-   # JWT Configuration
-   JWT_SECRET=your_very_secure_jwt_secret_key_here
-   
-   # Server Configuration
-   PORT=3000
-   NODE_ENV=development
-   
-   # Cloudinary Configuration (nếu sử dụng)
-   CLOUDINARY_CLOUD_NAME=your_cloud_name
-   CLOUDINARY_API_KEY=your_api_key
-   CLOUDINARY_API_SECRET=your_api_secret
-   ```
+## 🚀 Hướng Dẫn Cài Đặt & Deployment
 
-4. **Tạo database và chạy migration**:
-   ```bash
-   # Tạo database PostgreSQL (nếu chưa có)
-   psql -U postgres -c "CREATE DATABASE cusc_db;"
-   
-   # Chạy migration để tạo các bảng
-   npx sequelize-cli db:migrate
-   
-   # Hoặc sử dụng npm script
-   npm run migrate
-   
-   # Rollback migration (nếu cần)
-   npx sequelize-cli db:migrate:undo:all
-   ```
+### **1. Prerequisites**
+Đảm bảo hệ thống đã cài đặt:
+- **Node.js** `≥ 18.x` ([Download](https://nodejs.org/))
+- **PostgreSQL** `≥ 14.x` ([Download](https://www.postgresql.org/download/))
+- **Git** ([Download](https://git-scm.com/downloads))
 
-5. **Chạy ứng dụng**:
-   ```bash
-   # Development mode với auto-restart
-   npm run dev
-   
-   # Production mode
-   npm start
-   
-   # Kiểm tra biến môi trường
-   npm run env
-   ```
+### **2. Clone Repository**
+```bash
+git clone <repository-url>
+cd cusc-schedule/be
+```
 
-## Scripts có sẵn
+### **3. Install Dependencies**
+```bash
+npm install
+```
 
-- `npm start`: Chạy server production với Babel
-- `npm run dev`: Chạy server development với nodemon và auto-restart
-- `npm run env`: Kiểm tra biến môi trường
-- `npm test`: Chạy tests (chưa cấu hình)
+### **4. Environment Configuration**
+Tạo file `.env` trong thư mục root và cấu hình:
+
+```env
+# 🗄️ Database Configuration
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=cusc_db
+DB_USER=postgres
+DB_PASSWORD=your_secure_password
+
+# 🔐 JWT Configuration  
+JWT_SECRET=your_very_secure_jwt_secret_key_minimum_32_characters
+
+# 🌐 Server Configuration
+PORT=3000
+NODE_ENV=development
+
+# ☁️ Cloudinary Configuration (Optional)
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+```
+
+### **5. Database Setup**
+```bash
+# Tạo database PostgreSQL
+psql -U postgres -c "CREATE DATABASE cusc_db;"
+
+# Chạy migrations để tạo tables
+npx sequelize-cli db:migrate
+
+# Hoặc sử dụng npm script (nếu available)
+npm run migrate
+
+# Rollback migrations (nếu cần)
+npx sequelize-cli db:migrate:undo:all
+```
+
+### **6. Run Application**
+```bash
+# 🔥 Development mode (auto-restart)
+npm run dev
+
+# 🚀 Production mode  
+npm start
+
+# 🔍 Check environment variables
+npm run env
+```
+
+### **7. Verify Installation**
+- Server sẽ chạy tại: `http://localhost:3000`
+- Test API: `GET http://localhost:3000/api/auth/` (should return 404 - normal)
+- Database connection được log trong console
+
+## 📋 Available Scripts
+
+| Script | Command | Description |
+|--------|---------|-------------|
+| `npm run dev` | `nodemon --exec babel-node src/server.js` | 🔥 Development server với hot-reload |
+| `npm run env` | `node console-env.js` | 🔍 Kiểm tra environment variables |
+| `npm test` | `echo "Error: no test specified"` | 🧪 Run tests (chưa implement) |
+
+### **Migration Scripts**
+```bash
+# Tạo migration mới
+npx sequelize-cli migration:generate --name migration-name
+
+# Chạy migrations
+npx sequelize-cli db:migrate
+
+# Rollback migration gần nhất
+npx sequelize-cli db:migrate:undo
+
+# Rollback tất cả migrations  
+npx sequelize-cli db:migrate:undo:all
+```
 
 ## Trạng thái dự án
 
@@ -290,6 +331,5 @@ Hệ thống quản lý 20 bảng chính bao gồm:
 
 
 ## Giấy Phép
-
 Dự án này được cấp phép theo Giấy phép MIT. Xem file LICENSE để biết thêm chi tiết.
 

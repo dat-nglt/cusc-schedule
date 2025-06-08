@@ -20,12 +20,7 @@ export const login = async (req, res) => {
         const token = generateToken(user.user_id);
         return APIResponse(res, 200, {
             token,
-            user: {
-                id: user.user_id,
-                name: user.name,
-                email: user.email,
-                role: user.role
-            }
+
         }, 'Login successful');
     } catch (error) {
         console.error('Login error:', error);
