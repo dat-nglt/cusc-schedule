@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Table,
   TableBody,
@@ -7,10 +7,30 @@ import {
   TableHead,
   TableRow,
   Box,
+  IconButton,
+  Menu,
+  MenuItem,
+  Tooltip,
 } from '@mui/material';
-import { Visibility, Edit, Delete } from '@mui/icons-material';
+import { Visibility, Edit, Delete, Menu as MenuIcon } from '@mui/icons-material';
 
 const SlotTimeTable = ({ displayedSlotTimes, isExtraSmallScreen, isSmallScreen, isMediumScreen, handleViewSlotTime, handleEditSlotTime, handleDeleteSlotTime }) => {
+  // State để quản lý menu
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [selectedRowId, setSelectedRowId] = useState(null);
+
+  // Hàm mở menu
+  const handleOpenMenu = (event, id) => {
+    setAnchorEl(event.currentTarget);
+    setSelectedRowId(id);
+  };
+
+  // Hàm đóng menu
+  const handleCloseMenu = () => {
+    setAnchorEl(null);
+    setSelectedRowId(null);
+  };
+
   return (
     <Table sx={{ minWidth: isExtraSmallScreen ? 300 : isSmallScreen ? 400 : isMediumScreen ? 600 : 1000, border: '1px solid #e0e0e0' }}>
       <TableHead>
@@ -99,23 +119,77 @@ const SlotTimeTable = ({ displayedSlotTimes, isExtraSmallScreen, isSmallScreen, 
               </>
             )}
             <TableCell sx={{ textAlign: 'center', py: 1.5 }}>
-              <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1 }}>
-                <Visibility
-                  color="primary"
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => handleViewSlotTime(slotTime.id)}
-                />
-                <Edit
-                  color="primary"
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => handleEditSlotTime(slotTime.id)}
-                />
-                <Delete
-                  color="error"
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => handleDeleteSlotTime(slotTime.id)}
-                />
-              </Box>
+              {isExtraSmallScreen ? (
+                <>
+                  <Tooltip title="Thao tác">
+                    <IconButton
+                      onClick={(event) => handleOpenMenu(event, slotTime.id)}
+                      sx={{ color: '#1976d2' }}
+                    >
+                      <MenuIcon />
+                    </IconButton>
+                  </Tooltip>
+                  <Menu
+                    anchorEl={anchorEl}
+                    open={Boolean(anchorEl) && selectedRowId === slotTime.id}
+                    onClose={handleCloseMenu}
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                    transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                  >
+                    <MenuItem
+                      onClick={() => {
+                        handleViewSlotTime(slotTime.id);
+                        handleCloseMenu();
+                      }}
+                    >
+                      <Visibility sx={{ mr: 1, color: '#1976d2' }} />
+                      Xem
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        handleEditSlotTime(slotTime.id);
+                        handleCloseMenu();
+                      }}
+                    >
+                      <Edit sx={{ mr: 1, color: '#1976d2' }} />
+                      Sửa
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        handleDeleteSlotTime(slotTime.id);
+                        handleCloseMenu();
+                      }}
+                    >
+                      <Delete sx={{ mr: 1, color: '#d32f2f' }} />
+                      Xóa
+                    </MenuItem>
+                  </Menu>
+                </>
+              ) : (
+                <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1 }}>
+                  <Tooltip title="Xem">
+                    <Visibility
+                      color="primary"
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => handleViewSlotTime(slotTime.id)}
+                    />
+                  </Tooltip>
+                  <Tooltip title="Sửa">
+                    <Edit
+                      color="primary"
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => handleEditSlotTime(slotTime.id)}
+                    />
+                  </Tooltip>
+                  <Tooltip title="Xóa">
+                    <Delete
+                      color="error"
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => handleDeleteSlotTime(slotTime.id)}
+                    />
+                  </Tooltip>
+                </Box>
+              )}
             </TableCell>
           </TableRow>
         ))}
