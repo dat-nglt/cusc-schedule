@@ -49,6 +49,14 @@ const routes = [
     isPrivate: false,
     layout: MainLayout,
   },
+  {
+    path: "/room",
+    component: "Room",
+    exact: true,
+    title: "Quản lý Phòng học",
+    isPrivate: false,
+    layout: MainLayout,
+  },
 ];
 
 export default routes;
