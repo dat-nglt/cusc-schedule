@@ -1,11 +1,17 @@
 import { Button, Card, Typography } from '@mui/material';
-import {Link} from 'react-router-dom';
-import { Box } from '@mui/system';
+import { Link } from 'react-router-dom';
+import { Box, useTheme } from '@mui/system';
 import React from 'react';
 
-function Features({ features }) {
+const Features = ({ features }) => {
+  const theme = useTheme();
+  
   return (
-    <Card sx={{ width: '100%' }}>
+    <Box sx={{
+      width: '100%',
+      border: `1px solid ${theme.palette.divider}`,
+
+    }}>
       <Box
         sx={{
           display: 'flex',
@@ -45,7 +51,7 @@ function Features({ features }) {
           </Box>
         ))}
       </Box>
-    </Card>
+    </Box>
   );
 }
 

@@ -25,19 +25,6 @@ const DashboardGrid = () => {
         setActiveTab(newValue);
     };
 
-    // const handleMenuClick = (event) => {
-    //     setAnchorEl(event.currentTarget);
-    // };
-
-    // const handleMenuClose = () => {
-    //     setAnchorEl(null);
-    // };
-
-    // const handleMenuItemClick = (index) => {
-    //     setActiveTab(index);
-    //     handleMenuClose();
-    // };
-
     // Sample data
     const sampleData = [
         {
@@ -103,7 +90,7 @@ const DashboardGrid = () => {
                 <Grid item xs={12} md={6} sx={{
                     display: isMobile ? (activeTab === 0 ? 'block' : 'none') : 'block', flex: 1
                 }}>
-                    <Paper elevation={3} sx={{ p: 2, height: '100%' }}>
+                    <Paper elevation={3} sx={{ p: 2, height: '100%', boxShadow: 'none', border: `1px solid ${theme.palette.divider}` }}>
                         <SubjectGPAChart data={sampleData} />
                     </Paper>
                 </Grid>
@@ -112,7 +99,7 @@ const DashboardGrid = () => {
                     display: isMobile ? (activeTab === 1 ? 'block' : 'none') : 'block',
                     flex: isMobile ? (activeTab === 1 ? 1 : 'none') : 'none',
                 }}>
-                    <Paper elevation={3} sx={{ p: 2, height: '100%' }}>
+                    <Paper elevation={3} sx={{ p: 2, height: '100%', boxShadow: 'none', border: `1px solid ${theme.palette.divider}` }}>
                         <CreditProgress progress={75} completed={120} total={160} />
                     </Paper>
                 </Grid>
@@ -120,7 +107,7 @@ const DashboardGrid = () => {
                 <Grid item xs={12} md={4} sx={{
                     display: isMobile ? (activeTab === 2 ? 'block' : 'none') : 'block', flex: 1
                 }}>
-                    <Paper elevation={3} sx={{ p: 2, height: '100%' }}>
+                    <Paper elevation={3} sx={{ p: 2, height: '100%', boxShadow: 'none', border: `1px solid ${theme.palette.divider}` }}>
                         <LearningSection
                             semester="2024-2025 HK3"
                             data={learningData}

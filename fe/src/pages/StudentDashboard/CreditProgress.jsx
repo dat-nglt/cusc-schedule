@@ -23,7 +23,6 @@ const CreditProgress = ({ progress, completed, total, target = 120 }) => {
       p: 3,
       borderRadius: 3,
       bgcolor: 'background.paper',
-      boxShadow: theme.shadows[1],
       textAlign: 'center'
     }}>
       <Typography variant="h6" sx={{

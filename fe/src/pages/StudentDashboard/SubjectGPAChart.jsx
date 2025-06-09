@@ -27,7 +27,7 @@ import SchoolIcon from '@mui/icons-material/School';
 const SubjectGPAChart = ({ data = [] }) => {
   const theme = useTheme();
   const [selectedSemester, setSelectedSemester] = useState('');
-  
+
   // Extract unique semesters from data
   const semesters = [...new Set(data.map(item => item.semester))];
   if (semesters.length > 0 && !selectedSemester) {
@@ -41,14 +41,14 @@ const SubjectGPAChart = ({ data = [] }) => {
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       return (
-        <Paper elevation={3} sx={{ 
+        <Paper elevation={3} sx={{
           p: 2,
           bgcolor: 'background.paper',
           border: `1px solid ${theme.palette.divider}`
         }}>
           <Typography variant="subtitle2" fontWeight="bold">{label}</Typography>
           <Stack direction="row" spacing={1} mt={1}>
-            <Chip 
+            <Chip
               label={`GPA: ${payload[0].value.toFixed(2)}`}
               size="small"
               color="primary"
@@ -66,19 +66,19 @@ const SubjectGPAChart = ({ data = [] }) => {
   };
 
   return (
-    <Paper elevation={0} sx={{ 
+    <Paper elevation={0} sx={{
       p: 3,
       borderRadius: 3,
       bgcolor: 'background.paper',
       height: '100%'
     }}>
-      <Box sx={{ 
+      <Box sx={{
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
         mb: 3
       }}>
-        <Typography variant="h6" sx={{ 
+        <Typography variant="h6" sx={{
           fontWeight: 600,
           display: 'flex',
           alignItems: 'center'
@@ -86,7 +86,7 @@ const SubjectGPAChart = ({ data = [] }) => {
           <SchoolIcon sx={{ mr: 1, color: theme.palette.primary.main }} />
           Điểm môn học theo học kỳ
         </Typography>
-        
+
         {semesters.length > 0 && (
           <FormControl size="small" sx={{ minWidth: 120 }}>
             <Select
@@ -108,7 +108,7 @@ const SubjectGPAChart = ({ data = [] }) => {
       </Box>
 
       {filteredData.length === 0 ? (
-        <Box sx={{ 
+        <Box sx={{
           height: 300,
           display: 'flex',
           flexDirection: 'column',
@@ -133,19 +133,19 @@ const SubjectGPAChart = ({ data = [] }) => {
                 }}
                 barSize={24}
               >
-                <CartesianGrid 
+                <CartesianGrid
                   horizontal={false}
                   stroke={theme.palette.divider}
                 />
-                <XAxis 
-                  type="number" 
+                <XAxis
+                  type="number"
                   domain={[0, 4]}
                   ticks={[0, 1, 2, 3, 4]}
                   tick={{ fontSize: 12 }}
                   tickLine={false}
                   axisLine={false}
                 />
-                <YAxis 
+                <YAxis
                   dataKey="subjectName"
                   type="category"
                   width={120}
@@ -153,19 +153,19 @@ const SubjectGPAChart = ({ data = [] }) => {
                   tickLine={false}
                   axisLine={false}
                 />
-                <Tooltip 
+                <Tooltip
                   content={<CustomTooltip />}
                   cursor={{ fill: theme.palette.action.hover }}
                 />
                 <Bar dataKey="gpa">
                   {filteredData.map((entry, index) => (
-                    <Cell 
+                    <Cell
                       key={`cell-${index}`}
                       fill={
-                        entry.gpa >= 3.5 
-                          ? theme.palette.success.main 
-                          : entry.gpa >= 2.0 
-                            ? theme.palette.warning.main 
+                        entry.gpa >= 3.5
+                          ? theme.palette.success.main
+                          : entry.gpa >= 2.0
+                            ? theme.palette.warning.main
                             : theme.palette.error.main
                       }
                     />
@@ -174,10 +174,10 @@ const SubjectGPAChart = ({ data = [] }) => {
               </BarChart>
             </ResponsiveContainer>
           </Box>
-          
-          <Stack 
-            direction="row" 
-            spacing={1} 
+
+          <Stack
+            direction="row"
+            spacing={1}
             justifyContent="flex-end"
             sx={{ mt: 2 }}
           >
@@ -185,7 +185,7 @@ const SubjectGPAChart = ({ data = [] }) => {
               icon={<TrendingUpIcon fontSize="small" />}
               label="Xuất sắc (≥3.5)"
               size="small"
-              sx={{ 
+              sx={{
                 bgcolor: alpha(theme.palette.success.main, 0.1),
                 color: theme.palette.success.dark
               }}
@@ -193,7 +193,7 @@ const SubjectGPAChart = ({ data = [] }) => {
             <Chip
               label="Trung bình (2.0-3.4)"
               size="small"
-              sx={{ 
+              sx={{
                 bgcolor: alpha(theme.palette.warning.main, 0.1),
                 color: theme.palette.warning.dark
               }}
@@ -201,7 +201,7 @@ const SubjectGPAChart = ({ data = [] }) => {
             <Chip
               label="Yếu (<2.0)"
               size="small"
-              sx={{ 
+              sx={{
                 bgcolor: alpha(theme.palette.error.main, 0.1),
                 color: theme.palette.error.dark
               }}

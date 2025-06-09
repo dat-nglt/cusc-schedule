@@ -10,6 +10,7 @@ import StudentInfo from './StudentInfo';
 import AcademicFilter from './AcademicFilter';
 import ResultsTable from './ResultsTable';
 import PerformanceComparison from './PerformanceComparison';
+import AcademicFilterAndActions from './AcademicFilter';
 
 const StudentLearningResults = () => {
     const [semester, setSemester] = useState('');
@@ -109,15 +110,6 @@ const StudentLearningResults = () => {
                 {/* Student Info */}
                 <StudentInfo studentData={studentData} />
 
-                {/* Filter Controls */}
-                <AcademicFilter
-                    academicYear={academicYear}
-                    setAcademicYear={setAcademicYear}
-                    semester={semester}
-                    setSemester={setSemester}
-                    onViewResults={handleViewResults}
-                />
-
                 {/* Summary */}
                 <PerformanceComparison
                     studentStats={{
@@ -133,7 +125,15 @@ const StudentLearningResults = () => {
                         { name: 'Hóa học cơ bản', credits: 2, studentScore: 8.1, classAverage: 7.3 }
                     ]}
                 />
-                
+
+                {/* Filter Controls */}
+                <AcademicFilterAndActions
+                    academicYear={academicYear}
+                    setAcademicYear={setAcademicYear}
+                    semester={semester}
+                    setSemester={setSemester}
+                    onViewResults={handleViewResults}
+                />
                 {/* Results Table */}
                 <ResultsTable data={results} />
 

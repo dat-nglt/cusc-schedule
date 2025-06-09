@@ -32,17 +32,16 @@ const LearningSection = ({ data = [], semester = '', showTotal = false }) => {
   const totalCredits = filteredCourses.reduce((sum, course) => sum + course.credits, 0);
 
   // Xác định môn đặc biệt
-  const isSpecialCourse = (name) => 
+  const isSpecialCourse = (name) =>
     name?.toLowerCase().includes('thực tập') ||
     name?.toLowerCase().includes('đồ án') ||
     name?.toLowerCase().includes('project');
 
   return (
-    <Paper elevation={0} sx={{ 
-      p: 3, 
+    <Paper elevation={0} sx={{
+      p: 3,
       borderRadius: 3,
       bgcolor: 'background.paper',
-      boxShadow: theme.shadows[1]
     }}>
       <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 3 }}>
         <SchoolIcon color="primary" sx={{ fontSize: 32 }} />
@@ -52,7 +51,7 @@ const LearningSection = ({ data = [], semester = '', showTotal = false }) => {
           </Typography>
           <Stack direction="row" spacing={1} alignItems="center">
             <SemesterIcon color="action" fontSize="small" />
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="subtitle1" color="text.secondary" sx={{ pt: 0.3}}>
               {semester || 'Chưa chọn học kỳ'}
             </Typography>
           </Stack>
@@ -60,8 +59,8 @@ const LearningSection = ({ data = [], semester = '', showTotal = false }) => {
       </Stack>
 
       {filteredCourses.length === 0 ? (
-        <Box sx={{ 
-          p: 4, 
+        <Box sx={{
+          p: 4,
           textAlign: 'center',
           border: `1px dashed ${theme.palette.divider}`,
           borderRadius: 2
@@ -72,14 +71,14 @@ const LearningSection = ({ data = [], semester = '', showTotal = false }) => {
         </Box>
       ) : (
         <>
-          <TableContainer sx={{ 
+          <TableContainer sx={{
             border: `1px solid ${theme.palette.divider}`,
             borderRadius: 2,
             mb: 2
           }}>
             <Table aria-label="Danh sách lớp học phần">
               <TableHead>
-                <TableRow sx={{ 
+                <TableRow sx={{
                   bgcolor: theme.palette.grey[100],
                   '& th': { fontWeight: 'bold' }
                 }}>
@@ -93,8 +92,8 @@ const LearningSection = ({ data = [], semester = '', showTotal = false }) => {
                     key={index}
                     sx={{
                       '&:last-child td': { borderBottom: 0 },
-                      bgcolor: isSpecialCourse(course.subjectName) 
-                        ? alpha(theme.palette.warning.light, 0.1) 
+                      bgcolor: isSpecialCourse(course.subjectName)
+                        ? alpha(theme.palette.warning.light, 0.1)
                         : 'inherit'
                     }}
                   >
@@ -103,9 +102,9 @@ const LearningSection = ({ data = [], semester = '', showTotal = false }) => {
                         {course.subjectName}
                       </Typography>
                       <Stack direction="row" spacing={1} alignItems="center" mt={0.5}>
-                        <CodeIcon sx={{ 
-                          fontSize: 16, 
-                          color: theme.palette.text.secondary 
+                        <CodeIcon sx={{
+                          fontSize: 16,
+                          color: theme.palette.text.secondary
                         }} />
                         <Typography variant="caption" color="text.secondary">
                           {course.subjectCode}
@@ -118,12 +117,12 @@ const LearningSection = ({ data = [], semester = '', showTotal = false }) => {
                         size="small"
                         sx={{
                           fontWeight: 'bold',
-                          bgcolor: theme.palette.mode === 'dark' 
-                            ? theme.palette.primary.dark 
+                          bgcolor: theme.palette.mode === 'dark'
+                            ? theme.palette.primary.dark
                             : theme.palette.primary.light,
                           color: theme.palette.getContrastText(
-                            theme.palette.mode === 'dark' 
-                              ? theme.palette.primary.dark 
+                            theme.palette.mode === 'dark'
+                              ? theme.palette.primary.dark
                               : theme.palette.primary.light
                           )
                         }}
@@ -136,11 +135,11 @@ const LearningSection = ({ data = [], semester = '', showTotal = false }) => {
           </TableContainer>
 
           {showTotal && (
-            <Stack 
-              direction="row" 
-              justifyContent="space-between" 
+            <Stack
+              direction="row"
+              justifyContent="space-between"
               alignItems="center"
-              sx={{ 
+              sx={{
                 p: 2,
                 borderRadius: 1,
                 bgcolor: alpha(theme.palette.primary.main, 0.05),
@@ -150,14 +149,14 @@ const LearningSection = ({ data = [], semester = '', showTotal = false }) => {
               <Typography variant="subtitle1" fontWeight={500}>
                 Tổng số tín chỉ
               </Typography>
-              <Chip 
-                label={totalCredits} 
+              <Chip
+                label={totalCredits}
                 color="primary"
-                sx={{ 
+                sx={{
                   fontWeight: 'bold',
                   fontSize: '1rem',
                   px: 1.5
-                }} 
+                }}
               />
             </Stack>
           )}

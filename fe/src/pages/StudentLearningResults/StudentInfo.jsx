@@ -119,10 +119,8 @@ function StudentInfo({ studentData }) {
     return (
         <Box sx={{
             p: isMobile ? 2 : 4,
-            mb: 4,
             borderRadius: 3,
             background: 'linear-gradient(to bottom, #f9f9f9, #ffffff)',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
             border: '1px solid #e0e0e0',
             position: 'relative',
             overflow: 'hidden',
@@ -133,7 +131,7 @@ function StudentInfo({ studentData }) {
                 left: 0,
                 width: 5,
                 height: '100%',
-                backgroundColor: 'primary.main'
+                backgroundColor: !isMobile ? 'primary.main' : 'none',
             }
         }}>
             <Grid container spacing={isMobile ? 2 : 3} alignItems="center" sx={{
@@ -148,7 +146,7 @@ function StudentInfo({ studentData }) {
                             sx={{
                                 width: isMobile ? 120 : 150,
                                 height: isMobile ? 120 : 150,
-                                border: '3px solid',
+                                border: '4px solid',
                                 borderColor: 'primary.light',
                                 boxShadow: 2
                             }}
@@ -156,7 +154,7 @@ function StudentInfo({ studentData }) {
                         <Box sx={{
                             position: 'absolute',
                             bottom: 0,
-                            right: 0,
+                            right: 10,
                             backgroundColor: 'primary.main',
                             color: 'white',
                             borderRadius: '50%',
