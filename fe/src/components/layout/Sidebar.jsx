@@ -37,7 +37,6 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { styled } from '@mui/material/styles';
-import { format } from 'date-fns';
 import DateSelector from '../../pages/Dashboard/DateSelector';
 import CalendarWithWeekHighlight from './CalendarWithWeekHighlight';
 import { useThemeContext } from '../../contexts/ThemeContext';
@@ -158,7 +157,7 @@ const Sidebar = () => {
         {/* Calendar component */}
         <CalendarWithWeekHighlight />
 
-        <Divider sx={{ my: 1 }} />
+        {/* <Divider sx={{ my: 1 }} />
         <Box
           sx={{
             px: 2,
@@ -186,9 +185,6 @@ const Sidebar = () => {
                 <DarkMode fontSize="small" />
               )}
             </Box>
-            {/* <Typography variant="body2" color="text.primary">
-              {isDarkMode ? 'Light Mode' : 'Dark Mode'}
-            </Typography> */}
           </Box>
           <Switch
             checked={isDarkMode}
@@ -204,7 +200,7 @@ const Sidebar = () => {
               }
             }}
           />
-        </Box>
+        </Box> */}
         {/* Navigation menu */}
         <List sx={{ flexGrow: 1 }}>
           {navItems.map((item) => (

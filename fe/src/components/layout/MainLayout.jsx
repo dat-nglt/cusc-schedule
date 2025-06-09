@@ -4,6 +4,7 @@ import './MainLayout.css';
 import Header from './Header';
 import Sidebar from './Sidebar';
 import MainContainer from './MainContainer';
+import Footer from './Footer';
 
 const MainLayout = ({ children }) => {
     return (
@@ -11,7 +12,7 @@ const MainLayout = ({ children }) => {
             <CssBaseline />
             <Header />
             <Sidebar />
-            <Box sx={{ mt: '64px' }}>
+            <Box sx={{ mt: '64px', ml: '350px' }}>
                 {children} {/* Render children passed from DynamicRouter */}
             </Box>
         </MainContainer>
