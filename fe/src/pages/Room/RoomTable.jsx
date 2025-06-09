@@ -10,76 +10,154 @@ import {
   Menu,
   MenuItem,
   Tooltip,
+  TableSortLabel,
 } from '@mui/material';
-import { Visibility, Edit, Delete, Menu as MenuIcon } from '@mui/icons-material';
+import { Visibility, Edit, Delete, Menu as MenuIcon, ArrowDropDown } from '@mui/icons-material';
 
-const RoomTable = ({ displayedRooms, isExtraSmallScreen, isSmallScreen, isMediumScreen, isLargeScreen, handleViewRoom, handleEditRoom, handleDeleteRoom }) => {
+const RoomTable = ({ displayedRooms, isExtraSmallScreen, isSmallScreen, isMediumScreen, handleViewRoom, handleEditRoom, handleDeleteRoom }) => {
+  // State để quản lý menu và sắp xếp
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedRowId, setSelectedRowId] = useState(null);
+  const [orderBy, setOrderBy] = useState('stt');
+  const [order, setOrder] = useState('asc');
 
+  // Hàm mở menu
   const handleOpenMenu = (event, id) => {
     setAnchorEl(event.currentTarget);
     setSelectedRowId(id);
   };
 
+  // Hàm đóng menu
   const handleCloseMenu = () => {
     setAnchorEl(null);
     setSelectedRowId(null);
   };
 
+  // Hàm xử lý sắp xếp
+  const handleSort = (property) => {
+    const isAsc = orderBy === property && order === 'asc';
+    setOrder(isAsc ? 'desc' : 'asc');
+    setOrderBy(property);
+  };
+
+  // Sắp xếp dữ liệu
+  const sortedDisplayedRooms = [...displayedRooms].sort((a, b) => {
+    if (orderBy === 'stt' || orderBy === 'tang' || orderBy === 'sucChua') {
+      return order === 'asc' ? a[orderBy] - b[orderBy] : b[orderBy] - a[orderBy];
+    }
+    return order === 'asc' ? a[orderBy].localeCompare(b[orderBy]) : b[orderBy].localeCompare(a[orderBy]);
+  });
+
   return (
-    <Table sx={{ minWidth: isExtraSmallScreen ? 300 : isSmallScreen ? 500 : isMediumScreen ? 700 : 1000, border: '1px solid #e0e0e0' }}>
+    <Table sx={{ minWidth: '100%', border: '1px solid #e0e0e0', tableLayout: 'fixed' }}>
       <TableHead>
         <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
-          <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0' }}>
-            STT
+          {/* Cột STT - Giữ nguyên 10% */}
+          <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '10%' }}>
+            <TableSortLabel
+              active={orderBy === 'stt'}
+              direction={orderBy === 'stt' ? order : 'asc'}
+              onClick={() => handleSort('stt')}
+              IconComponent={ArrowDropDown}
+            >
+              STT
+            </TableSortLabel>
           </TableCell>
-          <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0' }}>
-            Mã phòng học
-          </TableCell>
-          <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'left', borderRight: '1px solid #e0e0e0' }}>
-            Tên phòng học
-          </TableCell>
-          {!isSmallScreen && (
-            <>
-              <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0' }}>
-                Tòa nhà
-              </TableCell>
-              <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0' }}>
-                Tầng
-              </TableCell>
-              {!isMediumScreen && (
-                <>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0' }}>
-                    Sức chứa
-                  </TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0' }}>
-                    Loại phòng học
-                  </TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0' }}>
-                    Trạng thái
-                  </TableCell>
-                  {!isLargeScreen && (
-                    <>
-                      <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0' }}>
-                        Thời gian tạo
-                      </TableCell>
-                      <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0' }}>
-                        Thời gian cập nhật
-                      </TableCell>
-                    </>
-                  )}
-                </>
-              )}
-            </>
+          {/* Cột Mã phòng - Giữ nguyên 12%, Ẩn dưới 1200px */}
+          {!isMediumScreen && (
+            <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '12%' }}>
+              <TableSortLabel
+                active={orderBy === 'maPhongHoc'}
+                direction={orderBy === 'maPhongHoc' ? order : 'asc'}
+                onClick={() => handleSort('maPhongHoc')}
+                IconComponent={ArrowDropDown}
+              >
+                Mã phòng
+              </TableSortLabel>
+            </TableCell>
           )}
-          <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center' }}>
+          {/* Cột Tên phòng - Giảm xuống 15%, căn giữa */}
+          <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '15%' }}>
+            <TableSortLabel
+              active={orderBy === 'tenPhongHoc'}
+              direction={orderBy === 'tenPhongHoc' ? order : 'asc'}
+              onClick={() => handleSort('tenPhongHoc')}
+              IconComponent={ArrowDropDown}
+            >
+              Tên phòng
+            </TableSortLabel>
+          </TableCell>
+          {/* Cột Tòa nhà - Tăng lên 13%, Ẩn dưới 900px */}
+          {!isSmallScreen && (
+            <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '13%' }}>
+              <TableSortLabel
+                active={orderBy === 'toaNha'}
+                direction={orderBy === 'toaNha' ? order : 'asc'}
+                onClick={() => handleSort('toaNha')}
+                IconComponent={ArrowDropDown}
+              >
+                Tòa nhà
+              </TableSortLabel>
+            </TableCell>
+          )}
+          {/* Cột Tầng - Giữ nguyên 8%, Ẩn dưới 900px */}
+          {!isSmallScreen && (
+            <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '8%' }}>
+              <TableSortLabel
+                active={orderBy === 'tang'}
+                direction={orderBy === 'tang' ? order : 'asc'}
+                onClick={() => handleSort('tang')}
+                IconComponent={ArrowDropDown}
+              >
+                Tầng
+              </TableSortLabel>
+            </TableCell>
+          )}
+          {/* Cột Sức chứa - Giữ nguyên 12%, Ẩn dưới 1200px */}
+          {!isMediumScreen && (
+            <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '12%' }}>
+              <TableSortLabel
+                active={orderBy === 'sucChua'}
+                direction={orderBy === 'sucChua' ? order : 'asc'}
+                onClick={() => handleSort('sucChua')}
+                IconComponent={ArrowDropDown}
+              >
+                Sức chứa
+              </TableSortLabel>
+            </TableCell>
+          )}
+          {/* Cột Loại phòng - Giữ nguyên 15% */}
+          <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '15%' }}>
+            <TableSortLabel
+              active={orderBy === 'loaiPhongHoc'}
+              direction={orderBy === 'loaiPhongHoc' ? order : 'asc'}
+              onClick={() => handleSort('loaiPhongHoc')}
+              IconComponent={ArrowDropDown}
+            >
+              Loại phòng
+            </TableSortLabel>
+          </TableCell>
+          {/* Cột Trạng thái - Tăng lên 13%, Ẩn dưới 700px */}
+          {!isExtraSmallScreen && (
+            <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '13%' }}>
+              <TableSortLabel
+                active={orderBy === 'trangThai'}
+                direction={orderBy === 'trangThai' ? order : 'asc'}
+                onClick={() => handleSort('trangThai')}
+                IconComponent={ArrowDropDown}
+              >
+                Trạng thái
+              </TableSortLabel>
+            </TableCell>
+          )}
+          {/* Cột Thao tác - Giữ nguyên 10% */}
+          <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', width: '10%' }}>
             Thao tác
           </TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
-        {displayedRooms.map((room, index) => (
+        {sortedDisplayedRooms.map((room, index) => (
           <TableRow
             key={room.id}
             sx={{
@@ -88,49 +166,50 @@ const RoomTable = ({ displayedRooms, isExtraSmallScreen, isSmallScreen, isMedium
               borderBottom: '1px solid #e0e0e0',
             }}
           >
-            <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
+            {/* Cột STT - Giữ nguyên 10% */}
+            <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5, width: '10%' }}>
               {room.stt}
             </TableCell>
-            <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-              {room.maPhongHoc}
-            </TableCell>
-            <TableCell sx={{ textAlign: 'left', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
+            {/* Cột Mã phòng - Giữ nguyên 12%, Ẩn dưới 1200px */}
+            {!isMediumScreen && (
+              <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5, width: '12%' }}>
+                {room.maPhongHoc}
+              </TableCell>
+            )}
+            {/* Cột Tên phòng - Giảm xuống 15%, căn giữa */}
+            <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5, width: '15%' }}>
               {room.tenPhongHoc}
             </TableCell>
+            {/* Cột Tòa nhà - Tăng lên 13%, Ẩn dưới 900px */}
             {!isSmallScreen && (
-              <>
-                <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                  {room.toaNha}
-                </TableCell>
-                <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                  {room.tang}
-                </TableCell>
-                {!isMediumScreen && (
-                  <>
-                    <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                      {room.sucChua}
-                    </TableCell>
-                    <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                      {room.loaiPhongHoc}
-                    </TableCell>
-                    <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                      {room.trangThai}
-                    </TableCell>
-                    {!isLargeScreen && (
-                      <>
-                        <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                          {room.thoiGianTao}
-                        </TableCell>
-                        <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                          {room.thoiGianCapNhat}
-                        </TableCell>
-                      </>
-                    )}
-                  </>
-                )}
-              </>
+              <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5, width: '13%' }}>
+                {room.toaNha}
+              </TableCell>
             )}
-            <TableCell sx={{ textAlign: 'center', py: 1.5 }}>
+            {/* Cột Tầng - Giữ nguyên 8%, Ẩn dưới 900px */}
+            {!isSmallScreen && (
+              <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5, width: '8%' }}>
+                {room.tang}
+              </TableCell>
+            )}
+            {/* Cột Sức chứa - Giữ nguyên 12%, Ẩn dưới 1200px */}
+            {!isMediumScreen && (
+              <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5, width: '12%' }}>
+                {room.sucChua}
+              </TableCell>
+            )}
+            {/* Cột Loại phòng - Giữ nguyên 15% */}
+            <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5, width: '15%' }}>
+              {room.loaiPhongHoc}
+            </TableCell>
+            {/* Cột Trạng thái - Tăng lên 13%, Ẩn dưới 700px */}
+            {!isExtraSmallScreen && (
+              <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5, width: '13%' }}>
+                {room.trangThai}
+              </TableCell>
+            )}
+            {/* Cột Thao tác - Giữ nguyên 10% */}
+            <TableCell sx={{ textAlign: 'center', py: 1.5, width: '10%' }}>
               {isExtraSmallScreen ? (
                 <>
                   <Tooltip title="Thao tác">

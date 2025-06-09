@@ -14,10 +14,7 @@ import {
   IconButton,
   Button,
 } from '@mui/material';
-import { 
-  Add as AddIcon, 
-  Search as SearchIcon,
-} from '@mui/icons-material';
+import { Add as AddIcon, Search as SearchIcon } from '@mui/icons-material';
 import RoomDetailModal from './RoomDetailModal';
 import AddRoomModal from './AddRoomModal';
 import EditRoomModal from './EditRoomModal';
@@ -25,7 +22,7 @@ import useResponsive from '../../hooks/useResponsive';
 import RoomTable from './RoomTable';
 
 const Room = () => {
-  const { isExtraSmallScreen, isSmallScreen, isMediumScreen, isLargeScreen } = useResponsive();
+  const { isExtraSmallScreen, isSmallScreen, isMediumScreen } = useResponsive();
 
   // Dữ liệu mẫu cho danh sách phòng học
   const [rooms, setRooms] = useState([
@@ -37,14 +34,6 @@ const Room = () => {
     { id: 6, stt: 6, maPhongHoc: 'P302', tenPhongHoc: 'Phòng 302', toaNha: 'B', tang: 3, sucChua: 50, loaiPhongHoc: 'Phòng lý thuyết', trangThai: 'Hoạt động', thoiGianTao: '2025-05-20 09:45', thoiGianCapNhat: '2025-05-25 16:10' },
     { id: 7, stt: 7, maPhongHoc: 'P401', tenPhongHoc: 'Phòng 401', toaNha: 'B', tang: 4, sucChua: 40, loaiPhongHoc: 'Phòng thực hành', trangThai: 'Hoạt động', thoiGianTao: '2025-05-21 11:00', thoiGianCapNhat: '2025-05-26 13:40' },
     { id: 8, stt: 8, maPhongHoc: 'P402', tenPhongHoc: 'Phòng 402', toaNha: 'B', tang: 4, sucChua: 70, loaiPhongHoc: 'Phòng hội thảo', trangThai: 'Không hoạt động', thoiGianTao: '2025-05-22 14:20', thoiGianCapNhat: '2025-05-27 15:55' },
-    { id: 9, stt: 9, maPhongHoc: 'P501', tenPhongHoc: 'Phòng 501', toaNha: 'C', tang: 5, sucChua: 60, loaiPhongHoc: 'Phòng lý thuyết', trangThai: 'Hoạt động', thoiGianTao: '2025-05-23 08:30', thoiGianCapNhat: '2025-05-28 12:10' },
-    { id: 10, stt: 10, maPhongHoc: 'P502', tenPhongHoc: 'Phòng 502', toaNha: 'C', tang: 5, sucChua: 50, loaiPhongHoc: 'Phòng thực hành', trangThai: 'Hoạt động', thoiGianTao: '2025-05-24 09:10', thoiGianCapNhat: '2025-05-29 14:50' },
-    { id: 11, stt: 11, maPhongHoc: 'P601', tenPhongHoc: 'Phòng 601', toaNha: 'C', tang: 6, sucChua: 100, loaiPhongHoc: 'Phòng hội thảo', trangThai: 'Hoạt động', thoiGianTao: '2025-05-25 10:40', thoiGianCapNhat: '2025-05-30 11:30' },
-    { id: 12, stt: 12, maPhongHoc: 'P602', tenPhongHoc: 'Phòng 602', toaNha: 'C', tang: 6, sucChua: 40, loaiPhongHoc: 'Phòng lý thuyết', trangThai: 'Hoạt động', thoiGianTao: '2025-05-26 13:25', thoiGianCapNhat: '2025-06-01 10:45' },
-    { id: 13, stt: 13, maPhongHoc: 'P701', tenPhongHoc: 'Phòng 701', toaNha: 'D', tang: 7, sucChua: 50, loaiPhongHoc: 'Phòng thực hành', trangThai: 'Không hoạt động', thoiGianTao: '2025-05-27 15:10', thoiGianCapNhat: '2025-06-02 09:35' },
-    { id: 14, stt: 14, maPhongHoc: 'P702', tenPhongHoc: 'Phòng 702', toaNha: 'D', tang: 7, sucChua: 60, loaiPhongHoc: 'Phòng lý thuyết', trangThai: 'Hoạt động', thoiGianTao: '2025-05-28 16:45', thoiGianCapNhat: '2025-06-03 14:15' },
-    { id: 15, stt: 15, maPhongHoc: 'P801', tenPhongHoc: 'Phòng 801', toaNha: 'D', tang: 8, sucChua: 80, loaiPhongHoc: 'Phòng hội thảo', trangThai: 'Hoạt động', thoiGianTao: '2025-05-29 09:30', thoiGianCapNhat: '2025-06-04 11:20' },
-    { id: 16, stt: 16, maPhongHoc: 'P802', tenPhongHoc: 'Phòng 802', toaNha: 'D', tang: 8, sucChua: 50, loaiPhongHoc: 'Phòng thực hành', trangThai: 'Hoạt động', thoiGianTao: '2025-05-30 10:50', thoiGianCapNhat: '2025-06-05 08:40' },
   ]);
 
   // State cho phân trang, tìm kiếm, lọc theo loại phòng học và modal
@@ -142,17 +131,17 @@ const Room = () => {
   const displayedRooms = filteredRooms.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   return (
-    <Box sx={{ p: 3, zIndex: 10, height: 'calc(100vh - 64px)', overflowY: 'auto' }}>
+    <Box sx={{ p: 2, height: 'calc(100vh - 64px)', overflowY: 'auto', width: '100%' }}>
       {/* Main Content */}
-      <Box sx={{ width: '100%', mb: 3 }}>
+      <Box sx={{ width: '100%', mb: 2 }}>
         {/* Bảng danh sách phòng học */}
-        <Card sx={{ flexGrow: 1 }}>
+        <Card sx={{ width: '100%', boxShadow: 1 }}>
           <CardContent>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, gap: 2 }}>
-              <Typography variant="h6">
+            <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'stretch', sm: 'center' }, mb: 2, gap: 2 }}>
+              <Typography variant="h6" sx={{ mb: { xs: 1, sm: 0 } }}>
                 Danh sách phòng học
               </Typography>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexGrow: 1, justifyContent: { xs: 'flex-start', sm: 'flex-end' } }}>
                 {isSmallScreen ? (
                   <IconButton
                     color="primary"
@@ -172,13 +161,14 @@ const Room = () => {
                     Thêm phòng học
                   </Button>
                 )}
-                <FormControl sx={{ minWidth: isSmallScreen ? 100 : 200 }} variant="outlined">
+                <FormControl sx={{ minWidth: isSmallScreen ? 100 : 200, flexGrow: 1, maxWidth: { xs: '100%', sm: 200 } }} variant="outlined">
                   <InputLabel id="loai-phong-hoc-filter-label">{isSmallScreen ? 'Loại' : 'Lọc theo loại phòng'}</InputLabel>
                   <Select
                     labelId="loai-phong-hoc-filter-label"
                     value={selectedLoaiPhongHoc}
                     onChange={(e) => setSelectedLoaiPhongHoc(e.target.value)}
                     label={isSmallScreen ? 'Loại' : 'Lọc theo loại phòng'}
+                    sx={{ width: '100%' }}
                   >
                     <MenuItem value="">Tất cả</MenuItem>
                     {loaiPhongHocOptions.map((loai) => (
@@ -197,7 +187,7 @@ const Room = () => {
                 placeholder="Tìm kiếm theo mã hoặc tên phòng học..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                sx={{ bgcolor: '#fff' }}
+                sx={{ bgcolor: '#fff', width: '100%' }}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -210,13 +200,12 @@ const Room = () => {
             {filteredRooms.length === 0 ? (
               <Typography>Không có phòng học nào để hiển thị.</Typography>
             ) : (
-              <>
+              <Box sx={{ width: '100%', overflowX: 'auto' }}>
                 <RoomTable
                   displayedRooms={displayedRooms}
                   isExtraSmallScreen={isExtraSmallScreen}
                   isSmallScreen={isSmallScreen}
                   isMediumScreen={isMediumScreen}
-                  isLargeScreen={isLargeScreen}
                   handleViewRoom={handleViewRoom}
                   handleEditRoom={handleEditRoom}
                   handleDeleteRoom={handleDeleteRoom}
@@ -229,8 +218,9 @@ const Room = () => {
                   rowsPerPage={rowsPerPage}
                   rowsPerPageOptions={[]}
                   labelDisplayedRows={({ from, to, count }) => `${from}-${to} trên ${count}`}
+                  sx={{ width: '100%', px: 0 }}
                 />
-              </>
+              </Box>
             )}
           </CardContent>
         </Card>
