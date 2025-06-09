@@ -22,7 +22,7 @@ const routes = [
     component: "ProfilePage",
     exact: true,
     title: "Hồ sơ cá nhân",
-    isPrivate: true,
+    isPrivate: false,
     layout: MainLayout, // Sử dụng layout MainLayout
   },
   {
@@ -30,6 +30,14 @@ const routes = [
     component: "StudentDashboard",
     exact: true,
     title: "Hồ sơ cá nhân",
+    isPrivate: false,
+    layout: LayoutJustHeader,
+  },
+  {
+    path: "student/results",
+    component: "StudentLearningResults",
+    exact: true,
+    title: "Kết quả học tập",
     isPrivate: false,
     layout: LayoutJustHeader,
   },

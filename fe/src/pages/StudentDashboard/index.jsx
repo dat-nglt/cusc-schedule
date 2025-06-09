@@ -1,43 +1,25 @@
 import {
     Grid, Card, CardHeader, CardContent, Avatar, Typography,
-    Button, Chip, Box, useTheme, alpha, IconButton
+    Button, Chip, Box,
+    Divider,
 } from '@mui/material';
 import {
-    School, Notifications, CalendarToday, Assessment,
-    Book, Assignment, BarChart, PieChart, Person, Edit, MoreVert
+    School, Assessment,
+    Book, Assignment, BarChart, PieChart,
 } from '@mui/icons-material';
-import React from 'react';
 import CreditProgress from './CreditProgress';
-import AcademicPerformanceChart from './SubjectGPAChart';
 import LearningSection from './LearningSection';
 import SubjectGPAChart from './SubjectGPAChart';
 import Features from './Features';
 import StudentProfile from './StudentProfile';
+import DashboardGrid from './DashboardGrid';
+import StudentSidebar from '../../components/layout/SidebarForJustheader';
 
-const sampleData = [
-    {
-        subjectName: "Toán cao cấp",
-        gpa: 3.2,
-        credits: 3,
-        semester: "2023-2024 HK1"
-    },
-    {
-        subjectName: "Lập trình hướng đối tượng",
-        gpa: 3.8,
-        credits: 4,
-        semester: "2023-2024 HK1"
-    },
-    {
-        subjectName: "Cơ sở dữ liệu",
-        gpa: 2.7,
-        credits: 3,
-        semester: "2023-2024 HK2"
-    }
-];
+
 
 
 const StudentDashboard = () => {
-    const theme = useTheme();
+    // const theme = useTheme();
 
     const sampleStudentInfo = {
         name: "Nguyễn Lê Tấn Đạt",
@@ -75,63 +57,69 @@ const StudentDashboard = () => {
 
 
     const features = [
-        { icon: <Assessment fontSize="small" />, name: 'Kết quả' },
-        { icon: <Book fontSize="small" />, name: 'CTĐT' },
-        { icon: <Assignment fontSize="small" />, name: 'Đăng ký' },
-        { icon: <School fontSize="small" />, name: 'Lịch học' },
-        { icon: <BarChart fontSize="small" />, name: 'Thống kê' },
-        { icon: <PieChart fontSize="small" />, name: 'Tốt nghiệp' }
+        { icon: <Assessment fontSize="small" />, name: 'Kết quả', path: '/student/results' },
+        { icon: <Book fontSize="small" />, name: 'CTĐT', path: '/student/curriculum' },
+        { icon: <Assignment fontSize="small" />, name: 'Đăng ký', path: '/student/registration' },
+        { icon: <School fontSize="small" />, name: 'Lịch học', path: '/student/schedule' },
+        { icon: <BarChart fontSize="small" />, name: 'Thống kê', path: '/student/statistics' },
+        { icon: <PieChart fontSize="small" />, name: 'Tốt nghiệp', path: '/student/graduation' }
     ];
 
     return (
-        <Box sx={{ p: 2, bgcolor: 'background.default', display: 'flex', flexDirection: 'column', gap: 2, width: '70vw', mt: '20px' }}>
-            {/* Header */}
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Typography variant="h5" fontWeight="bold">
-                    Hệ thống đào tạo
-                </Typography>
-                <Chip
-                    label={new Date().toLocaleDateString('vi-VN')}
-                    size="small"
-                />
+        <>
+            <Box sx={{
+                p: 2,
+                bgcolor: 'background.paper',
+                display: 'flex',
+                flexDirection: 'column',
+                borderRadius: 1,
+                gap: 2,
+                width: '97%'
+
+            }}>
+                <Box sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    p: 1,
+                    borderRadius: 2,
+                    bgcolor: 'background.default',
+                    mb: 1,
+                    flexWrap: 'wrap',
+                    gap: 2
+                }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Box sx={{
+                            width: 6,
+                            height: 32,
+                            bgcolor: 'primary.main',
+                            borderRadius: 1,
+                            mr: 1
+                        }} />
+                        <Typography color='primary' variant="h5" fontWeight="bold" textTransform="uppercase" sx={{ letterSpacing: 1 }}>
+                            THÔNG TIN SINH VIÊN
+                        </Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500 }}>
+                            {new Date().toLocaleDateString('vi-VN', { weekday: 'long', year: 'numeric', month: '2-digit', day: '2-digit' })}
+                        </Typography>
+                    </Box>
+                </Box>
+
+                <Divider />
+
+                {/* Profile and Notifications */}
+                <StudentProfile studentInfo={sampleStudentInfo} />
+
+                {/* Features */}
+                <Features features={features} />
+
+                {/* Charts */}
+                <DashboardGrid />
             </Box>
+        </>
 
-            {/* Profile and Notifications */}
-            <StudentProfile studentInfo={sampleStudentInfo} />
-
-            {/* Features */}
-            <Features features={features} />
-
-            {/* Charts */}
-            <Grid container spacing={2} justifyContent={"space-between"}>
-                <Grid item xs={12} md={6} flex={1}>
-                    <SubjectGPAChart data={sampleData} />
-
-                </Grid>
-                <Grid item xs={12} md={4}>
-                    <CreditProgress progress={75} completed={120} total={160} />
-                </Grid>
-                <Grid item xs={12} md={4} flex={1}>
-                    <LearningSection
-                        semester="2024-2025 HK3"
-                        data={[
-                            {
-                                subjectCode: "010100255801",
-                                subjectName: "Thực tập tốt nghiệp Kỹ thuật phần mềm",
-                                credits: 10,
-                                semester: "2024-2025 HK3"
-                            },
-                            {
-                                subjectCode: "CT173",
-                                subjectName: "Phát triển phần mềm mã nguồn mở",
-                                credits: 3,
-                                semester: "2024-2025 HK3"
-                            }
-                        ]}
-                        showTotal={true}
-                    />                </Grid>
-            </Grid>
-        </Box>
     );
 };
 

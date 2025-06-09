@@ -17,26 +17,26 @@ const CreditProgress = ({ progress, completed, total, target = 120 }) => {
   };
 
   return (
-    <Box sx={{ 
-      width: '100%', 
-      maxWidth: 300,
+    <Box sx={{
+      width: { sx: '100vw', md: '100%' },
+      maxWidth: '100%',
       p: 3,
       borderRadius: 3,
       bgcolor: 'background.paper',
       boxShadow: theme.shadows[1],
       textAlign: 'center'
     }}>
-      <Typography variant="h6" sx={{ 
-        mb: 2, 
+      <Typography variant="h6" sx={{
+        mb: 2,
         fontWeight: 600,
+        width: '100%',
         color: 'text.primary'
       }}>
         Tiến độ tích lũy tín chỉ
       </Typography>
 
-      <Box sx={{ 
-        width: '100%', 
-        maxWidth: 200, 
+      <Box sx={{
+        width: '100%',
         mx: 'auto',
         mb: 3
       }}>
@@ -50,13 +50,13 @@ const CreditProgress = ({ progress, completed, total, target = 120 }) => {
           })}
         >
           <Box sx={{ textAlign: 'center' }}>
-            <Typography variant="h4" sx={{ 
+            <Typography variant="h4" sx={{
               fontWeight: 700,
               color: getProgressColor()
             }}>
               {completed}
             </Typography>
-            <Typography variant="caption" sx={{ 
+            <Typography variant="caption" sx={{
               color: 'text.secondary',
               display: 'block',
               lineHeight: 1.2
@@ -67,17 +67,17 @@ const CreditProgress = ({ progress, completed, total, target = 120 }) => {
         </CircularProgressbarWithChildren>
       </Box>
 
-      <Stack 
-        spacing={2} 
+      <Stack
+        spacing={2}
         divider={<Divider flexItem />}
-        sx={{ 
+        sx={{
           maxWidth: 240,
           mx: 'auto',
           textAlign: 'left'
         }}
       >
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <CheckCircleOutlineIcon sx={{ 
+          <CheckCircleOutlineIcon sx={{
             color: theme.palette.success.main,
             mr: 1.5,
             fontSize: 20
@@ -93,7 +93,7 @@ const CreditProgress = ({ progress, completed, total, target = 120 }) => {
         </Box>
 
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <RotateRightIcon sx={{ 
+          <RotateRightIcon sx={{
             color: theme.palette.warning.main,
             mr: 1.5,
             fontSize: 20
@@ -109,14 +109,14 @@ const CreditProgress = ({ progress, completed, total, target = 120 }) => {
         </Box>
       </Stack>
 
-      <Box sx={{ 
+      <Box sx={{
         mt: 3,
         p: 1.5,
         borderRadius: 1,
         bgcolor: alpha(getProgressColor(), 0.1),
         display: 'inline-block'
       }}>
-        <Typography variant="caption" sx={{ 
+        <Typography variant="caption" sx={{
           color: getProgressColor(),
           fontWeight: 500
         }}>
