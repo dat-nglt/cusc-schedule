@@ -1,23 +1,23 @@
 import React from 'react';
 import { Box, CssBaseline } from '@mui/material';
-import './MainLayout.css';
-import Header from './Header';
-import Footer from './Footer';
-import MainContainer from './MainContainer';
-import SidebarForJustheader from './SidebarForJustheader';
+import '../ScheduleLayout/ScheduleLayout.css';
+import Header from '../Header';
+import Footer from '../Footer';
+import MainContainer from '../MainContainer';
+import SidebarJustForStudent from './SidebarJustForStudent';
 
-const LayoutJustHeader = ({ children }) => {
+const StudentLayout = ({ children }) => {
     return (
         <MainContainer>
             <CssBaseline />
             <Header />
-            <SidebarForJustheader />
+            <SidebarJustForStudent />
             <Box
                 sx={{
                     mt: '90px',
                     mb: '20px',
-                    ml: { xs: 0, md: '240px' },
-                    width: { xs: '100vw', md: 'calc(100vw - 240px)' },
+                    ml: { xs: 0, md: '350px' },
+                    width: { xs: '100vw', md: 'calc(100vw - 350px)' },
                     display: 'flex',
                     justifyContent: 'center',
                     flexDirection: 'column',
@@ -31,4 +31,4 @@ const LayoutJustHeader = ({ children }) => {
     );
 };
 
-export default LayoutJustHeader;
+export default StudentLayout;

@@ -24,7 +24,7 @@ import {
 } from 'date-fns';
 import ChevronLeft from '@mui/icons-material/ChevronLeft';
 import ChevronRight from '@mui/icons-material/ChevronRight';
-import { useTimetable } from '../../contexts/TimetableContext';
+import { useTimetable } from '../../../contexts/TimetableContext';
 
 const CalendarWithWeekHighlight = () => {
     const [selectedDate, setSelectedDate] = useState(new Date());

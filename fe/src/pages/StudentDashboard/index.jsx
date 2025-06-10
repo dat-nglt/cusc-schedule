@@ -13,7 +13,7 @@ import SubjectGPAChart from './SubjectGPAChart';
 import Features from './Features';
 import StudentProfile from './StudentProfile';
 import DashboardGrid from './DashboardGrid';
-import StudentSidebar from '../../components/layout/SidebarForJustheader';
+import StudentSidebar from '../../components/layout/AdminLayout/SidebarJustForStudent';
 
 
 

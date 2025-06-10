@@ -36,12 +36,12 @@ const menuItems = [
     { text: 'Cài Đặt', icon: <Settings />, path: '/cai-dat' }
 ];
 
-const SidebarForJustheader = () => {
+const SidebarJustForStudent = () => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
     const [mobileOpen, setMobileOpen] = useState(false);
 
-    const drawerWidth = 240;
+    const drawerWidth = 350;
 
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
@@ -101,4 +101,4 @@ const SidebarForJustheader = () => {
     );
 };
 
-export default SidebarForJustheader;
+export default SidebarJustForStudent;
