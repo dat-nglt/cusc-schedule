@@ -1,13 +1,13 @@
 import dotenv from "dotenv";
-
-// Load environment variables first
-dotenv.config();
-
 import express from "express";
 import cors from "cors";
 import setupRoutes from "./routes/router";
 import bodyParser from "body-parser";
 import connectDB from "./config/database";
+import multer from "multer";
+// Load environment variables first
+dotenv.config();
+
 
 const app = express();
 const PORT = process.env.PORT || 3000;

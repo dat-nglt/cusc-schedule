@@ -1,5 +1,4 @@
 
-
 // import Timetable from '../models/Timetable.js';
 // import APIResponse from '../utils/APIResponse.js';
 

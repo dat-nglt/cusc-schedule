@@ -73,6 +73,38 @@ const routes = [
     isPrivate: false,
     layout: MainLayout,
   },
+  {
+    path: "/lecturers",
+    component: "Lecturer",
+    exact: true,
+    title: "Quản lý Giảng viên",
+    isPrivate: false,
+    layout: MainLayout,
+  },
+  {
+    path: "/students",
+    component: "Student",
+    exact: true,
+    title: "Quản lý Học viên",
+    isPrivate: false,
+    layout: MainLayout,
+  },
+  {
+    path: "/subjects",
+    component: "Subject",
+    exact: true,
+    title: "Quản lý Học phần",
+    isPrivate: false,
+    layout: MainLayout,
+  },
+  {
+    path: "/programs",
+    component: "Program",
+    exact: true,
+    title: "Quản lý Chương trình đào tạo",
+    isPrivate: false,
+    layout: MainLayout,
+  },
 ];
 
 export default routes;

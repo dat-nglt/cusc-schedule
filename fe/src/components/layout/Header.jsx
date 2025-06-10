@@ -11,7 +11,8 @@ import {
     MenuItem,
     Divider,
     ListItemIcon,
-    Badge
+    Badge,
+    Switch
 } from '@mui/material';
 import {
     Add as AddIcon,
@@ -21,11 +22,15 @@ import {
     Settings as SettingsIcon,
     Logout as LogoutIcon,
     Menu as MenuIcon,
-    Warning
+    Warning,
+    LightMode,
+    DarkMode
 } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import { Link } from 'react-router-dom';
+import { useThemeContext } from '../../contexts/ThemeContext';
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
     backgroundColor: theme.palette.background.default,
@@ -36,8 +41,14 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
     backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9))',
 }));
 
-const Header = ({ onMenuToggle, pageTitle = 'Quản Lý Thời Khoá Biều - CUSC' }) => {
+const headerMenuItems = [
+    { icon: <AccountIcon fontSize="small" />, label: 'Hồ sơ cá nhân', path: '/profile' },
+    { icon: <SettingsIcon fontSize="small" />, label: 'Cài đặt', path: '/settings' },
+];
+
+const Header = ({ onMenuToggle }) => {
     const theme = useTheme();
+    const { isDarkMode, toggleTheme } = useThemeContext();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
     // State for dropdown menus
@@ -69,11 +80,14 @@ const Header = ({ onMenuToggle, pageTitle = 'Quản Lý Thời Khoá Biều - CU
                 minHeight: '64px',
             }}>
                 {/* Left section - Logo and Menu Button */}
-                <Box sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: theme.spacing(2)
-                }}>
+                <Box
+                    component={Link}
+                    to="/dashboard"
+                    sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: theme.spacing(2)
+                    }}>
                     {isMobile && (
                         <IconButton
                             color="inherit"
@@ -114,7 +128,7 @@ const Header = ({ onMenuToggle, pageTitle = 'Quản Lý Thời Khoá Biều - CU
                         >
                             TRUNG TÂM CÔNG NGHỆ PHẦN MỀM - ĐẠI HỌC CẦN THƠ
                         </Typography>
-                            
+
                     </Box>
                 </Box>
 
@@ -124,7 +138,7 @@ const Header = ({ onMenuToggle, pageTitle = 'Quản Lý Thời Khoá Biều - CU
                     alignItems: 'center',
                     gap: theme.spacing(1)
                 }}>
-                   
+
                     <IconButton
                         size="large"
                         aria-label="show notifications"
@@ -235,21 +249,24 @@ const Header = ({ onMenuToggle, pageTitle = 'Quản Lý Thời Khoá Biều - CU
                     anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                 >
                     <MenuItem dense sx={{ pointerEvents: 'none' }}>
-                        <Typography variant="subtitle2" fontWeight="bold">admin@eduschedule.edu.vn</Typography>
+                        <Avatar
+                            alt="Remy Sharp"
+                            src="/static/images/avatar/1.jpg"
+                            sx={{ width: 24, height: 24 }}
+                        />
+                        <Typography variant="subtitle1" fontWeight="bold">admin@eduschedule.edu.vn</Typography>
                     </MenuItem>
                     <Divider />
-                    <MenuItem>
-                        <ListItemIcon>
-                            <AccountIcon fontSize="small" />
-                        </ListItemIcon>
-                        Hồ sơ cá nhân
-                    </MenuItem>
-                    <MenuItem>
-                        <ListItemIcon>
-                            <SettingsIcon fontSize="small" />
-                        </ListItemIcon>
-                        Cài đặt
-                    </MenuItem>
+                    {
+                        headerMenuItems.map((item, index) => (
+                            <MenuItem key={index} component={Link} to={item.path}>
+                                <ListItemIcon>
+                                    {item.icon}
+                                </ListItemIcon>
+                                {item.label}
+                            </MenuItem>
+                        ))
+                    }
                     <Divider />
                     <MenuItem>
                         <ListItemIcon>
@@ -257,6 +274,59 @@ const Header = ({ onMenuToggle, pageTitle = 'Quản Lý Thời Khoá Biều - CU
                         </ListItemIcon>
                         Đăng xuất
                     </MenuItem>
+                    <Divider />
+                    <Box
+                        sx={{
+                            px: 2,
+                            py: 1.5,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            bgcolor: 'background.paper',
+                            borderRadius: 1,
+                        }}
+                    >
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    color: isDarkMode ? 'warning.light' : 'text.secondary'
+                                }}
+                            >
+                                {isDarkMode ? (
+                                    <>
+                                        <LightMode fontSize="small" sx={{ mr: 1 }} />
+                                        Chuyển sang sáng
+                                    </>
+                                ) : (
+                                    <>
+                                        <DarkMode fontSize="small" sx={{ mr: 1 }} />
+                                        Chuyển sang tối 
+                                    </>
+                                )}
+                            </Box>
+                            {/* <Typography variant="body2" color="text.primary">
+                       {isDarkMode ? 'Light Mode' : 'Dark Mode'}
+                     </Typography> */}
+                        </Box>
+                        <Switch
+                            checked={isDarkMode}
+                            onChange={toggleTheme}
+                            size="small"
+                            sx={{
+                                ml: 1,
+                                '& .MuiSwitch-thumb': {
+                                    color: isDarkMode ? 'warning.light' : 'grey.500'
+                                },
+                                '& .MuiSwitch-track': {
+                                    backgroundColor: isDarkMode ? 'warning.dark' : 'grey.300'
+                                }
+                            }}
+                        />
+                    </Box>
+
                 </Menu>
             </Toolbar>
         </StyledAppBar>

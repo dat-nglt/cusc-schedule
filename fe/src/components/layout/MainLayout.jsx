@@ -9,14 +9,14 @@ import MainContainer from './MainContainer';
 
 const MainLayout = ({ children }) => {
   const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down(700)); // Màn hình < 700px
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down(900)); // Màn hình < 700px
 
   return (
     <MainContainer>
       <CssBaseline />
       <Header />
       {!isSmallScreen && <Sidebar />} {/* Ẩn Sidebar khi màn hình < 700px */}
-      <Box sx={{ mt: '64px' }}>
+      <Box sx={{ mt: '64px', ml: isSmallScreen ? 0 : '350px', p: 2, flexGrow: 1 }}>
         {children} {/* Render children passed from DynamicRouter */}
       </Box>
     </MainContainer>
