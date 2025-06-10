@@ -57,6 +57,8 @@ const Sidebar = () => {
 
   const navItems = [
     { text: 'Quản lý giảng viên', icon: <LogoutIcon />, path: '/lecturers' },
+    { text: 'Quản lý học viên', icon: <LogoutIcon />, path: '/students' },
+    { text: 'Quản lý học phần', icon: <LogoutIcon />, path: '/subjects' },
     { text: 'Quản lý khóa học', icon: <LogoutIcon />, path: '/courses' },
     { text: 'Quản lý khung giờ', icon: <LogoutIcon />, path: '/slottime' },
     { text: 'Đăng xuất', icon: <LogoutIcon />, path: '/logout' },

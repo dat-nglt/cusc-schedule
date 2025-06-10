@@ -73,6 +73,14 @@ const routes = [
     isPrivate: false,
     layout: MainLayout,
   },
+  {
+    path: "/subjects",
+    component: "Subject",
+    exact: true,
+    title: "Quản lý Học phần",
+    isPrivate: false,
+    layout: MainLayout,
+  },
 ];
 
 export default routes;
