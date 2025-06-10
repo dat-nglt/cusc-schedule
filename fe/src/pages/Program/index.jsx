@@ -18,124 +18,114 @@ import {
     Add as AddIcon,
     Search as SearchIcon,
 } from '@mui/icons-material';
-import AddStudentModal from './AddStudentModal';
-import StudentDetailModal from './StudentDetailModal';
-import EditStudentModal from './EditStudentModal';
+import AddProgramModal from './AddProgramModal';
+import ProgramDetailModal from './ProgramDetailModal';
+import EditProgramModal from './EditProgramModal';
 import useResponsive from '../../hooks/useResponsive';
-import StudentTable from './StudentTable';
+import ProgramTable from './ProgramTable';
 
-const Student = () => {
+const Program = () => {
     const { isSmallScreen, isMediumScreen } = useResponsive();
 
-    // Dữ liệu mẫu cho danh sách học viên
-    const [students, setStudents] = useState([
+    // Dữ liệu mẫu cho danh sách chương trình đào tạo
+    const [programs, setPrograms] = useState([
         {
             id: 1,
             stt: 1,
-            maHocVien: 'SV001',
-            hoTen: 'Nguyễn Văn An',
-            maLop: 'CNTT01',
-            khoaHoc: 'Công nghệ thông tin',
-            trangThai: 'Đang học',
+            maChuongTrinh: 'CT001',
+            tenChuongTrinh: 'Kỹ thuật phần mềm',
+            thoiGianDaoTao: '4 năm',
+            trangThai: 'Đang triển khai',
             thoiGianTao: '2025-01-15 09:00',
             thoiGianCapNhat: '2025-01-20 14:30'
         },
         {
             id: 2,
             stt: 2,
-            maHocVien: 'SV002',
-            hoTen: 'Trần Thị Bình',
-            maLop: 'CNTP01',
-            khoaHoc: 'Công nghệ thực phẩm',
-            trangThai: 'Đang học',
+            maChuongTrinh: 'CT002',
+            tenChuongTrinh: 'Công nghệ thực phẩm',
+            thoiGianDaoTao: '4 năm',
+            trangThai: 'Đang triển khai',
             thoiGianTao: '2025-01-16 10:15',
             thoiGianCapNhat: '2025-01-21 15:00'
         },
         {
             id: 3,
             stt: 3,
-            maHocVien: 'SV003',
-            hoTen: 'Lê Minh Cường',
-            maLop: 'KTCN01',
-            khoaHoc: 'Kỹ thuật cơ khí',
-            trangThai: 'Tạm nghỉ',
+            maChuongTrinh: 'CT003',
+            tenChuongTrinh: 'Kỹ thuật hệ thống công nghiệp',
+            thoiGianDaoTao: '4 năm',
+            trangThai: 'Tạm dừng',
             thoiGianTao: '2025-01-17 11:30',
             thoiGianCapNhat: '2025-01-22 09:45'
         },
         {
             id: 4,
             stt: 4,
-            maHocVien: 'SV004',
-            hoTen: 'Phạm Thị Dung',
-            maLop: 'DIEN01',
-            khoaHoc: 'Kỹ thuật điện',
-            trangThai: 'Đang học',
+            maChuongTrinh: 'CT004',
+            tenChuongTrinh: 'Công nghệ kỹ thuật điện, điện tử',
+            thoiGianDaoTao: '4 năm',
+            trangThai: 'Đang triển khai',
             thoiGianTao: '2025-01-18 14:00',
             thoiGianCapNhat: '2025-01-23 13:15'
         },
         {
             id: 5,
             stt: 5,
-            maHocVien: 'SV005',
-            hoTen: 'Hoàng Văn Em',
-            maLop: 'CNTT02',
-            khoaHoc: 'Công nghệ thông tin',
-            trangThai: 'Đang học',
+            maChuongTrinh: 'CT005',
+            tenChuongTrinh: 'Quản lý công nghiệp',
+            thoiGianDaoTao: '3.5 năm',
+            trangThai: 'Đang triển khai',
             thoiGianTao: '2025-01-19 15:30',
             thoiGianCapNhat: '2025-01-24 10:20'
         },
         {
             id: 6,
             stt: 6,
-            maHocVien: 'SV006',
-            hoTen: 'Vũ Thị Phương',
-            maLop: 'QLCN01',
-            khoaHoc: 'Quản lý công nghiệp',
-            trangThai: 'Đang học',
+            maChuongTrinh: 'CT006',
+            tenChuongTrinh: 'Công nghệ kỹ thuật điều khiển và tự động hóa',
+            thoiGianDaoTao: '4 năm',
+            trangThai: 'Đang triển khai',
             thoiGianTao: '2025-01-20 09:45',
             thoiGianCapNhat: '2025-01-25 16:10'
         },
         {
             id: 7,
             stt: 7,
-            maHocVien: 'SV007',
-            hoTen: 'Đỗ Minh Giang',
-            maLop: 'TUDH01',
-            khoaHoc: 'Tự động hóa',
-            trangThai: 'Đang học',
+            maChuongTrinh: 'CT007',
+            tenChuongTrinh: 'Quản lý xây dựng',
+            thoiGianDaoTao: '4 năm',
+            trangThai: 'Tạm dừng',
             thoiGianTao: '2025-01-21 11:00',
             thoiGianCapNhat: '2025-01-26 13:40'
         },
         {
             id: 8,
             stt: 8,
-            maHocVien: 'SV008',
-            hoTen: 'Bùi Thị Hạnh',
-            maLop: 'QLXD01',
-            khoaHoc: 'Quản lý xây dựng',
-            trangThai: 'Tốt nghiệp',
+            maChuongTrinh: 'CT008',
+            tenChuongTrinh: 'Khoa học máy tính',
+            thoiGianDaoTao: '4 năm',
+            trangThai: 'Đang triển khai',
             thoiGianTao: '2025-01-22 14:20',
             thoiGianCapNhat: '2025-01-27 15:55'
         },
         {
             id: 9,
             stt: 9,
-            maHocVien: 'SV009',
-            hoTen: 'Ngô Văn Ích',
-            maLop: 'CNTT03',
-            khoaHoc: 'Công nghệ thông tin',
-            trangThai: 'Đang học',
+            maChuongTrinh: 'CT009',
+            tenChuongTrinh: 'Công nghệ kỹ thuật cơ điện tử',
+            thoiGianDaoTao: '4 năm',
+            trangThai: 'Đang triển khai',
             thoiGianTao: '2025-01-23 08:30',
             thoiGianCapNhat: '2025-01-28 12:10'
         },
         {
             id: 10,
             stt: 10,
-            maHocVien: 'SV010',
-            hoTen: 'Lý Thị Kim',
-            maLop: 'DIEN02',
-            khoaHoc: 'Kỹ thuật điện',
-            trangThai: 'Đang học',
+            maChuongTrinh: 'CT010',
+            tenChuongTrinh: 'Kỹ thuật phần mềm (Chất lượng cao)',
+            thoiGianDaoTao: '4.5 năm',
+            trangThai: 'Đang triển khai',
             thoiGianTao: '2025-01-24 09:10',
             thoiGianCapNhat: '2025-01-29 14:50'
         }
@@ -147,50 +137,50 @@ const Student = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedStatus, setSelectedStatus] = useState('');
     const [openDetail, setOpenDetail] = useState(false);
-    const [selectedStudent, setSelectedStudent] = useState(null);
+    const [selectedProgram, setSelectedProgram] = useState(null);
     const [openAddModal, setOpenAddModal] = useState(false);
     const [openEditModal, setOpenEditModal] = useState(false);
-    const [editedStudent, setEditedStudent] = useState(null);
+    const [editedProgram, setEditedProgram] = useState(null);
 
     // Danh sách trạng thái để lọc
-    const statuses = ['Đang học', 'Tạm nghỉ', 'Tốt nghiệp', 'Bảo lưu'];
+    const statuses = ['Đang triển khai', 'Tạm dừng', 'Kết thúc'];
 
-    // Hàm xử lý khi nhấn nút Thêm học viên
-    const handleAddStudent = () => {
+    // Hàm xử lý khi nhấn nút Thêm chương trình
+    const handleAddProgram = () => {
         setOpenAddModal(true);
     };
 
-    // Hàm đóng modal thêm học viên
+    // Hàm đóng modal thêm chương trình
     const handleCloseAddModal = () => {
         setOpenAddModal(false);
     };
 
-    // Hàm thêm học viên mới
-    const handleAddNewStudent = (newStudent) => {
-        setStudents((prevStudents) => {
-            const updatedStudents = [...prevStudents, { ...newStudent, stt: prevStudents.length + 1 }];
-            return updatedStudents;
+    // Hàm thêm chương trình mới
+    const handleAddNewProgram = (newProgram) => {
+        setPrograms((prevPrograms) => {
+            const updatedPrograms = [...prevPrograms, { ...newProgram, stt: prevPrograms.length + 1 }];
+            return updatedPrograms;
         });
     };
 
     // Hàm xử lý khi nhấn nút chỉnh sửa
-    const handleEditStudent = (id) => {
-        const studentToEdit = students.find((s) => s.id === id);
-        setEditedStudent(studentToEdit);
+    const handleEditProgram = (id) => {
+        const programToEdit = programs.find((p) => p.id === id);
+        setEditedProgram(programToEdit);
         setOpenEditModal(true);
     };
 
     // Hàm đóng modal chỉnh sửa
     const handleCloseEditModal = () => {
         setOpenEditModal(false);
-        setEditedStudent(null);
+        setEditedProgram(null);
     };
 
     // Hàm lưu thay đổi sau khi chỉnh sửa
-    const handleSaveEditedStudent = (updatedStudent) => {
-        setStudents((prevStudents) =>
-            prevStudents.map((student) =>
-                student.id === updatedStudent.id ? { ...student, ...updatedStudent } : student
+    const handleSaveEditedProgram = (updatedProgram) => {
+        setPrograms((prevPrograms) =>
+            prevPrograms.map((program) =>
+                program.id === updatedProgram.id ? { ...program, ...updatedProgram } : program
             )
         );
     };
@@ -200,59 +190,58 @@ const Student = () => {
         setPage(newPage);
     };
 
-    // Hàm xử lý xem học viên
-    const handleViewStudent = (id) => {
-        const student = students.find((s) => s.id === id);
-        setSelectedStudent(student);
+    // Hàm xử lý xem chương trình
+    const handleViewProgram = (id) => {
+        const program = programs.find((p) => p.id === id);
+        setSelectedProgram(program);
         setOpenDetail(true);
     };
 
-    // Hàm xử lý xóa học viên
-    const handleDeleteStudent = (id) => {
-        console.log(`Xóa học viên với ID: ${id}`);
-        // Thêm logic xóa học viên
+    // Hàm xử lý xóa chương trình
+    const handleDeleteProgram = (id) => {
+        console.log(`Xóa chương trình với ID: ${id}`);
+        // Thêm logic xóa chương trình
     };
 
     // Hàm đóng modal chi tiết
     const handleCloseDetail = () => {
         setOpenDetail(false);
-        setSelectedStudent(null);
+        setSelectedProgram(null);
     };
 
-    // Lọc danh sách học viên dựa trên từ khóa tìm kiếm và trạng thái
-    const filteredStudents = students.filter((student) => {
+    // Lọc danh sách chương trình dựa trên từ khóa tìm kiếm và trạng thái
+    const filteredPrograms = programs.filter((program) => {
         const matchesSearchTerm =
-            student.maHocVien.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            student.hoTen.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            student.maLop.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            student.khoaHoc.toLowerCase().includes(searchTerm.toLowerCase());
+            program.maChuongTrinh.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            program.tenChuongTrinh.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            program.thoiGianDaoTao.toLowerCase().includes(searchTerm.toLowerCase());
 
         const matchesStatus = selectedStatus
-            ? student.trangThai === selectedStatus
+            ? program.trangThai === selectedStatus
             : true;
 
         return matchesSearchTerm && matchesStatus;
     });
 
     // Tính toán dữ liệu hiển thị trên trang hiện tại
-    const displayedStudents = filteredStudents.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+    const displayedPrograms = filteredPrograms.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
     return (
         <Box sx={{ p: 3, zIndex: 10, height: 'calc(100vh - 64px)', overflowY: 'auto' }}>
             {/* Main Content */}
             <Box sx={{ width: '100%', mb: 3 }}>
-                {/* Bảng danh sách học viên */}
+                {/* Bảng danh sách chương trình đào tạo */}
                 <Card sx={{ flexGrow: 1 }}>
                     <CardContent>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, gap: 2 }}>
                             <Typography variant="h6">
-                                Danh sách học viên
+                                Danh sách chương trình đào tạo
                             </Typography>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                                 {isSmallScreen ? (
                                     <IconButton
                                         color="primary"
-                                        onClick={handleAddStudent}
+                                        onClick={handleAddProgram}
                                         sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
                                     >
                                         <AddIcon sx={{ color: '#fff' }} />
@@ -262,10 +251,10 @@ const Student = () => {
                                         variant="contained"
                                         color="primary"
                                         startIcon={<AddIcon />}
-                                        onClick={handleAddStudent}
+                                        onClick={handleAddProgram}
                                         sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
                                     >
-                                        Thêm học viên
+                                        Thêm chương trình
                                     </Button>
                                 )}
                                 <FormControl sx={{ minWidth: isSmallScreen ? 100 : 150 }} variant="outlined">
@@ -290,7 +279,7 @@ const Student = () => {
                             <TextField
                                 fullWidth
                                 variant="outlined"
-                                placeholder="Tìm kiếm theo mã học viên, tên, mã lớp hoặc khóa học..."
+                                placeholder="Tìm kiếm theo mã, tên chương trình hoặc thời gian đào tạo..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 sx={{ bgcolor: '#fff' }}
@@ -303,21 +292,21 @@ const Student = () => {
                                 }}
                             />
                         </Box>
-                        {filteredStudents.length === 0 ? (
-                            <Typography>Không có học viên nào để hiển thị.</Typography>
+                        {filteredPrograms.length === 0 ? (
+                            <Typography>Không có chương trình đào tạo nào để hiển thị.</Typography>
                         ) : (
                             <>
-                                <StudentTable
-                                    displayedStudents={displayedStudents}
+                                <ProgramTable
+                                    displayedPrograms={displayedPrograms}
                                     isSmallScreen={isSmallScreen}
                                     isMediumScreen={isMediumScreen}
-                                    handleViewStudent={handleViewStudent}
-                                    handleEditStudent={handleEditStudent}
-                                    handleDeleteStudent={handleDeleteStudent}
+                                    handleViewProgram={handleViewProgram}
+                                    handleEditProgram={handleEditProgram}
+                                    handleDeleteProgram={handleDeleteProgram}
                                 />
                                 <TablePagination
                                     component="div"
-                                    count={filteredStudents.length}
+                                    count={filteredPrograms.length}
                                     page={page}
                                     onPageChange={handleChangePage}
                                     rowsPerPage={rowsPerPage}
@@ -329,24 +318,24 @@ const Student = () => {
                     </CardContent>
                 </Card>
             </Box>
-            <StudentDetailModal
+            <ProgramDetailModal
                 open={openDetail}
                 onClose={handleCloseDetail}
-                student={selectedStudent}
+                program={selectedProgram}
             />
-            <AddStudentModal
+            <AddProgramModal
                 open={openAddModal}
                 onClose={handleCloseAddModal}
-                onAddStudent={handleAddNewStudent}
+                onAddProgram={handleAddNewProgram}
             />
-            <EditStudentModal
+            <EditProgramModal
                 open={openEditModal}
                 onClose={handleCloseEditModal}
-                student={editedStudent}
-                onSave={handleSaveEditedStudent}
+                program={editedProgram}
+                onSave={handleSaveEditedProgram}
             />
         </Box>
     );
 };
 
-export default Student;
+export default Program;

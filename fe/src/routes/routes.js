@@ -81,6 +81,14 @@ const routes = [
     isPrivate: false,
     layout: MainLayout,
   },
+  {
+    path: "/programs",
+    component: "Program",
+    exact: true,
+    title: "Quản lý Chương trình đào tạo",
+    isPrivate: false,
+    layout: MainLayout,
+  },
 ];
 
 export default routes;

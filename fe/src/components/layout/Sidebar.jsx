@@ -30,6 +30,12 @@ import {
   Today as TodayIcon,
   DateRange as DateRangeIcon,
   Add as AddIcon,
+  School as SchoolIcon,
+  Groups as GroupsIcon,
+  MenuBook as MenuBookIcon,
+  Class as ClassIcon,
+  AccessTime as AccessTimeIcon,
+  LibraryBooks as LibraryBooksIcon,
 } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
 import CalendarWithWeekHighlight from './CalendarWithWeekHighlight';
@@ -56,11 +62,12 @@ const Sidebar = () => {
   const [searchQuery, setSearchQuery] = useState('');
 
   const navItems = [
-    { text: 'Quản lý giảng viên', icon: <LogoutIcon />, path: '/lecturers' },
-    { text: 'Quản lý học viên', icon: <LogoutIcon />, path: '/students' },
-    { text: 'Quản lý học phần', icon: <LogoutIcon />, path: '/subjects' },
-    { text: 'Quản lý khóa học', icon: <LogoutIcon />, path: '/courses' },
-    { text: 'Quản lý khung giờ', icon: <LogoutIcon />, path: '/slottime' },
+    { text: 'Quản lý giảng viên', icon: <PersonIcon />, path: '/lecturers' },
+    { text: 'Quản lý học viên', icon: <SchoolIcon />, path: '/students' },
+    { text: 'Quản lý chương trình đào tạo', icon: <LibraryBooksIcon />, path: '/programs' },
+    { text: 'Quản lý học phần', icon: <MenuBookIcon />, path: '/subjects' },
+    { text: 'Quản lý khóa học', icon: <ClassIcon />, path: '/courses' },
+    { text: 'Quản lý khung giờ', icon: <AccessTimeIcon />, path: '/slottime' },
     { text: 'Đăng xuất', icon: <LogoutIcon />, path: '/logout' },
   ];
 

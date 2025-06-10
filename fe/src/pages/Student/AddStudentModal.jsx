@@ -78,7 +78,7 @@ export default function AddStudentModal({ open, onClose, onAddStudent }) {
     return (
         <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
             <DialogTitle>
-                <Typography variant="h6">Thêm sinh viên mới</Typography>
+                <Typography variant="h6">Thêm học viên mới</Typography>
             </DialogTitle>
             <DialogContent>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
