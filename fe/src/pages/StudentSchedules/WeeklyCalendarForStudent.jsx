@@ -24,30 +24,35 @@ import { useTimetable } from '../../contexts/TimetableContext';
 // Import the new CalendarModal component
 import CalendarModal from './CalendarModal'; // Adjust path as necessary
 
+import ScheduleItem from './ScheduleItem';
+
 // Constants (remain the same)
 const HOURS = Array.from({ length: 16 }, (_, i) => i + 7); // 7h - 22h
 const DAYS = Array.from({ length: 7 }, (_, i) => i); // 0-6 (Monday-Sunday)
 
 // Schedule Item Component (remains the same)
-const ScheduleItem = ({ item }) => {
-    return (
-        <Box
-            sx={{
-                backgroundColor: '#4a90e2',
-                color: 'white',
-                borderRadius: '4px',
-                padding: '4px 8px',
-                margin: '2px 0',
-                fontSize: '0.8rem',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap'
-            }}
-        >
-            {item.course} - {item.room}
-        </Box>
-    );
-};
+// <<<<<<< chuong
+// const ScheduleItem = ({ item }) => {
+//     return (
+//         <Box
+//             sx={{
+//                 backgroundColor: '#4a90e2',
+//                 color: 'white',
+//                 borderRadius: '4px',
+//                 padding: '4px 8px',
+//                 margin: '2px 0',
+//                 fontSize: '0.8rem',
+//                 overflow: 'hidden',
+//                 textOverflow: 'ellipsis',
+//                 whiteSpace: 'nowrap'
+//             }}
+//         >
+//             {item.course} - {item.room}
+//         </Box>
+//     );
+// };
+// =======
+
 
 // Time Slot Component (remains the same)
 const TimeSlot = ({ day, hour, date, scheduleItems }) => {
@@ -64,7 +69,7 @@ const TimeSlot = ({ day, hour, date, scheduleItems }) => {
         <Box
             sx={{
                 border: '1px solid #e0e0e0',
-                minHeight: '60px',
+                minHeight: '170px',
                 minWidth: { xs: '60px', sm: '100px', md: '120px', lg: '150px' },
                 backgroundColor: theme.palette.background.paper,
                 padding: '4px',
@@ -141,8 +146,8 @@ const WeeklyCalendar = ({
     };
 
     return (
-        <Paper elevation={2} sx={{
-            p: { xs: 1, sm: 3 },
+        <Box elevation={2} sx={{
+            p: { xs: 1, sm: 2 },
             height: '100%',
             overflow: 'auto',
             flex: 1,
@@ -306,14 +311,14 @@ const WeeklyCalendar = ({
                         borderBottom: '1px solid',
                         borderColor: (theme) => theme.palette.divider
                     }}>
-                        <Typography variant="subtitle2" sx={{
-                            fontSize: { xs: '0.7rem', sm: '0.875rem' },
+                        <Typography variant="subtitle1" sx={{
+                            fontSize: { xs: '0.7rem', sm: '1rem' },
                             color: (theme) => theme.palette.text.primary
                         }}>
                             {isMobile ? day.shortName : day.name}
                         </Typography>
-                        <Typography variant="body2" sx={{
-                            fontSize: { xs: '0.6rem', sm: '0.75rem' },
+                        <Typography variant="subtitle2" sx={{
+                            fontSize: { xs: '0.6rem', sm: '0.9rem' },
                             color: (theme) => theme.palette.text.secondary
                         }}>
                             {day.date}
@@ -339,8 +344,9 @@ const WeeklyCalendar = ({
                             borderRight: '1px solid',
                             borderColor: (theme) => theme.palette.divider
                         }}>
-                            <Typography variant="caption" sx={{
-                                fontSize: { xs: '0.6rem', sm: '0.75rem' },
+
+                            <Typography variant="subtitle2" sx={{
+                                fontSize: { xs: '0.6rem', sm: '0.9rem' },
                                 color: (theme) => theme.palette.text.secondary
                             }}>
                                 {hour}:00
@@ -380,7 +386,7 @@ const WeeklyCalendar = ({
                     initialDate={currentDate || new Date()} // Pass current displayed date to modal
                 />
             </Modal>
-        </Paper>
+        </Box>
     );
 };
 

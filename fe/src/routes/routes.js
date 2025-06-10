@@ -22,8 +22,8 @@ const routes = [
     component: "ProfilePage",
     exact: true,
     title: "Hồ sơ cá nhân",
-    isPrivate: true,
-    layout: MainLayout,
+    isPrivate: false,
+    layout: MainLayout, 
   },
   {
     path: "/student",
@@ -34,6 +34,7 @@ const routes = [
     layout: LayoutJustHeader,
   },
   {
+
     path: "/courses",
     component: "Course",
     exact: true,
@@ -104,6 +105,22 @@ const routes = [
     title: "Quản lý Chương trình đào tạo",
     isPrivate: false,
     layout: MainLayout,
+  },
+    {
+    path: "student/results",
+    component: "StudentLearningResults",
+    exact: true,
+    title: "Kết quả học tập",
+    isPrivate: false,
+    layout: LayoutJustHeader,
+  },
+  {
+    path: "student/schedules",
+    component: "StudentSchedules",
+    exact: true,
+    title: "Kết quả học tập",
+    isPrivate: false,
+    layout: LayoutJustHeader,
   },
 ];
 
