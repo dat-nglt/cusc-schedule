@@ -52,6 +52,7 @@ const StudentDashboardSidebar = () => {
     ];
 
     return (
+
         <Box sx={{ width: '100%', height: { xs: 'fit-content', md: '250px' }, display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 3 }}>
             <Box
                 sx={{
@@ -65,11 +66,11 @@ const StudentDashboardSidebar = () => {
                     borderRadius: 2 // Bo tròn góc cho box chính
                 }}
             >
+
                 <Typography variant="h6" gutterBottom fontWeight="bold" color="primary">
                     Tổng quan học tập
                 </Typography>
                 <Divider sx={{ mb: 2 }} />
-
                 {/* Các Box thông tin chi tiết */}
                 <Stack gap={1}>
                     <Stack flexDirection={'row'} gap={3}>

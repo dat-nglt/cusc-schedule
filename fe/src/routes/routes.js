@@ -1,5 +1,5 @@
 import LayoutJustHeader from "../components/layout/LayoutJustHeader";
-import MainLayout from "../components/layout/MainLayout"; // Import MainLayout
+import MainLayout from "../components/layout/MainLayout";
 
 const routes = [
   {
@@ -8,7 +8,7 @@ const routes = [
     exact: true,
     title: "Trình điều khiển",
     isPrivate: false,
-    layout: MainLayout, // Sử dụng layout MainLayout
+    layout: MainLayout,
   },
   {
     path: "/login",
@@ -23,7 +23,7 @@ const routes = [
     exact: true,
     title: "Hồ sơ cá nhân",
     isPrivate: false,
-    layout: MainLayout, // Sử dụng layout MainLayout
+    layout: MainLayout, 
   },
   {
     path: "/student",
@@ -34,6 +34,79 @@ const routes = [
     layout: LayoutJustHeader,
   },
   {
+
+    path: "/courses",
+    component: "Course",
+    exact: true,
+    title: "Quản lý Khóa học",
+    isPrivate: false,
+    layout: MainLayout,
+  },
+  {
+    path: "/slottime",
+    component: "Slot_time",
+    exact: true,
+    title: "Quản lý Khung giờ",
+    isPrivate: false,
+    layout: MainLayout,
+  },
+  {
+    path: "/room",
+    component: "Room",
+    exact: true,
+    title: "Quản lý Phòng học",
+    isPrivate: false,
+    layout: MainLayout,
+  },
+  {
+    path: "/class",
+    component: "Class",
+    exact: true,
+    title: "Quản lý Lớp học",
+    isPrivate: false,
+    layout: MainLayout,
+  },
+  {
+    path: "/classsection",
+    component: "ClassSection",
+    exact: true,
+    title: "Quản lý Lớp học phần",
+    isPrivate: false,
+    layout: MainLayout,
+  },
+  {
+    path: "/lecturers",
+    component: "Lecturer",
+    exact: true,
+    title: "Quản lý Giảng viên",
+    isPrivate: false,
+    layout: MainLayout,
+  },
+  {
+    path: "/students",
+    component: "Student",
+    exact: true,
+    title: "Quản lý Học viên",
+    isPrivate: false,
+    layout: MainLayout,
+  },
+  {
+    path: "/subjects",
+    component: "Subject",
+    exact: true,
+    title: "Quản lý Học phần",
+    isPrivate: false,
+    layout: MainLayout,
+  },
+  {
+    path: "/programs",
+    component: "Program",
+    exact: true,
+    title: "Quản lý Chương trình đào tạo",
+    isPrivate: false,
+    layout: MainLayout,
+  },
+    {
     path: "student/results",
     component: "StudentLearningResults",
     exact: true,

@@ -23,6 +23,7 @@ import { useTimetable } from '../../contexts/TimetableContext';
 
 // Import the new CalendarModal component
 import CalendarModal from './CalendarModal'; // Adjust path as necessary
+
 import ScheduleItem from './ScheduleItem';
 
 // Constants (remain the same)
@@ -30,6 +31,28 @@ const HOURS = Array.from({ length: 16 }, (_, i) => i + 7); // 7h - 22h
 const DAYS = Array.from({ length: 7 }, (_, i) => i); // 0-6 (Monday-Sunday)
 
 // Schedule Item Component (remains the same)
+// <<<<<<< chuong
+// const ScheduleItem = ({ item }) => {
+//     return (
+//         <Box
+//             sx={{
+//                 backgroundColor: '#4a90e2',
+//                 color: 'white',
+//                 borderRadius: '4px',
+//                 padding: '4px 8px',
+//                 margin: '2px 0',
+//                 fontSize: '0.8rem',
+//                 overflow: 'hidden',
+//                 textOverflow: 'ellipsis',
+//                 whiteSpace: 'nowrap'
+//             }}
+//         >
+//             {item.course} - {item.room}
+//         </Box>
+//     );
+// };
+// =======
+
 
 // Time Slot Component (remains the same)
 const TimeSlot = ({ day, hour, date, scheduleItems }) => {
@@ -321,6 +344,7 @@ const WeeklyCalendar = ({
                             borderRight: '1px solid',
                             borderColor: (theme) => theme.palette.divider
                         }}>
+
                             <Typography variant="subtitle2" sx={{
                                 fontSize: { xs: '0.6rem', sm: '0.9rem' },
                                 color: (theme) => theme.palette.text.secondary

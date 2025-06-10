@@ -1,0 +1,36 @@
+'use strict';
+
+/** @type {import('sequelize-cli').Migration} */
+module.exports = {
+  async up (queryInterface, Sequelize) {
+    await queryInterface.createTable('training_officers', {
+      staff_id: {
+        type: Sequelize.STRING(30),
+        primaryKey: true,
+        allowNull: false
+      },
+      department: {
+        type: Sequelize.STRING(30),
+        allowNull: true
+      },
+      position: {
+        type: Sequelize.STRING(30),
+        allowNull: true
+      },
+      user_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'users',
+          key: 'user_id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
+      }
+    });
+  },
+
+  async down (queryInterface, Sequelize) {
+    await queryInterface.dropTable('training_officers');
+  }
+};

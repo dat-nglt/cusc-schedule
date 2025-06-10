@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import {
   Drawer,
   List,
@@ -30,6 +31,14 @@ import {
   Today as TodayIcon,
   DateRange as DateRangeIcon,
   Add as AddIcon,
+  School as SchoolIcon,
+  Groups as GroupsIcon,
+  MenuBook as MenuBookIcon,
+  Class as ClassIcon,
+  AccessTime as AccessTimeIcon,
+  LibraryBooks as LibraryBooksIcon,
+  Room as RoomIcon,
+  AccountBalance as AccountBalanceIcon,
 } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
 import CalendarWithWeekHighlight from './CalendarWithWeekHighlight';
@@ -51,12 +60,25 @@ const StyledDrawer = styled(Drawer)(({ theme }) => ({
 }));
 
 const Sidebar = () => {
+  const location = useLocation();
+  const isDashboard = location.pathname === '/dashboard';
+
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [filterValue, setFilterValue] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
 
   const navItems = [
-    { text: 'Đăng xuất', icon: <LogoutIcon />, path: '/logout' }
+    { text: 'Quản lý thời khóa biểu', icon: <TimetableIcon />, path: '/dashboard' },
+    { text: 'Quản lý giảng viên', icon: <PersonIcon />, path: '/lecturers' },
+    { text: 'Quản lý học viên', icon: <SchoolIcon />, path: '/students' },
+    { text: 'Quản lý chương trình đào tạo', icon: <LibraryBooksIcon />, path: '/programs' },
+    { text: 'Quản lý học phần', icon: <MenuBookIcon />, path: '/subjects' },
+    { text: 'Quản lý khóa học', icon: <ClassIcon />, path: '/courses' },
+    { text: 'Quản lý lớp', icon: <GroupsIcon />, path: '/class' },
+    { text: 'Quản lý lớp học phần', icon: <AccountBalanceIcon />, path: '/classsection' },
+    { text: 'Quản lý phòng', icon: <RoomIcon />, path: '/room' },
+    { text: 'Quản lý khung giờ', icon: <AccessTimeIcon />, path: '/slottime' },
+    { text: 'Đăng xuất', icon: <LogoutIcon />, path: '/logout' },
   ];
 
   const handleDateChange = (date) => {
@@ -86,98 +108,106 @@ const Sidebar = () => {
         p: 2,
         gap: 2
       }}>
-        {/* Tạo lịch button */}
-        <Button
-          variant="contained"
-          color="primary"
-          startIcon={<AddIcon />}
-          fullWidth
-          sx={{
-            mb: 2,
-            py: 1.5,
-            borderRadius: '8px',
-            textTransform: 'none',
-            fontWeight: 'bold'
-          }}
-        >
-          Tạo thời khóa biểu
-        </Button>
-
-        {/* Search component */}
-        <TextField
-          placeholder="Tìm kiếm lớp, giảng viên..."
-          variant="outlined"
-          size="small"
-          fullWidth
-          value={searchQuery}
-          onChange={handleSearchChange}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon />
-              </InputAdornment>
-            ),
-          }}
-        />
-
-        {/* Filter component */}
-        <Paper elevation={0} sx={{ p: 1.5, borderRadius: '8px', bgcolor: 'background.default' }}>
-          <Typography variant="subtitle2" fontWeight="bold" gutterBottom>
-            Bộ lọc
-          </Typography>
-          <FormControl fullWidth size="small">
-            <Select
-              value={filterValue}
-              onChange={handleFilterChange}
-              startAdornment={
-                <InputAdornment position="start" sx={{ mr: 1 }}>
-                  <FilterIcon fontSize="small" />
-                </InputAdornment>
-              }
-              sx={{ bgcolor: 'background.paper' }}
-            >
-              <MenuItem value="all">Tất cả</MenuItem>
-              <MenuItem value="classes">Theo lớp học</MenuItem>
-              <MenuItem value="teachers">Theo giảng viên</MenuItem>
-              <MenuItem value="rooms">Theo phòng học</MenuItem>
-            </Select>
-          </FormControl>
-        </Paper>
-
-        {/* Calendar component */}
-        <CalendarWithWeekHighlight />
-
-        <List sx={{ flexGrow: 1 }}>
-          {navItems.map((item) => (
-            <ListItem
-              button
-              key={item.text}
+        {isDashboard && (
+          <>
+            {/* Tạo lịch button */}
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<AddIcon />}
+              fullWidth
               sx={{
+                mb: 2,
+                py: 1.5,
                 borderRadius: '8px',
-                mb: 0.5,
-                '&:hover': {
-                  backgroundColor: 'action.hover'
-                },
-                '&.Mui-selected': {
-                  backgroundColor: 'primary.light',
-                  '& .MuiListItemIcon-root': {
-                    color: 'primary.main'
-                  }
-                }
+                textTransform: 'none',
+                fontWeight: 'bold'
               }}
             >
-              <ListItemIcon sx={{ minWidth: '36px' }}>
-                {item.icon}
-              </ListItemIcon>
-              <ListItemText
-                primary={item.text}
-                primaryTypographyProps={{
-                  variant: 'body2',
-                  fontWeight: 'medium'
+              Tạo thời khóa biểu
+            </Button>
+
+            {/* Search component */}
+            <TextField
+              placeholder="Tìm kiếm lớp, giảng viên..."
+              variant="outlined"
+              size="small"
+              fullWidth
+              value={searchQuery}
+              onChange={handleSearchChange}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+              }}
+            />
+
+            {/* Filter component */}
+            <Paper elevation={0} sx={{ p: 1.5, borderRadius: '8px', bgcolor: 'background.default' }}>
+              <Typography variant="subtitle2" fontWeight="bold" gutterBottom>
+                Bộ lọc
+              </Typography>
+              <FormControl fullWidth size="small">
+                <Select
+                  value={filterValue}
+                  onChange={handleFilterChange}
+                  startAdornment={
+                    <InputAdornment position="start" sx={{ mr: 1 }}>
+                      <FilterIcon fontSize="small" />
+                    </InputAdornment>
+                  }
+                  sx={{ bgcolor: 'background.paper' }}
+                >
+                  <MenuItem value="all">Tất cả</MenuItem>
+                  <MenuItem value="classes">Theo lớp học</MenuItem>
+                  <MenuItem value="teachers">Theo giảng viên</MenuItem>
+                  <MenuItem value="rooms">Theo phòng học</MenuItem>
+                </Select>
+              </FormControl>
+            </Paper>
+
+            {/* Calendar component */}
+            <CalendarWithWeekHighlight />
+          </>
+        )}
+
+        <List sx={{ flexGrow: 1 }}>
+          {navItems
+            .filter(item => !(isDashboard && item.path === '/dashboard'))
+            .map((item) => (
+              <ListItem
+                button
+                component="a"
+                href={item.path}
+                key={item.text}
+                sx={{
+                  borderRadius: '8px',
+                  mb: 0.5,
+                  '&:hover': {
+                    backgroundColor: 'action.hover'
+                  },
+                  '&.Mui-selected': {
+                    backgroundColor: 'primary.light',
+                    '& .MuiListItemIcon-root': {
+                      color: 'primary.main'
+                    }
+                  }
                 }}
-              />
-            </ListItem>
-          ))}
+              >
+                <ListItemIcon sx={{ minWidth: '36px' }}>
+                  {item.icon}
+                </ListItemIcon>
+                <ListItemText
+                  primary={item.text}
+                  primaryTypographyProps={{
+                    variant: 'body2',
+                    fontWeight: 'medium'
+                  }}
+                />
+              </ListItem>
+            ))}
         </List>
       </Box>
     </StyledDrawer>
