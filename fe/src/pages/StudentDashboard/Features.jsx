@@ -1,10 +1,17 @@
 import { Button, Card, Typography } from '@mui/material';
-import { Box } from '@mui/system';
+import { Link } from 'react-router-dom';
+import { Box, useTheme } from '@mui/system';
 import React from 'react';
 
-function Features({ features }) {
+const Features = ({ features }) => {
+  const theme = useTheme();
+  
   return (
-    <Card sx={{ width: '100%' }}>
+    <Box sx={{
+      width: '100%',
+      border: `1px solid ${theme.palette.divider}`,
+
+    }}>
       <Box
         sx={{
           display: 'flex',
@@ -23,6 +30,8 @@ function Features({ features }) {
             }}
           >
             <Button
+              component={Link}
+              to={feature.path}
               fullWidth
               sx={{
                 display: 'flex',
@@ -31,6 +40,9 @@ function Features({ features }) {
                 gap: 1,
                 py: 2,
                 color: 'text.secondary',
+                '&:hover': {
+                  color: 'primary.main',
+                }
               }}
             >
               {feature.icon}
@@ -39,7 +51,7 @@ function Features({ features }) {
           </Box>
         ))}
       </Box>
-    </Card>
+    </Box>
   );
 }
 

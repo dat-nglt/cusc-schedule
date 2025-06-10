@@ -22,8 +22,8 @@ const routes = [
     component: "ProfilePage",
     exact: true,
     title: "Hồ sơ cá nhân",
-    isPrivate: true,
-    layout: MainLayout,
+    isPrivate: false,
+    layout: MainLayout, // Sử dụng layout MainLayout
   },
   {
     path: "/student",
@@ -34,28 +34,20 @@ const routes = [
     layout: LayoutJustHeader,
   },
   {
-    path: "/courses",
-    component: "Course",
+    path: "student/results",
+    component: "StudentLearningResults",
     exact: true,
-    title: "Quản lý Khóa học",
+    title: "Kết quả học tập",
     isPrivate: false,
-    layout: MainLayout,
+    layout: LayoutJustHeader,
   },
   {
-    path: "/slottime",
-    component: "Slot_time",
+    path: "student/schedules",
+    component: "StudentSchedules",
     exact: true,
-    title: "Quản lý Khung giờ",
+    title: "Kết quả học tập",
     isPrivate: false,
-    layout: MainLayout,
-  },
-  {
-    path: "/room",
-    component: "Room",
-    exact: true,
-    title: "Quản lý Phòng học",
-    isPrivate: false,
-    layout: MainLayout,
+    layout: LayoutJustHeader,
   },
 ];
 

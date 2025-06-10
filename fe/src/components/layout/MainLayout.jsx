@@ -6,6 +6,7 @@ import './MainLayout.css';
 import Header from './Header';
 import Sidebar from './Sidebar';
 import MainContainer from './MainContainer';
+import Footer from './Footer';
 
 const MainLayout = ({ children }) => {
   const theme = useTheme();
