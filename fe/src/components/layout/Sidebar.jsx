@@ -37,6 +37,8 @@ import {
   Class as ClassIcon,
   AccessTime as AccessTimeIcon,
   LibraryBooks as LibraryBooksIcon,
+  Room as RoomIcon,
+  AccountBalance as AccountBalanceIcon,
 } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
 import CalendarWithWeekHighlight from './CalendarWithWeekHighlight';
@@ -72,6 +74,9 @@ const Sidebar = () => {
     { text: 'Quản lý chương trình đào tạo', icon: <LibraryBooksIcon />, path: '/programs' },
     { text: 'Quản lý học phần', icon: <MenuBookIcon />, path: '/subjects' },
     { text: 'Quản lý khóa học', icon: <ClassIcon />, path: '/courses' },
+    { text: 'Quản lý lớp', icon: <GroupsIcon />, path: '/class' },
+    { text: 'Quản lý lớp học phần', icon: <AccountBalanceIcon />, path: '/classsection' },
+    { text: 'Quản lý phòng', icon: <RoomIcon />, path: '/room' },
     { text: 'Quản lý khung giờ', icon: <AccessTimeIcon />, path: '/slottime' },
     { text: 'Đăng xuất', icon: <LogoutIcon />, path: '/logout' },
   ];
