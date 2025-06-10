@@ -22,7 +22,7 @@ import useResponsive from '../../hooks/useResponsive';
 import RoomTable from './RoomTable';
 
 const Room = () => {
-  const { isExtraSmallScreen, isSmallScreen, isMediumScreen } = useResponsive();
+  const { isExtraSmallScreen, isSmallScreen, isMediumScreen, isLargeScreen } = useResponsive();
 
   // Dữ liệu mẫu cho danh sách phòng học
   const [rooms, setRooms] = useState([
@@ -158,7 +158,7 @@ const Room = () => {
                     onClick={handleAddRoom}
                     sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
                   >
-                    Thêm phòng học
+                    Thêm phòng
                   </Button>
                 )}
                 <FormControl sx={{ minWidth: isSmallScreen ? 100 : 200, flexGrow: 1, maxWidth: { xs: '100%', sm: 200 } }} variant="outlined">
@@ -206,6 +206,7 @@ const Room = () => {
                   isExtraSmallScreen={isExtraSmallScreen}
                   isSmallScreen={isSmallScreen}
                   isMediumScreen={isMediumScreen}
+                  isLargeScreen={isLargeScreen}
                   handleViewRoom={handleViewRoom}
                   handleEditRoom={handleEditRoom}
                   handleDeleteRoom={handleDeleteRoom}
