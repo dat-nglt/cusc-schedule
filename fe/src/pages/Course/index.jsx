@@ -15,8 +15,8 @@ import {
   IconButton,
   Button,
 } from '@mui/material';
-import { 
-  Add as AddIcon, 
+import {
+  Add as AddIcon,
   Search as SearchIcon,
 } from '@mui/icons-material';
 import CourseDetailModal from './CourseDetailModal';
@@ -238,10 +238,10 @@ const Course = () => {
           </CardContent>
         </Card>
       </Box>
-      <CourseDetailModal 
-        open={openDetail} 
-        onClose={handleCloseDetail} 
-        course={selectedCourse} 
+      <CourseDetailModal
+        open={openDetail}
+        onClose={handleCloseDetail}
+        course={selectedCourse}
       />
       <AddCourseModal
         open={openAddModal}

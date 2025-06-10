@@ -56,7 +56,10 @@ const Sidebar = () => {
   const [searchQuery, setSearchQuery] = useState('');
 
   const navItems = [
-    { text: 'Đăng xuất', icon: <LogoutIcon />, path: '/logout' }
+    { text: 'Quản lý giảng viên', icon: <LogoutIcon />, path: '/lecturers' },
+    { text: 'Quản lý khóa học', icon: <LogoutIcon />, path: '/courses' },
+    { text: 'Quản lý khung giờ', icon: <LogoutIcon />, path: '/slottime' },
+    { text: 'Đăng xuất', icon: <LogoutIcon />, path: '/logout' },
   ];
 
   const handleDateChange = (date) => {
@@ -151,6 +154,8 @@ const Sidebar = () => {
           {navItems.map((item) => (
             <ListItem
               button
+              component="a"
+              href={item.path}
               key={item.text}
               sx={{
                 borderRadius: '8px',
