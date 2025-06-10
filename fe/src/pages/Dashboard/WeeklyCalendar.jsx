@@ -16,94 +16,21 @@ import {
     FileDownload,
     PostAdd
 } from '@mui/icons-material';
-import { format, startOfWeek, addDays, isSameDay, parseISO } from 'date-fns';
+import { format, startOfWeek, addDays } from 'date-fns';
 import { vi } from 'date-fns/locale';
-import { DndProvider, useDrag, useDrop } from 'react-dnd';
+import { DndProvider } from 'react-dnd'; DOMImplementation
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { TouchBackend } from 'react-dnd-touch-backend';
 import { useTimetable } from '../../contexts/TimetableContext';
+import TimeSlot from './TimeSlot';
 
 // Constants
 const HOURS = Array.from({ length: 16 }, (_, i) => i + 7); // 7h - 22h
 const DAYS = Array.from({ length: 7 }, (_, i) => i); // 0-6 (Monday-Sunday)
 
-// Schedule Item Component
-const ScheduleItem = ({ item, onDrop }) => {
-    const [{ isDragging }, drag] = useDrag(() => ({
-        type: 'SCHEDULE_ITEM',
-        item: { id: item.id },
-        end: (draggedItem, monitor) => {
-            if (monitor.didDrop()) {
-                onDrop(draggedItem.id, monitor.getDropResult());
-            }
-        },
-        collect: (monitor) => ({
-            isDragging: !!monitor.isDragging(),
-        }),
-    }));
-
-    return (
-        <Box
-            ref={drag}
-            sx={{
-                backgroundColor: '#4a90e2',
-                color: 'white',
-                borderRadius: '4px',
-                padding: '4px 8px',
-                margin: '2px 0',
-                fontSize: '0.8rem',
-                cursor: 'move',
-                opacity: isDragging ? 0.5 : 1,
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap'
-            }}
-        >
-            {item.course} - {item.room}
-        </Box>
-    );
-};
-
-// Time Slot Component
-const TimeSlot = ({ day, hour, date, onDrop, scheduleItems }) => {
-    const [{ isOver }, drop] = useDrop(() => ({
-        accept: 'SCHEDULE_ITEM',
-        drop: () => ({ day, hour, date }),
-        collect: (monitor) => ({
-            isOver: !!monitor.isOver(),
-        }),
-    }));
-
-    const slotDate = addDays(date, day);
-    const slotDateTime = parseISO(format(slotDate, 'yyyy-MM-dd') + `T${hour.toString().padStart(2, '0')}:00:00`);
-
-    const itemsInSlot = scheduleItems.filter(item =>
-        isSameDay(parseISO(item.startTime), slotDate) &&
-        format(parseISO(item.startTime), 'H') === hour.toString()
-    );
-
-    return (
-        <Box
-            ref={drop}
-            sx={{
-                border: '1px solid #e0e0e0',
-                minHeight: '60px',
-                minWidth: { xs: '60px', sm: '100px', md: '120px', lg: '150px' },
-                backgroundColor: isOver ? '#f5f5f5' : 'white',
-                padding: '4px',
-                overflow: 'hidden',
-            }}
-        >
-            {itemsInSlot.map(item => (
-                <ScheduleItem key={item.id} item={item} onDrop={onDrop} />
-            ))}
-        </Box>
-    );
-};
-
 // Main Component
 const WeeklyCalendar = ({
-    initialDate = new Date(),
+    // initialDate = new Date(),
     scheduleItems = [],
     onItemMove,
     onAddNew
@@ -326,14 +253,14 @@ const WeeklyCalendar = ({
                             borderBottom: '1px solid',
                             borderColor: (theme) => theme.palette.divider
                         }}>
-                            <Typography variant="subtitle2" sx={{
-                                fontSize: { xs: '0.7rem', sm: '0.875rem' },
+                            <Typography variant="subtitle1" sx={{
+                                fontSize: { xs: '0.7rem', sm: '1rem' },
                                 color: (theme) => theme.palette.text.primary
                             }}>
                                 {isMobile ? day.shortName : day.name}
                             </Typography>
-                            <Typography variant="body2" sx={{
-                                fontSize: { xs: '0.6rem', sm: '0.75rem' },
+                            <Typography variant="subtitle2" sx={{
+                                fontSize: { xs: '0.6rem', sm: '0.9rem' },
                                 color: (theme) => theme.palette.text.secondary
                             }}>
                                 {day.date}
@@ -359,8 +286,8 @@ const WeeklyCalendar = ({
                                 borderRight: '1px solid',
                                 borderColor: (theme) => theme.palette.divider
                             }}>
-                                <Typography variant="caption" sx={{
-                                    fontSize: { xs: '0.6rem', sm: '0.75rem' },
+                                <Typography variant="subtitle2" sx={{
+                                    fontSize: { xs: '0.6rem', sm: '0.9rem' },
                                     color: (theme) => theme.palette.text.secondary
                                 }}>
                                     {hour}:00
