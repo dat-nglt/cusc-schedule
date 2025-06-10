@@ -36,7 +36,7 @@ const menuItems = [
     { text: 'Cài Đặt', icon: <Settings />, path: '/cai-dat' }
 ];
 
-const SidebarForJustheader = () => {
+const SidebarForJustAdmin = () => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
     const [mobileOpen, setMobileOpen] = useState(false);
@@ -96,9 +96,9 @@ const SidebarForJustheader = () => {
                     </ListItem>
                 ))}
             </List>
-            
+
         </Drawer>
     );
 };
 
-export default SidebarForJustheader;
+export default SidebarForJustAdmin;

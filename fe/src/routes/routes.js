@@ -41,6 +41,14 @@ const routes = [
     isPrivate: false,
     layout: LayoutJustHeader,
   },
+  {
+    path: "student/schedules",
+    component: "StudentSchedules",
+    exact: true,
+    title: "Kết quả học tập",
+    isPrivate: false,
+    layout: LayoutJustHeader,
+  },
 ];
 
 export default routes;

@@ -1,7 +1,8 @@
 import React from 'react';
 import {
     Box, Typography, Chip, Grid, Divider, LinearProgress,
-    Accordion, AccordionSummary, AccordionDetails, Paper
+    Accordion, AccordionSummary, AccordionDetails, Paper,
+    useTheme
 } from '@mui/material';
 import { Assessment, CompareArrows, TrendingFlat, ExpandMore } from '@mui/icons-material';
 
@@ -50,7 +51,9 @@ const ComparisonCard = ({ subject, isMobile = false }) => (
     </Box>
 );
 
-function PerformanceComparison({ studentStats, classAverages }) {
+const PerformanceComparison = ({ studentStats, classAverages }) => {
+
+    const theme = useTheme();
     // Desktop
     const DesktopView = (
         <Grid container spacing={1} alignItems="stretch">
@@ -73,11 +76,52 @@ function PerformanceComparison({ studentStats, classAverages }) {
                 </Box>
             </Grid>
             <Grid item xs={12} md={8} sx={{ display: 'flex', flex: 1 }}>
-                <Box sx={{ p: 3, borderRadius: 2, border: '1px solid', borderColor: 'divider', backgroundColor: 'background.paper', height: '100%', flex: 1 }}>
+                <Box
+                    sx={{
+                        p: 3,
+                        borderRadius: 2,
+                        border: '1px solid',
+                        borderColor: 'divider',
+                        backgroundColor: 'background.paper',
+                        height: '100%',
+                        maxWidth: '100%',
+                        flex: 1,
+                        display: 'flex', // Sử dụng flexbox cho nội dung bên trong Box
+                        flexDirection: 'column', // Xếp tiêu đề và danh sách cuộn theo cột
+                    }}
+                >
                     <Typography variant="h6" sx={{ mb: 3, fontWeight: 600, display: 'flex', alignItems: 'center' }}>
                         <CompareArrows sx={{ mr: 1, color: 'secondary.main' }} /> So Sánh Kết Quả Học Tập
                     </Typography>
-                    <Box sx={{ display: 'flex', overflowX: 'auto', pb: 2, gap: 3, '&::-webkit-scrollbar': { height: 8 }, '&::-webkit-scrollbar-track': { backgroundColor: 'transparent' }, '&::-webkit-scrollbar-thumb': { backgroundColor: 'rgba(0,0,0,0.2)', borderRadius: 4 } }}>
+
+                    {/* Phần chứa các ComparisonCard với cuộn ngang */}
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            flexGrow: 1,
+                            pb: 2,
+                            gap: 3,
+                            overflowX: 'scroll',
+                            '&::-webkit-scrollbar': {
+                                height: 8,
+                            },
+                            '&::-webkit-scrollbar-track': {
+                                backgroundColor: theme.palette.action.hover,
+                                borderRadius: 4,
+                            },
+                            '&::-webkit-scrollbar-thumb': {
+                                backgroundColor: theme.palette.grey[400],
+                                borderRadius: 4,
+                                '&:hover': {
+                                    backgroundColor: theme.palette.grey[600],
+                                },
+                            },
+
+                            scrollbarWidth: 'thin',
+                            scrollbarColor: `${theme.palette.grey[400]} ${theme.palette.action.hover}`,
+                        }}
+                    >
+                        {/* Đảm bảo mỗi ComparisonCard có một min-width để tránh bị co lại quá mức */}
                         {classAverages.map((subject, index) => (
                             <ComparisonCard key={index} subject={subject} />
                         ))}
@@ -86,7 +130,7 @@ function PerformanceComparison({ studentStats, classAverages }) {
             </Grid>
         </Grid>
     );
-    // Mobile
+
     const MobileView = (
         <Paper sx={{ p: { xs: 2, sm: 3 }, borderRadius: 2 }}>
             <Grid item xs={12} md={4}>

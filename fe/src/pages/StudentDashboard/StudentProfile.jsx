@@ -12,7 +12,14 @@ import {
     Chip,
     Paper,
     IconButton,
-    Collapse
+    Collapse,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    List,
+    DialogActions, Button,
+    ListItem, ListItemIcon, ListItemText
+
 } from '@mui/material';
 import {
     Notifications,
@@ -23,11 +30,19 @@ import {
     Person,
     LocationOn,
     Cake,
+    Class,
     Female,
+    Grade, Home,
     Male,
     ExpandMore,
-    ExpandLess
+    ExpandLess,
+    MoreHoriz,
+    Close,
+    Visibility,
+    Block,
+    More
 } from '@mui/icons-material';
+import StudentDetailModal from './StudentDetailModal';
 
 const InfoCard = ({ icon, title, value, color = 'primary' }) => {
     const theme = useTheme();
@@ -54,7 +69,7 @@ const InfoCard = ({ icon, title, value, color = 'primary' }) => {
                     {React.cloneElement(icon, { fontSize: 'small' })}
                 </Box>
                 <Box>
-                    <Typography variant="h6" color="text.secondary" fontWeight={500}>
+                    <Typography variant="subtitle1" color="text.secondary" fontWeight={500}>
                         {title}
                     </Typography>
                     <Typography variant="subtitle1" fontWeight="600">
@@ -69,9 +84,17 @@ const InfoCard = ({ icon, title, value, color = 'primary' }) => {
 
 function StudentProfile({ studentInfo }) {
     const theme = useTheme();
-    const [expanded, setExpanded] = useState(false);
+    const [openModal, setOpenModal] = useState(false); // State to control modal visibility
 
-    const toggleExpand = () => setExpanded(!expanded);
+    // const infoItems = getInfoItems(studentInfo); // Lấy thông tin chi tiết để hiển thị trong modal
+
+    const handleOpenModal = () => {
+        setOpenModal(true);
+    };
+
+    const handleCloseModal = () => {
+        setOpenModal(false);
+    };
 
     const dataForCard = [
         {
@@ -99,17 +122,7 @@ function StudentProfile({ studentInfo }) {
             color: "secondary"
         }
     ]
-    const infoItems = [
-        { icon: <Email sx={{ fontSize: 18, mr: 1, color: theme.palette.text.secondary }} />, value: studentInfo.email },
-        { icon: <Phone sx={{ fontSize: 18, mr: 1, color: theme.palette.text.secondary }} />, value: studentInfo.phone },
-        { icon: <Cake sx={{ fontSize: 18, mr: 1, color: theme.palette.text.secondary }} />, value: studentInfo.dob },
-        {
-            icon: studentInfo.gender.toLowerCase() === 'nam'
-                ? <Male sx={{ fontSize: 18, mr: 1, color: theme.palette.text.secondary }} />
-                : <Female sx={{ fontSize: 18, mr: 1, color: theme.palette.text.secondary }} />,
-            value: studentInfo.gender
-        }
-    ];
+
 
     return (
         <Box sx={{ width: '100%' }}>
@@ -122,13 +135,15 @@ function StudentProfile({ studentInfo }) {
                 <Box sx={{ p: { xs: 0, md: 3 } }}>
                     <Stack direction={{ xs: 'column', md: 'row' }} spacing={3} alignItems="flex-start">
                         {/* Avatar Section - Centered on mobile */}
-                        <Box sx={{
+                        <Box sx={{ // Thêm Box bao quanh Avatar và IconButton
                             alignSelf: { xs: 'center', md: 'flex-start' },
-                            position: 'relative'
+                            position: 'relative', // Quan trọng để định vị icon tuyệt đối
+                            mr: { xs: 0, sm: 3 }, // Điều chỉnh margin ở đây để phù hợp với Box
+                            mb: { xs: 2, sm: 0 },
                         }}>
                             <Avatar sx={{
-                                width: { xs: 120 , md: 150 },
-                                height: { xs: 120 , md: 150 },
+                                width: { xs: 120, md: 150 },
+                                height: { xs: 120, md: 150 },
                                 bgcolor: theme.palette.primary.main,
                                 fontSize: { xs: '2rem', md: '2.5rem' },
                                 border: `4px solid ${alpha(theme.palette.primary.main, 0.2)}`
@@ -137,46 +152,57 @@ function StudentProfile({ studentInfo }) {
                             >
                                 {studentInfo.name.charAt(0)}
                             </Avatar>
-
-                            {/* Expand/Collapse button - only visible on mobile */}
+                            {/* IconButton mới ở góc dưới bên phải của Avatar */}
                             <IconButton
                                 sx={{
-                                    display: { xs: 'flex', md: 'none' },
                                     position: 'absolute',
-                                    right: -10,
-                                    bottom: -10,
-                                    bgcolor: 'background.paper',
-                                    boxShadow: 1,
+                                    display: { xs: 'flex', md: 'none' },
+                                    bottom: -5, // Điều chỉnh vị trí theo ý muốn
+                                    right: 0,  // Điều chỉnh vị trí theo ý muốn
+                                    bgcolor: theme.palette.secondary.main, // Màu nền của icon
+                                    color: 'white', // Màu của icon
+                                    border: `2px solid ${theme.palette.background.paper}`, // Viền trắng để nổi bật
                                     '&:hover': {
-                                        bgcolor: 'background.default'
-                                    }
+                                        bgcolor: theme.palette.secondary.dark,
+                                        transform: 'scale(1.05)',
+                                        transition: 'transform 0.2s ease-in-out'
+                                    },
+                                    width: 35, // Kích thước icon
+                                    height: 35,
+                                    boxShadow: theme.shadows[3] // Thêm box shadow
                                 }}
-                                onClick={toggleExpand}
-                                size="small"
+                                onClick={handleOpenModal} // Gọi hàm để mở dialog chi tiết
                             >
-                                {expanded ? <ExpandLess /> : <ExpandMore />}
+                                <MoreHoriz sx={{ fontSize: '1.2rem' }} />
                             </IconButton>
                         </Box>
 
                         {/* Content Section */}
                         <Box sx={{ flex: 1, width: '100%' }}>
-                            <Typography
-                                variant="h5"
-                                fontWeight="700"
-                                gutterBottom
-                                sx={{ textAlign: { xs: 'center', md: 'left' } }}
-                            >
-                                {studentInfo.name}
-                            </Typography>
+                            <Box sx={{
+                                display: 'flex', justifyContent: { xs: 'center', md: 'flex-start' }, alignItems: 'center',
+                            }}>
+                                <Typography
+                                    variant="h5"
+                                    fontWeight="700"
+                                    gutterBottom={false} // Adjust gutterBottom here
+                                    sx={{ textAlign: { xs: 'center', md: 'left' }, mr: 2 }} // Add margin-right for the icon
+                                >
+                                    {studentInfo.name}
+                                </Typography>
+                                {/* More Info Button - always visible, but consider position for small screens */}
+                                <Chip label={'Đang học'} color='primary' size='small' sx={{ px: 2, display: { xs: 'none', md: 'block' } }} />
+                            </Box>
+
+                            <Divider sx={{ my: 2, display: { xs: 'none', md: 'flex' } }} />
 
                             {/* Chips - wrap on small screens */}
                             <Stack
                                 sx={{
-                                    display: { xs: 'none', md: 'flex' },
+                                    display: { xs: 'none', md: 'flex' }, // Only show on medium+ screens
                                     flexDirection: { md: 'row' },
                                     flexWrap: 'wrap',
                                     gap: 1,
-                                    mb: 1,
                                     alignItems: { md: 'flex-start' },
                                     justifyContent: { md: 'flex-start' }
                                 }}
@@ -198,14 +224,6 @@ function StudentProfile({ studentInfo }) {
                                     }}
                                 />
                                 <Chip
-                                    label={studentInfo.trainingLevel}
-                                    size="small"
-                                    sx={{
-                                        bgcolor: alpha(theme.palette.info.main, 0.1),
-                                        color: theme.palette.info.dark
-                                    }}
-                                />
-                                <Chip
                                     label={studentInfo.major}
                                     size="small"
                                     sx={{
@@ -213,130 +231,33 @@ function StudentProfile({ studentInfo }) {
                                         color: theme.palette.info.dark
                                     }}
                                 />
-                            </Stack>
-
-                            {/* Menu for mobile */}
-                            <Box sx={{ display: { xs: 'block', md: 'none' } }}>
-                                <Collapse in={expanded}>
-                                    <Box
-                                        sx={{
-                                            display: 'inline-flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'space-around',
-                                            px: 1.5,
-                                            py: 0.5,
-                                            bgcolor: alpha(theme.palette.info.main, 0.1),
-                                            color: theme.palette.info.dark,
-                                            borderRadius: 1,
-                                            fontSize: '0.75rem',
-                                            fontWeight: 500,
-                                            width: '100%',
-                                            border: `1px solid ${alpha(theme.palette.info.main, 0.3)}`
-                                        }}
-                                    >
-                                        {[studentInfo.id, studentInfo.class, studentInfo.major].map((item, index, array) => (
-                                            <React.Fragment key={index}>
-                                                <span>{item}</span>
-                                                {index < array.length - 1 && (
-                                                    <Box
-                                                        component="span"
-                                                        sx={{
-                                                            mx: 1,
-                                                            height: '0.75rem',
-                                                            width: '2px',
-                                                            bgcolor: theme.palette.divider,
-                                                            alignSelf: 'center',
-                                                        }}
-                                                    />
-                                                )}
-                                            </React.Fragment>
-                                        ))}
-                                    </Box>
-                                    <Stack
-                                        sx={{
-                                            display: 'grid',
-                                            gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' },
-                                            gap: 1,
-                                            mt: 1,
-                                            borderRadius: 2,
-                                        }}
-                                    >
-                                        {infoItems.map((item, index) => (
-                                            <Box
-                                                key={index}
-                                                sx={{
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    gap: 1,
-                                                    px: 1,
-                                                    py: 0.75,
-                                                    borderRadius: 1,
-                                                    bgcolor: theme.palette.action.hover,
-                                                }}
-                                            >
-                                                {React.cloneElement(item.icon, {
-                                                    sx: {
-                                                        fontSize: 18,
-                                                        color: theme.palette.text.secondary,
-                                                    },
-                                                })}
-                                                <Typography
-                                                    variant="body2"
-                                                    sx={{
-                                                        fontSize: '0.75rem',
-                                                        fontWeight: 500,
-                                                        color: theme.palette.text.primary,
-                                                    }}
-                                                >
-                                                    {item.value}
-                                                </Typography>
-                                            </Box>
-                                        ))}
-                                    </Stack>
-
-
-                                </Collapse>
-                            </Box>
-
-                            <Divider sx={{ my: 2 }} />
-
-                            {/* Info Items - collapsible on mobile */}
-                            <Box sx={{ display: { xs: 'none', md: 'block' } }}>
-                                <Stack
-                                    direction="row"
-                                    spacing={1}
-                                    flexWrap="wrap"
-                                    useFlexGap
+                                <Chip
+                                    label={studentInfo.trainingLevel}
+                                    size="small"
                                     sx={{
-                                        '& > *': {
-                                            minWidth: { xs: 'calc(50% - 8px)', sm: 'auto' }
-                                        }
+                                        bgcolor: alpha(theme.palette.info.main, 0.1),
+                                        color: theme.palette.info.dark
+                                    }}
+                                />
+                                <IconButton onClick={handleOpenModal} size="small" color="primary"
+                                    sx={{
+                                        mt: { xs: -0.5, md: -0.5 }, // Adjust margin top to align with title
+                                        display: 'flex', // Ensure it's always visible
                                     }}
                                 >
-                                    {infoItems.map((item, index) => (
-                                        <Box key={index} sx={{
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            mr: 2,
-                                            mb: 1
-                                        }}>
-                                            {React.cloneElement(item.icon, {
-                                                sx: {
-                                                    fontSize: '1rem',
-                                                    mr: 0.5,
-                                                    color: 'text.secondary'
-                                                }
-                                            })}
-                                            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                                                {item.value}
-                                            </Typography>
-                                        </Box>
-                                    ))}
-                                </Stack>
-                            </Box>
+                                    <MoreHoriz />
+                                </IconButton>
+                            </Stack>
                         </Box>
                     </Stack>
                 </Box>
+
+                {/* Student Details Modal */}
+                <StudentDetailModal
+                    openModal={openModal}
+                    handleCloseModal={handleCloseModal}
+                    studentInfo={studentInfo} // Đảm bảo studentInfo được định nghĩa và chứa đủ dữ liệu
+                />
             </Card>
 
             <Box sx={{
