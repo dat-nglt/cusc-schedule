@@ -58,6 +58,22 @@ const routes = [
     layout: MainLayout,
   },
   {
+    path: "/class",
+    component: "Class",
+    exact: true,
+    title: "Quản lý Lớp học",
+    isPrivate: false,
+    layout: MainLayout,
+  },
+  {
+    path: "/classsection",
+    component: "ClassSection",
+    exact: true,
+    title: "Quản lý Lớp học phần",
+    isPrivate: false,
+    layout: MainLayout,
+  },
+  {
     path: "/lecturers",
     component: "Lecturer",
     exact: true,
