@@ -1,0 +1,37 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.sequelize = exports.default = void 0;
+require("core-js/modules/es.promise.js");
+var _sequelize = require("sequelize");
+const sequelize = exports.sequelize = new _sequelize.Sequelize(process.env.DB_NAME || 'cusc_db', process.env.DB_USER || 'postgres', process.env.DB_PASSWORD || 'MyPostgreSQL@2025', {
+  host: process.env.DB_HOST || 'localhost',
+  port: process.env.DB_PORT || 5432,
+  dialect: 'postgres',
+  logging: false,
+  // Set to console.log to see SQL queries
+  pool: {
+    max: 5,
+    min: 0,
+    acquire: 30000,
+    idle: 10000
+  }
+});
+const connectDB = async () => {
+  try {
+    await sequelize.authenticate();
+    console.log('PostgreSQL connected successfully with Sequelize');
+
+    // Sync database (create tables if they don't exist)
+    await sequelize.sync({
+      alter: true
+    });
+    console.log('Database synced successfully');
+  } catch (error) {
+    console.error('Database connection error:', error);
+    process.exit(1);
+  }
+};
+var _default = exports.default = connectDB;
