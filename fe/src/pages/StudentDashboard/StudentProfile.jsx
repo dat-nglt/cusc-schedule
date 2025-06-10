@@ -37,7 +37,10 @@ import {
     ExpandMore,
     ExpandLess,
     MoreHoriz,
-    Close
+    Close,
+    Visibility,
+    Block,
+    More
 } from '@mui/icons-material';
 import StudentDetailModal from './StudentDetailModal';
 
@@ -132,9 +135,11 @@ function StudentProfile({ studentInfo }) {
                 <Box sx={{ p: { xs: 0, md: 3 } }}>
                     <Stack direction={{ xs: 'column', md: 'row' }} spacing={3} alignItems="flex-start">
                         {/* Avatar Section - Centered on mobile */}
-                        <Box sx={{
+                        <Box sx={{ // Thêm Box bao quanh Avatar và IconButton
                             alignSelf: { xs: 'center', md: 'flex-start' },
-                            position: 'relative'
+                            position: 'relative', // Quan trọng để định vị icon tuyệt đối
+                            mr: { xs: 0, sm: 3 }, // Điều chỉnh margin ở đây để phù hợp với Box
+                            mb: { xs: 2, sm: 0 },
                         }}>
                             <Avatar sx={{
                                 width: { xs: 120, md: 150 },
@@ -147,12 +152,36 @@ function StudentProfile({ studentInfo }) {
                             >
                                 {studentInfo.name.charAt(0)}
                             </Avatar>
-
+                            {/* IconButton mới ở góc dưới bên phải của Avatar */}
+                            <IconButton
+                                sx={{
+                                    position: 'absolute',
+                                    display: { xs: 'flex', md: 'none' },
+                                    bottom: -5, // Điều chỉnh vị trí theo ý muốn
+                                    right: 0,  // Điều chỉnh vị trí theo ý muốn
+                                    bgcolor: theme.palette.secondary.main, // Màu nền của icon
+                                    color: 'white', // Màu của icon
+                                    border: `2px solid ${theme.palette.background.paper}`, // Viền trắng để nổi bật
+                                    '&:hover': {
+                                        bgcolor: theme.palette.secondary.dark,
+                                        transform: 'scale(1.05)',
+                                        transition: 'transform 0.2s ease-in-out'
+                                    },
+                                    width: 35, // Kích thước icon
+                                    height: 35,
+                                    boxShadow: theme.shadows[3] // Thêm box shadow
+                                }}
+                                onClick={handleOpenModal} // Gọi hàm để mở dialog chi tiết
+                            >
+                                <MoreHoriz sx={{ fontSize: '1.2rem' }} />
+                            </IconButton>
                         </Box>
 
                         {/* Content Section */}
                         <Box sx={{ flex: 1, width: '100%' }}>
-                            <Box sx={{ display: 'flex', justifyContent: { xs: 'center', md: 'flex-start' }, alignItems: 'center' }}>
+                            <Box sx={{
+                                display: 'flex', justifyContent: { xs: 'center', md: 'flex-start' }, alignItems: 'center',
+                            }}>
                                 <Typography
                                     variant="h5"
                                     fontWeight="700"
@@ -162,10 +191,10 @@ function StudentProfile({ studentInfo }) {
                                     {studentInfo.name}
                                 </Typography>
                                 {/* More Info Button - always visible, but consider position for small screens */}
-                                <Chip label={'Đang học'} color='primary' size='small' sx={{ px: 2 }} />
+                                <Chip label={'Đang học'} color='primary' size='small' sx={{ px: 2, display: { xs: 'none', md: 'block' } }} />
                             </Box>
 
-                            <Divider sx={{ my: 2, display: { xs: 'none', md: 'block' } }} />
+                            <Divider sx={{ my: 2, display: { xs: 'none', md: 'flex' } }} />
 
                             {/* Chips - wrap on small screens */}
                             <Stack
@@ -195,7 +224,7 @@ function StudentProfile({ studentInfo }) {
                                     }}
                                 />
                                 <Chip
-                                    label={studentInfo.trainingLevel}
+                                    label={studentInfo.major}
                                     size="small"
                                     sx={{
                                         bgcolor: alpha(theme.palette.info.main, 0.1),
@@ -203,7 +232,7 @@ function StudentProfile({ studentInfo }) {
                                     }}
                                 />
                                 <Chip
-                                    label={studentInfo.major}
+                                    label={studentInfo.trainingLevel}
                                     size="small"
                                     sx={{
                                         bgcolor: alpha(theme.palette.info.main, 0.1),

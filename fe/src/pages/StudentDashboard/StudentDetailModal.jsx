@@ -11,7 +11,8 @@ import {
     Chip,
     Avatar,
     useTheme,
-    alpha
+    alpha,
+    useMediaQuery // Import useMediaQuery
 } from '@mui/material';
 import {
     Close,
@@ -29,6 +30,8 @@ import {
 
 const StudentDetailModal = ({ openModal, handleCloseModal, studentInfo }) => {
     const theme = useTheme();
+    // Use useMediaQuery to check for small screens
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
     // Enhanced InfoItem component for Flexbox layout
     const InfoItem = ({ icon, label, value, sx }) => (
@@ -40,7 +43,7 @@ const StudentDetailModal = ({ openModal, handleCloseModal, studentInfo }) => {
                 minWidth: { xs: '100%', sm: 'calc(50% - 16px)' },
                 flexGrow: 1, // Allow items to grow
                 gap: 1.5,
-                p: 2, // Consistent padding for each item
+                p: { xs: 1.5, sm: 1 }, // Slightly more padding on mobile
                 borderRadius: 2,
                 bgcolor: alpha(theme.palette.grey[100], 0.8), // Slightly lighter background for items
                 border: `1px solid ${theme.palette.divider}`,
@@ -49,8 +52,8 @@ const StudentDetailModal = ({ openModal, handleCloseModal, studentInfo }) => {
             }}
         >
             <Box sx={{
-                width: 40,
-                height: 40,
+                width: 35,
+                height: 35,
                 borderRadius: '10px',
                 bgcolor: alpha(theme.palette.primary.main, 0.1),
                 display: 'flex',
@@ -59,7 +62,7 @@ const StudentDetailModal = ({ openModal, handleCloseModal, studentInfo }) => {
                 flexShrink: 0,
             }}>
                 {React.cloneElement(icon, {
-                    fontSize: 'small',
+                    fontSize: 'small', // Smaller icon size on mobile
                     sx: { color: theme.palette.primary.main }
                 })}
             </Box>
@@ -76,11 +79,12 @@ const StudentDetailModal = ({ openModal, handleCloseModal, studentInfo }) => {
                     {label}
                 </Typography>
                 <Typography
-                    variant="body2"
+                    variant="subtitle2"
                     sx={{
                         fontWeight: 500,
                         color: theme.palette.text.primary,
-                        mt: 0.5
+                        mt: 0.5,
+                        fontSize: { xs: '0.875rem', sm: '0.9375rem' } // Adjust font size for readability
                     }}
                 >
                     {value || '---'}
@@ -112,19 +116,22 @@ const StudentDetailModal = ({ openModal, handleCloseModal, studentInfo }) => {
         <Dialog
             open={openModal}
             onClose={handleCloseModal}
-            maxWidth="md"
+            // Adjust maxWidth based on screen size
+            maxWidth={isMobile ? 'xs' : 'md'}
             fullWidth
             PaperProps={{
                 sx: {
-                    borderRadius: 3,
-                    overflow: 'hidden'
+                    borderRadius: 2,
+                    overflow: 'hidden',
+                    margin: isMobile ? 1 : 4,
+                    maxHeight: isMobile ? '80vh' : 'auto'
                 }
             }}
         >
             {/* Header with gradient background */}
             <DialogTitle sx={{
-                py: 1,
-                px: 3,
+                py: { xs: 1.5, sm: 1 }, // Slightly more padding on mobile
+                px: { xs: 2, sm: 3 }, // Adjust horizontal padding
                 background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
                 color: 'white',
                 position: 'relative'
@@ -134,7 +141,7 @@ const StudentDetailModal = ({ openModal, handleCloseModal, studentInfo }) => {
                     justifyContent: 'space-between',
                     alignItems: 'center'
                 }}>
-                    <Typography variant="h6" fontWeight={600}>
+                    <Typography variant="h6" fontWeight={600} sx={{ fontSize: { xs: '1rem', sm: '1.25rem' } }}>
                         Hồ sơ sinh viên
                     </Typography>
                     <IconButton
@@ -153,7 +160,7 @@ const StudentDetailModal = ({ openModal, handleCloseModal, studentInfo }) => {
             </DialogTitle>
 
             <DialogContent dividers sx={{ p: 0 }}>
-                <Box sx={{ p: 3, pt: 4 }}>
+                <Box sx={{ p: { xs: 2, sm: 3 }, pt: { xs: 3, sm: 4 } }}> {/* Adjust padding for content */}
                     {/* Student Profile Header */}
                     <Box sx={{
                         display: 'flex',
@@ -165,8 +172,8 @@ const StudentDetailModal = ({ openModal, handleCloseModal, studentInfo }) => {
                         <Avatar
                             src="https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png"
                             sx={{
-                                width: 80,
-                                height: 80,
+                                width: { xs: 70, sm: 80 }, // Slightly smaller avatar on mobile
+                                height: { xs: 70, sm: 80 },
                                 mr: { xs: 0, sm: 3 },
                                 mb: { xs: 2, sm: 0 },
                                 border: `3px solid ${alpha(theme.palette.primary.light, 0.3)}`,
@@ -175,32 +182,48 @@ const StudentDetailModal = ({ openModal, handleCloseModal, studentInfo }) => {
                             }}
                         />
                         <Box sx={{ flexGrow: 1 }}> {/* Allow name box to grow */}
-                            <Typography variant="h5" fontWeight={700} gutterBottom>
+                            <Typography variant="h5" fontWeight={700} gutterBottom sx={{ fontSize: { xs: '1.25rem', sm: '1.5rem' } }}>
                                 {studentInfo.name}
                             </Typography>
                             <Box sx={{
                                 display: 'flex',
                                 flexWrap: 'wrap',
-                                gap: 1,
+                                gap: { xs: 0.5, sm: 1 }, // Smaller gap for chips on mobile
                                 justifyContent: { xs: 'center', sm: 'flex-start' }
                             }}>
                                 <Chip
                                     label={studentInfo.id}
                                     size="small"
-                                    // icon={<Home fontSize="small" />}
-                                    sx={{ bgcolor: alpha(theme.palette.success.light, 0.2) }}
+                                    sx={{
+                                        bgcolor: alpha(theme.palette.secondary.main, 0.1),
+                                        color: theme.palette.secondary.dark,
+                                        fontSize: { xs: '0.6rem', sm: '0.75rem' } // Adjust chip font size
+                                    }}
                                 />
                                 <Chip
                                     label={studentInfo.class}
                                     size="small"
-                                    // icon={<Class fontSize="small" />}
-                                    sx={{ bgcolor: alpha(theme.palette.info.light, 0.2) }}
-                                />
+                                    sx={{
+                                        bgcolor: alpha(theme.palette.info.main, 0.1),
+                                        color: theme.palette.info.dark,
+                                        fontSize: { xs: '0.6rem', sm: '0.75rem' }
+                                    }} />
                                 <Chip
                                     label={studentInfo.major}
                                     size="small"
-                                    // icon={<Home fontSize="small" />}
-                                    sx={{ bgcolor: alpha(theme.palette.success.light, 0.2) }}
+                                    sx={{
+                                        bgcolor: alpha(theme.palette.info.main, 0.1),
+                                        color: theme.palette.info.dark,
+                                        fontSize: { xs: '0.6rem', sm: '0.75rem' }
+                                    }} />
+                                <Chip
+                                    label={studentInfo.trainingLevel}
+                                    size="small"
+                                    sx={{
+                                        bgcolor: alpha(theme.palette.info.main, 0.1),
+                                        color: theme.palette.info.dark,
+                                        fontSize: { xs: '0.6rem', sm: '0.75rem' }
+                                    }}
                                 />
                             </Box>
                         </Box>
@@ -210,12 +233,12 @@ const StudentDetailModal = ({ openModal, handleCloseModal, studentInfo }) => {
                     <Box sx={{
                         display: 'flex',
                         flexDirection: { xs: 'column', md: 'row' }, // Stack on small, row on medium+
-                        gap: 3, // Gap between major sections
+                        gap: { xs: 2, sm: 3 }, // Adjust gap between major sections
                     }}>
                         {/* Personal Info Section */}
                         <Box sx={{
                             flex: 1, // Allows section to grow and shrink
-                            p: 2,
+                            p: { xs: 1.5, sm: 2 }, // Adjust padding
                             bgcolor: alpha(theme.palette.background.paper, 0.9), // Use paper color
                             borderRadius: 2,
                             border: `1px solid ${theme.palette.divider}`
@@ -224,7 +247,7 @@ const StudentDetailModal = ({ openModal, handleCloseModal, studentInfo }) => {
                             <Box sx={{
                                 display: 'flex',
                                 flexDirection: 'column',
-                                gap: 2, // Gap between InfoItems
+                                gap: { xs: 1.5, sm: 2 }, // Adjust gap between InfoItems
                             }}>
                                 <InfoItem icon={<CalendarToday />} label="Ngày sinh" value={studentInfo.dob} />
                                 <InfoItem icon={<Wc />} label="Giới tính" value={studentInfo.gender} />
@@ -242,7 +265,7 @@ const StudentDetailModal = ({ openModal, handleCloseModal, studentInfo }) => {
 
                         {/* Academic Info Section */}
                         <Box sx={{
-                            p: 2,
+                            p: { xs: 1.5, sm: 2 }, // Adjust padding
                             flex: 1,
                             bgcolor: alpha(theme.palette.background.paper, 0.9),
                             borderRadius: 2,
@@ -252,7 +275,7 @@ const StudentDetailModal = ({ openModal, handleCloseModal, studentInfo }) => {
                             <Box sx={{
                                 display: 'flex',
                                 flexDirection: 'column',
-                                gap: 2,
+                                gap: { xs: 1.5, sm: 2 },
                             }}>
                                 <InfoItem icon={<Class />} label="Lớp" value={studentInfo.class} />
                                 <InfoItem icon={<Grade />} label="Trình độ" value={studentInfo.trainingLevel} />
@@ -262,7 +285,7 @@ const StudentDetailModal = ({ openModal, handleCloseModal, studentInfo }) => {
 
                         {/* Contact Info Section */}
                         <Box sx={{
-                            p: 2,
+                            p: { xs: 1.5, sm: 2 }, // Adjust padding
                             flex: 1,
                             bgcolor: alpha(theme.palette.background.paper, 0.9),
                             borderRadius: 2,
@@ -272,7 +295,7 @@ const StudentDetailModal = ({ openModal, handleCloseModal, studentInfo }) => {
                             <Box sx={{
                                 display: 'flex',
                                 flexDirection: 'column',
-                                gap: 2,
+                                gap: { xs: 1.5, sm: 2 },
                             }}>
                                 <InfoItem icon={<Email />} label="Email" value={studentInfo.email} />
                                 <InfoItem icon={<Phone />} label="Điện thoại" value={studentInfo.phone} />
@@ -282,14 +305,15 @@ const StudentDetailModal = ({ openModal, handleCloseModal, studentInfo }) => {
                 </Box>
             </DialogContent>
 
-            <DialogActions sx={{ p: 3, justifyContent: 'flex-end' }}>
+            <DialogActions sx={{ p: { xs: 2, sm: 3 }, justifyContent: 'flex-end' }}>
                 <Button
                     onClick={handleCloseModal}
                     variant="outlined"
                     sx={{
                         borderRadius: 2,
-                        px: 3,
-                        textTransform: 'none'
+                        px: { xs: 2, sm: 3 },
+                        textTransform: 'none',
+                        fontSize: { xs: '0.8rem', sm: '0.875rem' } // Adjust button font size
                     }}
                 >
                     Đóng
@@ -298,12 +322,13 @@ const StudentDetailModal = ({ openModal, handleCloseModal, studentInfo }) => {
                     variant="contained"
                     sx={{
                         borderRadius: 2,
-                        px: 3,
+                        px: { xs: 2, sm: 3 },
                         textTransform: 'none',
                         bgcolor: theme.palette.primary.main,
                         '&:hover': {
                             bgcolor: theme.palette.primary.dark
-                        }
+                        },
+                        fontSize: { xs: '0.8rem', sm: '0.875rem' }
                     }}
                 >
                     In hồ sơ
