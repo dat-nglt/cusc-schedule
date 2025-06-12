@@ -11,6 +11,7 @@ import {
   MenuItem,
   Tooltip,
   TableSortLabel,
+  Chip,
 } from '@mui/material';
 import { Visibility, Edit, Delete, Menu as MenuIcon, ArrowDropDown } from '@mui/icons-material';
 
@@ -31,6 +32,28 @@ const RoomTable = ({ displayedRooms, isExtraSmallScreen, isSmallScreen, isMedium
   const handleCloseMenu = () => {
     setAnchorEl(null);
     setSelectedRowId(null);
+  };
+
+  // Hàm hiển thị trạng thái với màu sắc
+  const getStatusChip = (status) => {
+    const statusColors = {
+      'Hoạt động': { color: '#4caf50', bgcolor: '#e8f5e8' },
+      'Không hoạt động': { color: '#f57c00', bgcolor: '#fff3e0' },
+    };
+    const style = statusColors[status] || { color: '#757575', bgcolor: '#f5f5f5' };
+
+    return (
+      <Chip
+        label={status}
+        size="small"
+        sx={{
+          color: style.color,
+          bgcolor: style.bgcolor,
+          fontWeight: 'bold',
+          fontSize: '0.75rem'
+        }}
+      />
+    );
   };
 
   // Hàm xử lý sắp xếp
@@ -77,7 +100,7 @@ const RoomTable = ({ displayedRooms, isExtraSmallScreen, isSmallScreen, isMedium
             </TableCell>
           )}
           {/* Cột Tên phòng - Luôn hiển thị */}
-          <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: isSmallScreen ? '25%' : isMediumScreen ? '20%' : '15%' }}>
+          <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'left', borderRight: '1px solid #e0e0e0', width: isSmallScreen ? '25%' : isMediumScreen ? '20%' : '15%' }}>
             <TableSortLabel
               active={orderBy === 'tenPhongHoc'}
               direction={orderBy === 'tenPhongHoc' ? order : 'asc'}
@@ -179,7 +202,7 @@ const RoomTable = ({ displayedRooms, isExtraSmallScreen, isSmallScreen, isMedium
               </TableCell>
             )}
             {/* Cột Tên phòng - Luôn hiển thị */}
-            <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5, width: isSmallScreen ? '25%' : isMediumScreen ? '20%' : '15%' }}>
+            <TableCell sx={{ textAlign: 'left', borderRight: '1px solid #e0e0e0', py: 1.5, width: isSmallScreen ? '25%' : isMediumScreen ? '20%' : '15%' }}>
               {room.tenPhongHoc}
             </TableCell>
             {/* Cột Tòa nhà - Hiển thị khi >= 1400px */}
@@ -209,7 +232,7 @@ const RoomTable = ({ displayedRooms, isExtraSmallScreen, isSmallScreen, isMedium
             {/* Cột Trạng thái - Hiển thị khi >= 900px */}
             {!isSmallScreen && (
               <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5, width: isMediumScreen ? '25%' : '13%' }}>
-                {room.trangThai}
+                {getStatusChip(room.trangThai)}
               </TableCell>
             )}
             {/* Cột Thao tác - Luôn hiển thị */}

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import {
   Table,
@@ -11,6 +10,7 @@ import {
   Menu,
   MenuItem,
   Tooltip,
+  Chip,
 } from '@mui/material';
 import { Visibility, Edit, Delete, Menu as MenuIcon } from '@mui/icons-material';
 
@@ -31,8 +31,31 @@ const SlotTimeTable = ({ displayedSlotTimes, isExtraSmallScreen, isSmallScreen, 
     setSelectedRowId(null);
   };
 
+  // Hàm hiển thị buổi học với màu sắc
+  const getSessionChip = (session) => {
+    const sessionColors = {
+      'Sáng': { color: '#4caf50', bgcolor: '#e8f5e8' },
+      'Chiều': { color: '#f57c00', bgcolor: '#fff3e0' },
+      'Tối': { color: '#2196f3', bgcolor: '#e3f2fd' },
+    };
+    const style = sessionColors[session] || { color: '#757575', bgcolor: '#f5f5f5' };
+
+    return (
+      <Chip
+        label={session}
+        size="small"
+        sx={{
+          color: style.color,
+          bgcolor: style.bgcolor,
+          fontWeight: 'bold',
+          fontSize: '0.75rem',
+        }}
+      />
+    );
+  };
+
   return (
-    <Table sx={{ minWidth: isExtraSmallScreen ? 300 : isSmallScreen ? 400 : isMediumScreen ? 600 : 1000, border: '1px solid #e0e0e0' }}>
+    <Table sx={{ width: '100%', border: '1px solid #e0e0e0', tableLayout: 'auto' }}>
       <TableHead>
         <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
           <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0' }}>
@@ -41,7 +64,7 @@ const SlotTimeTable = ({ displayedSlotTimes, isExtraSmallScreen, isSmallScreen, 
           <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0' }}>
             Mã khung giờ
           </TableCell>
-          <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'left', borderRight: '1px solid #e0e0e0' }}>
+          <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0' }}>
             Tên khung giờ
           </TableCell>
           {!isSmallScreen && (
@@ -57,16 +80,6 @@ const SlotTimeTable = ({ displayedSlotTimes, isExtraSmallScreen, isSmallScreen, 
               <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0' }}>
                 Thời gian kết thúc
               </TableCell>
-              {!isMediumScreen && (
-                <>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0' }}>
-                    Thời gian tạo
-                  </TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0' }}>
-                    Thời gian cập nhật
-                  </TableCell>
-                </>
-              )}
             </>
           )}
           <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center' }}>
@@ -90,14 +103,14 @@ const SlotTimeTable = ({ displayedSlotTimes, isExtraSmallScreen, isSmallScreen, 
             <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
               {slotTime.maKhungGio}
             </TableCell>
-            <TableCell sx={{ textAlign: 'left', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
+            <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
               {slotTime.tenKhungGio}
             </TableCell>
             {!isSmallScreen && (
               <>
                 {!isMediumScreen && (
                   <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                    {slotTime.buoiHoc}
+                    {getSessionChip(slotTime.buoiHoc)}
                   </TableCell>
                 )}
                 <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
@@ -106,16 +119,6 @@ const SlotTimeTable = ({ displayedSlotTimes, isExtraSmallScreen, isSmallScreen, 
                 <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
                   {slotTime.thoiGianKetThuc}
                 </TableCell>
-                {!isMediumScreen && (
-                  <>
-                    <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                      {slotTime.thoiGianTao}
-                    </TableCell>
-                    <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                      {slotTime.thoiGianCapNhat}
-                    </TableCell>
-                  </>
-                )}
               </>
             )}
             <TableCell sx={{ textAlign: 'center', py: 1.5 }}>

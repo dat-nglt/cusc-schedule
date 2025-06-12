@@ -35,8 +35,8 @@ const CourseTable = ({ displayedCourses, isSmallScreen, isMediumScreen, handleVi
       sx={{
         minWidth: isSmallScreen ? 300 : isMediumScreen ? 500 : 650,
         border: '1px solid #e0e0e0',
-        width: '100%', // Đảm bảo bảng chiếm toàn bộ chiều rộng container
-        tableLayout: 'fixed', // Phân bổ không gian cố định
+        width: '100%',
+        tableLayout: 'fixed',
       }}
     >
       <TableHead>
@@ -45,37 +45,24 @@ const CourseTable = ({ displayedCourses, isSmallScreen, isMediumScreen, handleVi
             STT
           </TableCell>
           {!isSmallScreen && (
-            <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '15%' }}>
+            <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '20%' }}>
               Mã khóa học
             </TableCell>
           )}
-          <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'left', borderRight: '1px solid #e0e0e0', width: isSmallScreen ? '60%' : '20%' }}>
+          <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'left', borderRight: '1px solid #e0e0e0', width: isSmallScreen ? '50%' : '25%' }}>
             Tên khóa học
           </TableCell>
-          {!isSmallScreen && isMediumScreen && (
-            <>
-              <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '25%' }}>
-                Thời gian bắt đầu
-              </TableCell>
-              <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '30%' }}>
-                Thời gian cập nhật
-              </TableCell>
-            </>
+          {!isSmallScreen && (
+            <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '20%' }}>
+              Thời gian bắt đầu
+            </TableCell>
           )}
-          {!isMediumScreen && (
-            <>
-              <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '12.5%' }}>
-                Thời gian kết thúc
-              </TableCell>
-              <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '12.5%' }}>
-                Thời gian tạo
-              </TableCell>
-              <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '12.5%' }}>
-                Thời gian cập nhật
-              </TableCell>
-            </>
+          {!isSmallScreen && (
+            <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '20%' }}>
+              Thời gian kết thúc
+            </TableCell>
           )}
-          <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', width: isSmallScreen ? '30%' : '10%' }}>
+          <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', width: isSmallScreen ? '40%' : '15%' }}>
             Thao tác
           </TableCell>
         </TableRow>
@@ -94,37 +81,24 @@ const CourseTable = ({ displayedCourses, isSmallScreen, isMediumScreen, handleVi
               {course.stt}
             </TableCell>
             {!isSmallScreen && (
-              <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5, width: '15%' }}>
+              <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5, width: '20%' }}>
                 {course.maKhoaHoc}
               </TableCell>
             )}
-            <TableCell sx={{ textAlign: 'left', borderRight: '1px solid #e0e0e0', py: 1.5, width: isSmallScreen ? '60%' : '20%' }}>
+            <TableCell sx={{ textAlign: 'left', borderRight: '1px solid #e0e0e0', py: 1.5, width: isSmallScreen ? '50%' : '25%' }}>
               {course.tenKhoaHoc}
             </TableCell>
-            {!isSmallScreen && isMediumScreen && (
-              <>
-                <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5, width: '25%' }}>
-                  {course.thoiGianBatDau}
-                </TableCell>
-                <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5, width: '30%' }}>
-                  {course.thoiGianCapNhat}
-                </TableCell>
-              </>
+            {!isSmallScreen && (
+              <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5, width: '20%' }}>
+                {course.thoiGianBatDau}
+              </TableCell>
             )}
-            {!isMediumScreen && (
-              <>
-                <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5, width: '12.5%' }}>
-                  {course.thoiGianKetThuc}
-                </TableCell>
-                <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5, width: '12.5%' }}>
-                  {course.thoiGianTao}
-                </TableCell>
-                <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5, width: '12.5%' }}>
-                  {course.thoiGianCapNhat}
-                </TableCell>
-              </>
+            {!isSmallScreen && (
+              <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5, width: '20%' }}>
+                {course.thoiGianKetThuc}
+              </TableCell>
             )}
-            <TableCell sx={{ textAlign: 'center', py: 1.5, width: isSmallScreen ? '30%' : '10%' }}>
+            <TableCell sx={{ textAlign: 'center', py: 1.5, width: isSmallScreen ? '40%' : '15%' }}>
               {isSmallScreen ? (
                 <>
                   <Tooltip title="Thao tác">
