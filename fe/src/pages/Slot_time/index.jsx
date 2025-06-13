@@ -244,6 +244,7 @@ const SlotTime = () => {
         open={openAddModal}
         onClose={handleCloseAddModal}
         onAddSlotTime={handleAddNewSlotTime}
+        existingSlotTimes={slotTimes}
       />
       <EditSlotTimeModal
         open={openEditModal}

@@ -1,20 +1,13 @@
 import React, { useState } from 'react';
 import {
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    Typography,
-    TextField,
-    Button,
-    Box,
-    FormControl,
-    InputLabel,
-    Select,
-    MenuItem,
+    Dialog, DialogTitle, DialogContent, DialogActions,
+    Typography, TextField, Button, Box, FormControl,
+    InputLabel, Select, MenuItem
 } from '@mui/material';
+import UploadFileIcon from '@mui/icons-material/UploadFile';
+import * as XLSX from 'xlsx';
 
-export default function AddSubjectModal({ open, onClose, onAddSubject }) {
+export default function AddSubjectModal({ open, onClose, onAddSubject, existingSubjects = [] }) {
     const [newSubject, setNewSubject] = useState({
         maHocPhan: '',
         tenHocPhan: '',
@@ -36,6 +29,12 @@ export default function AddSubjectModal({ open, onClose, onAddSubject }) {
             newSubject.soTietThucHanh < 0
         ) {
             alert('Vui lòng điền đầy đủ thông tin hợp lệ!');
+            return;
+        }
+
+        const isDuplicate = existingSubjects.some(subject => subject.maHocPhan === newSubject.maHocPhan);
+        if (isDuplicate) {
+            alert(`Mã học phần "${newSubject.maHocPhan}" đã tồn tại!`);
             return;
         }
 
@@ -63,10 +62,73 @@ export default function AddSubjectModal({ open, onClose, onAddSubject }) {
         onClose();
     };
 
+    const handleImportExcel = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+            const data = evt.target.result;
+            const workbook = XLSX.read(data, { type: 'binary' });
+            const sheet = workbook.Sheets[workbook.SheetNames[0]];
+            const rows = XLSX.utils.sheet_to_json(sheet);
+
+            const imported = [];
+            const duplicated = [];
+
+            rows.forEach((row) => {
+                const maHocPhan = row['Mã học phần'];
+                if (existingSubjects.some(sub => sub.maHocPhan === maHocPhan)) {
+                    duplicated.push(maHocPhan);
+                } else {
+                    imported.push({
+                        id: Date.now() + Math.random(),
+                        stt: 0,
+                        maHocPhan,
+                        tenHocPhan: row['Tên học phần'],
+                        soTietLyThuyet: parseInt(row['Số tiết lý thuyết']) || 0,
+                        soTietThucHanh: parseInt(row['Số tiết thực hành']) || 0,
+                        trangThai: row['Trạng thái'] || 'Đang hoạt động',
+                        thoiGianTao: new Date().toISOString().slice(0, 19).replace('T', ' '),
+                        thoiGianCapNhat: new Date().toISOString().slice(0, 19).replace('T', ' '),
+                    });
+                }
+            });
+
+            if (duplicated.length > 0) {
+                alert(`Bỏ qua mã học phần đã tồn tại:\n${duplicated.join(', ')}`);
+            }
+
+            imported.forEach(onAddSubject);
+            onClose();
+        };
+
+        reader.readAsBinaryString(file);
+    };
+
     return (
         <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
             <DialogTitle>
-                <Typography variant="h6">Thêm học phần mới</Typography>
+                <Box display="flex" justifyContent="space-between" alignItems="center">
+                    Thêm học phần mới
+                    <label htmlFor="upload-subject-excel">
+                        <input
+                            id="upload-subject-excel"
+                            type="file"
+                            hidden
+                            accept=".xlsx, .xls"
+                            onChange={handleImportExcel}
+                        />
+                        <Button
+                            variant="outlined"
+                            component="span"
+                            size="small"
+                            startIcon={<UploadFileIcon />}
+                        >
+                            Thêm tự động
+                        </Button>
+                    </label>
+                </Box>
             </DialogTitle>
             <DialogContent>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
@@ -134,5 +196,5 @@ export default function AddSubjectModal({ open, onClose, onAddSubject }) {
                 </Button>
             </DialogActions>
         </Dialog>
-    )
+    );
 }
