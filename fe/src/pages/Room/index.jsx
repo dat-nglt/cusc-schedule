@@ -156,7 +156,12 @@ const Room = () => {
                     color="primary"
                     startIcon={<AddIcon />}
                     onClick={handleAddRoom}
-                    sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
+                    sx={{
+                      bgcolor: '#1976d2',
+                      '&:hover': { bgcolor: '#115293' },
+                      minWidth: isSmallScreen ? 100 : 150,
+                      height: '56px'
+                    }}
                   >
                     Thêm phòng
                   </Button>
@@ -226,10 +231,10 @@ const Room = () => {
           </CardContent>
         </Card>
       </Box>
-      <RoomDetailModal 
-        open={openDetail} 
-        onClose={handleCloseDetail} 
-        room={selectedRoom} 
+      <RoomDetailModal
+        open={openDetail}
+        onClose={handleCloseDetail}
+        room={selectedRoom}
       />
       <AddRoomModal
         open={openAddModal}

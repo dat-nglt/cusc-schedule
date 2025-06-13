@@ -175,7 +175,12 @@ const ClassSection = () => {
                     color="primary"
                     startIcon={<AddIcon />}
                     onClick={handleAddClassSection}
-                    sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
+                    sx={{
+                      bgcolor: '#1976d2',
+                      '&:hover': { bgcolor: '#115293' },
+                      minWidth: isSmallScreen ? 100 : 150,
+                      height: '56px'
+                    }}
                   >
                     Thêm lớp học phần
                   </Button>
