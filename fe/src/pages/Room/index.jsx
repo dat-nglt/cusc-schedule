@@ -235,6 +235,7 @@ const Room = () => {
         open={openAddModal}
         onClose={handleCloseAddModal}
         onAddRoom={handleAddNewRoom}
+        existingRooms={rooms}
       />
       <EditRoomModal
         open={openEditModal}

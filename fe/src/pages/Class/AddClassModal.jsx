@@ -10,9 +10,13 @@ import {
   Select,
   FormControl,
   InputLabel,
+  Box,
+  Typography,
 } from '@mui/material';
+import UploadFileIcon from '@mui/icons-material/UploadFile';
+import * as XLSX from 'xlsx';
 
-const AddClassModal = ({ open, onClose, onAddClass }) => {
+const AddClassModal = ({ open, onClose, onAddClass, existingClasses = [] }) => {
   const [formData, setFormData] = useState({
     maLopHoc: '',
     maHocVien: '',
@@ -21,22 +25,35 @@ const AddClassModal = ({ open, onClose, onAddClass }) => {
     trangThai: '',
   });
 
+  const [error, setError] = useState('');
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    setError('');
   };
 
   const handleSubmit = () => {
     if (!Object.values(formData).every((value) => value)) {
-      alert('Vui lòng điền đầy đủ thông tin!');
+      setError('Vui lòng điền đầy đủ thông tin!');
       return;
     }
+
+    const isDuplicate = existingClasses.some(
+      (cls) => cls.maLopHoc === formData.maLopHoc
+    );
+    if (isDuplicate) {
+      setError(`Mã lớp học "${formData.maLopHoc}" đã tồn tại!`);
+      return;
+    }
+
     onAddClass({
-      id: Date.now(), // Tạm dùng timestamp làm ID
+      id: Date.now(),
       ...formData,
       thoiGianTao: new Date().toISOString().slice(0, 16).replace('T', ' '),
       thoiGianCapNhat: new Date().toISOString().slice(0, 16).replace('T', ' '),
     });
+
     setFormData({
       maLopHoc: '',
       maHocVien: '',
@@ -47,10 +64,81 @@ const AddClassModal = ({ open, onClose, onAddClass }) => {
     onClose();
   };
 
+  const handleImportExcel = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      const data = evt.target.result;
+      const workbook = XLSX.read(data, { type: 'binary' });
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      const json = XLSX.utils.sheet_to_json(sheet);
+
+      const imported = [];
+      const duplicated = [];
+
+      json.forEach((row) => {
+        const maLopHoc = row['Mã lớp học'];
+        const isDuplicate = existingClasses.some((cls) => cls.maLopHoc === maLopHoc);
+
+        if (isDuplicate) {
+          duplicated.push(maLopHoc);
+        } else {
+          imported.push({
+            id: Date.now() + Math.random(),
+            maLopHoc,
+            maHocVien: row['Mã học viên'],
+            maKhoaHoc: row['Mã khóa học'],
+            siSoLop: row['Sĩ số lớp'],
+            trangThai: row['Trạng thái'],
+            thoiGianTao: new Date().toISOString().slice(0, 16).replace('T', ' '),
+            thoiGianCapNhat: new Date().toISOString().slice(0, 16).replace('T', ' '),
+          });
+        }
+      });
+
+      if (duplicated.length > 0) {
+        alert(`Các mã lớp học sau đã tồn tại và bị bỏ qua:\n${duplicated.join(', ')}`);
+      }
+
+      imported.forEach(onAddClass);
+      onClose();
+    };
+
+    reader.readAsBinaryString(file);
+  };
+
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle>Thêm lớp học</DialogTitle>
+      <DialogTitle>
+        <Box display="flex" justifyContent="space-between" alignItems="center">
+          Thêm lớp học
+          <label htmlFor="excel-upload">
+            <input
+              id="excel-upload"
+              type="file"
+              accept=".xlsx, .xls"
+              hidden
+              onChange={handleImportExcel}
+            />
+            <Button
+              variant="outlined"
+              component="span"
+              startIcon={<UploadFileIcon />}
+              size="small"
+            >
+              Thêm tự động
+            </Button>
+          </label>
+        </Box>
+      </DialogTitle>
       <DialogContent>
+        {error && (
+          <Typography color="error" sx={{ mb: 1 }}>
+            {error}
+          </Typography>
+        )}
         <TextField
           fullWidth
           margin="dense"

@@ -232,6 +232,7 @@ const Class = () => {
         open={openAddModal}
         onClose={handleCloseAddModal}
         onAddClass={handleAddNewClass}
+        existingClasses={classes}
       />
       <EditClassModal
         open={openEditModal}
