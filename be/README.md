@@ -230,7 +230,20 @@ npx sequelize-cli db:migrate:undo
 # Rollback tất cả migrations  
 npx sequelize-cli db:migrate:undo:all
 ```
+### Chạy dữ liệu mẫu với seeders
+```bash
+#tạo seeder trong file seeders
+npx sequelize-cli seed:generate --name <tên seeders>
 
+#LƯU Ý CHỈNH SỬA DỮ LIỆU TRONG SEEDERS PHÙ HỢP VỚI 
+
+#Chạy seeder
+npx sequelize-cli db:seed:all
+
+#Nếu muốn xóa seed
+npx sequelize-cli db:seed:undo:all
+
+```
 ## Trạng thái dự án
 
 **Đã hoàn thành:**
