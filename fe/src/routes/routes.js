@@ -9,12 +9,18 @@ const routes = [
     title: "Trình điều khiển",
     isPrivate: false,
     layout: MainLayout,
-  },
-  {
+  }, {
     path: "/login",
     component: "LoginPage",
     exact: true,
     title: "Đăng nhập",
+    isPrivate: false,
+  },
+  {
+    path: "/auth/callback",
+    component: "AuthCallback",
+    exact: true,
+    title: "Xử lý đăng nhập",
     isPrivate: false,
   },
   {
@@ -23,7 +29,7 @@ const routes = [
     exact: true,
     title: "Hồ sơ cá nhân",
     isPrivate: false,
-    layout: MainLayout, 
+    layout: MainLayout,
   },
   {
     path: "/student",
@@ -106,7 +112,7 @@ const routes = [
     isPrivate: false,
     layout: MainLayout,
   },
-    {
+  {
     path: "student/results",
     component: "StudentLearningResults",
     exact: true,

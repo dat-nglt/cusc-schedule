@@ -72,3 +72,29 @@ export const logout = (req, res) => {
     // For enhanced security, you could maintain a blacklist of tokens
     return APIResponse(res, 200, 'User logged out successfully');
 };
+
+// Handle Google OAuth callback
+export const googleCallback = async (req, res) => {
+    try {
+        const user = req.user;
+        if (!user) {
+            return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5000'}/login?error=authentication_failed`);
+        }
+
+        // Generate JWT token
+        const token = generateToken(user.user_id);
+
+        // Redirect to frontend with token
+        const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5000';
+        return res.redirect(`${frontendUrl}/auth/callback?token=${token}&user=${encodeURIComponent(JSON.stringify({
+            id: user.user_id,
+            name: user.name,
+            email: user.email,
+            role: user.role
+        }))}`);
+    } catch (error) {
+        console.error('Google callback error:', error);
+        const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+        return res.redirect(`${frontendUrl}/login?error=server_error`);
+    }
+};

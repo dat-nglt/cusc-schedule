@@ -187,9 +187,6 @@ psql -U postgres -c "CREATE DATABASE cusc_db;"
 # Chạy migrations để tạo tables
 npx sequelize-cli db:migrate
 
-# Hoặc sử dụng npm script (nếu available)
-npm run migrate
-
 # Rollback migrations (nếu cần)
 npx sequelize-cli db:migrate:undo:all
 ```

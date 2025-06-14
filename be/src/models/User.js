@@ -18,10 +18,14 @@ const User = sequelize.define('users', {
   }, phone_number: {
     type: DataTypes.STRING(20),
     allowNull: true
-  },
-  password: {
+  }, password: {
     type: DataTypes.STRING(1000),
     allowNull: true
+  },
+  google_id: {
+    type: DataTypes.STRING(100),
+    allowNull: true,
+    unique: true
   },
   day_of_birth: {
     type: DataTypes.DATEONLY,
