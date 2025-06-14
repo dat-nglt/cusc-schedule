@@ -14,7 +14,7 @@ export const getCurrentUser = async (req, res) => {
     try {
         const userInfo = req.userInfo;
         const { user, role } = userInfo;
-        
+
         return APIResponse(res, 200, {
             id: req.userId,
             name: user.name,

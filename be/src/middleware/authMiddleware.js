@@ -11,7 +11,7 @@ const authMiddleware = async (req, res, next) => {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        
+
         // Verify user still exists in database
         const userInfo = await findUserById(decoded.id);
         if (!userInfo) {

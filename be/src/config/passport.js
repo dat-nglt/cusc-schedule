@@ -1,11 +1,11 @@
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
-import { 
-    findUserByEmail, 
-    findUserByGoogleId, 
-    findUserById, 
-    updateUserGoogleId,
-    getUserId 
+import {
+  findUserByEmail,
+  findUserByGoogleId,
+  findUserById,
+  updateUserGoogleId,
+  getUserId
 } from "../services/userService.js";
 import dotenv from "dotenv";
 
@@ -27,11 +27,11 @@ passport.use(new GoogleStrategy({
 
       if (userInfo) {
         // User đã tồn tại với google_id này
-        return done(null, { 
-            user: userInfo.user, 
-            role: userInfo.role, 
-            model: userInfo.model,
-            id: getUserId(userInfo)
+        return done(null, {
+          user: userInfo.user,
+          role: userInfo.role,
+          model: userInfo.model,
+          id: getUserId(userInfo)
         });
       }
 
@@ -41,11 +41,11 @@ passport.use(new GoogleStrategy({
       if (userInfo) {
         // User tồn tại nhưng chưa có google_id, cập nhật google_id
         await updateUserGoogleId(userInfo, googleId);
-        return done(null, { 
-            user: userInfo.user, 
-            role: userInfo.role, 
-            model: userInfo.model,
-            id: getUserId(userInfo)
+        return done(null, {
+          user: userInfo.user,
+          role: userInfo.role,
+          model: userInfo.model,
+          id: getUserId(userInfo)
         });
       } else {
         // User không tồn tại trong hệ thống
@@ -73,9 +73,9 @@ passport.deserializeUser(async (sessionData, done) => {
   try {
     const userInfo = await findUserById(sessionData.id);
     if (userInfo) {
-      done(null, { 
-        user: userInfo.user, 
-        role: userInfo.role, 
+      done(null, {
+        user: userInfo.user,
+        role: userInfo.role,
         model: userInfo.model,
         id: getUserId(userInfo)
       });

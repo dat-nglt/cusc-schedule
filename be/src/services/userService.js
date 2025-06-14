@@ -6,7 +6,7 @@ export const getAllUsers = async () => {
         const lecturers = await Lecturer.findAll();
         const admins = await Admin.findAll();
         const trainingOfficers = await TrainingOfficer.findAll();
-        
+
         return {
             students,
             lecturers,
@@ -108,23 +108,23 @@ export const findUserById = async (id) => {
 // Service để cập nhật google_id cho user
 export const updateUserGoogleId = async (userInfo, googleId) => {
     const { user, model } = userInfo;
-    
+
     switch (model) {
         case 'Student':
-            return await Student.update({ google_id: googleId }, { 
-                where: { student_id: user.student_id } 
+            return await Student.update({ google_id: googleId }, {
+                where: { student_id: user.student_id }
             });
         case 'Lecturer':
-            return await Lecturer.update({ google_id: googleId }, { 
-                where: { lecturer_id: user.lecturer_id } 
+            return await Lecturer.update({ google_id: googleId }, {
+                where: { lecturer_id: user.lecturer_id }
             });
         case 'Admin':
-            return await Admin.update({ google_id: googleId }, { 
-                where: { admin_id: user.admin_id } 
+            return await Admin.update({ google_id: googleId }, {
+                where: { admin_id: user.admin_id }
             });
         case 'TrainingOfficer':
-            return await TrainingOfficer.update({ google_id: googleId }, { 
-                where: { staff_id: user.staff_id } 
+            return await TrainingOfficer.update({ google_id: googleId }, {
+                where: { staff_id: user.staff_id }
             });
         default:
             throw new Error('Invalid user model');
@@ -134,7 +134,7 @@ export const updateUserGoogleId = async (userInfo, googleId) => {
 // Service để lấy ID của user
 export const getUserId = (userInfo) => {
     const { user, model } = userInfo;
-    
+
     switch (model) {
         case 'Student':
             return user.student_id;

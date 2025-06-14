@@ -32,7 +32,7 @@ export const login = async (req, res) => {
 
         const userId = getUserId(userInfo);
         const token = generateToken(userId, role);
-        
+
         return APIResponse(res, 200, {
             token,
             user: {

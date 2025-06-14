@@ -19,13 +19,13 @@ async function startServer() {
     try {
         // Connect to database first
         await connectDB();
-        
+
         // Initialize models after database connection
         await import("./models/index.js");
-        
+
         // Initialize passport configuration after models
         await import("./config/passport.js");
-        
+
         app.use(session({
             secret: process.env.SESSION_SECRET || 'default-secret',
             resave: false,
@@ -49,7 +49,7 @@ async function startServer() {
         app.listen(port, () => {
             console.log(`Server is running on port ${port}`);
         });
-        
+
     } catch (error) {
         console.error('Failed to start server:', error);
         process.exit(1);
