@@ -8,7 +8,7 @@ const router = express.Router();
 const setupRoutes = (app) => {
     // app.use('/api/timetable', timetableRoutes);
     app.use('/auth', authRoutes);
-    app.use('/api/user', userRoutes);
+    app.use('/user', userRoutes);
 };
 
 export default setupRoutes;

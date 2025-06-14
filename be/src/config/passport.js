@@ -1,6 +1,12 @@
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
-import User from "../models/User.js";
+import { 
+    findUserByEmail, 
+    findUserByGoogleId, 
+    findUserById, 
+    updateUserGoogleId,
+    getUserId 
+} from "../services/userService.js";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -16,26 +22,35 @@ passport.use(new GoogleStrategy({
       const name = profile.displayName;
       const googleId = profile.id;
 
-      // Tìm user đã tồn tại
-      let user = await User.findOne({ where: { email } });
+      // Tìm user bằng google_id trước
+      let userInfo = await findUserByGoogleId(googleId);
 
-      if (user) {
-        // User đã tồn tại, cập nhật google_id nếu chưa có
-        if (!user.google_id) {
-          await user.update({ google_id: googleId });
-        }
-        return done(null, user);
-      } else {
-        // Tạo user mới từ Google
-        user = await User.create({
-          name: name,
-          email: email,
-          google_id: googleId,
-          role: 'student', // default role cho Google login
-          status: 'active',
-          password: null // Không cần password cho Google login
+      if (userInfo) {
+        // User đã tồn tại với google_id này
+        return done(null, { 
+            user: userInfo.user, 
+            role: userInfo.role, 
+            model: userInfo.model,
+            id: getUserId(userInfo)
         });
-        return done(null, user);
+      }
+
+      // Tìm user bằng email
+      userInfo = await findUserByEmail(email);
+
+      if (userInfo) {
+        // User tồn tại nhưng chưa có google_id, cập nhật google_id
+        await updateUserGoogleId(userInfo, googleId);
+        return done(null, { 
+            user: userInfo.user, 
+            role: userInfo.role, 
+            model: userInfo.model,
+            id: getUserId(userInfo)
+        });
+      } else {
+        // User không tồn tại trong hệ thống
+        // Chỉ cho phép đăng nhập nếu user đã được tạo trước trong hệ thống
+        return done(new Error('Email not found in system. Please contact administrator.'), null);
       }
     } catch (error) {
       console.error('Google OAuth error:', error);
@@ -45,15 +60,28 @@ passport.use(new GoogleStrategy({
 ));
 
 // Serialize user (save to session)
-passport.serializeUser((user, done) => {
-  done(null, user.user_id);
+passport.serializeUser((userObj, done) => {
+  done(null, {
+    id: userObj.id,
+    role: userObj.role,
+    model: userObj.model
+  });
 });
 
 // Deserialize user
-passport.deserializeUser(async (id, done) => {
+passport.deserializeUser(async (sessionData, done) => {
   try {
-    const user = await User.findByPk(id);
-    done(null, user);
+    const userInfo = await findUserById(sessionData.id);
+    if (userInfo) {
+      done(null, { 
+        user: userInfo.user, 
+        role: userInfo.role, 
+        model: userInfo.model,
+        id: getUserId(userInfo)
+      });
+    } else {
+      done(new Error('User not found'), null);
+    }
   } catch (error) {
     done(error, null);
   }

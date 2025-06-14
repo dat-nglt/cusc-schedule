@@ -49,7 +49,7 @@ const AuthCallback = () => {
             case 'lecturer':
                 return '/dashboard';
             case 'student':
-                return '/student-dashboard';
+                return '/student';
             default:
                 return '/dashboard';
         }
