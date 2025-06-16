@@ -7,7 +7,7 @@ module.exports = {
       {
         student_id: 'SV001',
         name: 'Nguyễn Văn A',
-        email: 'ptvu2100761@student.ctuet.edu.vn',
+        email: 'ptv@student.ctuet.edu.vn',
         day_of_birth: '2002-05-15',
         gender: 'Nam',
         address: 'Cần Thơ',
