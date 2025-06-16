@@ -327,6 +327,7 @@ const Program = () => {
                 open={openAddModal}
                 onClose={handleCloseAddModal}
                 onAddProgram={handleAddNewProgram}
+                existingPrograms={programs}
             />
             <EditProgramModal
                 open={openEditModal}

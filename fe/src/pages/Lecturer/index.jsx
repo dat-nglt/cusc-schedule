@@ -337,6 +337,7 @@ const Lecturer = () => {
                 open={openAddModal}
                 onClose={handleCloseAddModal}
                 onAddLecturer={handleAddNewLecturer}
+                existingLecturers={lecturers}
             />
             <EditLecturerModal
                 open={openEditModal}
