@@ -9,18 +9,18 @@ import {
   Box,
 } from '@mui/material';
 
-const DeleteRoomModal = ({ open, onClose, onDelete, room }) => {
+const DeleteLecturerModal = ({ open, onClose, onDelete, lecturer }) => {
   const handleDelete = () => {
-    onDelete(room.id);
+    onDelete(lecturer.id);
     onClose();
   };
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
-      <DialogTitle>Xác nhận xóa phòng học</DialogTitle>
+      <DialogTitle>Xác nhận xóa giảng viên</DialogTitle>
       <DialogContent>
         <Typography>
-          Bạn có muốn xóa phòng học với mã{' '}
+          Bạn có muốn xóa giảng viên với mã{' '}
           <Box
             component="span"
             sx={{
@@ -28,7 +28,7 @@ const DeleteRoomModal = ({ open, onClose, onDelete, room }) => {
               fontWeight: 'bold', // In đậm
             }}
           >
-            {room?.maPhongHoc}
+            {lecturer?.maGiangVien}
           </Box> không?
         </Typography>
       </DialogContent>
@@ -42,4 +42,4 @@ const DeleteRoomModal = ({ open, onClose, onDelete, room }) => {
   );
 };
 
-export default DeleteRoomModal;
+export default DeleteLecturerModal;

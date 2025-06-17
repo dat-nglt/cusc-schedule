@@ -247,6 +247,7 @@ const Course = () => {
         open={openAddModal}
         onClose={handleCloseAddModal}
         onAddCourse={handleAddNewCourse}
+        existingCourses={courses}
       />
       <EditCourseModal
         open={openEditModal}

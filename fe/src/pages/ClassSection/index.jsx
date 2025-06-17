@@ -254,6 +254,7 @@ const ClassSection = () => {
         open={openAddModal}
         onClose={handleCloseAddModal}
         onAddClassSection={handleAddNewClassSection}
+        existingClassSections={ClassSectiones}
       />
       <EditClassSectionModal
         open={openEditModal}
