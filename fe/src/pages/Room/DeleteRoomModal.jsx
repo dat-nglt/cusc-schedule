@@ -19,7 +19,7 @@ const DeleteRoomModal = ({ open, onClose, onDelete, room }) => {
       <DialogTitle>Xác nhận xóa phòng học</DialogTitle>
       <DialogContent>
         <Typography>
-          Bạn có muốn xóa phòng học này không?
+          Bạn có muốn xóa phòng học với mã <strong>{room?.maPhongHoc}</strong> không?
         </Typography>
       </DialogContent>
       <DialogActions>
