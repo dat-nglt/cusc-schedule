@@ -75,6 +75,14 @@ const routes = [
     layout: MainLayout,
   },
   {
+    path: "/notification",
+    component: "Notification",
+    exact: false,
+    title: "Thông báo",
+    isPrivate: false,
+    layout: MainLayout,
+  },
+  {
     path: "/lecturers",
     component: "Lecturer",
     exact: true,
@@ -122,6 +130,7 @@ const routes = [
     isPrivate: false,
     layout: LayoutJustHeader,
   },
+  
 ];
 
 export default routes;
