@@ -21,6 +21,7 @@ import {
 import AddStudentModal from './AddStudentModal';
 import StudentDetailModal from './StudentDetailModal';
 import EditStudentModal from './EditStudentModal';
+import DeleteStudentModal from './DeleteStudentModal';
 import useResponsive from '../../hooks/useResponsive';
 import StudentTable from './StudentTable';
 
@@ -150,7 +151,9 @@ const Student = () => {
     const [selectedStudent, setSelectedStudent] = useState(null);
     const [openAddModal, setOpenAddModal] = useState(false);
     const [openEditModal, setOpenEditModal] = useState(false);
+    const [openDeleteModal, setOpenDeleteModal] = useState(false);
     const [editedStudent, setEditedStudent] = useState(null);
+    const [studentToDelete, setStudentToDelete] = useState(null);
 
     // Danh sách trạng thái để lọc
     const statuses = ['Đang học', 'Tạm nghỉ', 'Tốt nghiệp', 'Bảo lưu'];
@@ -209,14 +212,32 @@ const Student = () => {
 
     // Hàm xử lý xóa học viên
     const handleDeleteStudent = (id) => {
-        console.log(`Xóa học viên với ID: ${id}`);
-        // Thêm logic xóa học viên
+        const student = students.find((s) => s.id === id);
+        setStudentToDelete(student);
+        setOpenDeleteModal(true);
+    };
+
+    // Hàm xác nhận xóa học viên
+    const confirmDeleteStudent = (id) => {
+        setStudents((prevStudents) => {
+            const updatedStudents = prevStudents.filter((student) => student.id !== id)
+                .map((student, index) => ({ ...student, stt: index + 1 }));
+            return updatedStudents;
+        });
+        setOpenDeleteModal(false);
+        setStudentToDelete(null);
     };
 
     // Hàm đóng modal chi tiết
     const handleCloseDetail = () => {
         setOpenDetail(false);
         setSelectedStudent(null);
+    };
+
+    // Hàm đóng modal xóa
+    const handleCloseDeleteModal = () => {
+        setOpenDeleteModal(false);
+        setStudentToDelete(null);
     };
 
     // Lọc danh sách học viên dựa trên từ khóa tìm kiếm và trạng thái
@@ -238,7 +259,7 @@ const Student = () => {
     const displayedStudents = filteredStudents.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
     return (
-        <Box sx={{ p: 3, zIndex: 10, height: 'calc(100vh - 64px)', overflowY: 'auto' }}>
+        <Box sx={{ p: 3, zIndex: 10, height: 'calc(100vh -.64px)', overflowY: 'auto' }}>
             {/* Main Content */}
             <Box sx={{ width: '100%', mb: 3 }}>
                 {/* Bảng danh sách học viên */}
@@ -255,7 +276,7 @@ const Student = () => {
                                         onClick={handleAddStudent}
                                         sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
                                     >
-                                        <AddIcon sx={{ color: '#fff' }} />
+                                        <AddIcon sx={{ color: '# philanthropic' }} />
                                     </IconButton>
                                 ) : (
                                     <Button
@@ -345,6 +366,12 @@ const Student = () => {
                 onClose={handleCloseEditModal}
                 student={editedStudent}
                 onSave={handleSaveEditedStudent}
+            />
+            <DeleteStudentModal
+                open={openDeleteModal}
+                onClose={handleCloseDeleteModal}
+                onDelete={confirmDeleteStudent}
+                student={studentToDelete}
             />
         </Box>
     );

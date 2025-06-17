@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import {
   Box,
@@ -22,6 +21,7 @@ import {
 import CourseDetailModal from './CourseDetailModal';
 import AddCourseModal from './AddCourseModal';
 import EditCourseModal from './EditCourseModal';
+import DeleteCourseModal from './DeleteCourseModal';
 import useResponsive from '../../hooks/useResponsive';
 import CourseTable from './CourseTable';
 
@@ -42,7 +42,7 @@ const Course = () => {
     { id: 10, stt: 10, maKhoaHoc: 'MET2501', tenKhoaHoc: 'Công nghệ kỹ thuật cơ điện tử', thoiGianBatDau: '2025-06-28', thoiGianKetThuc: '2025-07-28', thoiGianTao: '2025-05-24 09:10', thoiGianCapNhat: '2025-05-29 14:50' },
     { id: 11, stt: 11, maKhoaHoc: 'CET2501', tenKhoaHoc: 'Công nghệ kỹ thuật công trình xây dựng', thoiGianBatDau: '2025-07-01', thoiGianKetThuc: '2025-08-01', thoiGianTao: '2025-05-25 10:40', thoiGianCapNhat: '2025-05-30 11:30' },
     { id: 12, stt: 12, maKhoaHoc: 'BT2501', tenKhoaHoc: 'Công nghệ sinh học', thoiGianBatDau: '2025-07-03', thoiGianKetThuc: '2025-08-03', thoiGianTao: '2025-05-26 13:25', thoiGianCapNhat: '2025-06-01 10:45' },
-    { id: 13, stt: 13, maKhoaHoc: 'DS2501', tenKhoaHoc: 'Khoa học dữ liệu', thoiGianBatDau: '2025-07-05', thoiGianKetThuc: '2025-08-5', thoiGianTao: '2025-05-27 15:10', thoiGianCapNhat: '2025-06-02 09:35' },
+    { id: 13, stt: 13, maKhoaHoc: 'DS2501', tenKhoaHoc: 'Khoa học dữ liệu', thoiGianBatDau: '2025-07-05', thoiGianKetThuc: '2025-08-05', thoiGianTao: '2025-05-27 15:10', thoiGianCapNhat: '2025-06-02 09:35' },
     { id: 14, stt: 14, maKhoaHoc: 'LSCM2501', tenKhoaHoc: 'Logistics và quản lý chuỗi cung ứng', thoiGianBatDau: '2025-07-07', thoiGianKetThuc: '2025-08-07', thoiGianTao: '2025-05-28 16:45', thoiGianCapNhat: '2025-06-03 14:15' },
     { id: 15, stt: 15, maKhoaHoc: 'IT2501', tenKhoaHoc: 'Công nghệ thông tin', thoiGianBatDau: '2025-07-09', thoiGianKetThuc: '2025-08-09', thoiGianTao: '2025-05-29 09:30', thoiGianCapNhat: '2025-06-04 11:20' },
     { id: 16, stt: 16, maKhoaHoc: 'EET2501', tenKhoaHoc: 'Công nghệ kỹ thuật năng lượng', thoiGianBatDau: '2025-07-11', thoiGianKetThuc: '2025-08-11', thoiGianTao: '2025-05-30 10:50', thoiGianCapNhat: '2025-06-05 08:40' },
@@ -61,7 +61,9 @@ const Course = () => {
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [openAddModal, setOpenAddModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [editedCourse, setEditedCourse] = useState(null);
+  const [courseToDelete, setCourseToDelete] = useState(null);
 
   // Danh sách năm để lọc
   const years = ['2021', '2022', '2023', '2024', '2025'];
@@ -120,14 +122,32 @@ const Course = () => {
 
   // Hàm xử lý xóa khóa học
   const handleDeleteCourse = (id) => {
-    console.log(`Xóa khóa học với ID: ${id}`);
-    // Thêm logic xóa khóa học
+    const course = courses.find((c) => c.id === id);
+    setCourseToDelete(course); // Sửa: Sử dụng setCourseToDelete để thiết lập khóa học
+    setOpenDeleteModal(true);
+  };
+
+  // Hàm xác nhận xóa khóa học
+  const confirmDeleteCourse = (id) => {
+    setCourses((prevCourses) => {
+      const updatedCourses = prevCourses.filter((course) => course.id !== id)
+        .map((course, index) => ({ ...course, stt: index + 1 }));
+      return updatedCourses;
+    });
+    setOpenDeleteModal(false);
+    setCourseToDelete(null);
   };
 
   // Hàm đóng modal chi tiết
   const handleCloseDetail = () => {
     setOpenDetail(false);
     setSelectedCourse(null);
+  };
+
+  // Hàm đóng modal xóa
+  const handleCloseDeleteModal = () => {
+    setOpenDeleteModal(false);
+    setCourseToDelete(null);
   };
 
   // Lọc danh sách khóa học dựa trên từ khóa tìm kiếm và năm
@@ -254,6 +274,12 @@ const Course = () => {
         onClose={handleCloseEditModal}
         course={editedCourse}
         onSave={handleSaveEditedCourse}
+      />
+      <DeleteCourseModal
+        open={openDeleteModal}
+        onClose={handleCloseDeleteModal}
+        onDelete={confirmDeleteCourse}
+        course={courseToDelete}
       />
     </Box>
   );

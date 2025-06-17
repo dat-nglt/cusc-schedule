@@ -18,6 +18,7 @@ import { Add as AddIcon, Search as SearchIcon } from '@mui/icons-material';
 import ClassSectionDetailModal from './ClassSectionDetailModal';
 import AddClassSectionModal from './AddClassSectionModal';
 import EditClassSectionModal from './EditClassSectionModal';
+import DeleteClassSectionModal from './DeleteClassSectionModal';
 import useResponsive from '../../hooks/useResponsive';
 import ClassSectionTable from './ClassSectionTable';
 
@@ -52,17 +53,18 @@ const ClassSection = () => {
     { id: 24, stt: 24, maLopHocPhan: 'LHP124', maLopHoc: 'LH124', maHocPhan: 'HP024', tenLopHocPhan: 'Lập Trình NodeJS', siSoToiDa: 40, trangThai: 'Hoạt động', thoiGianTao: '2025-06-24 10:45', thoiGianCapNhat: '2025-06-28 14:25' }
   ]);
 
-
   // State cho phân trang, tìm kiếm, lọc theo trạng thái và modal
   const [page, setPage] = useState(0);
   const [rowsPerPage] = useState(8);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTrangThai, setSelectedTrangThai] = useState('');
-  const [openDetail, setOpenDetail] = useState(false);
+  const [openDetailModal, setOpenDetailModal] = useState(false);
   const [selectedClassSection, setSelectedClassSection] = useState(null);
   const [openAddModal, setOpenAddModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
   const [editedClassSection, setEditedClassSection] = useState(null);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [classSectionToDelete, setClassSectionToDelete] = useState(null);
 
   // Danh sách trạng thái để lọc
   const trangThaiOptions = ['Hoạt động', 'Không hoạt động'];
@@ -116,19 +118,38 @@ const ClassSection = () => {
   const handleViewClassSection = (id) => {
     const cls = ClassSectiones.find((c) => c.id === id);
     setSelectedClassSection(cls);
-    setOpenDetail(true);
+    setOpenDetailModal(true);
   };
 
   // Hàm xử lý xóa lớp học phần
   const handleDeleteClassSection = (id) => {
-    console.log(`Xóa lớp học phần với ID: ${id}`);
-    // Thêm logic xóa lớp học phần
+    const cls = ClassSectiones.find((c) => c.id === id);
+    setClassSectionToDelete(cls);
+    setOpenDeleteModal(true);
+  };
+
+  // Hàm xử lý xác nhận xóa lớp học phần
+  const handleConfirmDelete = (id) => {
+    setClassSectiones((prevClassSectiones) =>
+      prevClassSectiones.filter((cls) => cls.id !== id).map((cls, index) => ({
+        ...cls,
+        stt: index + 1,
+      }))
+    );
+    setOpenDeleteModal(false);
+    setClassSectionToDelete(null);
   };
 
   // Hàm đóng modal chi tiết
-  const handleCloseDetail = () => {
-    setOpenDetail(false);
+  const handleCloseDetailModal = () => {
+    setOpenDetailModal(false);
     setSelectedClassSection(null);
+  };
+
+  // Hàm đóng modal xóa
+  const handleCloseDeleteModal = () => {
+    setOpenDeleteModal(false);
+    setClassSectionToDelete(null);
   };
 
   // Lọc danh sách lớp học phần dựa trên từ khóa tìm kiếm và trạng thái
@@ -246,8 +267,8 @@ const ClassSection = () => {
         </Card>
       </Box>
       <ClassSectionDetailModal
-        open={openDetail}
-        onClose={handleCloseDetail}
+        open={openDetailModal}
+        onClose={handleCloseDetailModal}
         cls={selectedClassSection}
       />
       <AddClassSectionModal
@@ -261,6 +282,12 @@ const ClassSection = () => {
         onClose={handleCloseEditModal}
         cls={editedClassSection}
         onSave={handleSaveEditedClassSection}
+      />
+      <DeleteClassSectionModal
+        open={openDeleteModal}
+        onClose={handleCloseDeleteModal}
+        onDelete={handleConfirmDelete}
+        cls={classSectionToDelete}
       />
     </Box>
   );
