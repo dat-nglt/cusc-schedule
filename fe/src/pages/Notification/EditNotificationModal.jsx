@@ -10,54 +10,47 @@ import {
   Select,
   FormControl,
   InputLabel,
-  Typography,
 } from '@mui/material';
 
 const EditNotificationModal = ({ open, onClose, notification, onSave }) => {
   const [formData, setFormData] = useState({
     id: '',
     maThongBao: '',
-    tieuDe: '',
-    noiDung: '',
+    tieuDeNoiDung: '',
     loaiThongBao: '',
     mucDoUuTien: '',
     kenhGui: '',
     thoiGianGui: '',
   });
-  const [error, setError] = useState('');
 
   useEffect(() => {
     if (notification) {
       setFormData({
         id: notification.id,
         maThongBao: notification.maThongBao,
-        tieuDe: notification.tieuDe,
-        noiDung: notification.noiDung,
+        tieuDeNoiDung: notification.tieuDeNoiDung,
         loaiThongBao: notification.loaiThongBao,
         mucDoUuTien: notification.mucDoUuTien,
         kenhGui: notification.kenhGui,
         thoiGianGui: notification.thoiGianGui,
       });
-      setError('');
     }
   }, [notification]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    setError('');
   };
 
   const handleSubmit = () => {
     if (!Object.values(formData).every((value) => value)) {
-      setError('Vui lòng điền đầy đủ thông tin!');
+      alert('Vui lòng điền đầy đủ thông tin!');
       return;
     }
     onSave({
       ...formData,
       thoiGianCapNhat: new Date().toISOString().slice(0, 16).replace('T', ' '),
     });
-    setError('');
     onClose();
   };
 
@@ -81,11 +74,6 @@ const EditNotificationModal = ({ open, onClose, notification, onSave }) => {
           padding: 2,
         }}
       >
-        {error && (
-          <Typography color="error" sx={{ mb: 2 }}>
-            {error}
-          </Typography>
-        )}
         <TextField
           fullWidth
           margin="normal"
@@ -97,19 +85,9 @@ const EditNotificationModal = ({ open, onClose, notification, onSave }) => {
         <TextField
           fullWidth
           margin="normal"
-          label="Tiêu đề"
-          name="tieuDe"
-          value={formData.tieuDe}
-          onChange={handleChange}
-        />
-        <TextField
-          fullWidth
-          margin="normal"
-          label="Nội dung"
-          name="noiDung"
-          multiline
-          rows={4}
-          value={formData.noiDung}
+          label="Tiêu đề nội dung"
+          name="tieuDeNoiDung"
+          value={formData.tieuDeNoiDung}
           onChange={handleChange}
         />
         <FormControl fullWidth margin="normal">
@@ -121,9 +99,9 @@ const EditNotificationModal = ({ open, onClose, notification, onSave }) => {
             onChange={handleChange}
             label="Loại thông báo"
           >
-            <MenuItem value="Họp lớp">Họp lớp</MenuItem>
-            <MenuItem value="Lịch học">Lịch học</MenuItem>
             <MenuItem value="Sự kiện">Sự kiện</MenuItem>
+            <MenuItem value="Học tập">Học tập</MenuItem>
+            <MenuItem value="Hành chính">Hành chính</MenuItem>
           </Select>
         </FormControl>
         <FormControl fullWidth margin="normal">
@@ -150,7 +128,8 @@ const EditNotificationModal = ({ open, onClose, notification, onSave }) => {
             label="Kênh gửi"
           >
             <MenuItem value="Email">Email</MenuItem>
-            <MenuItem value="Website">Website</MenuItem>
+            <MenuItem value="App">App</MenuItem>
+            <MenuItem value="SMS">SMS</MenuItem>
           </Select>
         </FormControl>
         <TextField
@@ -165,8 +144,8 @@ const EditNotificationModal = ({ open, onClose, notification, onSave }) => {
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} aria-label="Hủy chỉnh sửa thông báo">Hủy</Button>
-        <Button onClick={handleSubmit} variant="contained" color="primary" aria-label="Lưu thông báo">
+        <Button onClick={onClose}>Hủy</Button>
+        <Button onClick={handleSubmit} variant="contained" color="primary">
           Lưu
         </Button>
       </DialogActions>

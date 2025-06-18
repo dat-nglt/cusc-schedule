@@ -10,17 +10,17 @@ import {
   Select,
   FormControl,
   InputLabel,
+  IconButton,
   Box,
   Typography,
 } from '@mui/material';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import * as XLSX from 'xlsx';
 
-const AddNotificationModal = ({ open, onClose, onAddNotification, existingNotifications = [] }) => {
+const AddNotificationModal = ({ open, onClose, onAddNotification, existingNotifications }) => {
   const [formData, setFormData] = useState({
     maThongBao: '',
-    tieuDe: '',
-    noiDung: '',
+    tieuDeNoiDung: '',
     loaiThongBao: '',
     mucDoUuTien: '',
     kenhGui: '',
@@ -42,7 +42,7 @@ const AddNotificationModal = ({ open, onClose, onAddNotification, existingNotifi
     }
 
     const isDuplicate = existingNotifications.some(
-      (notif) => notif.maThongBao === formData.maThongBao
+      (notification) => notification.maThongBao === formData.maThongBao
     );
     if (isDuplicate) {
       setError(`Mã thông báo "${formData.maThongBao}" đã tồn tại!`);
@@ -58,14 +58,13 @@ const AddNotificationModal = ({ open, onClose, onAddNotification, existingNotifi
 
     setFormData({
       maThongBao: '',
-      tieuDe: '',
-      noiDung: '',
+      tieuDeNoiDung: '',
       loaiThongBao: '',
       mucDoUuTien: '',
       kenhGui: '',
       thoiGianGui: '',
     });
-    setError('');
+
     onClose();
   };
 
@@ -85,16 +84,17 @@ const AddNotificationModal = ({ open, onClose, onAddNotification, existingNotifi
 
       json.forEach((row) => {
         const maThongBao = row['Mã thông báo'];
-        const isDuplicate = existingNotifications.some((notif) => notif.maThongBao === maThongBao);
+        const isDuplicate = existingNotifications.some(
+          (notification) => notification.maThongBao === maThongBao
+        );
 
         if (isDuplicate) {
           duplicated.push(maThongBao);
-        } else if (row['Mã thông báo'] && row['Tiêu đề'] && row['Nội dung'] && row['Loại thông báo'] && row['Mức độ ưu tiên'] && row['Kênh gửi'] && row['Thời gian gửi']) {
+        } else {
           imported.push({
             id: Date.now() + Math.random(),
-            maThongBao: row['Mã thông báo'],
-            tieuDe: row['Tiêu đề'],
-            noiDung: row['Nội dung'],
+            maThongBao,
+            tieuDeNoiDung: row['Tiêu đề nội dung'],
             loaiThongBao: row['Loại thông báo'],
             mucDoUuTien: row['Mức độ ưu tiên'],
             kenhGui: row['Kênh gửi'],
@@ -106,7 +106,9 @@ const AddNotificationModal = ({ open, onClose, onAddNotification, existingNotifi
       });
 
       if (duplicated.length > 0) {
-        alert(`Các mã thông báo sau đã tồn tại và bị bỏ qua:\n${duplicated.join(', ')}`);
+        alert(
+          `Các mã thông báo sau đã tồn tại và bị bỏ qua:\n${duplicated.join(', ')}`
+        );
       }
 
       imported.forEach(onAddNotification);
@@ -134,7 +136,6 @@ const AddNotificationModal = ({ open, onClose, onAddNotification, existingNotifi
               component="span"
               startIcon={<UploadFileIcon />}
               size="small"
-              aria-label="Thêm thông báo từ file Excel"
             >
               Thêm tự động
             </Button>
@@ -158,19 +159,9 @@ const AddNotificationModal = ({ open, onClose, onAddNotification, existingNotifi
         <TextField
           fullWidth
           margin="dense"
-          label="Tiêu đề"
-          name="tieuDe"
-          value={formData.tieuDe}
-          onChange={handleChange}
-        />
-        <TextField
-          fullWidth
-          margin="dense"
-          label="Nội dung"
-          name="noiDung"
-          multiline
-          rows={4}
-          value={formData.noiDung}
+          label="Tiêu đề nội dung"
+          name="tieuDeNoiDung"
+          value={formData.tieuDeNoiDung}
           onChange={handleChange}
         />
         <FormControl fullWidth margin="dense">
@@ -182,9 +173,9 @@ const AddNotificationModal = ({ open, onClose, onAddNotification, existingNotifi
             onChange={handleChange}
             label="Loại thông báo"
           >
-            <MenuItem value="Họp lớp">Họp lớp</MenuItem>
-            <MenuItem value="Lịch học">Lịch học</MenuItem>
             <MenuItem value="Sự kiện">Sự kiện</MenuItem>
+            <MenuItem value="Học tập">Học tập</MenuItem>
+            <MenuItem value="Hành chính">Hành chính</MenuItem>
           </Select>
         </FormControl>
         <FormControl fullWidth margin="dense">
@@ -211,7 +202,8 @@ const AddNotificationModal = ({ open, onClose, onAddNotification, existingNotifi
             label="Kênh gửi"
           >
             <MenuItem value="Email">Email</MenuItem>
-            <MenuItem value="Website">Website</MenuItem>
+            <MenuItem value="App">App</MenuItem>
+            <MenuItem value="SMS">SMS</MenuItem>
           </Select>
         </FormControl>
         <TextField
@@ -226,8 +218,8 @@ const AddNotificationModal = ({ open, onClose, onAddNotification, existingNotifi
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} aria-label="Hủy thêm thông báo">Hủy</Button>
-        <Button onClick={handleSubmit} variant="contained" color="primary" aria-label="Thêm thông báo">
+        <Button onClick={onClose}>Hủy</Button>
+        <Button onClick={handleSubmit} variant="contained" color="primary">
           Thêm
         </Button>
       </DialogActions>

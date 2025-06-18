@@ -13,11 +13,10 @@ import {
 } from '@mui/material';
 import {
   Code as CodeIcon,
-  Title as TitleIcon,
-  Description as DescriptionIcon,
+  Label as LabelIcon,
   Category as CategoryIcon,
   PriorityHigh as PriorityIcon,
-  Email as EmailIcon,
+  Send as SendIcon,
   Event as EventIcon,
   Update as UpdateIcon,
 } from '@mui/icons-material';
@@ -40,6 +39,7 @@ const getValueOrDefault = (value) => value || 'Không có dữ liệu';
 const NotificationDetailModal = ({ open, onClose, notification }) => {
   if (!notification) return null;
 
+  // Hàm sao chép mã thông báo
   const handleCopyMaThongBao = () => {
     navigator.clipboard.writeText(notification.maThongBao);
     alert('Đã sao chép mã thông báo!');
@@ -75,7 +75,6 @@ const NotificationDetailModal = ({ open, onClose, notification }) => {
           <IconButton
             onClick={handleCopyMaThongBao}
             sx={{ color: '#fff' }}
-            aria-label="Sao chép mã thông báo"
           >
             <CodeIcon />
           </IconButton>
@@ -83,6 +82,7 @@ const NotificationDetailModal = ({ open, onClose, notification }) => {
       </DialogTitle>
       <DialogContent sx={{ mt: 2, px: 3 }}>
         <Grid container spacing={2}>
+          {/* Mã thông báo */}
           <Grid item xs={12}>
             <Box
               sx={{
@@ -105,6 +105,8 @@ const NotificationDetailModal = ({ open, onClose, notification }) => {
               </Box>
             </Box>
           </Grid>
+
+          {/* Tiêu đề nội dung */}
           <Grid item xs={12}>
             <Box
               sx={{
@@ -116,39 +118,19 @@ const NotificationDetailModal = ({ open, onClose, notification }) => {
                 border: '1px solid #e0e0e0',
               }}
             >
-              <TitleIcon sx={{ mr: 1, color: '#1976d2' }} />
+              <LabelIcon sx={{ mr: 1, color: '#1976d2' }} />
               <Box>
                 <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#333' }}>
-                  Tiêu đề
+                  Tiêu đề nội dung
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#666' }}>
-                  {getValueOrDefault(notification.tieuDe)}
+                  {getValueOrDefault(notification.tieuDeNoiDung)}
                 </Typography>
               </Box>
             </Box>
           </Grid>
-          <Grid item xs={12}>
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                bgcolor: '#f9f9f9',
-                p: 2,
-                borderRadius: 1,
-                border: '1px solid #e0e0e0',
-              }}
-            >
-              <DescriptionIcon sx={{ mr: 1, color: '#1976d2' }} />
-              <Box>
-                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#333' }}>
-                  Nội dung
-                </Typography>
-                <Typography variant="body1" sx={{ color: '#666' }}>
-                  {getValueOrDefault(notification.noiDung)}
-                </Typography>
-              </Box>
-            </Box>
-          </Grid>
+
+          {/* Loại thông báo */}
           <Grid item xs={6}>
             <Box
               sx={{
@@ -171,6 +153,8 @@ const NotificationDetailModal = ({ open, onClose, notification }) => {
               </Box>
             </Box>
           </Grid>
+
+          {/* Mức độ ưu tiên */}
           <Grid item xs={6}>
             <Box
               sx={{
@@ -182,7 +166,7 @@ const NotificationDetailModal = ({ open, onClose, notification }) => {
                 border: '1px solid #e0e0e0',
               }}
             >
-              <PriorityHighIcon sx={{ mr: 1, color: '#1976d2' }} />
+              <PriorityIcon sx={{ mr: 1, color: '#1976d2' }} />
               <Box>
                 <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#333' }}>
                   Mức độ ưu tiên
@@ -193,6 +177,8 @@ const NotificationDetailModal = ({ open, onClose, notification }) => {
               </Box>
             </Box>
           </Grid>
+
+          {/* Kênh gửi */}
           <Grid item xs={6}>
             <Box
               sx={{
@@ -204,7 +190,7 @@ const NotificationDetailModal = ({ open, onClose, notification }) => {
                 border: '1px solid #e0e0e0',
               }}
             >
-              <EmailIcon sx={{ mr: 1, color: '#1976d2' }} />
+              <SendIcon sx={{ mr: 1, color: '#1976d2' }} />
               <Box>
                 <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#333' }}>
                   Kênh gửi
@@ -215,6 +201,8 @@ const NotificationDetailModal = ({ open, onClose, notification }) => {
               </Box>
             </Box>
           </Grid>
+
+          {/* Thời gian gửi */}
           <Grid item xs={6}>
             <Box
               sx={{
@@ -237,6 +225,8 @@ const NotificationDetailModal = ({ open, onClose, notification }) => {
               </Box>
             </Box>
           </Grid>
+
+          {/* Thời gian tạo */}
           <Grid item xs={6}>
             <Box
               sx={{
@@ -259,6 +249,8 @@ const NotificationDetailModal = ({ open, onClose, notification }) => {
               </Box>
             </Box>
           </Grid>
+
+          {/* Thời gian cập nhật */}
           <Grid item xs={6}>
             <Box
               sx={{
@@ -294,7 +286,6 @@ const NotificationDetailModal = ({ open, onClose, notification }) => {
             borderRadius: 1,
             px: 3,
           }}
-          aria-label="Đóng modal chi tiết"
         >
           Đóng
         </Button>
