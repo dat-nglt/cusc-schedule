@@ -1,4 +1,4 @@
-
+// src/pages/Course/CourseDetailModal.jsx
 import React from 'react';
 import {
   Dialog,
@@ -26,7 +26,7 @@ const formatDateTime = (dateTime) => {
   try {
     const [date, time] = dateTime.split(' ');
     const [year, month, day] = date.split('-');
-    return `${day}/${month}/${year} ${time}`;
+    return `${day}/${month}/${year} ${time || ''}`;
   } catch {
     return 'Không hợp lệ';
   }
@@ -40,7 +40,7 @@ const CourseDetailModal = ({ open, onClose, course }) => {
 
   // Hàm sao chép mã khóa học
   const handleCopyMaKhoaHoc = () => {
-    navigator.clipboard.writeText(course.maKhoaHoc);
+    navigator.clipboard.writeText(course.courseid);
     alert('Đã sao chép mã khóa học!');
   };
 
@@ -68,7 +68,7 @@ const CourseDetailModal = ({ open, onClose, course }) => {
         }}
       >
         <Typography variant="h6">
-          Chi tiết khóa học {course.maKhoaHoc}
+          Chi tiết khóa học {course.courseid}
         </Typography>
         <Tooltip title="Sao chép mã khóa học">
           <IconButton
@@ -102,7 +102,7 @@ const CourseDetailModal = ({ open, onClose, course }) => {
                   Mã khóa học
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#666' }}>
-                  {getValueOrDefault(course.maKhoaHoc)}
+                  {getValueOrDefault(course.courseid)}
                 </Typography>
               </Box>
             </Box>
@@ -129,7 +129,7 @@ const CourseDetailModal = ({ open, onClose, course }) => {
                   Tên khóa học
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#666' }}>
-                  {getValueOrDefault(course.tenKhoaHoc)}
+                  {getValueOrDefault(course.coursename)}
                 </Typography>
               </Box>
             </Box>
@@ -156,7 +156,7 @@ const CourseDetailModal = ({ open, onClose, course }) => {
                   Thời gian bắt đầu
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#666' }}>
-                  {formatDateTime(course.thoiGianBatDau)}
+                  {formatDateTime(course.startdate)}
                 </Typography>
               </Box>
             </Box>
@@ -183,7 +183,7 @@ const CourseDetailModal = ({ open, onClose, course }) => {
                   Thời gian kết thúc
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#666' }}>
-                  {formatDateTime(course.thoiGianKetThuc)}
+                  {formatDateTime(course.enddate)}
                 </Typography>
               </Box>
             </Box>
@@ -210,7 +210,7 @@ const CourseDetailModal = ({ open, onClose, course }) => {
                   Thời gian tạo
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#666' }}>
-                  {formatDateTime(course.thoiGianTao)}
+                  {formatDateTime(course.created_at)}
                 </Typography>
               </Box>
             </Box>
@@ -237,7 +237,7 @@ const CourseDetailModal = ({ open, onClose, course }) => {
                   Thời gian cập nhật
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#666' }}>
-                  {formatDateTime(course.thoiGianCapNhat)}
+                  {formatDateTime(course.updated_at)}
                 </Typography>
               </Box>
             </Box>

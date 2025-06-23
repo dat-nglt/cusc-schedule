@@ -23,7 +23,7 @@ const routes = [
     exact: true,
     title: "Hồ sơ cá nhân",
     isPrivate: false,
-    layout: MainLayout, 
+    layout: MainLayout,
   },
   {
     path: "/student",
@@ -34,11 +34,26 @@ const routes = [
     layout: LayoutJustHeader,
   },
   {
-
     path: "/courses",
     component: "Course",
     exact: true,
     title: "Quản lý Khóa học",
+    isPrivate: false,
+    layout: MainLayout,
+  },
+  {
+    path: "/courses/add",
+    component: "AddCourseModal",
+    exact: true,
+    title: "Thêm Khóa học",
+    isPrivate: false,
+    layout: MainLayout,
+  },
+  {
+    path: "/courses/edit/:courseid",
+    component: "EditCourseModal",
+    exact: true,
+    title: "Chỉnh sửa Khóa học",
     isPrivate: false,
     layout: MainLayout,
   },
@@ -114,7 +129,7 @@ const routes = [
     isPrivate: false,
     layout: MainLayout,
   },
-    {
+  {
     path: "student/results",
     component: "StudentLearningResults",
     exact: true,
@@ -130,7 +145,6 @@ const routes = [
     isPrivate: false,
     layout: LayoutJustHeader,
   },
-  
 ];
 
 export default routes;

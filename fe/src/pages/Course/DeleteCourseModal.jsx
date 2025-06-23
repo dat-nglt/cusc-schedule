@@ -1,3 +1,4 @@
+// src/pages/Course/DeleteCourseModal.jsx
 import React from 'react';
 import {
   Dialog,
@@ -11,7 +12,7 @@ import {
 
 const DeleteCourseModal = ({ open, onClose, onDelete, course }) => {
   const handleDelete = () => {
-    onDelete(course.id);
+    onDelete(course.courseid); // Sử dụng courseid thay vì id
     onClose();
   };
 
@@ -23,12 +24,9 @@ const DeleteCourseModal = ({ open, onClose, onDelete, course }) => {
           Bạn có muốn xóa khóa học với mã{' '}
           <Box
             component="span"
-            sx={{
-              color: '#1976d2', // Màu xanh dương (tương tự màu primary của MUI)
-              fontWeight: 'bold', // In đậm
-            }}
+            sx={{ color: '#1976d2', fontWeight: 'bold' }}
           >
-            {course?.maKhoaHoc}
+            {course?.courseid}
           </Box> không?
         </Typography>
       </DialogContent>

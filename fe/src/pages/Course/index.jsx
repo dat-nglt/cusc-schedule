@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+// src/pages/Course/index.jsx (đoạn liên quan)
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -17,6 +18,8 @@ import {
 import {
   Add as AddIcon,
   Search as SearchIcon,
+  Edit as EditIcon,
+  Delete as DeleteIcon,
 } from '@mui/icons-material';
 import CourseDetailModal from './CourseDetailModal';
 import AddCourseModal from './AddCourseModal';
@@ -24,88 +27,202 @@ import EditCourseModal from './EditCourseModal';
 import DeleteCourseModal from './DeleteCourseModal';
 import useResponsive from '../../hooks/useResponsive';
 import CourseTable from './CourseTable';
+import axios from 'axios';
 
 const Course = () => {
   const { isSmallScreen, isMediumScreen } = useResponsive();
 
-  // Dữ liệu mẫu cho danh sách khóa học
-  const [courses, setCourses] = useState([
-    { id: 1, stt: 1, maKhoaHoc: 'IS2501', tenKhoaHoc: 'Hệ thống thông tin', thoiGianBatDau: '2022-06-10', thoiGianKetThuc: '2024-07-10', thoiGianTao: '2025-05-15 09:00', thoiGianCapNhat: '2025-05-20 14:30' },
-    { id: 2, stt: 2, maKhoaHoc: 'FT2501', tenKhoaHoc: 'Công nghệ thực phẩm', thoiGianBatDau: '2025-06-12', thoiGianKetThuc: '2025-07-12', thoiGianTao: '2025-05-16 10:15', thoiGianCapNhat: '2025-05-21 15:00' },
-    { id: 3, stt: 3, maKhoaHoc: 'ISE2501', tenKhoaHoc: 'Kỹ thuật hệ thống công nghiệp', thoiGianBatDau: '2025-06-14', thoiGianKetThuc: '2025-07-14', thoiGianTao: '2025-05-17 11:30', thoiGianCapNhat: '2025-05-22 09:45' },
-    { id: 4, stt: 4, maKhoaHoc: 'EEET2501', tenKhoaHoc: 'Công nghệ kỹ thuật điện, điện tử', thoiGianBatDau: '2025-06-16', thoiGianKetThuc: '2025-07-16', thoiGianTao: '2025-05-18 14:00', thoiGianCapNhat: '2025-05-23 13:15' },
-    { id: 5, stt: 5, maKhoaHoc: 'SE2501', tenKhoaHoc: 'Kỹ thuật phần mềm', thoiGianBatDau: '2025-06-18', thoiGianKetThuc: '2025-07-18', thoiGianTao: '2025-05-19 15:30', thoiGianCapNhat: '2025-05-24 10:20' },
-    { id: 6, stt: 6, maKhoaHoc: 'IM2501', tenKhoaHoc: 'Quản lý công nghiệp', thoiGianBatDau: '2025-06-20', thoiGianKetThuc: '2025-07-20', thoiGianTao: '2025-05-20 09:45', thoiGianCapNhat: '2025-05-25 16:10' },
-    { id: 7, stt: 7, maKhoaHoc: 'CAE2501', tenKhoaHoc: 'Công nghệ kỹ thuật điều khiển và tự động hóa', thoiGianBatDau: '2025-06-22', thoiGianKetThuc: '2025-07-22', thoiGianTao: '2025-05-21 11:00', thoiGianCapNhat: '2025-05-26 13:40' },
-    { id: 8, stt: 8, maKhoaHoc: 'CM2501', tenKhoaHoc: 'Quản lý xây dựng', thoiGianBatDau: '2025-06-24', thoiGianKetThuc: '2025-07-24', thoiGianTao: '2025-05-22 14:20', thoiGianCapNhat: '2025-05-27 15:55' },
-    { id: 9, stt: 9, maKhoaHoc: 'CS2501', tenKhoaHoc: 'Khoa học máy tính', thoiGianBatDau: '2025-06-26', thoiGianKetThuc: '2025-07-26', thoiGianTao: '2025-05-23 08:30', thoiGianCapNhat: '2025-05-28 12:10' },
-    { id: 10, stt: 10, maKhoaHoc: 'MET2501', tenKhoaHoc: 'Công nghệ kỹ thuật cơ điện tử', thoiGianBatDau: '2025-06-28', thoiGianKetThuc: '2025-07-28', thoiGianTao: '2025-05-24 09:10', thoiGianCapNhat: '2025-05-29 14:50' },
-    { id: 11, stt: 11, maKhoaHoc: 'CET2501', tenKhoaHoc: 'Công nghệ kỹ thuật công trình xây dựng', thoiGianBatDau: '2025-07-01', thoiGianKetThuc: '2025-08-01', thoiGianTao: '2025-05-25 10:40', thoiGianCapNhat: '2025-05-30 11:30' },
-    { id: 12, stt: 12, maKhoaHoc: 'BT2501', tenKhoaHoc: 'Công nghệ sinh học', thoiGianBatDau: '2025-07-03', thoiGianKetThuc: '2025-08-03', thoiGianTao: '2025-05-26 13:25', thoiGianCapNhat: '2025-06-01 10:45' },
-    { id: 13, stt: 13, maKhoaHoc: 'DS2501', tenKhoaHoc: 'Khoa học dữ liệu', thoiGianBatDau: '2025-07-05', thoiGianKetThuc: '2025-08-05', thoiGianTao: '2025-05-27 15:10', thoiGianCapNhat: '2025-06-02 09:35' },
-    { id: 14, stt: 14, maKhoaHoc: 'LSCM2501', tenKhoaHoc: 'Logistics và quản lý chuỗi cung ứng', thoiGianBatDau: '2025-07-07', thoiGianKetThuc: '2025-08-07', thoiGianTao: '2025-05-28 16:45', thoiGianCapNhat: '2025-06-03 14:15' },
-    { id: 15, stt: 15, maKhoaHoc: 'IT2501', tenKhoaHoc: 'Công nghệ thông tin', thoiGianBatDau: '2025-07-09', thoiGianKetThuc: '2025-08-09', thoiGianTao: '2025-05-29 09:30', thoiGianCapNhat: '2025-06-04 11:20' },
-    { id: 16, stt: 16, maKhoaHoc: 'EET2501', tenKhoaHoc: 'Công nghệ kỹ thuật năng lượng', thoiGianBatDau: '2025-07-11', thoiGianKetThuc: '2025-08-11', thoiGianTao: '2025-05-30 10:50', thoiGianCapNhat: '2025-06-05 08:40' },
-    { id: 17, stt: 17, maKhoaHoc: 'CET2502', tenKhoaHoc: 'Công nghệ kỹ thuật công trình xây dựng', thoiGianBatDau: '2025-07-13', thoiGianKetThuc: '2025-08-13', thoiGianTao: '2025-05-31 14:35', thoiGianCapNhat: '2025-06-06 13:25' },
-    { id: 18, stt: 18, maKhoaHoc: 'SE2502', tenKhoaHoc: 'Kỹ thuật phần mềm', thoiGianBatDau: '2025-07-15', thoiGianKetThuc: '2025-08-15', thoiGianTao: '2025-06-01 11:00', thoiGianCapNhat: '2025-06-07 12:15' },
-    { id: 19, stt: 19, maKhoaHoc: 'DS2502', tenKhoaHoc: 'Khoa học dữ liệu', thoiGianBatDau: '2025-07-17', thoiGianKetThuc: '2025-08-17', thoiGianTao: '2025-06-02 15:30', thoiGianCapNhat: '2025-06-08 16:40' },
-    { id: 20, stt: 20, maKhoaHoc: 'IT2502', tenKhoaHoc: 'Công nghệ thông tin', thoiGianBatDau: '2025-07-19', thoiGianKetThuc: '2025-08-19', thoiGianTao: '2025-06-03 13:20', thoiGianCapNhat: '2025-06-09 14:10' },
-  ]);
-
-  // State cho phân trang, tìm kiếm, lọc theo năm và modal
+  // State cho danh sách khóa học, phân trang, tìm kiếm, lọc, và modal
+  const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage] = useState(8);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedYear, setSelectedYear] = useState('');
   const [openDetail, setOpenDetail] = useState(false);
+  const [openAdd, setOpenAdd] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState(null);
-  const [openAddModal, setOpenAddModal] = useState(false);
-  const [openEditModal, setOpenEditModal] = useState(false);
-  const [openDeleteModal, setOpenDeleteModal] = useState(false);
-  const [editedCourse, setEditedCourse] = useState(null);
-  const [courseToDelete, setCourseToDelete] = useState(null);
 
   // Danh sách năm để lọc
   const years = ['2021', '2022', '2023', '2024', '2025'];
 
-  // Hàm xử lý khi nhấn nút Thêm khóa học
-  const handleAddCourse = () => {
-    setOpenAddModal(true);
+  // Load danh sách khóa học từ API
+  const fetchCourses = async () => {
+    try {
+      console.log('Gọi API tới:', 'http://localhost:3000/api/courses');
+      const response = await axios.get('http://localhost:3000/api/courses', {
+        timeout: 5000,
+      });
+      console.log('Phản hồi từ API (danh sách):', response.data);
+
+      let coursesData = [];
+      if (Array.isArray(response.data)) {
+        coursesData = response.data.map((course, index) => ({
+          stt: index + 1,
+          courseid: course.courseid, // Sử dụng courseid làm khóa chính
+          coursename: course.coursename,
+          startdate: course.startdate,
+          enddate: course.enddate,
+          created_at: course.created_at,
+          updated_at: course.updated_at,
+        }));
+      } else if (response.data && typeof response.data === 'object' && Array.isArray(response.data.data)) {
+        coursesData = response.data.data.map((course, index) => ({
+          stt: index + 1,
+          courseid: course.courseid, // Sử dụng courseid làm khóa chính
+          coursename: course.coursename,
+          startdate: course.startdate,
+          enddate: course.enddate,
+          created_at: course.created_at,
+          updated_at: course.updated_at,
+        }));
+      } else {
+        throw new Error('Dữ liệu từ API không phải là mảng hợp lệ');
+      }
+
+      setCourses(coursesData);
+      setLoading(false);
+    } catch (err) {
+      console.error('Lỗi chi tiết (danh sách):', err.response?.status, err.response?.data || err.message);
+      setError(`Lỗi khi tải danh sách khóa học: ${err.message}`);
+      setLoading(false);
+    }
   };
 
-  // Hàm đóng modal thêm khóa học
-  const handleCloseAddModal = () => {
-    setOpenAddModal(false);
+  useEffect(() => {
+    fetchCourses();
+  }, []);
+
+  // Hàm lấy chi tiết khóa học theo ID
+  const handleViewCourse = async (courseid) => {
+    try {
+      console.log('Gọi API chi tiết với courseid:', courseid);
+      const response = await axios.get(`http://localhost:3000/api/courses/${courseid}`, {
+        timeout: 5000,
+      });
+      console.log('Phản hồi từ API (chi tiết):', response.data);
+
+      let courseData = {};
+      if (response.data && typeof response.data === 'object') {
+        if (Array.isArray(response.data.data)) {
+          courseData = response.data.data[0] || {};
+        } else if (response.data.data) {
+          courseData = response.data.data;
+        } else {
+          courseData = response.data;
+        }
+      } else {
+        throw new Error('Dữ liệu từ API không phải là object hợp lệ');
+      }
+
+      setSelectedCourse({
+        courseid: courseData.courseid, // Sử dụng courseid
+        coursename: courseData.coursename,
+        startdate: courseData.startdate,
+        enddate: courseData.enddate,
+        created_at: courseData.created_at,
+        updated_at: courseData.updated_at,
+      });
+      setOpenDetail(true);
+    } catch (err) {
+      console.error('Lỗi khi lấy chi tiết:', err.response?.status, err.response?.data || err.message);
+      setError(`Lỗi khi lấy chi tiết khóa học: ${err.message}`);
+      setOpenDetail(false);
+    }
   };
 
-  // Hàm thêm khóa học mới
-  const handleAddNewCourse = (newCourse) => {
-    setCourses((prevCourses) => {
-      const updatedCourses = [...prevCourses, { ...newCourse, stt: prevCourses.length + 1 }];
-      return updatedCourses;
-    });
+  // Hàm thêm khóa học
+  const handleAddCourse = async (courseData) => {
+    try {
+      console.log('Gửi dữ liệu thêm khóa học:', courseData);
+      const response = await axios.post('http://localhost:3000/api/courses/add', courseData, {
+        timeout: 5000,
+      });
+      console.log('Phản hồi từ API (thêm):', response.data);
+
+      const newCourse = response.data.data || response.data;
+      setCourses((prev) => [
+        ...prev,
+        {
+          stt: prev.length + 1,
+          courseid: newCourse.courseid, // Sử dụng courseid
+          coursename: newCourse.coursename,
+          startdate: newCourse.startdate,
+          enddate: newCourse.enddate,
+          created_at: newCourse.created_at,
+          updated_at: newCourse.updated_at,
+        },
+      ]);
+    } catch (err) {
+      console.error('Lỗi khi thêm khóa học:', err.response?.status, err.response?.data || err.message);
+      setError(`Lỗi khi thêm khóa học: ${err.message}`);
+    }
   };
 
-  // Hàm xử lý khi nhấn nút chỉnh sửa
-  const handleEditCourse = (id) => {
-    const courseToEdit = courses.find((c) => c.id === id);
-    setEditedCourse(courseToEdit);
-    setOpenEditModal(true);
+  // Hàm mở modal chỉnh sửa và set course
+  const handleEditCourse = (course) => {
+    setSelectedCourse(course);
+    setOpenEdit(true);
   };
 
-  // Hàm đóng modal chỉnh sửa
-  const handleCloseEditModal = () => {
-    setOpenEditModal(false);
-    setEditedCourse(null);
+  // Hàm cập nhật khóa học
+  const handleSaveEditedCourse = async (courseData) => {
+    try {
+      console.log('Gửi dữ liệu chỉnh sửa khóa học:', courseData);
+      const response = await axios.put(`http://localhost:3000/api/courses/edit/${courseData.courseid}`, {
+        courseid: courseData.courseid,
+        coursename: courseData.coursename,
+        startdate: courseData.startdate,
+        enddate: courseData.enddate,
+        updated_at: courseData.updated_at,
+      }, {
+        timeout: 5000,
+      });
+      console.log('Phản hồi từ API (chỉnh sửa):', response.data);
+
+      // Làm mới danh sách khóa học sau khi cập nhật thành công
+      await fetchCourses();
+    } catch (err) {
+      console.error('Lỗi khi chỉnh sửa khóa học:', err.response?.status, err.response?.data || err.message);
+      setError(`Lỗi khi chỉnh sửa khóa học: ${err.message}`);
+    }
   };
 
-  // Hàm lưu thay đổi sau khi chỉnh sửa
-  const handleSaveEditedCourse = (updatedCourse) => {
-    setCourses((prevCourses) =>
-      prevCourses.map((course) =>
-        course.id === updatedCourse.id ? { ...course, ...updatedCourse } : course
-      )
-    );
+  // Hàm mở modal xóa và set course
+  const handleOpenDeleteModal = (course) => {
+    console.log('Opening delete modal for course:', course); // Debug
+    if (!course || !course.courseid) { // Sử dụng courseid
+      console.error('Invalid course data in handleOpenDeleteModal:', course);
+      setError('Dữ liệu khóa học không hợp lệ');
+      return;
+    }
+    setSelectedCourse(course);
+    setOpenDelete(true);
+  };
+
+  // Hàm xóa khóa học
+  const handleDeleteCourse = async (courseId) => {
+    try {
+      console.log('Attempting to delete course with courseid:', courseId); // Debug
+      if (!courseId) {
+        console.error('Invalid courseId for deletion:', courseId);
+        setError('Dữ liệu khóa học không hợp lệ');
+        return;
+      }
+      const response = await axios.delete(`http://localhost:3000/api/courses/delete/${courseId}`, {
+        timeout: 5000,
+      });
+      console.log('Response from API (delete):', response.data);
+
+      // Làm mới danh sách khóa học sau khi xóa thành công
+      await fetchCourses();
+    } catch (err) {
+      console.error('Lỗi khi xóa khóa học:', err.response?.status, err.response?.data || err.message);
+      setError(`Lỗi khi xóa khóa học: ${err.message}`);
+    }
   };
 
   // Hàm xử lý thay đổi trang
@@ -113,53 +230,14 @@ const Course = () => {
     setPage(newPage);
   };
 
-  // Hàm xử lý xem khóa học
-  const handleViewCourse = (id) => {
-    const course = courses.find((c) => c.id === id);
-    setSelectedCourse(course);
-    setOpenDetail(true);
-  };
-
-  // Hàm xử lý xóa khóa học
-  const handleDeleteCourse = (id) => {
-    const course = courses.find((c) => c.id === id);
-    setCourseToDelete(course); // Sửa: Sử dụng setCourseToDelete để thiết lập khóa học
-    setOpenDeleteModal(true);
-  };
-
-  // Hàm xác nhận xóa khóa học
-  const confirmDeleteCourse = (id) => {
-    setCourses((prevCourses) => {
-      const updatedCourses = prevCourses.filter((course) => course.id !== id)
-        .map((course, index) => ({ ...course, stt: index + 1 }));
-      return updatedCourses;
-    });
-    setOpenDeleteModal(false);
-    setCourseToDelete(null);
-  };
-
-  // Hàm đóng modal chi tiết
-  const handleCloseDetail = () => {
-    setOpenDetail(false);
-    setSelectedCourse(null);
-  };
-
-  // Hàm đóng modal xóa
-  const handleCloseDeleteModal = () => {
-    setOpenDeleteModal(false);
-    setCourseToDelete(null);
-  };
-
   // Lọc danh sách khóa học dựa trên từ khóa tìm kiếm và năm
   const filteredCourses = courses.filter((course) => {
     const matchesSearchTerm =
-      course.maKhoaHoc.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      course.tenKhoaHoc.toLowerCase().includes(searchTerm.toLowerCase());
-
+      course.courseid.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      course.coursename.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesYear = selectedYear
-      ? course.thoiGianBatDau.startsWith(selectedYear)
+      ? course.startdate?.startsWith(selectedYear)
       : true;
-
     return matchesSearchTerm && matchesYear;
   });
 
@@ -181,7 +259,7 @@ const Course = () => {
                 {isSmallScreen ? (
                   <IconButton
                     color="primary"
-                    onClick={handleAddCourse}
+                    onClick={() => setOpenAdd(true)}
                     sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
                   >
                     <AddIcon sx={{ color: '#fff' }} />
@@ -191,7 +269,7 @@ const Course = () => {
                     variant="contained"
                     color="primary"
                     startIcon={<AddIcon />}
-                    onClick={handleAddCourse}
+                    onClick={() => setOpenAdd(true)}
                     sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
                   >
                     Thêm khóa học
@@ -232,9 +310,12 @@ const Course = () => {
                 }}
               />
             </Box>
-            {filteredCourses.length === 0 ? (
+            {loading && <Typography>Loading...</Typography>}
+            {error && <Typography color="error">{error}</Typography>}
+            {filteredCourses.length === 0 && !loading && !error && (
               <Typography>Không có khóa học nào để hiển thị.</Typography>
-            ) : (
+            )}
+            {!loading && !error && filteredCourses.length > 0 && (
               <>
                 <CourseTable
                   displayedCourses={displayedCourses}
@@ -242,7 +323,7 @@ const Course = () => {
                   isMediumScreen={isMediumScreen}
                   handleViewCourse={handleViewCourse}
                   handleEditCourse={handleEditCourse}
-                  handleDeleteCourse={handleDeleteCourse}
+                  handleDeleteCourse={handleOpenDeleteModal}
                 />
                 <TablePagination
                   component="div"
@@ -260,26 +341,34 @@ const Course = () => {
       </Box>
       <CourseDetailModal
         open={openDetail}
-        onClose={handleCloseDetail}
+        onClose={() => {
+          setOpenDetail(false);
+          setSelectedCourse(null);
+        }}
         course={selectedCourse}
       />
       <AddCourseModal
-        open={openAddModal}
-        onClose={handleCloseAddModal}
-        onAddCourse={handleAddNewCourse}
-        existingCourses={courses}
+        open={openAdd}
+        onClose={() => setOpenAdd(false)}
+        onAddCourse={handleAddCourse}
       />
       <EditCourseModal
-        open={openEditModal}
-        onClose={handleCloseEditModal}
-        course={editedCourse}
+        open={openEdit}
+        onClose={() => {
+          setOpenEdit(false);
+          setSelectedCourse(null);
+        }}
+        course={selectedCourse}
         onSave={handleSaveEditedCourse}
       />
       <DeleteCourseModal
-        open={openDeleteModal}
-        onClose={handleCloseDeleteModal}
-        onDelete={confirmDeleteCourse}
-        course={courseToDelete}
+        open={openDelete}
+        onClose={() => {
+          setOpenDelete(false);
+          setSelectedCourse(null);
+        }}
+        onDelete={handleDeleteCourse}
+        course={selectedCourse}
       />
     </Box>
   );
