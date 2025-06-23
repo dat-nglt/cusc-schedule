@@ -23,7 +23,6 @@ connectDB();
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
-
 //router
 setupRoutes(app);
 
