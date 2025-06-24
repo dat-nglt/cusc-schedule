@@ -14,8 +14,8 @@ import {
   IconButton,
   Button,
 } from '@mui/material';
-import { 
-  Add as AddIcon, 
+import {
+  Add as AddIcon,
   Search as SearchIcon,
 } from '@mui/icons-material';
 import SlotTimeDetailModal from './SlotTimeDetailModal';
@@ -189,7 +189,12 @@ const SlotTime = () => {
                     color="primary"
                     startIcon={<AddIcon />}
                     onClick={handleAddSlotTime}
-                    sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
+                    sx={{
+                      bgcolor: '#1976d2',
+                      '&:hover': { bgcolor: '#115293' },
+                      minWidth: isSmallScreen ? 100 : 150,
+                      height: '56px'
+                    }}
                   >
                     Thêm khung giờ
                   </Button>
@@ -256,10 +261,10 @@ const SlotTime = () => {
           </CardContent>
         </Card>
       </Box>
-      <SlotTimeDetailModal 
-        open={openDetail} 
-        onClose={handleCloseDetail} 
-        slotTime={selectedSlotTime} 
+      <SlotTimeDetailModal
+        open={openDetail}
+        onClose={handleCloseDetail}
+        slotTime={selectedSlotTime}
       />
       <AddSlotTimeModal
         open={openAddModal}

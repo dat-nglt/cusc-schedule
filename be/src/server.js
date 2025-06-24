@@ -1,32 +1,59 @@
 import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
-import setupRoutes from "./routes/router";
+import setupRoutes from "./routes/router.js";
 import bodyParser from "body-parser";
-import connectDB from "./config/database";
+import connectDB from "./config/database.js";
 import multer from "multer";
+import passport from "passport";
+import session from "express-session";
+
 // Load environment variables first
 dotenv.config();
-
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Initialize server
+async function startServer() {
+    try {
+        // Connect to database first
+        await connectDB();
 
-app.use(cors());
-app.use(express.json());
+        // Initialize models after database connection
+        await import("./models/index.js");
 
-//connect database
-connectDB();
+        // Initialize passport configuration after models
+        await import("./config/passport.js");
 
-//body parser
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use(bodyParser.json())
+        app.use(session({
+            secret: process.env.SESSION_SECRET || 'default-secret',
+            resave: false,
+            saveUninitialized: true
+        }));
 
-//router
-setupRoutes(app);
+        app.use(passport.initialize());
+        app.use(passport.session());
 
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-});
+        app.use(cors());
+        app.use(express.json());
+
+        //body parser
+        app.use(bodyParser.urlencoded({ extended: false }))
+        app.use(bodyParser.json())
+
+        //router
+        setupRoutes(app);
+
+        const port = process.env.PORT || 3000;
+        app.listen(port, () => {
+            console.log(`Server is running on port ${port}`);
+        });
+
+    } catch (error) {
+        console.error('Failed to start server:', error);
+        process.exit(1);
+    }
+}
+
+startServer();
