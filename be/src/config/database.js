@@ -13,8 +13,8 @@ const sequelize = new Sequelize(
       max: 5,
       min: 0,
       acquire: 30000,
-      idle: 10000
-    }
+      idle: 10000,
+    },
   }
 );
 
@@ -24,7 +24,7 @@ const connectDB = async () => {
     console.log('PostgreSQL connected successfully with Sequelize');
 
     // Sync database (create tables if they don't exist)
-    await sequelize.sync({ alter: true });
+    await sequelize.sync({ force: false });
     console.log('Database synced successfully');
   } catch (error) {
     console.error('Database connection error:', error);
@@ -32,5 +32,7 @@ const connectDB = async () => {
   }
 };
 
+const DataTypes = Sequelize.DataTypes;
+
+export { sequelize, DataTypes };
 export default connectDB;
-export { sequelize };

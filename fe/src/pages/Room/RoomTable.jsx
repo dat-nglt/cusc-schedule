@@ -274,7 +274,7 @@ const RoomTable = ({ displayedRooms, isExtraSmallScreen, isSmallScreen, isMedium
                     </MenuItem>
                     <MenuItem
                       onClick={() => {
-                        handleDeleteRoom(room.id);
+                        handleDeleteRoom(room); // Truyền cả object room thay vì chỉ id
                         handleCloseMenu();
                       }}
                     >
@@ -303,7 +303,7 @@ const RoomTable = ({ displayedRooms, isExtraSmallScreen, isSmallScreen, isMedium
                     <Delete
                       color="error"
                       style={{ cursor: 'pointer' }}
-                      onClick={() => handleDeleteRoom(room.id)}
+                      onClick={() => handleDeleteRoom(room)} // Truyền cả object room thay vì chỉ id
                     />
                   </Tooltip>
                 </Box>

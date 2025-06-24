@@ -7,6 +7,8 @@ import { lightTheme, darkTheme } from '../theme';
 import { TimetableProvider } from './contexts/TimetableContext';
 import ThemeWrapper from '../themeWrapper';
 
+
+
 function App() {
   useEffect(() => {
     document.body.classList.add("theme-loaded");

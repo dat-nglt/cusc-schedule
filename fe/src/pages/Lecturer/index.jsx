@@ -21,6 +21,7 @@ import {
 import AddLecturerModal from './AddLecturerModal';
 import LecturerDetailModal from './LecturerDetailModal';
 import EditLecturerModal from './EditLecturerModal';
+import DeleteLecturerModal from './DeleteLecturerModal';
 import useResponsive from '../../hooks/useResponsive';
 import LecturerTable from './LecturerTable';
 
@@ -151,6 +152,8 @@ const Lecturer = () => {
     const [openAddModal, setOpenAddModal] = useState(false);
     const [openEditModal, setOpenEditModal] = useState(false);
     const [editedLecturer, setEditedLecturer] = useState(null);
+    const [openDeleteModal, setOpenDeleteModal] = useState(false);
+    const [lecturerToDelete, setLecturerToDelete] = useState(null);
 
     // Danh sách trạng thái để lọc
     const statuses = ['Hoạt động', 'Tạm nghỉ'];
@@ -209,14 +212,30 @@ const Lecturer = () => {
 
     // Hàm xử lý xóa giảng viên
     const handleDeleteLecturer = (id) => {
-        console.log(`Xóa giảng viên với ID: ${id}`);
-        // Thêm logic xóa giảng viên
+        const lecturer = lecturers.find((l) => l.id === id);
+        setLecturerToDelete(lecturer);
+        setOpenDeleteModal(true);
+    };
+
+    // Hàm xác nhận xóa giảng viên
+    const confirmDeleteLecturer = (id) => {
+        setLecturers((prevLecturers) => {
+            const updatedLecturers = prevLecturers.filter((lecturer) => lecturer.id !== id)
+                .map((lecturer, index) => ({ ...lecturer, stt: index + 1 }));
+            return updatedLecturers;
+        });
     };
 
     // Hàm đóng modal chi tiết
     const handleCloseDetail = () => {
         setOpenDetail(false);
         setSelectedLecturer(null);
+    };
+
+    // Hàm đóng modal xóa
+    const handleCloseDeleteModal = () => {
+        setOpenDeleteModal(false);
+        setLecturerToDelete(null);
     };
 
     // Lọc danh sách giảng viên dựa trên từ khóa tìm kiếm và trạng thái
@@ -342,12 +361,19 @@ const Lecturer = () => {
                 open={openAddModal}
                 onClose={handleCloseAddModal}
                 onAddLecturer={handleAddNewLecturer}
+                existingLecturers={lecturers}
             />
             <EditLecturerModal
                 open={openEditModal}
                 onClose={handleCloseEditModal}
                 lecturer={editedLecturer}
                 onSave={handleSaveEditedLecturer}
+            />
+            <DeleteLecturerModal
+                open={openDeleteModal}
+                onClose={handleCloseDeleteModal}
+                onDelete={confirmDeleteLecturer}
+                lecturer={lecturerToDelete}
             />
         </Box>
     );
