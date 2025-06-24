@@ -47,13 +47,10 @@ const CourseTable = ({ displayedCourses, isSmallScreen, isMediumScreen, handleVi
           {!isMediumScreen && (
             <>
               <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '12.5%' }}>
+                Thời gian bắt đầu
+              </TableCell>
+              <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '12.5%' }}>
                 Thời gian kết thúc
-              </TableCell>
-              <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '12.5%' }}>
-                Thời gian tạo
-              </TableCell>
-              <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '12.5%' }}>
-                Thời gian cập nhật
               </TableCell>
             </>
           )}
@@ -96,13 +93,10 @@ const CourseTable = ({ displayedCourses, isSmallScreen, isMediumScreen, handleVi
             {!isMediumScreen && (
               <>
                 <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5, width: '12.5%' }}>
+                  {course.startdate}
+                </TableCell>
+                <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5, width: '12.5%' }}>
                   {course.enddate}
-                </TableCell>
-                <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5, width: '12.5%' }}>
-                  {course.created_at}
-                </TableCell>
-                <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5, width: '12.5%' }}>
-                  {course.updated_at}
                 </TableCell>
               </>
             )}

@@ -57,6 +57,7 @@ export const deleteCourseController = async (req, res) => {
   }
 };
 
+//LẤY DANH SÁCH CÁC KHÓA HỌC VỚI CÁC BỘ LỌC
 export const listCoursesController = async (req, res) => {
   try {
     const { courseid, coursename, startdate } = req.query;

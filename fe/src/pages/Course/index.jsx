@@ -1,4 +1,3 @@
-// src/pages/Course/index.jsx (đoạn liên quan)
 import React, { useState, useEffect } from 'react';
 import {
   Box,
@@ -28,6 +27,20 @@ import DeleteCourseModal from './DeleteCourseModal';
 import useResponsive from '../../hooks/useResponsive';
 import CourseTable from './CourseTable';
 import axios from 'axios';
+
+// Hàm định dạng timestamp thành YYYY-MM-DD HH:MM:SS.sss+07
+const formatTimestamp = (timestamp) => {
+  if (!timestamp) return '';
+  const date = new Date(timestamp);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+  const milliseconds = String(date.getMilliseconds()).padStart(3, '0');
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${milliseconds}+07`;
+};
 
 const Course = () => {
   const { isSmallScreen, isMediumScreen } = useResponsive();
@@ -62,22 +75,22 @@ const Course = () => {
       if (Array.isArray(response.data)) {
         coursesData = response.data.map((course, index) => ({
           stt: index + 1,
-          courseid: course.courseid, // Sử dụng courseid làm khóa chính
+          courseid: course.courseid,
           coursename: course.coursename,
           startdate: course.startdate,
           enddate: course.enddate,
-          created_at: course.created_at,
-          updated_at: course.updated_at,
+          created_at: formatTimestamp(course.created_at),
+          updated_at: formatTimestamp(course.updated_at),
         }));
       } else if (response.data && typeof response.data === 'object' && Array.isArray(response.data.data)) {
         coursesData = response.data.data.map((course, index) => ({
           stt: index + 1,
-          courseid: course.courseid, // Sử dụng courseid làm khóa chính
+          courseid: course.courseid,
           coursename: course.coursename,
           startdate: course.startdate,
           enddate: course.enddate,
-          created_at: course.created_at,
-          updated_at: course.updated_at,
+          created_at: formatTimestamp(course.created_at),
+          updated_at: formatTimestamp(course.updated_at),
         }));
       } else {
         throw new Error('Dữ liệu từ API không phải là mảng hợp lệ');
@@ -119,12 +132,12 @@ const Course = () => {
       }
 
       setSelectedCourse({
-        courseid: courseData.courseid, // Sử dụng courseid
+        courseid: courseData.courseid,
         coursename: courseData.coursename,
         startdate: courseData.startdate,
         enddate: courseData.enddate,
-        created_at: courseData.created_at,
-        updated_at: courseData.updated_at,
+        created_at: formatTimestamp(courseData.created_at),
+        updated_at: formatTimestamp(courseData.updated_at),
       });
       setOpenDetail(true);
     } catch (err) {
@@ -148,12 +161,12 @@ const Course = () => {
         ...prev,
         {
           stt: prev.length + 1,
-          courseid: newCourse.courseid, // Sử dụng courseid
+          courseid: newCourse.courseid,
           coursename: newCourse.coursename,
           startdate: newCourse.startdate,
           enddate: newCourse.enddate,
-          created_at: newCourse.created_at,
-          updated_at: newCourse.updated_at,
+          created_at: formatTimestamp(newCourse.created_at),
+          updated_at: formatTimestamp(newCourse.updated_at),
         },
       ]);
     } catch (err) {
@@ -177,13 +190,12 @@ const Course = () => {
         coursename: courseData.coursename,
         startdate: courseData.startdate,
         enddate: courseData.enddate,
-        updated_at: courseData.updated_at,
+        updated_at: new Date().toISOString(), // Cập nhật thời gian hiện tại
       }, {
         timeout: 5000,
       });
       console.log('Phản hồi từ API (chỉnh sửa):', response.data);
 
-      // Làm mới danh sách khóa học sau khi cập nhật thành công
       await fetchCourses();
     } catch (err) {
       console.error('Lỗi khi chỉnh sửa khóa học:', err.response?.status, err.response?.data || err.message);
@@ -193,8 +205,7 @@ const Course = () => {
 
   // Hàm mở modal xóa và set course
   const handleOpenDeleteModal = (course) => {
-    console.log('Opening delete modal for course:', course); // Debug
-    if (!course || !course.courseid) { // Sử dụng courseid
+    if (!course || !course.courseid) {
       console.error('Invalid course data in handleOpenDeleteModal:', course);
       setError('Dữ liệu khóa học không hợp lệ');
       return;
@@ -206,7 +217,6 @@ const Course = () => {
   // Hàm xóa khóa học
   const handleDeleteCourse = async (courseId) => {
     try {
-      console.log('Attempting to delete course with courseid:', courseId); // Debug
       if (!courseId) {
         console.error('Invalid courseId for deletion:', courseId);
         setError('Dữ liệu khóa học không hợp lệ');
@@ -217,7 +227,6 @@ const Course = () => {
       });
       console.log('Response from API (delete):', response.data);
 
-      // Làm mới danh sách khóa học sau khi xóa thành công
       await fetchCourses();
     } catch (err) {
       console.error('Lỗi khi xóa khóa học:', err.response?.status, err.response?.data || err.message);
@@ -246,9 +255,7 @@ const Course = () => {
 
   return (
     <Box sx={{ p: 3, zIndex: 10, height: 'calc(100vh - 64px)', overflowY: 'auto' }}>
-      {/* Main Content */}
       <Box sx={{ width: '100%', mb: 3 }}>
-        {/* Bảng danh sách khóa học */}
         <Card sx={{ flexGrow: 1 }}>
           <CardContent>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, gap: 2 }}>
