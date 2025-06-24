@@ -70,7 +70,7 @@ export const importLecturersFromExcel = async (fileBuffer) => {
     try {
         // Đọc file Excel từ buffer
         const rawData = ExcelUtils.readExcelToJSON(fileBuffer);
-        
+
         if (!rawData || rawData.length === 0) {
             throw new Error("File Excel không có dữ liệu hoặc định dạng không đúng");
         }
@@ -138,8 +138,8 @@ export const importLecturersFromExcel = async (fileBuffer) => {
 
                 // Kiểm tra email đã tồn tại chưa (nếu có)
                 if (lecturerData.email) {
-                    const existingEmail = await Lecturer.findOne({ 
-                        where: { email: lecturerData.email } 
+                    const existingEmail = await Lecturer.findOne({
+                        where: { email: lecturerData.email }
                     });
                     if (existingEmail) {
                         results.errors.push({
@@ -176,13 +176,14 @@ export const importLecturersFromExcel = async (fileBuffer) => {
 };
 
 // Validate Excel template structure
-export const validateExcelTemplate = (fileBuffer) => {    const requiredColumns = ['Mã giảng viên', 'Họ tên'];
+export const validateExcelTemplate = (fileBuffer) => {
+    const requiredColumns = ['Mã giảng viên', 'Họ tên'];
     const optionalColumns = ['Email', 'Ngày sinh', 'Giới tính', 'Địa chỉ', 'Số điện thoại', 'Khoa/Bộ môn', 'Ngày tuyển dụng', 'Học vị', 'Trạng thái'];
-      const validation = ExcelUtils.validateTemplate(fileBuffer, requiredColumns, optionalColumns);
-    
+    const validation = ExcelUtils.validateTemplate(fileBuffer, requiredColumns, optionalColumns);
+
     if (!validation.valid) {
         throw new Error(validation.error);
     }
-    
+
     return validation;
 };

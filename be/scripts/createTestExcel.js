@@ -47,7 +47,7 @@ function createVietnameseTestFile() {
 
     const workbook = XLSX.utils.book_new();
     const worksheet = XLSX.utils.json_to_sheet(data);
-    
+
     // Set column widths for better readability
     const colWidths = [
         { wch: 15 }, // Mã giảng viên
@@ -62,14 +62,14 @@ function createVietnameseTestFile() {
         { wch: 12 }, // Học vị
         { wch: 12 }  // Trạng thái
     ];
-    
+
     worksheet['!cols'] = colWidths;
-    
+
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Lecturers');
-    
+
     const filePath = path.join(process.cwd(), 'lecturer_sample_vietnamese.xlsx');
     XLSX.writeFile(workbook, filePath);
-    
+
     console.log(`✅ File Excel mẫu đã được tạo: ${filePath}`);
     console.log('\n📋 Cấu trúc file:');
     console.log('- Mã giảng viên (bắt buộc)');
@@ -83,7 +83,7 @@ function createVietnameseTestFile() {
     console.log('- Ngày tuyển dụng (định dạng: YYYY-MM-DD)');
     console.log('- Học vị');
     console.log('- Trạng thái (active/inactive)');
-    
+
     return filePath;
 }
 
@@ -122,16 +122,16 @@ function createErrorTestFile() {
     const workbook = XLSX.utils.book_new();
     const worksheet = XLSX.utils.json_to_sheet(data);
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Lecturers');
-    
+
     const filePath = path.join(process.cwd(), 'lecturer_error_test.xlsx');
     XLSX.writeFile(workbook, filePath);
-    
+
     console.log(`⚠️  File Excel test lỗi đã được tạo: ${filePath}`);
     console.log('File này chứa các lỗi để test validation:');
     console.log('- Dòng 2: Email sai định dạng');
     console.log('- Dòng 3: Thiếu mã giảng viên');
     console.log('- Dòng 4: Thiếu họ tên');
-    
+
     return filePath;
 }
 

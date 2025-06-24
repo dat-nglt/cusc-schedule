@@ -15,11 +15,11 @@ class ExcelUtils {
             const workbook = XLSX.read(fileBuffer, { type: 'buffer' });
             const targetSheetName = sheetName || workbook.SheetNames[0];
             const worksheet = workbook.Sheets[targetSheetName];
-            
+
             if (!worksheet) {
                 throw new Error(`Sheet '${targetSheetName}' không tồn tại`);
             }
-            
+
             return XLSX.utils.sheet_to_json(worksheet);
         } catch (error) {
             throw new Error(`Lỗi đọc file Excel: ${error.message}`);
@@ -36,9 +36,9 @@ class ExcelUtils {
         try {
             const workbook = XLSX.utils.book_new();
             const worksheet = XLSX.utils.json_to_sheet(data);
-            
+
             XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
-            
+
             return XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
         } catch (error) {
             throw new Error(`Lỗi tạo file Excel: ${error.message}`);
@@ -57,11 +57,11 @@ class ExcelUtils {
             const workbook = XLSX.read(fileBuffer, { type: 'buffer' });
             const sheetName = workbook.SheetNames[0];
             const worksheet = workbook.Sheets[sheetName];
-            
+
             // Lấy header row
             const range = XLSX.utils.decode_range(worksheet['!ref']);
             const headers = [];
-            
+
             for (let col = range.s.c; col <= range.e.c; col++) {
                 const cellAddress = XLSX.utils.encode_cell({ r: 0, c: col });
                 const cell = worksheet[cellAddress];
@@ -71,10 +71,10 @@ class ExcelUtils {
             }
 
             // Kiểm tra các cột bắt buộc
-            const missingRequired = requiredColumns.filter(col => 
+            const missingRequired = requiredColumns.filter(col =>
                 !headers.includes(col.toLowerCase())
             );
-            
+
             if (missingRequired.length > 0) {
                 return {
                     valid: false,
@@ -105,14 +105,14 @@ class ExcelUtils {
      */
     static formatExcelDate(dateValue) {
         if (!dateValue) return null;
-        
+
         try {
             // Nếu là Excel date number
             if (typeof dateValue === 'number') {
                 const date = XLSX.SSF.parse_date_code(dateValue);
                 return `${date.y}-${String(date.m).padStart(2, '0')}-${String(date.d).padStart(2, '0')}`;
             }
-            
+
             // Nếu là string
             if (typeof dateValue === 'string') {
                 const date = new Date(dateValue);
@@ -120,7 +120,7 @@ class ExcelUtils {
                     return date.toISOString().split('T')[0];
                 }
             }
-            
+
             return null;
         } catch (error) {
             return null;
@@ -212,15 +212,15 @@ class ExcelUtils {
      */
     static convertVietnameseColumnsToEnglish(data) {
         const mapping = this.getVietnameseColumnMapping();
-        
+
         return data.map(row => {
             const convertedRow = {};
-            
+
             Object.keys(row).forEach(key => {
                 const englishKey = mapping[key] || key.toLowerCase().replace(/\s+/g, '_');
                 convertedRow[englishKey] = row[key];
             });
-            
+
             return convertedRow;
         });
     }

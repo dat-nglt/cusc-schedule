@@ -73,11 +73,11 @@ export const importLecturersController = async (req, res) => {
         }
 
         const fileBuffer = req.file.buffer;
-        
+
         // Validate file extension
         const allowedExtensions = ['.xlsx', '.xls'];
         const fileExtension = path.extname(req.file.originalname).toLowerCase();
-        
+
         if (!allowedExtensions.includes(fileExtension)) {
             return APIResponse(res, 400, null, "Chỉ chấp nhận file Excel (.xlsx, .xls)");
         }
@@ -90,7 +90,7 @@ export const importLecturersController = async (req, res) => {
 
         // Import data
         const results = await importLecturersFromExcel(fileBuffer);
-        
+
         const response = {
             summary: {
                 total: results.total,
@@ -106,7 +106,7 @@ export const importLecturersController = async (req, res) => {
         } else {
             return APIResponse(res, 200, response, `Import thành công ${results.success.length} giảng viên`);
         }
-        
+
     } catch (error) {
         console.error("Error importing lecturers:", error);
         return APIResponse(res, 500, null, error.message || "Lỗi khi import file Excel");
@@ -118,13 +118,13 @@ export const downloadTemplateController = async (req, res) => {
     try {
         // Tạo template buffer
         const buffer = ExcelUtils.createLecturerTemplate();
-        
+
         // Set headers để download
         res.setHeader('Content-Disposition', 'attachment; filename=lecturer_template.xlsx');
         res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        
+
         return res.send(buffer);
-        
+
     } catch (error) {
         console.error("Error creating template:", error);
         return APIResponse(res, 500, null, "Lỗi khi tạo template");
@@ -141,7 +141,7 @@ export const uploadExcel = multer({
     fileFilter: (req, file, cb) => {
         const allowedExtensions = ['.xlsx', '.xls'];
         const fileExtension = path.extname(file.originalname).toLowerCase();
-        
+
         if (allowedExtensions.includes(fileExtension)) {
             cb(null, true);
         } else {

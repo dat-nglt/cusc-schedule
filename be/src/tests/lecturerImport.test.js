@@ -14,11 +14,11 @@ describe('Lecturer Import Excel Tests', () => {
     beforeAll(async () => {
         // Setup database
         await db.sequelize.sync({ force: true });
-        
+
         // Create test admin user và get token
         // (Giả sử bạn đã có hàm để tạo token test)
         authToken = 'test-admin-token';
-        
+
         // Tạo test Excel file
         testFilePath = path.join(__dirname, 'test-lecturers.xlsx');
         createTestExcelFile(testFilePath);
