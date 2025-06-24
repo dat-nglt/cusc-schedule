@@ -7,10 +7,10 @@ import authMiddleware from '../middleware/authMiddleware.js';
 const router = express.Router();
 
 // Login route
-router.post('/login', validateLogin, login);
+// router.post('/login', validateLogin, login);
 
 // Register route
-router.post('/register', validateRegister, register);
+// router.post('/register', validateRegister, register);
 
 // Logout route (protected)
 router.post('/logout', authMiddleware, logout);
