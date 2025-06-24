@@ -96,7 +96,7 @@ export default function LecturerTable({ displayedLecturers, isSmallScreen, isMed
             <TableBody>
                 {displayedLecturers.map((lecturer, index) => (
                     <TableRow
-                        key={lecturer.id}
+                        key={lecturer.lecturer_id}
                         sx={{
                             backgroundColor: index % 2 === 0 ? '#fafafa' : '#ffffff',
                             '&:hover': { backgroundColor: '#e3f2fd', cursor: 'pointer' },
@@ -104,48 +104,48 @@ export default function LecturerTable({ displayedLecturers, isSmallScreen, isMed
                         }}
                     >
                         <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                            {lecturer.stt}
+                            {index + 1}
                         </TableCell>
                         {!isSmallScreen && (
                             <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                                {lecturer.maGiangVien}
+                                {lecturer.lecturer_id}
                             </TableCell>
                         )}
                         <TableCell sx={{ textAlign: 'left', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                            {lecturer.hoTen}
+                            {lecturer.name}
                         </TableCell>
                         {!isSmallScreen && (
                             <TableCell sx={{ textAlign: 'left', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                    {lecturer.monGiangDay.slice(0, 2).map((mon, idx) => (
+                                    {/* {lecturer.department.slice(0, 2).map((d, idx) => (
                                         <Chip
                                             key={idx}
-                                            label={mon}
+                                            label={d}
                                             size="small"
                                             sx={{ fontSize: '0.7rem', maxWidth: '120px' }}
                                         />
                                     ))}
-                                    {lecturer.monGiangDay.length > 2 && (
+                                    {lecturer.department.length > 2 && (
                                         <Chip
-                                            label={`+${lecturer.monGiangDay.length - 2}`}
+                                            label={`+${lecturer.department.length - 2}`}
                                             size="small"
                                             variant="outlined"
                                             sx={{ fontSize: '0.7rem' }}
                                         />
-                                    )}
+                                    )} */}
                                 </Box>
                             </TableCell>
                         )}
                         {!isMediumScreen && (
                             <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
                                 <Box sx={{ fontSize: '0.85rem' }}>
-                                    <div>{lecturer.lienHe.email}</div>
-                                    <div style={{ color: '#666', marginTop: '2px' }}>{lecturer.lienHe.soDienThoai}</div>
+                                    <div>{lecturer.email}</div>
+                                    <div style={{ color: '#666', marginTop: '2px' }}>{lecturer.phone_number}</div>
                                 </Box>
                             </TableCell>
                         )}
                         <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                            {getStatusChip(lecturer.trangThai)}
+                            {getStatusChip(lecturer.status)}
                         </TableCell>
                         <TableCell sx={{ textAlign: 'center', py: 1.5 }}>
                             {isSmallScreen ? (
@@ -160,14 +160,14 @@ export default function LecturerTable({ displayedLecturers, isSmallScreen, isMed
                                     </Tooltip>
                                     <Menu
                                         anchorEl={anchorEl}
-                                        open={Boolean(anchorEl) && selectedRowId === lecturer.id}
+                                        open={Boolean(anchorEl) && selectedRowId === lecturer.lecturer_id}
                                         onClose={handleCloseMenu}
                                         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                                         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
                                     >
                                         <MenuItem
                                             onClick={() => {
-                                                handleViewLecturer(lecturer.id);
+                                                handleViewLecturer(lecturer.lecturer_id);
                                                 handleCloseMenu();
                                             }}
                                         >
@@ -176,7 +176,7 @@ export default function LecturerTable({ displayedLecturers, isSmallScreen, isMed
                                         </MenuItem>
                                         <MenuItem
                                             onClick={() => {
-                                                handleEditLecturer(lecturer.id);
+                                                handleEditLecturer(lecturer.lecturer_id);
                                                 handleCloseMenu();
                                             }}
                                         >
@@ -185,7 +185,7 @@ export default function LecturerTable({ displayedLecturers, isSmallScreen, isMed
                                         </MenuItem>
                                         <MenuItem
                                             onClick={() => {
-                                                handleDeleteLecturer(lecturer.id);
+                                                handleDeleteLecturer(lecturer.lecturer_id);
                                                 handleCloseMenu();
                                             }}
                                         >
@@ -200,21 +200,21 @@ export default function LecturerTable({ displayedLecturers, isSmallScreen, isMed
                                         <Visibility
                                             color="primary"
                                             style={{ cursor: 'pointer' }}
-                                            onClick={() => handleViewLecturer(lecturer.id)}
+                                            onClick={() => handleViewLecturer(lecturer.lecturer_id)}
                                         />
                                     </Tooltip>
                                     <Tooltip title="Sửa">
                                         <Edit
                                             color="primary"
                                             style={{ cursor: 'pointer' }}
-                                            onClick={() => handleEditLecturer(lecturer.id)}
+                                            onClick={() => handleEditLecturer(lecturer.lecturer_id)}
                                         />
                                     </Tooltip>
                                     <Tooltip title="Xóa">
                                         <Delete
                                             color="error"
                                             style={{ cursor: 'pointer' }}
-                                            onClick={() => handleDeleteLecturer(lecturer.id)}
+                                            onClick={() => handleDeleteLecturer(lecturer.lecturer_id)}
                                         />
                                     </Tooltip>
                                 </Box>

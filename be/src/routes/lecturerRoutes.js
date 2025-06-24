@@ -8,8 +8,8 @@ import {
     deleteLecturerController,
     importLecturersController,
     downloadTemplateController,
-    uploadExcel
 } from '../controllers/lecturerController.js';
+import { uploadExcel } from '../middleware/excelMiddleware';
 
 const lecturerRoutes = express.Router();
 
@@ -21,5 +21,5 @@ lecturerRoutes.put('/update/:id', authenticateAndAuthorize(['admin', 'training_o
 
 // Import Excel routes
 lecturerRoutes.post('/import', authenticateAndAuthorize(['admin', 'training_officer']), uploadExcel, importLecturersController);
-lecturerRoutes.get('/template/download', downloadTemplateController);
+lecturerRoutes.get('/template/download', authenticateAndAuthorize(['admin', 'training_officer']), downloadTemplateController);
 export default lecturerRoutes;  
