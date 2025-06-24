@@ -1,7 +1,6 @@
 import { getAllLecturers, getLecturerById, createLecturer, updateLecturer, deleteLecturer, importLecturersFromExcel, validateExcelTemplate } from "../services/lecturerService";
 import { APIResponse } from "../utils/APIResponse.js";
 import ExcelUtils from "../utils/ExcelUtils.js";
-import multer from 'multer';
 import path from 'path';
 
 export const getAllLecturersController = async (req, res) => {
@@ -130,22 +129,3 @@ export const downloadTemplateController = async (req, res) => {
         return APIResponse(res, 500, null, "Lỗi khi tạo template");
     }
 };
-
-// Multer configuration for file upload
-const storage = multer.memoryStorage();
-export const uploadExcel = multer({
-    storage: storage,
-    limits: {
-        fileSize: 5 * 1024 * 1024 // 5MB limit
-    },
-    fileFilter: (req, file, cb) => {
-        const allowedExtensions = ['.xlsx', '.xls'];
-        const fileExtension = path.extname(file.originalname).toLowerCase();
-
-        if (allowedExtensions.includes(fileExtension)) {
-            cb(null, true);
-        } else {
-            cb(new Error('Chỉ chấp nhận file Excel (.xlsx, .xls)'), false);
-        }
-    }
-}).single('excel_file');

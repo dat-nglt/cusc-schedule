@@ -3,7 +3,7 @@ import { findUserByEmail, getUserId } from './userService.js';
 
 
 export const generateToken = (userId, role) => {
-    return jwt.sign({ id: userId, role: role }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    return jwt.sign({ id: userId, role: role }, process.env.JWT_SECRET, { expiresIn: '12h' });
 };
 
 export const loginUser = async (email, password) => {
