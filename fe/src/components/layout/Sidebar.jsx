@@ -78,6 +78,7 @@ const Sidebar = () => {
     { text: 'Quản lý lớp học phần', icon: <AccountBalanceIcon />, path: '/classsection' },
     { text: 'Quản lý phòng', icon: <RoomIcon />, path: '/room' },
     { text: 'Quản lý khung giờ', icon: <AccessTimeIcon />, path: '/slottime' },
+    { text: 'Quản lý thông báo', icon: <CalendarIcon />, path: '/notification' },
     { text: 'Đăng xuất', icon: <LogoutIcon />, path: '/logout' },
   ];
 

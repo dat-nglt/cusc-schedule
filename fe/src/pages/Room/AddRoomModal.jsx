@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import {
   Dialog,
@@ -11,9 +10,14 @@ import {
   Select,
   FormControl,
   InputLabel,
+  IconButton,
+  Box,
+  Typography,
 } from '@mui/material';
+import UploadFileIcon from '@mui/icons-material/UploadFile';
+import * as XLSX from 'xlsx';
 
-const AddRoomModal = ({ open, onClose, onAddRoom }) => {
+const AddRoomModal = ({ open, onClose, onAddRoom, existingRooms }) => {
   const [formData, setFormData] = useState({
     maPhongHoc: '',
     tenPhongHoc: '',
@@ -24,22 +28,35 @@ const AddRoomModal = ({ open, onClose, onAddRoom }) => {
     trangThai: '',
   });
 
+  const [error, setError] = useState('');
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    setError('');
   };
 
   const handleSubmit = () => {
     if (!Object.values(formData).every((value) => value)) {
-      alert('Vui lòng điền đầy đủ thông tin!');
+      setError('Vui lòng điền đầy đủ thông tin!');
       return;
     }
+
+    const isDuplicate = existingRooms.some(
+      (room) => room.maPhongHoc === formData.maPhongHoc
+    );
+    if (isDuplicate) {
+      setError(`Mã phòng học "${formData.maPhongHoc}" đã tồn tại!`);
+      return;
+    }
+
     onAddRoom({
-      id: Date.now(), // Tạm dùng timestamp làm ID
+      id: Date.now(),
       ...formData,
       thoiGianTao: new Date().toISOString().slice(0, 16).replace('T', ' '),
       thoiGianCapNhat: new Date().toISOString().slice(0, 16).replace('T', ' '),
     });
+
     setFormData({
       maPhongHoc: '',
       tenPhongHoc: '',
@@ -49,13 +66,89 @@ const AddRoomModal = ({ open, onClose, onAddRoom }) => {
       loaiPhongHoc: '',
       trangThai: '',
     });
+
     onClose();
+  };
+
+  const handleImportExcel = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      const data = evt.target.result;
+      const workbook = XLSX.read(data, { type: 'binary' });
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      const json = XLSX.utils.sheet_to_json(sheet);
+
+      const imported = [];
+      const duplicated = [];
+
+      json.forEach((row) => {
+        const maPhongHoc = row['Mã phòng học'];
+        const isDuplicate = existingRooms.some((room) => room.maPhongHoc === maPhongHoc);
+
+        if (isDuplicate) {
+          duplicated.push(maPhongHoc);
+        } else {
+          imported.push({
+            id: Date.now() + Math.random(),
+            maPhongHoc,
+            tenPhongHoc: row['Tên phòng học'],
+            toaNha: row['Tòa nhà'],
+            tang: row['Tầng'],
+            sucChua: row['Sức chứa'],
+            loaiPhongHoc: row['Loại phòng học'],
+            trangThai: row['Trạng thái'],
+            thoiGianTao: new Date().toISOString().slice(0, 16).replace('T', ' '),
+            thoiGianCapNhat: new Date().toISOString().slice(0, 16).replace('T', ' '),
+          });
+        }
+      });
+
+      if (duplicated.length > 0) {
+        alert(
+          `Các mã phòng học sau đã tồn tại và bị bỏ qua:\n${duplicated.join(', ')}`
+        );
+      }
+
+      imported.forEach(onAddRoom);
+      onClose();
+    };
+
+    reader.readAsBinaryString(file);
   };
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle>Thêm phòng học</DialogTitle>
+      <DialogTitle>
+        <Box display="flex" justifyContent="space-between" alignItems="center">
+          Thêm phòng học
+          <label htmlFor="excel-upload">
+            <input
+              id="excel-upload"
+              type="file"
+              accept=".xlsx, .xls"
+              hidden
+              onChange={handleImportExcel}
+            />
+            <Button
+              variant="outlined"
+              component="span"
+              startIcon={<UploadFileIcon />}
+              size="small"
+            >
+              Thêm tự động
+            </Button>
+          </label>
+        </Box>
+      </DialogTitle>
       <DialogContent>
+        {error && (
+          <Typography color="error" sx={{ mb: 1 }}>
+            {error}
+          </Typography>
+        )}
         <TextField
           fullWidth
           margin="dense"

@@ -1,4 +1,4 @@
-
+// src/pages/Course/EditCourseModal.jsx
 import React, { useState, useEffect } from 'react';
 import {
   Dialog,
@@ -14,24 +14,24 @@ import {
 const EditCourseModal = ({ open, onClose, course, onSave }) => {
   const [editedCourse, setEditedCourse] = useState({
     id: null,
-    maKhoaHoc: '',
-    tenKhoaHoc: '',
-    thoiGianBatDau: '',
-    thoiGianKetThuc: '',
-    thoiGianTao: '',
-    thoiGianCapNhat: '',
+    courseid: '',
+    coursename: '',
+    startdate: '',
+    enddate: '',
+    created_at: '',
+    updated_at: '',
   });
 
   useEffect(() => {
     if (course) {
       setEditedCourse({
         id: course.id,
-        maKhoaHoc: course.maKhoaHoc,
-        tenKhoaHoc: course.tenKhoaHoc,
-        thoiGianBatDau: course.thoiGianBatDau,
-        thoiGianKetThuc: course.thoiGianKetThuc,
-        thoiGianTao: course.thoiGianTao,
-        thoiGianCapNhat: new Date().toISOString().slice(0, 16).replace('T', ' '),
+        courseid: course.courseid,
+        coursename: course.coursename,
+        startdate: course.startdate,
+        enddate: course.enddate,
+        created_at: course.created_at,
+        updated_at: new Date().toISOString().slice(0, 16).replace('T', ' '),
       });
     }
   }, [course]);
@@ -43,10 +43,10 @@ const EditCourseModal = ({ open, onClose, course, onSave }) => {
 
   const handleSave = () => {
     if (
-      !editedCourse.maKhoaHoc ||
-      !editedCourse.tenKhoaHoc ||
-      !editedCourse.thoiGianBatDau ||
-      !editedCourse.thoiGianKetThuc
+      !editedCourse.courseid ||
+      !editedCourse.coursename ||
+      !editedCourse.startdate ||
+      !editedCourse.enddate
     ) {
       alert('Vui lòng điền đầy đủ thông tin!');
       return;
@@ -64,8 +64,8 @@ const EditCourseModal = ({ open, onClose, course, onSave }) => {
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
           <TextField
             label="Mã khóa học"
-            name="maKhoaHoc"
-            value={editedCourse.maKhoaHoc}
+            name="courseid"
+            value={editedCourse.courseid}
             onChange={handleChange}
             fullWidth
             variant="outlined"
@@ -73,8 +73,8 @@ const EditCourseModal = ({ open, onClose, course, onSave }) => {
           />
           <TextField
             label="Tên khóa học"
-            name="tenKhoaHoc"
-            value={editedCourse.tenKhoaHoc}
+            name="coursename"
+            value={editedCourse.coursename}
             onChange={handleChange}
             fullWidth
             variant="outlined"
@@ -82,9 +82,9 @@ const EditCourseModal = ({ open, onClose, course, onSave }) => {
           />
           <TextField
             label="Thời gian bắt đầu"
-            name="thoiGianBatDau"
+            name="startdate"
             type="date"
-            value={editedCourse.thoiGianBatDau}
+            value={editedCourse.startdate}
             onChange={handleChange}
             fullWidth
             variant="outlined"
@@ -93,9 +93,9 @@ const EditCourseModal = ({ open, onClose, course, onSave }) => {
           />
           <TextField
             label="Thời gian kết thúc"
-            name="thoiGianKetThuc"
+            name="enddate"
             type="date"
-            value={editedCourse.thoiGianKetThuc}
+            value={editedCourse.enddate}
             onChange={handleChange}
             fullWidth
             variant="outlined"
@@ -104,16 +104,16 @@ const EditCourseModal = ({ open, onClose, course, onSave }) => {
           />
           <TextField
             label="Thời gian tạo"
-            name="thoiGianTao"
-            value={editedCourse.thoiGianTao}
+            name="created_at"
+            value={editedCourse.created_at}
             fullWidth
             variant="outlined"
             InputProps={{ readOnly: true }}
           />
           <TextField
             label="Thời gian cập nhật"
-            name="thoiGianCapNhat"
-            value={editedCourse.thoiGianCapNhat}
+            name="updated_at"
+            value={editedCourse.updated_at}
             fullWidth
             variant="outlined"
             InputProps={{ readOnly: true }}

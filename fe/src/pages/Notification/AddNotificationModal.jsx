@@ -10,19 +10,21 @@ import {
   Select,
   FormControl,
   InputLabel,
+  IconButton,
   Box,
   Typography,
 } from '@mui/material';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import * as XLSX from 'xlsx';
 
-const AddClassModal = ({ open, onClose, onAddClass, existingClasses = [] }) => {
+const AddNotificationModal = ({ open, onClose, onAddNotification, existingNotifications }) => {
   const [formData, setFormData] = useState({
-    maLopHoc: '',
-    maHocVien: '',
-    maKhoaHoc: '',
-    siSoLop: '',
-    trangThai: '',
+    maThongBao: '',
+    tieuDeNoiDung: '',
+    loaiThongBao: '',
+    mucDoUuTien: '',
+    kenhGui: '',
+    thoiGianGui: '',
   });
 
   const [error, setError] = useState('');
@@ -39,15 +41,15 @@ const AddClassModal = ({ open, onClose, onAddClass, existingClasses = [] }) => {
       return;
     }
 
-    const isDuplicate = existingClasses.some(
-      (cls) => cls.maLopHoc === formData.maLopHoc
+    const isDuplicate = existingNotifications.some(
+      (notification) => notification.maThongBao === formData.maThongBao
     );
     if (isDuplicate) {
-      setError(`Mã lớp học "${formData.maLopHoc}" đã tồn tại!`);
+      setError(`Mã thông báo "${formData.maThongBao}" đã tồn tại!`);
       return;
     }
 
-    onAddClass({
+    onAddNotification({
       id: Date.now(),
       ...formData,
       thoiGianTao: new Date().toISOString().slice(0, 16).replace('T', ' '),
@@ -55,12 +57,14 @@ const AddClassModal = ({ open, onClose, onAddClass, existingClasses = [] }) => {
     });
 
     setFormData({
-      maLopHoc: '',
-      maHocVien: '',
-      maKhoaHoc: '',
-      siSoLop: '',
-      trangThai: '',
+      maThongBao: '',
+      tieuDeNoiDung: '',
+      loaiThongBao: '',
+      mucDoUuTien: '',
+      kenhGui: '',
+      thoiGianGui: '',
     });
+
     onClose();
   };
 
@@ -79,19 +83,22 @@ const AddClassModal = ({ open, onClose, onAddClass, existingClasses = [] }) => {
       const duplicated = [];
 
       json.forEach((row) => {
-        const maLopHoc = row['Mã lớp học'];
-        const isDuplicate = existingClasses.some((cls) => cls.maLopHoc === maLopHoc);
+        const maThongBao = row['Mã thông báo'];
+        const isDuplicate = existingNotifications.some(
+          (notification) => notification.maThongBao === maThongBao
+        );
 
         if (isDuplicate) {
-          duplicated.push(maLopHoc);
+          duplicated.push(maThongBao);
         } else {
           imported.push({
             id: Date.now() + Math.random(),
-            maLopHoc,
-            maHocVien: row['Mã học viên'],
-            maKhoaHoc: row['Mã khóa học'],
-            siSoLop: row['Sĩ số lớp'],
-            trangThai: row['Trạng thái'],
+            maThongBao,
+            tieuDeNoiDung: row['Tiêu đề nội dung'],
+            loaiThongBao: row['Loại thông báo'],
+            mucDoUuTien: row['Mức độ ưu tiên'],
+            kenhGui: row['Kênh gửi'],
+            thoiGianGui: row['Thời gian gửi'],
             thoiGianTao: new Date().toISOString().slice(0, 16).replace('T', ' '),
             thoiGianCapNhat: new Date().toISOString().slice(0, 16).replace('T', ' '),
           });
@@ -99,10 +106,12 @@ const AddClassModal = ({ open, onClose, onAddClass, existingClasses = [] }) => {
       });
 
       if (duplicated.length > 0) {
-        alert(`Các mã lớp học sau đã tồn tại và bị bỏ qua:\n${duplicated.join(', ')}`);
+        alert(
+          `Các mã thông báo sau đã tồn tại và bị bỏ qua:\n${duplicated.join(', ')}`
+        );
       }
 
-      imported.forEach(onAddClass);
+      imported.forEach(onAddNotification);
       onClose();
     };
 
@@ -113,7 +122,7 @@ const AddClassModal = ({ open, onClose, onAddClass, existingClasses = [] }) => {
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>
         <Box display="flex" justifyContent="space-between" alignItems="center">
-          Thêm lớp học
+          Thêm thông báo
           <label htmlFor="excel-upload">
             <input
               id="excel-upload"
@@ -142,49 +151,71 @@ const AddClassModal = ({ open, onClose, onAddClass, existingClasses = [] }) => {
         <TextField
           fullWidth
           margin="dense"
-          label="Mã lớp học"
-          name="maLopHoc"
-          value={formData.maLopHoc}
+          label="Mã thông báo"
+          name="maThongBao"
+          value={formData.maThongBao}
           onChange={handleChange}
         />
         <TextField
           fullWidth
           margin="dense"
-          label="Mã học viên"
-          name="maHocVien"
-          value={formData.maHocVien}
-          onChange={handleChange}
-        />
-        <TextField
-          fullWidth
-          margin="dense"
-          label="Mã khóa học"
-          name="maKhoaHoc"
-          value={formData.maKhoaHoc}
-          onChange={handleChange}
-        />
-        <TextField
-          fullWidth
-          margin="dense"
-          label="Sĩ số lớp"
-          name="siSoLop"
-          type="number"
-          value={formData.siSoLop}
+          label="Tiêu đề nội dung"
+          name="tieuDeNoiDung"
+          value={formData.tieuDeNoiDung}
           onChange={handleChange}
         />
         <FormControl fullWidth margin="dense">
-          <InputLabel id="trang-thai-label">Trạng thái</InputLabel>
+          <InputLabel id="loai-thong-bao-label">Loại thông báo</InputLabel>
           <Select
-            labelId="trang-thai-label"
-            name="trangThai"
-            value={formData.trangThai}
+            labelId="loai-thong-bao-label"
+            name="loaiThongBao"
+            value={formData.loaiThongBao}
             onChange={handleChange}
-            label="Trạng thái"
+            label="Loại thông báo"
           >
-            <MenuItem value="Hoạt động">Hoạt động</MenuItem>
-            <MenuItem value="Không hoạt động">Không hoạt động</MenuItem>
+            <MenuItem value="Sự kiện">Sự kiện</MenuItem>
+            <MenuItem value="Học tập">Học tập</MenuItem>
+            <MenuItem value="Hành chính">Hành chính</MenuItem>
           </Select>
         </FormControl>
+        <FormControl fullWidth margin="dense">
+          <InputLabel id="muc-do-uu-tien-label">Mức độ ưu tiên</InputLabel>
+          <Select
+            labelId="muc-do-uu-tien-label"
+            name="mucDoUuTien"
+            value={formData.mucDoUuTien}
+            onChange={handleChange}
+            label="Mức độ ưu tiên"
+          >
+            <MenuItem value="Cao">Cao</MenuItem>
+            <MenuItem value="Trung bình">Trung bình</MenuItem>
+            <MenuItem value="Thấp">Thấp</MenuItem>
+          </Select>
+        </FormControl>
+        <FormControl fullWidth margin="dense">
+          <InputLabel id="kenh-gui-label">Kênh gửi</InputLabel>
+          <Select
+            labelId="kenh-gui-label"
+            name="kenhGui"
+            value={formData.kenhGui}
+            onChange={handleChange}
+            label="Kênh gửi"
+          >
+            <MenuItem value="Email">Email</MenuItem>
+            <MenuItem value="App">App</MenuItem>
+            <MenuItem value="SMS">SMS</MenuItem>
+          </Select>
+        </FormControl>
+        <TextField
+          fullWidth
+          margin="dense"
+          label="Thời gian gửi"
+          name="thoiGianGui"
+          type="datetime-local"
+          value={formData.thoiGianGui}
+          onChange={handleChange}
+          InputLabelProps={{ shrink: true }}
+        />
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Hủy</Button>
@@ -196,4 +227,4 @@ const AddClassModal = ({ open, onClose, onAddClass, existingClasses = [] }) => {
   );
 };
 
-export default AddClassModal;
+export default AddNotificationModal;
