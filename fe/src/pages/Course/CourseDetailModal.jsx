@@ -16,6 +16,7 @@ import {
   Code as CodeIcon,
   Label as LabelIcon,
   Schedule as ScheduleIcon,
+  ToggleOn as ToggleOnIcon,
   Event as EventIcon,
   Update as UpdateIcon,
 } from '@mui/icons-material';
@@ -40,7 +41,7 @@ const CourseDetailModal = ({ open, onClose, course }) => {
 
   // Hàm sao chép mã khóa học
   const handleCopyMaKhoaHoc = () => {
-    navigator.clipboard.writeText(course.courseid);
+    navigator.clipboard.writeText(course.course_id);
     alert('Đã sao chép mã khóa học!');
   };
 
@@ -68,7 +69,7 @@ const CourseDetailModal = ({ open, onClose, course }) => {
         }}
       >
         <Typography variant="h6">
-          Chi tiết khóa học {course.courseid}
+          Chi tiết khóa học {course.course_id}
         </Typography>
         <Tooltip title="Sao chép mã khóa học">
           <IconButton
@@ -95,14 +96,11 @@ const CourseDetailModal = ({ open, onClose, course }) => {
             >
               <CodeIcon sx={{ mr: 1, color: '#1976d2' }} />
               <Box>
-                <Typography
-                  variant="body2"
-                  sx={{ fontWeight: 'bold', color: '#333' }}
-                >
+                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#333' }}>
                   Mã khóa học
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#666' }}>
-                  {getValueOrDefault(course.courseid)}
+                  {getValueOrDefault(course.course_id)}
                 </Typography>
               </Box>
             </Box>
@@ -122,14 +120,11 @@ const CourseDetailModal = ({ open, onClose, course }) => {
             >
               <LabelIcon sx={{ mr: 1, color: '#1976d2' }} />
               <Box>
-                <Typography
-                  variant="body2"
-                  sx={{ fontWeight: 'bold', color: '#333' }}
-                >
+                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#333' }}>
                   Tên khóa học
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#666' }}>
-                  {getValueOrDefault(course.coursename)}
+                  {getValueOrDefault(course.course_name)}
                 </Typography>
               </Box>
             </Box>
@@ -149,14 +144,11 @@ const CourseDetailModal = ({ open, onClose, course }) => {
             >
               <ScheduleIcon sx={{ mr: 1, color: '#1976d2' }} />
               <Box>
-                <Typography
-                  variant="body2"
-                  sx={{ fontWeight: 'bold', color: '#333' }}
-                >
+                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#333' }}>
                   Thời gian bắt đầu
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#666' }}>
-                  {formatDateTime(course.startdate)}
+                  {formatDateTime(course.start_date)}
                 </Typography>
               </Box>
             </Box>
@@ -176,14 +168,35 @@ const CourseDetailModal = ({ open, onClose, course }) => {
             >
               <ScheduleIcon sx={{ mr: 1, color: '#1976d2' }} />
               <Box>
-                <Typography
-                  variant="body2"
-                  sx={{ fontWeight: 'bold', color: '#333' }}
-                >
+                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#333' }}>
                   Thời gian kết thúc
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#666' }}>
-                  {formatDateTime(course.enddate)}
+                  {formatDateTime(course.end_date)}
+                </Typography>
+              </Box>
+            </Box>
+          </Grid>
+
+          {/* Trạng thái */}
+          <Grid item xs={6}>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                bgcolor: '#f9f9f9',
+                p: 2,
+                borderRadius: 1,
+                border: '1px solid #e0e0e0',
+              }}
+            >
+              <ToggleOnIcon sx={{ mr: 1, color: '#1976d2' }} />
+              <Box>
+                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#333' }}>
+                  Trạng thái
+                </Typography>
+                <Typography variant="body1" sx={{ color: '#666' }}>
+                  {getValueOrDefault(course.status)}
                 </Typography>
               </Box>
             </Box>
@@ -203,10 +216,7 @@ const CourseDetailModal = ({ open, onClose, course }) => {
             >
               <EventIcon sx={{ mr: 1, color: '#1976d2' }} />
               <Box>
-                <Typography
-                  variant="body2"
-                  sx={{ fontWeight: 'bold', color: '#333' }}
-                >
+                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#333' }}>
                   Thời gian tạo
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#666' }}>
@@ -230,10 +240,7 @@ const CourseDetailModal = ({ open, onClose, course }) => {
             >
               <UpdateIcon sx={{ mr: 1, color: '#1976d2' }} />
               <Box>
-                <Typography
-                  variant="body2"
-                  sx={{ fontWeight: 'bold', color: '#333' }}
-                >
+                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#333' }}>
                   Thời gian cập nhật
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#666' }}>

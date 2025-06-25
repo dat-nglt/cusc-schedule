@@ -3,7 +3,8 @@ import {
   getCourseById,
   createCourse,
   updateCourse,
-  deleteCourse
+  deleteCourse,
+  listCourses
 } from "../services/courseService.js";
 import { successResponse, errorResponse } from "../utils/APIResponse.js";
 
@@ -16,10 +17,10 @@ export const getAllCoursesController = async (req, res) => {
   }
 };
 
-// GET /courses/:id
+// GET /courses/:course_id
 export const getCourseByIdController = async (req, res) => {
   try {
-    const course = await getCourseById(req.params.id);
+    const course = await getCourseById(req.params.course_id);
     if (!course) return errorResponse(res, "Course not found", 404);
     return successResponse(res, course, "Course fetched");
   } catch (error) {
@@ -27,7 +28,7 @@ export const getCourseByIdController = async (req, res) => {
   }
 };
 
-// POST /courses
+// POST /courses/add
 export const createCourseController = async (req, res) => {
   try {
     const course = await createCourse(req.body);
@@ -37,36 +38,35 @@ export const createCourseController = async (req, res) => {
   }
 };
 
-// PUT /courses/:id
+// PUT /courses/edit/:course_id
 export const updateCourseController = async (req, res) => {
   try {
-    const course = await updateCourse(req.params.id, req.body);
+    const course = await updateCourse(req.params.course_id, req.body);
     return successResponse(res, course, "Course updated");
   } catch (error) {
     return errorResponse(res, error.message, 400);
   }
 };
 
-// DELETE /courses/:id
+// DELETE /courses/delete/:course_id
 export const deleteCourseController = async (req, res) => {
   try {
-    await deleteCourse(req.params.courseid); // Sử dụng courseid
+    await deleteCourse(req.params.course_id);
     return successResponse(res, null, "Course deleted");
   } catch (error) {
     return errorResponse(res, error.message, 400);
   }
 };
 
-//LẤY DANH SÁCH CÁC KHÓA HỌC VỚI CÁC BỘ LỌC
+// LẤY DANH SÁCH CÁC KHÓA HỌC VỚI CÁC BỘ LỌC
 export const listCoursesController = async (req, res) => {
   try {
-    const { courseid, coursename, startdate } = req.query;
+    const { course_id, course_name, start_date } = req.query;
 
-    const filters = { courseid, coursename, startdate };
+    const filters = { course_id, course_name, start_date };
 
     const courses = await listCourses(filters);
 
-    // ✅ Trả về mảng dữ liệu trực tiếp
     return res.json(courses);
   } catch (error) {
     return res.status(500).json({ error: error.message || "Error listing courses" });

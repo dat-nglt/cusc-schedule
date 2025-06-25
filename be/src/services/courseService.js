@@ -1,4 +1,5 @@
 import Course from "../models/Course.js";
+import { Op } from 'sequelize'; // Đảm bảo import Op nếu chưa có
 
 export const getAllCourses = async () => {
   try {
@@ -10,8 +11,8 @@ export const getAllCourses = async () => {
 };
 
 // Get one course by ID
-export const getCourseById = async (id) => {
-  return await Course.findByPk(id);
+export const getCourseById = async (course_id) => {
+  return await Course.findByPk(course_id);
 };
 
 // Create a new course
@@ -20,15 +21,15 @@ export const createCourse = async (data) => {
 };
 
 // Update a course
-export const updateCourse = async (id, data) => {
-  const course = await Course.findByPk(id);
+export const updateCourse = async (course_id, data) => {
+  const course = await Course.findByPk(course_id);
   if (!course) throw new Error("Course not found");
   return await course.update(data);
 };
 
 // Delete a course
-export const deleteCourse = async (courseid) => {
-  const course = await Course.findOne({ where: { courseid } }); // Sử dụng courseid
+export const deleteCourse = async (course_id) => {
+  const course = await Course.findOne({ where: { course_id } });
   if (!course) throw new Error("Course not found");
   return await course.destroy();
 };
@@ -40,28 +41,28 @@ export const listCourses = async (filters) => {
   try {
     const whereClause = {};
 
-    // Lọc theo courseid
-    if (filters.courseid) {
-      whereClause.courseid = {
-        [Op.iLike]: `%${filters.courseid}%`
+    // Lọc theo course_id
+    if (filters.course_id) {
+      whereClause.course_id = {
+        [Op.iLike]: `%${filters.course_id}%`
       };
     }
 
-    // Lọc theo coursename
-    if (filters.coursename) {
-      whereClause.coursename = {
-        [Op.iLike]: `%${filters.coursename}%`
+    // Lọc theo course_name
+    if (filters.course_name) {
+      whereClause.course_name = {
+        [Op.iLike]: `%${filters.course_name}%`
       };
     }
 
-    // Lọc theo startdate
-    if (filters.startdate) {
-      whereClause.startdate = filters.startdate; // YYYY-MM-DD
+    // Lọc theo start_date
+    if (filters.start_date) {
+      whereClause.start_date = filters.start_date; // YYYY-MM-DD
     }
 
     const courses = await Course.findAll({
       where: whereClause,
-      attributes: ['courseid', 'coursename', 'startdate', 'enddate', 'status'],
+      attributes: ['course_id', 'course_name', 'start_date', 'end_date', 'status', 'created_at', 'updated_at'],
       order: [['created_at', 'DESC']]
     });
 
@@ -70,4 +71,3 @@ export const listCourses = async (filters) => {
     throw new Error('Error listing courses: ' + error.message);
   }
 };
-

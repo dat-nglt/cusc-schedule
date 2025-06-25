@@ -26,7 +26,7 @@ import EditCourseModal from './EditCourseModal';
 import DeleteCourseModal from './DeleteCourseModal';
 import useResponsive from '../../hooks/useResponsive';
 import CourseTable from './CourseTable';
-import axios from 'axios';
+import { getCourses, getCourseById, addCourse, updateCourse, deleteCourse, listCourses } from '../../api/courseAPI';
 
 // Hàm định dạng timestamp thành YYYY-MM-DD HH:MM:SS.sss+07
 const formatTimestamp = (timestamp) => {
@@ -65,30 +65,28 @@ const Course = () => {
   // Load danh sách khóa học từ API
   const fetchCourses = async () => {
     try {
-      console.log('Gọi API tới:', 'http://localhost:3000/api/courses');
-      const response = await axios.get('http://localhost:3000/api/courses', {
-        timeout: 5000,
-      });
-      console.log('Phản hồi từ API (danh sách):', response.data);
+      setLoading(true);
+      const response = await getCourses();
+      console.log('Phản hồi từ API (danh sách):', response);
 
       let coursesData = [];
-      if (Array.isArray(response.data)) {
-        coursesData = response.data.map((course, index) => ({
+      if (Array.isArray(response)) {
+        coursesData = response.map((course, index) => ({
           stt: index + 1,
-          courseid: course.courseid,
-          coursename: course.coursename,
-          startdate: course.startdate,
-          enddate: course.enddate,
+          course_id: course.course_id, // Thay courseid bằng course_id
+          course_name: course.course_name, // Thay coursename bằng course_name
+          start_date: course.start_date, // Thay startdate bằng start_date
+          end_date: course.end_date, // Thay enddate bằng end_date
           created_at: formatTimestamp(course.created_at),
           updated_at: formatTimestamp(course.updated_at),
         }));
-      } else if (response.data && typeof response.data === 'object' && Array.isArray(response.data.data)) {
-        coursesData = response.data.data.map((course, index) => ({
+      } else if (response && typeof response === 'object' && Array.isArray(response.data)) {
+        coursesData = response.data.map((course, index) => ({
           stt: index + 1,
-          courseid: course.courseid,
-          coursename: course.coursename,
-          startdate: course.startdate,
-          enddate: course.enddate,
+          course_id: course.course_id,
+          course_name: course.course_name,
+          start_date: course.start_date,
+          end_date: course.end_date,
           created_at: formatTimestamp(course.created_at),
           updated_at: formatTimestamp(course.updated_at),
         }));
@@ -99,7 +97,7 @@ const Course = () => {
       setCourses(coursesData);
       setLoading(false);
     } catch (err) {
-      console.error('Lỗi chi tiết (danh sách):', err.response?.status, err.response?.data || err.message);
+      console.error('Lỗi chi tiết (danh sách):', err.message);
       setError(`Lỗi khi tải danh sách khóa học: ${err.message}`);
       setLoading(false);
     }
@@ -110,68 +108,77 @@ const Course = () => {
   }, []);
 
   // Hàm lấy chi tiết khóa học theo ID
-  const handleViewCourse = async (courseid) => {
+  const handleViewCourse = async (course_id) => { // Thay courseid bằng course_id
     try {
-      console.log('Gọi API chi tiết với courseid:', courseid);
-      const response = await axios.get(`http://localhost:3000/api/courses/${courseid}`, {
-        timeout: 5000,
-      });
-      console.log('Phản hồi từ API (chi tiết):', response.data);
+      setLoading(true);
+      const response = await getCourseById(course_id);
+      console.log('Phản hồi từ API (chi tiết):', response);
 
       let courseData = {};
-      if (response.data && typeof response.data === 'object') {
-        if (Array.isArray(response.data.data)) {
-          courseData = response.data.data[0] || {};
-        } else if (response.data.data) {
-          courseData = response.data.data;
-        } else {
+      if (response && typeof response === 'object') {
+        if (Array.isArray(response.data)) {
+          courseData = response.data[0] || {};
+        } else if (response.data) {
           courseData = response.data;
+        } else {
+          courseData = response;
         }
       } else {
         throw new Error('Dữ liệu từ API không phải là object hợp lệ');
       }
 
       setSelectedCourse({
-        courseid: courseData.courseid,
-        coursename: courseData.coursename,
-        startdate: courseData.startdate,
-        enddate: courseData.enddate,
+        course_id: courseData.course_id,
+        course_name: courseData.course_name,
+        start_date: courseData.start_date,
+        end_date: courseData.end_date,
+        status: courseData.status || 'Không có dữ liệu', // Thêm status
         created_at: formatTimestamp(courseData.created_at),
         updated_at: formatTimestamp(courseData.updated_at),
       });
       setOpenDetail(true);
     } catch (err) {
-      console.error('Lỗi khi lấy chi tiết:', err.response?.status, err.response?.data || err.message);
+      console.error('Lỗi khi lấy chi tiết:', err.message);
       setError(`Lỗi khi lấy chi tiết khóa học: ${err.message}`);
       setOpenDetail(false);
+    } finally {
+      setLoading(false);
     }
   };
 
   // Hàm thêm khóa học
+  // src/pages/Course/index.jsx (đoạn handleAddCourse)
   const handleAddCourse = async (courseData) => {
     try {
-      console.log('Gửi dữ liệu thêm khóa học:', courseData);
-      const response = await axios.post('http://localhost:3000/api/courses/add', courseData, {
-        timeout: 5000,
+      setLoading(true);
+      console.log('Gửi dữ liệu thêm khóa học:', courseData); // Log dữ liệu gửi lên
+      const response = await addCourse({
+        course_id: courseData.course_id,
+        course_name: courseData.course_name,
+        start_date: courseData.start_date,
+        end_date: courseData.end_date,
+        status: courseData.status || 'inactive', // Đặt giá trị mặc định nếu không có
       });
-      console.log('Phản hồi từ API (thêm):', response.data);
+      console.log('Phản hồi từ API (thêm):', response); // Log phản hồi từ API
 
-      const newCourse = response.data.data || response.data;
+      const newCourse = response.data || response;
       setCourses((prev) => [
         ...prev,
         {
           stt: prev.length + 1,
-          courseid: newCourse.courseid,
-          coursename: newCourse.coursename,
-          startdate: newCourse.startdate,
-          enddate: newCourse.enddate,
+          course_id: newCourse.course_id,
+          course_name: newCourse.course_name,
+          start_date: newCourse.start_date,
+          end_date: newCourse.end_date,
           created_at: formatTimestamp(newCourse.created_at),
           updated_at: formatTimestamp(newCourse.updated_at),
         },
       ]);
     } catch (err) {
-      console.error('Lỗi khi thêm khóa học:', err.response?.status, err.response?.data || err.message);
-      setError(`Lỗi khi thêm khóa học: ${err.message}`);
+      console.error('Lỗi khi thêm khóa học:', err.message, err.response?.data); // Log chi tiết lỗi
+      setError(`Lỗi khi thêm khóa học: ${err.message} - ${err.response?.data?.message || 'Kiểm tra định dạng dữ liệu'}`);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -184,28 +191,30 @@ const Course = () => {
   // Hàm cập nhật khóa học
   const handleSaveEditedCourse = async (courseData) => {
     try {
+      setLoading(true);
       console.log('Gửi dữ liệu chỉnh sửa khóa học:', courseData);
-      const response = await axios.put(`http://localhost:3000/api/courses/edit/${courseData.courseid}`, {
-        courseid: courseData.courseid,
-        coursename: courseData.coursename,
-        startdate: courseData.startdate,
-        enddate: courseData.enddate,
-        updated_at: new Date().toISOString(), // Cập nhật thời gian hiện tại
-      }, {
-        timeout: 5000,
+      const response = await updateCourse(courseData.course_id, { // Thay courseid bằng course_id
+        course_id: courseData.course_id,
+        course_name: courseData.course_name,
+        start_date: courseData.start_date,
+        end_date: courseData.end_date,
+        status: courseData.status,
+        updated_at: new Date().toISOString(),
       });
-      console.log('Phản hồi từ API (chỉnh sửa):', response.data);
+      console.log('Phản hồi từ API (chỉnh sửa):', response);
 
       await fetchCourses();
     } catch (err) {
-      console.error('Lỗi khi chỉnh sửa khóa học:', err.response?.status, err.response?.data || err.message);
+      console.error('Lỗi khi chỉnh sửa khóa học:', err.message);
       setError(`Lỗi khi chỉnh sửa khóa học: ${err.message}`);
+    } finally {
+      setLoading(false);
     }
   };
 
   // Hàm mở modal xóa và set course
   const handleOpenDeleteModal = (course) => {
-    if (!course || !course.courseid) {
+    if (!course || !course.course_id) { // Thay courseid bằng course_id
       console.error('Invalid course data in handleOpenDeleteModal:', course);
       setError('Dữ liệu khóa học không hợp lệ');
       return;
@@ -215,22 +224,24 @@ const Course = () => {
   };
 
   // Hàm xóa khóa học
-  const handleDeleteCourse = async (courseId) => {
+  const handleDeleteCourse = async (course_id) => { // Thay courseId bằng course_id
     try {
-      if (!courseId) {
-        console.error('Invalid courseId for deletion:', courseId);
+      setLoading(true);
+      if (!course_id) {
+        console.error('Invalid courseId for deletion:', course_id);
         setError('Dữ liệu khóa học không hợp lệ');
         return;
       }
-      const response = await axios.delete(`http://localhost:3000/api/courses/delete/${courseId}`, {
-        timeout: 5000,
-      });
-      console.log('Response from API (delete):', response.data);
+      console.log('Attempting to delete course with course_id:', course_id);
+      const response = await deleteCourse(course_id);
+      console.log('Response from API (delete):', response);
 
       await fetchCourses();
     } catch (err) {
-      console.error('Lỗi khi xóa khóa học:', err.response?.status, err.response?.data || err.message);
+      console.error('Lỗi khi xóa khóa học:', err.message);
       setError(`Lỗi khi xóa khóa học: ${err.message}`);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -242,10 +253,10 @@ const Course = () => {
   // Lọc danh sách khóa học dựa trên từ khóa tìm kiếm và năm
   const filteredCourses = courses.filter((course) => {
     const matchesSearchTerm =
-      course.courseid.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      course.coursename.toLowerCase().includes(searchTerm.toLowerCase());
+      course.course_id.toLowerCase().includes(searchTerm.toLowerCase()) || // Thay courseid bằng course_id
+      course.course_name.toLowerCase().includes(searchTerm.toLowerCase()); // Thay coursename bằng course_name
     const matchesYear = selectedYear
-      ? course.startdate?.startsWith(selectedYear)
+      ? course.start_date?.startsWith(selectedYear) // Thay startdate bằng start_date
       : true;
     return matchesSearchTerm && matchesYear;
   });

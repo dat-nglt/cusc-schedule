@@ -9,14 +9,16 @@ import {
   TextField,
   Button,
   Box,
+  MenuItem,
 } from '@mui/material';
 
 const AddCourseModal = ({ open, onClose, onAddCourse }) => {
   const [newCourse, setNewCourse] = useState({
-    courseid: '',
-    coursename: '',
-    startdate: '',
-    enddate: '',
+    course_id: '', // Thay courseid bằng course_id
+    course_name: '', // Thay coursename bằng course_name
+    start_date: '', // Thay startdate bằng start_date
+    end_date: '', // Thay enddate bằng end_date
+    status: '', // Thêm status theo model
   });
 
   const handleChange = (e) => {
@@ -26,10 +28,11 @@ const AddCourseModal = ({ open, onClose, onAddCourse }) => {
 
   const handleSubmit = () => {
     if (
-      !newCourse.courseid ||
-      !newCourse.coursename ||
-      !newCourse.startdate ||
-      !newCourse.enddate
+      !newCourse.course_id ||
+      !newCourse.course_name ||
+      !newCourse.start_date ||
+      !newCourse.end_date ||
+      !newCourse.status
     ) {
       alert('Vui lòng điền đầy đủ thông tin!');
       return;
@@ -44,10 +47,11 @@ const AddCourseModal = ({ open, onClose, onAddCourse }) => {
 
     onAddCourse(courseToAdd);
     setNewCourse({
-      courseid: '',
-      coursename: '',
-      startdate: '',
-      enddate: '',
+      course_id: '',
+      course_name: '',
+      start_date: '',
+      end_date: '',
+      status: '',
     });
     onClose();
   };
@@ -61,8 +65,8 @@ const AddCourseModal = ({ open, onClose, onAddCourse }) => {
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
           <TextField
             label="Mã khóa học"
-            name="courseid"
-            value={newCourse.courseid}
+            name="course_id" // Thay courseid bằng course_id
+            value={newCourse.course_id}
             onChange={handleChange}
             fullWidth
             variant="outlined"
@@ -70,8 +74,8 @@ const AddCourseModal = ({ open, onClose, onAddCourse }) => {
           />
           <TextField
             label="Tên khóa học"
-            name="coursename"
-            value={newCourse.coursename}
+            name="course_name" // Thay coursename bằng course_name
+            value={newCourse.course_name}
             onChange={handleChange}
             fullWidth
             variant="outlined"
@@ -79,9 +83,9 @@ const AddCourseModal = ({ open, onClose, onAddCourse }) => {
           />
           <TextField
             label="Thời gian bắt đầu"
-            name="startdate"
+            name="start_date" // Thay startdate bằng start_date
             type="date"
-            value={newCourse.startdate}
+            value={newCourse.start_date}
             onChange={handleChange}
             fullWidth
             variant="outlined"
@@ -90,15 +94,28 @@ const AddCourseModal = ({ open, onClose, onAddCourse }) => {
           />
           <TextField
             label="Thời gian kết thúc"
-            name="enddate"
+            name="end_date" // Thay enddate bằng end_date
             type="date"
-            value={newCourse.enddate}
+            value={newCourse.end_date}
             onChange={handleChange}
             fullWidth
             variant="outlined"
             InputLabelProps={{ shrink: true }}
             required
           />
+          <TextField
+            label="Trạng thái"
+            name="status"
+            value={newCourse.status}
+            onChange={handleChange}
+            fullWidth
+            variant="outlined"
+            required
+            select // Loại bỏ SelectProps={{ native: true }}
+          >
+            <MenuItem value="active">Hoạt động</MenuItem>
+            <MenuItem value="inactive">Ngừng hoạt động</MenuItem>
+          </TextField>
         </Box>
       </DialogContent>
       <DialogActions>

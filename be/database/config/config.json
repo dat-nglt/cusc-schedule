@@ -1,7 +1,7 @@
 {
   "development": {
     "username": "postgres",
-    "password": "MyPostgreSQL@2025",
+    "password": "123",
     "database": "cusc_db",
     "host": "127.0.0.1",
     "dialect": "postgres",
