@@ -152,7 +152,7 @@ export default function LecturerTable({ displayedLecturers, isSmallScreen, isMed
                                 <>
                                     <Tooltip title="Thao tác">
                                         <IconButton
-                                            onClick={(event) => handleOpenMenu(event, lecturer.id)}
+                                            onClick={(event) => handleOpenMenu(event, lecturer.lecturer_id)}
                                             sx={{ color: '#1976d2' }}
                                         >
                                             <MenuIcon />

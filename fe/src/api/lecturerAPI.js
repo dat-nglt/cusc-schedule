@@ -60,4 +60,15 @@ export const importLecturers = async (file) => {
         console.error('Error importing lecturers:', error);
         throw new Error('Lỗi khi nhập giảng viên từ tệp');
     }
-}
+};
+
+export const deleteLecturer = async (id) => {
+    try {
+        const response = await axiosInstance.delete(`/api/lecturers/delete/${id}`);
+        return response;
+    }
+    catch (error) {
+        console.error('Error deleting lecturer:', error);
+        throw new Error('Lỗi khi xóa giảng viên');
+    }
+};

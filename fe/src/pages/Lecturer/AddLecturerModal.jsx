@@ -14,7 +14,8 @@ import {
     MenuItem,
 } from '@mui/material';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
-import * as XLSX from 'xlsx';
+import { importLecturers } from '../../api/lecturerAPI';
+
 
 const availableDepartments = [
     'Khoa Công Nghệ Thông Tin',
@@ -34,7 +35,7 @@ const availableDegrees = [
     'Phó Giáo sư'
 ];
 
-const validStatuses = ['Hoạt động', 'Tạm nghỉ'];
+// const validStatuses = ['Hoạt động', 'Tạm nghỉ'];
 
 export default function AddLecturerModal({ open, onClose, onAddLecturer, existingLecturers }) {
     const [newLecturer, setNewLecturer] = useState({
@@ -140,7 +141,7 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
         onClose();
     };
 
-    const handleImportExcel = (e) => {
+    const handleImportExcel = async (e) => {
         const file = e.target.files[0];
         if (!file) {
             setError('Vui lòng chọn một file Excel!');
@@ -154,140 +155,46 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
             return;
         }
 
-        const reader = new FileReader();
-        reader.onload = (evt) => {
-            try {
-                const data = new Uint8Array(evt.target.result);
-                const workbook = XLSX.read(data, { type: 'array' });
-                const sheet = workbook.Sheets[workbook.SheetNames[0]];
-                const json = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+        try {
+            setError(''); // Clear previous errors
+            const response = await importLecturers(file);
 
-                if (!json || json.length <= 1) {
-                    setError('File Excel không chứa dữ liệu hoặc thiếu hàng dữ liệu!');
-                    return;
+            if (response.data && response.data.success) {
+                // Handle successful import
+                const { imported, duplicated, invalid } = response.data;
+
+                let message = '';
+                if (imported && imported.length > 0) {
+                    // Add imported lecturers to the list
+                    imported.forEach(lecturer => onAddLecturer(lecturer));
+                    message += `Đã thêm thành công ${imported.length} giảng viên. `;
                 }
 
-                const header = json[0].map(h => h?.toString().trim());
-                const expectedHeader = ['Mã giảng viên', 'Họ tên', 'Email', 'Ngày sinh', 'Giới tính', 'Địa chỉ', 'Số điện thoại', 'Khoa', 'Ngày tuyển dụng', 'Bằng cấp', 'Trạng thái'];
-                if (!expectedHeader.every((h, i) => h === header[i])) {
-                    setError('Định dạng cột không đúng! Cần: Mã giảng viên, Họ tên, Email, Ngày sinh, Giới tính, Địa chỉ, Số điện thoại, Khoa, Ngày tuyển dụng, Bằng cấp, Trạng thái');
-                    return;
+                if (duplicated && duplicated.length > 0) {
+                    message += `Các mã giảng viên đã tồn tại và bị bỏ qua: ${duplicated.join(', ')}. `;
                 }
 
-                const imported = [];
-                const duplicated = [];
-                const invalidRows = [];
-
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                const phoneRegex = /^[0-9]{10,11}$/;
-
-                json.slice(1).forEach((row, index) => {
-                    const lecturer_id = row[0]?.toString().trim();
-                    const name = row[1]?.toString().trim();
-                    const email = row[2]?.toString().trim();
-                    const day_of_birth = row[3]?.toString().trim();
-                    const gender = row[4]?.toString().trim();
-                    const address = row[5]?.toString().trim();
-                    const phone_number = row[6]?.toString().trim();
-                    const department = row[7]?.toString().trim();
-                    const hire_date = row[8]?.toString().trim();
-                    const degree = row[9]?.toString().trim();
-                    const status = row[10]?.toString().trim() || 'Hoạt động';
-
-                    // Kiểm tra dữ liệu hợp lệ
-                    if (!lecturer_id || !name || !email || !day_of_birth || !gender || !address || !phone_number || !department || !hire_date || !degree) {
-                        invalidRows.push(index + 2);
-                        return;
-                    }
-
-                    if (!emailRegex.test(email)) {
-                        invalidRows.push(index + 2);
-                        return;
-                    }
-
-                    if (!phoneRegex.test(phone_number)) {
-                        invalidRows.push(index + 2);
-                        return;
-                    }
-
-                    if (!validStatuses.includes(status)) {
-                        invalidRows.push(index + 2);
-                        return;
-                    }
-
-                    if (!availableDepartments.includes(department)) {
-                        invalidRows.push(index + 2);
-                        return;
-                    }
-
-                    if (!availableDegrees.includes(degree)) {
-                        invalidRows.push(index + 2);
-                        return;
-                    }
-
-                    if (!['Nam', 'Nữ'].includes(gender)) {
-                        invalidRows.push(index + 2);
-                        return;
-                    }
-
-                    const isDuplicate = existingLecturers.some(
-                        (lecturer) => lecturer.lecturer_id === lecturer_id
-                    );
-
-                    if (isDuplicate) {
-                        duplicated.push(lecturer_id);
-                    } else {
-                        imported.push({
-                            id: Date.now() + Math.random(),
-                            lecturer_id,
-                            name,
-                            email,
-                            day_of_birth,
-                            gender,
-                            address,
-                            phone_number,
-                            department,
-                            hire_date,
-                            degree,
-                            status,
-                            google_id: null,
-                            created_at: new Date().toISOString(),
-                            updated_at: new Date().toISOString(),
-                        });
-                    }
-                });
-
-                let errorMessage = '';
-                if (duplicated.length > 0) {
-                    errorMessage += `Các mã giảng viên đã tồn tại và bị bỏ qua: ${duplicated.join(', ')}. `;
-                }
-                if (invalidRows.length > 0) {
-                    errorMessage += `Các hàng không hợp lệ (thiếu dữ liệu hoặc giá trị không đúng): ${invalidRows.join(', ')}.`;
+                if (invalid && invalid.length > 0) {
+                    message += `Các hàng không hợp lệ: ${invalid.join(', ')}.`;
                 }
 
-                if (errorMessage) {
-                    setError(errorMessage);
+                if (message) {
+                    setError(message);
                 }
 
-                if (imported.length > 0) {
-                    imported.forEach(onAddLecturer);
-                    if (!errorMessage) {
-                        onClose();
-                    }
-                } else if (!errorMessage) {
-                    setError('Không có giảng viên hợp lệ nào để thêm!');
+                if (imported && imported.length > 0 && (!duplicated || duplicated.length === 0) && (!invalid || invalid.length === 0)) {
+                    onClose(); // Close modal only if completely successful
                 }
-            } catch (err) {
-                console.error('Error reading Excel file:', err);
-                setError(`Lỗi khi đọc file Excel: ${err.message}. Vui lòng kiểm tra định dạng file!`);
+            } else {
+                setError(response.data?.message || 'Có lỗi xảy ra khi nhập dữ liệu!');
             }
-        };
+        } catch (error) {
+            console.error('Error importing Excel file:', error);
+            setError(error.message || 'Lỗi khi nhập file Excel! Vui lòng thử lại.');
+        }
 
-        reader.onerror = () => {
-            setError('Lỗi khi đọc file Excel! Vui lòng thử lại.');
-        };
-
-        reader.readAsArrayBuffer(file);
+        // Reset file input
+        e.target.value = '';
     };
 
     return (
