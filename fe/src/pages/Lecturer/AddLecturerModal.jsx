@@ -12,43 +12,44 @@ import {
     InputLabel,
     Select,
     MenuItem,
-    Chip,
-    OutlinedInput,
 } from '@mui/material';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
-import * as XLSX from 'xlsx';
+import { importLecturers } from '../../api/lecturerAPI';
 
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-    PaperProps: {
-        style: {
-            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-            width: 250,
-        },
-    },
-};
 
-const availableSubjects = [
-    'Hệ thống thông tin', 'Phân tích thiết kế hệ thống', 'Công nghệ thực phẩm',
-    'Hóa học thực phẩm', 'Kỹ thuật hệ thống công nghiệp', 'Tự động hóa công nghiệp',
-    'Công nghệ kỹ thuật điện, điện tử', 'Mạch điện tử', 'Kỹ thuật phần mềm',
-    'Lập trình Java', 'Quản lý công nghiệp', 'Quản trị doanh nghiệp',
-    'Công nghệ kỹ thuật điều khiển và tự động hóa', 'PLC', 'Quản lý xây dựng',
-    'Kinh tế xây dựng', 'Khoa học máy tính', 'Cấu trúc dữ liệu',
-    'Công nghệ kỹ thuật cơ điện tử', 'Robot học'
+const availableDepartments = [
+    'Khoa Công Nghệ Thông Tin',
+    'Khoa Kỹ Thuật',
+    'Khoa Quản Trị Kinh Doanh',
+    'Khoa Công Nghệ Thực Phẩm',
+    'Khoa Xây Dựng',
+    'Khoa Cơ Khí',
+    'Khoa Điện - Điện Tử'
 ];
 
-const validStatuses = ['Hoạt động', 'Tạm nghỉ', 'Đang dạy'];
+const availableDegrees = [
+    'Cử nhân',
+    'Thạc sỹ',
+    'Tiến sỹ',
+    'Giáo sư',
+    'Phó Giáo sư'
+];
+
+// const validStatuses = ['Hoạt động', 'Tạm nghỉ'];
 
 export default function AddLecturerModal({ open, onClose, onAddLecturer, existingLecturers }) {
     const [newLecturer, setNewLecturer] = useState({
-        maGiangVien: '',
-        hoTen: '',
-        monGiangDay: [],
+        lecturer_id: '',
+        name: '',
         email: '',
-        soDienThoai: '',
-        trangThai: 'Hoạt động',
+        day_of_birth: '',
+        gender: '',
+        address: '',
+        phone_number: '',
+        department: '',
+        hire_date: '',
+        degree: '',
+        status: 'Hoạt động',
     });
 
     const [error, setError] = useState('');
@@ -59,22 +60,18 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
         setError('');
     };
 
-    const handleSubjectChange = (event) => {
-        const { value } = event.target;
-        setNewLecturer((prev) => ({
-            ...prev,
-            monGiangDay: typeof value === 'string' ? value.split(',') : value,
-        }));
-        setError('');
-    };
-
     const handleSubmit = () => {
         if (
-            !newLecturer.maGiangVien ||
-            !newLecturer.hoTen ||
-            newLecturer.monGiangDay.length === 0 ||
+            !newLecturer.lecturer_id ||
+            !newLecturer.name ||
             !newLecturer.email ||
-            !newLecturer.soDienThoai
+            !newLecturer.day_of_birth ||
+            !newLecturer.gender ||
+            !newLecturer.address ||
+            !newLecturer.phone_number ||
+            !newLecturer.department ||
+            !newLecturer.hire_date ||
+            !newLecturer.degree
         ) {
             setError('Vui lòng điền đầy đủ thông tin!');
             return;
@@ -89,50 +86,62 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
 
         // Kiểm tra số điện thoại format
         const phoneRegex = /^[0-9]{10,11}$/;
-        if (!phoneRegex.test(newLecturer.soDienThoai)) {
+        if (!phoneRegex.test(newLecturer.phone_number)) {
             setError('Số điện thoại không hợp lệ!');
             return;
         }
 
         // Kiểm tra trùng mã giảng viên
         const isDuplicate = existingLecturers.some(
-            (lecturer) => lecturer.maGiangVien === newLecturer.maGiangVien
+            (lecturer) => lecturer.lecturer_id === newLecturer.lecturer_id
         );
         if (isDuplicate) {
-            setError(`Mã giảng viên "${newLecturer.maGiangVien}" đã tồn tại!`);
+            setError(`Mã giảng viên "${newLecturer.lecturer_id}" đã tồn tại!`);
             return;
         }
 
-        const currentDateTime = new Date().toISOString().slice(0, 16).replace('T', ' ');
+        // Kiểm tra ngày hợp lệ
+        const birthDate = new Date(newLecturer.day_of_birth);
+        const hireDate = new Date(newLecturer.hire_date);
+        const today = new Date();
+
+        if (birthDate >= today) {
+            setError('Ngày sinh không hợp lệ!');
+            return;
+        }
+
+        if (hireDate > today) {
+            setError('Ngày tuyển dụng không được là ngày tương lai!');
+            return;
+        }
+
         const lecturerToAdd = {
+            ...newLecturer,
             id: Date.now(),
-            stt: 0,
-            maGiangVien: newLecturer.maGiangVien,
-            hoTen: newLecturer.hoTen,
-            monGiangDay: newLecturer.monGiangDay,
-            lienHe: {
-                email: newLecturer.email,
-                soDienThoai: newLecturer.soDienThoai
-            },
-            trangThai: newLecturer.trangThai,
-            thoiGianTao: currentDateTime,
-            thoiGianCapNhat: currentDateTime,
+            google_id: null,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
         };
 
         onAddLecturer(lecturerToAdd);
         setNewLecturer({
-            maGiangVien: '',
-            hoTen: '',
-            monGiangDay: [],
+            lecturer_id: '',
+            name: '',
             email: '',
-            soDienThoai: '',
-            trangThai: 'Hoạt động',
+            day_of_birth: '',
+            gender: '',
+            address: '',
+            phone_number: '',
+            department: '',
+            hire_date: '',
+            degree: '',
+            status: 'Hoạt động',
         });
         setError('');
         onClose();
     };
 
-    const handleImportExcel = (e) => {
+    const handleImportExcel = async (e) => {
         const file = e.target.files[0];
         if (!file) {
             setError('Vui lòng chọn một file Excel!');
@@ -146,132 +155,50 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
             return;
         }
 
-        const reader = new FileReader();
-        reader.onload = (evt) => {
-            try {
-                const data = new Uint8Array(evt.target.result);
-                const workbook = XLSX.read(data, { type: 'array' });
-                const sheet = workbook.Sheets[workbook.SheetNames[0]];
-                const json = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+        try {
+            setError(''); // Clear previous errors
+            const response = await importLecturers(file);
 
-                if (!json || json.length <= 1) {
-                    setError('File Excel không chứa dữ liệu hoặc thiếu hàng dữ liệu!');
-                    return;
+            if (response.data && response.data.success) {
+                // Handle successful import
+                const { imported, duplicated, invalid } = response.data;
+
+                let message = '';
+                if (imported && imported.length > 0) {
+                    // Add imported lecturers to the list
+                    imported.forEach(lecturer => onAddLecturer(lecturer));
+                    message = `Đã thêm thành công ${imported.length} giảng viên. `;
                 }
 
-                const header = json[0].map(h => h?.toString().trim());
-                const expectedHeader = ['Mã giảng viên', 'Họ tên', 'Môn giảng dạy', 'Email', 'Số điện thoại', 'Trạng thái'];
-                if (!expectedHeader.every((h, i) => h === header[i])) {
-                    setError('Định dạng cột không đúng! Cần: Mã giảng viên, Họ tên, Môn giảng dạy, Email, Số điện thoại, Trạng thái');
-                    return;
+                if (duplicated && duplicated.length > 0) {
+                    message = `Các mã giảng viên đã tồn tại và bị bỏ qua: ${duplicated.join(', ')}. `;
                 }
 
-                const imported = [];
-                const duplicated = [];
-                const invalidRows = [];
-
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                const phoneRegex = /^[0-9]{10,11}$/;
-
-                json.slice(1).forEach((row, index) => {
-                    const maGiangVien = row[0]?.toString().trim();
-                    const hoTen = row[1]?.toString().trim();
-                    const monGiangDay = row[2]?.toString().trim().split(',').map(s => s.trim()).filter(s => s);
-                    const email = row[3]?.toString().trim();
-                    const soDienThoai = row[4]?.toString().trim();
-                    const trangThai = row[5]?.toString().trim() || 'Hoạt động';
-
-                    // Kiểm tra dữ liệu hợp lệ
-                    if (!maGiangVien || !hoTen || !monGiangDay.length || !email || !soDienThoai) {
-                        invalidRows.push(index + 2);
-                        return;
-                    }
-
-                    if (!emailRegex.test(email)) {
-                        invalidRows.push(index + 2);
-                        return;
-                    }
-
-                    if (!phoneRegex.test(soDienThoai)) {
-                        invalidRows.push(index + 2);
-                        return;
-                    }
-
-                    if (!validStatuses.includes(trangThai)) {
-                        invalidRows.push(index + 2);
-                        return;
-                    }
-
-                    if (!monGiangDay.every(subject => availableSubjects.includes(subject))) {
-                        invalidRows.push(index + 2);
-                        return;
-                    }
-
-                    const isDuplicate = existingLecturers.some(
-                        (lecturer) => lecturer.maGiangVien === maGiangVien
-                    );
-
-                    if (isDuplicate) {
-                        duplicated.push(maGiangVien);
-                    } else {
-                        imported.push({
-                            id: Date.now() + Math.random(),
-                            stt: 0,
-                            maGiangVien,
-                            hoTen,
-                            monGiangDay,
-                            lienHe: {
-                                email,
-                                soDienThoai
-                            },
-                            trangThai,
-                            thoiGianTao: new Date().toISOString().slice(0, 16).replace('T', ' '),
-                            thoiGianCapNhat: new Date().toISOString().slice(0, 16).replace('T', ' '),
-                        });
-                    }
-                });
-
-                let errorMessage = '';
-                if (duplicated.length > 0) {
-                    errorMessage += `Các mã giảng viên đã tồn tại và bị bỏ qua: ${duplicated.join(', ')}. `;
-                }
-                if (invalidRows.length > 0) {
-                    errorMessage += `Các hàng không hợp lệ (thiếu dữ liệu hoặc giá trị không đúng): ${invalidRows.join(', ')}.`;
+                if (invalid && invalid.length > 0) {
+                    message = `Các hàng không hợp lệ: ${invalid.join(', ')}.`;
                 }
 
-                if (errorMessage) {
-                    setError(errorMessage);
+                if (message) {
+                    setError(message);
                 }
 
-                if (imported.length > 0) {
-                    imported.forEach(onAddLecturer);
-                    if (!errorMessage) {
-                        onClose();
-                    }
-                } else if (!errorMessage) {
-                    setError('Không có giảng viên hợp lệ nào để thêm!');
+                if (imported && imported.length > 0 && (!duplicated || duplicated.length === 0) && (!invalid || invalid.length === 0)) {
+                    onClose(); // Close modal only if completely successful
                 }
-
-                console.log('Imported lecturers:', imported);
-                console.log('Duplicated lecturers:', duplicated);
-                console.log('Invalid rows:', invalidRows);
-                console.log('Excel header:', header);
-                console.log('Raw JSON data:', json);
-            } catch (err) {
-                console.error('Error reading Excel file:', err);
-                setError(`Lỗi khi đọc file Excel: ${err.message}. Vui lòng kiểm tra định dạng file!`);
+            } else {
+                setError(response.data?.message || 'Có lỗi xảy ra khi nhập dữ liệu!');
             }
-        };
+        } catch (error) {
+            console.error('Error importing Excel file:', error);
+            setError(error.message || 'Lỗi khi nhập file Excel! Vui lòng thử lại.');
+        }
 
-        reader.onerror = () => {
-            setError('Lỗi khi đọc file Excel! Vui lòng thử lại.');
-        };
-
-        reader.readAsArrayBuffer(file);
+        // Reset file input
+        e.target.value = '';
     };
 
     return (
-        <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+        <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
             <DialogTitle>
                 <Box display="flex" justifyContent="space-between" alignItems="center">
                     <Typography variant="h6">Thêm giảng viên mới</Typography>
@@ -300,11 +227,11 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
                         {error}
                     </Typography>
                 )}
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
+                <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2, mt: 2 }}>
                     <TextField
                         label="Mã giảng viên"
-                        name="maGiangVien"
-                        value={newLecturer.maGiangVien}
+                        name="lecturer_id"
+                        value={newLecturer.lecturer_id}
                         onChange={handleChange}
                         fullWidth
                         variant="outlined"
@@ -312,36 +239,13 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
                     />
                     <TextField
                         label="Họ tên"
-                        name="hoTen"
-                        value={newLecturer.hoTen}
+                        name="name"
+                        value={newLecturer.name}
                         onChange={handleChange}
                         fullWidth
                         variant="outlined"
                         required
                     />
-                    <FormControl fullWidth required>
-                        <InputLabel>Môn giảng dạy</InputLabel>
-                        <Select
-                            multiple
-                            value={newLecturer.monGiangDay}
-                            onChange={handleSubjectChange}
-                            input={<OutlinedInput label="Môn giảng dạy" />}
-                            renderValue={(selected) => (
-                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                    {selected.map((value) => (
-                                        <Chip key={value} label={value} size="small" />
-                                    ))}
-                                </Box>
-                            )}
-                            MenuProps={MenuProps}
-                        >
-                            {availableSubjects.map((subject) => (
-                                <MenuItem key={subject} value={subject}>
-                                    {subject}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
                     <TextField
                         label="Email"
                         name="email"
@@ -353,25 +257,98 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
                         required
                     />
                     <TextField
+                        label="Ngày sinh"
+                        name="day_of_birth"
+                        type="date"
+                        value={newLecturer.day_of_birth}
+                        onChange={handleChange}
+                        fullWidth
+                        variant="outlined"
+                        required
+                        InputLabelProps={{ shrink: true }}
+                    />
+                    <FormControl fullWidth required>
+                        <InputLabel>Giới tính</InputLabel>
+                        <Select
+                            name="gender"
+                            value={newLecturer.gender}
+                            onChange={handleChange}
+                            label="Giới tính"
+                        >
+                            <MenuItem value="Nam">Nam</MenuItem>
+                            <MenuItem value="Nữ">Nữ</MenuItem>
+                        </Select>
+                    </FormControl>
+                    <TextField
                         label="Số điện thoại"
-                        name="soDienThoai"
-                        value={newLecturer.soDienThoai}
+                        name="phone_number"
+                        value={newLecturer.phone_number}
                         onChange={handleChange}
                         fullWidth
                         variant="outlined"
                         required
                     />
+                    <TextField
+                        label="Địa chỉ"
+                        name="address"
+                        value={newLecturer.address}
+                        onChange={handleChange}
+                        fullWidth
+                        variant="outlined"
+                        required
+                        sx={{ gridColumn: { md: 'span 2' } }}
+                    />
+                    <FormControl fullWidth required>
+                        <InputLabel>Khoa</InputLabel>
+                        <Select
+                            name="department"
+                            value={newLecturer.department}
+                            onChange={handleChange}
+                            label="Khoa"
+                        >
+                            {availableDepartments.map((dept) => (
+                                <MenuItem key={dept} value={dept}>
+                                    {dept}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                    <TextField
+                        label="Ngày tuyển dụng"
+                        name="hire_date"
+                        type="date"
+                        value={newLecturer.hire_date}
+                        onChange={handleChange}
+                        fullWidth
+                        variant="outlined"
+                        required
+                        InputLabelProps={{ shrink: true }}
+                    />
+                    <FormControl fullWidth required>
+                        <InputLabel>Bằng cấp</InputLabel>
+                        <Select
+                            name="degree"
+                            value={newLecturer.degree}
+                            onChange={handleChange}
+                            label="Bằng cấp"
+                        >
+                            {availableDegrees.map((degree) => (
+                                <MenuItem key={degree} value={degree}>
+                                    {degree}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
                     <FormControl fullWidth required>
                         <InputLabel>Trạng thái</InputLabel>
                         <Select
-                            name="trangThai"
-                            value={newLecturer.trangThai}
+                            name="status"
+                            value={newLecturer.status}
                             onChange={handleChange}
                             label="Trạng thái"
                         >
                             <MenuItem value="Hoạt động">Hoạt động</MenuItem>
                             <MenuItem value="Tạm nghỉ">Tạm nghỉ</MenuItem>
-                            <MenuItem value="Đang dạy">Đang dạy</MenuItem>
                         </Select>
                     </FormControl>
                 </Box>

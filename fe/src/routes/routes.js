@@ -9,12 +9,18 @@ const routes = [
     title: "Trình điều khiển",
     isPrivate: false,
     layout: MainLayout,
-  },
-  {
+  }, {
     path: "/login",
     component: "LoginPage",
     exact: true,
     title: "Đăng nhập",
+    isPrivate: false,
+  },
+  {
+    path: "/auth/callback",
+    component: "AuthCallback",
+    exact: true,
+    title: "Xử lý đăng nhập",
     isPrivate: false,
   },
   {

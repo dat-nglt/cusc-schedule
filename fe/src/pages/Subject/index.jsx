@@ -227,7 +227,12 @@ const Subject = () => {
                                         color="primary"
                                         startIcon={<AddIcon />}
                                         onClick={handleAddSubject}
-                                        sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
+                                        sx={{
+                                            bgcolor: '#1976d2',
+                                            '&:hover': { bgcolor: '#115293' },
+                                            minWidth: isSmallScreen ? 100 : 150,
+                                            height: '56px'
+                                        }}
                                     >
                                         Thêm học phần
                                     </Button>

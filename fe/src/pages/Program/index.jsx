@@ -273,7 +273,12 @@ const Program = () => {
                                         color="primary"
                                         startIcon={<AddIcon />}
                                         onClick={handleAddProgram}
-                                        sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
+                                        sx={{
+                                            bgcolor: '#1976d2',
+                                            '&:hover': { bgcolor: '#115293' },
+                                            minWidth: isSmallScreen ? 100 : 150,
+                                            height: '56px'
+                                        }}
                                     >
                                         Thêm chương trình
                                     </Button>

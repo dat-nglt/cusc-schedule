@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Box,
     Typography,
@@ -24,124 +24,30 @@ import EditLecturerModal from './EditLecturerModal';
 import DeleteLecturerModal from './DeleteLecturerModal';
 import useResponsive from '../../hooks/useResponsive';
 import LecturerTable from './LecturerTable';
-
+import { getAllLecturers } from '../../api/lecturerAPI';
 const Lecturer = () => {
     const { isSmallScreen, isMediumScreen } = useResponsive();
 
     // Dữ liệu mẫu cho danh sách giảng viên
-    const [lecturers, setLecturers] = useState([
-        {
-            id: 1,
-            stt: 1,
-            maGiangVien: 'GV001',
-            hoTen: 'Nguyễn Văn An',
-            monGiangDay: ['Hệ thống thông tin', 'Phân tích thiết kế hệ thống'],
-            lienHe: { email: 'nva@cusc.edu.vn', soDienThoai: '0123456789' },
-            trangThai: 'Hoạt động',
-            thoiGianTao: '2025-01-15 09:00',
-            thoiGianCapNhat: '2025-01-20 14:30'
-        },
-        {
-            id: 2,
-            stt: 2,
-            maGiangVien: 'GV002',
-            hoTen: 'Trần Thị Bình',
-            monGiangDay: ['Công nghệ thực phẩm', 'Hóa học thực phẩm'],
-            lienHe: { email: 'ttb@cusc.edu.vn', soDienThoai: '0123456790' },
-            trangThai: 'Hoạt động',
-            thoiGianTao: '2025-01-16 10:15',
-            thoiGianCapNhat: '2025-01-21 15:00'
-        },
-        {
-            id: 3,
-            stt: 3,
-            maGiangVien: 'GV003',
-            hoTen: 'Lê Minh Cường',
-            monGiangDay: ['Kỹ thuật hệ thống công nghiệp', 'Tự động hóa công nghiệp'],
-            lienHe: { email: 'lmc@cusc.edu.vn', soDienThoai: '0123456791' },
-            trangThai: 'Tạm nghỉ',
-            thoiGianTao: '2025-01-17 11:30',
-            thoiGianCapNhat: '2025-01-22 09:45'
-        },
-        {
-            id: 4,
-            stt: 4,
-            maGiangVien: 'GV004',
-            hoTen: 'Phạm Thị Dung',
-            monGiangDay: ['Công nghệ kỹ thuật điện, điện tử', 'Mạch điện tử'],
-            lienHe: { email: 'ptd@cusc.edu.vn', soDienThoai: '0123456792' },
-            trangThai: 'Hoạt động',
-            thoiGianTao: '2025-01-18 14:00',
-            thoiGianCapNhat: '2025-01-23 13:15'
-        },
-        {
-            id: 5,
-            stt: 5,
-            maGiangVien: 'GV005',
-            hoTen: 'Hoàng Văn Em',
-            monGiangDay: ['Kỹ thuật phần mềm', 'Lập trình Java'],
-            lienHe: { email: 'hve@cusc.edu.vn', soDienThoai: '0123456793' },
-            trangThai: 'Hoạt động',
-            thoiGianTao: '2025-01-19 15:30',
-            thoiGianCapNhat: '2025-01-24 10:20'
-        },
-        {
-            id: 6,
-            stt: 6,
-            maGiangVien: 'GV006',
-            hoTen: 'Vũ Thị Phương',
-            monGiangDay: ['Quản lý công nghiệp', 'Quản trị doanh nghiệp'],
-            lienHe: { email: 'vtp@cusc.edu.vn', soDienThoai: '0123456794' },
-            trangThai: 'Hoạt động',
-            thoiGianTao: '2025-01-20 09:45',
-            thoiGianCapNhat: '2025-01-25 16:10'
-        },
-        {
-            id: 7,
-            stt: 7,
-            maGiangVien: 'GV007',
-            hoTen: 'Đỗ Minh Giang',
-            monGiangDay: ['Công nghệ kỹ thuật điều khiển và tự động hóa', 'PLC'],
-            lienHe: { email: 'dmg@cusc.edu.vn', soDienThoai: '0123456795' },
-            trangThai: 'Hoạt động',
-            thoiGianTao: '2025-01-21 11:00',
-            thoiGianCapNhat: '2025-01-26 13:40'
-        },
-        {
-            id: 8,
-            stt: 8,
-            maGiangVien: 'GV008',
-            hoTen: 'Bùi Thị Hạnh',
-            monGiangDay: ['Quản lý xây dựng', 'Kinh tế xây dựng'],
-            lienHe: { email: 'bth@cusc.edu.vn', soDienThoai: '0123456796' },
-            trangThai: 'Tạm nghỉ',
-            thoiGianTao: '2025-01-22 14:20',
-            thoiGianCapNhat: '2025-01-27 15:55'
-        },
-        {
-            id: 9,
-            stt: 9,
-            maGiangVien: 'GV009',
-            hoTen: 'Ngô Văn Ích',
-            monGiangDay: ['Khoa học máy tính', 'Cấu trúc dữ liệu'],
-            lienHe: { email: 'nvi@cusc.edu.vn', soDienThoai: '0123456797' },
-            trangThai: 'Hoạt động',
-            thoiGianTao: '2025-01-23 08:30',
-            thoiGianCapNhat: '2025-01-28 12:10'
-        },
-        {
-            id: 10,
-            stt: 10,
-            maGiangVien: 'GV010',
-            hoTen: 'Lý Thị Kim',
-            monGiangDay: ['Công nghệ kỹ thuật cơ điện tử', 'Robot học'],
-            lienHe: { email: 'ltk@cusc.edu.vn', soDienThoai: '0123456798' },
-            trangThai: 'Hoạt động',
-            thoiGianTao: '2025-01-24 09:10',
-            thoiGianCapNhat: '2025-01-29 14:50'
-        }
-    ]);
+    const [lecturers, setLecturers] = useState([]);
 
+    const fetchLecturers = async () => {
+        try {
+            const response = await getAllLecturers();
+            if (!response) {
+                throw new Error('Lỗi khi tải danh sách giảng viên');
+            }
+            setLecturers(response.data.data);
+        } catch (error) {
+            console.error('Error fetching lecturers:', error);
+            // Hiển thị thông báo lỗi hoặc xử lý lỗi ở đây
+        }
+    };
+
+    useEffect(() => {
+        fetchLecturers();
+    }, []);
+    console.log("giảng viên", lecturers);
     // State cho phân trang, tìm kiếm, lọc theo trạng thái và modal
     const [page, setPage] = useState(0);
     const [rowsPerPage] = useState(8);
@@ -178,7 +84,7 @@ const Lecturer = () => {
 
     // Hàm xử lý khi nhấn nút chỉnh sửa
     const handleEditLecturer = (id) => {
-        const lecturerToEdit = lecturers.find((l) => l.id === id);
+        const lecturerToEdit = lecturers.find((l) => l.lecturer_id === id);
         setEditedLecturer(lecturerToEdit);
         setOpenEditModal(true);
     };
@@ -191,11 +97,8 @@ const Lecturer = () => {
 
     // Hàm lưu thay đổi sau khi chỉnh sửa
     const handleSaveEditedLecturer = (updatedLecturer) => {
-        setLecturers((prevLecturers) =>
-            prevLecturers.map((lecturer) =>
-                lecturer.id === updatedLecturer.id ? { ...lecturer, ...updatedLecturer } : lecturer
-            )
-        );
+        // Refresh data from server after successful update
+        fetchLecturers();
     };
 
     // Hàm xử lý thay đổi trang
@@ -205,25 +108,22 @@ const Lecturer = () => {
 
     // Hàm xử lý xem giảng viên
     const handleViewLecturer = (id) => {
-        const lecturer = lecturers.find((l) => l.id === id);
+        const lecturer = lecturers.find((l) => l.lecturer_id === id);
         setSelectedLecturer(lecturer);
         setOpenDetail(true);
     };
 
     // Hàm xử lý xóa giảng viên
     const handleDeleteLecturer = (id) => {
-        const lecturer = lecturers.find((l) => l.id === id);
+        const lecturer = lecturers.find((l) => l.lecturer_id === id);
         setLecturerToDelete(lecturer);
         setOpenDeleteModal(true);
     };
 
     // Hàm xác nhận xóa giảng viên
     const confirmDeleteLecturer = (id) => {
-        setLecturers((prevLecturers) => {
-            const updatedLecturers = prevLecturers.filter((lecturer) => lecturer.id !== id)
-                .map((lecturer, index) => ({ ...lecturer, stt: index + 1 }));
-            return updatedLecturers;
-        });
+        // Refresh data from server after successful delete
+        fetchLecturers();
     };
 
     // Hàm đóng modal chi tiết
@@ -241,12 +141,14 @@ const Lecturer = () => {
     // Lọc danh sách giảng viên dựa trên từ khóa tìm kiếm và trạng thái
     const filteredLecturers = lecturers.filter((lecturer) => {
         const matchesSearchTerm =
-            lecturer.maGiangVien.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            lecturer.hoTen.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            lecturer.monGiangDay.some(mon => mon.toLowerCase().includes(searchTerm.toLowerCase()));
+            lecturer.lecturer_id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            lecturer.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            lecturer.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            lecturer.phone_number?.toString().includes(searchTerm) ||
+            lecturer.department?.toLowerCase().includes(searchTerm.toLowerCase());
 
         const matchesStatus = selectedStatus
-            ? lecturer.trangThai === selectedStatus
+            ? lecturer.status === selectedStatus
             : true;
 
         return matchesSearchTerm && matchesStatus;
@@ -281,7 +183,12 @@ const Lecturer = () => {
                                         color="primary"
                                         startIcon={<AddIcon />}
                                         onClick={handleAddLecturer}
-                                        sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
+                                        sx={{
+                                            bgcolor: '#1976d2',
+                                            '&:hover': { bgcolor: '#115293' },
+                                            minWidth: isSmallScreen ? 100 : 150,
+                                            height: '56px'
+                                        }}
                                     >
                                         Thêm giảng viên
                                     </Button>

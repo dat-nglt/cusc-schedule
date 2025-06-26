@@ -12,50 +12,38 @@ import {
     InputLabel,
     Select,
     MenuItem,
-    Chip,
-    OutlinedInput,
 } from '@mui/material';
-
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-    PaperProps: {
-        style: {
-            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-            width: 250,
-        },
-    },
-};
-
-const availableSubjects = [
-    'Hệ thống thông tin', 'Phân tích thiết kế hệ thống', 'Công nghệ thực phẩm',
-    'Hóa học thực phẩm', 'Kỹ thuật hệ thống công nghiệp', 'Tự động hóa công nghiệp',
-    'Công nghệ kỹ thuật điện, điện tử', 'Mạch điện tử', 'Kỹ thuật phần mềm',
-    'Lập trình Java', 'Quản lý công nghiệp', 'Quản trị doanh nghiệp',
-    'Công nghệ kỹ thuật điều khiển và tự động hóa', 'PLC', 'Quản lý xây dựng',
-    'Kinh tế xây dựng', 'Khoa học máy tính', 'Cấu trúc dữ liệu',
-    'Công nghệ kỹ thuật cơ điện tử', 'Robot học'
-];
+import { updateLecturer } from '../../api/lecturerAPI';
 
 export default function EditLecturerModal({ open, onClose, lecturer, onSave }) {
     const [editedLecturer, setEditedLecturer] = useState({
-        maGiangVien: '',
-        hoTen: '',
-        monGiangDay: [],
+        lecturer_id: '',
+        name: '',
         email: '',
-        soDienThoai: '',
-        trangThai: 'Hoạt động',
+        day_of_birth: '',
+        gender: '',
+        address: '',
+        phone_number: '',
+        department: '',
+        hire_date: '',
+        degree: '',
+        status: 'Hoạt động',
     });
 
     useEffect(() => {
         if (lecturer) {
             setEditedLecturer({
-                maGiangVien: lecturer.maGiangVien || '',
-                hoTen: lecturer.hoTen || '',
-                monGiangDay: lecturer.monGiangDay || [],
-                email: lecturer.lienHe?.email || '',
-                soDienThoai: lecturer.lienHe?.soDienThoai || '',
-                trangThai: lecturer.trangThai || 'Hoạt động',
+                lecturer_id: lecturer.lecturer_id || '',
+                name: lecturer.name || '',
+                email: lecturer.email || '',
+                day_of_birth: lecturer.day_of_birth || '',
+                gender: lecturer.gender || '',
+                address: lecturer.address || '',
+                phone_number: lecturer.phone_number || '',
+                department: lecturer.department || '',
+                hire_date: lecturer.hire_date || '',
+                degree: lecturer.degree || '',
+                status: lecturer.status || 'Hoạt động',
             });
         }
     }, [lecturer]);
@@ -65,21 +53,18 @@ export default function EditLecturerModal({ open, onClose, lecturer, onSave }) {
         setEditedLecturer((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleSubjectChange = (event) => {
-        const { value } = event.target;
-        setEditedLecturer((prev) => ({
-            ...prev,
-            monGiangDay: typeof value === 'string' ? value.split(',') : value,
-        }));
-    };
-
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (
-            !editedLecturer.maGiangVien ||
-            !editedLecturer.hoTen ||
-            editedLecturer.monGiangDay.length === 0 ||
+            !editedLecturer.lecturer_id ||
+            !editedLecturer.name ||
             !editedLecturer.email ||
-            !editedLecturer.soDienThoai
+            !editedLecturer.day_of_birth ||
+            !editedLecturer.gender ||
+            !editedLecturer.address ||
+            !editedLecturer.phone_number ||
+            !editedLecturer.department ||
+            !editedLecturer.hire_date ||
+            !editedLecturer.degree
         ) {
             alert('Vui lòng điền đầy đủ thông tin!');
             return;
@@ -94,40 +79,65 @@ export default function EditLecturerModal({ open, onClose, lecturer, onSave }) {
 
         // Kiểm tra số điện thoại format
         const phoneRegex = /^[0-9]{10,11}$/;
-        if (!phoneRegex.test(editedLecturer.soDienThoai)) {
+        if (!phoneRegex.test(editedLecturer.phone_number)) {
             alert('Số điện thoại không hợp lệ!');
             return;
         }
 
-        const currentDateTime = new Date().toISOString().slice(0, 16).replace('T', ' ');
-        const updatedLecturer = {
-            ...lecturer,
-            maGiangVien: editedLecturer.maGiangVien,
-            hoTen: editedLecturer.hoTen,
-            monGiangDay: editedLecturer.monGiangDay,
-            lienHe: {
-                email: editedLecturer.email,
-                soDienThoai: editedLecturer.soDienThoai
-            },
-            trangThai: editedLecturer.trangThai,
-            thoiGianCapNhat: currentDateTime,
-        };
+        // Kiểm tra ngày hợp lệ
+        const birthDate = new Date(editedLecturer.day_of_birth);
+        const hireDate = new Date(editedLecturer.hire_date);
+        const today = new Date();
 
-        onSave(updatedLecturer);
-        onClose();
+        if (birthDate >= today) {
+            alert('Ngày sinh không hợp lệ!');
+            return;
+        }
+
+        if (hireDate > today) {
+            alert('Ngày tuyển dụng không được là ngày tương lai!');
+            return;
+        }
+
+        try {
+            const updatedLecturerData = {
+                lecturer_id: editedLecturer.lecturer_id,
+                name: editedLecturer.name,
+                email: editedLecturer.email,
+                day_of_birth: editedLecturer.day_of_birth,
+                gender: editedLecturer.gender,
+                address: editedLecturer.address,
+                phone_number: editedLecturer.phone_number,
+                department: editedLecturer.department,
+                hire_date: editedLecturer.hire_date,
+                degree: editedLecturer.degree,
+                status: editedLecturer.status,
+            };
+
+            const response = await updateLecturer(lecturer.lecturer_id, updatedLecturerData);
+
+            if (response && response.data) {
+                onSave(response.data.data);
+                onClose();
+                alert('Cập nhật giảng viên thành công!');
+            }
+        } catch (error) {
+            console.error('Error updating lecturer:', error);
+            alert('Lỗi khi cập nhật giảng viên: ' + error.message);
+        }
     };
 
     return (
-        <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+        <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
             <DialogTitle>
                 <Typography variant="h6">Chỉnh sửa giảng viên</Typography>
             </DialogTitle>
             <DialogContent>
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
+                <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2, mt: 2 }}>
                     <TextField
                         label="Mã giảng viên"
-                        name="maGiangVien"
-                        value={editedLecturer.maGiangVien}
+                        name="lecturer_id"
+                        value={editedLecturer.lecturer_id}
                         onChange={handleChange}
                         fullWidth
                         variant="outlined"
@@ -135,36 +145,13 @@ export default function EditLecturerModal({ open, onClose, lecturer, onSave }) {
                     />
                     <TextField
                         label="Họ tên"
-                        name="hoTen"
-                        value={editedLecturer.hoTen}
+                        name="name"
+                        value={editedLecturer.name}
                         onChange={handleChange}
                         fullWidth
                         variant="outlined"
                         required
                     />
-                    <FormControl fullWidth required>
-                        <InputLabel>Môn giảng dạy</InputLabel>
-                        <Select
-                            multiple
-                            value={editedLecturer.monGiangDay}
-                            onChange={handleSubjectChange}
-                            input={<OutlinedInput label="Môn giảng dạy" />}
-                            renderValue={(selected) => (
-                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                    {selected.map((value) => (
-                                        <Chip key={value} label={value} size="small" />
-                                    ))}
-                                </Box>
-                            )}
-                            MenuProps={MenuProps}
-                        >
-                            {availableSubjects.map((subject) => (
-                                <MenuItem key={subject} value={subject}>
-                                    {subject}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
                     <TextField
                         label="Email"
                         name="email"
@@ -176,25 +163,100 @@ export default function EditLecturerModal({ open, onClose, lecturer, onSave }) {
                         required
                     />
                     <TextField
+                        label="Ngày sinh"
+                        name="day_of_birth"
+                        type="date"
+                        value={editedLecturer.day_of_birth}
+                        onChange={handleChange}
+                        fullWidth
+                        variant="outlined"
+                        required
+                        InputLabelProps={{ shrink: true }}
+                    />
+                    <FormControl fullWidth required>
+                        <InputLabel>Giới tính</InputLabel>
+                        <Select
+                            name="gender"
+                            value={editedLecturer.gender}
+                            onChange={handleChange}
+                            label="Giới tính"
+                        >
+                            <MenuItem value="Nam">Nam</MenuItem>
+                            <MenuItem value="Nữ">Nữ</MenuItem>
+                        </Select>
+                    </FormControl>
+                    <TextField
                         label="Số điện thoại"
-                        name="soDienThoai"
-                        value={editedLecturer.soDienThoai}
+                        name="phone_number"
+                        value={editedLecturer.phone_number}
                         onChange={handleChange}
                         fullWidth
                         variant="outlined"
                         required
                     />
+                    <TextField
+                        label="Địa chỉ"
+                        name="address"
+                        value={editedLecturer.address}
+                        onChange={handleChange}
+                        fullWidth
+                        variant="outlined"
+                        required
+                        sx={{ gridColumn: { md: 'span 2' } }}
+                    />
+                    <FormControl fullWidth required>
+                        <InputLabel>Khoa</InputLabel>
+                        <Select
+                            name="department"
+                            value={editedLecturer.department}
+                            onChange={handleChange}
+                            label="Khoa"
+                        >
+                            <MenuItem value="Khoa Công Nghệ Thông Tin">Khoa Công Nghệ Thông Tin</MenuItem>
+                            <MenuItem value="Khoa Kỹ Thuật">Khoa Kỹ Thuật</MenuItem>
+                            <MenuItem value="Khoa Quản Trị Kinh Doanh">Khoa Quản Trị Kinh Doanh</MenuItem>
+                            <MenuItem value="Khoa Công Nghệ Thực Phẩm">Khoa Công Nghệ Thực Phẩm</MenuItem>
+                            <MenuItem value="Khoa Xây Dựng">Khoa Xây Dựng</MenuItem>
+                            <MenuItem value="Khoa Cơ Khí">Khoa Cơ Khí</MenuItem>
+                            <MenuItem value="Khoa Điện - Điện Tử">Khoa Điện - Điện Tử</MenuItem>
+                        </Select>
+                    </FormControl>
+                    <TextField
+                        label="Ngày tuyển dụng"
+                        name="hire_date"
+                        type="date"
+                        value={editedLecturer.hire_date}
+                        onChange={handleChange}
+                        fullWidth
+                        variant="outlined"
+                        required
+                        InputLabelProps={{ shrink: true }}
+                    />
+                    <FormControl fullWidth required>
+                        <InputLabel>Bằng cấp</InputLabel>
+                        <Select
+                            name="degree"
+                            value={editedLecturer.degree}
+                            onChange={handleChange}
+                            label="Bằng cấp"
+                        >
+                            <MenuItem value="Cử nhân">Cử nhân</MenuItem>
+                            <MenuItem value="Thạc sỹ">Thạc sỹ</MenuItem>
+                            <MenuItem value="Tiến sỹ">Tiến sỹ</MenuItem>
+                            <MenuItem value="Giáo sư">Giáo sư</MenuItem>
+                            <MenuItem value="Phó Giáo sư">Phó Giáo sư</MenuItem>
+                        </Select>
+                    </FormControl>
                     <FormControl fullWidth required>
                         <InputLabel>Trạng thái</InputLabel>
                         <Select
-                            name="trangThai"
-                            value={editedLecturer.trangThai}
+                            name="status"
+                            value={editedLecturer.status}
                             onChange={handleChange}
                             label="Trạng thái"
                         >
                             <MenuItem value="Hoạt động">Hoạt động</MenuItem>
                             <MenuItem value="Tạm nghỉ">Tạm nghỉ</MenuItem>
-                            <MenuItem value="Đang dạy">Đang dạy</MenuItem>
                         </Select>
                     </FormControl>
                 </Box>

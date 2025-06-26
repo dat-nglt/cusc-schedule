@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Box,
     Typography,
@@ -24,124 +24,13 @@ import EditStudentModal from './EditStudentModal';
 import DeleteStudentModal from './DeleteStudentModal';
 import useResponsive from '../../hooks/useResponsive';
 import StudentTable from './StudentTable';
+import { getAllStudents } from '../../api/studentAPI';
 
 const Student = () => {
     const { isSmallScreen, isMediumScreen } = useResponsive();
 
     // Dữ liệu mẫu cho danh sách học viên
-    const [students, setStudents] = useState([
-        {
-            id: 1,
-            stt: 1,
-            maHocVien: 'SV001',
-            hoTen: 'Nguyễn Văn An',
-            maLop: 'CNTT01',
-            khoaHoc: 'Công nghệ thông tin',
-            trangThai: 'Đang học',
-            thoiGianTao: '2025-01-15 09:00',
-            thoiGianCapNhat: '2025-01-20 14:30'
-        },
-        {
-            id: 2,
-            stt: 2,
-            maHocVien: 'SV002',
-            hoTen: 'Trần Thị Bình',
-            maLop: 'CNTP01',
-            khoaHoc: 'Công nghệ thực phẩm',
-            trangThai: 'Đang học',
-            thoiGianTao: '2025-01-16 10:15',
-            thoiGianCapNhat: '2025-01-21 15:00'
-        },
-        {
-            id: 3,
-            stt: 3,
-            maHocVien: 'SV003',
-            hoTen: 'Lê Minh Cường',
-            maLop: 'KTCN01',
-            khoaHoc: 'Kỹ thuật cơ khí',
-            trangThai: 'Tạm nghỉ',
-            thoiGianTao: '2025-01-17 11:30',
-            thoiGianCapNhat: '2025-01-22 09:45'
-        },
-        {
-            id: 4,
-            stt: 4,
-            maHocVien: 'SV004',
-            hoTen: 'Phạm Thị Dung',
-            maLop: 'DIEN01',
-            khoaHoc: 'Kỹ thuật điện',
-            trangThai: 'Đang học',
-            thoiGianTao: '2025-01-18 14:00',
-            thoiGianCapNhat: '2025-01-23 13:15'
-        },
-        {
-            id: 5,
-            stt: 5,
-            maHocVien: 'SV005',
-            hoTen: 'Hoàng Văn Em',
-            maLop: 'CNTT02',
-            khoaHoc: 'Công nghệ thông tin',
-            trangThai: 'Đang học',
-            thoiGianTao: '2025-01-19 15:30',
-            thoiGianCapNhat: '2025-01-24 10:20'
-        },
-        {
-            id: 6,
-            stt: 6,
-            maHocVien: 'SV006',
-            hoTen: 'Vũ Thị Phương',
-            maLop: 'QLCN01',
-            khoaHoc: 'Quản lý công nghiệp',
-            trangThai: 'Đang học',
-            thoiGianTao: '2025-01-20 09:45',
-            thoiGianCapNhat: '2025-01-25 16:10'
-        },
-        {
-            id: 7,
-            stt: 7,
-            maHocVien: 'SV007',
-            hoTen: 'Đỗ Minh Giang',
-            maLop: 'TUDH01',
-            khoaHoc: 'Tự động hóa',
-            trangThai: 'Đang học',
-            thoiGianTao: '2025-01-21 11:00',
-            thoiGianCapNhat: '2025-01-26 13:40'
-        },
-        {
-            id: 8,
-            stt: 8,
-            maHocVien: 'SV008',
-            hoTen: 'Bùi Thị Hạnh',
-            maLop: 'QLXD01',
-            khoaHoc: 'Quản lý xây dựng',
-            trangThai: 'Tốt nghiệp',
-            thoiGianTao: '2025-01-22 14:20',
-            thoiGianCapNhat: '2025-01-27 15:55'
-        },
-        {
-            id: 9,
-            stt: 9,
-            maHocVien: 'SV009',
-            hoTen: 'Ngô Văn Ích',
-            maLop: 'CNTT03',
-            khoaHoc: 'Công nghệ thông tin',
-            trangThai: 'Đang học',
-            thoiGianTao: '2025-01-23 08:30',
-            thoiGianCapNhat: '2025-01-28 12:10'
-        },
-        {
-            id: 10,
-            stt: 10,
-            maHocVien: 'SV010',
-            hoTen: 'Lý Thị Kim',
-            maLop: 'DIEN02',
-            khoaHoc: 'Kỹ thuật điện',
-            trangThai: 'Đang học',
-            thoiGianTao: '2025-01-24 09:10',
-            thoiGianCapNhat: '2025-01-29 14:50'
-        }
-    ]);
-
+    const [students, setStudents] = useState([]);
     // State cho phân trang, tìm kiếm, lọc theo trạng thái và modal
     const [page, setPage] = useState(0);
     const [rowsPerPage] = useState(8);
@@ -157,6 +46,24 @@ const Student = () => {
 
     // Danh sách trạng thái để lọc
     const statuses = ['Đang học', 'Tạm nghỉ', 'Tốt nghiệp', 'Bảo lưu'];
+
+
+    const fetchStudents = async () => {
+        try {
+            const response = await getAllStudents();
+            if (!response) {
+                console.error("Không có dữ liệu học viên");
+                return;
+            }
+            setStudents(response.data.data)
+        } catch (error) {
+            console.error("Lỗi khi tải danh sách học viên:", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchStudents();
+    }, [])
 
     // Hàm xử lý khi nhấn nút Thêm học viên
     const handleAddStudent = () => {
@@ -243,13 +150,12 @@ const Student = () => {
     // Lọc danh sách học viên dựa trên từ khóa tìm kiếm và trạng thái
     const filteredStudents = students.filter((student) => {
         const matchesSearchTerm =
-            student.maHocVien.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            student.hoTen.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            student.maLop.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            student.khoaHoc.toLowerCase().includes(searchTerm.toLowerCase());
+            student.student_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            student.class.toLowerCase().includes(searchTerm.toLowerCase());
 
         const matchesStatus = selectedStatus
-            ? student.trangThai === selectedStatus
+            ? student.status === selectedStatus
             : true;
 
         return matchesSearchTerm && matchesStatus;
@@ -284,7 +190,12 @@ const Student = () => {
                                         color="primary"
                                         startIcon={<AddIcon />}
                                         onClick={handleAddStudent}
-                                        sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
+                                        sx={{
+                                            bgcolor: '#1976d2',
+                                            '&:hover': { bgcolor: '#115293' },
+                                            minWidth: isSmallScreen ? 100 : 150,
+                                            height: '56px'
+                                        }}
                                     >
                                         Thêm học viên
                                     </Button>
