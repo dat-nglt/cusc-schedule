@@ -187,9 +187,6 @@ psql -U postgres -c "CREATE DATABASE cusc_db;"
 # Chạy migrations để tạo tables
 npx sequelize-cli db:migrate
 
-# Hoặc sử dụng npm script (nếu available)
-npm run migrate
-
 # Rollback migrations (nếu cần)
 npx sequelize-cli db:migrate:undo:all
 ```
@@ -233,7 +230,20 @@ npx sequelize-cli db:migrate:undo
 # Rollback tất cả migrations  
 npx sequelize-cli db:migrate:undo:all
 ```
+### Chạy dữ liệu mẫu với seeders
+```bash
+#tạo seeder trong file seeders
+npx sequelize-cli seed:generate --name <tên seeders>
 
+#LƯU Ý CHỈNH SỬA DỮ LIỆU TRONG SEEDERS PHÙ HỢP VỚI 
+
+#Chạy seeder
+npx sequelize-cli db:seed:all
+
+#Nếu muốn xóa seed
+npx sequelize-cli db:seed:undo:all
+
+```
 ## Trạng thái dự án
 
 **Đã hoàn thành:**
@@ -329,7 +339,223 @@ npx sequelize-cli db:migrate:undo:all
 - ⏳ **HTTPS**: Chưa configure cho production
 
 
+# Authentication và Authorization Middleware
+
+## Các middleware có sẵn:
+
+### 1. `authMiddleware` (default export)
+- Kiểm tra JWT token trong header Authorization
+- Verify user có tồn tại trong database
+- Đặt `req.userId`, `req.userRole`, `req.userInfo`
+
+### 2. `requireRole(allowedRoles)`
+- Phải sử dụng sau `authMiddleware`
+- Kiểm tra user có role được phép không
+- `allowedRoles` có thể là string hoặc array
+
+### 3. `authenticateAndAuthorize(allowedRoles)`
+- Kết hợp authenticate và authorize trong 1 middleware
+- Được khuyến khích sử dụng
+
+## Cách sử dụng:
+
+### Cách 1: Sử dụng 2 middleware riêng biệt
+```javascript
+import authMiddleware, { requireRole } from '../middleware/authMiddleware.js';
+
+// Chỉ admin mới được truy cập
+router.get('/admin-only', authMiddleware, requireRole('admin'), controller);
+
+// Admin hoặc training_officer được truy cập
+router.get('/staff-only', authMiddleware, requireRole(['admin', 'training_officer']), controller);
+```
+
+### Cách 2: Sử dụng middleware kết hợp (Khuyến khích)
+```javascript
+import { authenticateAndAuthorize } from '../middleware/authMiddleware.js';
+
+// Chỉ admin mới được truy cập
+router.get('/admin-only', authenticateAndAuthorize('admin'), controller);
+
+// Admin hoặc training_officer được truy cập
+router.get('/staff-only', authenticateAndAuthorize(['admin', 'training_officer']), controller);
+```
+
+## Các role có sẵn:
+- `student` - Sinh viên
+- `lecturer` - Giảng viên  
+- `admin` - Quản trị viên
+- `training_officer` - Cán bộ đào tạo
+
+## Error codes:
+- `401` - Chưa đăng nhập hoặc token không hợp lệ
+- `403` - Đã đăng nhập nhưng không có quyền truy cập
+
+## Test với Postman:
+
+### 1. Login để lấy token:
+```
+POST /api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@example.com",
+  "password": "password"
+}
+```
+
+### 2. Sử dụng token trong các request khác:
+```
+GET /api/users/getAll
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+```
+
+### Test case cho role checking:
+1. Login với tài khoản student
+2. Gọi API `/api/users/getAll` (chỉ admin/training_officer được phép)
+3. Kết quả mong đợi: 403 với message "Access denied. Required role: admin or training_officer, but user has role: student"
+
+
 
 ## Giấy Phép
 Dự án này được cấp phép theo Giấy phép MIT. Xem file LICENSE để biết thêm chi tiết.
+
+
+# Authentication System Documentation
+
+## Tổng quan
+Hệ thống authentication đã được cập nhật để hoạt động với các model riêng biệt thay vì model User tổng hợp.
+
+## Models được hỗ trợ
+- **Student**: Sinh viên với student_id
+- **Lecturer**: Giảng viên với lecturer_id  
+- **Admin**: Quản trị viên với admin_id
+- **TrainingOfficer**: Cán bộ đào tạo với staff_id
+
+## Chức năng Google OAuth
+
+### Quy trình đăng nhập
+1. User click "Login with Google"
+2. Được chuyển hướng đến Google OAuth
+3. Sau khi xác thực thành công, Google trả về profile
+4. Hệ thống tìm kiếm user bằng google_id hoặc email
+5. Nếu tìm thấy, cập nhật google_id và tạo JWT token
+6. Nếu không tìm thấy, trả về lỗi (yêu cầu admin tạo account trước)
+
+### Các endpoint
+
+#### `GET /auth/google`
+Khởi tạo Google OAuth flow
+
+#### `GET /auth/google/callback`
+Callback URL cho Google OAuth
+
+#### `POST /auth/login`
+Traditional login với email/password (nếu user có password)
+
+#### `POST /auth/logout`
+Logout (client-side remove token)
+
+#### `GET /user/current`
+Lấy thông tin user hiện tại
+
+### JWT Token Structure
+```json
+{
+  "id": "user_id", // student_id, lecturer_id, admin_id, hoặc staff_id
+  "role": "student|lecturer|admin|training_officer",
+  "iat": "issued_at_timestamp",
+  "exp": "expiration_timestamp"
+}
+```
+
+## Security Features
+
+### Authentication Middleware
+- Verify JWT token
+- Check user existence in database
+- Attach user info to request
+
+### Role-based Authorization
+```javascript
+// Sử dụng requireRole middleware
+router.get('/admin-only', authMiddleware, requireRole(['admin']), handler);
+router.get('/staff-only', authMiddleware, requireRole(['admin', 'training_officer']), handler);
+```
+
+## User Service Functions
+
+### `findUserByEmail(email)`
+Tìm user trong tất cả models bằng email
+
+### `findUserByGoogleId(googleId)`
+Tìm user bằng google_id
+
+### `findUserById(id)`
+Tìm user bằng primary key
+
+### `updateUserGoogleId(userInfo, googleId)`
+Cập nhật google_id cho user
+
+### `getUserId(userInfo)`
+Lấy primary key của user từ userInfo object
+
+## Lưu ý quan trọng
+
+1. **Không auto-create user**: Hệ thống không tự động tạo user mới qua Google OAuth. Admin phải tạo user trước trong database.
+
+2. **Email uniqueness**: Email phải unique trong toàn bộ hệ thống (không được trùng giữa các models).
+
+3. **Google-only accounts**: User có thể chỉ dùng Google login (không có password).
+
+4. **Role mapping**: Role được xác định dựa trên model chứa user:
+   - Student → 'student'
+   - Lecturer → 'lecturer'  
+   - Admin → 'admin'
+   - TrainingOfficer → 'training_officer'
+
+## Environment Variables cần thiết
+
+```env
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=cusc_db
+DB_USER=postgres
+DB_PASSWORD=MyPostgreSQL@2025
+
+# 🔐 JWT Configuration  
+JWT_SECRET=your_very_secure_jwt_secret_key_minimum_32_characters
+
+# 🌐 Server Configuration
+PORT=3000
+NODE_ENV=development
+FRONTEND_URL=http://localhost:5000
+
+# ☁️ Cloudinary Configuration (Optional)
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+
+# Login with Google OAuth (Optional)
+GOOGLE_CLIENT_ID=801932636860-f35873dkek0gp2gf1ip3nkk08n8n3jej.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=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
+GOOGLE_CALLBACK_URL=http://localhost:3000/auth/google/callback
+SESSION_SECRET=supersecretkey
+```
+
+## Frontend Integration
+
+Sau khi Google OAuth thành công, user sẽ được redirect về:
+```
+${FRONTEND_URL}/auth/callback?token=${jwt_token}&user=${user_info}
+```
+
+Frontend cần:
+1. Parse token và user info từ URL
+2. Store token trong localStorage/sessionStorage
+3. Redirect user đến dashboard
+4. Include token trong Authorization header cho các API calls:
+   ```
+   Authorization: Bearer ${token}
+   ```
 

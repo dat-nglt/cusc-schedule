@@ -18,6 +18,7 @@ import { Add as AddIcon, Search as SearchIcon } from '@mui/icons-material';
 import ClassDetailModal from './ClassDetailModal';
 import AddClassModal from './AddClassModal';
 import EditClassModal from './EditClassModal';
+import DeleteClassModal from './DeleteClassModal';
 import useResponsive from '../../hooks/useResponsive';
 import ClassTable from './ClassTable';
 
@@ -41,7 +42,9 @@ const Class = () => {
   const [selectedClass, setSelectedClass] = useState(null);
   const [openAddModal, setOpenAddModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [editedClass, setEditedClass] = useState(null);
+  const [classToDelete, setClassToDelete] = useState(null);
 
   // Danh sách trạng thái để lọc
   const trangThaiOptions = ['Hoạt động', 'Không hoạt động'];
@@ -100,14 +103,32 @@ const Class = () => {
 
   // Hàm xử lý xóa lớp học
   const handleDeleteClass = (id) => {
-    console.log(`Xóa lớp học với ID: ${id}`);
-    // Thêm logic xóa lớp học
+    const cls = classes.find((c) => c.id === id);
+    setClassToDelete(cls);
+    setOpenDeleteModal(true);
+  };
+
+  // Hàm xác nhận xóa lớp học
+  const confirmDeleteClass = (id) => {
+    setClasses((prevClasses) => {
+      const updatedClasses = prevClasses.filter((cls) => cls.id !== id)
+        .map((cls, index) => ({ ...cls, stt: index + 1 }));
+      return updatedClasses;
+    });
+    setOpenDeleteModal(false);
+    setClassToDelete(null);
   };
 
   // Hàm đóng modal chi tiết
   const handleCloseDetail = () => {
     setOpenDetail(false);
     setSelectedClass(null);
+  };
+
+  // Hàm đóng modal xóa
+  const handleCloseDeleteModal = () => {
+    setOpenDeleteModal(false);
+    setClassToDelete(null);
   };
 
   // Lọc danh sách lớp học dựa trên từ khóa tìm kiếm và trạng thái
@@ -149,11 +170,16 @@ const Class = () => {
                   </IconButton>
                 ) : (
                   <Button
-                    variant="contained" // Fixed variant
+                    variant="contained"
                     color="primary"
                     startIcon={<AddIcon />}
                     onClick={handleAddClass}
-                    sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
+                    sx={{
+                      bgcolor: '#1976d2',
+                      '&:hover': { bgcolor: '#115293' },
+                      minWidth: isSmallScreen ? 100 : 150,
+                      height: '56px'
+                    }}
                   >
                     Thêm lớp học
                   </Button>
@@ -232,12 +258,19 @@ const Class = () => {
         open={openAddModal}
         onClose={handleCloseAddModal}
         onAddClass={handleAddNewClass}
+        existingClasses={classes}
       />
       <EditClassModal
         open={openEditModal}
         onClose={handleCloseEditModal}
         cls={editedClass}
         onSave={handleSaveEditedClass}
+      />
+      <DeleteClassModal
+        open={openDeleteModal}
+        onClose={handleCloseDeleteModal}
+        onDelete={confirmDeleteClass}
+        cls={classToDelete}
       />
     </Box>
   );

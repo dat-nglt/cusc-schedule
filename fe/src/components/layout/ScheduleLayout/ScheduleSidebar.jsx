@@ -68,7 +68,24 @@ const ScheduleSidebar = () => {
   const [filterValue, setFilterValue] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
 
+<<<<<<< HEAD:fe/src/components/layout/ScheduleLayout/ScheduleSidebar.jsx
   const [drawerOpen, setDrawerOpen] = useState(false);
+=======
+  const navItems = [
+    { text: 'Quản lý thời khóa biểu', icon: <TimetableIcon />, path: '/dashboard' },
+    { text: 'Quản lý giảng viên', icon: <PersonIcon />, path: '/lecturers' },
+    { text: 'Quản lý học viên', icon: <SchoolIcon />, path: '/students' },
+    { text: 'Quản lý chương trình đào tạo', icon: <LibraryBooksIcon />, path: '/programs' },
+    { text: 'Quản lý học phần', icon: <MenuBookIcon />, path: '/subjects' },
+    { text: 'Quản lý khóa học', icon: <ClassIcon />, path: '/courses' },
+    { text: 'Quản lý lớp', icon: <GroupsIcon />, path: '/class' },
+    { text: 'Quản lý lớp học phần', icon: <AccountBalanceIcon />, path: '/classsection' },
+    { text: 'Quản lý phòng', icon: <RoomIcon />, path: '/room' },
+    { text: 'Quản lý khung giờ', icon: <AccessTimeIcon />, path: '/slottime' },
+    { text: 'Quản lý thông báo', icon: <CalendarIcon />, path: '/notification' },
+    { text: 'Đăng xuất', icon: <LogoutIcon />, path: '/logout' },
+  ];
+>>>>>>> 66a1362a00eaa404f4e3cf74422769c8c72a256a:fe/src/components/layout/Sidebar.jsx
 
   // Handlers for drawer
   const handleDrawerOpen = () => {

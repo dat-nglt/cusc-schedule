@@ -25,6 +25,11 @@ const LoginPage = () => {
     const [selectedRole, setSelectedRole] = useState('Học viên');
     const theme = useTheme();
 
+    const handleGoogleLogin = () => {
+        // Redirect to backend Google OAuth
+        window.location.href = 'http://localhost:3000/auth/google';
+    };
+
     const roles = [
         { name: 'Học viên', icon: <SchoolIcon fontSize="large" /> },
         { name: 'Giảng viên', icon: <PersonIcon fontSize="large" /> },
@@ -462,14 +467,13 @@ const LoginPage = () => {
                                         >
                                             Đăng nhập với tư cách {selectedRole}
                                         </Typography>
-                                    </Divider>
-
-                                    {/* Google Button cải tiến */}
+                                    </Divider>                                    {/* Google Button cải tiến */}
                                     <Button
                                         fullWidth
                                         variant="contained"
                                         size="large"
                                         startIcon={<GoogleIcon />}
+                                        onClick={handleGoogleLogin}
                                         sx={{
                                             background: 'linear-gradient(90deg, #4285F4 0%, #34A853 100%)',
                                             color: 'white',

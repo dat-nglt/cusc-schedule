@@ -21,6 +21,7 @@ import {
 import AddSubjectModal from './AddSubjectModal';
 import SubjectDetailModal from './SubjectDetailModal';
 import EditSubjectModal from './EditSubjectModal';
+import DeleteSubjectModal from './DeleteSubjectModal';
 import useResponsive from '../../hooks/useResponsive';
 import SubjectTable from './SubjectTable';
 
@@ -95,7 +96,9 @@ const Subject = () => {
     const [selectedSubject, setSelectedSubject] = useState(null);
     const [openAddModal, setOpenAddModal] = useState(false);
     const [openEditModal, setOpenEditModal] = useState(false);
+    const [openDeleteModal, setOpenDeleteModal] = useState(false);
     const [editedSubject, setEditedSubject] = useState(null);
+    const [subjectToDelete, setSubjectToDelete] = useState(null);
 
     // Danh sách trạng thái để lọc
     const statuses = ['Đang hoạt động', 'Tạm dừng', 'Ngừng hoạt động'];
@@ -154,14 +157,32 @@ const Subject = () => {
 
     // Hàm xử lý xóa học phần
     const handleDeleteSubject = (id) => {
-        console.log(`Xóa học phần với ID: ${id}`);
-        // Thêm logic xóa học phần
+        const subject = subjects.find((s) => s.id === id);
+        setSubjectToDelete(subject);
+        setOpenDeleteModal(true);
+    };
+
+    // Hàm xác nhận xóa học phần
+    const confirmDeleteSubject = (id) => {
+        setSubjects((prevSubjects) => {
+            const updatedSubjects = prevSubjects.filter((subject) => subject.id !== id)
+                .map((subject, index) => ({ ...subject, stt: index + 1 }));
+            return updatedSubjects;
+        });
+        setOpenDeleteModal(false);
+        setSubjectToDelete(null);
     };
 
     // Hàm đóng modal chi tiết
     const handleCloseDetail = () => {
         setOpenDetail(false);
         setSelectedSubject(null);
+    };
+
+    // Hàm đóng modal xóa
+    const handleCloseDeleteModal = () => {
+        setOpenDeleteModal(false);
+        setSubjectToDelete(null);
     };
 
     // Lọc danh sách học phần dựa trên từ khóa tìm kiếm và trạng thái
@@ -206,7 +227,12 @@ const Subject = () => {
                                         color="primary"
                                         startIcon={<AddIcon />}
                                         onClick={handleAddSubject}
-                                        sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
+                                        sx={{
+                                            bgcolor: '#1976d2',
+                                            '&:hover': { bgcolor: '#115293' },
+                                            minWidth: isSmallScreen ? 100 : 150,
+                                            height: '56px'
+                                        }}
                                     >
                                         Thêm học phần
                                     </Button>
@@ -287,6 +313,12 @@ const Subject = () => {
                 onClose={handleCloseEditModal}
                 subject={editedSubject}
                 onSave={handleSaveEditedSubject}
+            />
+            <DeleteSubjectModal
+                open={openDeleteModal}
+                onClose={handleCloseDeleteModal}
+                onDelete={confirmDeleteSubject}
+                subject={subjectToDelete}
             />
         </Box>
     );

@@ -21,6 +21,7 @@ import {
 import AddProgramModal from './AddProgramModal';
 import ProgramDetailModal from './ProgramDetailModal';
 import EditProgramModal from './EditProgramModal';
+import DeleteProgramModal from './DeleteProgramModal';
 import useResponsive from '../../hooks/useResponsive';
 import ProgramTable from './ProgramTable';
 
@@ -140,7 +141,9 @@ const Program = () => {
     const [selectedProgram, setSelectedProgram] = useState(null);
     const [openAddModal, setOpenAddModal] = useState(false);
     const [openEditModal, setOpenEditModal] = useState(false);
+    const [openDeleteModal, setOpenDeleteModal] = useState(false);
     const [editedProgram, setEditedProgram] = useState(null);
+    const [programToDelete, setProgramToDelete] = useState(null);
 
     // Danh sách trạng thái để lọc
     const statuses = ['Đang triển khai', 'Tạm dừng', 'Kết thúc'];
@@ -199,14 +202,32 @@ const Program = () => {
 
     // Hàm xử lý xóa chương trình
     const handleDeleteProgram = (id) => {
-        console.log(`Xóa chương trình với ID: ${id}`);
-        // Thêm logic xóa chương trình
+        const program = programs.find((p) => p.id === id);
+        setProgramToDelete(program);
+        setOpenDeleteModal(true);
+    };
+
+    // Hàm xác nhận xóa chương trình
+    const confirmDeleteProgram = (id) => {
+        setPrograms((prevPrograms) => {
+            const updatedPrograms = prevPrograms.filter((program) => program.id !== id)
+                .map((program, index) => ({ ...program, stt: index + 1 }));
+            return updatedPrograms;
+        });
+        setOpenDeleteModal(false);
+        setProgramToDelete(null);
     };
 
     // Hàm đóng modal chi tiết
     const handleCloseDetail = () => {
         setOpenDetail(false);
         setSelectedProgram(null);
+    };
+
+    // Hàm đóng modal xóa
+    const handleCloseDeleteModal = () => {
+        setOpenDeleteModal(false);
+        setProgramToDelete(null);
     };
 
     // Lọc danh sách chương trình dựa trên từ khóa tìm kiếm và trạng thái
@@ -252,7 +273,12 @@ const Program = () => {
                                         color="primary"
                                         startIcon={<AddIcon />}
                                         onClick={handleAddProgram}
-                                        sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
+                                        sx={{
+                                            bgcolor: '#1976d2',
+                                            '&:hover': { bgcolor: '#115293' },
+                                            minWidth: isSmallScreen ? 100 : 150,
+                                            height: '56px'
+                                        }}
                                     >
                                         Thêm chương trình
                                     </Button>
@@ -327,12 +353,19 @@ const Program = () => {
                 open={openAddModal}
                 onClose={handleCloseAddModal}
                 onAddProgram={handleAddNewProgram}
+                existingPrograms={programs}
             />
             <EditProgramModal
                 open={openEditModal}
                 onClose={handleCloseEditModal}
                 program={editedProgram}
                 onSave={handleSaveEditedProgram}
+            />
+            <DeleteProgramModal
+                open={openDeleteModal}
+                onClose={handleCloseDeleteModal}
+                onDelete={confirmDeleteProgram}
+                program={programToDelete}
             />
         </Box>
     );

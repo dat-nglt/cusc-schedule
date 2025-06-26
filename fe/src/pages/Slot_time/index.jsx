@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import {
   Box,
@@ -15,13 +14,14 @@ import {
   IconButton,
   Button,
 } from '@mui/material';
-import { 
-  Add as AddIcon, 
+import {
+  Add as AddIcon,
   Search as SearchIcon,
 } from '@mui/icons-material';
 import SlotTimeDetailModal from './SlotTimeDetailModal';
 import AddSlotTimeModal from './AddSlotTimeModal';
 import EditSlotTimeModal from './EditSlotTimeModal';
+import DeleteSlotTimeModal from './DeleteSlotTimeModal';
 import useResponsive from '../../hooks/useResponsive';
 import SlotTimeTable from './SlotTimeTable.jsx';
 
@@ -58,6 +58,8 @@ const SlotTime = () => {
   const [openAddModal, setOpenAddModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
   const [editedSlotTime, setEditedSlotTime] = useState(null);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [slotTimeToDelete, setSlotTimeToDelete] = useState(null);
 
   // Danh sách buổi học để lọc
   const buoiHocOptions = ['Sáng', 'Chiều', 'Tối'];
@@ -116,14 +118,33 @@ const SlotTime = () => {
 
   // Hàm xử lý xóa khung giờ
   const handleDeleteSlotTime = (id) => {
-    console.log(`Xóa khung giờ với ID: ${id}`);
-    // Thêm logic xóa khung giờ
+    const slotTime = slotTimes.find((s) => s.id === id);
+    setSlotTimeToDelete(slotTime);
+    setOpenDeleteModal(true);
+  };
+
+  // Hàm xử lý xác nhận xóa khung giờ
+  const handleConfirmDelete = (id) => {
+    setSlotTimes((prevSlotTimes) =>
+      prevSlotTimes.filter((slotTime) => slotTime.id !== id).map((slotTime, index) => ({
+        ...slotTime,
+        stt: index + 1,
+      }))
+    );
+    setOpenDeleteModal(false);
+    setSlotTimeToDelete(null);
   };
 
   // Hàm đóng modal chi tiết
   const handleCloseDetail = () => {
     setOpenDetail(false);
     setSelectedSlotTime(null);
+  };
+
+  // Hàm đóng modal xóa
+  const handleCloseDeleteModal = () => {
+    setOpenDeleteModal(false);
+    setSlotTimeToDelete(null);
   };
 
   // Lọc danh sách khung giờ dựa trên từ khóa tìm kiếm và buổi học
@@ -168,7 +189,12 @@ const SlotTime = () => {
                     color="primary"
                     startIcon={<AddIcon />}
                     onClick={handleAddSlotTime}
-                    sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
+                    sx={{
+                      bgcolor: '#1976d2',
+                      '&:hover': { bgcolor: '#115293' },
+                      minWidth: isSmallScreen ? 100 : 150,
+                      height: '56px'
+                    }}
                   >
                     Thêm khung giờ
                   </Button>
@@ -235,21 +261,28 @@ const SlotTime = () => {
           </CardContent>
         </Card>
       </Box>
-      <SlotTimeDetailModal 
-        open={openDetail} 
-        onClose={handleCloseDetail} 
-        slotTime={selectedSlotTime} 
+      <SlotTimeDetailModal
+        open={openDetail}
+        onClose={handleCloseDetail}
+        slotTime={selectedSlotTime}
       />
       <AddSlotTimeModal
         open={openAddModal}
         onClose={handleCloseAddModal}
         onAddSlotTime={handleAddNewSlotTime}
+        existingSlotTimes={slotTimes}
       />
       <EditSlotTimeModal
         open={openEditModal}
         onClose={handleCloseEditModal}
         slotTime={editedSlotTime}
         onSave={handleSaveEditedSlotTime}
+      />
+      <DeleteSlotTimeModal
+        open={openDeleteModal}
+        onClose={handleCloseDeleteModal}
+        onDelete={handleConfirmDelete}
+        slotTime={slotTimeToDelete}
       />
     </Box>
   );

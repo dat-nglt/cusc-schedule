@@ -18,6 +18,7 @@ import { Add as AddIcon, Search as SearchIcon } from '@mui/icons-material';
 import RoomDetailModal from './RoomDetailModal';
 import AddRoomModal from './AddRoomModal';
 import EditRoomModal from './EditRoomModal';
+import DeleteRoomModal from './DeleteRoomModal';
 import useResponsive from '../../hooks/useResponsive';
 import RoomTable from './RoomTable';
 
@@ -46,6 +47,8 @@ const Room = () => {
   const [openAddModal, setOpenAddModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
   const [editedRoom, setEditedRoom] = useState(null);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [roomToDelete, setRoomToDelete] = useState(null);
 
   // Danh sách loại phòng học để lọc
   const loaiPhongHocOptions = ['Phòng lý thuyết', 'Phòng thực hành', 'Phòng hội thảo'];
@@ -102,13 +105,24 @@ const Room = () => {
     setOpenDetail(true);
   };
 
-  // Hàm xử lý xóa phòng học
-  const handleDeleteRoom = (id) => {
-    console.log(`Xóa phòng học với ID: ${id}`);
-    // Thêm logic xóa phòng học
+  // Hàm mở modal xác nhận xóa
+  const handleOpenDeleteModal = (room) => {
+    setRoomToDelete(room);
+    setOpenDeleteModal(true);
   };
 
-  // Hàm đóng modal chi tiết
+  // Hàm đóng modal xóa
+  const handleCloseDeleteModal = () => {
+    setOpenDeleteModal(false);
+    setRoomToDelete(null);
+  };
+
+  // Hàm xử lý xóa phòng học
+  const handleDeleteRoom = (id) => {
+    setRooms((prevRooms) => prevRooms.filter((room) => room.id !== id));
+  };
+
+  // Hàm đóng modal chi tiết (định nghĩa mới)
   const handleCloseDetail = () => {
     setOpenDetail(false);
     setSelectedRoom(null);
@@ -156,7 +170,12 @@ const Room = () => {
                     color="primary"
                     startIcon={<AddIcon />}
                     onClick={handleAddRoom}
-                    sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
+                    sx={{
+                      bgcolor: '#1976d2',
+                      '&:hover': { bgcolor: '#115293' },
+                      minWidth: isSmallScreen ? 100 : 150,
+                      height: '56px'
+                    }}
                   >
                     Thêm phòng
                   </Button>
@@ -209,7 +228,7 @@ const Room = () => {
                   isLargeScreen={isLargeScreen}
                   handleViewRoom={handleViewRoom}
                   handleEditRoom={handleEditRoom}
-                  handleDeleteRoom={handleDeleteRoom}
+                  handleDeleteRoom={handleOpenDeleteModal}
                 />
                 <TablePagination
                   component="div"
@@ -226,21 +245,28 @@ const Room = () => {
           </CardContent>
         </Card>
       </Box>
-      <RoomDetailModal 
-        open={openDetail} 
-        onClose={handleCloseDetail} 
-        room={selectedRoom} 
+      <RoomDetailModal
+        open={openDetail}
+        onClose={handleCloseDetail}
+        room={selectedRoom}
       />
       <AddRoomModal
         open={openAddModal}
         onClose={handleCloseAddModal}
         onAddRoom={handleAddNewRoom}
+        existingRooms={rooms}
       />
       <EditRoomModal
         open={openEditModal}
         onClose={handleCloseEditModal}
         room={editedRoom}
         onSave={handleSaveEditedRoom}
+      />
+      <DeleteRoomModal
+        open={openDeleteModal}
+        onClose={handleCloseDeleteModal}
+        onDelete={handleDeleteRoom}
+        room={roomToDelete}
       />
     </Box>
   );

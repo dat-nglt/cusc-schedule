@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import {
   Dialog,
@@ -11,10 +10,14 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Box,
+  Typography,
 } from '@mui/material';
+import UploadFileIcon from '@mui/icons-material/UploadFile';
+import * as XLSX from 'xlsx';
 
-const AddSlotTimeModal = ({ open, onClose, onAddSlotTime }) => {
-  const [newSlotTime, newSlotTimesetNewSlotTime] = useState({
+const AddSlotTimeModal = ({ open, onClose, onAddSlotTime, existingSlotTimes = [] }) => {
+  const [newSlotTime, setNewSlotTime] = useState({
     maKhungGio: '',
     tenKhungGio: '',
     buoiHoc: '',
@@ -22,19 +25,64 @@ const AddSlotTimeModal = ({ open, onClose, onAddSlotTime }) => {
     thoiGianKetThuc: '',
   });
 
+  const [error, setError] = useState('');
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    newSlotTimesetNewSlotTime((prev) => ({ ...prev, [name]: value }));
+    setNewSlotTime((prev) => ({ ...prev, [name]: value }));
+    setError('');
+  };
+
+  const cleanText = (value) => {
+    if (typeof value === 'string') {
+      return value.trim().normalize('NFC');
+    }
+    return '';
+  };
+
+  const normalizeBuoiHoc = (text) => {
+    const cleaned = cleanText(text).toLowerCase();
+    if (cleaned.includes('sáng')) return 'Sáng';
+    if (cleaned.includes('chiều')) return 'Chiều';
+    if (cleaned.includes('tối') || cleaned.includes('tối')) return 'Tối';
+    return '';
+  };
+
+  const parseTime = (value) => {
+    if (typeof value === 'number') {
+      const totalMinutes = Math.round(value * 24 * 60);
+      const hours = String(Math.floor(totalMinutes / 60)).padStart(2, '0');
+      const minutes = String(totalMinutes % 60).padStart(2, '0');
+      return `${hours}:${minutes}`;
+    } else if (typeof value === 'string') {
+      return value.trim();
+    }
+    return '';
   };
 
   const handleSubmit = () => {
+    const isDuplicate = existingSlotTimes.some(
+      (slot) => slot.maKhungGio === newSlotTime.maKhungGio
+    );
+
+    if (!Object.values(newSlotTime).every((v) => v)) {
+      setError('Vui lòng nhập đầy đủ thông tin!');
+      return;
+    }
+
+    if (isDuplicate) {
+      setError(`Mã khung giờ "${newSlotTime.maKhungGio}" đã tồn tại!`);
+      return;
+    }
+
     onAddSlotTime({
       ...newSlotTime,
-      id: Date.now(), // Tạo ID tạm thời
+      id: Date.now(),
       thoiGianTao: new Date().toISOString().slice(0, 19).replace('T', ' '),
       thoiGianCapNhat: new Date().toISOString().slice(0, 19).replace('T', ' '),
     });
-    newSlotTimesetNewSlotTime({
+
+    setNewSlotTime({
       maKhungGio: '',
       tenKhungGio: '',
       buoiHoc: '',
@@ -44,10 +92,79 @@ const AddSlotTimeModal = ({ open, onClose, onAddSlotTime }) => {
     onClose();
   };
 
+  const handleImportExcel = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      const data = evt.target.result;
+      const workbook = XLSX.read(data, { type: 'binary' });
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(sheet);
+
+      const imported = [];
+      const duplicated = [];
+
+      rows.forEach((row) => {
+        const maKhungGio = cleanText(row['Mã khung giờ']);
+        if (existingSlotTimes.some((s) => s.maKhungGio === maKhungGio)) {
+          duplicated.push(maKhungGio);
+        } else {
+          imported.push({
+            id: Date.now() + Math.random(),
+            maKhungGio,
+            tenKhungGio: cleanText(row['Tên khung giờ']),
+            buoiHoc: normalizeBuoiHoc(row['Buổi học']),
+            thoiGianBatDau: parseTime(row['Thời gian bắt đầu']),
+            thoiGianKetThuc: parseTime(row['Thời gian kết thúc']),
+            thoiGianTao: new Date().toISOString().slice(0, 19).replace('T', ' '),
+            thoiGianCapNhat: new Date().toISOString().slice(0, 19).replace('T', ' '),
+          });
+        }
+      });
+
+      if (duplicated.length > 0) {
+        alert(`Bỏ qua các mã khung giờ đã tồn tại:\n${duplicated.join(', ')}`);
+      }
+
+      imported.forEach(onAddSlotTime);
+      onClose();
+    };
+
+    reader.readAsBinaryString(file);
+  };
+
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle>Thêm khung giờ mới</DialogTitle>
+      <DialogTitle>
+        <Box display="flex" justifyContent="space-between" alignItems="center">
+          Thêm khung giờ mới
+          <label htmlFor="upload-slot-time">
+            <input
+              id="upload-slot-time"
+              type="file"
+              hidden
+              accept=".xlsx, .xls"
+              onChange={handleImportExcel}
+            />
+            <Button
+              variant="outlined"
+              component="span"
+              size="small"
+              startIcon={<UploadFileIcon />}
+            >
+              Thêm tự động
+            </Button>
+          </label>
+        </Box>
+      </DialogTitle>
       <DialogContent>
+        {error && (
+          <Typography color="error" sx={{ mb: 1 }}>
+            {error}
+          </Typography>
+        )}
         <TextField
           fullWidth
           label="Mã khung giờ"
