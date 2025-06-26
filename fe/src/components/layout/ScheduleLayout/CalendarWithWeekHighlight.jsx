@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
     Box,
     Button,
@@ -31,27 +31,34 @@ const CalendarWithWeekHighlight = () => {
     const [weekRange, setWeekRange] = useState([]);
     const { currentDate, setCurrentDate } = useTimetable();
 
-    const processDate = (date) => {
+    const updateWeekInfo = useCallback((date) => {
         const weekStart = startOfWeek(date, { weekStartsOn: 1 });
         const weekEnd = endOfWeek(date, { weekStartsOn: 1 });
         const daysInWeek = eachDayOfInterval({ start: weekStart, end: weekEnd });
 
-        setSelectedDate(date); // Nếu bạn muốn cập nhật cả selectedDate
+        setSelectedDate(date);
         setWeekRange(daysInWeek);
-        setCurrentDate(weekStart); // nếu cần chuẩn hóa lại
-    };
+    }, []);
 
 
     // Xử lý khi chọn ngày
     const handleDateClick = (date) => {
-        processDate(date);
+        updateWeekInfo(date);
+        // Chúng ta muốn currentDate trong context là ngày đầu tiên của tuần chứa 'date'
+        const newCurrentDateForContext = startOfWeek(date, { weekStartsOn: 1 });
+
+        // Chỉ cập nhật context nếu nó thực sự khác để tránh re-render không cần thiết
+        if (!isSameDay(currentDate, newCurrentDateForContext)) {
+            setCurrentDate(newCurrentDateForContext);
+        }
+
     };
 
     useEffect(() => {
         if (currentDate) {
-            processDate(currentDate);
+            updateWeekInfo(currentDate);
         }
-    }, [currentDate]);
+    }, [currentDate, updateWeekInfo]);
 
     // Chuyển tháng
     const handlePrevMonth = () => {

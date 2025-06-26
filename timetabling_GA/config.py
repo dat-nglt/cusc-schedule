@@ -1,8 +1,8 @@
 # timetable_ga/config.py
 
 # GA Parameters
-POPULATION_SIZE = 1500
-MAX_GENERATIONS = 5
+POPULATION_SIZE = 1500 #tạo ra 1500
+MAX_GENERATIONS = 500
 MUTATION_RATE = 0.1
 CROSSOVER_RATE = 0.8
 ELITISM_COUNT = 10  # Giữ lại N cá thể tốt nhất cho thế hệ sau

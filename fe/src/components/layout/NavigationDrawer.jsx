@@ -88,7 +88,7 @@ const NavigationDrawer = ({ open, onClose }) => {
                 color: theme.palette.primary.contrastText,
                 py: 1
             }}>
-                 <Box
+                <Box
                     component={Link}
                     to="/dashboard"
                     onClick={onClose} // Close drawer when clicking logo
@@ -123,7 +123,7 @@ const NavigationDrawer = ({ open, onClose }) => {
                 <Divider />
 
                 <List disablePadding sx={{ mt: 1 }}>
-                    {navItems.map((item, index) => (
+                    {navItems.map((item) => (
                         <ListItem
                             key={item.path}
                             disablePadding
@@ -151,7 +151,7 @@ const NavigationDrawer = ({ open, onClose }) => {
                                         ? theme.palette.primary.main
                                         : theme.palette.text.primary,
                                     '&:hover': {
-                                        backgroundColor: alpha(theme.palette.action.hover, 0.7),
+                                        backgroundColor: alpha(theme.palette.action.hover, 0.2),
                                         color: theme.palette.primary.main,
                                         '& .MuiListItemIcon-root': {
                                             color: theme.palette.primary.main,

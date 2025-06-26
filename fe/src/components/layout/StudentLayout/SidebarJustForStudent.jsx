@@ -1,104 +1,117 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useLocation, Link } from 'react-router-dom';
 import {
     Divider,
-    Drawer,
     List,
     ListItem,
     ListItemIcon,
     ListItemText,
     useTheme,
-    useMediaQuery,
     Box,
-    Typography,
-    Switch
+    alpha,
+    styled,
+    ListItemButton
 } from '@mui/material';
 import {
-    Assessment,
     School,
-    HowToReg,
-    Schedule,
-    BarChart,
     Home,
     People,
+    Assessment,
+    HowToReg,
+    Schedule,
     Settings,
-    LightMode,
-    DarkMode
+    BarChartOutlined
 } from '@mui/icons-material';
 
-const menuItems = [
+const navItems = [
     { text: 'Trang Chủ', icon: <Home />, path: '/dashboard' },
     { text: 'Sinh Viên', icon: <People />, path: '/student' },
     { text: 'Kết Quả', icon: <Assessment />, path: '/student/results' },
     { text: 'Chương Trình ĐT', icon: <School />, path: '/chuong-trinh' },
     { text: 'Đăng Ký Học Phần', icon: <HowToReg />, path: '/dang-ky' },
     { text: 'Lịch Học', icon: <Schedule />, path: '/student/schedules' },
-    { text: 'Thống Kê', icon: <BarChart />, path: '/thong-ke' },
+    { text: 'Thống Kê', icon: <BarChartOutlined />, path: '/thong-ke' },
     { text: 'Cài Đặt', icon: <Settings />, path: '/cai-dat' }
 ];
 
-const SidebarJustForStudent = () => {
+const drawerWidth = 350;
+
+const StyledSidebarContainer = styled(Box)(({ theme }) => ({
+    width: drawerWidth,
+    flexShrink: 0,
+    color: theme.palette.primary.contrastText,
+    boxSizing: 'border-box',
+    position: 'fixed',
+    top: 64,
+    height: 'calc(100% - 64px)',
+    // Viền phải và đổ bóng để tạo hiệu ứng Drawer
+    zIndex: theme.zIndex.drawer,
+    borderRight: `1px solid ${theme.palette.divider}`,
+    backgroundColor: theme.palette.background.paper,
+    boxShadow: theme.shadows[1],
+    overflowY: 'auto',
+}));
+
+const SidebarForJustAdmin = () => {
     const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-    const [mobileOpen, setMobileOpen] = useState(false);
-
-    const drawerWidth = 350;
-
-    const handleDrawerToggle = () => {
-        setMobileOpen(!mobileOpen);
-    };
+    const location = useLocation();
 
     return (
-        <Drawer
-            variant={isMobile ? "temporary" : "permanent"}
-            open={isMobile ? mobileOpen : true}
-            onClose={handleDrawerToggle}
-            ModalProps={{
-                keepMounted: true, // Better open performance on mobile
-            }}
-            sx={{
-                width: drawerWidth,
-                flexShrink: 0,
-                '& .MuiDrawer-paper': {
-                    top: '64px',
-                    width: drawerWidth,
-                    boxSizing: 'border-box',
-                    backgroundColor: theme.palette.primary.main,
-                    color: theme.palette.primary.contrastText,
-                },
-            }}
-        >
-
-            <Divider />
-            <List>
-                {menuItems.map((item) => (
+        <StyledSidebarContainer>
+            <Divider sx={{ borderColor: alpha(theme.palette.common.white, 0.3) }} />
+            <List disablePadding sx={{ mt: 1, ml: 1 }}>
+                {navItems.map((item) => (
                     <ListItem
-                        button
-                        key={item.text}
-                        // selected={currentPath === item.path}
-                        onClick={() => window.location.href = item.path}
+                        key={item.path}
+                        disablePadding
                         sx={{
-                            '&.Mui-selected': {
-                                backgroundColor: theme.palette.primary.light,
+                            backgroundColor: location.pathname === item.path
+                                ? alpha(theme.palette.primary.main, 0.1)
+                                : 'transparent',
+                            borderLeft: location.pathname === item.path
+                                ? `4px solid ${theme.palette.primary.main}`
+                                : 'none',
+                            '&:not(:last-of-type)': {
+                                mb: 0.5,
                             },
-                            '&.Mui-selected:hover': {
-                                backgroundColor: theme.palette.primary.light,
-                            },
-                            '&:hover': {
-                                cursor: 'pointer',
-                                backgroundColor: theme.palette.primary.dark,
-                            }
                         }}
                     >
-                        <ListItemIcon sx={{ color: 'inherit' }}>
-                            {item.icon}
-                        </ListItemIcon>
-                        <ListItemText primary={item.text} />
+                        <ListItemButton
+                            component={Link}
+                            to={item.path}
+                            sx={{
+                                py: 1.2,
+                                px: 2,
+                                color: location.pathname === item.path
+                                    ? theme.palette.primary.main
+                                    : theme.palette.text.primary,
+                                '&:hover': {
+                                    backgroundColor: alpha(theme.palette.action.hover, 0.2),
+                                    color: theme.palette.primary.main,
+                                    '& .MuiListItemIcon-root': {
+                                        color: theme.palette.primary.main,
+                                    },
+                                },
+                                '& .MuiListItemIcon-root': {
+                                    color: location.pathname === item.path
+                                        ? theme.palette.primary.main
+                                        : theme.palette.text.secondary,
+                                },
+                                '& .MuiListItemText-primary': {
+                                    fontWeight: location.pathname === item.path ? 600 : 400,
+                                },
+                            }}
+                        >
+                            <ListItemIcon>
+                                {item.icon}
+                            </ListItemIcon>
+                            <ListItemText primary={item.text} />
+                        </ListItemButton>
                     </ListItem>
                 ))}
             </List>
-            
-        </Drawer>
+        </StyledSidebarContainer>
     );
 };
 
-export default SidebarJustForStudent;
+export default SidebarForJustAdmin;

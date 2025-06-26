@@ -86,7 +86,6 @@ const SidebarForJustAdmin = () => {
                             borderLeft: location.pathname === item.path
                                 ? `4px solid ${theme.palette.primary.main}`
                                 : 'none',
-                            borderRadius: '4px',
                             '&:not(:last-of-type)': {
                                 mb: 0.5,
                             },

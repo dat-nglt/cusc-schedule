@@ -1,15 +1,15 @@
 Best Fitness: -5.83
 
-Class: C01, Subject: M02 (theory), Day: Mon, Slot: S1, Room: LT2, Lecturer: GV02
-Class: C01, Subject: M01 (theory), Day: Tue, Slot: C1, Room: LT2, Lecturer: GV01
-Class: C01, Subject: M01 (practice), Day: Thu, Slot: T2, Room: TH2, Lecturer: GV03
-Class: C01, Subject: M02 (practice), Day: Sat, Slot: C1, Room: TH4, Lecturer: GV03
-Class: C02, Subject: M03 (theory), Day: Mon, Slot: T2, Room: LT2, Lecturer: GV04
-Class: C02, Subject: M04 (theory), Day: Tue, Slot: S2, Room: LT4, Lecturer: GV01
-Class: C02, Subject: M04 (practice), Day: Wed, Slot: S1, Room: TH2, Lecturer: GV04
-Class: C02, Subject: M03 (practice), Day: Thu, Slot: T1, Room: TH2, Lecturer: GV04
-Class: C02, Subject: M03 (theory), Day: Fri, Slot: T1, Room: LT4, Lecturer: GV04
-Class: C03, Subject: M06 (practice), Day: Wed, Slot: S2, Room: TH2, Lecturer: GV02
-Class: C03, Subject: M05 (theory), Day: Thu, Slot: T1, Room: LT1, Lecturer: GV01
-Class: C03, Subject: M06 (theory), Day: Fri, Slot: C1, Room: LT1, Lecturer: GV03
-Class: C03, Subject: M05 (theory), Day: Sat, Slot: T2, Room: LT1, Lecturer: GV01
+Class: C01, Subject: M01 (theory), Day: Wed, Slot: T1, Room: LT4, Lecturer: GV01
+Class: C01, Subject: M02 (theory), Day: Thu, Slot: T1, Room: LT4, Lecturer: GV03
+Class: C01, Subject: M02 (practice), Day: Fri, Slot: S1, Room: TH1, Lecturer: GV03
+Class: C01, Subject: M01 (practice), Day: Sat, Slot: C2, Room: TH4, Lecturer: GV03
+Class: C02, Subject: M04 (practice), Day: Mon, Slot: T1, Room: TH2, Lecturer: GV04
+Class: C02, Subject: M03 (practice), Day: Tue, Slot: C1, Room: TH2, Lecturer: GV02
+Class: C02, Subject: M03 (theory), Day: Wed, Slot: C2, Room: LT4, Lecturer: GV04
+Class: C02, Subject: M04 (theory), Day: Fri, Slot: C2, Room: LT4, Lecturer: GV01
+Class: C02, Subject: M03 (theory), Day: Sat, Slot: S2, Room: LT1, Lecturer: GV04
+Class: C03, Subject: M06 (theory), Day: Mon, Slot: C2, Room: LT4, Lecturer: GV03
+Class: C03, Subject: M05 (theory), Day: Tue, Slot: T1, Room: LT1, Lecturer: GV01
+Class: C03, Subject: M06 (practice), Day: Wed, Slot: S1, Room: TH1, Lecturer: GV02
+Class: C03, Subject: M05 (theory), Day: Sat, Slot: T1, Room: LT4, Lecturer: GV01

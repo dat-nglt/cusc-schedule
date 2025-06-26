@@ -109,7 +109,7 @@ const ScheduleSidebar = () => {
         {isDashboard && (
           <>
             {/* Tạo lịch button */}
-            <Button
+            {/* <Button
               variant="contained"
               color="primary"
               startIcon={<AddIcon />}
@@ -121,22 +121,7 @@ const ScheduleSidebar = () => {
               }}
             >
               Tạo thời khóa biểu
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<DashboardIcon />}
-              onClick={handleDrawerOpen} // Call the drawer open handler
-              fullWidth
-              sx={{
-                mb: 2,
-                borderRadius: '8px',
-                textTransform: 'none',
-                fontWeight: 'bold'
-              }}
-            >
-              Quản lý hệ thống
-            </Button>
+            </Button> */}
 
             {/* Search component */}
             <TextField
@@ -181,7 +166,20 @@ const ScheduleSidebar = () => {
 
             {/* Calendar component */}
             <CalendarWithWeekHighlight />
-
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<DashboardIcon />}
+              onClick={handleDrawerOpen} // Call the drawer open handler
+              fullWidth
+              sx={{
+                mb: 2,
+                textTransform: 'none',
+                fontWeight: 'bold'
+              }}
+            >
+              Quản lý hệ thống
+            </Button>
             <NavigationDrawer open={drawerOpen} onClose={handleDrawerClose} />
           </>
         )}
