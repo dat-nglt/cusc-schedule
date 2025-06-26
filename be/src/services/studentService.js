@@ -3,7 +3,7 @@ import ExcelUtils from "../utils/ExcelUtils.js";
 const { Student } = db;
 
 // get all students
-export const getAllstudents = async () => {
+export const getAllStudents = async () => {
     try {
         const students = await Student.findAll();
         return students;

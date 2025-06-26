@@ -167,15 +167,15 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
                 if (imported && imported.length > 0) {
                     // Add imported lecturers to the list
                     imported.forEach(lecturer => onAddLecturer(lecturer));
-                    message += `Đã thêm thành công ${imported.length} giảng viên. `;
+                    message = `Đã thêm thành công ${imported.length} giảng viên. `;
                 }
 
                 if (duplicated && duplicated.length > 0) {
-                    message += `Các mã giảng viên đã tồn tại và bị bỏ qua: ${duplicated.join(', ')}. `;
+                    message = `Các mã giảng viên đã tồn tại và bị bỏ qua: ${duplicated.join(', ')}. `;
                 }
 
                 if (invalid && invalid.length > 0) {
-                    message += `Các hàng không hợp lệ: ${invalid.join(', ')}.`;
+                    message = `Các hàng không hợp lệ: ${invalid.join(', ')}.`;
                 }
 
                 if (message) {
