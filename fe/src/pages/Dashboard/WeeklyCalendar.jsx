@@ -38,7 +38,7 @@ const WeeklyCalendar = ({
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
     const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'));
-    const { currentDate, setCurrentDate, selectedDateByWeekly } = useTimetable();
+    const { currentDate, setCurrentDate} = useTimetable();
     // const [currentDate, setCurrentDate] = useState(startOfWeek(initialDate, { weekStartsOn: 1 }));
 
     const [weekDays, setWeekDays] = useState([]);
@@ -59,12 +59,10 @@ const WeeklyCalendar = ({
 
     const handlePrevWeek = () => {
         setCurrentDate(addDays(currentDate, -7));
-        selectedDateByWeekly(currentDate);
     };
 
     const handleNextWeek = () => {
         setCurrentDate(addDays(currentDate, 7));
-        selectedDateByWeekly(currentDate);
     };
 
     useEffect(() => {

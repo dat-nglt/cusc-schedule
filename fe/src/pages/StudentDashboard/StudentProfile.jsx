@@ -191,7 +191,7 @@ function StudentProfile({ studentInfo }) {
                                     {studentInfo.name}
                                 </Typography>
                                 {/* More Info Button - always visible, but consider position for small screens */}
-                                <Chip label={'Đang học'} color='primary' size='small' sx={{ px: 2, display: { xs: 'none', md: 'block' } }} />
+                                <Chip label={'Đang học'} color='primary' size='small' sx={{ px: 2, display: { xs: 'none', md: 'flex' } }} />
                             </Box>
 
                             <Divider sx={{ my: 2, display: { xs: 'none', md: 'flex' } }} />

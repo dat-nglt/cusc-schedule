@@ -132,13 +132,14 @@ const Header = ({ onMenuToggle }) => {
                     </Box>
                 </Box>
 
+
+
                 {/* Right section - Actions and User Menu */}
                 <Box sx={{
                     display: 'flex',
                     alignItems: 'center',
                     gap: theme.spacing(1)
                 }}>
-
                     <IconButton
                         size="large"
                         aria-label="show notifications"
@@ -303,7 +304,7 @@ const Header = ({ onMenuToggle }) => {
                                 ) : (
                                     <>
                                         <DarkMode fontSize="small" sx={{ mr: 1 }} />
-                                        Chuyển sang tối 
+                                        Chuyển sang tối
                                     </>
                                 )}
                             </Box>

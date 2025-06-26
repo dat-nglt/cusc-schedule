@@ -5,7 +5,6 @@ import routes from "./routes"; // Import định nghĩa các route
 import Loader from "../components/common/Loader"; // Component hiển thị khi đang tải
 import NotFound from "../components/layout/NotFound"; // Component cho trang 404
 import { useAuth } from "../hooks/useAuth"; // Hook kiểm tra trạng thái đăng nhập
-import MainLayout from "../components/layout/MainLayout"; // Layout chính của ứng dụng
 
 // Import động tất cả các component từ thư mục `pages`
 const pageComponents = import.meta.glob("../pages/*/index.jsx");
