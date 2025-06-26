@@ -110,9 +110,9 @@ export const importstudentsFromExcel = async (fileBuffer) => {
                     address: ExcelUtils.cleanString(row.address),
                     phone_number: ExcelUtils.cleanString(row.phone_number),
                     class: ExcelUtils.cleanString(row.class),
-                    admission_year: ExcelUtils.formatExcelDate(row.admission_year),
+                    admission_year: ExcelUtils.cleanString(row.admission_year),
                     gpa: ExcelUtils.cleanString(row.gpa),
-                    status: ExcelUtils.cleanString(row.status) || 'active'
+                    status: ExcelUtils.cleanString(row.status)
                 };
 
                 // Validate email format nếu có

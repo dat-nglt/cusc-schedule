@@ -24,7 +24,7 @@ import EditStudentModal from './EditStudentModal';
 import DeleteStudentModal from './DeleteStudentModal';
 import useResponsive from '../../hooks/useResponsive';
 import StudentTable from './StudentTable';
-import { getAllStudents } from '../../api/studentAPI';
+import { getAllStudents, getStudentById, createStudent, updateStudent, deleteStudent } from '../../api/studentAPI';
 
 const Student = () => {
     const { isSmallScreen, isMediumScreen } = useResponsive();
@@ -43,6 +43,8 @@ const Student = () => {
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
     const [editedStudent, setEditedStudent] = useState(null);
     const [studentToDelete, setStudentToDelete] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
 
     // Danh sách trạng thái để lọc
     const statuses = ['Đang học', 'Tạm nghỉ', 'Tốt nghiệp', 'Bảo lưu'];
@@ -50,6 +52,8 @@ const Student = () => {
 
     const fetchStudents = async () => {
         try {
+            setLoading(true);
+            setError('');
             const response = await getAllStudents();
             if (!response) {
                 console.error("Không có dữ liệu học viên");
@@ -58,6 +62,9 @@ const Student = () => {
             setStudents(response.data.data)
         } catch (error) {
             console.error("Lỗi khi tải danh sách học viên:", error);
+            setError('Không thể tải danh sách học viên. Vui lòng thử lại sau.');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -76,18 +83,36 @@ const Student = () => {
     };
 
     // Hàm thêm học viên mới
-    const handleAddNewStudent = (newStudent) => {
-        setStudents((prevStudents) => {
-            const updatedStudents = [...prevStudents, { ...newStudent, stt: prevStudents.length + 1 }];
-            return updatedStudents;
-        });
+    const handleAddNewStudent = async (newStudent) => {
+        try {
+            setLoading(true);
+            const response = await createStudent(newStudent);
+            if (response && response.data) {
+                fetchStudents(); // Tải lại danh sách học viên sau khi thêm thành công
+            }
+        } catch (error) {
+            console.error("Lỗi khi thêm học viên:", error);
+            alert("Không thể thêm học viên. Vui lòng thử lại.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     // Hàm xử lý khi nhấn nút chỉnh sửa
-    const handleEditStudent = (id) => {
-        const studentToEdit = students.find((s) => s.id === id);
-        setEditedStudent(studentToEdit);
-        setOpenEditModal(true);
+    const handleEditStudent = async (id) => {
+        try {
+            setLoading(true);
+            const response = await getStudentById(id);
+            if (response && response.data) {
+                setEditedStudent(response.data.data);
+                setOpenEditModal(true);
+            }
+        } catch (error) {
+            console.error("Lỗi khi lấy thông tin học viên để chỉnh sửa:", error);
+            alert("Không thể lấy thông tin học viên. Vui lòng thử lại.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     // Hàm đóng modal chỉnh sửa
@@ -97,12 +122,19 @@ const Student = () => {
     };
 
     // Hàm lưu thay đổi sau khi chỉnh sửa
-    const handleSaveEditedStudent = (updatedStudent) => {
-        setStudents((prevStudents) =>
-            prevStudents.map((student) =>
-                student.id === updatedStudent.id ? { ...student, ...updatedStudent } : student
-            )
-        );
+    const handleSaveEditedStudent = async (updatedStudent) => {
+        try {
+            setLoading(true);
+            const response = await updateStudent(updatedStudent.student_id, updatedStudent);
+            if (response && response.data) {
+                fetchStudents(); // Tải lại danh sách học viên sau khi cập nhật thành công
+            }
+        } catch (error) {
+            console.error("Lỗi khi cập nhật học viên:", error);
+            alert("Không thể cập nhật thông tin học viên. Vui lòng thử lại.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     // Hàm xử lý thay đổi trang
@@ -111,28 +143,45 @@ const Student = () => {
     };
 
     // Hàm xử lý xem học viên
-    const handleViewStudent = (id) => {
-        const student = students.find((s) => s.id === id);
-        setSelectedStudent(student);
-        setOpenDetail(true);
+    const handleViewStudent = async (id) => {
+        try {
+            setLoading(true);
+            const response = await getStudentById(id);
+            if (response && response.data) {
+                setSelectedStudent(response.data.data);
+                setOpenDetail(true);
+            }
+        } catch (error) {
+            console.error("Lỗi khi lấy thông tin chi tiết học viên:", error);
+            alert("Không thể lấy thông tin chi tiết học viên. Vui lòng thử lại.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     // Hàm xử lý xóa học viên
     const handleDeleteStudent = (id) => {
-        const student = students.find((s) => s.id === id);
+        const student = students.find((s) => s.student_id === id);
         setStudentToDelete(student);
         setOpenDeleteModal(true);
     };
 
     // Hàm xác nhận xóa học viên
-    const confirmDeleteStudent = (id) => {
-        setStudents((prevStudents) => {
-            const updatedStudents = prevStudents.filter((student) => student.id !== id)
-                .map((student, index) => ({ ...student, stt: index + 1 }));
-            return updatedStudents;
-        });
-        setOpenDeleteModal(false);
-        setStudentToDelete(null);
+    const confirmDeleteStudent = async (id) => {
+        try {
+            setLoading(true);
+            const response = await deleteStudent(id);
+            if (response) {
+                fetchStudents(); // Tải lại danh sách học viên sau khi xóa thành công
+            }
+        } catch (error) {
+            console.error("Lỗi khi xóa học viên:", error);
+            alert("Không thể xóa học viên. Vui lòng thử lại.");
+        } finally {
+            setLoading(false);
+            setOpenDeleteModal(false);
+            setStudentToDelete(null);
+        }
     };
 
     // Hàm đóng modal chi tiết
