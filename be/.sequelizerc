@@ -1,8 +1,10 @@
-const path = require('path');
+const path = require("path");
+// Tải dotenv ngay lập tức để process.env có các biến từ .env
+require("dotenv").config();
 
 module.exports = {
-  'config': path.resolve('database/config', 'config.json'),
-  'models-path': path.resolve('database/models'),
-  'seeders-path': path.resolve('database/seeders'),
-  'migrations-path': path.resolve('database/migrations')
+  url: process.env.DATABASE_URL,
+  "models-path": path.resolve(__dirname, "src/database/models"),
+  "seeders-path": path.resolve(__dirname, "src/database/seeders"),
+  "migrations-path": path.resolve(__dirname, "src/database/migrations"),
 };
