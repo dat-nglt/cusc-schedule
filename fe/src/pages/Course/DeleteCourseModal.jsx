@@ -12,7 +12,7 @@ import {
 
 const DeleteCourseModal = ({ open, onClose, onDelete, course }) => {
   const handleDelete = () => {
-    onDelete(course.courseid); // Sử dụng courseid thay vì id
+    onDelete(course.course_id);
     onClose();
   };
 
@@ -26,7 +26,7 @@ const DeleteCourseModal = ({ open, onClose, onDelete, course }) => {
             component="span"
             sx={{ color: '#1976d2', fontWeight: 'bold' }}
           >
-            {course?.courseid}
+            {course?.course_id}
           </Box> không?
         </Typography>
       </DialogContent>

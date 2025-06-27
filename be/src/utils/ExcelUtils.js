@@ -20,7 +20,7 @@ class ExcelUtils {
                 throw new Error(`Sheet '${targetSheetName}' không tồn tại`);
             }
 
-            return XLSX.utils.sheet_to_json(worksheet);
+            return XLSX.utils.sheet_to_json(worksheet, { header: 1 });
         } catch (error) {
             throw new Error(`Lỗi đọc file Excel: ${error.message}`);
         }
@@ -148,7 +148,9 @@ class ExcelUtils {
             return null;
         }
         return String(value).trim();
-    }    /**
+    }
+
+    /**
      * Tạo Excel template cho lecturer với tên cột tiếng Việt
      * @returns {Buffer} Buffer của template Excel
      */
@@ -165,7 +167,7 @@ class ExcelUtils {
                 'Khoa/Bộ môn': 'Khoa Công Nghệ Thông Tin',
                 'Ngày tuyển dụng': '2020-09-01',
                 'Học vị': 'Tiến sỹ',
-                'Trạng thái': 'active'
+                'Trạng thái': 'Hoạt động'
             },
             {
                 'Mã giảng viên': 'GV002',
@@ -178,7 +180,7 @@ class ExcelUtils {
                 'Khoa/Bộ môn': 'Khoa Kinh Tế',
                 'Ngày tuyển dụng': '2021-02-15',
                 'Học vị': 'Thạc sỹ',
-                'Trạng thái': 'active'
+                'Trạng thái': 'Hoạt động'
             }
         ];
 
@@ -186,6 +188,28 @@ class ExcelUtils {
     }
 
     /**
+     * Tạo Excel template cho khóa học với tên cột tiếng Việt
+     * @returns {Buffer} Buffer của template Excel
+     */
+    static createCourseTemplate() {
+        const templateData = [
+            {
+                'Mã khóa học': 'KH001',
+                'Tên khóa học': 'Khóa học lập trình',
+                'Thời gian bắt đầu': '2025-06-28',
+                'Thời gian kết thúc': '2025-06-30',
+                'Trạng thái': 'Hoạt động'
+            },
+            {
+                'Mã khóa học': 'KH002',
+                'Tên khóa học': 'Khóa học cơ sở dữ liệu',
+                'Thời gian bắt đầu': '2025-07-01',
+                'Thời gian kết thúc': '2025-07-31',
+                'Trạng thái': 'Ngừng hoạt động'
+            }
+        ];
+
+        return this.createExcelFromJSON(templateData, 'Courses');
      * Tạo Excel template cho student với tên cột tiếng Việt
      * @returns {Buffer} Buffer của template Excel
      */
@@ -240,6 +264,10 @@ class ExcelUtils {
             'Ngày tuyển dụng': 'hire_date',
             'Học vị': 'degree',
             'Trạng thái': 'status',
+            'Mã khóa học': 'course_id',
+            'Tên khóa học': 'course_name',
+            'Thời gian bắt đầu': 'start_date',
+            'Thời gian kết thúc': 'end_date'
 
             // Student columns
             'Mã học viên': 'student_id',

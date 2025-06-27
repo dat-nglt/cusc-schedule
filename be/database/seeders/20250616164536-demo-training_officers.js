@@ -7,7 +7,7 @@ module.exports = {
       {
         staff_id: 'TO001',
         name: 'Nguyễn Văn An',
-        email: 'ptvu2100761@student.ctuet.edu.vn',
+        email: 'dhchuong2100264@student.ctuet.edu.vn',
         day_of_birth: '1985-03-15',
         gender: 'Nam',
         address: '123 Đường ABC, Quận 1, TP.HCM',

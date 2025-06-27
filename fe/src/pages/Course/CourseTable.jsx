@@ -47,13 +47,10 @@ const CourseTable = ({ displayedCourses, isSmallScreen, isMediumScreen, handleVi
           {!isMediumScreen && (
             <>
               <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '12.5%' }}>
+                Thời gian bắt đầu
+              </TableCell>
+              <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '12.5%' }}>
                 Thời gian kết thúc
-              </TableCell>
-              <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '12.5%' }}>
-                Thời gian tạo
-              </TableCell>
-              <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '12.5%' }}>
-                Thời gian cập nhật
               </TableCell>
             </>
           )}
@@ -65,7 +62,7 @@ const CourseTable = ({ displayedCourses, isSmallScreen, isMediumScreen, handleVi
       <TableBody>
         {displayedCourses.map((course, index) => (
           <TableRow
-            key={course.courseid}
+            key={course.course_id}
             sx={{
               backgroundColor: index % 2 === 0 ? '#fafafa' : '#ffffff',
               '&:hover': { backgroundColor: '#e3f2fd', cursor: 'pointer' },
@@ -77,16 +74,16 @@ const CourseTable = ({ displayedCourses, isSmallScreen, isMediumScreen, handleVi
             </TableCell>
             {!isSmallScreen && (
               <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5, width: '15%' }}>
-                {course.courseid}
+                {course.course_id}
               </TableCell>
             )}
             <TableCell sx={{ textAlign: 'left', borderRight: '1px solid #e0e0e0', py: 1.5, width: isSmallScreen ? '60%' : '20%' }}>
-              {course.coursename}
+              {course.course_name}
             </TableCell>
             {!isSmallScreen && isMediumScreen && (
               <>
                 <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5, width: '25%' }}>
-                  {course.startdate}
+                  {course.start_date}
                 </TableCell>
                 <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5, width: '30%' }}>
                   {course.updated_at}
@@ -96,13 +93,10 @@ const CourseTable = ({ displayedCourses, isSmallScreen, isMediumScreen, handleVi
             {!isMediumScreen && (
               <>
                 <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5, width: '12.5%' }}>
-                  {course.enddate}
+                  {course.start_date}
                 </TableCell>
                 <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5, width: '12.5%' }}>
-                  {course.created_at}
-                </TableCell>
-                <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5, width: '12.5%' }}>
-                  {course.updated_at}
+                  {course.end_date}
                 </TableCell>
               </>
             )}
@@ -111,7 +105,7 @@ const CourseTable = ({ displayedCourses, isSmallScreen, isMediumScreen, handleVi
                 <Visibility
                   color="primary"
                   style={{ cursor: 'pointer', marginRight: 8 }}
-                  onClick={() => handleViewCourse(course.courseid)}
+                  onClick={() => handleViewCourse(course.course_id)}
                 />
               </Tooltip>
               <Tooltip title="Sửa">
@@ -125,10 +119,7 @@ const CourseTable = ({ displayedCourses, isSmallScreen, isMediumScreen, handleVi
                 <Delete
                   color="error"
                   style={{ cursor: 'pointer' }}
-                  onClick={() => {
-                    console.log('Delete button clicked for course:', course); // Debug
-                    handleDeleteCourse(course);
-                  }}
+                  onClick={() => handleDeleteCourse(course)} // Thay bằng handleDeleteCourse với toàn bộ course object
                 />
               </Tooltip>
             </TableCell>
