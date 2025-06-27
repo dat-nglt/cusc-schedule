@@ -71,7 +71,7 @@ export default function PreviewLecturersModal({
 
     const handleConfirmImport = async () => {
         if (validRows.length === 0) {
-            setImportError('Không có dữ liệu hợp lệ để import!');
+            setImportError('Không có dữ liệu hợp lệ!');
             return;
         }
 
@@ -90,7 +90,7 @@ export default function PreviewLecturersModal({
             const response = await importLecturers(null, validData);
 
             if (response.data && response.data) {
-                setImportMessage(`Import thành công ${validRows.length} giảng viên`);
+                setImportMessage(`Thêm thành công ${validRows.length} giảng viên`);
                 setImportError('');
 
                 // Delay để người dùng thấy thông báo thành công trước khi đóng modal
@@ -99,11 +99,11 @@ export default function PreviewLecturersModal({
                     onClose();
                 }, 1500);
             } else {
-                setImportError(response.data?.message || 'Có lỗi xảy ra khi import dữ liệu!');
+                setImportError(response.data?.message || 'Có lỗi xảy ra khi thêm dữ liệu!');
             }
         } catch (error) {
             console.error('Error importing data:', error);
-            setImportError(error.message || 'Lỗi khi import dữ liệu! Vui lòng thử lại.');
+            setImportError(error.message || 'Lỗi khi thêm dữ liệu! Vui lòng thử lại.');
         } finally {
             setIsImporting(false);
         }
@@ -112,7 +112,7 @@ export default function PreviewLecturersModal({
     return (
         <Dialog open={open} onClose={onClose} maxWidth="lg" fullWidth>
             <DialogTitle>
-                <Typography variant="h6">Xem trước dữ liệu import</Typography>
+                <Typography variant="h6">Xem trước dữ liệu đã nhập</Typography>
             </DialogTitle>
             <DialogContent>
                 {importError && (
@@ -145,7 +145,7 @@ export default function PreviewLecturersModal({
                         />
                         <Chip
                             icon={<ErrorIcon />}
-                            label={`Có lỗi: ${errorRows.length}`}
+                            label={`Không hợp lệ: ${errorRows.length}`}
                             color="error"
                             variant="outlined"
                         />
@@ -200,7 +200,7 @@ export default function PreviewLecturersModal({
                     <Accordion defaultExpanded sx={{ mt: 2 }}>
                         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                             <Typography variant="h6" color="error.main">
-                                Dữ liệu có lỗi ({errorRows.length} dòng)
+                                Dữ liệu không hợp lệ ({errorRows.length} dòng)
                             </Typography>
                         </AccordionSummary>
                         <AccordionDetails>
@@ -251,9 +251,9 @@ export default function PreviewLecturersModal({
                     disabled={validRows.length === 0 || isImporting || importMessage}
                     sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
                 >
-                    {isImporting ? 'Đang import...' :
-                        importMessage ? 'Đã import thành công' :
-                            `Import ${validRows.length} giảng viên`}
+                    {isImporting ? 'Đang thêm...' :
+                        importMessage ? 'Đã thêm thành công' :
+                            `Thêm ${validRows.length} giảng viên`}
                 </Button>
             </DialogActions>
         </Dialog>
