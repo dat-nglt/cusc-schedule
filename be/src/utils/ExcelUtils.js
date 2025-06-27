@@ -200,7 +200,7 @@ class ExcelUtils {
                 'Địa chỉ': '123 Đường DEF, Quận 2, TP.HCM',
                 'Số điện thoại': '0123456789',
                 'Lớp': 'CNTT2020',
-                'Năm nhập học': '2020-09-01',
+                'Năm nhập học': '2020',
                 'Điểm trung bình': '3.5',
                 'Trạng thái': 'active'
             },
@@ -213,7 +213,7 @@ class ExcelUtils {
                 'Địa chỉ': '456 Đường GHI, Quận 7, TP.HCM',
                 'Số điện thoại': '0987654321',
                 'Lớp': 'QTKD2021',
-                'Năm nhập học': '2021-09-01',
+                'Năm nhập học': '2021',
                 'Điểm trung bình': '3.7',
                 'Trạng thái': 'active'
             }

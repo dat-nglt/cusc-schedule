@@ -12,37 +12,28 @@ import {
     InputLabel,
     Select,
     MenuItem,
+    CircularProgress,
 } from '@mui/material';
-
-const availableCourses = [
-    'Công nghệ thông tin',
-    'Công nghệ thực phẩm',
-    'Kỹ thuật cơ khí',
-    'Kỹ thuật điện',
-    'Quản lý công nghiệp',
-    'Tự động hóa',
-    'Quản lý xây dựng',
-    'Kỹ thuật điện tử',
-    'An toàn thông tin'
-];
 
 export default function EditStudentModal({ open, onClose, student, onSave }) {
     const [editedStudent, setEditedStudent] = useState({
-        maHocVien: '',
-        hoTen: '',
-        maLop: '',
-        khoaHoc: '',
-        trangThai: 'Đang học',
+        student_id: '',
+        name: '',
+        class: '',
+        admission_year: '',
+        status: 'Đang học',
     });
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
 
     useEffect(() => {
         if (student) {
             setEditedStudent({
-                maHocVien: student.maHocVien || '',
-                hoTen: student.hoTen || '',
-                maLop: student.maLop || '',
-                khoaHoc: student.khoaHoc || '',
-                trangThai: student.trangThai || 'Đang học',
+                student_id: student.student_id || '',
+                name: student.name || '',
+                class: student.class || '',
+                admission_year: student.admission_year || '',
+                status: student.status || 'Đang học',
             });
         }
     }, [student]);
@@ -50,32 +41,30 @@ export default function EditStudentModal({ open, onClose, student, onSave }) {
     const handleChange = (e) => {
         const { name, value } = e.target;
         setEditedStudent((prev) => ({ ...prev, [name]: value }));
+        setError('');
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (
-            !editedStudent.maHocVien ||
-            !editedStudent.hoTen ||
-            !editedStudent.maLop ||
-            !editedStudent.khoaHoc
+            !editedStudent.student_id ||
+            !editedStudent.name ||
+            !editedStudent.class ||
+            !editedStudent.admission_year
         ) {
-            alert('Vui lòng điền đầy đủ thông tin!');
+            setError('Vui lòng điền đầy đủ thông tin!');
             return;
         }
 
-        const currentDateTime = new Date().toISOString().slice(0, 16).replace('T', ' ');
-        const updatedStudent = {
-            ...student,
-            maHocVien: editedStudent.maHocVien,
-            hoTen: editedStudent.hoTen,
-            maLop: editedStudent.maLop,
-            khoaHoc: editedStudent.khoaHoc,
-            trangThai: editedStudent.trangThai,
-            thoiGianCapNhat: currentDateTime,
-        };
-
-        onSave(updatedStudent);
-        onClose();
+        try {
+            setLoading(true);
+            await onSave(editedStudent);
+            onClose();
+        } catch (error) {
+            setError('Có lỗi xảy ra khi cập nhật học viên. Vui lòng thử lại!');
+            console.error('Error updating student:', error);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -84,54 +73,69 @@ export default function EditStudentModal({ open, onClose, student, onSave }) {
                 <Typography variant="h6">Chỉnh sửa sinh viên</Typography>
             </DialogTitle>
             <DialogContent>
+                {error && (
+                    <Typography color="error" sx={{ mb: 2 }}>
+                        {error}
+                    </Typography>
+                )}
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
                     <TextField
                         label="Mã học viên"
-                        name="maHocVien"
-                        value={editedStudent.maHocVien}
+                        name="student_id"
+                        value={editedStudent.student_id}
                         onChange={handleChange}
                         fullWidth
                         variant="outlined"
                         required
+                        disabled={true} // Không cho phép thay đổi mã học viên
                     />
                     <TextField
                         label="Họ tên"
-                        name="hoTen"
-                        value={editedStudent.hoTen}
+                        name="name"
+                        value={editedStudent.name}
                         onChange={handleChange}
                         fullWidth
                         variant="outlined"
                         required
+                        disabled={loading}
                     />
                     <TextField
                         label="Mã lớp"
-                        name="maLop"
-                        value={editedStudent.maLop}
+                        name="class"
+                        value={editedStudent.class}
                         onChange={handleChange}
                         fullWidth
                         variant="outlined"
                         required
+                        disabled={loading}
                     />
-                    <FormControl fullWidth required>
-                        <InputLabel>Khóa học</InputLabel>
+                    <FormControl fullWidth required disabled={loading}>
+                        <InputLabel>Năm nhập học</InputLabel>
                         <Select
-                            name="khoaHoc"
-                            value={editedStudent.khoaHoc}
+                            name="admission_year"
+                            value={editedStudent.admission_year}
                             onChange={handleChange}
-                            label="Khóa học"
+                            label="Năm nhập học"
                         >
-                            {availableCourses.map((course) => (
+                            {/* {availableCourses.map((course) => (
                                 <MenuItem key={course} value={course}>
                                     {course}
                                 </MenuItem>
-                            ))}
+                            ))} */}
+                            <MenuItem value="2020">2020</MenuItem>
+                            <MenuItem value="2021">2021</MenuItem>
+                            <MenuItem value="2022">2022</MenuItem>
+                            <MenuItem value="2023">2023</MenuItem>
+                            <MenuItem value="2024">2024</MenuItem>
+                            <MenuItem value="2025">2025</MenuItem>
+
                         </Select>
                     </FormControl>
-                    <FormControl fullWidth required>
+                    <FormControl fullWidth required disabled={loading}>
                         <InputLabel>Trạng thái</InputLabel>
                         <Select
-                            name="trangThai"
-                            value={editedStudent.trangThai}
+                            name="status"
+                            value={editedStudent.status}
                             onChange={handleChange}
                             label="Trạng thái"
                         >
@@ -144,13 +148,18 @@ export default function EditStudentModal({ open, onClose, student, onSave }) {
                 </Box>
             </DialogContent>
             <DialogActions>
-                <Button onClick={onClose} variant="outlined" sx={{ color: '#1976d2' }}>
+                <Button onClick={onClose} variant="outlined" sx={{ color: '#1976d2' }} disabled={loading}>
                     Hủy
                 </Button>
-                <Button onClick={handleSubmit} variant="contained" sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}>
-                    Lưu
+                <Button
+                    onClick={handleSubmit}
+                    variant="contained"
+                    sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
+                    disabled={loading}
+                >
+                    {loading ? <CircularProgress size={24} /> : 'Lưu'}
                 </Button>
             </DialogActions>
         </Dialog>
-    )
+    );
 }

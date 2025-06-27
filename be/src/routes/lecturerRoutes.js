@@ -7,6 +7,7 @@ import {
     updateLecturerController,
     deleteLecturerController,
     importLecturersController,
+    importLecturersFromJsonController,
     downloadTemplateController,
 } from '../controllers/lecturerController.js';
 import { uploadExcel } from '../middleware/excelMiddleware';
@@ -21,5 +22,6 @@ lecturerRoutes.delete('/delete/:id', authenticateAndAuthorize(['admin', 'trainin
 
 // Import Excel routes
 lecturerRoutes.post('/import', authenticateAndAuthorize(['admin', 'training_officer']), uploadExcel, importLecturersController);
+lecturerRoutes.post('/importJson', authenticateAndAuthorize(['admin', 'training_officer']), importLecturersFromJsonController);
 lecturerRoutes.get('/template/download', authenticateAndAuthorize(['admin', 'training_officer']), downloadTemplateController);
 export default lecturerRoutes;

@@ -7,12 +7,22 @@ import {
   Button,
   Typography,
   Box,
+  CircularProgress,
 } from '@mui/material';
 
 const DeleteStudentModal = ({ open, onClose, onDelete, student }) => {
-  const handleDelete = () => {
-    onDelete(student.id);
-    onClose();
+  const [loading, setLoading] = React.useState(false);
+
+  const handleDelete = async () => {
+    try {
+      setLoading(true);
+      await onDelete(student.student_id);
+    } catch (error) {
+      console.error('Error deleting student:', error);
+      alert('Không thể xóa học viên. Vui lòng thử lại.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -28,14 +38,19 @@ const DeleteStudentModal = ({ open, onClose, onDelete, student }) => {
               fontWeight: 'bold', // In đậm
             }}
           >
-            {student?.maHocVien}
+            {student?.student_id}
           </Box> không?
         </Typography>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Hủy</Button>
-        <Button onClick={handleDelete} variant="contained" color="error">
-          Xóa
+        <Button onClick={onClose} disabled={loading}>Hủy</Button>
+        <Button
+          onClick={handleDelete}
+          variant="contained"
+          color="error"
+          disabled={loading}
+        >
+          {loading ? <CircularProgress size={24} color="inherit" /> : 'Xóa'}
         </Button>
       </DialogActions>
     </Dialog>

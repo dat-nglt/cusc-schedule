@@ -51,7 +51,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: true
         },
         admission_year: {
-            type: DataTypes.DATEONLY,
+            type: DataTypes.DECIMAL(4, 0),
             allowNull: true
         },
         gpa: {

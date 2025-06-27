@@ -1,4 +1,4 @@
-import { getAllLecturers, getLecturerById, createLecturer, updateLecturer, deleteLecturer, importLecturersFromExcel, validateExcelTemplate } from "../services/lecturerService";
+import { getAllLecturers, getLecturerById, createLecturer, updateLecturer, deleteLecturer, importLecturersFromExcel, validateExcelTemplate, importLecturersFromJson } from "../services/lecturerService";
 import { APIResponse } from "../utils/APIResponse.js";
 import ExcelUtils from "../utils/ExcelUtils.js";
 import path from 'path';
@@ -127,5 +127,41 @@ export const downloadTemplateController = async (req, res) => {
     } catch (error) {
         console.error("Error creating template:", error);
         return APIResponse(res, 500, null, "Lỗi khi tạo template");
+    }
+};
+
+// Import lecturers from JSON data (for preview feature)
+export const importLecturersFromJsonController = async (req, res) => {
+    try {
+        const { lecturers } = req.body;
+
+        if (!lecturers || !Array.isArray(lecturers)) {
+            return APIResponse(res, 400, null, "Dữ liệu giảng viên không hợp lệ");
+        }
+
+        if (lecturers.length === 0) {
+            return APIResponse(res, 400, null, "Không có dữ liệu giảng viên để import");
+        }
+
+        // Import data
+        const results = await importLecturersFromJson(lecturers);
+
+        const response = {
+            success: true,
+            imported: results.success,
+            errors: results.errors,
+            message: `Import thành công ${results.success.length} giảng viên`
+        };
+
+        if (results.errors.length > 0) {
+            response.message = `Import hoàn tất với ${results.success.length}/${lecturers.length} bản ghi thành công`;
+            return APIResponse(res, 207, response, response.message);
+        } else {
+            return APIResponse(res, 200, response, response.message);
+        }
+
+    } catch (error) {
+        console.error("Error importing lecturers from JSON:", error);
+        return APIResponse(res, 500, null, error.message || "Lỗi khi import dữ liệu");
     }
 };

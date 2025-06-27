@@ -12,7 +12,7 @@ export const getAllStudents = async () => {
 
 export const getStudentById = async (id) => {
     try {
-        const response = await axiosInstance.get(`/api/students/getById/${id}`);
+        const response = await axiosInstance.get(`/api/students/${id}`);
         return response;
     } catch (error) {
         console.error(`Error getting student with id ${id}:`, error);
