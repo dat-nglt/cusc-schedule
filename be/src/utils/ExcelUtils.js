@@ -210,6 +210,40 @@ class ExcelUtils {
         ];
 
         return this.createExcelFromJSON(templateData, 'Courses');
+     * Tạo Excel template cho student với tên cột tiếng Việt
+     * @returns {Buffer} Buffer của template Excel
+     */
+    static createStudentTemplate() {
+        const templateData = [
+            {
+                'Mã học viên': 'SV001',
+                'Họ tên': 'Lê Văn C',
+                'Email': 'levanc@example.com',
+                'Ngày sinh': '2000-05-15',
+                'Giới tính': 'Nam',
+                'Địa chỉ': '123 Đường DEF, Quận 2, TP.HCM',
+                'Số điện thoại': '0123456789',
+                'Lớp': 'CNTT2020',
+                'Năm nhập học': '2020',
+                'Điểm trung bình': '3.5',
+                'Trạng thái': 'active'
+            },
+            {
+                'Mã học viên': 'SV002',
+                'Họ tên': 'Phạm Thị D',
+                'Email': 'phamthid@example.com',
+                'Ngày sinh': '2001-12-20',
+                'Giới tính': 'Nữ',
+                'Địa chỉ': '456 Đường GHI, Quận 7, TP.HCM',
+                'Số điện thoại': '0987654321',
+                'Lớp': 'QTKD2021',
+                'Năm nhập học': '2021',
+                'Điểm trung bình': '3.7',
+                'Trạng thái': 'active'
+            }
+        ];
+
+        return this.createExcelFromJSON(templateData, 'Students');
     }
 
     /**
@@ -218,6 +252,7 @@ class ExcelUtils {
      */
     static getVietnameseColumnMapping() {
         return {
+            // Lecturer columns
             'Mã giảng viên': 'lecturer_id',
             'Họ tên': 'name',
             'Email': 'email',
@@ -233,6 +268,12 @@ class ExcelUtils {
             'Tên khóa học': 'course_name',
             'Thời gian bắt đầu': 'start_date',
             'Thời gian kết thúc': 'end_date'
+
+            // Student columns
+            'Mã học viên': 'student_id',
+            'Lớp': 'class',
+            'Năm nhập học': 'admission_year',
+            'Điểm trung bình': 'gpa'
         };
     }
 

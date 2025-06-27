@@ -44,20 +44,40 @@ export const updateLecturer = async (id, lecturerData) => {
     }
 };
 
-export const importLecturers = async (file) => {
-    const formData = new FormData();
-    formData.append('excel_file', file);
-
+export const importLecturers = async (file, jsonData = null) => {
     try {
-        const response = await axiosInstance.post('/api/lecturers/import', formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-        });
-        return response;
+        if (jsonData) {
+            // Import từ dữ liệu JSON đã được validate
+            const response = await axiosInstance.post('/api/lecturers/importJson', {
+                lecturers: jsonData
+            });
+            return response;
+        } else {
+            // Import từ file Excel
+            const formData = new FormData();
+            formData.append('excel_file', file);
+
+            const response = await axiosInstance.post('/api/lecturers/import', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            return response;
+        }
     }
     catch (error) {
         console.error('Error importing lecturers:', error);
         throw new Error('Lỗi khi nhập giảng viên từ tệp');
     }
-}
+};
+
+export const deleteLecturer = async (id) => {
+    try {
+        const response = await axiosInstance.delete(`/api/lecturers/delete/${id}`);
+        return response;
+    }
+    catch (error) {
+        console.error('Error deleting lecturer:', error);
+        throw new Error('Lỗi khi xóa giảng viên');
+    }
+};

@@ -43,7 +43,7 @@ export default function LecturerDetailModal({ open, onClose, lecturer }) {
 
     // Hàm sao chép mã giảng viên
     const handleCopyMaGiangVien = () => {
-        navigator.clipboard.writeText(lecturer.maGiangVien);
+        navigator.clipboard.writeText(lecturer.lecturer_id);
         alert('Đã sao chép mã giảng viên!');
     };
 
@@ -52,7 +52,8 @@ export default function LecturerDetailModal({ open, onClose, lecturer }) {
         const statusColors = {
             'Hoạt động': { color: '#4caf50', bgcolor: '#e8f5e8' },
             'Tạm nghỉ': { color: '#f57c00', bgcolor: '#fff3e0' },
-            'Đang dạy': { color: '#2196f3', bgcolor: '#e3f2fd' }
+            'Nghỉ hưu': { color: '#9e9e9e', bgcolor: '#f5f5f5' },
+            'Đã nghỉ việc': { color: '#f44336', bgcolor: '#ffebee' },
         };
         const style = statusColors[status] || { color: '#757575', bgcolor: '#f5f5f5' };
 
@@ -92,7 +93,7 @@ export default function LecturerDetailModal({ open, onClose, lecturer }) {
                 }}
             >
                 <Typography variant="h6">
-                    Chi tiết giảng viên {lecturer.maGiangVien}
+                    Chi tiết giảng viên {lecturer.name || lecturer.lecturer_id}
                 </Typography>
                 <Tooltip title="Sao chép mã giảng viên">
                     <IconButton
@@ -126,7 +127,7 @@ export default function LecturerDetailModal({ open, onClose, lecturer }) {
                                     Mã giảng viên
                                 </Typography>
                                 <Typography variant="body1" sx={{ color: '#666' }}>
-                                    {getValueOrDefault(lecturer.maGiangVien)}
+                                    {getValueOrDefault(lecturer.lecturer_id)}
                                 </Typography>
                             </Box>
                         </Box>
@@ -153,7 +154,7 @@ export default function LecturerDetailModal({ open, onClose, lecturer }) {
                                     Họ tên
                                 </Typography>
                                 <Typography variant="body1" sx={{ color: '#666' }}>
-                                    {getValueOrDefault(lecturer.hoTen)}
+                                    {getValueOrDefault(lecturer.name)}
                                 </Typography>
                             </Box>
                         </Box>
@@ -180,14 +181,21 @@ export default function LecturerDetailModal({ open, onClose, lecturer }) {
                                     Môn giảng dạy
                                 </Typography>
                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                                    {lecturer.monGiangDay?.length > 0 ? (
-                                        lecturer.monGiangDay.map((mon, idx) => (
+                                    {lecturer.department && lecturer.department.length > 0 ? (
+                                        Array.isArray(lecturer.department) ? (
+                                            lecturer.department.map((mon, idx) => (
+                                                <Chip
+                                                    key={idx}
+                                                    label={mon}
+                                                    sx={{ bgcolor: '#e3f2fd', color: '#1976d2' }}
+                                                />
+                                            ))
+                                        ) : (
                                             <Chip
-                                                key={idx}
-                                                label={mon}
+                                                label={lecturer.department}
                                                 sx={{ bgcolor: '#e3f2fd', color: '#1976d2' }}
                                             />
-                                        ))
+                                        )
                                     ) : (
                                         <Typography variant="body1" sx={{ color: '#666' }}>
                                             Không có dữ liệu
@@ -219,7 +227,7 @@ export default function LecturerDetailModal({ open, onClose, lecturer }) {
                                     Email
                                 </Typography>
                                 <Typography variant="body1" sx={{ color: '#666' }}>
-                                    {getValueOrDefault(lecturer.lienHe?.email)}
+                                    {getValueOrDefault(lecturer.email)}
                                 </Typography>
                             </Box>
                         </Box>
@@ -246,7 +254,7 @@ export default function LecturerDetailModal({ open, onClose, lecturer }) {
                                     Số điện thoại
                                 </Typography>
                                 <Typography variant="body1" sx={{ color: '#666' }}>
-                                    {getValueOrDefault(lecturer.lienHe?.soDienThoai)}
+                                    {getValueOrDefault(lecturer.phone_number)}
                                 </Typography>
                             </Box>
                         </Box>
@@ -273,7 +281,7 @@ export default function LecturerDetailModal({ open, onClose, lecturer }) {
                                     Trạng thái
                                 </Typography>
                                 <Box sx={{ mt: 0.5 }}>
-                                    {getStatusChip(lecturer.trangThai)}
+                                    {getStatusChip(lecturer.status)}
                                 </Box>
                             </Box>
                         </Box>
@@ -300,7 +308,7 @@ export default function LecturerDetailModal({ open, onClose, lecturer }) {
                                     Thời gian tạo
                                 </Typography>
                                 <Typography variant="body1" sx={{ color: '#666' }}>
-                                    {formatDateTime(lecturer.thoiGianTao)}
+                                    {formatDateTime(lecturer.created_at)}
                                 </Typography>
                             </Box>
                         </Box>
@@ -327,7 +335,7 @@ export default function LecturerDetailModal({ open, onClose, lecturer }) {
                                     Thời gian cập nhật
                                 </Typography>
                                 <Typography variant="body1" sx={{ color: '#666' }}>
-                                    {formatDateTime(lecturer.thoiGianCapNhat)}
+                                    {formatDateTime(lecturer.updated_at)}
                                 </Typography>
                             </Box>
                         </Box>

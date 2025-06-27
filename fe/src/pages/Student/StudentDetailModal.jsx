@@ -26,9 +26,14 @@ import {
 const formatDateTime = (dateTime) => {
     if (!dateTime) return 'Không có dữ liệu';
     try {
-        const [date, time] = dateTime.split(' ');
-        const [year, month, day] = date.split('-');
-        return `${day}/${month}/${year} ${time}`;
+        const date = new Date(dateTime);
+        return date.toLocaleString('vi-VN', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
     } catch {
         return 'Không hợp lệ';
     }
@@ -41,8 +46,8 @@ export default function StudentDetailModal({ open, onClose, student }) {
     if (!student) return null;
 
     // Hàm sao chép mã học viên
-    const handleCopyMaHocVien = () => {
-        navigator.clipboard.writeText(student.maHocVien);
+    const handleCopyStudentId = () => {
+        navigator.clipboard.writeText(student.student_id);
         alert('Đã sao chép mã học viên!');
     };
 
@@ -92,11 +97,11 @@ export default function StudentDetailModal({ open, onClose, student }) {
                 }}
             >
                 <Typography variant="h6">
-                    Chi tiết sinh viên {student.maHocVien}
+                    Chi tiết sinh viên {student.student_id}
                 </Typography>
                 <Tooltip title="Sao chép mã học viên">
                     <IconButton
-                        onClick={handleCopyMaHocVien}
+                        onClick={handleCopyStudentId}
                         sx={{ color: '#fff' }}
                     >
                         <BadgeIcon />
@@ -126,7 +131,7 @@ export default function StudentDetailModal({ open, onClose, student }) {
                                     Mã học viên
                                 </Typography>
                                 <Typography variant="body1" sx={{ color: '#666' }}>
-                                    {getValueOrDefault(student.maHocVien)}
+                                    {getValueOrDefault(student.student_id)}
                                 </Typography>
                             </Box>
                         </Box>
@@ -153,7 +158,7 @@ export default function StudentDetailModal({ open, onClose, student }) {
                                     Họ tên
                                 </Typography>
                                 <Typography variant="body1" sx={{ color: '#666' }}>
-                                    {getValueOrDefault(student.hoTen)}
+                                    {getValueOrDefault(student.name)}
                                 </Typography>
                             </Box>
                         </Box>
@@ -180,13 +185,13 @@ export default function StudentDetailModal({ open, onClose, student }) {
                                     Mã lớp
                                 </Typography>
                                 <Typography variant="body1" sx={{ color: '#666' }}>
-                                    {getValueOrDefault(student.maLop)}
+                                    {getValueOrDefault(student.class)}
                                 </Typography>
                             </Box>
                         </Box>
                     </Grid>
 
-                    {/* Khóa học */}
+                    {/* Năm nhập học */}
                     <Grid item xs={12} md={6}>
                         <Box
                             sx={{
@@ -204,10 +209,10 @@ export default function StudentDetailModal({ open, onClose, student }) {
                                     variant="body2"
                                     sx={{ fontWeight: 'bold', color: '#333' }}
                                 >
-                                    Khóa học
+                                    Năm nhập học
                                 </Typography>
                                 <Typography variant="body1" sx={{ color: '#666' }}>
-                                    {getValueOrDefault(student.khoaHoc)}
+                                    {getValueOrDefault(student.admission_year)}
                                 </Typography>
                             </Box>
                         </Box>
@@ -234,7 +239,7 @@ export default function StudentDetailModal({ open, onClose, student }) {
                                     Trạng thái
                                 </Typography>
                                 <Box sx={{ mt: 0.5 }}>
-                                    {getStatusChip(student.trangThai)}
+                                    {getStatusChip(student.status)}
                                 </Box>
                             </Box>
                         </Box>
@@ -261,7 +266,7 @@ export default function StudentDetailModal({ open, onClose, student }) {
                                     Thời gian tạo
                                 </Typography>
                                 <Typography variant="body1" sx={{ color: '#666' }}>
-                                    {formatDateTime(student.thoiGianTao)}
+                                    {formatDateTime(student.created_at)}
                                 </Typography>
                             </Box>
                         </Box>
@@ -288,7 +293,7 @@ export default function StudentDetailModal({ open, onClose, student }) {
                                     Thời gian cập nhật
                                 </Typography>
                                 <Typography variant="body1" sx={{ color: '#666' }}>
-                                    {formatDateTime(student.thoiGianCapNhat)}
+                                    {formatDateTime(student.updated_at)}
                                 </Typography>
                             </Box>
                         </Box>
@@ -311,5 +316,5 @@ export default function StudentDetailModal({ open, onClose, student }) {
                 </Button>
             </DialogActions>
         </Dialog>
-    )
+    );
 }

@@ -9,254 +9,244 @@ LỊCH DẠY CỦA GIẢNG VIÊN THEO HỌC KỲ:
 ===== LỊCH DẠY GIẢNG VIÊN: GV01 =====
 
   --- Tuần 1 ---
-    Day: Sat, Slot: T2, Class: C03, Subject: M05 (theory), Room: LT1
-    Day: Thu, Slot: T1, Class: C03, Subject: M05 (theory), Room: LT1
-    Day: Tue, Slot: C1, Class: C01, Subject: M01 (theory), Room: LT2
-    Day: Tue, Slot: S2, Class: C02, Subject: M04 (theory), Room: LT4
+    Day: Fri, Slot: C2, Class: C02, Subject: M04 (theory), Room: LT4
+    Day: Sat, Slot: T1, Class: C03, Subject: M05 (theory), Room: LT4
+    Day: Tue, Slot: T1, Class: C03, Subject: M05 (theory), Room: LT1
+    Day: Wed, Slot: T1, Class: C01, Subject: M01 (theory), Room: LT4
 
   --- Tuần 2 ---
-    Day: Sat, Slot: T2, Class: C03, Subject: M05 (theory), Room: LT1
-    Day: Thu, Slot: T1, Class: C03, Subject: M05 (theory), Room: LT1
-    Day: Tue, Slot: C1, Class: C01, Subject: M01 (theory), Room: LT2
-    Day: Tue, Slot: S2, Class: C02, Subject: M04 (theory), Room: LT4
+    Day: Fri, Slot: C2, Class: C02, Subject: M04 (theory), Room: LT4
+    Day: Sat, Slot: T1, Class: C03, Subject: M05 (theory), Room: LT4
+    Day: Tue, Slot: T1, Class: C03, Subject: M05 (theory), Room: LT1
+    Day: Wed, Slot: T1, Class: C01, Subject: M01 (theory), Room: LT4
 
   --- Tuần 3 ---
-    Day: Sat, Slot: T2, Class: C03, Subject: M05 (theory), Room: LT1
-    Day: Thu, Slot: T1, Class: C03, Subject: M05 (theory), Room: LT1
-    Day: Tue, Slot: C1, Class: C01, Subject: M01 (theory), Room: LT2
-    Day: Tue, Slot: S2, Class: C02, Subject: M04 (theory), Room: LT4
+    Day: Fri, Slot: C2, Class: C02, Subject: M04 (theory), Room: LT4
+    Day: Sat, Slot: T1, Class: C03, Subject: M05 (theory), Room: LT4
+    Day: Tue, Slot: T1, Class: C03, Subject: M05 (theory), Room: LT1
+    Day: Wed, Slot: T1, Class: C01, Subject: M01 (theory), Room: LT4
 
   --- Tuần 4 ---
-    Day: Sat, Slot: T2, Class: C03, Subject: M05 (theory), Room: LT1
-    Day: Thu, Slot: T1, Class: C03, Subject: M05 (theory), Room: LT1
-    Day: Tue, Slot: C1, Class: C01, Subject: M01 (theory), Room: LT2
-    Day: Tue, Slot: S2, Class: C02, Subject: M04 (theory), Room: LT4
+    Day: Fri, Slot: C2, Class: C02, Subject: M04 (theory), Room: LT4
+    Day: Sat, Slot: T1, Class: C03, Subject: M05 (theory), Room: LT4
+    Day: Tue, Slot: T1, Class: C03, Subject: M05 (theory), Room: LT1
+    Day: Wed, Slot: T1, Class: C01, Subject: M01 (theory), Room: LT4
 
   --- Tuần 5 ---
-    Day: Sat, Slot: T2, Class: C03, Subject: M05 (theory), Room: LT1
-    Day: Thu, Slot: T1, Class: C03, Subject: M05 (theory), Room: LT1
-    Day: Tue, Slot: C1, Class: C01, Subject: M01 (theory), Room: LT2
-    Day: Tue, Slot: S2, Class: C02, Subject: M04 (theory), Room: LT4
+    Day: Fri, Slot: C2, Class: C02, Subject: M04 (theory), Room: LT4
+    Day: Sat, Slot: T1, Class: C03, Subject: M05 (theory), Room: LT4
+    Day: Tue, Slot: T1, Class: C03, Subject: M05 (theory), Room: LT1
+    Day: Wed, Slot: T1, Class: C01, Subject: M01 (theory), Room: LT4
 
   --- Tuần 6 ---
-    Day: Sat, Slot: T2, Class: C03, Subject: M05 (theory), Room: LT1
-    Day: Thu, Slot: T1, Class: C03, Subject: M05 (theory), Room: LT1
-    Day: Tue, Slot: C1, Class: C01, Subject: M01 (theory), Room: LT2
-    Day: Tue, Slot: S2, Class: C02, Subject: M04 (theory), Room: LT4
+    Day: Fri, Slot: C2, Class: C02, Subject: M04 (theory), Room: LT4
+    Day: Sat, Slot: T1, Class: C03, Subject: M05 (theory), Room: LT4
+    Day: Tue, Slot: T1, Class: C03, Subject: M05 (theory), Room: LT1
+    Day: Wed, Slot: T1, Class: C01, Subject: M01 (theory), Room: LT4
 
   --- Tuần 7 ---
-    Day: Sat, Slot: T2, Class: C03, Subject: M05 (theory), Room: LT1
-    Day: Thu, Slot: T1, Class: C03, Subject: M05 (theory), Room: LT1
-    Day: Tue, Slot: C1, Class: C01, Subject: M01 (theory), Room: LT2
-    Day: Tue, Slot: S2, Class: C02, Subject: M04 (theory), Room: LT4
+    Day: Fri, Slot: C2, Class: C02, Subject: M04 (theory), Room: LT4
+    Day: Sat, Slot: T1, Class: C03, Subject: M05 (theory), Room: LT4
+    Day: Tue, Slot: T1, Class: C03, Subject: M05 (theory), Room: LT1
+    Day: Wed, Slot: T1, Class: C01, Subject: M01 (theory), Room: LT4
 
   --- Tuần 8 ---
-    Day: Sat, Slot: T2, Class: C03, Subject: M05 (theory), Room: LT1
-    Day: Thu, Slot: T1, Class: C03, Subject: M05 (theory), Room: LT1
-    Day: Tue, Slot: C1, Class: C01, Subject: M01 (theory), Room: LT2
-    Day: Tue, Slot: S2, Class: C02, Subject: M04 (theory), Room: LT4
+    Day: Fri, Slot: C2, Class: C02, Subject: M04 (theory), Room: LT4
+    Day: Sat, Slot: T1, Class: C03, Subject: M05 (theory), Room: LT4
+    Day: Tue, Slot: T1, Class: C03, Subject: M05 (theory), Room: LT1
+    Day: Wed, Slot: T1, Class: C01, Subject: M01 (theory), Room: LT4
 
   --- Tuần 9 ---
-    Day: Sat, Slot: T2, Class: C03, Subject: M05 (theory), Room: LT1
-    Day: Thu, Slot: T1, Class: C03, Subject: M05 (theory), Room: LT1
-    Day: Tue, Slot: C1, Class: C01, Subject: M01 (theory), Room: LT2
-    Day: Tue, Slot: S2, Class: C02, Subject: M04 (theory), Room: LT4
+    Day: Fri, Slot: C2, Class: C02, Subject: M04 (theory), Room: LT4
+    Day: Sat, Slot: T1, Class: C03, Subject: M05 (theory), Room: LT4
+    Day: Tue, Slot: T1, Class: C03, Subject: M05 (theory), Room: LT1
+    Day: Wed, Slot: T1, Class: C01, Subject: M01 (theory), Room: LT4
 
   --- Tuần 10 ---
-    Day: Sat, Slot: T2, Class: C03, Subject: M05 (theory), Room: LT1
-    Day: Thu, Slot: T1, Class: C03, Subject: M05 (theory), Room: LT1
-    Day: Tue, Slot: C1, Class: C01, Subject: M01 (theory), Room: LT2
-    Day: Tue, Slot: S2, Class: C02, Subject: M04 (theory), Room: LT4
+    Day: Fri, Slot: C2, Class: C02, Subject: M04 (theory), Room: LT4
+    Day: Sat, Slot: T1, Class: C03, Subject: M05 (theory), Room: LT4
+    Day: Tue, Slot: T1, Class: C03, Subject: M05 (theory), Room: LT1
+    Day: Wed, Slot: T1, Class: C01, Subject: M01 (theory), Room: LT4
 
   --- Tuần 11 ---
-    Day: Tue, Slot: C1, Class: C01, Subject: M01 (theory), Room: LT2
-    Day: Tue, Slot: S2, Class: C02, Subject: M04 (theory), Room: LT4
+    Day: Fri, Slot: C2, Class: C02, Subject: M04 (theory), Room: LT4
+    Day: Wed, Slot: T1, Class: C01, Subject: M01 (theory), Room: LT4
 
   --- Tuần 12 ---
-    Day: Tue, Slot: C1, Class: C01, Subject: M01 (theory), Room: LT2
-    Day: Tue, Slot: S2, Class: C02, Subject: M04 (theory), Room: LT4
+    Day: Fri, Slot: C2, Class: C02, Subject: M04 (theory), Room: LT4
+    Day: Wed, Slot: T1, Class: C01, Subject: M01 (theory), Room: LT4
 
   --- Tuần 13 ---
-    Day: Tue, Slot: C1, Class: C01, Subject: M01 (theory), Room: LT2
+    Day: Wed, Slot: T1, Class: C01, Subject: M01 (theory), Room: LT4
 
   --- Tuần 14 ---
-    Day: Tue, Slot: C1, Class: C01, Subject: M01 (theory), Room: LT2
+    Day: Wed, Slot: T1, Class: C01, Subject: M01 (theory), Room: LT4
 
   --- Tuần 15 ---
-    Day: Tue, Slot: C1, Class: C01, Subject: M01 (theory), Room: LT2
+    Day: Wed, Slot: T1, Class: C01, Subject: M01 (theory), Room: LT4
 
 
 ===== LỊCH DẠY GIẢNG VIÊN: GV02 =====
 
   --- Tuần 1 ---
-    Day: Mon, Slot: S1, Class: C01, Subject: M02 (theory), Room: LT2
-    Day: Wed, Slot: S2, Class: C03, Subject: M06 (practice), Room: TH2
+    Day: Tue, Slot: C1, Class: C02, Subject: M03 (practice), Room: TH2
+    Day: Wed, Slot: S1, Class: C03, Subject: M06 (practice), Room: TH1
 
   --- Tuần 2 ---
-    Day: Mon, Slot: S1, Class: C01, Subject: M02 (theory), Room: LT2
-    Day: Wed, Slot: S2, Class: C03, Subject: M06 (practice), Room: TH2
+    Day: Tue, Slot: C1, Class: C02, Subject: M03 (practice), Room: TH2
+    Day: Wed, Slot: S1, Class: C03, Subject: M06 (practice), Room: TH1
 
   --- Tuần 3 ---
-    Day: Mon, Slot: S1, Class: C01, Subject: M02 (theory), Room: LT2
-    Day: Wed, Slot: S2, Class: C03, Subject: M06 (practice), Room: TH2
+    Day: Tue, Slot: C1, Class: C02, Subject: M03 (practice), Room: TH2
+    Day: Wed, Slot: S1, Class: C03, Subject: M06 (practice), Room: TH1
 
   --- Tuần 4 ---
-    Day: Mon, Slot: S1, Class: C01, Subject: M02 (theory), Room: LT2
-    Day: Wed, Slot: S2, Class: C03, Subject: M06 (practice), Room: TH2
+    Day: Tue, Slot: C1, Class: C02, Subject: M03 (practice), Room: TH2
+    Day: Wed, Slot: S1, Class: C03, Subject: M06 (practice), Room: TH1
 
   --- Tuần 5 ---
-    Day: Mon, Slot: S1, Class: C01, Subject: M02 (theory), Room: LT2
-    Day: Wed, Slot: S2, Class: C03, Subject: M06 (practice), Room: TH2
+    Day: Tue, Slot: C1, Class: C02, Subject: M03 (practice), Room: TH2
+    Day: Wed, Slot: S1, Class: C03, Subject: M06 (practice), Room: TH1
 
   --- Tuần 6 ---
-    Day: Mon, Slot: S1, Class: C01, Subject: M02 (theory), Room: LT2
-    Day: Wed, Slot: S2, Class: C03, Subject: M06 (practice), Room: TH2
+    Day: Tue, Slot: C1, Class: C02, Subject: M03 (practice), Room: TH2
+    Day: Wed, Slot: S1, Class: C03, Subject: M06 (practice), Room: TH1
 
   --- Tuần 7 ---
-    Day: Mon, Slot: S1, Class: C01, Subject: M02 (theory), Room: LT2
-    Day: Wed, Slot: S2, Class: C03, Subject: M06 (practice), Room: TH2
+    Day: Wed, Slot: S1, Class: C03, Subject: M06 (practice), Room: TH1
 
   --- Tuần 8 ---
-    Day: Mon, Slot: S1, Class: C01, Subject: M02 (theory), Room: LT2
-    Day: Wed, Slot: S2, Class: C03, Subject: M06 (practice), Room: TH2
+    Day: Wed, Slot: S1, Class: C03, Subject: M06 (practice), Room: TH1
 
   --- Tuần 9 ---
-    Day: Mon, Slot: S1, Class: C01, Subject: M02 (theory), Room: LT2
-    Day: Wed, Slot: S2, Class: C03, Subject: M06 (practice), Room: TH2
+    Day: Wed, Slot: S1, Class: C03, Subject: M06 (practice), Room: TH1
 
   --- Tuần 10 ---
-    Day: Mon, Slot: S1, Class: C01, Subject: M02 (theory), Room: LT2
-    Day: Wed, Slot: S2, Class: C03, Subject: M06 (practice), Room: TH2
-
-  --- Tuần 11 ---
-    Day: Mon, Slot: S1, Class: C01, Subject: M02 (theory), Room: LT2
-
-  --- Tuần 12 ---
-    Day: Mon, Slot: S1, Class: C01, Subject: M02 (theory), Room: LT2
-
-  --- Tuần 13 ---
-    Day: Mon, Slot: S1, Class: C01, Subject: M02 (theory), Room: LT2
-
-  --- Tuần 14 ---
-    Day: Mon, Slot: S1, Class: C01, Subject: M02 (theory), Room: LT2
-
-  --- Tuần 15 ---
-    Day: Mon, Slot: S1, Class: C01, Subject: M02 (theory), Room: LT2
+    Day: Wed, Slot: S1, Class: C03, Subject: M06 (practice), Room: TH1
 
 
 ===== LỊCH DẠY GIẢNG VIÊN: GV03 =====
 
   --- Tuần 1 ---
-    Day: Fri, Slot: C1, Class: C03, Subject: M06 (theory), Room: LT1
-    Day: Sat, Slot: C1, Class: C01, Subject: M02 (practice), Room: TH4
-    Day: Thu, Slot: T2, Class: C01, Subject: M01 (practice), Room: TH2
+    Day: Fri, Slot: S1, Class: C01, Subject: M02 (practice), Room: TH1
+    Day: Mon, Slot: C2, Class: C03, Subject: M06 (theory), Room: LT4
+    Day: Sat, Slot: C2, Class: C01, Subject: M01 (practice), Room: TH4
+    Day: Thu, Slot: T1, Class: C01, Subject: M02 (theory), Room: LT4
 
   --- Tuần 2 ---
-    Day: Fri, Slot: C1, Class: C03, Subject: M06 (theory), Room: LT1
-    Day: Sat, Slot: C1, Class: C01, Subject: M02 (practice), Room: TH4
-    Day: Thu, Slot: T2, Class: C01, Subject: M01 (practice), Room: TH2
+    Day: Fri, Slot: S1, Class: C01, Subject: M02 (practice), Room: TH1
+    Day: Mon, Slot: C2, Class: C03, Subject: M06 (theory), Room: LT4
+    Day: Sat, Slot: C2, Class: C01, Subject: M01 (practice), Room: TH4
+    Day: Thu, Slot: T1, Class: C01, Subject: M02 (theory), Room: LT4
 
   --- Tuần 3 ---
-    Day: Fri, Slot: C1, Class: C03, Subject: M06 (theory), Room: LT1
-    Day: Sat, Slot: C1, Class: C01, Subject: M02 (practice), Room: TH4
-    Day: Thu, Slot: T2, Class: C01, Subject: M01 (practice), Room: TH2
+    Day: Fri, Slot: S1, Class: C01, Subject: M02 (practice), Room: TH1
+    Day: Mon, Slot: C2, Class: C03, Subject: M06 (theory), Room: LT4
+    Day: Sat, Slot: C2, Class: C01, Subject: M01 (practice), Room: TH4
+    Day: Thu, Slot: T1, Class: C01, Subject: M02 (theory), Room: LT4
 
   --- Tuần 4 ---
-    Day: Fri, Slot: C1, Class: C03, Subject: M06 (theory), Room: LT1
-    Day: Sat, Slot: C1, Class: C01, Subject: M02 (practice), Room: TH4
-    Day: Thu, Slot: T2, Class: C01, Subject: M01 (practice), Room: TH2
+    Day: Fri, Slot: S1, Class: C01, Subject: M02 (practice), Room: TH1
+    Day: Mon, Slot: C2, Class: C03, Subject: M06 (theory), Room: LT4
+    Day: Sat, Slot: C2, Class: C01, Subject: M01 (practice), Room: TH4
+    Day: Thu, Slot: T1, Class: C01, Subject: M02 (theory), Room: LT4
 
   --- Tuần 5 ---
-    Day: Fri, Slot: C1, Class: C03, Subject: M06 (theory), Room: LT1
-    Day: Sat, Slot: C1, Class: C01, Subject: M02 (practice), Room: TH4
-    Day: Thu, Slot: T2, Class: C01, Subject: M01 (practice), Room: TH2
+    Day: Fri, Slot: S1, Class: C01, Subject: M02 (practice), Room: TH1
+    Day: Mon, Slot: C2, Class: C03, Subject: M06 (theory), Room: LT4
+    Day: Sat, Slot: C2, Class: C01, Subject: M01 (practice), Room: TH4
+    Day: Thu, Slot: T1, Class: C01, Subject: M02 (theory), Room: LT4
 
   --- Tuần 6 ---
-    Day: Fri, Slot: C1, Class: C03, Subject: M06 (theory), Room: LT1
-    Day: Sat, Slot: C1, Class: C01, Subject: M02 (practice), Room: TH4
-    Day: Thu, Slot: T2, Class: C01, Subject: M01 (practice), Room: TH2
+    Day: Fri, Slot: S1, Class: C01, Subject: M02 (practice), Room: TH1
+    Day: Mon, Slot: C2, Class: C03, Subject: M06 (theory), Room: LT4
+    Day: Sat, Slot: C2, Class: C01, Subject: M01 (practice), Room: TH4
+    Day: Thu, Slot: T1, Class: C01, Subject: M02 (theory), Room: LT4
 
   --- Tuần 7 ---
-    Day: Fri, Slot: C1, Class: C03, Subject: M06 (theory), Room: LT1
-    Day: Sat, Slot: C1, Class: C01, Subject: M02 (practice), Room: TH4
-    Day: Thu, Slot: T2, Class: C01, Subject: M01 (practice), Room: TH2
+    Day: Fri, Slot: S1, Class: C01, Subject: M02 (practice), Room: TH1
+    Day: Mon, Slot: C2, Class: C03, Subject: M06 (theory), Room: LT4
+    Day: Sat, Slot: C2, Class: C01, Subject: M01 (practice), Room: TH4
+    Day: Thu, Slot: T1, Class: C01, Subject: M02 (theory), Room: LT4
 
   --- Tuần 8 ---
-    Day: Fri, Slot: C1, Class: C03, Subject: M06 (theory), Room: LT1
-    Day: Sat, Slot: C1, Class: C01, Subject: M02 (practice), Room: TH4
-    Day: Thu, Slot: T2, Class: C01, Subject: M01 (practice), Room: TH2
+    Day: Fri, Slot: S1, Class: C01, Subject: M02 (practice), Room: TH1
+    Day: Mon, Slot: C2, Class: C03, Subject: M06 (theory), Room: LT4
+    Day: Sat, Slot: C2, Class: C01, Subject: M01 (practice), Room: TH4
+    Day: Thu, Slot: T1, Class: C01, Subject: M02 (theory), Room: LT4
 
   --- Tuần 9 ---
-    Day: Fri, Slot: C1, Class: C03, Subject: M06 (theory), Room: LT1
+    Day: Mon, Slot: C2, Class: C03, Subject: M06 (theory), Room: LT4
+    Day: Thu, Slot: T1, Class: C01, Subject: M02 (theory), Room: LT4
 
   --- Tuần 10 ---
-    Day: Fri, Slot: C1, Class: C03, Subject: M06 (theory), Room: LT1
+    Day: Mon, Slot: C2, Class: C03, Subject: M06 (theory), Room: LT4
+    Day: Thu, Slot: T1, Class: C01, Subject: M02 (theory), Room: LT4
 
   --- Tuần 11 ---
-    Day: Fri, Slot: C1, Class: C03, Subject: M06 (theory), Room: LT1
+    Day: Mon, Slot: C2, Class: C03, Subject: M06 (theory), Room: LT4
+    Day: Thu, Slot: T1, Class: C01, Subject: M02 (theory), Room: LT4
 
   --- Tuần 12 ---
-    Day: Fri, Slot: C1, Class: C03, Subject: M06 (theory), Room: LT1
+    Day: Mon, Slot: C2, Class: C03, Subject: M06 (theory), Room: LT4
+    Day: Thu, Slot: T1, Class: C01, Subject: M02 (theory), Room: LT4
 
   --- Tuần 13 ---
-    Day: Fri, Slot: C1, Class: C03, Subject: M06 (theory), Room: LT1
+    Day: Mon, Slot: C2, Class: C03, Subject: M06 (theory), Room: LT4
+    Day: Thu, Slot: T1, Class: C01, Subject: M02 (theory), Room: LT4
 
   --- Tuần 14 ---
-    Day: Fri, Slot: C1, Class: C03, Subject: M06 (theory), Room: LT1
+    Day: Mon, Slot: C2, Class: C03, Subject: M06 (theory), Room: LT4
+    Day: Thu, Slot: T1, Class: C01, Subject: M02 (theory), Room: LT4
 
   --- Tuần 15 ---
-    Day: Fri, Slot: C1, Class: C03, Subject: M06 (theory), Room: LT1
+    Day: Mon, Slot: C2, Class: C03, Subject: M06 (theory), Room: LT4
+    Day: Thu, Slot: T1, Class: C01, Subject: M02 (theory), Room: LT4
 
 
 ===== LỊCH DẠY GIẢNG VIÊN: GV04 =====
 
   --- Tuần 1 ---
-    Day: Fri, Slot: T1, Class: C02, Subject: M03 (theory), Room: LT4
-    Day: Mon, Slot: T2, Class: C02, Subject: M03 (theory), Room: LT2
-    Day: Thu, Slot: T1, Class: C02, Subject: M03 (practice), Room: TH2
-    Day: Wed, Slot: S1, Class: C02, Subject: M04 (practice), Room: TH2
+    Day: Mon, Slot: T1, Class: C02, Subject: M04 (practice), Room: TH2
+    Day: Sat, Slot: S2, Class: C02, Subject: M03 (theory), Room: LT1
+    Day: Wed, Slot: C2, Class: C02, Subject: M03 (theory), Room: LT4
 
   --- Tuần 2 ---
-    Day: Fri, Slot: T1, Class: C02, Subject: M03 (theory), Room: LT4
-    Day: Mon, Slot: T2, Class: C02, Subject: M03 (theory), Room: LT2
-    Day: Thu, Slot: T1, Class: C02, Subject: M03 (practice), Room: TH2
-    Day: Wed, Slot: S1, Class: C02, Subject: M04 (practice), Room: TH2
+    Day: Mon, Slot: T1, Class: C02, Subject: M04 (practice), Room: TH2
+    Day: Sat, Slot: S2, Class: C02, Subject: M03 (theory), Room: LT1
+    Day: Wed, Slot: C2, Class: C02, Subject: M03 (theory), Room: LT4
 
   --- Tuần 3 ---
-    Day: Fri, Slot: T1, Class: C02, Subject: M03 (theory), Room: LT4
-    Day: Mon, Slot: T2, Class: C02, Subject: M03 (theory), Room: LT2
-    Day: Thu, Slot: T1, Class: C02, Subject: M03 (practice), Room: TH2
-    Day: Wed, Slot: S1, Class: C02, Subject: M04 (practice), Room: TH2
+    Day: Mon, Slot: T1, Class: C02, Subject: M04 (practice), Room: TH2
+    Day: Sat, Slot: S2, Class: C02, Subject: M03 (theory), Room: LT1
+    Day: Wed, Slot: C2, Class: C02, Subject: M03 (theory), Room: LT4
 
   --- Tuần 4 ---
-    Day: Fri, Slot: T1, Class: C02, Subject: M03 (theory), Room: LT4
-    Day: Mon, Slot: T2, Class: C02, Subject: M03 (theory), Room: LT2
-    Day: Thu, Slot: T1, Class: C02, Subject: M03 (practice), Room: TH2
-    Day: Wed, Slot: S1, Class: C02, Subject: M04 (practice), Room: TH2
+    Day: Mon, Slot: T1, Class: C02, Subject: M04 (practice), Room: TH2
+    Day: Sat, Slot: S2, Class: C02, Subject: M03 (theory), Room: LT1
+    Day: Wed, Slot: C2, Class: C02, Subject: M03 (theory), Room: LT4
 
   --- Tuần 5 ---
-    Day: Fri, Slot: T1, Class: C02, Subject: M03 (theory), Room: LT4
-    Day: Mon, Slot: T2, Class: C02, Subject: M03 (theory), Room: LT2
-    Day: Thu, Slot: T1, Class: C02, Subject: M03 (practice), Room: TH2
-    Day: Wed, Slot: S1, Class: C02, Subject: M04 (practice), Room: TH2
+    Day: Mon, Slot: T1, Class: C02, Subject: M04 (practice), Room: TH2
+    Day: Sat, Slot: S2, Class: C02, Subject: M03 (theory), Room: LT1
+    Day: Wed, Slot: C2, Class: C02, Subject: M03 (theory), Room: LT4
 
   --- Tuần 6 ---
-    Day: Fri, Slot: T1, Class: C02, Subject: M03 (theory), Room: LT4
-    Day: Mon, Slot: T2, Class: C02, Subject: M03 (theory), Room: LT2
-    Day: Thu, Slot: T1, Class: C02, Subject: M03 (practice), Room: TH2
-    Day: Wed, Slot: S1, Class: C02, Subject: M04 (practice), Room: TH2
+    Day: Mon, Slot: T1, Class: C02, Subject: M04 (practice), Room: TH2
+    Day: Sat, Slot: S2, Class: C02, Subject: M03 (theory), Room: LT1
+    Day: Wed, Slot: C2, Class: C02, Subject: M03 (theory), Room: LT4
 
   --- Tuần 7 ---
-    Day: Fri, Slot: T1, Class: C02, Subject: M03 (theory), Room: LT4
-    Day: Mon, Slot: T2, Class: C02, Subject: M03 (theory), Room: LT2
+    Day: Sat, Slot: S2, Class: C02, Subject: M03 (theory), Room: LT1
+    Day: Wed, Slot: C2, Class: C02, Subject: M03 (theory), Room: LT4
 
   --- Tuần 8 ---
-    Day: Fri, Slot: T1, Class: C02, Subject: M03 (theory), Room: LT4
-    Day: Mon, Slot: T2, Class: C02, Subject: M03 (theory), Room: LT2
+    Day: Sat, Slot: S2, Class: C02, Subject: M03 (theory), Room: LT1
+    Day: Wed, Slot: C2, Class: C02, Subject: M03 (theory), Room: LT4
 
   --- Tuần 9 ---
-    Day: Fri, Slot: T1, Class: C02, Subject: M03 (theory), Room: LT4
-    Day: Mon, Slot: T2, Class: C02, Subject: M03 (theory), Room: LT2
+    Day: Sat, Slot: S2, Class: C02, Subject: M03 (theory), Room: LT1
+    Day: Wed, Slot: C2, Class: C02, Subject: M03 (theory), Room: LT4
 
 LỊCH SỬ DỤNG PHÒNG:
 
@@ -269,266 +259,244 @@ LỊCH SỬ DỤNG PHÒNG HỌC THEO HỌC KỲ:
 ===== LỊCH SỬ DỤNG PHÒNG: LT1 =====
 
   --- Tuần 1 ---
-    Day: Thứ 6 (Fri), Slot: C1, Lớp: C03, Môn: Phát triển phần mềm (theory), GV: GV03
-    Day: Thứ 7 (Sat), Slot: T2, Lớp: C03, Môn: Trí tuệ nhân tạo (theory), GV: GV01
-    Day: Thứ 5 (Thu), Slot: T1, Lớp: C03, Môn: Trí tuệ nhân tạo (theory), GV: GV01
+    Day: Thứ 7 (Sat), Slot: S2, Lớp: C02, Môn: Cơ sở dữ liệu (theory), GV: GV04
+    Day: Thứ 3 (Tue), Slot: T1, Lớp: C03, Môn: Trí tuệ nhân tạo (theory), GV: GV01
 
   --- Tuần 2 ---
-    Day: Thứ 6 (Fri), Slot: C1, Lớp: C03, Môn: Phát triển phần mềm (theory), GV: GV03
-    Day: Thứ 7 (Sat), Slot: T2, Lớp: C03, Môn: Trí tuệ nhân tạo (theory), GV: GV01
-    Day: Thứ 5 (Thu), Slot: T1, Lớp: C03, Môn: Trí tuệ nhân tạo (theory), GV: GV01
+    Day: Thứ 7 (Sat), Slot: S2, Lớp: C02, Môn: Cơ sở dữ liệu (theory), GV: GV04
+    Day: Thứ 3 (Tue), Slot: T1, Lớp: C03, Môn: Trí tuệ nhân tạo (theory), GV: GV01
 
   --- Tuần 3 ---
-    Day: Thứ 6 (Fri), Slot: C1, Lớp: C03, Môn: Phát triển phần mềm (theory), GV: GV03
-    Day: Thứ 7 (Sat), Slot: T2, Lớp: C03, Môn: Trí tuệ nhân tạo (theory), GV: GV01
-    Day: Thứ 5 (Thu), Slot: T1, Lớp: C03, Môn: Trí tuệ nhân tạo (theory), GV: GV01
+    Day: Thứ 7 (Sat), Slot: S2, Lớp: C02, Môn: Cơ sở dữ liệu (theory), GV: GV04
+    Day: Thứ 3 (Tue), Slot: T1, Lớp: C03, Môn: Trí tuệ nhân tạo (theory), GV: GV01
 
   --- Tuần 4 ---
-    Day: Thứ 6 (Fri), Slot: C1, Lớp: C03, Môn: Phát triển phần mềm (theory), GV: GV03
-    Day: Thứ 7 (Sat), Slot: T2, Lớp: C03, Môn: Trí tuệ nhân tạo (theory), GV: GV01
-    Day: Thứ 5 (Thu), Slot: T1, Lớp: C03, Môn: Trí tuệ nhân tạo (theory), GV: GV01
+    Day: Thứ 7 (Sat), Slot: S2, Lớp: C02, Môn: Cơ sở dữ liệu (theory), GV: GV04
+    Day: Thứ 3 (Tue), Slot: T1, Lớp: C03, Môn: Trí tuệ nhân tạo (theory), GV: GV01
 
   --- Tuần 5 ---
-    Day: Thứ 6 (Fri), Slot: C1, Lớp: C03, Môn: Phát triển phần mềm (theory), GV: GV03
-    Day: Thứ 7 (Sat), Slot: T2, Lớp: C03, Môn: Trí tuệ nhân tạo (theory), GV: GV01
-    Day: Thứ 5 (Thu), Slot: T1, Lớp: C03, Môn: Trí tuệ nhân tạo (theory), GV: GV01
+    Day: Thứ 7 (Sat), Slot: S2, Lớp: C02, Môn: Cơ sở dữ liệu (theory), GV: GV04
+    Day: Thứ 3 (Tue), Slot: T1, Lớp: C03, Môn: Trí tuệ nhân tạo (theory), GV: GV01
 
   --- Tuần 6 ---
-    Day: Thứ 6 (Fri), Slot: C1, Lớp: C03, Môn: Phát triển phần mềm (theory), GV: GV03
-    Day: Thứ 7 (Sat), Slot: T2, Lớp: C03, Môn: Trí tuệ nhân tạo (theory), GV: GV01
-    Day: Thứ 5 (Thu), Slot: T1, Lớp: C03, Môn: Trí tuệ nhân tạo (theory), GV: GV01
+    Day: Thứ 7 (Sat), Slot: S2, Lớp: C02, Môn: Cơ sở dữ liệu (theory), GV: GV04
+    Day: Thứ 3 (Tue), Slot: T1, Lớp: C03, Môn: Trí tuệ nhân tạo (theory), GV: GV01
 
   --- Tuần 7 ---
-    Day: Thứ 6 (Fri), Slot: C1, Lớp: C03, Môn: Phát triển phần mềm (theory), GV: GV03
-    Day: Thứ 7 (Sat), Slot: T2, Lớp: C03, Môn: Trí tuệ nhân tạo (theory), GV: GV01
-    Day: Thứ 5 (Thu), Slot: T1, Lớp: C03, Môn: Trí tuệ nhân tạo (theory), GV: GV01
+    Day: Thứ 7 (Sat), Slot: S2, Lớp: C02, Môn: Cơ sở dữ liệu (theory), GV: GV04
+    Day: Thứ 3 (Tue), Slot: T1, Lớp: C03, Môn: Trí tuệ nhân tạo (theory), GV: GV01
 
   --- Tuần 8 ---
-    Day: Thứ 6 (Fri), Slot: C1, Lớp: C03, Môn: Phát triển phần mềm (theory), GV: GV03
-    Day: Thứ 7 (Sat), Slot: T2, Lớp: C03, Môn: Trí tuệ nhân tạo (theory), GV: GV01
-    Day: Thứ 5 (Thu), Slot: T1, Lớp: C03, Môn: Trí tuệ nhân tạo (theory), GV: GV01
+    Day: Thứ 7 (Sat), Slot: S2, Lớp: C02, Môn: Cơ sở dữ liệu (theory), GV: GV04
+    Day: Thứ 3 (Tue), Slot: T1, Lớp: C03, Môn: Trí tuệ nhân tạo (theory), GV: GV01
 
   --- Tuần 9 ---
-    Day: Thứ 6 (Fri), Slot: C1, Lớp: C03, Môn: Phát triển phần mềm (theory), GV: GV03
-    Day: Thứ 7 (Sat), Slot: T2, Lớp: C03, Môn: Trí tuệ nhân tạo (theory), GV: GV01
-    Day: Thứ 5 (Thu), Slot: T1, Lớp: C03, Môn: Trí tuệ nhân tạo (theory), GV: GV01
+    Day: Thứ 7 (Sat), Slot: S2, Lớp: C02, Môn: Cơ sở dữ liệu (theory), GV: GV04
+    Day: Thứ 3 (Tue), Slot: T1, Lớp: C03, Môn: Trí tuệ nhân tạo (theory), GV: GV01
 
   --- Tuần 10 ---
-    Day: Thứ 6 (Fri), Slot: C1, Lớp: C03, Môn: Phát triển phần mềm (theory), GV: GV03
-    Day: Thứ 7 (Sat), Slot: T2, Lớp: C03, Môn: Trí tuệ nhân tạo (theory), GV: GV01
-    Day: Thứ 5 (Thu), Slot: T1, Lớp: C03, Môn: Trí tuệ nhân tạo (theory), GV: GV01
-
-  --- Tuần 11 ---
-    Day: Thứ 6 (Fri), Slot: C1, Lớp: C03, Môn: Phát triển phần mềm (theory), GV: GV03
-
-  --- Tuần 12 ---
-    Day: Thứ 6 (Fri), Slot: C1, Lớp: C03, Môn: Phát triển phần mềm (theory), GV: GV03
-
-  --- Tuần 13 ---
-    Day: Thứ 6 (Fri), Slot: C1, Lớp: C03, Môn: Phát triển phần mềm (theory), GV: GV03
-
-  --- Tuần 14 ---
-    Day: Thứ 6 (Fri), Slot: C1, Lớp: C03, Môn: Phát triển phần mềm (theory), GV: GV03
-
-  --- Tuần 15 ---
-    Day: Thứ 6 (Fri), Slot: C1, Lớp: C03, Môn: Phát triển phần mềm (theory), GV: GV03
-
-
-===== LỊCH SỬ DỤNG PHÒNG: LT2 =====
-
-  --- Tuần 1 ---
-    Day: Thứ 2 (Mon), Slot: S1, Lớp: C01, Môn: Thuật toán (theory), GV: GV02
-    Day: Thứ 2 (Mon), Slot: T2, Lớp: C02, Môn: Cơ sở dữ liệu (theory), GV: GV04
-    Day: Thứ 3 (Tue), Slot: C1, Lớp: C01, Môn: Cấu trúc dữ liệu (theory), GV: GV01
-
-  --- Tuần 2 ---
-    Day: Thứ 2 (Mon), Slot: S1, Lớp: C01, Môn: Thuật toán (theory), GV: GV02
-    Day: Thứ 2 (Mon), Slot: T2, Lớp: C02, Môn: Cơ sở dữ liệu (theory), GV: GV04
-    Day: Thứ 3 (Tue), Slot: C1, Lớp: C01, Môn: Cấu trúc dữ liệu (theory), GV: GV01
-
-  --- Tuần 3 ---
-    Day: Thứ 2 (Mon), Slot: S1, Lớp: C01, Môn: Thuật toán (theory), GV: GV02
-    Day: Thứ 2 (Mon), Slot: T2, Lớp: C02, Môn: Cơ sở dữ liệu (theory), GV: GV04
-    Day: Thứ 3 (Tue), Slot: C1, Lớp: C01, Môn: Cấu trúc dữ liệu (theory), GV: GV01
-
-  --- Tuần 4 ---
-    Day: Thứ 2 (Mon), Slot: S1, Lớp: C01, Môn: Thuật toán (theory), GV: GV02
-    Day: Thứ 2 (Mon), Slot: T2, Lớp: C02, Môn: Cơ sở dữ liệu (theory), GV: GV04
-    Day: Thứ 3 (Tue), Slot: C1, Lớp: C01, Môn: Cấu trúc dữ liệu (theory), GV: GV01
-
-  --- Tuần 5 ---
-    Day: Thứ 2 (Mon), Slot: S1, Lớp: C01, Môn: Thuật toán (theory), GV: GV02
-    Day: Thứ 2 (Mon), Slot: T2, Lớp: C02, Môn: Cơ sở dữ liệu (theory), GV: GV04
-    Day: Thứ 3 (Tue), Slot: C1, Lớp: C01, Môn: Cấu trúc dữ liệu (theory), GV: GV01
-
-  --- Tuần 6 ---
-    Day: Thứ 2 (Mon), Slot: S1, Lớp: C01, Môn: Thuật toán (theory), GV: GV02
-    Day: Thứ 2 (Mon), Slot: T2, Lớp: C02, Môn: Cơ sở dữ liệu (theory), GV: GV04
-    Day: Thứ 3 (Tue), Slot: C1, Lớp: C01, Môn: Cấu trúc dữ liệu (theory), GV: GV01
-
-  --- Tuần 7 ---
-    Day: Thứ 2 (Mon), Slot: S1, Lớp: C01, Môn: Thuật toán (theory), GV: GV02
-    Day: Thứ 2 (Mon), Slot: T2, Lớp: C02, Môn: Cơ sở dữ liệu (theory), GV: GV04
-    Day: Thứ 3 (Tue), Slot: C1, Lớp: C01, Môn: Cấu trúc dữ liệu (theory), GV: GV01
-
-  --- Tuần 8 ---
-    Day: Thứ 2 (Mon), Slot: S1, Lớp: C01, Môn: Thuật toán (theory), GV: GV02
-    Day: Thứ 2 (Mon), Slot: T2, Lớp: C02, Môn: Cơ sở dữ liệu (theory), GV: GV04
-    Day: Thứ 3 (Tue), Slot: C1, Lớp: C01, Môn: Cấu trúc dữ liệu (theory), GV: GV01
-
-  --- Tuần 9 ---
-    Day: Thứ 2 (Mon), Slot: S1, Lớp: C01, Môn: Thuật toán (theory), GV: GV02
-    Day: Thứ 2 (Mon), Slot: T2, Lớp: C02, Môn: Cơ sở dữ liệu (theory), GV: GV04
-    Day: Thứ 3 (Tue), Slot: C1, Lớp: C01, Môn: Cấu trúc dữ liệu (theory), GV: GV01
-
-  --- Tuần 10 ---
-    Day: Thứ 2 (Mon), Slot: S1, Lớp: C01, Môn: Thuật toán (theory), GV: GV02
-    Day: Thứ 3 (Tue), Slot: C1, Lớp: C01, Môn: Cấu trúc dữ liệu (theory), GV: GV01
-
-  --- Tuần 11 ---
-    Day: Thứ 2 (Mon), Slot: S1, Lớp: C01, Môn: Thuật toán (theory), GV: GV02
-    Day: Thứ 3 (Tue), Slot: C1, Lớp: C01, Môn: Cấu trúc dữ liệu (theory), GV: GV01
-
-  --- Tuần 12 ---
-    Day: Thứ 2 (Mon), Slot: S1, Lớp: C01, Môn: Thuật toán (theory), GV: GV02
-    Day: Thứ 3 (Tue), Slot: C1, Lớp: C01, Môn: Cấu trúc dữ liệu (theory), GV: GV01
-
-  --- Tuần 13 ---
-    Day: Thứ 2 (Mon), Slot: S1, Lớp: C01, Môn: Thuật toán (theory), GV: GV02
-    Day: Thứ 3 (Tue), Slot: C1, Lớp: C01, Môn: Cấu trúc dữ liệu (theory), GV: GV01
-
-  --- Tuần 14 ---
-    Day: Thứ 2 (Mon), Slot: S1, Lớp: C01, Môn: Thuật toán (theory), GV: GV02
-    Day: Thứ 3 (Tue), Slot: C1, Lớp: C01, Môn: Cấu trúc dữ liệu (theory), GV: GV01
-
-  --- Tuần 15 ---
-    Day: Thứ 2 (Mon), Slot: S1, Lớp: C01, Môn: Thuật toán (theory), GV: GV02
-    Day: Thứ 3 (Tue), Slot: C1, Lớp: C01, Môn: Cấu trúc dữ liệu (theory), GV: GV01
+    Day: Thứ 3 (Tue), Slot: T1, Lớp: C03, Môn: Trí tuệ nhân tạo (theory), GV: GV01
 
 
 ===== LỊCH SỬ DỤNG PHÒNG: LT4 =====
 
   --- Tuần 1 ---
-    Day: Thứ 6 (Fri), Slot: T1, Lớp: C02, Môn: Cơ sở dữ liệu (theory), GV: GV04
-    Day: Thứ 3 (Tue), Slot: S2, Lớp: C02, Môn: Mạng máy tính (theory), GV: GV01
+    Day: Thứ 6 (Fri), Slot: C2, Lớp: C02, Môn: Mạng máy tính (theory), GV: GV01
+    Day: Thứ 2 (Mon), Slot: C2, Lớp: C03, Môn: Phát triển phần mềm (theory), GV: GV03
+    Day: Thứ 7 (Sat), Slot: T1, Lớp: C03, Môn: Trí tuệ nhân tạo (theory), GV: GV01
+    Day: Thứ 5 (Thu), Slot: T1, Lớp: C01, Môn: Thuật toán (theory), GV: GV03
+    Day: Thứ 4 (Wed), Slot: C2, Lớp: C02, Môn: Cơ sở dữ liệu (theory), GV: GV04
+    Day: Thứ 4 (Wed), Slot: T1, Lớp: C01, Môn: Cấu trúc dữ liệu (theory), GV: GV01
 
   --- Tuần 2 ---
-    Day: Thứ 6 (Fri), Slot: T1, Lớp: C02, Môn: Cơ sở dữ liệu (theory), GV: GV04
-    Day: Thứ 3 (Tue), Slot: S2, Lớp: C02, Môn: Mạng máy tính (theory), GV: GV01
+    Day: Thứ 6 (Fri), Slot: C2, Lớp: C02, Môn: Mạng máy tính (theory), GV: GV01
+    Day: Thứ 2 (Mon), Slot: C2, Lớp: C03, Môn: Phát triển phần mềm (theory), GV: GV03
+    Day: Thứ 7 (Sat), Slot: T1, Lớp: C03, Môn: Trí tuệ nhân tạo (theory), GV: GV01
+    Day: Thứ 5 (Thu), Slot: T1, Lớp: C01, Môn: Thuật toán (theory), GV: GV03
+    Day: Thứ 4 (Wed), Slot: C2, Lớp: C02, Môn: Cơ sở dữ liệu (theory), GV: GV04
+    Day: Thứ 4 (Wed), Slot: T1, Lớp: C01, Môn: Cấu trúc dữ liệu (theory), GV: GV01
 
   --- Tuần 3 ---
-    Day: Thứ 6 (Fri), Slot: T1, Lớp: C02, Môn: Cơ sở dữ liệu (theory), GV: GV04
-    Day: Thứ 3 (Tue), Slot: S2, Lớp: C02, Môn: Mạng máy tính (theory), GV: GV01
+    Day: Thứ 6 (Fri), Slot: C2, Lớp: C02, Môn: Mạng máy tính (theory), GV: GV01
+    Day: Thứ 2 (Mon), Slot: C2, Lớp: C03, Môn: Phát triển phần mềm (theory), GV: GV03
+    Day: Thứ 7 (Sat), Slot: T1, Lớp: C03, Môn: Trí tuệ nhân tạo (theory), GV: GV01
+    Day: Thứ 5 (Thu), Slot: T1, Lớp: C01, Môn: Thuật toán (theory), GV: GV03
+    Day: Thứ 4 (Wed), Slot: C2, Lớp: C02, Môn: Cơ sở dữ liệu (theory), GV: GV04
+    Day: Thứ 4 (Wed), Slot: T1, Lớp: C01, Môn: Cấu trúc dữ liệu (theory), GV: GV01
 
   --- Tuần 4 ---
-    Day: Thứ 6 (Fri), Slot: T1, Lớp: C02, Môn: Cơ sở dữ liệu (theory), GV: GV04
-    Day: Thứ 3 (Tue), Slot: S2, Lớp: C02, Môn: Mạng máy tính (theory), GV: GV01
+    Day: Thứ 6 (Fri), Slot: C2, Lớp: C02, Môn: Mạng máy tính (theory), GV: GV01
+    Day: Thứ 2 (Mon), Slot: C2, Lớp: C03, Môn: Phát triển phần mềm (theory), GV: GV03
+    Day: Thứ 7 (Sat), Slot: T1, Lớp: C03, Môn: Trí tuệ nhân tạo (theory), GV: GV01
+    Day: Thứ 5 (Thu), Slot: T1, Lớp: C01, Môn: Thuật toán (theory), GV: GV03
+    Day: Thứ 4 (Wed), Slot: C2, Lớp: C02, Môn: Cơ sở dữ liệu (theory), GV: GV04
+    Day: Thứ 4 (Wed), Slot: T1, Lớp: C01, Môn: Cấu trúc dữ liệu (theory), GV: GV01
 
   --- Tuần 5 ---
-    Day: Thứ 6 (Fri), Slot: T1, Lớp: C02, Môn: Cơ sở dữ liệu (theory), GV: GV04
-    Day: Thứ 3 (Tue), Slot: S2, Lớp: C02, Môn: Mạng máy tính (theory), GV: GV01
+    Day: Thứ 6 (Fri), Slot: C2, Lớp: C02, Môn: Mạng máy tính (theory), GV: GV01
+    Day: Thứ 2 (Mon), Slot: C2, Lớp: C03, Môn: Phát triển phần mềm (theory), GV: GV03
+    Day: Thứ 7 (Sat), Slot: T1, Lớp: C03, Môn: Trí tuệ nhân tạo (theory), GV: GV01
+    Day: Thứ 5 (Thu), Slot: T1, Lớp: C01, Môn: Thuật toán (theory), GV: GV03
+    Day: Thứ 4 (Wed), Slot: C2, Lớp: C02, Môn: Cơ sở dữ liệu (theory), GV: GV04
+    Day: Thứ 4 (Wed), Slot: T1, Lớp: C01, Môn: Cấu trúc dữ liệu (theory), GV: GV01
 
   --- Tuần 6 ---
-    Day: Thứ 6 (Fri), Slot: T1, Lớp: C02, Môn: Cơ sở dữ liệu (theory), GV: GV04
-    Day: Thứ 3 (Tue), Slot: S2, Lớp: C02, Môn: Mạng máy tính (theory), GV: GV01
+    Day: Thứ 6 (Fri), Slot: C2, Lớp: C02, Môn: Mạng máy tính (theory), GV: GV01
+    Day: Thứ 2 (Mon), Slot: C2, Lớp: C03, Môn: Phát triển phần mềm (theory), GV: GV03
+    Day: Thứ 7 (Sat), Slot: T1, Lớp: C03, Môn: Trí tuệ nhân tạo (theory), GV: GV01
+    Day: Thứ 5 (Thu), Slot: T1, Lớp: C01, Môn: Thuật toán (theory), GV: GV03
+    Day: Thứ 4 (Wed), Slot: C2, Lớp: C02, Môn: Cơ sở dữ liệu (theory), GV: GV04
+    Day: Thứ 4 (Wed), Slot: T1, Lớp: C01, Môn: Cấu trúc dữ liệu (theory), GV: GV01
 
   --- Tuần 7 ---
-    Day: Thứ 6 (Fri), Slot: T1, Lớp: C02, Môn: Cơ sở dữ liệu (theory), GV: GV04
-    Day: Thứ 3 (Tue), Slot: S2, Lớp: C02, Môn: Mạng máy tính (theory), GV: GV01
+    Day: Thứ 6 (Fri), Slot: C2, Lớp: C02, Môn: Mạng máy tính (theory), GV: GV01
+    Day: Thứ 2 (Mon), Slot: C2, Lớp: C03, Môn: Phát triển phần mềm (theory), GV: GV03
+    Day: Thứ 7 (Sat), Slot: T1, Lớp: C03, Môn: Trí tuệ nhân tạo (theory), GV: GV01
+    Day: Thứ 5 (Thu), Slot: T1, Lớp: C01, Môn: Thuật toán (theory), GV: GV03
+    Day: Thứ 4 (Wed), Slot: C2, Lớp: C02, Môn: Cơ sở dữ liệu (theory), GV: GV04
+    Day: Thứ 4 (Wed), Slot: T1, Lớp: C01, Môn: Cấu trúc dữ liệu (theory), GV: GV01
 
   --- Tuần 8 ---
-    Day: Thứ 6 (Fri), Slot: T1, Lớp: C02, Môn: Cơ sở dữ liệu (theory), GV: GV04
-    Day: Thứ 3 (Tue), Slot: S2, Lớp: C02, Môn: Mạng máy tính (theory), GV: GV01
+    Day: Thứ 6 (Fri), Slot: C2, Lớp: C02, Môn: Mạng máy tính (theory), GV: GV01
+    Day: Thứ 2 (Mon), Slot: C2, Lớp: C03, Môn: Phát triển phần mềm (theory), GV: GV03
+    Day: Thứ 7 (Sat), Slot: T1, Lớp: C03, Môn: Trí tuệ nhân tạo (theory), GV: GV01
+    Day: Thứ 5 (Thu), Slot: T1, Lớp: C01, Môn: Thuật toán (theory), GV: GV03
+    Day: Thứ 4 (Wed), Slot: C2, Lớp: C02, Môn: Cơ sở dữ liệu (theory), GV: GV04
+    Day: Thứ 4 (Wed), Slot: T1, Lớp: C01, Môn: Cấu trúc dữ liệu (theory), GV: GV01
 
   --- Tuần 9 ---
-    Day: Thứ 6 (Fri), Slot: T1, Lớp: C02, Môn: Cơ sở dữ liệu (theory), GV: GV04
-    Day: Thứ 3 (Tue), Slot: S2, Lớp: C02, Môn: Mạng máy tính (theory), GV: GV01
+    Day: Thứ 6 (Fri), Slot: C2, Lớp: C02, Môn: Mạng máy tính (theory), GV: GV01
+    Day: Thứ 2 (Mon), Slot: C2, Lớp: C03, Môn: Phát triển phần mềm (theory), GV: GV03
+    Day: Thứ 7 (Sat), Slot: T1, Lớp: C03, Môn: Trí tuệ nhân tạo (theory), GV: GV01
+    Day: Thứ 5 (Thu), Slot: T1, Lớp: C01, Môn: Thuật toán (theory), GV: GV03
+    Day: Thứ 4 (Wed), Slot: C2, Lớp: C02, Môn: Cơ sở dữ liệu (theory), GV: GV04
+    Day: Thứ 4 (Wed), Slot: T1, Lớp: C01, Môn: Cấu trúc dữ liệu (theory), GV: GV01
 
   --- Tuần 10 ---
-    Day: Thứ 3 (Tue), Slot: S2, Lớp: C02, Môn: Mạng máy tính (theory), GV: GV01
+    Day: Thứ 6 (Fri), Slot: C2, Lớp: C02, Môn: Mạng máy tính (theory), GV: GV01
+    Day: Thứ 2 (Mon), Slot: C2, Lớp: C03, Môn: Phát triển phần mềm (theory), GV: GV03
+    Day: Thứ 7 (Sat), Slot: T1, Lớp: C03, Môn: Trí tuệ nhân tạo (theory), GV: GV01
+    Day: Thứ 5 (Thu), Slot: T1, Lớp: C01, Môn: Thuật toán (theory), GV: GV03
+    Day: Thứ 4 (Wed), Slot: T1, Lớp: C01, Môn: Cấu trúc dữ liệu (theory), GV: GV01
 
   --- Tuần 11 ---
-    Day: Thứ 3 (Tue), Slot: S2, Lớp: C02, Môn: Mạng máy tính (theory), GV: GV01
+    Day: Thứ 6 (Fri), Slot: C2, Lớp: C02, Môn: Mạng máy tính (theory), GV: GV01
+    Day: Thứ 2 (Mon), Slot: C2, Lớp: C03, Môn: Phát triển phần mềm (theory), GV: GV03
+    Day: Thứ 5 (Thu), Slot: T1, Lớp: C01, Môn: Thuật toán (theory), GV: GV03
+    Day: Thứ 4 (Wed), Slot: T1, Lớp: C01, Môn: Cấu trúc dữ liệu (theory), GV: GV01
 
   --- Tuần 12 ---
-    Day: Thứ 3 (Tue), Slot: S2, Lớp: C02, Môn: Mạng máy tính (theory), GV: GV01
+    Day: Thứ 6 (Fri), Slot: C2, Lớp: C02, Môn: Mạng máy tính (theory), GV: GV01
+    Day: Thứ 2 (Mon), Slot: C2, Lớp: C03, Môn: Phát triển phần mềm (theory), GV: GV03
+    Day: Thứ 5 (Thu), Slot: T1, Lớp: C01, Môn: Thuật toán (theory), GV: GV03
+    Day: Thứ 4 (Wed), Slot: T1, Lớp: C01, Môn: Cấu trúc dữ liệu (theory), GV: GV01
+
+  --- Tuần 13 ---
+    Day: Thứ 2 (Mon), Slot: C2, Lớp: C03, Môn: Phát triển phần mềm (theory), GV: GV03
+    Day: Thứ 5 (Thu), Slot: T1, Lớp: C01, Môn: Thuật toán (theory), GV: GV03
+    Day: Thứ 4 (Wed), Slot: T1, Lớp: C01, Môn: Cấu trúc dữ liệu (theory), GV: GV01
+
+  --- Tuần 14 ---
+    Day: Thứ 2 (Mon), Slot: C2, Lớp: C03, Môn: Phát triển phần mềm (theory), GV: GV03
+    Day: Thứ 5 (Thu), Slot: T1, Lớp: C01, Môn: Thuật toán (theory), GV: GV03
+    Day: Thứ 4 (Wed), Slot: T1, Lớp: C01, Môn: Cấu trúc dữ liệu (theory), GV: GV01
+
+  --- Tuần 15 ---
+    Day: Thứ 2 (Mon), Slot: C2, Lớp: C03, Môn: Phát triển phần mềm (theory), GV: GV03
+    Day: Thứ 5 (Thu), Slot: T1, Lớp: C01, Môn: Thuật toán (theory), GV: GV03
+    Day: Thứ 4 (Wed), Slot: T1, Lớp: C01, Môn: Cấu trúc dữ liệu (theory), GV: GV01
+
+
+===== LỊCH SỬ DỤNG PHÒNG: TH1 =====
+
+  --- Tuần 1 ---
+    Day: Thứ 6 (Fri), Slot: S1, Lớp: C01, Môn: Thuật toán (practice), GV: GV03
+    Day: Thứ 4 (Wed), Slot: S1, Lớp: C03, Môn: Phát triển phần mềm (practice), GV: GV02
+
+  --- Tuần 2 ---
+    Day: Thứ 6 (Fri), Slot: S1, Lớp: C01, Môn: Thuật toán (practice), GV: GV03
+    Day: Thứ 4 (Wed), Slot: S1, Lớp: C03, Môn: Phát triển phần mềm (practice), GV: GV02
+
+  --- Tuần 3 ---
+    Day: Thứ 6 (Fri), Slot: S1, Lớp: C01, Môn: Thuật toán (practice), GV: GV03
+    Day: Thứ 4 (Wed), Slot: S1, Lớp: C03, Môn: Phát triển phần mềm (practice), GV: GV02
+
+  --- Tuần 4 ---
+    Day: Thứ 6 (Fri), Slot: S1, Lớp: C01, Môn: Thuật toán (practice), GV: GV03
+    Day: Thứ 4 (Wed), Slot: S1, Lớp: C03, Môn: Phát triển phần mềm (practice), GV: GV02
+
+  --- Tuần 5 ---
+    Day: Thứ 6 (Fri), Slot: S1, Lớp: C01, Môn: Thuật toán (practice), GV: GV03
+    Day: Thứ 4 (Wed), Slot: S1, Lớp: C03, Môn: Phát triển phần mềm (practice), GV: GV02
+
+  --- Tuần 6 ---
+    Day: Thứ 6 (Fri), Slot: S1, Lớp: C01, Môn: Thuật toán (practice), GV: GV03
+    Day: Thứ 4 (Wed), Slot: S1, Lớp: C03, Môn: Phát triển phần mềm (practice), GV: GV02
+
+  --- Tuần 7 ---
+    Day: Thứ 6 (Fri), Slot: S1, Lớp: C01, Môn: Thuật toán (practice), GV: GV03
+    Day: Thứ 4 (Wed), Slot: S1, Lớp: C03, Môn: Phát triển phần mềm (practice), GV: GV02
+
+  --- Tuần 8 ---
+    Day: Thứ 6 (Fri), Slot: S1, Lớp: C01, Môn: Thuật toán (practice), GV: GV03
+    Day: Thứ 4 (Wed), Slot: S1, Lớp: C03, Môn: Phát triển phần mềm (practice), GV: GV02
+
+  --- Tuần 9 ---
+    Day: Thứ 4 (Wed), Slot: S1, Lớp: C03, Môn: Phát triển phần mềm (practice), GV: GV02
+
+  --- Tuần 10 ---
+    Day: Thứ 4 (Wed), Slot: S1, Lớp: C03, Môn: Phát triển phần mềm (practice), GV: GV02
 
 
 ===== LỊCH SỬ DỤNG PHÒNG: TH2 =====
 
   --- Tuần 1 ---
-    Day: Thứ 5 (Thu), Slot: T1, Lớp: C02, Môn: Cơ sở dữ liệu (practice), GV: GV04
-    Day: Thứ 5 (Thu), Slot: T2, Lớp: C01, Môn: Cấu trúc dữ liệu (practice), GV: GV03
-    Day: Thứ 4 (Wed), Slot: S1, Lớp: C02, Môn: Mạng máy tính (practice), GV: GV04
-    Day: Thứ 4 (Wed), Slot: S2, Lớp: C03, Môn: Phát triển phần mềm (practice), GV: GV02
+    Day: Thứ 2 (Mon), Slot: T1, Lớp: C02, Môn: Mạng máy tính (practice), GV: GV04
+    Day: Thứ 3 (Tue), Slot: C1, Lớp: C02, Môn: Cơ sở dữ liệu (practice), GV: GV02
 
   --- Tuần 2 ---
-    Day: Thứ 5 (Thu), Slot: T1, Lớp: C02, Môn: Cơ sở dữ liệu (practice), GV: GV04
-    Day: Thứ 5 (Thu), Slot: T2, Lớp: C01, Môn: Cấu trúc dữ liệu (practice), GV: GV03
-    Day: Thứ 4 (Wed), Slot: S1, Lớp: C02, Môn: Mạng máy tính (practice), GV: GV04
-    Day: Thứ 4 (Wed), Slot: S2, Lớp: C03, Môn: Phát triển phần mềm (practice), GV: GV02
+    Day: Thứ 2 (Mon), Slot: T1, Lớp: C02, Môn: Mạng máy tính (practice), GV: GV04
+    Day: Thứ 3 (Tue), Slot: C1, Lớp: C02, Môn: Cơ sở dữ liệu (practice), GV: GV02
 
   --- Tuần 3 ---
-    Day: Thứ 5 (Thu), Slot: T1, Lớp: C02, Môn: Cơ sở dữ liệu (practice), GV: GV04
-    Day: Thứ 5 (Thu), Slot: T2, Lớp: C01, Môn: Cấu trúc dữ liệu (practice), GV: GV03
-    Day: Thứ 4 (Wed), Slot: S1, Lớp: C02, Môn: Mạng máy tính (practice), GV: GV04
-    Day: Thứ 4 (Wed), Slot: S2, Lớp: C03, Môn: Phát triển phần mềm (practice), GV: GV02
+    Day: Thứ 2 (Mon), Slot: T1, Lớp: C02, Môn: Mạng máy tính (practice), GV: GV04
+    Day: Thứ 3 (Tue), Slot: C1, Lớp: C02, Môn: Cơ sở dữ liệu (practice), GV: GV02
 
   --- Tuần 4 ---
-    Day: Thứ 5 (Thu), Slot: T1, Lớp: C02, Môn: Cơ sở dữ liệu (practice), GV: GV04
-    Day: Thứ 5 (Thu), Slot: T2, Lớp: C01, Môn: Cấu trúc dữ liệu (practice), GV: GV03
-    Day: Thứ 4 (Wed), Slot: S1, Lớp: C02, Môn: Mạng máy tính (practice), GV: GV04
-    Day: Thứ 4 (Wed), Slot: S2, Lớp: C03, Môn: Phát triển phần mềm (practice), GV: GV02
+    Day: Thứ 2 (Mon), Slot: T1, Lớp: C02, Môn: Mạng máy tính (practice), GV: GV04
+    Day: Thứ 3 (Tue), Slot: C1, Lớp: C02, Môn: Cơ sở dữ liệu (practice), GV: GV02
 
   --- Tuần 5 ---
-    Day: Thứ 5 (Thu), Slot: T1, Lớp: C02, Môn: Cơ sở dữ liệu (practice), GV: GV04
-    Day: Thứ 5 (Thu), Slot: T2, Lớp: C01, Môn: Cấu trúc dữ liệu (practice), GV: GV03
-    Day: Thứ 4 (Wed), Slot: S1, Lớp: C02, Môn: Mạng máy tính (practice), GV: GV04
-    Day: Thứ 4 (Wed), Slot: S2, Lớp: C03, Môn: Phát triển phần mềm (practice), GV: GV02
+    Day: Thứ 2 (Mon), Slot: T1, Lớp: C02, Môn: Mạng máy tính (practice), GV: GV04
+    Day: Thứ 3 (Tue), Slot: C1, Lớp: C02, Môn: Cơ sở dữ liệu (practice), GV: GV02
 
   --- Tuần 6 ---
-    Day: Thứ 5 (Thu), Slot: T1, Lớp: C02, Môn: Cơ sở dữ liệu (practice), GV: GV04
-    Day: Thứ 5 (Thu), Slot: T2, Lớp: C01, Môn: Cấu trúc dữ liệu (practice), GV: GV03
-    Day: Thứ 4 (Wed), Slot: S1, Lớp: C02, Môn: Mạng máy tính (practice), GV: GV04
-    Day: Thứ 4 (Wed), Slot: S2, Lớp: C03, Môn: Phát triển phần mềm (practice), GV: GV02
-
-  --- Tuần 7 ---
-    Day: Thứ 5 (Thu), Slot: T2, Lớp: C01, Môn: Cấu trúc dữ liệu (practice), GV: GV03
-    Day: Thứ 4 (Wed), Slot: S2, Lớp: C03, Môn: Phát triển phần mềm (practice), GV: GV02
-
-  --- Tuần 8 ---
-    Day: Thứ 5 (Thu), Slot: T2, Lớp: C01, Môn: Cấu trúc dữ liệu (practice), GV: GV03
-    Day: Thứ 4 (Wed), Slot: S2, Lớp: C03, Môn: Phát triển phần mềm (practice), GV: GV02
-
-  --- Tuần 9 ---
-    Day: Thứ 4 (Wed), Slot: S2, Lớp: C03, Môn: Phát triển phần mềm (practice), GV: GV02
-
-  --- Tuần 10 ---
-    Day: Thứ 4 (Wed), Slot: S2, Lớp: C03, Môn: Phát triển phần mềm (practice), GV: GV02
+    Day: Thứ 2 (Mon), Slot: T1, Lớp: C02, Môn: Mạng máy tính (practice), GV: GV04
+    Day: Thứ 3 (Tue), Slot: C1, Lớp: C02, Môn: Cơ sở dữ liệu (practice), GV: GV02
 
 
 ===== LỊCH SỬ DỤNG PHÒNG: TH4 =====
 
   --- Tuần 1 ---
-    Day: Thứ 7 (Sat), Slot: C1, Lớp: C01, Môn: Thuật toán (practice), GV: GV03
+    Day: Thứ 7 (Sat), Slot: C2, Lớp: C01, Môn: Cấu trúc dữ liệu (practice), GV: GV03
 
   --- Tuần 2 ---
-    Day: Thứ 7 (Sat), Slot: C1, Lớp: C01, Môn: Thuật toán (practice), GV: GV03
+    Day: Thứ 7 (Sat), Slot: C2, Lớp: C01, Môn: Cấu trúc dữ liệu (practice), GV: GV03
 
   --- Tuần 3 ---
-    Day: Thứ 7 (Sat), Slot: C1, Lớp: C01, Môn: Thuật toán (practice), GV: GV03
+    Day: Thứ 7 (Sat), Slot: C2, Lớp: C01, Môn: Cấu trúc dữ liệu (practice), GV: GV03
 
   --- Tuần 4 ---
-    Day: Thứ 7 (Sat), Slot: C1, Lớp: C01, Môn: Thuật toán (practice), GV: GV03
+    Day: Thứ 7 (Sat), Slot: C2, Lớp: C01, Môn: Cấu trúc dữ liệu (practice), GV: GV03
 
   --- Tuần 5 ---
-    Day: Thứ 7 (Sat), Slot: C1, Lớp: C01, Môn: Thuật toán (practice), GV: GV03
+    Day: Thứ 7 (Sat), Slot: C2, Lớp: C01, Môn: Cấu trúc dữ liệu (practice), GV: GV03
 
   --- Tuần 6 ---
-    Day: Thứ 7 (Sat), Slot: C1, Lớp: C01, Môn: Thuật toán (practice), GV: GV03
+    Day: Thứ 7 (Sat), Slot: C2, Lớp: C01, Môn: Cấu trúc dữ liệu (practice), GV: GV03
 
   --- Tuần 7 ---
-    Day: Thứ 7 (Sat), Slot: C1, Lớp: C01, Môn: Thuật toán (practice), GV: GV03
+    Day: Thứ 7 (Sat), Slot: C2, Lớp: C01, Môn: Cấu trúc dữ liệu (practice), GV: GV03
 
   --- Tuần 8 ---
-    Day: Thứ 7 (Sat), Slot: C1, Lớp: C01, Môn: Thuật toán (practice), GV: GV03
+    Day: Thứ 7 (Sat), Slot: C2, Lớp: C01, Môn: Cấu trúc dữ liệu (practice), GV: GV03

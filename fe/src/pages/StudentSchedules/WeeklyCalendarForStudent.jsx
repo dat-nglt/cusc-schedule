@@ -92,7 +92,7 @@ const WeeklyCalendar = ({
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
     const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'));
-    const { currentDate, setCurrentDate, selectedDateByWeekly } = useTimetable();
+    const { currentDate, setCurrentDate, setSeletedDateByWeekly } = useTimetable();
 
     const [weekDays, setWeekDays] = useState([]);
     const [isCalendarModalOpen, setIsCalendarModalOpen] = useState(false); // State for modal
@@ -124,13 +124,13 @@ const WeeklyCalendar = ({
     const handlePrevWeek = () => {
         const newDate = addDays(currentDate, -7);
         setCurrentDate(newDate);
-        selectedDateByWeekly(newDate); // Call with the new date
+        setSeletedDateByWeekly(newDate); // Call with the new date
     };
 
     const handleNextWeek = () => {
         const newDate = addDays(currentDate, 7);
         setCurrentDate(newDate);
-        selectedDateByWeekly(newDate); // Call with the new date
+        setSeletedDateByWeekly(newDate); // Call with the new date
     };
 
     // This now opens the modal
@@ -141,7 +141,7 @@ const WeeklyCalendar = ({
     // Callback when a date is selected in the modal
     const handleDateSelectedFromModal = (date) => {
         setCurrentDate(startOfWeek(date, { weekStartsOn: 1 })); // Set the WeeklyCalendar to the start of the selected date's week
-        selectedDateByWeekly(startOfWeek(date, { weekStartsOn: 1 })); // Notify context
+        setSeletedDateByWeekly(startOfWeek(date, { weekStartsOn: 1 })); // Notify context
         setIsCalendarModalOpen(false); // Close the modal
     };
 
