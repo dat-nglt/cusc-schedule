@@ -65,3 +65,17 @@ export const listCourses = async (filters = {}) => {
     throw new Error('Error listing courses: ' + (error.response?.data?.message || error.message));
   }
 };
+
+export const importCoursesFromExcel = async (fileBuffer) => {
+  try {
+    const formData = new FormData();
+    formData.append('excel_file', new Blob([fileBuffer]), 'courses.xlsx');
+    const response = await axiosInstance.post('/api/courses/import', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error importing courses:', error);
+    throw new Error('Error importing courses: ' + error.response?.data?.message || error.message);
+  }
+};

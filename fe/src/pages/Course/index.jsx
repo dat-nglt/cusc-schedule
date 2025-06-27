@@ -21,7 +21,7 @@ import {
   Delete as DeleteIcon,
 } from '@mui/icons-material';
 import CourseDetailModal from './CourseDetailModal';
-import AddCourseModal from './AddCourseModal';
+import AddCourseModal from './AddCourseModal'; // Import AddCourseModal mới
 import EditCourseModal from './EditCourseModal';
 import DeleteCourseModal from './DeleteCourseModal';
 import useResponsive from '../../hooks/useResponsive';
@@ -73,10 +73,10 @@ const Course = () => {
       if (Array.isArray(response)) {
         coursesData = response.map((course, index) => ({
           stt: index + 1,
-          course_id: course.course_id, // Thay courseid bằng course_id
-          course_name: course.course_name, // Thay coursename bằng course_name
-          start_date: course.start_date, // Thay startdate bằng start_date
-          end_date: course.end_date, // Thay enddate bằng end_date
+          course_id: course.course_id,
+          course_name: course.course_name,
+          start_date: course.start_date,
+          end_date: course.end_date,
           created_at: formatTimestamp(course.created_at),
           updated_at: formatTimestamp(course.updated_at),
         }));
@@ -108,7 +108,7 @@ const Course = () => {
   }, []);
 
   // Hàm lấy chi tiết khóa học theo ID
-  const handleViewCourse = async (course_id) => { // Thay courseid bằng course_id
+  const handleViewCourse = async (course_id) => {
     try {
       setLoading(true);
       const response = await getCourseById(course_id);
@@ -132,7 +132,7 @@ const Course = () => {
         course_name: courseData.course_name,
         start_date: courseData.start_date,
         end_date: courseData.end_date,
-        status: courseData.status || 'Không có dữ liệu', // Thêm status
+        status: courseData.status || 'Không có dữ liệu',
         created_at: formatTimestamp(courseData.created_at),
         updated_at: formatTimestamp(courseData.updated_at),
       });
@@ -147,19 +147,18 @@ const Course = () => {
   };
 
   // Hàm thêm khóa học
-  // src/pages/Course/index.jsx (đoạn handleAddCourse)
   const handleAddCourse = async (courseData) => {
     try {
       setLoading(true);
-      console.log('Gửi dữ liệu thêm khóa học:', courseData); // Log dữ liệu gửi lên
+      console.log('Gửi dữ liệu thêm khóa học:', courseData);
       const response = await addCourse({
         course_id: courseData.course_id,
         course_name: courseData.course_name,
         start_date: courseData.start_date,
         end_date: courseData.end_date,
-        status: courseData.status || 'inactive', // Đặt giá trị mặc định nếu không có
+        status: courseData.status || 'inactive',
       });
-      console.log('Phản hồi từ API (thêm):', response); // Log phản hồi từ API
+      console.log('Phản hồi từ API (thêm):', response);
 
       const newCourse = response.data || response;
       setCourses((prev) => [
@@ -175,7 +174,7 @@ const Course = () => {
         },
       ]);
     } catch (err) {
-      console.error('Lỗi khi thêm khóa học:', err.message, err.response?.data); // Log chi tiết lỗi
+      console.error('Lỗi khi thêm khóa học:', err.message, err.response?.data);
       setError(`Lỗi khi thêm khóa học: ${err.message} - ${err.response?.data?.message || 'Kiểm tra định dạng dữ liệu'}`);
     } finally {
       setLoading(false);
@@ -193,7 +192,7 @@ const Course = () => {
     try {
       setLoading(true);
       console.log('Gửi dữ liệu chỉnh sửa khóa học:', courseData);
-      const response = await updateCourse(courseData.course_id, { // Thay courseid bằng course_id
+      const response = await updateCourse(courseData.course_id, {
         course_id: courseData.course_id,
         course_name: courseData.course_name,
         start_date: courseData.start_date,
@@ -214,7 +213,7 @@ const Course = () => {
 
   // Hàm mở modal xóa và set course
   const handleOpenDeleteModal = (course) => {
-    if (!course || !course.course_id) { // Thay courseid bằng course_id
+    if (!course || !course.course_id) {
       console.error('Invalid course data in handleOpenDeleteModal:', course);
       setError('Dữ liệu khóa học không hợp lệ');
       return;
@@ -224,7 +223,7 @@ const Course = () => {
   };
 
   // Hàm xóa khóa học
-  const handleDeleteCourse = async (course_id) => { // Thay courseId bằng course_id
+  const handleDeleteCourse = async (course_id) => {
     try {
       setLoading(true);
       if (!course_id) {
@@ -253,10 +252,10 @@ const Course = () => {
   // Lọc danh sách khóa học dựa trên từ khóa tìm kiếm và năm
   const filteredCourses = courses.filter((course) => {
     const matchesSearchTerm =
-      course.course_id.toLowerCase().includes(searchTerm.toLowerCase()) || // Thay courseid bằng course_id
-      course.course_name.toLowerCase().includes(searchTerm.toLowerCase()); // Thay coursename bằng course_name
+      course.course_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      course.course_name.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesYear = selectedYear
-      ? course.start_date?.startsWith(selectedYear) // Thay startdate bằng start_date
+      ? course.start_date?.startsWith(selectedYear)
       : true;
     return matchesSearchTerm && matchesYear;
   });
@@ -369,6 +368,7 @@ const Course = () => {
         open={openAdd}
         onClose={() => setOpenAdd(false)}
         onAddCourse={handleAddCourse}
+        existingCourses={courses} // Truyền danh sách khóa học hiện tại để kiểm tra trùng lặp
       />
       <EditCourseModal
         open={openEdit}
