@@ -1,5 +1,7 @@
 # cusc-schedule
 
+
+
 ## 1. Thiết lập cấu trúc thư mục backend (`be`)
 - Tạo các thư mục và file cho backend: config, controllers, models, routes, services, middleware, utils, tests, docs, .env, app.js, package.json, README.md.
 - Đảm bảo phân chia rõ ràng các thành phần: xử lý nghiệp vụ, xác thực, routes, schema, middleware, v.v.

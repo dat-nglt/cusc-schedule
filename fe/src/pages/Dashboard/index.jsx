@@ -36,20 +36,60 @@ const Dashboard = () => {
 
     const [scheduleItems, setScheduleItems] = useState([
         {
-            id: '1',
-            course: 'Toán cao cấp',
-            room: 'P.301',
-            startTime: '2025-05-22T08:00:00',
-            endTime: '2025-05-22T10:00:00'
+            id: '3',
+            course: 'Hóa học cơ bản',
+            room: 'P.102',
+            lecturer: 'TS. Nguyễn Văn A',
+            type: 'Lý thuyết',
+            startTime: '2025-06-09T09:00:00',
+            endTime: '2025-06-09T11:00:00',
+            checkInTime: '2025-06-09T08:50:00',
+            checkOutTime: '2025-06-09T11:10:00'
         },
         {
-            id: '2',
-            course: 'Vật lý đại cương',
-            room: 'P.205',
-            startTime: '2025-05-22T13:00:00',
-            endTime: '2025-05-22T15:00:00'
+            id: '4',
+            course: 'Giải tích 1',
+            room: 'P.204',
+            lecturer: 'ThS. Trần Thị B',
+            type: 'Lý thuyết',
+            startTime: '2025-06-10T08:00:00',
+            endTime: '2025-06-10T10:00:00',
+            checkInTime: '2025-06-10T07:55:00',
+            checkOutTime: '2025-06-10T10:05:00'
+        },
+        {
+            id: '5',
+            course: 'Tin học đại cương',
+            room: 'P.105',
+            lecturer: 'ThS. Lê Văn C',
+            type: 'Thực hành',
+            startTime: '2025-06-11T13:00:00',
+            endTime: '2025-06-11T15:00:00',
+            checkInTime: '2025-06-11T12:50:00',
+            checkOutTime: '2025-06-11T15:10:00'
+        },
+        {
+            id: '6',
+            course: 'Kỹ thuật lập trình',
+            room: 'P.306',
+            lecturer: 'TS. Phạm Thị D',
+            type: 'Thực hành',
+            startTime: '2025-06-12T10:00:00',
+            endTime: '2025-06-12T12:00:00',
+            checkInTime: '2025-06-12T09:50:00',
+            checkOutTime: '2025-06-12T12:10:00'
+        },
+        {
+            id: '7',
+            course: 'Xác suất thống kê',
+            room: 'P.103',
+            lecturer: 'ThS. Đỗ Văn E',
+            type: 'Lý thuyết',
+            startTime: '2025-06-13T14:00:00',
+            endTime: '2025-06-13T16:00:00',
+            checkInTime: '2025-06-13T13:55:00',
+            checkOutTime: '2025-06-13T16:05:00'
         }
-
     ]);
 
     const handleItemMove = (itemId, newStartTime) => {
@@ -70,7 +110,7 @@ const Dashboard = () => {
     const recentConflicts = [
         { id: 1, type: 'Lớp học', name: 'Lớp Toán A1', time: '2023-10-15 08:00', conflictWith: 'Phòng 301 đã được đặt' },
         { id: 2, type: 'Giảng viên', name: 'TS. Nguyễn Văn A', time: '2023-10-15 09:00', conflictWith: 'Đã có lớp khác' },
-        { id: 3, type: 'Phòng học', name: 'Phòng 202', time: '2023-10-14 14:00', conflictWith: 'Thiết bị đang bảo trì' }
+        { id: 3, type: 'Phòng học', name: 'Phòng 202', time: '2023-10-14 14:00', conflictWith: 'Thiết bị đang bảo trì' },
     ];
 
     // Chart data
@@ -102,6 +142,7 @@ const Dashboard = () => {
         classes: 42,
         teachers: 28,
         rooms: 15,
+        course: 15,
         conflicts: 3
     };
 
@@ -109,7 +150,7 @@ const Dashboard = () => {
         <Box sx={{ p: 3, zIndex: 10 }}>
             {/* Quick Stats */}
             <QuickStats stats={stats} />
-            
+
             {/* Main Content */}
             <Box sx={
                 {
@@ -128,7 +169,7 @@ const Dashboard = () => {
                     onAddNew={handleAddNew}
                 />
                 {/* Recent Conflicts */}
-                <RecentConflicts stats={stats} recentConflicts={recentConflicts} />
+                {/* <RecentConflicts stats={stats} recentConflicts={recentConflicts} /> */}
             </Box>
         </Box>
     );
