@@ -44,26 +44,13 @@ export const updateLecturer = async (id, lecturerData) => {
     }
 };
 
-export const importLecturers = async (file, jsonData = null) => {
+export const importLecturers = async (jsonData) => {
     try {
-        if (jsonData) {
-            // Import từ dữ liệu JSON đã được validate
-            const response = await axiosInstance.post('/api/lecturers/importJson', {
-                lecturers: jsonData
-            });
-            return response;
-        } else {
-            // Import từ file Excel
-            const formData = new FormData();
-            formData.append('excel_file', file);
-
-            const response = await axiosInstance.post('/api/lecturers/import', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
-            return response;
-        }
+        // Import từ dữ liệu JSON đã được validate
+        const response = await axiosInstance.post('/api/lecturers/importJson', {
+            lecturers: jsonData
+        });
+        return response;
     }
     catch (error) {
         console.error('Error importing lecturers:', error);

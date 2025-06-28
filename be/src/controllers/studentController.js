@@ -1,7 +1,14 @@
-import { getAllStudents, getStudentById, createStudent, updateStudent, importstudentsFromExcel, deleteStudent, validateExcelTemplate } from "../services/studentService.js";
+import {
+    getAllStudents,
+    getStudentById,
+    createStudent,
+    updateStudent,
+    importstudentsFromJSON,
+    deleteStudent,
+    validateExcelTemplate
+} from "../services/studentService.js";
 import { APIResponse } from "../utils/APIResponse.js";
 import ExcelUtils from "../utils/ExcelUtils.js";
-import path from 'path';
 
 export const getAllStudentsController = async (req, res) => {
     try {
@@ -64,53 +71,42 @@ export const deleteStudentController = async (req, res) => {
     }
 }
 
-// Import Students from Excel
-export const importStudentsController = async (req, res) => {
+//Import Students from JSON
+export const importStudentsFromJSONController = async (req, res) => {
     try {
-        if (!req.file) {
-            return APIResponse(res, 400, null, "Vui lòng chọn file Excel");
+        const { students } = req.body;
+
+        if (!students || !Array.isArray(students)) {
+            return APIResponse(res, 400, null, "Dữ liệu học viên không hợp lệ.");
         }
 
-        const fileBuffer = req.file.buffer;
-
-        // Validate file extension
-        const allowedExtensions = ['.xlsx', '.xls'];
-        const fileExtension = path.extname(req.file.originalname).toLowerCase();
-
-        if (!allowedExtensions.includes(fileExtension)) {
-            return APIResponse(res, 400, null, "Chỉ chấp nhận file Excel (.xlsx, .xls)");
+        if (students.length === 0) {
+            return APIResponse(res, 400, null, "Không có học viên nào để thêm.");
         }
 
-        // Validate template structure
-        const templateValidation = validateExcelTemplate(fileBuffer);
-        if (!templateValidation.valid) {
-            return APIResponse(res, 400, null, "Template không hợp lệ");
-        }
-
-        // Import data
-        const results = await importstudentsFromExcel(fileBuffer);
-
+        //import data
+        const results = await importstudentsFromJSON(students);
         const response = {
-            summary: {
-                total: results.total,
-                success: results.success.length,
-                errors: results.errors.length
-            },
-            successRecords: results.success,
-            errorRecords: results.errors
+            success: true,
+            imported: results.success,
+            errors: results.errors,
+            message: `Đã thêm thành công ${results.success.length} học viên`
         };
 
         if (results.errors.length > 0) {
-            return APIResponse(res, 207, response, `Import hoàn tất với ${results.success.length}/${results.total} bản ghi thành công`);
+            response.message = `Thêm hoàn tất với ${results.success.length}/${students.length} bản ghi thành công`;
+            return APIResponse(res, 207, response, response.message);
         } else {
-            return APIResponse(res, 200, response, `Import thành công ${results.success.length} học viên`);
+            return APIResponse(res, 200, response, response.message);
         }
 
     } catch (error) {
-        console.error("Error importing Students:", error);
-        return APIResponse(res, 500, null, error.message || "Lỗi khi import file Excel");
+        console.error("Error importing students from JSON:", error);
+        return APIResponse(res, 500, null, error.message || "Lỗi khi thêm dữ liệu");
     }
 };
+
+
 
 // Download template Excel
 export const downloadTemplateController = async (req, res) => {

@@ -15,8 +15,8 @@ import {
 } from '@mui/material';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import * as XLSX from 'xlsx';
-import PreviewLecturersModal from './PreviewLecturersModal';
-import { processExcelData } from '../../utils/lecturerValidation';
+import PreviewLecturerModal from './PreviewLecturerModal';
+import { processExcelDataLecturer } from '../../utils/lecturerValidation';
 
 const availableDepartments = [
     'Khoa Công Nghệ Thông Tin',
@@ -52,6 +52,7 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
     });
 
     const [error, setError] = useState('');
+
     const [message, setMessage] = useState('');
     const [showPreview, setShowPreview] = useState(false);
     const [previewData, setPreviewData] = useState([]);
@@ -191,7 +192,7 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
             });
 
             // Xử lý và validate dữ liệu
-            const processedData = processExcelData(jsonData, existingLecturers);
+            const processedData = processExcelDataLecturer(jsonData, existingLecturers);
 
             if (processedData.length === 0) {
                 setError('Không có dữ liệu hợp lệ trong file Excel!');
@@ -219,7 +220,7 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
             imported.forEach(lecturer => onAddLecturer(lecturer));
 
             // Hiển thị thông báo thành công
-            setMessage(`Import thành công ${imported.length} giảng viên`);
+            setMessage(`Thêm thành công ${imported.length} giảng viên`);
             setError('');
         } else if (resultMessage) {
             setError(resultMessage);
@@ -418,7 +419,7 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
             </Dialog>
 
             {/* Preview Modal */}
-            <PreviewLecturersModal
+            <PreviewLecturerModal
                 open={showPreview}
                 onClose={handleClosePreview}
                 previewData={previewData}

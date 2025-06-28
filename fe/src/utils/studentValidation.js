@@ -1,31 +1,30 @@
-// Utility functions for validating lecturer data from Excel import
+// Utility functions for validating student data from Excel import
 
 export const validGenders = ['Nam', 'Nữ'];
 
 export const requiredFields = [
-    'lecturer_id',
+    'student_id',
     'name',
     'email',
     'day_of_birth',
     'gender',
     'address',
     'phone_number',
-    'department',
-    'hire_date',
-    'degree'
+    'class',
+    'admission_year',
 ];
 
-export const validateLecturerData = (lecturer, existingLecturers, allImportData = []) => {
+export const validateStudentData = (student, existingStudents, allImportData = []) => {
     const errors = [];
 
-    // Kiểm tra trùng lặp mã giảng viên với dữ liệu hiện có
-    const isDuplicateExisting = existingLecturers.some(
-        existing => existing.lecturer_id === lecturer.lecturer_id
+    // Kiểm tra trùng lặp mã học viên với dữ liệu hiện có
+    const isDuplicateExisting = existingStudents.some(
+        existing => existing.student_id === student.student_id
     );
 
     // Kiểm tra trùng lặp trong dữ liệu import
     const isDuplicateImport = allImportData.filter(
-        item => item.lecturer_id === lecturer.lecturer_id
+        item => item.student_id === student.student_id
     ).length > 1;
 
     if (isDuplicateExisting || isDuplicateImport) {
@@ -34,7 +33,7 @@ export const validateLecturerData = (lecturer, existingLecturers, allImportData 
 
     // Kiểm tra các trường bắt buộc
     const missingFields = requiredFields.filter(field => {
-        const value = lecturer[field];
+        const value = student[field];
         return !value || (typeof value === 'string' && value.trim() === '');
     });
 
@@ -43,22 +42,22 @@ export const validateLecturerData = (lecturer, existingLecturers, allImportData 
     }
 
     // Kiểm tra format email
-    if (lecturer.email) {
+    if (student.email) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(lecturer.email)) {
+        if (!emailRegex.test(student.email)) {
             errors.push('invalid_email');
         }
     }
 
     // Kiểm tra format số điện thoại
-    if (lecturer.phone_number) {
+    if (student.phone_number) {
         const phoneRegex = /^[0-9]{10,11}$/;
-        if (!phoneRegex.test(lecturer.phone_number.toString())) {
+        if (!phoneRegex.test(student.phone_number.toString())) {
             errors.push('invalid_phone');
         }
-    }    // Kiểm tra ngày sinh và ngày tuyển dụng
-    if (lecturer.day_of_birth) {
-        const birthDate = new Date(lecturer.day_of_birth);
+    }    // Kiểm tra ngày sinh 
+    if (student.day_of_birth) {
+        const birthDate = new Date(student.day_of_birth);
         const today = new Date();
 
         if (isNaN(birthDate.getTime()) || birthDate >= today) {
@@ -66,47 +65,38 @@ export const validateLecturerData = (lecturer, existingLecturers, allImportData 
         }
     }
 
-    if (lecturer.hire_date) {
-        const hireDate = new Date(lecturer.hire_date);
-        const today = new Date();
-
-        if (isNaN(hireDate.getTime()) || hireDate > today) {
-            errors.push('invalid_date');
-        }
-    }
-
     // Kiểm tra giới tính
-    if (lecturer.gender && !validGenders.includes(lecturer.gender)) {
+    if (student.gender && !validGenders.includes(student.gender)) {
         errors.push('invalid_gender');
     }
 
     return errors;
 };
 
-export const processExcelDataLecturer = (rawData, existingLecturers) => {
+export const processExcelDataStudent = (rawData, existingStudents) => {
     // Xử lý dữ liệu thô từ Excel
     const processedData = rawData.map((row, index) => {
         // Chuẩn hóa dữ liệu
-        const lecturer = {
-            lecturer_id: row['Mã giảng viên'] || row['lecturer_id'] || '',
+        const student = {
+            student_id: row['Mã học viên'] || row['student_id'] || '',
             name: row['Họ tên'] || row['name'] || '',
             email: row['Email'] || row['email'] || '',
             day_of_birth: formatDate(row['Ngày sinh'] || row['day_of_birth']),
             gender: row['Giới tính'] || row['gender'] || '',
             address: row['Địa chỉ'] || row['address'] || '',
             phone_number: row['Số điện thoại'] || row['phone_number'] || '',
-            department: row['Khoa/Bộ môn'] || row['department'] || '',
-            hire_date: formatDate(row['Ngày tuyển dụng'] || row['hire_date']),
-            degree: row['Học vị'] || row['degree'] || '',
-            status: row['Trạng thái'] || row['status'] || 'Hoạt động',
+            class: row['Lớp'] || row['class'] || '',
+            admission_year: row['Năm nhập học'] || row['admission_year'] || '',
+            gpa: row['Điểm trung bình'] || row['gpa'] || '',
+            status: row['Trạng thái'] || row['status'] || 'Đang học',
             rowIndex: index + 2 // +2 vì Excel bắt đầu từ row 1 và có header
         };
 
         // Validate dữ liệu
-        const errors = validateLecturerData(lecturer, existingLecturers, rawData);
+        const errors = validateStudentData(student, existingStudents, rawData);
 
         return {
-            ...lecturer,
+            ...student,
             errors
         };
     });

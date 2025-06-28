@@ -1,4 +1,4 @@
-import db from "../models";
+import db from "../models/User.js";
 import ExcelUtils from "../utils/ExcelUtils.js";
 const { Lecturer } = db;
 
@@ -65,115 +65,6 @@ export const deleteLecturer = async (id) => {
     }
 };
 
-// Import lecturers from Excel file
-export const importLecturersFromExcel = async (fileBuffer) => {
-    try {
-        // Đọc file Excel từ buffer
-        const rawData = ExcelUtils.readExcelToJSON(fileBuffer);
-
-        if (!rawData || rawData.length === 0) {
-            throw new Error("File Excel không có dữ liệu hoặc định dạng không đúng");
-        }
-
-        // Chuyển đổi cột tiếng Việt sang tiếng Anh
-        const lecturersData = ExcelUtils.convertVietnameseColumnsToEnglish(rawData);
-
-        const results = {
-            success: [],
-            errors: [],
-            total: lecturersData.length
-        };
-
-        // Validate và tạo lecturer cho từng row
-        for (let i = 0; i < lecturersData.length; i++) {
-            const row = lecturersData[i];
-            const rowIndex = i + 2; // Bắt đầu từ row 2 (sau header)
-
-            try {
-                // Validate required fields
-                if (!row.lecturer_id || !row.name) {
-                    results.errors.push({
-                        row: rowIndex,
-                        lecturer_id: row.lecturer_id || 'N/A',
-                        error: 'Mã giảng viên và Họ tên là bắt buộc'
-                    });
-                    continue;
-                }
-
-                // Format data theo structure của database
-                const lecturerData = {
-                    lecturer_id: ExcelUtils.cleanString(row.lecturer_id),
-                    name: ExcelUtils.cleanString(row.name),
-                    email: ExcelUtils.cleanString(row.email),
-                    day_of_birth: ExcelUtils.formatExcelDate(row.day_of_birth),
-                    gender: ExcelUtils.cleanString(row.gender),
-                    address: ExcelUtils.cleanString(row.address),
-                    phone_number: ExcelUtils.cleanString(row.phone_number),
-                    department: ExcelUtils.cleanString(row.department),
-                    hire_date: ExcelUtils.formatExcelDate(row.hire_date),
-                    degree: ExcelUtils.cleanString(row.degree),
-                    status: ExcelUtils.cleanString(row.status) || 'active'
-                };
-
-                // Validate email format nếu có
-                if (lecturerData.email && !ExcelUtils.isValidEmail(lecturerData.email)) {
-                    results.errors.push({
-                        row: rowIndex,
-                        lecturer_id: lecturerData.lecturer_id,
-                        error: 'Email không đúng định dạng'
-                    });
-                    continue;
-                }
-
-                // Kiểm tra lecturer_id đã tồn tại chưa
-                const existingLecturer = await Lecturer.findByPk(lecturerData.lecturer_id);
-                if (existingLecturer) {
-                    results.errors.push({
-                        row: rowIndex,
-                        lecturer_id: lecturerData.lecturer_id,
-                        error: 'Mã giảng viên đã tồn tại'
-                    });
-                    continue;
-                }
-
-                // Kiểm tra email đã tồn tại chưa (nếu có)
-                if (lecturerData.email) {
-                    const existingEmail = await Lecturer.findOne({
-                        where: { email: lecturerData.email }
-                    });
-                    if (existingEmail) {
-                        results.errors.push({
-                            row: rowIndex,
-                            lecturer_id: lecturerData.lecturer_id,
-                            error: 'Email đã tồn tại'
-                        });
-                        continue;
-                    }
-                }
-
-                // Tạo lecturer mới
-                const newLecturer = await Lecturer.create(lecturerData);
-                results.success.push({
-                    row: rowIndex,
-                    lecturer_id: newLecturer.lecturer_id,
-                    name: newLecturer.name
-                });
-
-            } catch (error) {
-                results.errors.push({
-                    row: rowIndex,
-                    lecturer_id: row.lecturer_id || 'N/A',
-                    error: error.message || 'Lỗi không xác định'
-                });
-            }
-        }
-
-        return results;
-    } catch (error) {
-        console.error("Error importing lecturers from Excel:", error);
-        throw error;
-    }
-};
 
 // Import lecturers from JSON data (for preview feature)
 export const importLecturersFromJson = async (lecturersData) => {
@@ -195,17 +86,17 @@ export const importLecturersFromJson = async (lecturersData) => {
 
             try {
                 // Validate required fields
-                if (!lecturerData.lecturer_id || !lecturerData.name) {
+                if (!lecturerData.lecturer_id || !lecturerData.name || !lecturerData.email) {
                     results.errors.push({
                         index: index,
                         lecturer_id: lecturerData.lecturer_id || 'N/A',
-                        error: 'Mã giảng viên và Họ tên là bắt buộc'
+                        error: 'Mã giảng viên, họ tên và email là bắt buộc'
                     });
                     continue;
                 }
 
                 // Clean và format data
-                const cleanedData = {
+               const cleanedData = {
                     lecturer_id: lecturerData.lecturer_id.toString().trim(),
                     name: lecturerData.name.toString().trim(),
                     email: lecturerData.email ? lecturerData.email.toString().trim() : null,
@@ -251,7 +142,7 @@ export const importLecturersFromJson = async (lecturersData) => {
                         results.errors.push({
                             index: index,
                             lecturer_id: cleanedData.lecturer_id,
-                            error: 'Email đã tồn tại'
+                             error: 'Email đã tồn tại'
                         });
                         continue;
                     }

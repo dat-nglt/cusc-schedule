@@ -50,15 +50,10 @@ export const deleteStudent = async (id) => {
     }
 };
 
-export const importStudents = async (file) => {
-    const formData = new FormData();
-    formData.append('excel_file', file);
-
+export const importStudents = async (jsonData) => {
     try {
-        const response = await axiosInstance.post('/api/students/import', formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
+        const response = await axiosInstance.post('/api/students/importJson', {
+            students: jsonData
         });
         return response;
     } catch (error) {

@@ -39,7 +39,7 @@ const DeleteLecturerModal = ({ open, onClose, onDelete, lecturer }) => {
               fontWeight: 'bold', // In đậm
             }}
           >
-            {lecturer?.maGiangVien}
+            {lecturer?.lecturer_id}
           </Box> không?
         </Typography>
       </DialogContent>

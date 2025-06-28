@@ -24,20 +24,14 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ErrorIcon from '@mui/icons-material/Error';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import { importLecturers } from '../../api/lecturerAPI';
-
-export default function PreviewLecturersModal({
-    open,
-    onClose,
-    previewData,
-    onImportSuccess
-}) {
+import { importStudents } from '../../api/studentAPI';
+export default function PreviewStudentModal({ open, onClose, previewData, onImportSuccess }) {
     const [isImporting, setIsImporting] = useState(false);
     const [importError, setImportError] = useState('');
     const [importMessage, setImportMessage] = useState('');
 
-    const getRowStatus = (lecturer) => {
-        if (lecturer.errors && lecturer.errors.length > 0) {
+    const getRowStatus = (student) => {
+        if (student.errors && student.errors.length > 0) {
             return 'error';
         }
         return 'valid';
@@ -45,12 +39,11 @@ export default function PreviewLecturersModal({
 
     const getErrorChip = (error) => {
         const errorMessages = {
-            'duplicate_id': 'Mã GV trùng lặp',
+            'duplicate_id': 'Mã HV trùng lặp',
             'missing_required': 'Thiếu dữ liệu bắt buộc',
             'invalid_email': 'Email không hợp lệ',
             'invalid_phone': 'SĐT không hợp lệ',
             'invalid_date': 'Ngày không hợp lệ',
-            'invalid_department': 'Khoa không hợp lệ',
             'invalid_degree': 'Bằng cấp không hợp lệ',
             'invalid_gender': 'Giới tính không hợp lệ'
         };
@@ -66,8 +59,10 @@ export default function PreviewLecturersModal({
         );
     };
 
+
     const validRows = previewData.filter(row => getRowStatus(row) === 'valid');
     const errorRows = previewData.filter(row => getRowStatus(row) === 'error');
+
 
     const handleConfirmImport = async () => {
         if (validRows.length === 0) {
@@ -82,15 +77,15 @@ export default function PreviewLecturersModal({
         try {
             // Tạo file Excel tạm thời chỉ với dữ liệu hợp lệ
             const validData = validRows.map(row => {
-                const { errors: _errors, rowIndex: _rowIndex, ...lecturerData } = row;
-                return lecturerData;
+                const { errors: _errors, rowIndex: _rowIndex, ...studentData } = row;
+                return studentData;
             });
-
+            console.log('Valid data to import:', validData);
             // Gọi API import với dữ liệu đã được validate
-            const response = await importLecturers(null, validData);
+            const response = await importStudents(validData);
 
             if (response.data && response.data) {
-                setImportMessage(`Thêm thành công ${validRows.length} giảng viên`);
+                setImportMessage(`Thêm thành công ${validRows.length} học viên`);
                 setImportError('');
 
                 // Delay để người dùng thấy thông báo thành công trước khi đóng modal
@@ -107,12 +102,11 @@ export default function PreviewLecturersModal({
         } finally {
             setIsImporting(false);
         }
-    };
-
+    }
     return (
         <Dialog open={open} onClose={onClose} maxWidth="lg" fullWidth>
             <DialogTitle>
-                <Typography variant="h6">Xem trước dữ liệu đã nhập</Typography>
+                <Typography >Xem trước dữ liệu học viên</Typography>
             </DialogTitle>
             <DialogContent>
                 {importError && (
@@ -169,23 +163,29 @@ export default function PreviewLecturersModal({
                                 <Table stickyHeader size="small">
                                     <TableHead>
                                         <TableRow>
-                                            <TableCell>Mã GV</TableCell>
+                                            <TableCell>Mã HV</TableCell>
                                             <TableCell>Họ tên</TableCell>
                                             <TableCell>Email</TableCell>
                                             <TableCell>SĐT</TableCell>
-                                            <TableCell>Khoa</TableCell>
-                                            <TableCell>Bằng cấp</TableCell>
+                                            <TableCell>Giới tính</TableCell>
+
+                                            <TableCell>Địa chỉ</TableCell>
+                                            <TableCell>Lớp</TableCell>
+                                            <TableCell>Năm nhập học</TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {validRows.map((lecturer, index) => (
+                                        {validRows.map((student, index) => (
                                             <TableRow key={index}>
-                                                <TableCell>{lecturer.lecturer_id}</TableCell>
-                                                <TableCell>{lecturer.name}</TableCell>
-                                                <TableCell>{lecturer.email}</TableCell>
-                                                <TableCell>{lecturer.phone_number}</TableCell>
-                                                <TableCell>{lecturer.department}</TableCell>
-                                                <TableCell>{lecturer.degree}</TableCell>
+                                                <TableCell>{student.student_id}</TableCell>
+                                                <TableCell>{student.name}</TableCell>
+                                                <TableCell>{student.email}</TableCell>
+                                                <TableCell>{student.phone_number}</TableCell>
+                                                <TableCell>{student.gender}</TableCell>
+
+                                                <TableCell>{student.address}</TableCell>
+                                                <TableCell>{student.class}</TableCell>
+                                                <TableCell>{student.admission_year}</TableCell>
                                             </TableRow>
                                         ))}
                                     </TableBody>
@@ -208,28 +208,36 @@ export default function PreviewLecturersModal({
                                 <Table stickyHeader size="small">
                                     <TableHead>
                                         <TableRow>
-                                            <TableCell>Mã GV</TableCell>
+                                            <TableCell>Mã HV</TableCell>
                                             <TableCell>Họ tên</TableCell>
                                             <TableCell>Email</TableCell>
                                             <TableCell>SĐT</TableCell>
-                                            <TableCell>Khoa</TableCell>
+                                            <TableCell>Giới tính</TableCell>
+
+                                            <TableCell>Địa chỉ</TableCell>
+                                            <TableCell>Lớp</TableCell>
+                                            <TableCell>Năm nhập học</TableCell>
                                             <TableCell>Lỗi</TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {errorRows.map((lecturer, index) => (
+                                        {errorRows.map((student, index) => (
                                             <TableRow
                                                 key={index}
                                                 sx={{ bgcolor: 'error.lighter' }}
                                             >
-                                                <TableCell>{lecturer.lecturer_id || '-'}</TableCell>
-                                                <TableCell>{lecturer.name || '-'}</TableCell>
-                                                <TableCell>{lecturer.email || '-'}</TableCell>
-                                                <TableCell>{lecturer.phone_number || '-'}</TableCell>
-                                                <TableCell>{lecturer.department || '-'}</TableCell>
+                                                <TableCell>{student.student_id || '-'}</TableCell>
+                                                <TableCell>{student.name || '-'}</TableCell>
+                                                <TableCell>{student.email || '-'}</TableCell>
+                                                <TableCell>{student.phone_number || '-'}</TableCell>
+                                                <TableCell>{student.gender || '-'}</TableCell>
+
+                                                <TableCell>{student.address || '-'}</TableCell>
+                                                <TableCell>{student.class || '-'}</TableCell>
+                                                <TableCell>{student.admission_year || '-'}</TableCell>
                                                 <TableCell>
                                                     <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-                                                        {lecturer.errors.map((error) => getErrorChip(error))}
+                                                        {student.errors.map((error) => getErrorChip(error))}
                                                     </Box>
                                                 </TableCell>
                                             </TableRow>
@@ -253,9 +261,9 @@ export default function PreviewLecturersModal({
                 >
                     {isImporting ? 'Đang thêm...' :
                         importMessage ? 'Đã thêm thành công' :
-                            `Thêm ${validRows.length} giảng viên`}
+                            `Thêm ${validRows.length} học viên viên`}
                 </Button>
             </DialogActions>
         </Dialog>
-    );
+    )
 }
