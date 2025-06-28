@@ -8,19 +8,12 @@ dotenv.config();
 
 const basename = path.basename(import.meta.url);
 
-// Xác định môi trường hiện tại: ưu tiên biến môi trường NODE_ENV, mặc định là 'development'.
-// Mặc dù biến 'env' không được dùng trực tiếp trong cấu hình Sequelize ở đây,
-// nó vẫn có thể hữu ích cho các logic khác trong ứng dụng của bạn.
 const env = process.env.NODE_ENV || "development";
 
-// Đối tượng 'db' sẽ chứa tất cả các model đã tải và instance của Sequelize.
 const db = {};
 
 let sequelize; // Biến lưu trữ instance của Sequelize.
 
-// --- Cấu hình Database từ biến môi trường ---
-// Kiểm tra xem các biến môi trường cần thiết có tồn tại không.
-// Đây là bước quan trọng để tránh lỗi nếu .env chưa được cấu hình.
 const requiredEnvVars = [
   "DB_DATABASE",
   "DB_USERNAME",
@@ -65,11 +58,6 @@ fs.readdirSync(__dirname)
     );
   })
   .forEach((file) => {
-    // Tải từng model và gán vào đối tượng 'db'.
-    // Lưu ý: Nếu các file model của bạn cũng là ES Modules (dùng 'export default'),
-    // bạn cần dùng 'await import(path.join(__dirname, file))).default(sequelize, Sequelize.DataTypes);'
-    // và biến hàm bao bọc (hoặc hàm IIFE) thành async.
-    // Hiện tại, 'require()' vẫn hoạt động nếu các model của bạn vẫn là CommonJS.
     const model = require(path.join(__dirname, file))(
       sequelize,
       Sequelize.DataTypes

@@ -1,0 +1,103 @@
+2025-06-28 11:03:32 info: ✅ PostgreSQL successfully connected to Sequelize.
+2025-06-28 11:03:32 info: ✅ Database connection successfully.
+2025-06-28 11:03:32 info: ✅ Passport configuration function loaded.
+2025-06-28 11:03:32 info: ✅ Passport has been configured.
+2025-06-28 11:03:32 info: ✅ Middleware Morgan for HTTP request logging configured.
+2025-06-28 11:03:32 info: ✅ Middleware Session and Passport have been configured.
+2025-06-28 11:03:32 info: ✅ Router has been setup.
+2025-06-28 11:03:32 info: ✅ Server is running on port 3000 (development environment)
+2025-06-28 14:23:44 info: ✅ PostgreSQL successfully connected to Sequelize.
+2025-06-28 14:23:44 info: ✅ Database connection successfully.
+2025-06-28 14:23:44 info: ✅ Passport configuration function loaded.
+2025-06-28 14:23:44 info: ✅ Passport has been configured.
+2025-06-28 14:23:44 info: ✅ Middleware Morgan for HTTP request logging configured.
+2025-06-28 14:23:44 info: ✅ Middleware Session and Passport have been configured.
+2025-06-28 14:23:44 info: ✅ Router has been setup.
+2025-06-28 14:23:44 info: ✅ Server is running on port 3000 (development environment)
+2025-06-28 14:25:08 info: ✅ PostgreSQL successfully connected to Sequelize.
+2025-06-28 14:25:08 info: ✅ Database connection successfully.
+2025-06-28 14:25:08 info: ✅ Passport configuration function loaded.
+2025-06-28 14:25:08 info: ✅ Passport has been configured.
+2025-06-28 14:25:08 info: ✅ Middleware Morgan for HTTP request logging configured.
+2025-06-28 14:25:08 info: ✅ Middleware Session and Passport have been configured.
+2025-06-28 14:25:08 info: ✅ Router has been setup.
+2025-06-28 14:25:08 info: ✅ Server is running on port 3000 (development environment)
+2025-06-28 15:25:06 info: ✅ PostgreSQL successfully connected to Sequelize.
+2025-06-28 15:25:06 info: ✅ Database connection successfully.
+2025-06-28 15:25:06 info: ✅ Passport configuration function loaded.
+2025-06-28 15:25:06 info: ✅ Passport has been configured.
+2025-06-28 15:25:06 info: ✅ Middleware Morgan for HTTP request logging configured.
+2025-06-28 15:25:06 info: ✅ Middleware Session and Passport have been configured.
+2025-06-28 15:25:06 info: ✅ Router has been setup.
+2025-06-28 15:25:06 info: ✅ Server is running on port 3000 (development environment)
+2025-06-28 15:25:12 info: ✅ PostgreSQL successfully connected to Sequelize.
+2025-06-28 15:25:12 info: ✅ Database connection successfully.
+2025-06-28 15:25:12 info: ✅ Passport configuration function loaded.
+2025-06-28 15:25:12 info: ✅ Passport has been configured.
+2025-06-28 15:25:12 info: ✅ Middleware Morgan for HTTP request logging configured.
+2025-06-28 15:25:12 info: ✅ Middleware Session and Passport have been configured.
+2025-06-28 15:25:12 info: ✅ Router has been setup.
+2025-06-28 15:25:12 info: ✅ Server is running on port 3000 (development environment)
+2025-06-28 15:25:20 info: ✅ PostgreSQL successfully connected to Sequelize.
+2025-06-28 15:25:20 info: ✅ Database connection successfully.
+2025-06-28 15:25:20 info: ✅ Passport configuration function loaded.
+2025-06-28 15:25:20 info: ✅ Passport has been configured.
+2025-06-28 15:25:20 info: ✅ Middleware Morgan for HTTP request logging configured.
+2025-06-28 15:25:20 info: ✅ Middleware Session and Passport have been configured.
+2025-06-28 15:25:20 info: ✅ Router has been setup.
+2025-06-28 15:25:20 info: ✅ Server is running on port 3000 (development environment)
+2025-06-28 15:25:29 info: ✅ PostgreSQL successfully connected to Sequelize.
+2025-06-28 15:25:29 info: ✅ Database connection successfully.
+2025-06-28 15:25:29 info: ✅ Passport configuration function loaded.
+2025-06-28 15:25:29 info: ✅ Passport has been configured.
+2025-06-28 15:25:29 info: ✅ Middleware Morgan for HTTP request logging configured.
+2025-06-28 15:25:29 info: ✅ Middleware Session and Passport have been configured.
+2025-06-28 15:25:29 info: ✅ Router has been setup.
+2025-06-28 15:25:29 info: ✅ Server is running on port 3000 (development environment)
+2025-06-28 15:29:27 info: ✅ PostgreSQL successfully connected to Sequelize.
+2025-06-28 15:29:27 info: ✅ Database connection successfully.
+2025-06-28 15:29:27 info: ✅ Passport configuration function loaded.
+2025-06-28 15:29:27 info: ✅ Passport has been configured.
+2025-06-28 15:29:27 info: ✅ Middleware Morgan for HTTP request logging configured.
+2025-06-28 15:29:27 info: ✅ Middleware Session and Passport have been configured.
+2025-06-28 15:29:27 info: ✅ Router has been setup.
+2025-06-28 15:29:27 info: ✅ Server is running on port 3000 (development environment)
+2025-06-28 15:29:32 info: ✅ PostgreSQL successfully connected to Sequelize.
+2025-06-28 15:29:32 info: ✅ Database connection successfully.
+2025-06-28 15:29:32 info: ✅ Passport configuration function loaded.
+2025-06-28 15:29:32 info: ✅ Passport has been configured.
+2025-06-28 15:29:32 info: ✅ Middleware Morgan for HTTP request logging configured.
+2025-06-28 15:29:32 info: ✅ Middleware Session and Passport have been configured.
+2025-06-28 15:29:32 info: ✅ Router has been setup.
+2025-06-28 15:29:32 info: ✅ Server is running on port 3000 (development environment)
+2025-06-28 15:29:35 info: ✅ PostgreSQL successfully connected to Sequelize.
+2025-06-28 15:29:35 info: ✅ Database connection successfully.
+2025-06-28 15:29:35 info: ✅ Passport configuration function loaded.
+2025-06-28 15:29:35 info: ✅ Passport has been configured.
+2025-06-28 15:29:35 info: ✅ Middleware Morgan for HTTP request logging configured.
+2025-06-28 15:29:35 info: ✅ Middleware Session and Passport have been configured.
+2025-06-28 15:29:35 info: ✅ Router has been setup.
+2025-06-28 15:29:35 info: ✅ Server is running on port 3000 (development environment)
+2025-06-28 15:30:14 info: ✅ PostgreSQL successfully connected to Sequelize.
+2025-06-28 15:30:14 info: ✅ Passport configuration function loaded.
+2025-06-28 15:30:14 info: ✅ Passport has been configured.
+2025-06-28 15:30:14 info: ✅ Middleware Morgan for HTTP request logging configured.
+2025-06-28 15:30:14 info: ✅ Middleware Session and Passport have been configured.
+2025-06-28 15:30:14 info: ✅ Router has been setup.
+2025-06-28 15:30:14 info: ✅ Server is running on port 3000 (development environment)
+2025-06-28 15:30:25 info: ✅ PostgreSQL successfully connected to Sequelize.
+2025-06-28 15:30:25 info: ✅ Database connection successfully.
+2025-06-28 15:30:25 info: ✅ Passport configuration function loaded.
+2025-06-28 15:30:25 info: ✅ Passport has been configured.
+2025-06-28 15:30:25 info: ✅ Middleware Morgan for HTTP request logging configured.
+2025-06-28 15:30:25 info: ✅ Middleware Session and Passport have been configured.
+2025-06-28 15:30:25 info: ✅ Router has been setup.
+2025-06-28 15:30:25 info: ✅ Server is running on port 3000 (development environment)
+2025-06-28 15:31:27 info: ✅ PostgreSQL successfully connected to Sequelize.
+2025-06-28 15:31:27 info: ✅ Database connection successfully.
+2025-06-28 15:31:27 info: ✅ Passport configuration function loaded.
+2025-06-28 15:31:27 info: ✅ Passport has been configured.
+2025-06-28 15:31:27 info: ✅ Middleware Morgan for HTTP request logging configured.
+2025-06-28 15:31:27 info: ✅ Middleware Session and Passport have been configured.
+2025-06-28 15:31:27 info: ✅ Router has been setup.
+2025-06-28 15:31:27 info: ✅ Server is running on port 3000 (development environment)

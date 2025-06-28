@@ -68,9 +68,7 @@ const ScheduleSidebar = () => {
   const [filterValue, setFilterValue] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
 
-<<<<<<< HEAD:fe/src/components/layout/ScheduleLayout/ScheduleSidebar.jsx
   const [drawerOpen, setDrawerOpen] = useState(false);
-=======
   const navItems = [
     { text: 'Quản lý thời khóa biểu', icon: <TimetableIcon />, path: '/dashboard' },
     { text: 'Quản lý giảng viên', icon: <PersonIcon />, path: '/lecturers' },
@@ -85,8 +83,6 @@ const ScheduleSidebar = () => {
     { text: 'Quản lý thông báo', icon: <CalendarIcon />, path: '/notification' },
     { text: 'Đăng xuất', icon: <LogoutIcon />, path: '/logout' },
   ];
->>>>>>> 66a1362a00eaa404f4e3cf74422769c8c72a256a:fe/src/components/layout/Sidebar.jsx
-
   // Handlers for drawer
   const handleDrawerOpen = () => {
     setDrawerOpen(true);

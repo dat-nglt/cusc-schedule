@@ -9,14 +9,9 @@ const routes = [
     exact: true,
     title: "Trình điều khiển",
     isPrivate: false,
-<<<<<<< HEAD
     layout: ScheduleLayout,
   },
   {
-=======
-    layout: MainLayout,
-  }, {
->>>>>>> 66a1362a00eaa404f4e3cf74422769c8c72a256a
     path: "/login",
     component: "LoginPage",
     exact: true,
@@ -36,11 +31,7 @@ const routes = [
     exact: true,
     title: "Hồ sơ cá nhân",
     isPrivate: false,
-<<<<<<< HEAD
     layout: AdminLayout,
-=======
-    layout: MainLayout,
->>>>>>> 66a1362a00eaa404f4e3cf74422769c8c72a256a
   },
   {
     path: "/student",
@@ -64,7 +55,7 @@ const routes = [
     exact: true,
     title: "Thêm Khóa học",
     isPrivate: false,
-    layout: MainLayout,
+    layout: AdminLayout,
   },
   {
     path: "/courses/edit/:courseid",
@@ -72,7 +63,7 @@ const routes = [
     exact: true,
     title: "Chỉnh sửa Khóa học",
     isPrivate: false,
-    layout: MainLayout,
+    layout: AdminLayout,
   },
   {
     path: "/slottime",
@@ -112,7 +103,7 @@ const routes = [
     exact: false,
     title: "Thông báo",
     isPrivate: false,
-    layout: MainLayout,
+    layout: AdminLayout,
   },
   {
     path: "/lecturers",
