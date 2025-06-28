@@ -7,7 +7,7 @@ import passport from "passport";
 import morgan from "morgan"; // Import Morgan
 import logger from "./utils/logger.js"; // Import logger đã cấu hìnhwinston-daily-rotate-file'
 import setupRoutes from "./routes/router.js";
-import connectDB from "./config/database.js";
+import connectDB from "./config/connectDB.js";
 import models from "./models/index.js";
 import configurePassport from "./config/passport.js";
 
@@ -19,10 +19,9 @@ const PORT = process.env.PORT || 3000;
 async function startServer() {
   try {
     await connectDB(models);
-    logger.info("✅ Database connection successfully."); // Dùng logger thay vì console.log
 
     configurePassport();
-    logger.info("✅ Passport has been configured."); // Dùng logger
+    logger.info("✅ Passport has been configured.");
 
     app.use(
       morgan("combined", {
@@ -42,7 +41,7 @@ async function startServer() {
     );
     app.use(passport.initialize());
     app.use(passport.session());
-    logger.info("✅ Middleware Session and Passport have been configured."); // Dùng logger
+    logger.info("✅ Middleware Session and Passport have been configured."); 
 
     // Cấu hình các Middleware chung
     app.use(cors());
@@ -51,7 +50,7 @@ async function startServer() {
 
     // Cấu hình Router
     setupRoutes(app);
-    logger.info("✅ Router has been setup."); // Dùng logger
+    logger.info("✅ Router has been setup."); 
 
     // Khởi động Server
     app.listen(PORT, () => {
@@ -62,7 +61,6 @@ async function startServer() {
       );
     });
   } catch (error) {
-    // Sử dụng logger cho lỗi khởi động server
     logger.error("❌ Failed to start server:", error);
     process.exit(1);
   }
