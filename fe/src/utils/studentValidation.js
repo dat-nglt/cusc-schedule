@@ -86,7 +86,7 @@ export const processExcelDataStudent = (rawData, existingStudents) => {
             address: row['Địa chỉ'] || row['address'] || '',
             phone_number: row['Số điện thoại'] || row['phone_number'] || '',
             class: row['Lớp'] || row['class'] || '',
-            admission_year: row['Năm nhập học'] || row['admission_year'] || '',
+            admission_year: formatDate(row['Năm nhập học'] || row['admission_year']),
             gpa: row['Điểm trung bình'] || row['gpa'] || '',
             status: row['Trạng thái'] || row['status'] || 'Đang học',
             rowIndex: index + 2 // +2 vì Excel bắt đầu từ row 1 và có header

@@ -107,7 +107,7 @@ export const importstudentsFromJSON = async (studentsData) => {
                     address: studentData.address ? studentData.address.toString().trim() : null,
                     phone_number: studentData.phone_number ? studentData.phone_number.toString().trim() : null,
                     class: studentData.class ? studentData.class.toString().trim() : null,
-                    admission_year: studentData.admission_year ? parseInt(studentData.admission_year, 10) : null,
+                    admission_year: studentData.admission_year || null,
                     gpa: studentData.gpa ? parseFloat(studentData.gpa) : null,
                     status: studentData.status || 'Đang học'
                 };
