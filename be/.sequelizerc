@@ -4,7 +4,7 @@ require("dotenv").config();
 
 module.exports = {
   url: process.env.DATABASE_URL,
-  "models-path": path.resolve(__dirname, "src/database/models"),
-  "seeders-path": path.resolve(__dirname, "src/database/seeders"),
-  "migrations-path": path.resolve(__dirname, "src/database/migrations"),
+  "models-path": path.resolve(__dirname, "src/config/setupDB/database"),
+  "seeders-path": path.resolve(__dirname, "src/config/setupDB/seeders"),
+  "migrations-path": path.resolve(__dirname, "src/config/setupDB/migrations"),
 };

@@ -1,4 +1,4 @@
-import { sequelize } from "../config/database.js";
+import { sequelize } from "../config/connectDB.js";
 import { DataTypes } from "sequelize";
 
 // Import model definitions

@@ -30,6 +30,7 @@ const connectDB = async (models) => {
   try {
     await sequelize.authenticate();
     logger.info("✅ PostgreSQL successfully connected to Sequelize."); // Changed from console.log
+    logger.info("✅ Database connection successfully.");
 
     // ĐỒNG BỘ CƠ SỞ DỮ LIỆU
     // if (process.env.NODE_ENV === "development") {
