@@ -8,7 +8,6 @@ import morgan from "morgan"; // Import Morgan
 import logger from "./utils/logger.js"; // Import logger đã cấu hìnhwinston-daily-rotate-file'
 import setupRoutes from "./routes/router.js";
 import connectDB from "./config/connectDB.js";
-import models from "./models/index.js";
 import configurePassport from "./config/passport.js";
 
 dotenv.config();
@@ -18,7 +17,7 @@ const PORT = process.env.PORT || 3000;
 
 async function startServer() {
   try {
-    await connectDB(models);
+    await connectDB();
 
     configurePassport();
     logger.info("✅ Passport has been configured.");

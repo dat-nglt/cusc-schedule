@@ -1,7 +1,9 @@
 import {
     getAllLecturers,
-    getLecturerById, createLecturer,
-    updateLecturer, deleteLecturer,
+    getLecturerById,
+    createLecturer,
+    updateLecturer,
+    deleteLecturer,
     importLecturersFromJson
 } from "../services/lecturerService";
 import { APIResponse } from "../utils/APIResponse.js";

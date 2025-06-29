@@ -272,6 +272,29 @@ export function createStudentTemplate() {
 }
 
 /**
+ * Tạo Excel template cho chương trình với tên cột tiếng Việt
+ * @returns {Buffer} Buffer của template Excel
+ */
+export function createProgramTemplate() {
+  const templateData = [
+    {
+      "Mã chương trình": "CT001",
+      "Tên chương trình": "Chương trình Đào tạo CNTT",
+      "Mô tả": "Chương trình đào tạo về công nghệ thông tin",
+      "Trạng thái": "Hoạt động",
+    },
+    {
+      "Mã chương trình": "CT002",
+      "Tên chương trình": "Chương trình Đào tạo Kinh tế",
+      "Mô tả": "Chương trình đào tạo về kinh tế và quản trị",
+      "Trạng thái": "Ngừng hoạt động",
+    },
+  ];
+
+  return createExcelFromJSON(templateData, "Programs");
+}
+
+/**
  * Map cột tiếng Việt sang tiếng Anh
  * @returns {Object} Object mapping từ tiếng Việt sang tiếng Anh
  */
@@ -303,6 +326,11 @@ export function getVietnameseColumnMapping() {
     Lớp: "class",
     "Năm nhập học": "admission_year",
     "Điểm trung bình": "gpa",
+
+    // Program specific columns
+    "Mã chương trình": "program_id",
+    "Tên chương trình": "program_name",
+    "Mô tả": "description",
   };
 }
 
@@ -332,6 +360,7 @@ export default {
   createStudentTemplate,
   createCourseTemplate,
   createLecturerTemplate,
+  createProgramTemplate,
   cleanString,
   isValidEmail,
   formatExcelDate,

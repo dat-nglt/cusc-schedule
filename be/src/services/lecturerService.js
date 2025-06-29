@@ -13,10 +13,14 @@ export const getAllLecturers = async () => {
     }
 };
 
+
 // get a lecturer by id (detail)
 export const getLecturerById = async (id) => {
     try {
         const lecturer = await Lecturer.findByPk(id);
+        if (!lecturer) {
+            throw new Error(`Lecturer with id ${id} not found`);
+        }
         return lecturer;
     } catch (error) {
         console.error(`Error getting lecturer with id ${id}:`, error);
@@ -96,7 +100,7 @@ export const importLecturersFromJson = async (lecturersData) => {
                 }
 
                 // Clean và format data
-               const cleanedData = {
+                const cleanedData = {
                     lecturer_id: lecturerData.lecturer_id.toString().trim(),
                     name: lecturerData.name.toString().trim(),
                     email: lecturerData.email ? lecturerData.email.toString().trim() : null,
@@ -142,7 +146,7 @@ export const importLecturersFromJson = async (lecturersData) => {
                         results.errors.push({
                             index: index,
                             lecturer_id: cleanedData.lecturer_id,
-                             error: 'Email đã tồn tại'
+                            error: 'Email đã tồn tại'
                         });
                         continue;
                     }
@@ -166,17 +170,4 @@ export const importLecturersFromJson = async (lecturersData) => {
         console.error("Error importing lecturers from JSON:", error);
         throw error;
     }
-};
-
-// Validate Excel template structure
-export const validateExcelTemplate = (fileBuffer) => {
-    const requiredColumns = ['Mã giảng viên', 'Họ tên'];
-    const optionalColumns = ['Email', 'Ngày sinh', 'Giới tính', 'Địa chỉ', 'Số điện thoại', 'Khoa/Bộ môn', 'Ngày tuyển dụng', 'Học vị', 'Trạng thái'];
-    const validation = ExcelUtils.validateTemplate(fileBuffer, requiredColumns, optionalColumns);
-
-    if (!validation.valid) {
-        throw new Error(validation.error);
-    }
-
-    return validation;
 };

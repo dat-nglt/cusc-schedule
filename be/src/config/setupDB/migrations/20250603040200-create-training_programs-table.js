@@ -3,13 +3,13 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
     async up(queryInterface, Sequelize) {
-        await queryInterface.createTable('training_programs', {
-            training_program_id: {
+        await queryInterface.createTable('programs', {
+            program_id: {
                 type: Sequelize.STRING(30),
                 primaryKey: true,
                 allowNull: false
             },
-            training_program_name: {
+            program_name: {
                 type: Sequelize.STRING(50),
                 allowNull: true
             },
@@ -35,6 +35,6 @@ module.exports = {
     },
 
     async down(queryInterface, Sequelize) {
-        await queryInterface.dropTable('training_programs');
+        await queryInterface.dropTable('programs');
     }
 };

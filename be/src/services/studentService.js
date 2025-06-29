@@ -17,6 +17,9 @@ export const getAllStudents = async () => {
 export const getStudentById = async (id) => {
     try {
         const student = await Student.findByPk(id);
+        if (!student) {
+            throw new Error(`Student with id ${id} not found`);
+        }
         return student;
     } catch (error) {
         console.error(`Error getting Student with id ${id}:`, error);
@@ -168,15 +171,3 @@ export const importstudentsFromJSON = async (studentsData) => {
 
 
 
-// Validate Excel template structure
-export const validateExcelTemplate = (fileBuffer) => {
-    const requiredColumns = ['Mã học viên', 'Họ tên'];
-    const optionalColumns = ['Email', 'Ngày sinh', 'Giới tính', 'Địa chỉ', 'Số điện thoại', 'Mã lớp', 'Năm nhập học', 'Điểm', 'Trạng thái'];
-    const validation = ExcelUtils.validateTemplate(fileBuffer, requiredColumns, optionalColumns);
-
-    if (!validation.valid) {
-        throw new Error(validation.error);
-    }
-
-    return validation;
-};
