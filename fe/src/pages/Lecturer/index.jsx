@@ -31,21 +31,23 @@ const Lecturer = () => {
     // Dữ liệu mẫu cho danh sách giảng viên
     const [lecturers, setLecturers] = useState([]);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await getAllLecturers();
-                if (!response) {
-                    throw new Error('Lỗi khi tải danh sách giảng viên');
-                }
-                setLecturers(response.data.data);
-            } catch (error) {
-                console.error('Error fetching lecturers:', error);
-                // Hiển thị thông báo lỗi hoặc xử lý lỗi ở đây
+    const fetchLecturers = async () => {
+        try {
+            const response = await getAllLecturers();
+            if (!response) {
+                throw new Error('Lỗi khi tải danh sách giảng viên');
             }
-        }; fetchData();
-    }, []);
+            setLecturers(response.data.data);
+        } catch (error) {
+            console.error('Error fetching lecturers:', error);
+            // Hiển thị thông báo lỗi hoặc xử lý lỗi ở đây
+        }
+    };
 
+    useEffect(() => {
+        fetchLecturers();
+    }, []);
+    console.log("giảng viên", lecturers);
     // State cho phân trang, tìm kiếm, lọc theo trạng thái và modal
     const [page, setPage] = useState(0);
     const [rowsPerPage] = useState(8);
@@ -82,7 +84,7 @@ const Lecturer = () => {
 
     // Hàm xử lý khi nhấn nút chỉnh sửa
     const handleEditLecturer = (id) => {
-        const lecturerToEdit = lecturers.find((l) => l.id === id);
+        const lecturerToEdit = lecturers.find((l) => l.lecturer_id === id);
         setEditedLecturer(lecturerToEdit);
         setOpenEditModal(true);
     };
@@ -95,11 +97,8 @@ const Lecturer = () => {
 
     // Hàm lưu thay đổi sau khi chỉnh sửa
     const handleSaveEditedLecturer = (updatedLecturer) => {
-        setLecturers((prevLecturers) =>
-            prevLecturers.map((lecturer) =>
-                lecturer.id === updatedLecturer.id ? { ...lecturer, ...updatedLecturer } : lecturer
-            )
-        );
+        // Refresh data from server after successful update
+        fetchLecturers();
     };
 
     // Hàm xử lý thay đổi trang
@@ -109,25 +108,22 @@ const Lecturer = () => {
 
     // Hàm xử lý xem giảng viên
     const handleViewLecturer = (id) => {
-        const lecturer = lecturers.find((l) => l.id === id);
+        const lecturer = lecturers.find((l) => l.lecturer_id === id);
         setSelectedLecturer(lecturer);
         setOpenDetail(true);
     };
 
     // Hàm xử lý xóa giảng viên
     const handleDeleteLecturer = (id) => {
-        const lecturer = lecturers.find((l) => l.id === id);
+        const lecturer = lecturers.find((l) => l.lecturer_id === id);
         setLecturerToDelete(lecturer);
         setOpenDeleteModal(true);
     };
 
     // Hàm xác nhận xóa giảng viên
     const confirmDeleteLecturer = (id) => {
-        setLecturers((prevLecturers) => {
-            const updatedLecturers = prevLecturers.filter((lecturer) => lecturer.id !== id)
-                .map((lecturer, index) => ({ ...lecturer, stt: index + 1 }));
-            return updatedLecturers;
-        });
+        // Refresh data from server after successful delete
+        fetchLecturers();
     };
 
     // Hàm đóng modal chi tiết

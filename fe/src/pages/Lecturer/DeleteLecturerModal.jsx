@@ -8,11 +8,22 @@ import {
   Typography,
   Box,
 } from '@mui/material';
+import { deleteLecturer } from '../../api/lecturerAPI';
 
 const DeleteLecturerModal = ({ open, onClose, onDelete, lecturer }) => {
-  const handleDelete = () => {
-    onDelete(lecturer.id);
-    onClose();
+  const handleDelete = async () => {
+    try {
+      const response = await deleteLecturer(lecturer.lecturer_id);
+
+      if (response && response.data) {
+        onDelete(lecturer.lecturer_id);
+        onClose();
+        alert('Xóa giảng viên thành công!');
+      }
+    } catch (error) {
+      console.error('Error deleting lecturer:', error);
+      alert('Lỗi khi xóa giảng viên: ' + error.message);
+    }
   };
 
   return (

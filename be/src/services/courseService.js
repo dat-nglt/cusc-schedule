@@ -35,9 +35,7 @@ export const deleteCourse = async (course_id) => {
   return await course.destroy();
 };
 
-/**
- * Lọc danh sách các khóa học theo mã, tên, và thời gian bắt đầu
- */
+
 export const listCourses = async (filters) => {
   try {
     const whereClause = {};

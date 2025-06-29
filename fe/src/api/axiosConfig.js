@@ -34,7 +34,7 @@ axiosInstance.interceptors.request.use(
 // // Interceptor cho response
 axiosInstance.interceptors.response.use(
   (response) => {
-    // console.log('Response:', response); // Log để debug
+    console.log('Response:', response); // Log để debug
     return response;
   },
   (error) => {

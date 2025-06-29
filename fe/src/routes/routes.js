@@ -1,5 +1,7 @@
-import LayoutJustHeader from "../components/layout/LayoutJustHeader";
-import MainLayout from "../components/layout/MainLayout";
+import StudentLayout from "../components/layout/StudentLayout/StudentLayout";
+import ScheduleLayout from "../components/layout/ScheduleLayout/ScheduleLayout";
+import AdminLayout from "../components/layout/AdminLayout/AdminLayout";
+import LecturerLayout from "../components/layout/LecturerLayout/LecturerLayout";
 
 const routes = [
   {
@@ -8,8 +10,9 @@ const routes = [
     exact: true,
     title: "Trình điều khiển",
     isPrivate: false,
-    layout: MainLayout,
-  }, {
+    layout: AdminLayout,
+  },
+  {
     path: "/login",
     component: "LoginPage",
     exact: true,
@@ -29,7 +32,7 @@ const routes = [
     exact: true,
     title: "Hồ sơ cá nhân",
     isPrivate: false,
-    layout: MainLayout,
+    layout: AdminLayout,
   },
   {
     path: "/student",
@@ -37,7 +40,7 @@ const routes = [
     exact: true,
     title: "Hồ sơ cá nhân",
     isPrivate: false,
-    layout: LayoutJustHeader,
+    layout: StudentLayout,
   },
   {
     path: "/courses",
@@ -45,7 +48,7 @@ const routes = [
     exact: true,
     title: "Quản lý Khóa học",
     isPrivate: false,
-    layout: MainLayout,
+    layout: AdminLayout,
   },
   {
     path: "/courses/add",
@@ -53,7 +56,7 @@ const routes = [
     exact: true,
     title: "Thêm Khóa học",
     isPrivate: false,
-    layout: MainLayout,
+    layout: AdminLayout,
   },
   {
     path: "/courses/edit/:courseid",
@@ -61,7 +64,7 @@ const routes = [
     exact: true,
     title: "Chỉnh sửa Khóa học",
     isPrivate: false,
-    layout: MainLayout,
+    layout: AdminLayout,
   },
   {
     path: "/slottime",
@@ -69,7 +72,7 @@ const routes = [
     exact: true,
     title: "Quản lý Khung giờ",
     isPrivate: false,
-    layout: MainLayout,
+    layout: AdminLayout,
   },
   {
     path: "/room",
@@ -77,7 +80,7 @@ const routes = [
     exact: true,
     title: "Quản lý Phòng học",
     isPrivate: false,
-    layout: MainLayout,
+    layout: AdminLayout,
   },
   {
     path: "/class",
@@ -85,7 +88,7 @@ const routes = [
     exact: true,
     title: "Quản lý Lớp học",
     isPrivate: false,
-    layout: MainLayout,
+    layout: AdminLayout,
   },
   {
     path: "/classsection",
@@ -93,7 +96,7 @@ const routes = [
     exact: true,
     title: "Quản lý Lớp học phần",
     isPrivate: false,
-    layout: MainLayout,
+    layout: AdminLayout,
   },
   {
     path: "/notification",
@@ -101,7 +104,7 @@ const routes = [
     exact: false,
     title: "Thông báo",
     isPrivate: false,
-    layout: MainLayout,
+    layout: AdminLayout,
   },
   {
     path: "/lecturers",
@@ -109,7 +112,7 @@ const routes = [
     exact: true,
     title: "Quản lý Giảng viên",
     isPrivate: false,
-    layout: MainLayout,
+    layout: AdminLayout,
   },
   {
     path: "/students",
@@ -117,7 +120,7 @@ const routes = [
     exact: true,
     title: "Quản lý Học viên",
     isPrivate: false,
-    layout: MainLayout,
+    layout: AdminLayout,
   },
   {
     path: "/subjects",
@@ -125,7 +128,7 @@ const routes = [
     exact: true,
     title: "Quản lý Học phần",
     isPrivate: false,
-    layout: MainLayout,
+    layout: AdminLayout,
   },
   {
     path: "/programs",
@@ -133,23 +136,73 @@ const routes = [
     exact: true,
     title: "Quản lý Chương trình đào tạo",
     isPrivate: false,
-    layout: MainLayout,
+    layout: AdminLayout,
   },
   {
-    path: "student/results",
+    path: "/student/results",
     component: "StudentLearningResults",
     exact: true,
     title: "Kết quả học tập",
     isPrivate: false,
-    layout: LayoutJustHeader,
+    layout: StudentLayout,
   },
   {
-    path: "student/schedules",
+    path: "/student/schedules",
     component: "StudentSchedules",
     exact: true,
-    title: "Kết quả học tập",
+    title: "Thời khóa biểu",
     isPrivate: false,
-    layout: LayoutJustHeader,
+    layout: StudentLayout,
+  },
+  /////////////////
+  //Lecturer routes
+  {
+    path: "/lecturer",
+    component: "LecturerDashboard",
+    exact: true,
+    title: "Tổng quan",
+    isPrivate: false,
+    layout: LecturerLayout,
+  },
+  {
+    path: "/lecturer/courses",
+    component: "Course",
+    exact: true,
+    title: "Quản lý Khóa học",
+    isPrivate: false,
+    layout: LecturerLayout,
+  },
+  {
+    path: "/lecturer/schedule",
+    component: "LecturerSchedule",
+    exact: true,
+    title: "Thời khóa biểu",
+    isPrivate: false,
+    layout: LecturerLayout,
+  },
+  {
+    path: "/lecturer/students",
+    component: "Student",
+    exact: true,
+    title: "Danh sách sinh viên",
+    isPrivate: false,
+    layout: LecturerLayout,
+  },
+  {
+    path: "/lecturer/classsection",
+    component: "ClassSection",
+    exact: true,
+    title: "Thông tin cá nhân",
+    isPrivate: false,
+    layout: LecturerLayout,
+  },
+  {
+    path: "/lecturer/settings",
+    component: "LecturerSettings",
+    exact: true,
+    title: "Cài đặt",
+    isPrivate: false,
+    layout: LecturerLayout,
   },
 ];
 

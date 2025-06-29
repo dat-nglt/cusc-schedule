@@ -18,7 +18,8 @@ import {
   MenuItem,
   FormControl,
   Select,
-  Switch
+  Switch,
+  Menu,
 } from '@mui/material';
 import {
   Dashboard as DashboardIcon,
@@ -42,7 +43,7 @@ import {
 } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
 import CalendarWithWeekHighlight from './CalendarWithWeekHighlight';
-import { useThemeContext } from '../../contexts/ThemeContext';
+import NavigationDrawer from '../NavigationDrawer';
 
 const drawerWidth = 350;
 
@@ -59,7 +60,7 @@ const StyledDrawer = styled(Drawer)(({ theme }) => ({
   },
 }));
 
-const Sidebar = () => {
+const ScheduleSidebar = () => {
   const location = useLocation();
   const isDashboard = location.pathname === '/dashboard';
 
@@ -67,24 +68,20 @@ const Sidebar = () => {
   const [filterValue, setFilterValue] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
 
-  const navItems = [
-    { text: 'Quản lý thời khóa biểu', icon: <TimetableIcon />, path: '/dashboard' },
-    { text: 'Quản lý giảng viên', icon: <PersonIcon />, path: '/lecturers' },
-    { text: 'Quản lý học viên', icon: <SchoolIcon />, path: '/students' },
-    { text: 'Quản lý chương trình đào tạo', icon: <LibraryBooksIcon />, path: '/programs' },
-    { text: 'Quản lý học phần', icon: <MenuBookIcon />, path: '/subjects' },
-    { text: 'Quản lý khóa học', icon: <ClassIcon />, path: '/courses' },
-    { text: 'Quản lý lớp', icon: <GroupsIcon />, path: '/class' },
-    { text: 'Quản lý lớp học phần', icon: <AccountBalanceIcon />, path: '/classsection' },
-    { text: 'Quản lý phòng', icon: <RoomIcon />, path: '/room' },
-    { text: 'Quản lý khung giờ', icon: <AccessTimeIcon />, path: '/slottime' },
-    { text: 'Quản lý thông báo', icon: <CalendarIcon />, path: '/notification' },
-    { text: 'Đăng xuất', icon: <LogoutIcon />, path: '/logout' },
-  ];
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const handleDateChange = (date) => {
-    setSelectedDate(date);
+  // Handlers for drawer
+  const handleDrawerOpen = () => {
+    setDrawerOpen(true);
   };
+
+  const handleDrawerClose = () => {
+    setDrawerOpen(false);
+  };
+
+  // const handleDateChange = (date) => {
+  //   setSelectedDate(date);
+  // };
 
   const handleFilterChange = (event) => {
     setFilterValue(event.target.value);
@@ -112,21 +109,19 @@ const Sidebar = () => {
         {isDashboard && (
           <>
             {/* Tạo lịch button */}
-            <Button
+            {/* <Button
               variant="contained"
               color="primary"
               startIcon={<AddIcon />}
               fullWidth
               sx={{
-                mb: 2,
-                py: 1.5,
                 borderRadius: '8px',
                 textTransform: 'none',
                 fontWeight: 'bold'
               }}
             >
               Tạo thời khóa biểu
-            </Button>
+            </Button> */}
 
             {/* Search component */}
             <TextField
@@ -171,48 +166,27 @@ const Sidebar = () => {
 
             {/* Calendar component */}
             <CalendarWithWeekHighlight />
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<DashboardIcon />}
+              onClick={handleDrawerOpen} // Call the drawer open handler
+              fullWidth
+              sx={{
+                mb: 2,
+                textTransform: 'none',
+                fontWeight: 'bold'
+              }}
+            >
+              Quản lý hệ thống
+            </Button>
+            <NavigationDrawer open={drawerOpen} onClose={handleDrawerClose} />
           </>
         )}
 
-        <List sx={{ flexGrow: 1 }}>
-          {navItems
-            .filter(item => !(isDashboard && item.path === '/dashboard'))
-            .map((item) => (
-              <ListItem
-                button
-                component="a"
-                href={item.path}
-                key={item.text}
-                sx={{
-                  borderRadius: '8px',
-                  mb: 0.5,
-                  '&:hover': {
-                    backgroundColor: 'action.hover'
-                  },
-                  '&.Mui-selected': {
-                    backgroundColor: 'primary.light',
-                    '& .MuiListItemIcon-root': {
-                      color: 'primary.main'
-                    }
-                  }
-                }}
-              >
-                <ListItemIcon sx={{ minWidth: '36px' }}>
-                  {item.icon}
-                </ListItemIcon>
-                <ListItemText
-                  primary={item.text}
-                  primaryTypographyProps={{
-                    variant: 'body2',
-                    fontWeight: 'medium'
-                  }}
-                />
-              </ListItem>
-            ))}
-        </List>
       </Box>
     </StyledDrawer>
   );
 };
 
-export default Sidebar;
+export default ScheduleSidebar;

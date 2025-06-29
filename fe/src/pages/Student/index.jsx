@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Box,
     Typography,
@@ -24,124 +24,13 @@ import EditStudentModal from './EditStudentModal';
 import DeleteStudentModal from './DeleteStudentModal';
 import useResponsive from '../../hooks/useResponsive';
 import StudentTable from './StudentTable';
+import { getAllStudents, getStudentById, createStudent, updateStudent, deleteStudent } from '../../api/studentAPI';
 
 const Student = () => {
     const { isSmallScreen, isMediumScreen } = useResponsive();
 
     // Dữ liệu mẫu cho danh sách học viên
-    const [students, setStudents] = useState([
-        {
-            id: 1,
-            stt: 1,
-            maHocVien: 'SV001',
-            hoTen: 'Nguyễn Văn An',
-            maLop: 'CNTT01',
-            khoaHoc: 'Công nghệ thông tin',
-            trangThai: 'Đang học',
-            thoiGianTao: '2025-01-15 09:00',
-            thoiGianCapNhat: '2025-01-20 14:30'
-        },
-        {
-            id: 2,
-            stt: 2,
-            maHocVien: 'SV002',
-            hoTen: 'Trần Thị Bình',
-            maLop: 'CNTP01',
-            khoaHoc: 'Công nghệ thực phẩm',
-            trangThai: 'Đang học',
-            thoiGianTao: '2025-01-16 10:15',
-            thoiGianCapNhat: '2025-01-21 15:00'
-        },
-        {
-            id: 3,
-            stt: 3,
-            maHocVien: 'SV003',
-            hoTen: 'Lê Minh Cường',
-            maLop: 'KTCN01',
-            khoaHoc: 'Kỹ thuật cơ khí',
-            trangThai: 'Tạm nghỉ',
-            thoiGianTao: '2025-01-17 11:30',
-            thoiGianCapNhat: '2025-01-22 09:45'
-        },
-        {
-            id: 4,
-            stt: 4,
-            maHocVien: 'SV004',
-            hoTen: 'Phạm Thị Dung',
-            maLop: 'DIEN01',
-            khoaHoc: 'Kỹ thuật điện',
-            trangThai: 'Đang học',
-            thoiGianTao: '2025-01-18 14:00',
-            thoiGianCapNhat: '2025-01-23 13:15'
-        },
-        {
-            id: 5,
-            stt: 5,
-            maHocVien: 'SV005',
-            hoTen: 'Hoàng Văn Em',
-            maLop: 'CNTT02',
-            khoaHoc: 'Công nghệ thông tin',
-            trangThai: 'Đang học',
-            thoiGianTao: '2025-01-19 15:30',
-            thoiGianCapNhat: '2025-01-24 10:20'
-        },
-        {
-            id: 6,
-            stt: 6,
-            maHocVien: 'SV006',
-            hoTen: 'Vũ Thị Phương',
-            maLop: 'QLCN01',
-            khoaHoc: 'Quản lý công nghiệp',
-            trangThai: 'Đang học',
-            thoiGianTao: '2025-01-20 09:45',
-            thoiGianCapNhat: '2025-01-25 16:10'
-        },
-        {
-            id: 7,
-            stt: 7,
-            maHocVien: 'SV007',
-            hoTen: 'Đỗ Minh Giang',
-            maLop: 'TUDH01',
-            khoaHoc: 'Tự động hóa',
-            trangThai: 'Đang học',
-            thoiGianTao: '2025-01-21 11:00',
-            thoiGianCapNhat: '2025-01-26 13:40'
-        },
-        {
-            id: 8,
-            stt: 8,
-            maHocVien: 'SV008',
-            hoTen: 'Bùi Thị Hạnh',
-            maLop: 'QLXD01',
-            khoaHoc: 'Quản lý xây dựng',
-            trangThai: 'Tốt nghiệp',
-            thoiGianTao: '2025-01-22 14:20',
-            thoiGianCapNhat: '2025-01-27 15:55'
-        },
-        {
-            id: 9,
-            stt: 9,
-            maHocVien: 'SV009',
-            hoTen: 'Ngô Văn Ích',
-            maLop: 'CNTT03',
-            khoaHoc: 'Công nghệ thông tin',
-            trangThai: 'Đang học',
-            thoiGianTao: '2025-01-23 08:30',
-            thoiGianCapNhat: '2025-01-28 12:10'
-        },
-        {
-            id: 10,
-            stt: 10,
-            maHocVien: 'SV010',
-            hoTen: 'Lý Thị Kim',
-            maLop: 'DIEN02',
-            khoaHoc: 'Kỹ thuật điện',
-            trangThai: 'Đang học',
-            thoiGianTao: '2025-01-24 09:10',
-            thoiGianCapNhat: '2025-01-29 14:50'
-        }
-    ]);
-
+    const [students, setStudents] = useState([]);
     // State cho phân trang, tìm kiếm, lọc theo trạng thái và modal
     const [page, setPage] = useState(0);
     const [rowsPerPage] = useState(8);
@@ -154,9 +43,34 @@ const Student = () => {
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
     const [editedStudent, setEditedStudent] = useState(null);
     const [studentToDelete, setStudentToDelete] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
 
     // Danh sách trạng thái để lọc
     const statuses = ['Đang học', 'Tạm nghỉ', 'Tốt nghiệp', 'Bảo lưu'];
+
+
+    const fetchStudents = async () => {
+        try {
+            setLoading(true);
+            setError('');
+            const response = await getAllStudents();
+            if (!response) {
+                console.error("Không có dữ liệu học viên");
+                return;
+            }
+            setStudents(response.data.data)
+        } catch (error) {
+            console.error("Lỗi khi tải danh sách học viên:", error);
+            setError('Không thể tải danh sách học viên. Vui lòng thử lại sau.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchStudents();
+    }, [])
 
     // Hàm xử lý khi nhấn nút Thêm học viên
     const handleAddStudent = () => {
@@ -169,18 +83,36 @@ const Student = () => {
     };
 
     // Hàm thêm học viên mới
-    const handleAddNewStudent = (newStudent) => {
-        setStudents((prevStudents) => {
-            const updatedStudents = [...prevStudents, { ...newStudent, stt: prevStudents.length + 1 }];
-            return updatedStudents;
-        });
+    const handleAddNewStudent = async (newStudent) => {
+        try {
+            setLoading(true);
+            const response = await createStudent(newStudent);
+            if (response && response.data) {
+                fetchStudents(); // Tải lại danh sách học viên sau khi thêm thành công
+            }
+        } catch (error) {
+            console.error("Lỗi khi thêm học viên:", error);
+            alert("Không thể thêm học viên. Vui lòng thử lại.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     // Hàm xử lý khi nhấn nút chỉnh sửa
-    const handleEditStudent = (id) => {
-        const studentToEdit = students.find((s) => s.id === id);
-        setEditedStudent(studentToEdit);
-        setOpenEditModal(true);
+    const handleEditStudent = async (id) => {
+        try {
+            setLoading(true);
+            const response = await getStudentById(id);
+            if (response && response.data) {
+                setEditedStudent(response.data.data);
+                setOpenEditModal(true);
+            }
+        } catch (error) {
+            console.error("Lỗi khi lấy thông tin học viên để chỉnh sửa:", error);
+            alert("Không thể lấy thông tin học viên. Vui lòng thử lại.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     // Hàm đóng modal chỉnh sửa
@@ -190,12 +122,19 @@ const Student = () => {
     };
 
     // Hàm lưu thay đổi sau khi chỉnh sửa
-    const handleSaveEditedStudent = (updatedStudent) => {
-        setStudents((prevStudents) =>
-            prevStudents.map((student) =>
-                student.id === updatedStudent.id ? { ...student, ...updatedStudent } : student
-            )
-        );
+    const handleSaveEditedStudent = async (updatedStudent) => {
+        try {
+            setLoading(true);
+            const response = await updateStudent(updatedStudent.student_id, updatedStudent);
+            if (response && response.data) {
+                fetchStudents(); // Tải lại danh sách học viên sau khi cập nhật thành công
+            }
+        } catch (error) {
+            console.error("Lỗi khi cập nhật học viên:", error);
+            alert("Không thể cập nhật thông tin học viên. Vui lòng thử lại.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     // Hàm xử lý thay đổi trang
@@ -204,28 +143,45 @@ const Student = () => {
     };
 
     // Hàm xử lý xem học viên
-    const handleViewStudent = (id) => {
-        const student = students.find((s) => s.id === id);
-        setSelectedStudent(student);
-        setOpenDetail(true);
+    const handleViewStudent = async (id) => {
+        try {
+            setLoading(true);
+            const response = await getStudentById(id);
+            if (response && response.data) {
+                setSelectedStudent(response.data.data);
+                setOpenDetail(true);
+            }
+        } catch (error) {
+            console.error("Lỗi khi lấy thông tin chi tiết học viên:", error);
+            alert("Không thể lấy thông tin chi tiết học viên. Vui lòng thử lại.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     // Hàm xử lý xóa học viên
     const handleDeleteStudent = (id) => {
-        const student = students.find((s) => s.id === id);
+        const student = students.find((s) => s.student_id === id);
         setStudentToDelete(student);
         setOpenDeleteModal(true);
     };
 
     // Hàm xác nhận xóa học viên
-    const confirmDeleteStudent = (id) => {
-        setStudents((prevStudents) => {
-            const updatedStudents = prevStudents.filter((student) => student.id !== id)
-                .map((student, index) => ({ ...student, stt: index + 1 }));
-            return updatedStudents;
-        });
-        setOpenDeleteModal(false);
-        setStudentToDelete(null);
+    const confirmDeleteStudent = async (id) => {
+        try {
+            setLoading(true);
+            const response = await deleteStudent(id);
+            if (response) {
+                fetchStudents(); // Tải lại danh sách học viên sau khi xóa thành công
+            }
+        } catch (error) {
+            console.error("Lỗi khi xóa học viên:", error);
+            alert("Không thể xóa học viên. Vui lòng thử lại.");
+        } finally {
+            setLoading(false);
+            setOpenDeleteModal(false);
+            setStudentToDelete(null);
+        }
     };
 
     // Hàm đóng modal chi tiết
@@ -243,13 +199,12 @@ const Student = () => {
     // Lọc danh sách học viên dựa trên từ khóa tìm kiếm và trạng thái
     const filteredStudents = students.filter((student) => {
         const matchesSearchTerm =
-            student.maHocVien.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            student.hoTen.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            student.maLop.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            student.khoaHoc.toLowerCase().includes(searchTerm.toLowerCase());
+            student.student_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            student.class.toLowerCase().includes(searchTerm.toLowerCase());
 
         const matchesStatus = selectedStatus
-            ? student.trangThai === selectedStatus
+            ? student.status === selectedStatus
             : true;
 
         return matchesSearchTerm && matchesStatus;
