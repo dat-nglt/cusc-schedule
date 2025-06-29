@@ -7,7 +7,7 @@ module.exports = {
       {
         lecturer_id: 'LEC001',
         name: 'Nguyen Van Vu',
-        email: 'abcd@student.ctuet.edu.vn',
+        email: 'vu@student.ctuet.edu.vn',
         day_of_birth: '1980-05-15',
         gender: 'Male',
         address: 'Ho Chi Minh City',
