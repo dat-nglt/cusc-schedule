@@ -84,7 +84,7 @@ export const importProgramsFromJSON = async (programsData) => {
                 // clean and format data (chuyển sang kiểu chuỗi và xóa khoảng cách thừa ở đầu chuỗi và cuối chuỗi)
                 const cleanedData = {
                     program_id: programData.program_id.toString().trim(),
-                    program_program_name: programData.program_name.toString().trim(),
+                    program_name: programData.program_name.toString().trim(),
                     description: programData.description ? programData.description.toString().trim() : null,
                     status: programData.status || 'Hoạt động' // Mặc định là 'hoạt động' nếu không có giá trị,
                 }

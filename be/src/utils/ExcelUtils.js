@@ -295,6 +295,33 @@ export function createProgramTemplate() {
 }
 
 /**
+ * Tạo Excel template cho học kỳ với tên cột tiếng Việt
+ * @returns {Buffer} Buffer của template Excel
+ */
+export function createSemesterTemplate() {
+  const templateData = [
+    {
+      "Mã học kỳ": "HK2024_1",
+      "Tên học kỳ": "Học kỳ 1 năm học 2024-2025",
+      "Ngày bắt đầu": "2024-09-01",
+      "Ngày kết thúc": "2025-01-15",
+      "Trạng thái": "Hoạt động",
+      "Mã chương trình đào tạo": "CT001",
+    },
+    {
+      "Mã học kỳ": "HK2024_2",
+      "Tên học kỳ": "Học kỳ 2 năm học 2024-2025",
+      "Ngày bắt đầu": "2025-02-01",
+      "Ngày kết thúc": "2025-06-30",
+      "Trạng thái": "Sắp diễn ra",
+      "Mã chương trình đào tạo": "CT001",
+    },
+  ];
+
+  return createExcelFromJSON(templateData, "Semesters");
+}
+
+/**
  * Map cột tiếng Việt sang tiếng Anh
  * @returns {Object} Object mapping từ tiếng Việt sang tiếng Anh
  */
@@ -303,7 +330,7 @@ export function getVietnameseColumnMapping() {
     // Common columns
     "Họ tên": "name",
     Email: "email",
-    "Ngày sinh": "date_of_birth", // Changed from day_of_birth for better readability
+    "Ngày sinh": "date_of_birth",
     "Giới tính": "gender",
     "Địa chỉ": "address",
     "Số điện thoại": "phone_number",
@@ -331,6 +358,13 @@ export function getVietnameseColumnMapping() {
     "Mã chương trình": "program_id",
     "Tên chương trình": "program_name",
     "Mô tả": "description",
+
+    // Semester specific columns
+    "Mã học kỳ": "semester_id",
+    "Tên học kỳ": "semester_name",
+    "Ngày bắt đầu": "start_date",
+    "Ngày kết thúc": "end_date",
+    "Mã chương trình đào tạo": "training_program_id",
   };
 }
 
@@ -361,6 +395,7 @@ export default {
   createCourseTemplate,
   createLecturerTemplate,
   createProgramTemplate,
+  createSemesterTemplate,
   cleanString,
   isValidEmail,
   formatExcelDate,

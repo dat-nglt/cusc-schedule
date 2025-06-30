@@ -73,7 +73,6 @@ export const deleteProgramController = async (req, res) => {
 export const importProgramsFromJSONController = async (req, res) => {
     const { programs } = req.body;
     try {
-        console.log("DEBUG programs:", programs);
         if (!programs || !Array.isArray(programs)) {
             return APIResponse(res, 400, null, "Invalid data format");
         }
@@ -99,7 +98,7 @@ export const importProgramsFromJSONController = async (req, res) => {
         }
     } catch (error) {
         console.error("Error importing programs from JSON:", error);
-        return APIResponse(res, 500, null, "Error importing programs from JSON");
+        return APIResponse(res, 500, null, "Lỗi khi thêm dữ liệu");
     }
 }
 
