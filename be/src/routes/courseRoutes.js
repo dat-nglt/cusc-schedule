@@ -8,6 +8,7 @@ import {
   deleteCourseController,
   listCoursesController,
   importCoursesController,
+  importCoursesFromJsonController,
   downloadTemplateController,
 } from '../controllers/courseController.js';
 import { uploadExcel } from '../middleware/excelMiddleware';
@@ -34,6 +35,7 @@ courseRoutes.get('', authenticateAndAuthorize(['admin', 'training_officer']), li
 
 // Import Excel routes
 courseRoutes.post('/import', authenticateAndAuthorize(['admin', 'training_officer']), uploadExcel, importCoursesController);
+courseRoutes.post('/importJson', authenticateAndAuthorize(['admin', 'training_officer']), importCoursesFromJsonController);
 courseRoutes.get('/template/download', authenticateAndAuthorize(['admin', 'training_officer']), downloadTemplateController);
 
 export default courseRoutes;
