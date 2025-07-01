@@ -24,9 +24,9 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ErrorIcon from '@mui/icons-material/Error';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import { importCourses } from '../../api/courseAPI';
+import { importBreakSchedules } from '../../api/breakScheduleAPI';
 
-export default function PreviewCourseModal({
+export default function PreviewBreakScheduleModal({
   open,
   onClose,
   previewData,
@@ -36,8 +36,8 @@ export default function PreviewCourseModal({
   const [importError, setImportError] = useState('');
   const [importMessage, setImportMessage] = useState('');
 
-  const getRowStatus = (course) => {
-    if (course.errors && course.errors.length > 0) {
+  const getRowStatus = (schedule) => {
+    if (schedule.errors && schedule.errors.length > 0) {
       return 'error';
     }
     return 'valid';
@@ -45,7 +45,7 @@ export default function PreviewCourseModal({
 
   const getErrorChip = (error) => {
     const errorMessages = {
-      'duplicate_id': 'Mã khóa học trùng lặp',
+      'duplicate_id': 'Mã lịch nghỉ trùng lặp',
       'missing_required': 'Thiếu dữ liệu bắt buộc',
       'invalid_date': 'Ngày không hợp lệ',
     };
@@ -76,14 +76,14 @@ export default function PreviewCourseModal({
 
     try {
       const validData = validRows.map(row => {
-        const { errors: _errors, rowIndex: _rowIndex, ...courseData } = row;
-        return courseData;
+        const { errors: _errors, rowIndex: _rowIndex, ...scheduleData } = row;
+        return scheduleData;
       });
 
-      const response = await importCourses(null, validData);
+      const response = await importBreakSchedules(null, validData);
 
       if (response.data && response.data) {
-        setImportMessage(`Thêm thành công ${validRows.length} khóa học`);
+        setImportMessage(`Thêm thành công ${validRows.length} lịch nghỉ`);
         setImportError('');
 
         setTimeout(() => {
@@ -173,21 +173,21 @@ export default function PreviewCourseModal({
                 <Table stickyHeader size="small">
                   <TableHead>
                     <TableRow>
-                      <TableCell>Mã khóa học</TableCell>
-                      <TableCell>Tên khóa học</TableCell>
+                      <TableCell>Mã lịch nghỉ</TableCell>
+                      <TableCell>Loại lịch nghỉ</TableCell>
                       <TableCell>Thời gian bắt đầu</TableCell>
                       <TableCell>Thời gian kết thúc</TableCell>
                       <TableCell>Trạng thái</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {validRows.map((course, index) => (
+                    {validRows.map((schedule, index) => (
                       <TableRow key={index}>
-                        <TableCell>{course.course_id}</TableCell>
-                        <TableCell>{course.course_name}</TableCell>
-                        <TableCell>{course.start_date}</TableCell>
-                        <TableCell>{course.end_date}</TableCell>
-                        <TableCell>{course.status}</TableCell>
+                        <TableCell>{schedule.break_id}</TableCell>
+                        <TableCell>{schedule.break_type}</TableCell>
+                        <TableCell>{schedule.break_start_date}</TableCell>
+                        <TableCell>{schedule.break_end_date}</TableCell>
+                        <TableCell>{schedule.status}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -209,26 +209,26 @@ export default function PreviewCourseModal({
                 <Table stickyHeader size="small">
                   <TableHead>
                     <TableRow>
-                      <TableCell>Mã khóa học</TableCell>
-                      <TableCell>Tên khóa học</TableCell>
+                      <TableCell>Mã lịch nghỉ</TableCell>
+                      <TableCell>Loại lịch nghỉ</TableCell>
                       <TableCell>Thời gian bắt đầu</TableCell>
                       <TableCell>Thời gian kết thúc</TableCell>
                       <TableCell>Lỗi</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {errorRows.map((course, index) => (
+                    {errorRows.map((schedule, index) => (
                       <TableRow
                         key={index}
                         sx={{ bgcolor: 'error.lighter' }}
                       >
-                        <TableCell>{course.course_id || '-'}</TableCell>
-                        <TableCell>{course.course_name || '-'}</TableCell>
-                        <TableCell>{course.start_date || '-'}</TableCell>
-                        <TableCell>{course.end_date || '-'}</TableCell>
+                        <TableCell>{schedule.break_id || '-'}</TableCell>
+                        <TableCell>{schedule.break_type || '-'}</TableCell>
+                        <TableCell>{schedule.break_start_date || '-'}</TableCell>
+                        <TableCell>{schedule.break_end_date || '-'}</TableCell>
                         <TableCell>
                           <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-                            {course.errors.map((error) => getErrorChip(error))}
+                            {schedule.errors.map((error) => getErrorChip(error))}
                           </Box>
                         </TableCell>
                       </TableRow>
@@ -252,7 +252,7 @@ export default function PreviewCourseModal({
         >
           {isImporting ? 'Đang thêm...' :
             importMessage ? 'Đã thêm thành công' :
-              `Thêm ${validRows.length} khóa học`}
+              `Thêm ${validRows.length} lịch nghỉ`}
         </Button>
       </DialogActions>
     </Dialog>
