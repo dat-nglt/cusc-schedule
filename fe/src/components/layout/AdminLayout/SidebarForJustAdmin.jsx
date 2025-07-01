@@ -32,7 +32,7 @@ const navItems = [
     { text: 'Quản lý thời khóa biểu', icon: <Dashboard />, path: '/dashboard' },
     { text: 'Quản lý giảng viên', icon: <Person />, path: '/lecturers' },
     { text: 'Quản lý học viên', icon: <School />, path: '/students' },
-    { text: 'Quản lý lịch nghỉ', icon: <Event />, path: '/breakschedules' },
+    { text: 'Quản lý lịch nghỉ', icon: <Event />, path: '/braekschedules' },
     { text: 'Quản lý chương trình', icon: <LibraryBooks />, path: '/programs' },
     { text: 'Quản lý học phần', icon: <MenuBook />, path: '/subjects' },
     { text: 'Quản lý khóa học', icon: <Class />, path: '/courses' },

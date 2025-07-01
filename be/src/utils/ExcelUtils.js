@@ -275,7 +275,14 @@ class ExcelUtils {
             'Mã học viên': 'student_id',
             'Lớp': 'class',
             'Năm nhập học': 'admission_year',
-            'Điểm trung bình': 'gpa'
+            'Điểm trung bình': 'gpa',
+
+            //break schedule columns
+            'Mã lịch nghỉ': 'break_id',
+            'Loại lịch nghỉ': 'break_type',
+            'Ngày bắt đầu': 'break_start_date',
+            'Ngày kết thúc': 'break_end_date',
+            'Lý do': 'reason'
         };
     }
 

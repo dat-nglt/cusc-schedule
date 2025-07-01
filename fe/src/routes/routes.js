@@ -83,7 +83,7 @@ const routes = [
     layout: AdminLayout,
   },
   {
-    path: "/brakeschedules",
+    path: "/braekschedules",
     component: "BreakSchedule",
     exact: true,
     title: "Quản lý lịch nghỉ",
