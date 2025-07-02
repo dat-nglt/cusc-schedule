@@ -16,7 +16,7 @@ import {
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import * as XLSX from 'xlsx';
 import PreviewLecturerModal from './PreviewLecturerModal';
-import { processExcelDataLecturer } from '../../utils/lecturerValidation';
+import { processExcelDataLecturer } from '../../utils/ExcelValidation';
 
 const availableDepartments = [
     'Khoa Công Nghệ Thông Tin',

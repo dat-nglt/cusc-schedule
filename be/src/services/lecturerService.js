@@ -90,11 +90,19 @@ export const importLecturersFromJson = async (lecturersData) => {
 
             try {
                 // Validate required fields
-                if (!lecturerData.lecturer_id || !lecturerData.name || !lecturerData.email) {
+                if (!lecturerData.lecturer_id) {
                     results.errors.push({
                         index: index,
                         lecturer_id: lecturerData.lecturer_id || 'N/A',
-                        error: 'Mã giảng viên, họ tên và email là bắt buộc'
+                        error: 'Mã giảng viên là bắt buộc'
+                    });
+                    continue;
+                }
+                if (!lecturerData.email) {
+                    results.errors.push({
+                        index: index,
+                        lecturer_id: lecturerData.lecturer_id || 'N/A',
+                        error: 'email là bắt buộc'
                     });
                     continue;
                 }

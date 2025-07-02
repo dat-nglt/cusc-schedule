@@ -280,12 +280,14 @@ export function createProgramTemplate() {
     {
       "Mã chương trình": "CT001",
       "Tên chương trình": "Chương trình Đào tạo CNTT",
+      "Thời gian đào tạo": "4 năm",
       "Mô tả": "Chương trình đào tạo về công nghệ thông tin",
       "Trạng thái": "Hoạt động",
     },
     {
       "Mã chương trình": "CT002",
       "Tên chương trình": "Chương trình Đào tạo Kinh tế",
+      "Thời gian đào tạo": "3 năm",
       "Mô tả": "Chương trình đào tạo về kinh tế và quản trị",
       "Trạng thái": "Ngừng hoạt động",
     },
@@ -386,6 +388,7 @@ export function getVietnameseColumnMapping() {
     // Program specific columns
     "Mã chương trình": "program_id",
     "Tên chương trình": "program_name",
+    "Thời gian đào tạo": "training_duration",
     "Mô tả": "description",
 
     // Semester specific columns

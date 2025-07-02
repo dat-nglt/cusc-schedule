@@ -96,11 +96,11 @@ export const importSubjectsFromJSON = async (subjectsData) => {
 
             try {
                 //validate required fields
-                if (!subjectData.subject_id || !subjectData.subject_name) {
+                if (!subjectData.subject_id) {
                     results.errors.push({
                         index: index,
                         subject_id: subjectData.subject_id || 'N/A',
-                        error: 'Mã môn học và tên môn học là bắt buộc'
+                        error: 'Mã môn học là bắt buộc'
                     });
                     continue;
                 }

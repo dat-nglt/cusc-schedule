@@ -25,39 +25,13 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ErrorIcon from '@mui/icons-material/Error';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { importStudents } from '../../api/studentAPI';
+import { getRowStatus, getErrorChip } from '../../components/ui/ErrorChip';
+
 export default function PreviewStudentModal({ open, onClose, previewData, onImportSuccess }) {
     const [isImporting, setIsImporting] = useState(false);
     const [importError, setImportError] = useState('');
     const [importMessage, setImportMessage] = useState('');
 
-    const getRowStatus = (student) => {
-        if (student.errors && student.errors.length > 0) {
-            return 'error';
-        }
-        return 'valid';
-    };
-
-    const getErrorChip = (error) => {
-        const errorMessages = {
-            'duplicate_id': 'Mã HV trùng lặp',
-            'missing_required': 'Thiếu dữ liệu bắt buộc',
-            'invalid_email': 'Email không hợp lệ',
-            'invalid_phone': 'SĐT không hợp lệ',
-            'invalid_date': 'Ngày không hợp lệ',
-            'invalid_degree': 'Bằng cấp không hợp lệ',
-            'invalid_gender': 'Giới tính không hợp lệ'
-        };
-
-        return (
-            <Chip
-                key={error}
-                label={errorMessages[error] || error}
-                color="error"
-                size="small"
-                sx={{ mr: 0.5, mb: 0.5 }}
-            />
-        );
-    };
 
 
     const validRows = previewData.filter(row => getRowStatus(row) === 'valid');
@@ -237,7 +211,7 @@ export default function PreviewStudentModal({ open, onClose, previewData, onImpo
                                                 <TableCell>{student.admission_year || '-'}</TableCell>
                                                 <TableCell>
                                                     <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-                                                        {student.errors.map((error) => getErrorChip(error))}
+                                                        {student.errors.map((error) => getErrorChip(error, 'học viên'))}
                                                     </Box>
                                                 </TableCell>
                                             </TableRow>

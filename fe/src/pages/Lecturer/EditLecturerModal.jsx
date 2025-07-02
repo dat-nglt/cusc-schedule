@@ -112,6 +112,7 @@ export default function EditLecturerModal({ open, onClose, lecturer, onSave }) {
                 hire_date: editedLecturer.hire_date,
                 degree: editedLecturer.degree,
                 status: editedLecturer.status,
+                updated_at: new Date().toISOString(),
             };
 
             const response = await updateLecturer(lecturer.lecturer_id, updatedLecturerData);
@@ -142,6 +143,7 @@ export default function EditLecturerModal({ open, onClose, lecturer, onSave }) {
                         fullWidth
                         variant="outlined"
                         required
+                       disabled={true}
                     />
                     <TextField
                         label="Họ tên"

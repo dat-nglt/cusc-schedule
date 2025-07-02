@@ -6,7 +6,7 @@ export const getAllStudents = async () => {
         return response;
     } catch (error) {
         console.error("Error getting students:", error);
-        throw new Error("Loi khi tải danh sách sinh viên");
+        throw error;
     }
 };
 
@@ -16,7 +16,7 @@ export const getStudentById = async (id) => {
         return response;
     } catch (error) {
         console.error(`Error getting student with id ${id}:`, error);
-        throw new Error(`Lỗi khi tải thông tin sinh viên với ID ${id}`)
+        throw error
     }
 }
 
@@ -26,7 +26,7 @@ export const createStudent = async (studentData) => {
         return response;
     } catch (error) {
         console.error("Error creating student:", error);
-        throw new Error("Lỗi khi tạo sinh viên mới");
+        throw error;
     }
 }
 
@@ -36,7 +36,7 @@ export const updateStudent = async (id, studentData) => {
         return response;
     } catch (error) {
         console.error(`Error updating student with id ${id}:`, error);
-        throw new Error(`Lỗi khi cập nhật thông tin sinh viên với ID ${id}`);
+        throw error;
     }
 };
 
@@ -46,7 +46,7 @@ export const deleteStudent = async (id) => {
         return response;
     } catch (error) {
         console.error(`Error deleting student with id ${id}:`, error);
-        throw new Error(`Lỗi khi xóa sinh viên với ID ${id}`);
+        throw error;
     }
 };
 
@@ -58,6 +58,6 @@ export const importStudents = async (jsonData) => {
         return response;
     } catch (error) {
         console.error('Error importing students:', error);
-        throw new Error('Lỗi khi nhập sinh viên từ file Excel');
+        throw error;
     }
 };

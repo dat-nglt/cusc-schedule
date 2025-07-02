@@ -71,11 +71,11 @@ export const importSemestersFromJSON = async (semestersData) => {
 
             try {
                 //validate required fields
-                if (!semesterData.semester_id || !semesterData.semester_name) {
+                if (!semesterData.semester_id) {
                     results.errors.push({
                         index: index,
                         semester_id: semesterData.semester_id || 'N/A',
-                        error: 'Mã học kỳ và tên học kỳ là bắt buộc'
+                        error: 'Mã học kỳ là bắt buộc'
                     });
                     continue;
                 }

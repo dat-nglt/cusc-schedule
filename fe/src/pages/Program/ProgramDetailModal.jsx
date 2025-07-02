@@ -20,14 +20,20 @@ import {
     Update as UpdateIcon,
     CheckCircle as StatusIcon,
 } from '@mui/icons-material';
+import { getStatusChip } from '../../components/ui/StatusChip';
 
 // Hàm định dạng thời gian từ YYYY-MM-DD HH:mm thành DD/MM/YYYY HH:mm
 const formatDateTime = (dateTime) => {
     if (!dateTime) return 'Không có dữ liệu';
     try {
-        const [date, time] = dateTime.split(' ');
-        const [year, month, day] = date.split('-');
-        return `${day}/${month}/${year} ${time}`;
+        const date = new Date(dateTime);
+        return date.toLocaleString('vi-VN', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
     } catch {
         return 'Không hợp lệ';
     }
@@ -40,31 +46,11 @@ export default function ProgramDetailModal({ open, onClose, program }) {
     if (!program) return null;
 
     // Hàm sao chép mã chương trình
-    const handleCopyMaChuongTrinh = () => {
-        navigator.clipboard.writeText(program.maChuongTrinh);
+    const handleCopyprogram_id = () => {
+        navigator.clipboard.writeText(program.program_id);
         alert('Đã sao chép mã chương trình!');
     };
 
-    // Hàm hiển thị trạng thái với màu sắc
-    const getStatusChip = (status) => {
-        const statusColors = {
-            'Đang triển khai': { color: '#4caf50', bgcolor: '#e8f5e8' },
-            'Tạm dừng': { color: '#f57c00', bgcolor: '#fff3e0' },
-            'Kết thúc': { color: '#757575', bgcolor: '#f5f5f5' }
-        };
-        const style = statusColors[status] || { color: '#757575', bgcolor: '#f5f5f5' };
-
-        return (
-            <Chip
-                label={status}
-                sx={{
-                    color: style.color,
-                    bgcolor: style.bgcolor,
-                    fontWeight: 'bold'
-                }}
-            />
-        );
-    };
 
     return (
         <Dialog
@@ -90,11 +76,11 @@ export default function ProgramDetailModal({ open, onClose, program }) {
                 }}
             >
                 <Typography variant="h6">
-                    Chi tiết chương trình {program.maChuongTrinh}
+                    Chi tiết chương trình {program.program_id}
                 </Typography>
                 <Tooltip title="Sao chép mã chương trình">
                     <IconButton
-                        onClick={handleCopyMaChuongTrinh}
+                        onClick={handleCopyprogram_id}
                         sx={{ color: '#fff' }}
                     >
                         <CodeIcon />
@@ -124,7 +110,7 @@ export default function ProgramDetailModal({ open, onClose, program }) {
                                     Mã chương trình
                                 </Typography>
                                 <Typography variant="body1" sx={{ color: '#666' }}>
-                                    {getValueOrDefault(program.maChuongTrinh)}
+                                    {getValueOrDefault(program.program_id)}
                                 </Typography>
                             </Box>
                         </Box>
@@ -151,7 +137,7 @@ export default function ProgramDetailModal({ open, onClose, program }) {
                                     Tên chương trình
                                 </Typography>
                                 <Typography variant="body1" sx={{ color: '#666' }}>
-                                    {getValueOrDefault(program.tenChuongTrinh)}
+                                    {getValueOrDefault(program.program_name)}
                                 </Typography>
                             </Box>
                         </Box>
@@ -178,7 +164,7 @@ export default function ProgramDetailModal({ open, onClose, program }) {
                                     Thời gian đào tạo
                                 </Typography>
                                 <Typography variant="body1" sx={{ color: '#666' }}>
-                                    {getValueOrDefault(program.thoiGianDaoTao)}
+                                    {getValueOrDefault(program.training_duration)} năm
                                 </Typography>
                             </Box>
                         </Box>
@@ -205,7 +191,7 @@ export default function ProgramDetailModal({ open, onClose, program }) {
                                     Trạng thái
                                 </Typography>
                                 <Box sx={{ mt: 0.5 }}>
-                                    {getStatusChip(program.trangThai)}
+                                    {getStatusChip(program.status)}
                                 </Box>
                             </Box>
                         </Box>
@@ -232,7 +218,7 @@ export default function ProgramDetailModal({ open, onClose, program }) {
                                     Thời gian tạo
                                 </Typography>
                                 <Typography variant="body1" sx={{ color: '#666' }}>
-                                    {formatDateTime(program.thoiGianTao)}
+                                    {formatDateTime(program.created_at)}
                                 </Typography>
                             </Box>
                         </Box>
@@ -259,7 +245,7 @@ export default function ProgramDetailModal({ open, onClose, program }) {
                                     Thời gian cập nhật
                                 </Typography>
                                 <Typography variant="body1" sx={{ color: '#666' }}>
-                                    {formatDateTime(program.thoiGianCapNhat)}
+                                    {formatDateTime(program.updated_at)}
                                 </Typography>
                             </Box>
                         </Box>

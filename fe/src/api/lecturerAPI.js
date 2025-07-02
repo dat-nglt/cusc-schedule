@@ -7,7 +7,7 @@ export const getAllLecturers = async () => {
     }
     catch (error) {
         console.error('Error fetching lecturers:', error);
-        throw new Error('Lỗi khi tải danh sách giảng viên');
+        throw error;
     }
 };
 
@@ -18,7 +18,7 @@ export const getLecturerById = async (id) => {
     }
     catch (error) {
         console.error('Error fetching lecturer by ID:', error);
-        throw new Error('Lỗi khi tải thông tin giảng viên');
+        throw error;
     }
 };
 
@@ -29,7 +29,7 @@ export const createLecturer = async (lecturerData) => {
     }
     catch (error) {
         console.error('Error creating lecturer:', error);
-        throw new Error('Lỗi khi tạo giảng viên mới');
+        throw error;
     }
 };
 
@@ -40,7 +40,7 @@ export const updateLecturer = async (id, lecturerData) => {
     }
     catch (error) {
         console.error('Error updating lecturer:', error);
-        throw new Error('Lỗi khi cập nhật thông tin giảng viên');
+        throw error;
     }
 };
 
@@ -54,7 +54,7 @@ export const importLecturers = async (jsonData) => {
     }
     catch (error) {
         console.error('Error importing lecturers:', error);
-        throw new Error('Lỗi khi nhập giảng viên từ tệp');
+        throw error;
     }
 };
 
@@ -65,6 +65,6 @@ export const deleteLecturer = async (id) => {
     }
     catch (error) {
         console.error('Error deleting lecturer:', error);
-        throw new Error('Lỗi khi xóa giảng viên');
+        throw error;
     }
 };

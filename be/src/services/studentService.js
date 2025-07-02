@@ -88,11 +88,19 @@ export const importstudentsFromJSON = async (studentsData) => {
 
             try {
                 //validate required fields
-                if (!studentData.student_id || !studentData.name || !studentData.email) {
+                if (!studentData.student_id) {
                     results.errors.push({
                         index: index,
                         student_id: studentData.student_id || 'N/A',
-                        error: 'Mã học viên, họ tên và email là bắt buộc'
+                        error: 'Mã học viên là bắt buộc'
+                    });
+                    continue;
+                }
+                if (!studentData.email) {
+                    results.errors.push({
+                        index: index,
+                        student_id: studentData.student_id || 'N/A',
+                        error: 'email là bắt buộc'
                     });
                     continue;
                 }

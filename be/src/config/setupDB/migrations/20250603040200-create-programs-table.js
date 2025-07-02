@@ -13,6 +13,10 @@ module.exports = {
                 type: Sequelize.STRING(50),
                 allowNull: true
             },
+            training_duration: {
+                type: Sequelize.STRING(30),
+                allowNull: true
+            },
             description: {
                 type: Sequelize.STRING(200),
                 allowNull: true

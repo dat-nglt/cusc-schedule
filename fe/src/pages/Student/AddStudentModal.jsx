@@ -17,7 +17,7 @@ import {
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import * as XLSX from 'xlsx';
 import PreviewStudentModal from './PreviewStudentModal';
-import { processExcelDataStudent } from '../../utils/studentValidation';
+import { processExcelDataStudent } from '../../utils/ExcelValidation';
 
 
 

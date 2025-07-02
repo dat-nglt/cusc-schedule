@@ -72,21 +72,32 @@ export const importProgramsFromJSON = async (programsData) => {
 
             try {
                 //validate required fields
-                if (!programData.program_id || !programData.program_name) {
+                if (!programData.program_id) {
                     results.errors.push({
                         index: index,
                         program_id: programData.program_id || 'N/A',
-                        error: 'Mã chương trình và tên chương trình là bắt buộc'
+                        error: 'Mã chương trình là bắt buộc'
                     });
                     continue;
                 }
 
-                // clean and format data (chuyển sang kiểu chuỗi và xóa khoảng cách thừa ở đầu chuỗi và cuối chuỗi)
+                // clean and format data
                 const cleanedData = {
                     program_id: programData.program_id.toString().trim(),
-                    program_name: programData.program_name.toString().trim(),
+                    program_name: programData.program_name ? programData.program_name.toString().trim() : null,
+                    training_duration: programData.training_duration ? parseFloat(programData.training_duration) : null,
                     description: programData.description ? programData.description.toString().trim() : null,
-                    status: programData.status || 'Hoạt động' // Mặc định là 'hoạt động' nếu không có giá trị,
+                    status: programData.status ? programData.status.toString().trim() : 'Hoạt động'
+                }
+
+                // Validate training_duration if provided
+                if (cleanedData.training_duration !== null && (isNaN(cleanedData.training_duration) || cleanedData.training_duration < 0)) {
+                    results.errors.push({
+                        index: index,
+                        program_id: cleanedData.program_id,
+                        error: 'Thời gian đào tạo phải là số dương'
+                    });
+                    continue;
                 }
 
                 // Kiểm tra program_id đã tồn tại chưa
