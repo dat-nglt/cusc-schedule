@@ -8,21 +8,19 @@ import {
   Typography,
   Box,
 } from '@mui/material';
-import { deleteLecturer } from '../../api/lecturerAPI';
 
 const DeleteLecturerModal = ({ open, onClose, onDelete, lecturer }) => {
   const handleDelete = async () => {
     try {
-      const response = await deleteLecturer(lecturer.lecturer_id);
-
+      const response = await onDelete(lecturer.lecturer_id);
       if (response && response.data) {
         onDelete(lecturer.lecturer_id);
         onClose();
-        alert('Xóa giảng viên thành công!');
       }
     } catch (error) {
       console.error('Error deleting lecturer:', error);
-      alert('Lỗi khi xóa giảng viên: ' + error.message);
+    } finally {
+      onClose();
     }
   };
 
@@ -45,7 +43,11 @@ const DeleteLecturerModal = ({ open, onClose, onDelete, lecturer }) => {
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Hủy</Button>
-        <Button onClick={handleDelete} variant="contained" color="error">
+        <Button
+          onClick={handleDelete}
+          variant="contained"
+          color="error"
+        >
           Xóa
         </Button>
       </DialogActions>

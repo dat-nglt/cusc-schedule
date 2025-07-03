@@ -13,7 +13,7 @@ export const getAllLecturers = async () => {
 
 export const getLecturerById = async (id) => {
     try {
-        const response = await axiosInstance.get(`/api/lecturers/getById/${id}`);
+        const response = await axiosInstance.get(`/api/lecturers/${id}`);
         return response;
     }
     catch (error) {

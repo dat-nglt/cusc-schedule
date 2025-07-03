@@ -8,21 +8,19 @@ import {
   Typography,
   Box,
 } from '@mui/material';
-import { deleteProgram } from '../../api/programAPI';
 
 const DeleteProgramModal = ({ open, onClose, onDelete, program }) => {
   const handleDelete = async () => {
     try {
-      const response = await deleteProgram(program.program_id);
-
+      const response = await onDelete(program.program_id);
       if (response && response.data) {
         onDelete(program.program_id);
         onClose();
-        alert('Xóa giảng viên thành công!');
       }
     } catch (error) {
       console.error('Error deleting program:', error);
-      alert('Lỗi khi xóa giảng viên: ' + error.message);
+    } finally {
+      onClose();
     }
   };
 

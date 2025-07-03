@@ -24,7 +24,7 @@ import EditProgramModal from './EditProgramModal';
 import DeleteProgramModal from './DeleteProgramModal';
 import useResponsive from '../../hooks/useResponsive';
 import ProgramTable from './ProgramTable';
-import { getAllPrograms } from '../../api/programAPI';
+import { getAllPrograms, getProgramById, createProgram, updateProgram, deleteProgram } from '../../api/programAPI';
 
 const Program = () => {
     const { isSmallScreen, isMediumScreen } = useResponsive();
@@ -43,31 +43,53 @@ const Program = () => {
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
     const [editedProgram, setEditedProgram] = useState(null);
     const [programToDelete, setProgramToDelete] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+    const [message, setMessage] = useState('');
+
+    // Danh sách trạng thái để lọc
+    const statuses = ['Đang triển khai', 'Tạm dừng', 'Kết thúc'];
 
     const fetchPrograms = async () => {
         try {
+            setLoading(true);
             const response = await getAllPrograms();
             if (!response) {
-                throw new Error('Lỗi khi tải danh sách chương trình đào tạo');
+                console.error("Không có dữ liệu chương trình đào tạo");
+                return;
             }
             setPrograms(response.data.data);
         } catch (error) {
-            console.error('Error fetching programs:', error);
-            // Hiển thị thông báo lỗi hoặc xử lý lỗi ở đây
+            console.error("Lỗi khi tải danh sách chương trình đào tạo:", error);
+        } finally {
+            setLoading(false);
         }
     };
 
     useEffect(() => {
         fetchPrograms();
     }, []);
-    console.log("chương trình đào tạo", programs);
-
-    // Danh sách trạng thái để lọc
-    const statuses = ['Đang triển khai', 'Tạm dừng', 'Kết thúc'];
 
     // Hàm xử lý khi nhấn nút Thêm chương trình
     const handleAddProgram = () => {
         setOpenAddModal(true);
+    };
+
+    // Hàm thêm chương trình mới
+    const handleAddNewProgram = async (newProgram) => {
+        try {
+            setLoading(true);
+            const response = await createProgram(newProgram);
+            if (response && response.data) {
+                setMessage("Thêm chương trình đào tạo thành công!");
+                fetchPrograms(); // Tải lại danh sách chương trình sau khi thêm thành công
+            }
+        } catch (error) {
+            console.error("Lỗi khi thêm chương trình đào tạo:", error);
+            setError("Không thể thêm chương trình đào tạo. Vui lòng kiểm tra lại thông tin.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     // Hàm đóng modal thêm chương trình
@@ -75,19 +97,21 @@ const Program = () => {
         setOpenAddModal(false);
     };
 
-    // Hàm thêm chương trình mới
-    const handleAddNewProgram = (newProgram) => {
-        setPrograms((prevPrograms) => {
-            const updatedPrograms = [...prevPrograms, { ...newProgram }];
-            return updatedPrograms;
-        });
-    };
-
     // Hàm xử lý khi nhấn nút chỉnh sửa
-    const handleEditProgram = (id) => {
-        const programToEdit = programs.find((p) => p.program_id === id);
-        setEditedProgram(programToEdit);
-        setOpenEditModal(true);
+    const handleEditProgram = async (id) => {
+        try {
+            setLoading(true);
+            const response = await getProgramById(id);
+            if (response && response.data) {
+                setEditedProgram(response.data.data);
+                setOpenEditModal(true);
+            }
+        } catch (error) {
+            console.error("Lỗi khi lấy thông tin chương trình đào tạo để chỉnh sửa:", error);
+            setError("Không thể lấy thông tin chương trình đào tạo để chỉnh sửa. Vui lòng thử lại.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     // Hàm đóng modal chỉnh sửa
@@ -97,11 +121,21 @@ const Program = () => {
     };
 
     // Hàm lưu thay đổi sau khi chỉnh sửa
-    const handleSaveEditedProgram = (updatedProgram) => {
-        // Refresh data from server after successful update
-        fetchPrograms();
+    const handleSaveEditedProgram = async (updatedProgram) => {
+        try {
+            setLoading(true);
+            const response = await updateProgram(updatedProgram.program_id, updatedProgram);
+            if (response && response.data) {
+                setMessage("Cập nhật chương trình đào tạo thành công!");
+                fetchPrograms(); // Tải lại danh sách chương trình sau khi cập nhật thành công
+            }
+        } catch (error) {
+            console.error("Lỗi khi cập nhật chương trình đào tạo:", error);
+            setError("Không thể cập nhật chương trình đào tạo. Vui lòng kiểm tra lại thông tin.");
+        } finally {
+            setLoading(false);
+        }
     };
-
 
     // Hàm xử lý thay đổi trang
     const handleChangePage = (event, newPage) => {
@@ -109,10 +143,20 @@ const Program = () => {
     };
 
     // Hàm xử lý xem chương trình
-    const handleViewProgram = (id) => {
-        const program = programs.find((p) => p.program_id === id);
-        setSelectedProgram(program);
-        setOpenDetail(true);
+    const handleViewProgram = async (id) => {
+        try {
+            setLoading(true);
+            const response = await getProgramById(id);
+            if (response && response.data) {
+                setSelectedProgram(response.data.data);
+                setOpenDetail(true);
+            }
+        } catch (error) {
+            console.error("Lỗi khi lấy thông tin chi tiết chương trình đào tạo:", error);
+            setError("Không thể lấy thông tin chi tiết chương trình đào tạo. Vui lòng thử lại.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     // Hàm xử lý xóa chương trình
@@ -123,13 +167,22 @@ const Program = () => {
     };
 
     // Hàm xác nhận xóa chương trình
-    const confirmDeleteProgram = (id) => {
-        setPrograms((prevPrograms) => {
-            const updatedPrograms = prevPrograms.filter((program) => program.program_id !== id);
-            return updatedPrograms;
-        });
-        setOpenDeleteModal(false);
-        setProgramToDelete(null);
+    const confirmDeleteProgram = async (id) => {
+        try {
+            setLoading(true);
+            const response = await deleteProgram(id);
+            if (response) {
+                setMessage("Xóa chương trình đào tạo thành công!");
+                fetchPrograms(); // Tải lại danh sách chương trình sau khi xóa thành công
+            }
+        } catch (error) {
+            console.error("Lỗi khi xóa chương trình đào tạo:", error);
+            setError("Không thể xóa chương trình đào tạo. Vui lòng thử lại.");
+        } finally {
+            setLoading(false);
+            setOpenDeleteModal(false);
+            setProgramToDelete(null);
+        }
     };
 
     // Hàm đóng modal chi tiết
@@ -147,9 +200,9 @@ const Program = () => {
     // Lọc danh sách chương trình dựa trên từ khóa tìm kiếm và trạng thái
     const filteredPrograms = programs.filter((program) => {
         const matchesSearchTerm =
-            program.program_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            program.program_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            program.training_duration.toString().toLowerCase().includes(searchTerm.toLowerCase());
+            program.program_id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            program.program_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            program.training_duration?.toString().toLowerCase().includes(searchTerm.toLowerCase());
 
         const matchesStatus = selectedStatus
             ? program.status === selectedStatus
@@ -243,6 +296,8 @@ const Program = () => {
                                     handleViewProgram={handleViewProgram}
                                     handleEditProgram={handleEditProgram}
                                     handleDeleteProgram={handleDeleteProgram}
+                                    loading={loading}
+                                    error={error}
                                 />
                                 <TablePagination
                                     component="div"
@@ -268,12 +323,17 @@ const Program = () => {
                 onClose={handleCloseAddModal}
                 onAddProgram={handleAddNewProgram}
                 existingPrograms={programs}
+                error={error}
+                loading={loading}
+                message={message}
             />
             <EditProgramModal
                 open={openEditModal}
                 onClose={handleCloseEditModal}
                 program={editedProgram}
                 onSave={handleSaveEditedProgram}
+                error={error}
+                loading={loading}
             />
             <DeleteProgramModal
                 open={openDeleteModal}

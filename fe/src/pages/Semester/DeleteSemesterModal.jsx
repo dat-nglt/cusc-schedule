@@ -8,21 +8,19 @@ import {
   Typography,
   Box,
 } from '@mui/material';
-import { deleteSemester } from '../../api/semesterAPI';
 
 const DeleteSemesterModal = ({ open, onClose, onDelete, semester }) => {
   const handleDelete = async () => {
     try {
-      const response = await deleteSemester(semester.semester_id);
-
+      const response = await onDelete(semester.semester_id);
       if (response && response.data) {
         onDelete(semester.semester_id);
         onClose();
-        alert('Xóa học kỳ thành công!');
       }
     } catch (error) {
       console.error('Error deleting semester:', error);
-      alert('Lỗi khi xóa học kỳ: ' + error.message);
+    } finally {
+      onClose();
     }
   };
 

@@ -53,7 +53,6 @@ const Student = () => {
     const fetchStudents = async () => {
         try {
             setLoading(true);
-            setError('');
             const response = await getAllStudents();
             if (!response) {
                 console.error("Không có dữ liệu học viên");
@@ -62,7 +61,6 @@ const Student = () => {
             setStudents(response.data.data)
         } catch (error) {
             console.error("Lỗi khi tải danh sách học viên:", error);
-            setError('Không thể tải danh sách học viên. Vui lòng thử lại sau.');
         } finally {
             setLoading(false);
         }
@@ -72,14 +70,9 @@ const Student = () => {
         fetchStudents();
     }, [])
 
-    // Hàm xử lý khi nhấn nút Thêm học viên
-    const handleAddStudent = () => {
+    // Hàm mở modal Thêm 
+    const handleAddStudentModal = () => {
         setOpenAddModal(true);
-    };
-
-    // Hàm đóng modal thêm học viên
-    const handleCloseAddModal = () => {
-        setOpenAddModal(false);
     };
 
     // Hàm thêm học viên mới
@@ -92,14 +85,19 @@ const Student = () => {
             }
         } catch (error) {
             console.error("Lỗi khi thêm học viên:", error);
-            alert("Không thể thêm học viên. Vui lòng thử lại.");
+            setError("Không thể thêm học viên. Vui lòng kiểm tra lại thông tin.");
         } finally {
             setLoading(false);
         }
     };
 
-    // Hàm xử lý khi nhấn nút chỉnh sửa
-    const handleEditStudent = async (id) => {
+    // Hàm đóng modal thêm học viên
+    const handleCloseAddModal = () => {
+        setOpenAddModal(false);
+    };
+
+    // Hàm mở modal chỉnh sửa
+    const handleEditStudentModal = async (id) => {
         try {
             setLoading(true);
             const response = await getStudentById(id);
@@ -109,16 +107,10 @@ const Student = () => {
             }
         } catch (error) {
             console.error("Lỗi khi lấy thông tin học viên để chỉnh sửa:", error);
-            alert("Không thể lấy thông tin học viên. Vui lòng thử lại.");
+            setError("Không thể lấy thông tin học viên để chỉnh sửa. Vui lòng thử lại.");
         } finally {
             setLoading(false);
         }
-    };
-
-    // Hàm đóng modal chỉnh sửa
-    const handleCloseEditModal = () => {
-        setOpenEditModal(false);
-        setEditedStudent(null);
     };
 
     // Hàm lưu thay đổi sau khi chỉnh sửa
@@ -131,18 +123,19 @@ const Student = () => {
             }
         } catch (error) {
             console.error("Lỗi khi cập nhật học viên:", error);
-            alert("Không thể cập nhật thông tin học viên. Vui lòng thử lại.");
+            setError("Không thể cập nhật học viên. Vui lòng kiểm tra lại thông tin.");
         } finally {
             setLoading(false);
         }
     };
 
-    // Hàm xử lý thay đổi trang
-    const handleChangePage = (event, newPage) => {
-        setPage(newPage);
+    // Hàm đóng modal chỉnh sửa
+    const handleCloseEditModal = () => {
+        setOpenEditModal(false);
+        setEditedStudent(null);
     };
 
-    // Hàm xử lý xem học viên
+    // Hàm mở modal chi tiết học viên
     const handleViewStudent = async (id) => {
         try {
             setLoading(true);
@@ -153,14 +146,21 @@ const Student = () => {
             }
         } catch (error) {
             console.error("Lỗi khi lấy thông tin chi tiết học viên:", error);
-            alert("Không thể lấy thông tin chi tiết học viên. Vui lòng thử lại.");
+            setError("Không thể lấy thông tin chi tiết học viên. Vui lòng thử lại.");
         } finally {
             setLoading(false);
         }
     };
 
-    // Hàm xử lý xóa học viên
-    const handleDeleteStudent = (id) => {
+    // Hàm đóng modal chi tiết
+    const handleCloseDetail = () => {
+        setOpenDetail(false);
+        setSelectedStudent(null);
+    };
+
+
+    // Hàm mở modal xóa
+    const handleDeleteStudentModal = (id) => {
         const student = students.find((s) => s.student_id === id);
         setStudentToDelete(student);
         setOpenDeleteModal(true);
@@ -176,7 +176,7 @@ const Student = () => {
             }
         } catch (error) {
             console.error("Lỗi khi xóa học viên:", error);
-            alert("Không thể xóa học viên. Vui lòng thử lại.");
+            error("Không thể xóa học viên. Vui lòng thử lại.");
         } finally {
             setLoading(false);
             setOpenDeleteModal(false);
@@ -184,16 +184,16 @@ const Student = () => {
         }
     };
 
-    // Hàm đóng modal chi tiết
-    const handleCloseDetail = () => {
-        setOpenDetail(false);
-        setSelectedStudent(null);
-    };
 
     // Hàm đóng modal xóa
     const handleCloseDeleteModal = () => {
         setOpenDeleteModal(false);
         setStudentToDelete(null);
+    };
+
+    // Hàm xử lý thay đổi trang
+    const handleChangePage = (event, newPage) => {
+        setPage(newPage);
     };
 
     // Lọc danh sách học viên dựa trên từ khóa tìm kiếm và trạng thái
@@ -228,7 +228,7 @@ const Student = () => {
                                 {isSmallScreen ? (
                                     <IconButton
                                         color="primary"
-                                        onClick={handleAddStudent}
+                                        onClick={handleAddStudentModal}
                                         sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
                                     >
                                         <AddIcon sx={{ color: '# philanthropic' }} />
@@ -238,7 +238,7 @@ const Student = () => {
                                         variant="contained"
                                         color="primary"
                                         startIcon={<AddIcon />}
-                                        onClick={handleAddStudent}
+                                        onClick={handleAddStudentModal}
                                         sx={{
                                             bgcolor: '#1976d2',
                                             '&:hover': { bgcolor: '#115293' },
@@ -293,8 +293,10 @@ const Student = () => {
                                     isSmallScreen={isSmallScreen}
                                     isMediumScreen={isMediumScreen}
                                     handleViewStudent={handleViewStudent}
-                                    handleEditStudent={handleEditStudent}
-                                    handleDeleteStudent={handleDeleteStudent}
+                                    handleEditStudent={handleEditStudentModal}
+                                    handleDeleteStudent={handleDeleteStudentModal}
+                                    loading={loading}
+                                    error={error}
                                 />
                                 <TablePagination
                                     component="div"
@@ -314,25 +316,31 @@ const Student = () => {
                 open={openDetail}
                 onClose={handleCloseDetail}
                 student={selectedStudent}
+                error={error}
+                loading={loading}
             />
             <AddStudentModal
                 open={openAddModal}
                 onClose={handleCloseAddModal}
                 onAddStudent={handleAddNewStudent}
                 existingStudents={students}
+                error={error}
+                loading={loading}
             />
             <EditStudentModal
                 open={openEditModal}
                 onClose={handleCloseEditModal}
                 student={editedStudent}
                 onSave={handleSaveEditedStudent}
-                updateStudentAPI={updateStudent}
+                error={error}
+                loading={loading}
             />
             <DeleteStudentModal
                 open={openDeleteModal}
                 onClose={handleCloseDeleteModal}
                 onDelete={confirmDeleteStudent}
                 student={studentToDelete}
+                error={error}
             />
         </Box>
     );

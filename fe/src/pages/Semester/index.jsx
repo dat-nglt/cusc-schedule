@@ -24,12 +24,12 @@ import EditSemesterModal from './EditSemesterModal';
 import DeleteSemesterModal from './DeleteSemesterModal';
 import useResponsive from '../../hooks/useResponsive';
 import SemesterTable from './SemesterTable';
-import { getAllSemesters } from '../../api/semesterAPI';
+import { getAllSemesters, getSemesterById, createSemester, updateSemester, deleteSemester } from '../../api/semesterAPI';
 
 const Semester = () => {
     const { isSmallScreen, isMediumScreen } = useResponsive();
 
-    // Dữ liệu mẫu cho danh sách chương trình đào tạo
+    // Dữ liệu mẫu cho danh sách học kỳ
     const [semesters, setSemesters] = useState([]);
     // State cho phân trang, tìm kiếm, lọc theo trạng thái và modal
     const [page, setPage] = useState(0);
@@ -43,17 +43,26 @@ const Semester = () => {
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
     const [editedSemester, setEditedSemester] = useState(null);
     const [semesterToDelete, setSemesterToDelete] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+    const [message, setMessage] = useState('');
+
+    // Danh sách trạng thái để lọc
+    const statuses = ['Đang triển khai', 'Tạm dừng', 'Kết thúc'];
 
     const fetchSemesters = async () => {
         try {
+            setLoading(true);
             const response = await getAllSemesters();
             if (!response) {
-                throw new Error('Lỗi khi tải danh sách học kỳ');
+                console.error("Không có dữ liệu học kỳ");
+                return;
             }
             setSemesters(response.data.data);
         } catch (error) {
-            console.error('Error fetching semesters:', error);
-            // Hiển thị thông báo lỗi hoặc xử lý lỗi ở đây
+            console.error("Lỗi khi tải danh sách học kỳ:", error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -61,32 +70,48 @@ const Semester = () => {
         fetchSemesters();
     }, []);
 
-    // Danh sách trạng thái để lọc
-    const statuses = ['Đang triển khai', 'Tạm dừng', 'Kết thúc'];
-
-    // Hàm xử lý khi nhấn nút Thêm chương trình
+    // Hàm xử lý khi nhấn nút Thêm học kỳ
     const handleAddSemester = () => {
         setOpenAddModal(true);
     };
 
-    // Hàm đóng modal thêm chương trình
+    // Hàm đóng modal thêm học kỳ
     const handleCloseAddModal = () => {
         setOpenAddModal(false);
     };
 
-    // Hàm thêm chương trình mới
-    const handleAddNewSemester = (newSemester) => {
-        setSemesters((prevSemesters) => {
-            const updatedSemesters = [...prevSemesters, { ...newSemester }];
-            return updatedSemesters;
-        });
+    // Hàm thêm học kỳ mới
+    const handleAddNewSemester = async (newSemester) => {
+        try {
+            setLoading(true);
+            const response = await createSemester(newSemester);
+            if (response && response.data) {
+                setMessage("Thêm học kỳ thành công!");
+                fetchSemesters(); // Tải lại danh sách học kỳ sau khi thêm thành công
+            }
+        } catch (error) {
+            console.error("Lỗi khi thêm học kỳ:", error);
+            setError("Không thể thêm học kỳ. Vui lòng kiểm tra lại thông tin.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     // Hàm xử lý khi nhấn nút chỉnh sửa
-    const handleEditSemester = (id) => {
-        const semesterToEdit = semesters.find((p) => p.semester_id === id);
-        setEditedSemester(semesterToEdit);
-        setOpenEditModal(true);
+    const handleEditSemester = async (id) => {
+        try {
+            setLoading(true);
+            const response = await getSemesterById(id);
+            if (response && response.data) {
+                setEditedSemester(response.data.data);
+                setOpenEditModal(true);
+            }
+        } catch (error) {
+            console.error("Lỗi khi lấy thông tin học kỳ để chỉnh sửa:", error);
+            setError("Không thể lấy thông tin học kỳ để chỉnh sửa. Vui lòng thử lại.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     // Hàm đóng modal chỉnh sửa
@@ -96,39 +121,68 @@ const Semester = () => {
     };
 
     // Hàm lưu thay đổi sau khi chỉnh sửa
-    const handleSaveEditedSemester = (updatedSemester) => {
-        // Refresh data from server after successful update
-        fetchSemesters();
+    const handleSaveEditedSemester = async (updatedSemester) => {
+        try {
+            setLoading(true);
+            const response = await updateSemester(updatedSemester.semester_id, updatedSemester);
+            if (response && response.data) {
+                setMessage("Cập nhật học kỳ thành công!");
+                fetchSemesters(); // Tải lại danh sách học kỳ sau khi cập nhật thành công
+            }
+        } catch (error) {
+            console.error("Lỗi khi cập nhật học kỳ:", error);
+            setError("Không thể cập nhật học kỳ. Vui lòng kiểm tra lại thông tin.");
+        } finally {
+            setLoading(false);
+        }
     };
-
 
     // Hàm xử lý thay đổi trang
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
 
-    // Hàm xử lý xem chương trình
-    const handleViewSemester = (id) => {
-        const semester = semesters.find((p) => p.semester_id === id);
-        setSelectedSemester(semester);
-        setOpenDetail(true);
+    // Hàm xử lý xem học kỳ
+    const handleViewSemester = async (id) => {
+        try {
+            setLoading(true);
+            const response = await getSemesterById(id);
+            if (response && response.data) {
+                setSelectedSemester(response.data.data);
+                setOpenDetail(true);
+            }
+        } catch (error) {
+            console.error("Lỗi khi lấy thông tin chi tiết học kỳ:", error);
+            setError("Không thể lấy thông tin chi tiết học kỳ. Vui lòng thử lại.");
+        } finally {
+            setLoading(false);
+        }
     };
 
-    // Hàm xử lý xóa chương trình
+    // Hàm xử lý xóa học kỳ
     const handleDeleteSemester = (id) => {
-        const semester = semesters.find((p) => p.semester_id === id);
+        const semester = semesters.find((s) => s.semester_id === id);
         setSemesterToDelete(semester);
         setOpenDeleteModal(true);
     };
 
-    // Hàm xác nhận xóa chương trình
-    const confirmDeleteSemester = (id) => {
-        setSemesters((prevSemesters) => {
-            const updatedSemesters = prevSemesters.filter((semester) => semester.semester_id !== id);
-            return updatedSemesters;
-        });
-        setOpenDeleteModal(false);
-        setSemesterToDelete(null);
+    // Hàm xác nhận xóa học kỳ
+    const confirmDeleteSemester = async (id) => {
+        try {
+            setLoading(true);
+            const response = await deleteSemester(id);
+            if (response) {
+                setMessage("Xóa học kỳ thành công!");
+                fetchSemesters(); // Tải lại danh sách học kỳ sau khi xóa thành công
+            }
+        } catch (error) {
+            console.error("Lỗi khi xóa học kỳ:", error);
+            setError("Không thể xóa học kỳ. Vui lòng thử lại.");
+        } finally {
+            setLoading(false);
+            setOpenDeleteModal(false);
+            setSemesterToDelete(null);
+        }
     };
 
     // Hàm đóng modal chi tiết
@@ -143,11 +197,11 @@ const Semester = () => {
         setSemesterToDelete(null);
     };
 
-    // Lọc danh sách chương trình dựa trên từ khóa tìm kiếm và trạng thái
+    // Lọc danh sách học kỳ dựa trên từ khóa tìm kiếm và trạng thái
     const filteredSemesters = semesters.filter((semester) => {
         const matchesSearchTerm =
-            semester.semester_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            semester.semester_name.toLowerCase().includes(searchTerm.toLowerCase());
+            semester.semester_id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            semester.semester_name?.toLowerCase().includes(searchTerm.toLowerCase());
 
         const matchesStatus = selectedStatus
             ? semester.status === selectedStatus
@@ -163,7 +217,7 @@ const Semester = () => {
         <Box sx={{ p: 3, zIndex: 10, height: 'calc(100vh - 64px)', overflowY: 'auto' }}>
             {/* Main Content */}
             <Box sx={{ width: '100%', mb: 3 }}>
-                {/* Bảng danh sách chương trình đào tạo */}
+                {/* Bảng danh sách học kỳ */}
                 <Card sx={{ flexGrow: 1 }}>
                     <CardContent>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, gap: 2 }}>
@@ -217,7 +271,7 @@ const Semester = () => {
                             <TextField
                                 fullWidth
                                 variant="outlined"
-                                placeholder="Tìm kiếm theo mã, tên chương trình hoặc thời gian đào tạo..."
+                                placeholder="Tìm kiếm theo mã, tên học kỳ..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 sx={{ bgcolor: '#fff' }}
@@ -231,7 +285,7 @@ const Semester = () => {
                             />
                         </Box>
                         {filteredSemesters.length === 0 ? (
-                            <Typography>Không có chương trình đào tạo nào để hiển thị.</Typography>
+                            <Typography>Không có học kỳ nào để hiển thị.</Typography>
                         ) : (
                             <>
                                 <SemesterTable
@@ -241,6 +295,8 @@ const Semester = () => {
                                     handleViewSemester={handleViewSemester}
                                     handleEditSemester={handleEditSemester}
                                     handleDeleteSemester={handleDeleteSemester}
+                                    loading={loading}
+                                    error={error}
                                 />
                                 <TablePagination
                                     component="div"
@@ -266,12 +322,17 @@ const Semester = () => {
                 onClose={handleCloseAddModal}
                 onAddSemester={handleAddNewSemester}
                 existingSemesters={semesters}
+                error={error}
+                loading={loading}
+                message={message}
             />
             <EditSemesterModal
                 open={openEditModal}
                 onClose={handleCloseEditModal}
                 semester={editedSemester}
                 onSave={handleSaveEditedSemester}
+                error={error}
+                loading={loading}
             />
             <DeleteSemesterModal
                 open={openDeleteModal}

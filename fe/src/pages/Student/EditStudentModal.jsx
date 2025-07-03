@@ -12,25 +12,34 @@ import {
     InputLabel,
     Select,
     MenuItem,
+    Alert,
     CircularProgress,
 } from '@mui/material';
 
-export default function EditStudentModal({ open, onClose, student, onSave }) {
+export default function EditStudentModal({ open, onClose, student, onSave, error, loading }) {
     const [editedStudent, setEditedStudent] = useState({
         student_id: '',
         name: '',
+        email: '',
+        day_of_birth: '',
+        gender: '',
+        address: '',
+        phone_number: '',
         class: '',
         admission_year: '',
         status: 'Đang học',
     });
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState('');
 
     useEffect(() => {
         if (student) {
             setEditedStudent({
                 student_id: student.student_id || '',
                 name: student.name || '',
+                email: student.email || '',
+                day_of_birth: student.day_of_birth || '',
+                gender: student.gender || '',
+                address: student.address || '',
+                phone_number: student.phone_number || '',
                 class: student.class || '',
                 admission_year: student.admission_year || '',
                 status: student.status || 'Đang học',
@@ -41,60 +50,84 @@ export default function EditStudentModal({ open, onClose, student, onSave }) {
     const handleChange = (e) => {
         const { name, value } = e.target;
         setEditedStudent((prev) => ({ ...prev, [name]: value }));
-        setError('');
     };
 
     const handleSubmit = async () => {
         if (
             !editedStudent.student_id ||
             !editedStudent.name ||
+            !editedStudent.email ||
+            !editedStudent.day_of_birth ||
+            !editedStudent.gender ||
+            !editedStudent.address ||
+            !editedStudent.phone_number ||
             !editedStudent.class ||
             !editedStudent.admission_year
         ) {
-            setError('Vui lòng điền đầy đủ thông tin!');
+            alert('Vui lòng điền đầy đủ thông tin!');
             return;
         }
 
-        try {
-            const updatedStudentData = {
-                student_id: editedStudent.student_id,
-                name: editedStudent.name,
-                email: editedStudent.email,
-                day_of_birth: editedStudent.day_of_birth,
-                gender: editedStudent.gender,
-                address: editedStudent.address,
-                phone_number: editedStudent.phone_number,
-                class: editedStudent.class,
-                admission_year: editedStudent.admission_year,
-                status: editedStudent.status,
-                updated_at: new Date().toISOString(),
-            };
-
-            const response = await updatedStudentData(student.student_id, updatedStudentData);
-
-            if (response && response.data) {
-                onSave(response.data.data);
-                onClose();
-                alert('Cập nhật học viên thành công!');
-            }
-        } catch (error) {
-            console.error('Error updating lecturer:', error);
-            alert('Lỗi khi cập nhật giảng viên: ' + error.message);
+        // Kiểm tra email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(editedStudent.email)) {
+            alert('Email không hợp lệ!');
+            return;
         }
+
+        // Kiểm tra số điện thoại format
+        const phoneRegex = /^[0-9]{10,11}$/;
+        if (!phoneRegex.test(editedStudent.phone_number)) {
+            alert('Số điện thoại không hợp lệ!');
+            return;
+        }
+
+        // Kiểm tra ngày hợp lệ
+        const birthDate = new Date(editedStudent.day_of_birth);
+        const admissionDate = new Date(editedStudent.admission_year);
+        const today = new Date();
+
+        if (birthDate >= today) {
+            alert('Ngày sinh không hợp lệ!');
+            return;
+        }
+
+        if (admissionDate > today) {
+            alert('Ngày nhập học không được là ngày tương lai!');
+            return;
+        }
+
+        const updatedStudentData = {
+            student_id: editedStudent.student_id,
+            name: editedStudent.name,
+            email: editedStudent.email,
+            day_of_birth: editedStudent.day_of_birth,
+            gender: editedStudent.gender,
+            address: editedStudent.address,
+            phone_number: editedStudent.phone_number,
+            class: editedStudent.class,
+            admission_year: editedStudent.admission_year,
+            status: editedStudent.status,
+            updated_at: new Date().toISOString(),
+        };
+
+        // Gọi hàm onSave được truyền từ component cha
+        await onSave(updatedStudentData);
+        onClose();
     };
 
     return (
-        <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+        <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
             <DialogTitle>
                 <Typography variant="h6">Chỉnh sửa sinh viên</Typography>
             </DialogTitle>
             <DialogContent>
                 {error && (
-                    <Typography color="error" sx={{ mb: 2 }}>
+                    <Alert severity="error" sx={{ mb: 2 }}>
                         {error}
-                    </Typography>
+                    </Alert>
                 )}
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
+                <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2, mt: 2 }}>
                     <TextField
                         label="Mã học viên"
                         name="student_id"
@@ -103,7 +136,7 @@ export default function EditStudentModal({ open, onClose, student, onSave }) {
                         fullWidth
                         variant="outlined"
                         required
-                        disabled={true} // Không cho phép thay đổi mã học viên
+                        disabled={true}
                     />
                     <TextField
                         label="Họ tên"
@@ -116,6 +149,62 @@ export default function EditStudentModal({ open, onClose, student, onSave }) {
                         disabled={loading}
                     />
                     <TextField
+                        label="Email"
+                        name="email"
+                        type="email"
+                        value={editedStudent.email}
+                        onChange={handleChange}
+                        fullWidth
+                        variant="outlined"
+                        required
+                        disabled={loading}
+                    />
+                    <TextField
+                        label="Ngày sinh"
+                        name="day_of_birth"
+                        type="date"
+                        value={editedStudent.day_of_birth}
+                        onChange={handleChange}
+                        fullWidth
+                        variant="outlined"
+                        required
+                        disabled={loading}
+                        InputLabelProps={{ shrink: true }}
+                    />
+                    <FormControl fullWidth required disabled={loading}>
+                        <InputLabel>Giới tính</InputLabel>
+                        <Select
+                            name="gender"
+                            value={editedStudent.gender}
+                            onChange={handleChange}
+                            label="Giới tính"
+                        >
+                            <MenuItem value="Nam">Nam</MenuItem>
+                            <MenuItem value="Nữ">Nữ</MenuItem>
+                        </Select>
+                    </FormControl>
+                    <TextField
+                        label="Số điện thoại"
+                        name="phone_number"
+                        value={editedStudent.phone_number}
+                        onChange={handleChange}
+                        fullWidth
+                        variant="outlined"
+                        required
+                        disabled={loading}
+                    />
+                    <TextField
+                        label="Địa chỉ"
+                        name="address"
+                        value={editedStudent.address}
+                        onChange={handleChange}
+                        fullWidth
+                        variant="outlined"
+                        required
+                        disabled={loading}
+                        sx={{ gridColumn: { md: 'span 2' } }}
+                    />
+                    <TextField
                         label="Mã lớp"
                         name="class"
                         value={editedStudent.class}
@@ -126,7 +215,7 @@ export default function EditStudentModal({ open, onClose, student, onSave }) {
                         disabled={loading}
                     />
                     <TextField
-                        label="Năm nhập học"
+                        label="Ngày nhập học"
                         name="admission_year"
                         type="date"
                         value={editedStudent.admission_year}
@@ -134,9 +223,8 @@ export default function EditStudentModal({ open, onClose, student, onSave }) {
                         fullWidth
                         variant="outlined"
                         required
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
+                        disabled={loading}
+                        InputLabelProps={{ shrink: true }}
                     />
                     <FormControl fullWidth required disabled={loading}>
                         <InputLabel>Trạng thái</InputLabel>
@@ -163,8 +251,9 @@ export default function EditStudentModal({ open, onClose, student, onSave }) {
                     variant="contained"
                     sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
                     disabled={loading}
+                    startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
                 >
-                    {loading ? <CircularProgress size={24} /> : 'Lưu'}
+                    {loading ? 'Đang lưu...' : 'Lưu'}
                 </Button>
             </DialogActions>
         </Dialog>

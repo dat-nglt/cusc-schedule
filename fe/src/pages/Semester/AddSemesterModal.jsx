@@ -12,14 +12,15 @@ import {
     InputLabel,
     Select,
     MenuItem,
-    IconButton,
+    Alert,
+    CircularProgress,
 } from '@mui/material';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import * as XLSX from 'xlsx';
 import PreviewSemesterModal from './PreviewSemesterModal';
 import { processExcelDataSemester } from '../../utils/ExcelValidation';
 
-export default function AddSemesterModal({ open, onClose, onAddSemester, existingSemesters }) {
+export default function AddSemesterModal({ open, onClose, onAddSemester, existingSemesters, error, loading, message }) {
     const [newSemester, setNewSemester] = useState({
         semester_id: '',
         semester_name: '',
@@ -28,43 +29,55 @@ export default function AddSemesterModal({ open, onClose, onAddSemester, existin
         status: 'Đang triển khai',
     });
 
-    const [error, setError] = useState('');
+    const [localError, setLocalError] = useState('');
     const [showPreview, setShowPreview] = useState(false);
     const [previewData, setPreviewData] = useState([]);
-
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setNewSemester((prev) => ({ ...prev, [name]: value }));
-        setError('');
-    }
+        setLocalError('');
+    };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (
             !newSemester.semester_id ||
             !newSemester.semester_name ||
             !newSemester.start_date ||
             !newSemester.end_date
         ) {
-            setError('Vui lòng điền đầy đủ thông tin!');
+            setLocalError('Vui lòng điền đầy đủ thông tin!');
             return;
         }
 
-        //kiểm tra mã học kỳ có hợp lệ hay không
+        // Kiểm tra trùng mã học kỳ
         const isDuplicate = existingSemesters.some(
             (semester) => semester.semester_id === newSemester.semester_id
         );
         if (isDuplicate) {
-            setError(`Mã học kỳ "${newSemester.semester_id}" đã tồn tại!`);
+            setLocalError(`Mã học kỳ "${newSemester.semester_id}" đã tồn tại!`);
+            return;
+        }
+
+        // Kiểm tra ngày hợp lệ
+        const startDate = new Date(newSemester.start_date);
+        const endDate = new Date(newSemester.end_date);
+
+        if (startDate >= endDate) {
+            setLocalError('Ngày kết thúc phải sau ngày bắt đầu!');
             return;
         }
 
         const semesterToAdd = {
             ...newSemester,
-            created_at: new Date(newSemester.start_date),
-            updated_at: new Date(newSemester.end_date),
+            id: Date.now(),
+            created_at: startDate.toISOString(),
+            updated_at: endDate.toISOString(),
         };
-        onAddSemester(semesterToAdd);
+
+        // Gọi hàm onAddSemester được truyền từ component cha
+        await onAddSemester(semesterToAdd);
+
         setNewSemester({
             semester_id: '',
             semester_name: '',
@@ -72,27 +85,26 @@ export default function AddSemesterModal({ open, onClose, onAddSemester, existin
             end_date: '',
             status: 'Đang triển khai',
         });
-        setError('');
+        setLocalError('');
         onClose();
     };
 
-    //hàm xử lý import file Excel
     const handleImportExcel = async (e) => {
         const file = e.target.files[0];
         if (!file) {
-            setError('Vui lòng chọn một file Excel!');
+            setLocalError('Vui lòng chọn một file Excel!');
             return;
         }
 
         const validExtensions = ['.xlsx', '.xls'];
         const fileExtension = file.name.slice(file.name.lastIndexOf('.')).toLowerCase();
         if (!validExtensions.includes(fileExtension)) {
-            setError('Chỉ hỗ trợ file Excel (.xlsx, .xls)!');
+            setLocalError('Chỉ hỗ trợ file Excel (.xlsx, .xls)!');
             return;
         }
 
         try {
-            setError(''); // Clear previous errors
+            setLocalError(''); // Clear previous errors
             // Đọc file Excel
             const arrayBuffer = await file.arrayBuffer();
             const workbook = XLSX.read(arrayBuffer, { type: 'array' });
@@ -103,7 +115,7 @@ export default function AddSemesterModal({ open, onClose, onAddSemester, existin
             const rawData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
             if (rawData.length < 2) {
-                setError('File Excel phải có ít nhất 2 dòng (header + dữ liệu)!');
+                setLocalError('File Excel phải có ít nhất 2 dòng (header + dữ liệu)!');
                 return;
             }
 
@@ -124,7 +136,7 @@ export default function AddSemesterModal({ open, onClose, onAddSemester, existin
             const processedData = processExcelDataSemester(jsonData, existingSemesters);
 
             if (processedData.length === 0) {
-                setError('Không có dữ liệu hợp lệ trong file Excel!');
+                setLocalError('Không có dữ liệu hợp lệ trong file Excel!');
                 return;
             }
 
@@ -135,7 +147,7 @@ export default function AddSemesterModal({ open, onClose, onAddSemester, existin
 
         } catch (error) {
             console.error('Error reading Excel file:', error);
-            setError('Lỗi khi đọc file Excel! Vui lòng kiểm tra format file.');
+            setLocalError('Lỗi khi đọc file Excel! Vui lòng kiểm tra format file.');
         }
 
         // Reset file input
@@ -143,18 +155,12 @@ export default function AddSemesterModal({ open, onClose, onAddSemester, existin
     };
 
     const handleImportSuccess = (result) => {
-        const { imported, message: resultMessage } = result;
+        const { imported } = result;
 
         if (imported && imported.length > 0) {
-            // Add imported lecturers to the list
+            // Add imported semesters to the list
             imported.forEach(semester => onAddSemester(semester));
-
-            // Hiển thị thông báo thành công
-            // setMessage(`Thêm thành công ${imported.length} chương trình đào tạo!`);
-            setError('');
             onClose();
-        } else if (resultMessage) {
-            setError(resultMessage);
         }
 
         setShowPreview(false);
@@ -192,10 +198,15 @@ export default function AddSemesterModal({ open, onClose, onAddSemester, existin
                     </Box>
                 </DialogTitle>
                 <DialogContent>
-                    {error && (
-                        <Typography color="error" sx={{ mb: 2 }}>
-                            {error}
-                        </Typography>
+                    {(error || localError) && (
+                        <Alert severity="error" sx={{ mb: 2 }}>
+                            {error || localError}
+                        </Alert>
+                    )}
+                    {message && (
+                        <Alert severity="success" sx={{ mb: 2 }}>
+                            {message}
+                        </Alert>
                     )}
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
                         <TextField
@@ -229,7 +240,6 @@ export default function AddSemesterModal({ open, onClose, onAddSemester, existin
                                 shrink: true,
                             }}
                         />
-
                         <TextField
                             label="Ngày kết thúc"
                             name="end_date"
@@ -259,11 +269,17 @@ export default function AddSemesterModal({ open, onClose, onAddSemester, existin
                     </Box>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={onClose} variant="outlined" sx={{ color: '#1976d2' }}>
+                    <Button onClick={onClose} variant="outlined" sx={{ color: '#1976d2' }} disabled={loading}>
                         Hủy
                     </Button>
-                    <Button onClick={handleSubmit} variant="contained" sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}>
-                        Thêm
+                    <Button
+                        onClick={handleSubmit}
+                        variant="contained"
+                        sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
+                        disabled={loading}
+                        startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
+                    >
+                        {loading ? 'Đang thêm...' : 'Thêm'}
                     </Button>
                 </DialogActions>
             </Dialog>
@@ -274,7 +290,8 @@ export default function AddSemesterModal({ open, onClose, onAddSemester, existin
                 onClose={handleClosePreview}
                 previewData={previewData}
                 onImportSuccess={handleImportSuccess}
+                existingSemesters={existingSemesters}
             />
         </>
-    )
+    );
 }

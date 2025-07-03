@@ -12,16 +12,17 @@ import {
     InputLabel,
     Select,
     MenuItem,
-    IconButton,
+    Alert,
+    CircularProgress,
 } from '@mui/material';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import * as XLSX from 'xlsx';
 import PreviewProgramModal from './PreviewProgramModal';
 import { processExcelDataProgram } from '../../utils/ExcelValidation';
 
+const availableTrainingDurations = [1, 2, 3, 4];
 
-
-export default function AddProgramModal({ open, onClose, onAddProgram, existingPrograms }) {
+export default function AddProgramModal({ open, onClose, onAddProgram, existingPrograms, error, loading, message }) {
     const [newProgram, setNewProgram] = useState({
         program_id: '',
         program_name: '',
@@ -29,25 +30,23 @@ export default function AddProgramModal({ open, onClose, onAddProgram, existingP
         status: 'Đang triển khai',
     });
 
-    const [error, setError] = useState('');
+    const [localError, setLocalError] = useState('');
     const [showPreview, setShowPreview] = useState(false);
     const [previewData, setPreviewData] = useState([]);
-
-    const availableTrainingDurations = [1, 2, 3, 4,]
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setNewProgram((prev) => ({ ...prev, [name]: value }));
-        setError('');
+        setLocalError('');
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (
             !newProgram.program_id ||
             !newProgram.program_name ||
             !newProgram.training_duration
         ) {
-            setError('Vui lòng điền đầy đủ thông tin!');
+            setLocalError('Vui lòng điền đầy đủ thông tin!');
             return;
         }
         //kiểm tra mã Chuong trình có hợp lệ hay không
@@ -55,24 +54,27 @@ export default function AddProgramModal({ open, onClose, onAddProgram, existingP
             (program) => program.program_id === newProgram.program_id
         );
         if (isDuplicate) {
-            setError(`Mã chương trình "${newProgram.program_id}" đã tồn tại!`);
+            setLocalError(`Mã chương trình "${newProgram.program_id}" đã tồn tại!`);
             return;
         }
 
         const programToAdd = {
             ...newProgram,
+            id: Date.now(),
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
         };
 
-        onAddProgram(programToAdd);
+        // Gọi hàm onAddProgram được truyền từ component cha
+        await onAddProgram(programToAdd);
+
         setNewProgram({
             program_id: '',
             program_name: '',
             training_duration: '',
             status: 'Đang triển khai',
         });
-        setError('');
+        setLocalError('');
         onClose();
     };
 
@@ -80,19 +82,19 @@ export default function AddProgramModal({ open, onClose, onAddProgram, existingP
     const handleImportExcel = async (e) => {
         const file = e.target.files[0];
         if (!file) {
-            setError('Vui lòng chọn một file Excel!');
+            setLocalError('Vui lòng chọn một file Excel!');
             return;
         }
 
         const validExtensions = ['.xlsx', '.xls'];
         const fileExtension = file.name.slice(file.name.lastIndexOf('.')).toLowerCase();
         if (!validExtensions.includes(fileExtension)) {
-            setError('Chỉ hỗ trợ file Excel (.xlsx, .xls)!');
+            setLocalError('Chỉ hỗ trợ file Excel (.xlsx, .xls)!');
             return;
         }
 
         try {
-            setError(''); // Clear previous errors
+            setLocalError(''); // Clear previous errors
             // Đọc file Excel
             const arrayBuffer = await file.arrayBuffer();
             const workbook = XLSX.read(arrayBuffer, { type: 'array' });
@@ -103,7 +105,7 @@ export default function AddProgramModal({ open, onClose, onAddProgram, existingP
             const rawData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
             if (rawData.length < 2) {
-                setError('File Excel phải có ít nhất 2 dòng (header + dữ liệu)!');
+                setLocalError('File Excel phải có ít nhất 2 dòng (header + dữ liệu)!');
                 return;
             }
 
@@ -124,7 +126,7 @@ export default function AddProgramModal({ open, onClose, onAddProgram, existingP
             const processedData = processExcelDataProgram(jsonData, existingPrograms);
 
             if (processedData.length === 0) {
-                setError('Không có dữ liệu hợp lệ trong file Excel!');
+                setLocalError('Không có dữ liệu hợp lệ trong file Excel!');
                 return;
             }
 
@@ -135,7 +137,7 @@ export default function AddProgramModal({ open, onClose, onAddProgram, existingP
 
         } catch (error) {
             console.error('Error reading Excel file:', error);
-            setError('Lỗi khi đọc file Excel! Vui lòng kiểm tra format file.');
+            setLocalError('Lỗi khi đọc file Excel! Vui lòng kiểm tra format file.');
         }
 
         // Reset file input
@@ -143,24 +145,17 @@ export default function AddProgramModal({ open, onClose, onAddProgram, existingP
     };
 
     const handleImportSuccess = (result) => {
-        const { imported, message: resultMessage } = result;
+        const { imported } = result;
 
         if (imported && imported.length > 0) {
-            // Add imported lecturers to the list
+            // Add imported programs to the list
             imported.forEach(program => onAddProgram(program));
-
-            // Hiển thị thông báo thành công
-            // setMessage(`Thêm thành công ${imported.length} chương trình đào tạo!`);
-            setError('');
             onClose();
-        } else if (resultMessage) {
-            setError(resultMessage);
         }
 
         setShowPreview(false);
         setPreviewData([]);
     };
-
 
     const handleClosePreview = () => {
         setShowPreview(false);
@@ -193,10 +188,15 @@ export default function AddProgramModal({ open, onClose, onAddProgram, existingP
                     </Box>
                 </DialogTitle>
                 <DialogContent>
-                    {error && (
-                        <Typography color="error" sx={{ mb: 2 }}>
-                            {error}
-                        </Typography>
+                    {(error || localError) && (
+                        <Alert severity="error" sx={{ mb: 2 }}>
+                            {error || localError}
+                        </Alert>
+                    )}
+                    {message && (
+                        <Alert severity="success" sx={{ mb: 2 }}>
+                            {message}
+                        </Alert>
                     )}
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
                         <TextField
@@ -248,11 +248,17 @@ export default function AddProgramModal({ open, onClose, onAddProgram, existingP
                     </Box>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={onClose} variant="outlined" sx={{ color: '#1976d2' }}>
+                    <Button onClick={onClose} variant="outlined" sx={{ color: '#1976d2' }} disabled={loading}>
                         Hủy
                     </Button>
-                    <Button onClick={handleSubmit} variant="contained" sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}>
-                        Thêm
+                    <Button
+                        onClick={handleSubmit}
+                        variant="contained"
+                        sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
+                        disabled={loading}
+                        startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
+                    >
+                        {loading ? 'Đang thêm...' : 'Thêm'}
                     </Button>
                 </DialogActions>
             </Dialog>

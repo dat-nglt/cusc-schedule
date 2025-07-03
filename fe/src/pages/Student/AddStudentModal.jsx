@@ -12,6 +12,7 @@ import {
     InputLabel,
     Select,
     MenuItem,
+    Alert,
     CircularProgress,
 } from '@mui/material';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
@@ -19,9 +20,7 @@ import * as XLSX from 'xlsx';
 import PreviewStudentModal from './PreviewStudentModal';
 import { processExcelDataStudent } from '../../utils/ExcelValidation';
 
-
-
-export default function AddStudentModal({ open, onClose, onAddStudent, existingStudents }) {
+export default function AddStudentModal({ open, onClose, onAddStudent, existingStudents, error, loading, message }) {
     const [newStudent, setNewStudent] = useState({
         student_id: '',
         name: '',
@@ -35,16 +34,14 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
         status: 'Đang học',
     });
 
-    const [error, setError] = useState('');
-    const [message, setMessage] = useState('');
+    const [localError, setLocalError] = useState('');
     const [showPreview, setShowPreview] = useState(false);
     const [previewData, setPreviewData] = useState([]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setNewStudent((prev) => ({ ...prev, [name]: value }));
-        setError('');
-        setMessage('');
+        setLocalError('');
     };
 
     const handleSubmit = async () => {
@@ -59,20 +56,20 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
             !newStudent.class ||
             !newStudent.admission_year
         ) {
-            setError('Vui lòng điền đầy đủ thông tin!');
+            setLocalError('Vui lòng điền đầy đủ thông tin!');
             return;
         }
         // Kiểm tra email format
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(newStudent.email)) {
-            setError('Email không hợp lệ!');
+            setLocalError('Email không hợp lệ!');
             return;
         }
 
         // Kiểm tra số điện thoại format
         const phoneRegex = /^[0-9]{10,11}$/;
         if (!phoneRegex.test(newStudent.phone_number)) {
-            setError('Số điện thoại không hợp lệ!');
+            setLocalError('Số điện thoại không hợp lệ!');
             return;
         }
 
@@ -81,7 +78,7 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
             (student) => student.student_id === newStudent.student_id
         );
         if (isDuplicate) {
-            setError(`Mã học viên "${newStudent.student_id}" đã tồn tại!`);
+            setLocalError(`Mã học viên "${newStudent.student_id}" đã tồn tại!`);
             return;
         }
 
@@ -90,7 +87,7 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
         const today = new Date();
 
         if (birthDate >= today) {
-            setError('Ngày sinh không hợp lệ!');
+            setLocalError('Ngày sinh không hợp lệ!');
             return;
         }
         const studentToAdd = {
@@ -101,7 +98,9 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
             updated_at: new Date().toISOString(),
         };
 
-        onAddStudent(studentToAdd);
+        // Gọi hàm onAddStudent được truyền từ component cha
+        await onAddStudent(studentToAdd);
+
         setNewStudent({
             student_id: '',
             name: '',
@@ -114,28 +113,26 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
             admission_year: '',
             status: 'Đang học',
         });
-        setError('');
-        setMessage('');
+        setLocalError('');
         onClose();
     };
 
     const handleImportExcel = async (e) => {
         const file = e.target.files[0];
         if (!file) {
-            setError('Vui lòng chọn một file Excel!');
+            setLocalError('Vui lòng chọn một file Excel!');
             return;
         }
 
         const validExtensions = ['.xlsx', '.xls'];
         const fileExtension = file.name.slice(file.name.lastIndexOf('.')).toLowerCase();
         if (!validExtensions.includes(fileExtension)) {
-            setError('Chỉ hỗ trợ file Excel (.xlsx, .xls)!');
+            setLocalError('Chỉ hỗ trợ file Excel (.xlsx, .xls)!');
             return;
         }
 
         try {
-            setError(''); // Clear previous errors
-            setMessage(''); // Clear previous messages
+            setLocalError(''); // Clear previous errors
             // Đọc file Excel
             const arrayBuffer = await file.arrayBuffer();
             const workbook = XLSX.read(arrayBuffer, { type: 'array' });
@@ -146,7 +143,7 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
             const rawData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
             if (rawData.length < 2) {
-                setError('File Excel phải có ít nhất 2 dòng (header + dữ liệu)!');
+                setLocalError('File Excel phải có ít nhất 2 dòng (header + dữ liệu)!');
                 return;
             }
 
@@ -167,7 +164,7 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
             const processedData = processExcelDataStudent(jsonData, existingStudents);
 
             if (processedData.length === 0) {
-                setError('Không có dữ liệu hợp lệ trong file Excel!');
+                setLocalError('Không có dữ liệu hợp lệ trong file Excel!');
                 return;
             }
 
@@ -178,24 +175,19 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
 
         } catch (error) {
             console.error('Error reading Excel file:', error);
-            setError('Lỗi khi đọc file Excel! Vui lòng kiểm tra định dạng file.');
+            setLocalError('Lỗi khi đọc file Excel! Vui lòng kiểm tra định dạng file.');
         }
         // Reset file input
         e.target.value = '';
     };
 
     const handleImportSuccess = (result) => {
-        const { imported, message: resultMessage } = result;
+        const { imported } = result;
 
         if (imported && imported.length > 0) {
             // Add imported students to the list
             imported.forEach(student => onAddStudent(student));
-
-            // Hiển thị thông báo thành công
-            setMessage(`Thêm thành công ${imported.length} học viên`);
-            setError('');
-        } else if (resultMessage) {
-            setError(resultMessage);
+            onClose();
         }
 
         setShowPreview(false);
@@ -209,7 +201,7 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
 
     return (
         <>
-            <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+            <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
                 <DialogTitle>
                     <Box display="flex" justifyContent="space-between" alignItems="center">
                         <Typography variant="h6">Thêm học viên mới</Typography>
@@ -233,28 +225,17 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
                     </Box>
                 </DialogTitle>
                 <DialogContent>
-                    {error && (
-                        <Typography color="error" sx={{ mb: 2 }}>
-                            {error}
-                        </Typography>
+                    {(error || localError) && (
+                        <Alert severity="error" sx={{ mb: 2 }}>
+                            {error || localError}
+                        </Alert>
                     )}
                     {message && (
-                        <div
-                            style={{
-                                marginBottom: '16px',
-                                color: '#4caf50',
-                                fontWeight: 'bold',
-                                fontSize: '16px',
-                                padding: '8px',
-                                backgroundColor: '#f1f8e9',
-                                border: '1px solid #4caf50',
-                                borderRadius: '4px'
-                            }}
-                        >
+                        <Alert severity="success" sx={{ mb: 2 }}>
                             {message}
-                        </div>
+                        </Alert>
                     )}
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
+                    <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2, mt: 2 }}>
                         <TextField
                             label="Mã học viên"
                             name="student_id"
@@ -274,6 +255,58 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
                             required
                         />
                         <TextField
+                            label="Email"
+                            name="email"
+                            type="email"
+                            value={newStudent.email}
+                            onChange={handleChange}
+                            fullWidth
+                            variant="outlined"
+                            required
+                        />
+                        <TextField
+                            label="Ngày sinh"
+                            name="day_of_birth"
+                            type="date"
+                            value={newStudent.day_of_birth}
+                            onChange={handleChange}
+                            fullWidth
+                            variant="outlined"
+                            required
+                            InputLabelProps={{ shrink: true }}
+                        />
+                        <FormControl fullWidth required>
+                            <InputLabel>Giới tính</InputLabel>
+                            <Select
+                                name="gender"
+                                value={newStudent.gender}
+                                onChange={handleChange}
+                                label="Giới tính"
+                            >
+                                <MenuItem value="Nam">Nam</MenuItem>
+                                <MenuItem value="Nữ">Nữ</MenuItem>
+                            </Select>
+                        </FormControl>
+                        <TextField
+                            label="Số điện thoại"
+                            name="phone_number"
+                            value={newStudent.phone_number}
+                            onChange={handleChange}
+                            fullWidth
+                            variant="outlined"
+                            required
+                        />
+                        <TextField
+                            label="Địa chỉ"
+                            name="address"
+                            value={newStudent.address}
+                            onChange={handleChange}
+                            fullWidth
+                            variant="outlined"
+                            required
+                            sx={{ gridColumn: { md: 'span 2' } }}
+                        />
+                        <TextField
                             label="Mã lớp"
                             name="class"
                             value={newStudent.class}
@@ -282,23 +315,18 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
                             variant="outlined"
                             required
                         />
-                        <FormControl fullWidth required>
-                            <InputLabel>Năm nhập học</InputLabel>
-                            <Select
-                                name="admission_year"
-                                value={newStudent.admission_year}
-                                onChange={handleChange}
-                                label="Năm nhập học"
-                            >
-                                <MenuItem value="2025">2025</MenuItem>
-                                <MenuItem value="2024">2024</MenuItem>
-                                <MenuItem value="2023">2023</MenuItem>
-                                <MenuItem value="2022">2022</MenuItem>
-                                <MenuItem value="2021">2021</MenuItem>
-                                <MenuItem value="2020">2020</MenuItem>
-                                <MenuItem value="2019">2019</MenuItem>
-                            </Select>
-                        </FormControl>
+                        <TextField
+                            label="Ngày nhập học"
+                            name="admission_year"
+                            type="date"
+                            value={newStudent.admission_year}
+                            onChange={handleChange}
+                            fullWidth
+                            variant="outlined"
+                            required
+                            disabled={loading}
+                            InputLabelProps={{ shrink: true }}
+                        />
                         <FormControl fullWidth required>
                             <InputLabel>Trạng thái</InputLabel>
                             <Select
@@ -316,18 +344,22 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
                     </Box>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={onClose} variant="outlined" sx={{ color: '#1976d2' }}>
+                    <Button onClick={onClose} variant="outlined" sx={{ color: '#1976d2' }} disabled={loading}>
                         Hủy
                     </Button>
                     <Button
                         onClick={handleSubmit}
                         variant="contained"
                         sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
+                        disabled={loading}
+                        startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
                     >
-                        Thêm
+                        {loading ? 'Đang thêm...' : 'Thêm'}
                     </Button>
                 </DialogActions>
             </Dialog>
+
+            {/* Preview Modal */}
             <PreviewStudentModal
                 open={showPreview}
                 onClose={handleClosePreview}

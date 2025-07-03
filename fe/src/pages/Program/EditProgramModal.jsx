@@ -12,12 +12,13 @@ import {
     InputLabel,
     Select,
     MenuItem,
+    Alert,
+    CircularProgress,
 } from '@mui/material';
-import { updateProgram } from '../../api/programAPI';
 
 const availableTrainingDurations = [1, 2, 3, 4];
 
-export default function EditProgramModal({ open, onClose, program, onSave }) {
+export default function EditProgramModal({ open, onClose, program, onSave, error, loading }) {
     const [editedProgram, setEditedProgram] = useState({
         program_id: '',
         program_name: '',
@@ -41,7 +42,7 @@ export default function EditProgramModal({ open, onClose, program, onSave }) {
         setEditedProgram((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (
             !editedProgram.program_id ||
             !editedProgram.program_name ||
@@ -50,27 +51,31 @@ export default function EditProgramModal({ open, onClose, program, onSave }) {
             alert('Vui lòng điền đầy đủ thông tin!');
             return;
         }
-        try {
-            const updatedProgram = {
-                ...program,
-                program_id: editedProgram.program_id,
-                program_name: editedProgram.program_name,
-                training_duration: editedProgram.training_duration,
-                status: editedProgram.status,
-                updated_at: new Date().toISOString(),
-            };
 
-            const response = updateProgram(program.program_id, updatedProgram);
-            if (response && response.data) {
-                onSave(response.data.data);
-                onClose();
-                alert('Cập nhật chương trình đào tạo thành công!');
-            }
-        } catch (error) {
-            console.error('Error updating lecturer:', error);
-            alert('Lỗi khi cập nhật chương trình đào tạo: ' + error.message);
+        // Validate program name length
+        if (editedProgram.program_name.length < 3) {
+            alert('Tên chương trình phải có ít nhất 3 ký tự!');
+            return;
+        }
+
+        // Validate training duration
+        if (!availableTrainingDurations.includes(Number(editedProgram.training_duration))) {
+            alert('Thời gian đào tạo không hợp lệ!');
+            return;
+        }
+
+        const updatedProgramData = {
+            program_id: editedProgram.program_id,
+            program_name: editedProgram.program_name,
+            training_duration: editedProgram.training_duration,
+            status: editedProgram.status,
+            updated_at: new Date().toISOString(),
         };
-    }
+
+        // Gọi hàm onSave được truyền từ component cha
+        await onSave(updatedProgramData);
+        onClose();
+    };
 
     return (
         <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
@@ -78,6 +83,11 @@ export default function EditProgramModal({ open, onClose, program, onSave }) {
                 <Typography variant="h6">Chỉnh sửa chương trình đào tạo</Typography>
             </DialogTitle>
             <DialogContent>
+                {error && (
+                    <Alert severity="error" sx={{ mb: 2 }}>
+                        {error}
+                    </Alert>
+                )}
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
                     <TextField
                         label="Mã chương trình"
@@ -130,11 +140,17 @@ export default function EditProgramModal({ open, onClose, program, onSave }) {
                 </Box>
             </DialogContent>
             <DialogActions>
-                <Button onClick={onClose} variant="outlined" sx={{ color: '#1976d2' }}>
+                <Button onClick={onClose} variant="outlined" sx={{ color: '#1976d2' }} disabled={loading}>
                     Hủy
                 </Button>
-                <Button onClick={handleSubmit} variant="contained" sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}>
-                    Lưu
+                <Button
+                    onClick={handleSubmit}
+                    variant="contained"
+                    sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
+                    disabled={loading}
+                    startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
+                >
+                    {loading ? 'Đang lưu...' : 'Lưu'}
                 </Button>
             </DialogActions>
         </Dialog>

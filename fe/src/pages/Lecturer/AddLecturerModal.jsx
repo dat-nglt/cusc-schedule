@@ -12,6 +12,8 @@ import {
     InputLabel,
     Select,
     MenuItem,
+    Alert,
+    CircularProgress,
 } from '@mui/material';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import * as XLSX from 'xlsx';
@@ -36,7 +38,7 @@ const availableDegrees = [
     'Phó Giáo sư'
 ];
 
-export default function AddLecturerModal({ open, onClose, onAddLecturer, existingLecturers }) {
+export default function AddLecturerModal({ open, onClose, onAddLecturer, existingLecturers, error, loading, message }) {
     const [newLecturer, setNewLecturer] = useState({
         lecturer_id: '',
         name: '',
@@ -51,20 +53,17 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
         status: 'Hoạt động',
     });
 
-    const [error, setError] = useState('');
-
-    const [message, setMessage] = useState('');
+    const [localError, setLocalError] = useState('');
     const [showPreview, setShowPreview] = useState(false);
     const [previewData, setPreviewData] = useState([]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setNewLecturer((prev) => ({ ...prev, [name]: value }));
-        setError('');
-        setMessage('');
+        setLocalError('');
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (
             !newLecturer.lecturer_id ||
             !newLecturer.name ||
@@ -77,21 +76,21 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
             !newLecturer.hire_date ||
             !newLecturer.degree
         ) {
-            setError('Vui lòng điền đầy đủ thông tin!');
+            setLocalError('Vui lòng điền đầy đủ thông tin!');
             return;
         }
 
         // Kiểm tra email format
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(newLecturer.email)) {
-            setError('Email không hợp lệ!');
+            setLocalError('Email không hợp lệ!');
             return;
         }
 
         // Kiểm tra số điện thoại format
         const phoneRegex = /^[0-9]{10,11}$/;
         if (!phoneRegex.test(newLecturer.phone_number)) {
-            setError('Số điện thoại không hợp lệ!');
+            setLocalError('Số điện thoại không hợp lệ!');
             return;
         }
 
@@ -100,7 +99,7 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
             (lecturer) => lecturer.lecturer_id === newLecturer.lecturer_id
         );
         if (isDuplicate) {
-            setError(`Mã giảng viên "${newLecturer.lecturer_id}" đã tồn tại!`);
+            setLocalError(`Mã giảng viên "${newLecturer.lecturer_id}" đã tồn tại!`);
             return;
         }
 
@@ -110,12 +109,12 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
         const today = new Date();
 
         if (birthDate >= today) {
-            setError('Ngày sinh không hợp lệ!');
+            setLocalError('Ngày sinh không hợp lệ!');
             return;
         }
 
         if (hireDate > today) {
-            setError('Ngày tuyển dụng không được là ngày tương lai!');
+            setLocalError('Ngày tuyển dụng không được là ngày tương lai!');
             return;
         }
 
@@ -127,7 +126,9 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
             updated_at: new Date().toISOString(),
         };
 
-        onAddLecturer(lecturerToAdd);
+        // Gọi hàm onAddLecturer được truyền từ component cha
+        await onAddLecturer(lecturerToAdd);
+
         setNewLecturer({
             lecturer_id: '',
             name: '',
@@ -141,28 +142,26 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
             degree: '',
             status: 'Hoạt động',
         });
-        setError('');
-        setMessage('');
+        setLocalError('');
         onClose();
     };
 
     const handleImportExcel = async (e) => {
         const file = e.target.files[0];
         if (!file) {
-            setError('Vui lòng chọn một file Excel!');
+            setLocalError('Vui lòng chọn một file Excel!');
             return;
         }
 
         const validExtensions = ['.xlsx', '.xls'];
         const fileExtension = file.name.slice(file.name.lastIndexOf('.')).toLowerCase();
         if (!validExtensions.includes(fileExtension)) {
-            setError('Chỉ hỗ trợ file Excel (.xlsx, .xls)!');
+            setLocalError('Chỉ hỗ trợ file Excel (.xlsx, .xls)!');
             return;
         }
 
         try {
-            setError(''); // Clear previous errors
-            setMessage(''); // Clear previous messages
+            setLocalError(''); // Clear previous errors
 
             // Đọc file Excel
             const arrayBuffer = await file.arrayBuffer();
@@ -174,7 +173,7 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
             const rawData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
             if (rawData.length < 2) {
-                setError('File Excel phải có ít nhất 2 dòng (header + dữ liệu)!');
+                setLocalError('File Excel phải có ít nhất 2 dòng (header + dữ liệu)!');
                 return;
             }
 
@@ -195,7 +194,7 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
             const processedData = processExcelDataLecturer(jsonData, existingLecturers);
 
             if (processedData.length === 0) {
-                setError('Không có dữ liệu hợp lệ trong file Excel!');
+                setLocalError('Không có dữ liệu hợp lệ trong file Excel!');
                 return;
             }
 
@@ -206,7 +205,7 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
 
         } catch (error) {
             console.error('Error reading Excel file:', error);
-            setError('Lỗi khi đọc file Excel! Vui lòng kiểm tra format file.');
+            setLocalError('Lỗi khi đọc file Excel! Vui lòng kiểm tra format file.');
         }
 
         // Reset file input
@@ -214,18 +213,12 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
     };
 
     const handleImportSuccess = (result) => {
-        const { imported, message: resultMessage } = result;
+        const { imported } = result;
 
         if (imported && imported.length > 0) {
             // Add imported lecturers to the list
             imported.forEach(lecturer => onAddLecturer(lecturer));
-
-            // Hiển thị thông báo thành công
-            setMessage(`Thêm thành công ${imported.length} giảng viên`);
-            setError('');
             onClose();
-        } else if (resultMessage) {
-            setError(resultMessage);
         }
 
         setShowPreview(false);
@@ -263,26 +256,15 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
                     </Box>
                 </DialogTitle>
                 <DialogContent>
-                    {error && (
-                        <Typography color="error" sx={{ mb: 2 }}>
-                            {error}
-                        </Typography>
+                    {(error || localError) && (
+                        <Alert severity="error" sx={{ mb: 2 }}>
+                            {error || localError}
+                        </Alert>
                     )}
                     {message && (
-                        <div
-                            style={{
-                                marginBottom: '16px',
-                                color: '#4caf50',
-                                fontWeight: 'bold',
-                                fontSize: '16px',
-                                padding: '8px',
-                                backgroundColor: '#f1f8e9',
-                                border: '1px solid #4caf50',
-                                borderRadius: '4px'
-                            }}
-                        >
+                        <Alert severity="success" sx={{ mb: 2 }}>
                             {message}
-                        </div>
+                        </Alert>
                     )}
                     <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2, mt: 2 }}>
                         <TextField
@@ -411,11 +393,17 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
                     </Box>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={onClose} variant="outlined" sx={{ color: '#1976d2' }}>
+                    <Button onClick={onClose} variant="outlined" sx={{ color: '#1976d2' }} disabled={loading}>
                         Hủy
                     </Button>
-                    <Button onClick={handleSubmit} variant="contained" sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}>
-                        Thêm
+                    <Button
+                        onClick={handleSubmit}
+                        variant="contained"
+                        sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
+                        disabled={loading}
+                        startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
+                    >
+                        {loading ? 'Đang thêm...' : 'Thêm'}
                     </Button>
                 </DialogActions>
             </Dialog>
