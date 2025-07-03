@@ -21,23 +21,7 @@ import {
     CheckCircle as StatusIcon,
 } from '@mui/icons-material';
 import { getStatusChip } from '../../components/ui/StatusChip';
-
-// Hàm định dạng thời gian từ YYYY-MM-DD HH:mm thành DD/MM/YYYY HH:mm
-const formatDateTime = (dateTime) => {
-    if (!dateTime) return 'Không có dữ liệu';
-    try {
-        const date = new Date(dateTime);
-        return date.toLocaleString('vi-VN', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-    } catch {
-        return 'Không hợp lệ';
-    }
-};
+import { formatDateTime } from '../../utils/formatDateTime';
 
 // Hàm kiểm tra giá trị và trả về giá trị hoặc thông báo mặc định
 const getValueOrDefault = (value) => value || 'Không có dữ liệu';

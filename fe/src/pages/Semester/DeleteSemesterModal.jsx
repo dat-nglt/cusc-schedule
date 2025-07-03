@@ -8,30 +8,30 @@ import {
   Typography,
   Box,
 } from '@mui/material';
-import { deleteProgram } from '../../api/programAPI';
+import { deleteSemester } from '../../api/semesterAPI';
 
-const DeleteProgramModal = ({ open, onClose, onDelete, program }) => {
+const DeleteSemesterModal = ({ open, onClose, onDelete, semester }) => {
   const handleDelete = async () => {
     try {
-      const response = await deleteProgram(program.program_id);
+      const response = await deleteSemester(semester.semester_id);
 
       if (response && response.data) {
-        onDelete(program.program_id);
+        onDelete(semester.semester_id);
         onClose();
-        alert('Xóa giảng viên thành công!');
+        alert('Xóa học kỳ thành công!');
       }
     } catch (error) {
-      console.error('Error deleting program:', error);
-      alert('Lỗi khi xóa giảng viên: ' + error.message);
+      console.error('Error deleting semester:', error);
+      alert('Lỗi khi xóa học kỳ: ' + error.message);
     }
   };
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
-      <DialogTitle>Xác nhận xóa chương trình đào tạo</DialogTitle>
+      <DialogTitle>Xác nhận xóa học kỳ</DialogTitle>
       <DialogContent>
         <Typography>
-          Bạn có muốn xóa chương trình đào tạo với mã{' '}
+          Bạn có muốn xóa học kỳ với mã{' '}
           <Box
             component="span"
             sx={{
@@ -39,7 +39,7 @@ const DeleteProgramModal = ({ open, onClose, onDelete, program }) => {
               fontWeight: 'bold', // In đậm
             }}
           >
-            {program?.program_id}
+            {semester?.semester_id}
           </Box> không?
         </Typography>
       </DialogContent>
@@ -53,4 +53,4 @@ const DeleteProgramModal = ({ open, onClose, onDelete, program }) => {
   );
 };
 
-export default DeleteProgramModal;
+export default DeleteSemesterModal;

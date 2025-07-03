@@ -16,7 +16,7 @@ import { Visibility, Edit, Delete, Menu as MenuIcon } from '@mui/icons-material'
 import { getStatusChip } from '../../components/ui/StatusChip';
 import { formatDateTime } from '../../utils/formatDateTime';
 
-export default function StudentTable({ displayedStudents, isSmallScreen, isMediumScreen, handleViewStudent, handleEditStudent, handleDeleteStudent }) {
+export default function SemesterTable({ displayedSemesters, isSmallScreen, isMediumScreen, handleViewSemester, handleEditSemester, handleDeleteSemester }) {
     const [anchorEl, setAnchorEl] = useState(null);
     const [selectedRowId, setSelectedRowId] = useState(null);
 
@@ -31,7 +31,6 @@ export default function StudentTable({ displayedStudents, isSmallScreen, isMediu
         setAnchorEl(null);
         setSelectedRowId(null);
     };
-
 
     return (
         <Table
@@ -48,35 +47,35 @@ export default function StudentTable({ displayedStudents, isSmallScreen, isMediu
                         STT
                     </TableCell>
                     {!isSmallScreen && (
-                        <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '15%' }}>
-                            Mã học viên
-                        </TableCell>
-                    )}
-                    <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'left', borderRight: '1px solid #e0e0e0', width: isSmallScreen ? '35%' : '20%' }}>
-                        Họ tên
-                    </TableCell>
-                    {!isMediumScreen && (
                         <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '12%' }}>
-                            Mã lớp
+                            Mã học kỳ
                         </TableCell>
                     )}
-                    {!isSmallScreen && (
-                        <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'left', borderRight: '1px solid #e0e0e0', width: '20%' }}>
-                            Năm nhập học
-                        </TableCell>
-                    )}
+                    <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'left', borderRight: '1px solid #e0e0e0', width: isSmallScreen ? '40%' : '35%' }}>
+                        Tên học kỳ
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '15%' }}>
+                        Ngày bắt đầu
+                    </TableCell>
+
+                    <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '15%' }}>
+                        Ngày kết thúc
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '12%' }}>
+                        Mã chương trình
+                    </TableCell>
                     <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: isSmallScreen ? '25%' : '15%' }}>
                         Trạng thái
                     </TableCell>
-                    <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', width: isSmallScreen ? '22%' : '10%' }}>
+                    <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', width: isSmallScreen ? '27%' : '15%' }}>
                         Thao tác
                     </TableCell>
                 </TableRow>
             </TableHead>
             <TableBody>
-                {displayedStudents.map((student, index) => (
+                {displayedSemesters.map((semester, index) => (
                     <TableRow
-                        key={student.student_id}
+                        key={semester.semester_id}
                         sx={{
                             backgroundColor: index % 2 === 0 ? '#fafafa' : '#ffffff',
                             '&:hover': { backgroundColor: '#e3f2fd', cursor: 'pointer' },
@@ -88,35 +87,30 @@ export default function StudentTable({ displayedStudents, isSmallScreen, isMediu
                         </TableCell>
                         {!isSmallScreen && (
                             <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                                {student.student_id}
+                                {semester.semester_id}
                             </TableCell>
                         )}
                         <TableCell sx={{ textAlign: 'left', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                            {student.name}
+                            {semester.semester_name}
                         </TableCell>
-                        {!isMediumScreen && (
-                            <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                                <Chip
-                                    label={student.class}
-                                    size="small"
-                                    sx={{ bgcolor: '#e3f2fd', color: '#1976d2', fontWeight: 'bold' }}
-                                />
-                            </TableCell>
-                        )}
-                        {!isSmallScreen && (
-                            <TableCell sx={{ textAlign: 'left', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                                {formatDateTime(student.admission_year)}
-                            </TableCell>
-                        )}
+                        <TableCell sx={{ textAlign: 'left', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
+                            {formatDateTime(semester.start_date)}
+                        </TableCell>
+                        <TableCell sx={{ textAlign: 'left', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
+                            {formatDateTime(semester.end_date)}
+                        </TableCell>
                         <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                            {getStatusChip(student.status)}
+                            {semester.program_id}
+                        </TableCell>
+                        <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
+                            {getStatusChip(semester.status)}
                         </TableCell>
                         <TableCell sx={{ textAlign: 'center', py: 1.5 }}>
                             {isSmallScreen ? (
                                 <>
                                     <Tooltip title="Thao tác">
                                         <IconButton
-                                            onClick={(event) => handleOpenMenu(event, student.student_id)}
+                                            onClick={(event) => handleOpenMenu(event, semester.semester_id)}
                                             sx={{ color: '#1976d2' }}
                                         >
                                             <MenuIcon />
@@ -124,14 +118,14 @@ export default function StudentTable({ displayedStudents, isSmallScreen, isMediu
                                     </Tooltip>
                                     <Menu
                                         anchorEl={anchorEl}
-                                        open={Boolean(anchorEl) && selectedRowId === student.student_id}
+                                        open={Boolean(anchorEl) && selectedRowId === semester.semester_id}
                                         onClose={handleCloseMenu}
                                         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                                         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
                                     >
                                         <MenuItem
                                             onClick={() => {
-                                                handleViewStudent(student.student_id);
+                                                handleViewSemester(semester.semester_id);
                                                 handleCloseMenu();
                                             }}
                                         >
@@ -140,7 +134,7 @@ export default function StudentTable({ displayedStudents, isSmallScreen, isMediu
                                         </MenuItem>
                                         <MenuItem
                                             onClick={() => {
-                                                handleEditStudent(student.student_id);
+                                                handleEditSemester(semester.semester_id);
                                                 handleCloseMenu();
                                             }}
                                         >
@@ -149,7 +143,7 @@ export default function StudentTable({ displayedStudents, isSmallScreen, isMediu
                                         </MenuItem>
                                         <MenuItem
                                             onClick={() => {
-                                                handleDeleteStudent(student.student_id);
+                                                handleDeleteSemester(semester.semester_id);
                                                 handleCloseMenu();
                                             }}
                                         >
@@ -164,21 +158,21 @@ export default function StudentTable({ displayedStudents, isSmallScreen, isMediu
                                         <Visibility
                                             color="primary"
                                             style={{ cursor: 'pointer' }}
-                                            onClick={() => handleViewStudent(student.student_id)}
+                                            onClick={() => handleViewSemester(semester.semester_id)}
                                         />
                                     </Tooltip>
                                     <Tooltip title="Sửa">
                                         <Edit
                                             color="primary"
                                             style={{ cursor: 'pointer' }}
-                                            onClick={() => handleEditStudent(student.student_id)}
+                                            onClick={() => handleEditSemester(semester.semester_id)}
                                         />
                                     </Tooltip>
                                     <Tooltip title="Xóa">
                                         <Delete
                                             color="error"
                                             style={{ cursor: 'pointer' }}
-                                            onClick={() => handleDeleteStudent(student.student_id)}
+                                            onClick={() => handleDeleteSemester(semester.semester_id)}
                                         />
                                     </Tooltip>
                                 </Box>

@@ -16,16 +16,15 @@ import {
 } from '@mui/material';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import * as XLSX from 'xlsx';
-import PreviewProgramModal from './PreviewProgramModal';
-import { processExcelDataProgram } from '../../utils/ExcelValidation';
+import PreviewSemesterModal from './PreviewSemesterModal';
+import { processExcelDataSemester } from '../../utils/ExcelValidation';
 
-
-
-export default function AddProgramModal({ open, onClose, onAddProgram, existingPrograms }) {
-    const [newProgram, setNewProgram] = useState({
-        program_id: '',
-        program_name: '',
-        training_duration: '',
+export default function AddSemesterModal({ open, onClose, onAddSemester, existingSemesters }) {
+    const [newSemester, setNewSemester] = useState({
+        semester_id: '',
+        semester_name: '',
+        start_date: '',
+        end_date: '',
         status: 'Đang triển khai',
     });
 
@@ -33,50 +32,51 @@ export default function AddProgramModal({ open, onClose, onAddProgram, existingP
     const [showPreview, setShowPreview] = useState(false);
     const [previewData, setPreviewData] = useState([]);
 
-    const availableTrainingDurations = [1, 2, 3, 4,]
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setNewProgram((prev) => ({ ...prev, [name]: value }));
+        setNewSemester((prev) => ({ ...prev, [name]: value }));
         setError('');
-    };
+    }
 
     const handleSubmit = () => {
         if (
-            !newProgram.program_id ||
-            !newProgram.program_name ||
-            !newProgram.training_duration
+            !newSemester.semester_id ||
+            !newSemester.semester_name ||
+            !newSemester.start_date ||
+            !newSemester.end_date
         ) {
             setError('Vui lòng điền đầy đủ thông tin!');
             return;
         }
-        //kiểm tra mã Chuong trình có hợp lệ hay không
-        const isDuplicate = existingPrograms.some(
-            (program) => program.program_id === newProgram.program_id
+
+        //kiểm tra mã học kỳ có hợp lệ hay không
+        const isDuplicate = existingSemesters.some(
+            (semester) => semester.semester_id === newSemester.semester_id
         );
         if (isDuplicate) {
-            setError(`Mã chương trình "${newProgram.program_id}" đã tồn tại!`);
+            setError(`Mã học kỳ "${newSemester.semester_id}" đã tồn tại!`);
             return;
         }
 
-        const programToAdd = {
-            ...newProgram,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
+        const semesterToAdd = {
+            ...newSemester,
+            created_at: new Date(newSemester.start_date),
+            updated_at: new Date(newSemester.end_date),
         };
-
-        onAddProgram(programToAdd);
-        setNewProgram({
-            program_id: '',
-            program_name: '',
-            training_duration: '',
+        onAddSemester(semesterToAdd);
+        setNewSemester({
+            semester_id: '',
+            semester_name: '',
+            start_date: '',
+            end_date: '',
             status: 'Đang triển khai',
         });
         setError('');
         onClose();
     };
 
-    // Hàm xử lý import file Excel
+    //hàm xử lý import file Excel
     const handleImportExcel = async (e) => {
         const file = e.target.files[0];
         if (!file) {
@@ -121,7 +121,7 @@ export default function AddProgramModal({ open, onClose, onAddProgram, existingP
             });
 
             // Xử lý và validate dữ liệu
-            const processedData = processExcelDataProgram(jsonData, existingPrograms);
+            const processedData = processExcelDataSemester(jsonData, existingSemesters);
 
             if (processedData.length === 0) {
                 setError('Không có dữ liệu hợp lệ trong file Excel!');
@@ -147,7 +147,7 @@ export default function AddProgramModal({ open, onClose, onAddProgram, existingP
 
         if (imported && imported.length > 0) {
             // Add imported lecturers to the list
-            imported.forEach(program => onAddProgram(program));
+            imported.forEach(semester => onAddSemester(semester));
 
             // Hiển thị thông báo thành công
             // setMessage(`Thêm thành công ${imported.length} chương trình đào tạo!`);
@@ -161,7 +161,6 @@ export default function AddProgramModal({ open, onClose, onAddProgram, existingP
         setPreviewData([]);
     };
 
-
     const handleClosePreview = () => {
         setShowPreview(false);
         setPreviewData([]);
@@ -172,7 +171,7 @@ export default function AddProgramModal({ open, onClose, onAddProgram, existingP
             <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
                 <DialogTitle>
                     <Box display="flex" justifyContent="space-between" alignItems="center">
-                        <Typography variant="h6">Thêm chương trình đào tạo mới</Typography>
+                        <Typography variant="h6">Thêm học kỳ mới</Typography>
                         <label htmlFor="excel-upload">
                             <input
                                 id="excel-upload"
@@ -200,43 +199,55 @@ export default function AddProgramModal({ open, onClose, onAddProgram, existingP
                     )}
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
                         <TextField
-                            label="Mã chương trình"
-                            name="program_id"
-                            value={newProgram.program_id}
+                            label="Mã học kỳ"
+                            name="semester_id"
+                            value={newSemester.semester_id}
                             onChange={handleChange}
                             fullWidth
                             variant="outlined"
                             required
                         />
                         <TextField
-                            label="Tên chương trình"
-                            name="program_name"
-                            value={newProgram.program_name}
+                            label="Tên học kỳ"
+                            name="semester_name"
+                            value={newSemester.semester_name}
                             onChange={handleChange}
                             fullWidth
                             variant="outlined"
                             required
                         />
-                        <FormControl fullWidth required>
-                            <InputLabel>Thời gian đào tạo</InputLabel>
-                            <Select
-                                name="training_duration"
-                                value={newProgram.training_duration}
-                                onChange={handleChange}
-                                label="Thời gian đào tạo"
-                            >
-                                {availableTrainingDurations.map((duration) => (
-                                    <MenuItem key={duration} value={duration}>
-                                        {duration} Năm
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
+                        <TextField
+                            label="Ngày bắt đầu"
+                            name="start_date"
+                            type="date"
+                            value={newSemester.start_date}
+                            onChange={handleChange}
+                            fullWidth
+                            variant="outlined"
+                            required
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                        />
+
+                        <TextField
+                            label="Ngày kết thúc"
+                            name="end_date"
+                            type="date"
+                            value={newSemester.end_date}
+                            onChange={handleChange}
+                            fullWidth
+                            variant="outlined"
+                            required
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                        />
                         <FormControl fullWidth required>
                             <InputLabel>Trạng thái</InputLabel>
                             <Select
                                 name="status"
-                                value={newProgram.status}
+                                value={newSemester.status}
                                 onChange={handleChange}
                                 label="Trạng thái"
                             >
@@ -258,12 +269,12 @@ export default function AddProgramModal({ open, onClose, onAddProgram, existingP
             </Dialog>
 
             {/* Preview Modal */}
-            <PreviewProgramModal
+            <PreviewSemesterModal
                 open={showPreview}
                 onClose={handleClosePreview}
-                onImportSuccess={handleImportSuccess}
                 previewData={previewData}
+                onImportSuccess={handleImportSuccess}
             />
         </>
-    );
+    )
 }

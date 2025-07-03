@@ -194,7 +194,8 @@ const validateStudentData = (student, existingStudents, allImportData = []) => {
         if (!phoneRegex.test(student.phone_number.toString())) {
             errors.push('invalid_phone');
         }
-    }    // Kiểm tra ngày sinh 
+    }
+    // Kiểm tra ngày sinh 
     if (student.day_of_birth) {
         const birthDate = new Date(student.day_of_birth);
         const today = new Date();
@@ -315,4 +316,97 @@ export const processExcelDataProgram = (rawData, existingPrograms) => {
     return processedData;
 };
 
-export { requiredProgramFields, validateProgramData };
+
+
+//validate semester data
+const requiredSemesterFields = [
+    'semester_id',
+    'semester_name',
+    'start_date',
+    'end_date',
+    'status',
+    'program_id',
+];
+
+const validateSemesterData = (semester, existingSemesters, allImportData = []) => {
+    const errors = [];
+
+    // Kiểm tra trùng lặp mã học kỳ với dữ liệu hiện có
+    const isDuplicateExisting = existingSemesters.some(
+        existing => existing.semester_id === semester.semester_id
+    );
+
+    // Kiểm tra trùng lặp trong dữ liệu import
+    const isDuplicateImport = allImportData.filter(
+        item => item.semester_id === semester.semester_id
+    ).length > 1;
+
+    if (isDuplicateExisting || isDuplicateImport) {
+        errors.push('duplicate_id');
+    }
+
+    // Kiểm tra các trường bắt buộc
+    const missingFields = requiredSemesterFields.filter(field => {
+        const value = semester[field];
+        return !value || (typeof value === 'string' && value.trim() === '');
+    });
+
+    if (missingFields.length > 0) {
+        errors.push('missing_required');
+    }
+
+    // Kiểm tra định dạng start_date
+    if (semester.start_date) {
+        const startDate = new Date(semester.start_date);
+        if (isNaN(startDate.getTime())) {
+            errors.push('invalid_start_date');
+        }
+    }
+
+    // Kiểm tra định dạng end_date
+    if (semester.end_date) {
+        const endDate = new Date(semester.end_date);
+        if (isNaN(endDate.getTime())) {
+            errors.push('invalid_end_date');
+        }
+    }
+
+    // Kiểm tra start_date phải nhỏ hơn end_date
+    if (semester.start_date && semester.end_date) {
+        const startDate = new Date(semester.start_date);
+        const endDate = new Date(semester.end_date);
+
+        if (!isNaN(startDate.getTime()) && !isNaN(endDate.getTime()) && startDate >= endDate) {
+            errors.push('invalid_date_range');
+        }
+    }
+
+    return errors;
+};
+
+export const processExcelDataSemester = (rawData, existingSemesters) => {
+    // Xử lý dữ liệu thô từ Excel
+    const processedData = rawData.map((row, index) => {
+        // Chuẩn hóa dữ liệu
+        const semester = {
+            semester_id: row['Mã học kỳ'] || row['semester_id'] || '',
+            semester_name: row['Tên học kỳ'] || row['semester_name'] || '',
+            start_date: formatDate(row['Ngày bắt đầu'] || row['start_date']),
+            end_date: formatDate(row['Ngày kết thúc'] || row['end_date']),
+            status: row['Trạng thái'] || row['status'] || 'Hoạt động',
+            program_id: row['Mã chương trình đào tạo'] || row['Mã chương trình'] || row['program_id'] || '',
+            rowIndex: index + 2 // +2 vì Excel bắt đầu từ row 1 và có header
+        };
+
+        // Validate dữ liệu
+        const errors = validateSemesterData(semester, existingSemesters, rawData);
+
+        return {
+            ...semester,
+            errors
+        };
+    });
+
+    return processedData;
+};
+

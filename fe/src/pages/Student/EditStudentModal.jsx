@@ -56,14 +56,30 @@ export default function EditStudentModal({ open, onClose, student, onSave }) {
         }
 
         try {
-            setLoading(true);
-            await onSave(editedStudent);
-            onClose();
+            const updatedStudentData = {
+                student_id: editedStudent.student_id,
+                name: editedStudent.name,
+                email: editedStudent.email,
+                day_of_birth: editedStudent.day_of_birth,
+                gender: editedStudent.gender,
+                address: editedStudent.address,
+                phone_number: editedStudent.phone_number,
+                class: editedStudent.class,
+                admission_year: editedStudent.admission_year,
+                status: editedStudent.status,
+                updated_at: new Date().toISOString(),
+            };
+
+            const response = await updatedStudentData(student.student_id, updatedStudentData);
+
+            if (response && response.data) {
+                onSave(response.data.data);
+                onClose();
+                alert('Cập nhật học viên thành công!');
+            }
         } catch (error) {
-            setError('Có lỗi xảy ra khi cập nhật học viên. Vui lòng thử lại!');
-            console.error('Error updating student:', error);
-        } finally {
-            setLoading(false);
+            console.error('Error updating lecturer:', error);
+            alert('Lỗi khi cập nhật giảng viên: ' + error.message);
         }
     };
 
@@ -109,28 +125,19 @@ export default function EditStudentModal({ open, onClose, student, onSave }) {
                         required
                         disabled={loading}
                     />
-                    <FormControl fullWidth required disabled={loading}>
-                        <InputLabel>Năm nhập học</InputLabel>
-                        <Select
-                            name="admission_year"
-                            value={editedStudent.admission_year}
-                            onChange={handleChange}
-                            label="Năm nhập học"
-                        >
-                            {/* {availableCourses.map((course) => (
-                                <MenuItem key={course} value={course}>
-                                    {course}
-                                </MenuItem>
-                            ))} */}
-                            <MenuItem value="2020">2020</MenuItem>
-                            <MenuItem value="2021">2021</MenuItem>
-                            <MenuItem value="2022">2022</MenuItem>
-                            <MenuItem value="2023">2023</MenuItem>
-                            <MenuItem value="2024">2024</MenuItem>
-                            <MenuItem value="2025">2025</MenuItem>
-
-                        </Select>
-                    </FormControl>
+                    <TextField
+                        label="Năm nhập học"
+                        name="admission_year"
+                        type="date"
+                        value={editedStudent.admission_year}
+                        onChange={handleChange}
+                        fullWidth
+                        variant="outlined"
+                        required
+                        InputLabelProps={{
+                            shrink: true,
+                        }}
+                    />
                     <FormControl fullWidth required disabled={loading}>
                         <InputLabel>Trạng thái</InputLabel>
                         <Select

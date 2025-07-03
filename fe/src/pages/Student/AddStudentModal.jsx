@@ -174,6 +174,7 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
             // Hiển thị preview
             setPreviewData(processedData);
             setShowPreview(true);
+            onClose();
 
         } catch (error) {
             console.error('Error reading Excel file:', error);

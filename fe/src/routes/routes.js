@@ -114,6 +114,14 @@ const routes = [
     layout: AdminLayout,
   },
   {
+    path: "/semesters",
+    component: "Semester",
+    exact: true,
+    title: "Quản lý học kỳ",
+    isPrivate: false,
+    layout: AdminLayout,
+  },
+  {
     path: "/students",
     component: "Student",
     exact: true,

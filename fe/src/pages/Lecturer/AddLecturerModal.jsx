@@ -202,6 +202,7 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
             // Hiển thị preview
             setPreviewData(processedData);
             setShowPreview(true);
+            onClose();
 
         } catch (error) {
             console.error('Error reading Excel file:', error);
@@ -222,6 +223,7 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
             // Hiển thị thông báo thành công
             setMessage(`Thêm thành công ${imported.length} giảng viên`);
             setError('');
+            onClose();
         } else if (resultMessage) {
             setError(resultMessage);
         }

@@ -18,178 +18,163 @@ import {
     Add as AddIcon,
     Search as SearchIcon,
 } from '@mui/icons-material';
-import AddSubjectModal from './AddSubjectModal';
-import SubjectDetailModal from './SubjectDetailModal';
-import EditSubjectModal from './EditSubjectModal';
-import DeleteSubjectModal from './DeleteSubjectModal';
+import AddSemesterModal from './AddSemesterModal';
+import SemesterDetailModal from './SemesterDetailModal';
+import EditSemesterModal from './EditSemesterModal';
+import DeleteSemesterModal from './DeleteSemesterModal';
 import useResponsive from '../../hooks/useResponsive';
-import SubjectTable from './SubjectTable';
-import { getAllSubjects } from '../../api/subjectAPI';
+import SemesterTable from './SemesterTable';
+import { getAllSemesters } from '../../api/semesterAPI';
 
-const Subject = () => {
+const Semester = () => {
     const { isSmallScreen, isMediumScreen } = useResponsive();
 
-    // Dữ liệu mẫu cho danh sách học phần
-    const [subjects, setSubjects] = useState([]);
-
+    // Dữ liệu mẫu cho danh sách chương trình đào tạo
+    const [semesters, setSemesters] = useState([]);
     // State cho phân trang, tìm kiếm, lọc theo trạng thái và modal
     const [page, setPage] = useState(0);
     const [rowsPerPage] = useState(8);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedStatus, setSelectedStatus] = useState('');
     const [openDetail, setOpenDetail] = useState(false);
-    const [selectedSubject, setSelectedSubject] = useState(null);
+    const [selectedSemester, setSelectedSemester] = useState(null);
     const [openAddModal, setOpenAddModal] = useState(false);
     const [openEditModal, setOpenEditModal] = useState(false);
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
-    const [editedSubject, setEditedSubject] = useState(null);
-    const [subjectToDelete, setSubjectToDelete] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState('');
-    // Danh sách trạng thái để lọc
-    const statuses = ['Đang hoạt động', 'Tạm dừng', 'Ngừng hoạt động'];
+    const [editedSemester, setEditedSemester] = useState(null);
+    const [semesterToDelete, setSemesterToDelete] = useState(null);
 
-
-
-    // Hàm lấy danh sách học phần từ API
-    const fetchSubjects = async () => {
+    const fetchSemesters = async () => {
         try {
-            setError('');
-            setLoading(true);
-            const response = await getAllSubjects();
+            const response = await getAllSemesters();
             if (!response) {
-                setError('Không có dữ liệu học phần');
-                return;
+                throw new Error('Lỗi khi tải danh sách học kỳ');
             }
-            setSubjects(response.data.data);
+            setSemesters(response.data.data);
         } catch (error) {
-            console.error('Lỗi khi lấy danh sách học phần:', error);
-            setError('Không thể lấy danh sách học phần. Vui lòng thử lại sau.');
-        }
-        finally {
-            setLoading(false);
+            console.error('Error fetching semesters:', error);
+            // Hiển thị thông báo lỗi hoặc xử lý lỗi ở đây
         }
     };
 
     useEffect(() => {
-        fetchSubjects();
+        fetchSemesters();
     }, []);
 
+    // Danh sách trạng thái để lọc
+    const statuses = ['Đang triển khai', 'Tạm dừng', 'Kết thúc'];
 
-    // Hàm xử lý khi nhấn nút Thêm học phần
-    const handleAddSubject = () => {
+    // Hàm xử lý khi nhấn nút Thêm chương trình
+    const handleAddSemester = () => {
         setOpenAddModal(true);
     };
 
-    // Hàm đóng modal thêm học phần
+    // Hàm đóng modal thêm chương trình
     const handleCloseAddModal = () => {
         setOpenAddModal(false);
     };
 
-    // Hàm thêm học phần mới
-    const handleAddNewSubject = (newSubject) => {
-        setSubjects((prevSubjects) => {
-            const updatedSubjects = [...prevSubjects, { ...newSubject }];
-            return updatedSubjects;
+    // Hàm thêm chương trình mới
+    const handleAddNewSemester = (newSemester) => {
+        setSemesters((prevSemesters) => {
+            const updatedSemesters = [...prevSemesters, { ...newSemester }];
+            return updatedSemesters;
         });
     };
 
     // Hàm xử lý khi nhấn nút chỉnh sửa
-    const handleEditSubject = (id) => {
-        const subjectToEdit = subjects.find((s) => s.id === id);
-        setEditedSubject(subjectToEdit);
+    const handleEditSemester = (id) => {
+        const semesterToEdit = semesters.find((p) => p.semester_id === id);
+        setEditedSemester(semesterToEdit);
         setOpenEditModal(true);
     };
 
     // Hàm đóng modal chỉnh sửa
     const handleCloseEditModal = () => {
         setOpenEditModal(false);
-        setEditedSubject(null);
+        setEditedSemester(null);
     };
 
     // Hàm lưu thay đổi sau khi chỉnh sửa
-    const handleSaveEditedSubject = (updatedSubject) => {
-        setSubjects((prevSubjects) =>
-            prevSubjects.map((subject) =>
-                subject.id === updatedSubject.id ? { ...subject, ...updatedSubject } : subject
-            )
-        );
+    const handleSaveEditedSemester = (updatedSemester) => {
+        // Refresh data from server after successful update
+        fetchSemesters();
     };
+
 
     // Hàm xử lý thay đổi trang
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
 
-    // Hàm xử lý xem học phần
-    const handleViewSubject = (id) => {
-        const subject = subjects.find((s) => s.id === id);
-        setSelectedSubject(subject);
+    // Hàm xử lý xem chương trình
+    const handleViewSemester = (id) => {
+        const semester = semesters.find((p) => p.semester_id === id);
+        setSelectedSemester(semester);
         setOpenDetail(true);
     };
 
-    // Hàm xử lý xóa học phần
-    const handleDeleteSubject = (id) => {
-        const subject = subjects.find((s) => s.id === id);
-        setSubjectToDelete(subject);
+    // Hàm xử lý xóa chương trình
+    const handleDeleteSemester = (id) => {
+        const semester = semesters.find((p) => p.semester_id === id);
+        setSemesterToDelete(semester);
         setOpenDeleteModal(true);
     };
 
-    // Hàm xác nhận xóa học phần
-    const confirmDeleteSubject = (id) => {
-        setSubjects((prevSubjects) => {
-            const updatedSubjects = prevSubjects.filter((subject) => subject.id !== id)
-                .map((subject, index) => ({ ...subject, stt: index + 1 }));
-            return updatedSubjects;
+    // Hàm xác nhận xóa chương trình
+    const confirmDeleteSemester = (id) => {
+        setSemesters((prevSemesters) => {
+            const updatedSemesters = prevSemesters.filter((semester) => semester.semester_id !== id);
+            return updatedSemesters;
         });
         setOpenDeleteModal(false);
-        setSubjectToDelete(null);
+        setSemesterToDelete(null);
     };
 
     // Hàm đóng modal chi tiết
     const handleCloseDetail = () => {
         setOpenDetail(false);
-        setSelectedSubject(null);
+        setSelectedSemester(null);
     };
 
     // Hàm đóng modal xóa
     const handleCloseDeleteModal = () => {
         setOpenDeleteModal(false);
-        setSubjectToDelete(null);
+        setSemesterToDelete(null);
     };
 
-    // Lọc danh sách học phần dựa trên từ khóa tìm kiếm và trạng thái
-    const filteredSubjects = subjects.filter((subject) => {
+    // Lọc danh sách chương trình dựa trên từ khóa tìm kiếm và trạng thái
+    const filteredSemesters = semesters.filter((semester) => {
         const matchesSearchTerm =
-            subject.maHocPhan.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            subject.tenHocPhan.toLowerCase().includes(searchTerm.toLowerCase());
+            semester.semester_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            semester.semester_name.toLowerCase().includes(searchTerm.toLowerCase());
 
         const matchesStatus = selectedStatus
-            ? subject.trangThai === selectedStatus
+            ? semester.status === selectedStatus
             : true;
 
         return matchesSearchTerm && matchesStatus;
     });
 
     // Tính toán dữ liệu hiển thị trên trang hiện tại
-    const displayedSubjects = filteredSubjects.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+    const displayedSemesters = filteredSemesters.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
     return (
         <Box sx={{ p: 3, zIndex: 10, height: 'calc(100vh - 64px)', overflowY: 'auto' }}>
             {/* Main Content */}
             <Box sx={{ width: '100%', mb: 3 }}>
-                {/* Bảng danh sách học phần */}
+                {/* Bảng danh sách chương trình đào tạo */}
                 <Card sx={{ flexGrow: 1 }}>
                     <CardContent>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, gap: 2 }}>
                             <Typography variant="h6">
-                                Danh sách học phần
+                                Danh sách học kỳ
                             </Typography>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                                 {isSmallScreen ? (
                                     <IconButton
                                         color="primary"
-                                        onClick={handleAddSubject}
+                                        onClick={handleAddSemester}
                                         sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
                                     >
                                         <AddIcon sx={{ color: '#fff' }} />
@@ -199,7 +184,7 @@ const Subject = () => {
                                         variant="contained"
                                         color="primary"
                                         startIcon={<AddIcon />}
-                                        onClick={handleAddSubject}
+                                        onClick={handleAddSemester}
                                         sx={{
                                             bgcolor: '#1976d2',
                                             '&:hover': { bgcolor: '#115293' },
@@ -207,7 +192,7 @@ const Subject = () => {
                                             height: '56px'
                                         }}
                                     >
-                                        Thêm học phần
+                                        Thêm học kỳ
                                     </Button>
                                 )}
                                 <FormControl sx={{ minWidth: isSmallScreen ? 100 : 150 }} variant="outlined">
@@ -232,7 +217,7 @@ const Subject = () => {
                             <TextField
                                 fullWidth
                                 variant="outlined"
-                                placeholder="Tìm kiếm theo mã học phần hoặc tên học phần..."
+                                placeholder="Tìm kiếm theo mã, tên chương trình hoặc thời gian đào tạo..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 sx={{ bgcolor: '#fff' }}
@@ -245,21 +230,21 @@ const Subject = () => {
                                 }}
                             />
                         </Box>
-                        {filteredSubjects.length === 0 ? (
-                            <Typography>Không có học phần nào để hiển thị.</Typography>
+                        {filteredSemesters.length === 0 ? (
+                            <Typography>Không có chương trình đào tạo nào để hiển thị.</Typography>
                         ) : (
                             <>
-                                <SubjectTable
-                                    displayedSubjects={displayedSubjects}
+                                <SemesterTable
+                                    displayedSemesters={displayedSemesters}
                                     isSmallScreen={isSmallScreen}
                                     isMediumScreen={isMediumScreen}
-                                    handleViewSubject={handleViewSubject}
-                                    handleEditSubject={handleEditSubject}
-                                    handleDeleteSubject={handleDeleteSubject}
+                                    handleViewSemester={handleViewSemester}
+                                    handleEditSemester={handleEditSemester}
+                                    handleDeleteSemester={handleDeleteSemester}
                                 />
                                 <TablePagination
                                     component="div"
-                                    count={filteredSubjects.length}
+                                    count={filteredSemesters.length}
                                     page={page}
                                     onPageChange={handleChangePage}
                                     rowsPerPage={rowsPerPage}
@@ -271,30 +256,31 @@ const Subject = () => {
                     </CardContent>
                 </Card>
             </Box>
-            <SubjectDetailModal
+            <SemesterDetailModal
                 open={openDetail}
                 onClose={handleCloseDetail}
-                subject={selectedSubject}
+                semester={selectedSemester}
             />
-            <AddSubjectModal
+            <AddSemesterModal
                 open={openAddModal}
                 onClose={handleCloseAddModal}
-                onAddSubject={handleAddNewSubject}
+                onAddSemester={handleAddNewSemester}
+                existingSemesters={semesters}
             />
-            <EditSubjectModal
+            <EditSemesterModal
                 open={openEditModal}
                 onClose={handleCloseEditModal}
-                subject={editedSubject}
-                onSave={handleSaveEditedSubject}
+                semester={editedSemester}
+                onSave={handleSaveEditedSemester}
             />
-            <DeleteSubjectModal
+            <DeleteSemesterModal
                 open={openDeleteModal}
                 onClose={handleCloseDeleteModal}
-                onDelete={confirmDeleteSubject}
-                subject={subjectToDelete}
+                onDelete={confirmDeleteSemester}
+                semester={semesterToDelete}
             />
         </Box>
     );
 };
 
-export default Subject;
+export default Semester;

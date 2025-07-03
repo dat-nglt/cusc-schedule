@@ -24,11 +24,11 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ErrorIcon from '@mui/icons-material/Error';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import { importPrograms } from '../../api/programAPI';
+import { importSemesters } from '../../api/semesterAPI';
 import { getErrorChip, getRowStatus } from '../../components/ui/ErrorChip';
+import { formatDateTime } from '../../utils/formatDateTime';
 
-
-export default function PreviewProgramModal({ open, onClose, previewData, onImportSuccess }) {
+export default function PreviewSemesterModal({ open, onClose, previewData, onImportSuccess }) {
     const [isImporting, setIsImporting] = useState(false);
     const [importError, setImportError] = useState('');
     const [importMessage, setImportMessage] = useState('');
@@ -50,19 +50,19 @@ export default function PreviewProgramModal({ open, onClose, previewData, onImpo
         try {
             // Tạo file Excel tạm thời chỉ với dữ liệu hợp lệ
             const validData = validRows.map(row => {
-                const { errors: _errors, rowIndex: _rowIndex, ...programData } = row;
-                return programData;
+                const { errors: _errors, rowIndex: _rowIndex, ...semesterData } = row;
+                return semesterData;
             });
             console.log('Valid data to import:', validData);
             // Gọi API import với dữ liệu đã được validate
-            const response = await importPrograms(validData);
+            const response = await importSemesters(validData);
 
             if (response.data && response.data) {
-                setImportMessage(`Thêm thành công ${validRows.length} chuơng trình đào tạo!`);
+                setImportMessage(`Thêm thành công ${validRows.length} học kỳ`);
                 setImportError('');
 
                 // Delay để người dùng thấy thông báo thành công trước khi đóng modal
-                 setTimeout(() => {
+                setTimeout(() => {
                     onImportSuccess(response.data);
                     onClose();
                 }, 1500);
@@ -76,7 +76,6 @@ export default function PreviewProgramModal({ open, onClose, previewData, onImpo
             setIsImporting(false);
         }
     };
-
     return (
         <Dialog open={open} onClose={onClose} maxWidth="lg" fullWidth>
             <DialogTitle>
@@ -137,19 +136,21 @@ export default function PreviewProgramModal({ open, onClose, previewData, onImpo
                                 <Table stickyHeader size="small">
                                     <TableHead>
                                         <TableRow>
-                                            <TableCell>Mã chương trình đào tạo</TableCell>
-                                            <TableCell>Tên chương trình đào tạo</TableCell>
-                                            <TableCell>Thời gian đào tạo</TableCell>
-                                            <TableCell>Mô tả</TableCell>
+                                            <TableCell>Mã học kỳ</TableCell>
+                                            <TableCell>Tên học kỳ</TableCell>
+                                            <TableCell>Ngày bắt đầu</TableCell>
+                                            <TableCell>Ngày kết thúc</TableCell>
+                                            <TableCell>Mã chương trình</TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {validRows.map((program, index) => (
+                                        {validRows.map((semester, index) => (
                                             <TableRow key={index}>
-                                                <TableCell>{program.program_id}</TableCell>
-                                                <TableCell>{program.program_name}</TableCell>
-                                                <TableCell>{program.training_duration}</TableCell>
-                                                <TableCell>{program.description}</TableCell>
+                                                <TableCell>{semester.semester_id}</TableCell>
+                                                <TableCell>{semester.semester_name}</TableCell>
+                                                <TableCell>{formatDateTime(semester.start_date)}</TableCell>
+                                                <TableCell>{formatDateTime(semester.end_date)}</TableCell>
+                                                <TableCell>{semester.program_id}</TableCell>
                                             </TableRow>
                                         ))}
                                     </TableBody>
@@ -172,26 +173,28 @@ export default function PreviewProgramModal({ open, onClose, previewData, onImpo
                                 <Table stickyHeader size="small">
                                     <TableHead>
                                         <TableRow>
-                                            <TableCell>Mã chương trình đào tạo</TableCell>
-                                            <TableCell>Tên chương trình đào tạo</TableCell>
-                                            <TableCell>Thời gian đào tạo</TableCell>
-                                            <TableCell>Mô tả</TableCell>
+                                            <TableCell>Mã học kỳ</TableCell>
+                                            <TableCell>Tên học kỳ</TableCell>
+                                            <TableCell>Ngày bắt đầu</TableCell>
+                                            <TableCell>Ngày kết thúc</TableCell>
+                                            <TableCell>Mã chương trình</TableCell>
                                             <TableCell>Lỗi</TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {errorRows.map((program, index) => (
+                                        {errorRows.map((semester, index) => (
                                             <TableRow
                                                 key={index}
                                                 sx={{ bgcolor: 'error.lighter' }}
                                             >
-                                                <TableCell>{program.program_id || '-'}</TableCell>
-                                                <TableCell>{program.program_name || '-'}</TableCell>
-                                                <TableCell>{program.training_duration || '-'}</TableCell>
-                                                <TableCell>{program.description || '-'}</TableCell>
+                                                <TableCell>{semester.semester_id || '-'}</TableCell>
+                                                <TableCell>{semester.semester_name || '-'}</TableCell>
+                                                <TableCell>{formatDateTime(semester.start_date) || '-'}</TableCell>
+                                                <TableCell>{formatDateTime(semester.end_date) || '-'}</TableCell>
+                                                <TableCell>{semester.program_id || '-'}</TableCell>
                                                 <TableCell>
                                                     <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-                                                        {program.errors.map((error) => getErrorChip(error, 'chương trình'))}
+                                                        {semester.errors.map((error) => getErrorChip(error, 'học kỳ'))}
                                                     </Box>
                                                 </TableCell>
                                             </TableRow>
@@ -215,9 +218,9 @@ export default function PreviewProgramModal({ open, onClose, previewData, onImpo
                 >
                     {isImporting ? 'Đang thêm...' :
                         importMessage ? 'Đã thêm thành công' :
-                            `Thêm ${validRows.length} chương trình`}
+                            `Thêm ${validRows.length} học kỳ`}
                 </Button>
             </DialogActions>
         </Dialog>
-    )
+    );
 }

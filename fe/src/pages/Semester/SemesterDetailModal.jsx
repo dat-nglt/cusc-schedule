@@ -13,31 +13,27 @@ import {
     Chip,
 } from '@mui/material';
 import {
-    Person as PersonIcon,
-    Badge as BadgeIcon,
     School as SchoolIcon,
-    Email as EmailIcon,
-    Phone as PhoneIcon,
+    Code as CodeIcon,
+    Schedule as ScheduleIcon,
     Event as EventIcon,
     Update as UpdateIcon,
     CheckCircle as StatusIcon,
 } from '@mui/icons-material';
 import { getStatusChip } from '../../components/ui/StatusChip';
 import { formatDateTime } from '../../utils/formatDateTime';
+
 // Hàm kiểm tra giá trị và trả về giá trị hoặc thông báo mặc định
 const getValueOrDefault = (value) => value || 'Không có dữ liệu';
 
-export default function LecturerDetailModal({ open, onClose, lecturer }) {
-    if (!lecturer) return null;
+export default function SemesterDetailModal({ open, onClose, semester }) {
+    if (!semester) return null;
 
-    // Hàm sao chép mã giảng viên
-    const handleCopyMaGiangVien = () => {
-        navigator.clipboard.writeText(lecturer.lecturer_id);
-        alert('Đã sao chép mã giảng viên!');
+    // Hàm sao chép mã chương trình
+    const handleCopysemester_id = () => {
+        navigator.clipboard.writeText(semester.semester_id);
+        alert('Đã sao chép mã học kỳ!');
     };
-
-
-
     return (
         <Dialog
             open={open}
@@ -62,20 +58,20 @@ export default function LecturerDetailModal({ open, onClose, lecturer }) {
                 }}
             >
                 <Typography variant="h6">
-                    Chi tiết giảng viên {lecturer.name || lecturer.lecturer_id}
+                    Chi tiết học kỳ {semester.semester_id}
                 </Typography>
-                <Tooltip title="Sao chép mã giảng viên">
+                <Tooltip title="Sao chép mã chương trình">
                     <IconButton
-                        onClick={handleCopyMaGiangVien}
+                        onClick={handleCopysemester_id}
                         sx={{ color: '#fff' }}
                     >
-                        <BadgeIcon />
+                        <CodeIcon />
                     </IconButton>
                 </Tooltip>
             </DialogTitle>
             <DialogContent sx={{ mt: 2, px: 3 }}>
                 <Grid container spacing={2}>
-                    {/* Mã giảng viên */}
+                    {/* Mã chương trình */}
                     <Grid item xs={12} md={6}>
                         <Box
                             sx={{
@@ -87,22 +83,22 @@ export default function LecturerDetailModal({ open, onClose, lecturer }) {
                                 border: '1px solid #e0e0e0',
                             }}
                         >
-                            <BadgeIcon sx={{ mr: 1, color: '#1976d2' }} />
+                            <CodeIcon sx={{ mr: 1, color: '#1976d2' }} />
                             <Box>
                                 <Typography
                                     variant="body2"
                                     sx={{ fontWeight: 'bold', color: '#333' }}
                                 >
-                                    Mã giảng viên
+                                    Mã học kỳ
                                 </Typography>
                                 <Typography variant="body1" sx={{ color: '#666' }}>
-                                    {getValueOrDefault(lecturer.lecturer_id)}
+                                    {getValueOrDefault(semester.semester_id)}
                                 </Typography>
                             </Box>
                         </Box>
                     </Grid>
 
-                    {/* Họ tên */}
+                    {/* Tên chương trình */}
                     <Grid item xs={12} md={6}>
                         <Box
                             sx={{
@@ -114,68 +110,22 @@ export default function LecturerDetailModal({ open, onClose, lecturer }) {
                                 border: '1px solid #e0e0e0',
                             }}
                         >
-                            <PersonIcon sx={{ mr: 1, color: '#1976d2' }} />
+                            <SchoolIcon sx={{ mr: 1, color: '#1976d2' }} />
                             <Box>
                                 <Typography
                                     variant="body2"
                                     sx={{ fontWeight: 'bold', color: '#333' }}
                                 >
-                                    Họ tên
+                                    Tên học kỳ
                                 </Typography>
                                 <Typography variant="body1" sx={{ color: '#666' }}>
-                                    {getValueOrDefault(lecturer.name)}
+                                    {getValueOrDefault(semester.semester_name)}
                                 </Typography>
                             </Box>
                         </Box>
                     </Grid>
 
-                    {/* Môn giảng dạy */}
-                    <Grid item xs={12}>
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                alignItems: 'flex-start',
-                                bgcolor: '#f9f9f9',
-                                p: 2,
-                                borderRadius: 1,
-                                border: '1px solid #e0e0e0',
-                            }}
-                        >
-                            <SchoolIcon sx={{ mr: 1, color: '#1976d2', mt: 0.5 }} />
-                            <Box sx={{ width: '100%' }}>
-                                <Typography
-                                    variant="body2"
-                                    sx={{ fontWeight: 'bold', color: '#333', mb: 1 }}
-                                >
-                                    Môn giảng dạy
-                                </Typography>
-                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                                    {lecturer.department && lecturer.department.length > 0 ? (
-                                        Array.isArray(lecturer.department) ? (
-                                            lecturer.department.map((mon, idx) => (
-                                                <Chip
-                                                    key={idx}
-                                                    label={mon}
-                                                    sx={{ bgcolor: '#e3f2fd', color: '#1976d2' }}
-                                                />
-                                            ))
-                                        ) : (
-                                            <Chip
-                                                label={lecturer.department}
-                                                sx={{ bgcolor: '#e3f2fd', color: '#1976d2' }}
-                                            />
-                                        )
-                                    ) : (
-                                        <Typography variant="body1" sx={{ color: '#666' }}>
-                                            Không có dữ liệu
-                                        </Typography>
-                                    )}
-                                </Box>
-                            </Box>
-                        </Box>
-                    </Grid>
-
-                    {/* Email */}
+                    {/* Thời bắt đầu */}
                     <Grid item xs={12} md={6}>
                         <Box
                             sx={{
@@ -187,22 +137,22 @@ export default function LecturerDetailModal({ open, onClose, lecturer }) {
                                 border: '1px solid #e0e0e0',
                             }}
                         >
-                            <EmailIcon sx={{ mr: 1, color: '#1976d2' }} />
+                            <ScheduleIcon sx={{ mr: 1, color: '#1976d2' }} />
                             <Box>
                                 <Typography
                                     variant="body2"
                                     sx={{ fontWeight: 'bold', color: '#333' }}
                                 >
-                                    Email
+                                    Thời gian bắt đầu
                                 </Typography>
                                 <Typography variant="body1" sx={{ color: '#666' }}>
-                                    {getValueOrDefault(lecturer.email)}
+                                    {formatDateTime(semester.start_date)}
                                 </Typography>
                             </Box>
                         </Box>
                     </Grid>
 
-                    {/* Số điện thoại */}
+                    {/* Thời kết thúc */}
                     <Grid item xs={12} md={6}>
                         <Box
                             sx={{
@@ -214,21 +164,20 @@ export default function LecturerDetailModal({ open, onClose, lecturer }) {
                                 border: '1px solid #e0e0e0',
                             }}
                         >
-                            <PhoneIcon sx={{ mr: 1, color: '#1976d2' }} />
+                            <ScheduleIcon sx={{ mr: 1, color: '#1976d2' }} />
                             <Box>
                                 <Typography
                                     variant="body2"
                                     sx={{ fontWeight: 'bold', color: '#333' }}
                                 >
-                                    Số điện thoại
+                                    Thời gian kết thúc
                                 </Typography>
                                 <Typography variant="body1" sx={{ color: '#666' }}>
-                                    {getValueOrDefault(lecturer.phone_number)}
+                                    {formatDateTime(semester.end_date)}
                                 </Typography>
                             </Box>
                         </Box>
                     </Grid>
-
                     {/* Trạng thái */}
                     <Grid item xs={12} md={6}>
                         <Box
@@ -250,7 +199,7 @@ export default function LecturerDetailModal({ open, onClose, lecturer }) {
                                     Trạng thái
                                 </Typography>
                                 <Box sx={{ mt: 0.5 }}>
-                                    {getStatusChip(lecturer.status)}
+                                    {getStatusChip(semester.status)}
                                 </Box>
                             </Box>
                         </Box>
@@ -277,7 +226,7 @@ export default function LecturerDetailModal({ open, onClose, lecturer }) {
                                     Thời gian tạo
                                 </Typography>
                                 <Typography variant="body1" sx={{ color: '#666' }}>
-                                    {formatDateTime(lecturer.created_at)}
+                                    {formatDateTime(semester.created_at)}
                                 </Typography>
                             </Box>
                         </Box>
@@ -304,7 +253,7 @@ export default function LecturerDetailModal({ open, onClose, lecturer }) {
                                     Thời gian cập nhật
                                 </Typography>
                                 <Typography variant="body1" sx={{ color: '#666' }}>
-                                    {formatDateTime(lecturer.updated_at)}
+                                    {formatDateTime(semester.updated_at)}
                                 </Typography>
                             </Box>
                         </Box>

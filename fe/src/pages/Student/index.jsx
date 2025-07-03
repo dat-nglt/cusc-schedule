@@ -326,6 +326,7 @@ const Student = () => {
                 onClose={handleCloseEditModal}
                 student={editedStudent}
                 onSave={handleSaveEditedStudent}
+                updateStudentAPI={updateStudent}
             />
             <DeleteStudentModal
                 open={openDeleteModal}
