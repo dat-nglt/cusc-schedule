@@ -12,13 +12,11 @@ import {
     InputLabel,
     Select,
     MenuItem,
-    Alert,
-    CircularProgress,
 } from '@mui/material';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import * as XLSX from 'xlsx';
-import PreviewLecturerModal from './PreviewLecturerModal';
-import { processExcelDataLecturer } from '../../utils/ExcelValidation';
+import PreviewLecturersModal from './PreviewLecturersModal';
+import { processExcelData } from '../../utils/lecturerValidation';
 
 const availableDepartments = [
     'Khoa Công Nghệ Thông Tin',
@@ -38,7 +36,7 @@ const availableDegrees = [
     'Phó Giáo sư'
 ];
 
-export default function AddLecturerModal({ open, onClose, onAddLecturer, existingLecturers, error, loading, message }) {
+export default function AddLecturerModal({ open, onClose, onAddLecturer, existingLecturers }) {
     const [newLecturer, setNewLecturer] = useState({
         lecturer_id: '',
         name: '',
@@ -53,17 +51,19 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
         status: 'Hoạt động',
     });
 
-    const [localError, setLocalError] = useState('');
+    const [error, setError] = useState('');
+    const [message, setMessage] = useState('');
     const [showPreview, setShowPreview] = useState(false);
     const [previewData, setPreviewData] = useState([]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setNewLecturer((prev) => ({ ...prev, [name]: value }));
-        setLocalError('');
+        setError('');
+        setMessage('');
     };
 
-    const handleSubmit = async () => {
+    const handleSubmit = () => {
         if (
             !newLecturer.lecturer_id ||
             !newLecturer.name ||
@@ -76,21 +76,21 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
             !newLecturer.hire_date ||
             !newLecturer.degree
         ) {
-            setLocalError('Vui lòng điền đầy đủ thông tin!');
+            setError('Vui lòng điền đầy đủ thông tin!');
             return;
         }
 
         // Kiểm tra email format
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(newLecturer.email)) {
-            setLocalError('Email không hợp lệ!');
+            setError('Email không hợp lệ!');
             return;
         }
 
         // Kiểm tra số điện thoại format
         const phoneRegex = /^[0-9]{10,11}$/;
         if (!phoneRegex.test(newLecturer.phone_number)) {
-            setLocalError('Số điện thoại không hợp lệ!');
+            setError('Số điện thoại không hợp lệ!');
             return;
         }
 
@@ -99,7 +99,7 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
             (lecturer) => lecturer.lecturer_id === newLecturer.lecturer_id
         );
         if (isDuplicate) {
-            setLocalError(`Mã giảng viên "${newLecturer.lecturer_id}" đã tồn tại!`);
+            setError(`Mã giảng viên "${newLecturer.lecturer_id}" đã tồn tại!`);
             return;
         }
 
@@ -109,12 +109,12 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
         const today = new Date();
 
         if (birthDate >= today) {
-            setLocalError('Ngày sinh không hợp lệ!');
+            setError('Ngày sinh không hợp lệ!');
             return;
         }
 
         if (hireDate > today) {
-            setLocalError('Ngày tuyển dụng không được là ngày tương lai!');
+            setError('Ngày tuyển dụng không được là ngày tương lai!');
             return;
         }
 
@@ -126,9 +126,7 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
             updated_at: new Date().toISOString(),
         };
 
-        // Gọi hàm onAddLecturer được truyền từ component cha
-        await onAddLecturer(lecturerToAdd);
-
+        onAddLecturer(lecturerToAdd);
         setNewLecturer({
             lecturer_id: '',
             name: '',
@@ -142,26 +140,28 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
             degree: '',
             status: 'Hoạt động',
         });
-        setLocalError('');
+        setError('');
+        setMessage('');
         onClose();
     };
 
     const handleImportExcel = async (e) => {
         const file = e.target.files[0];
         if (!file) {
-            setLocalError('Vui lòng chọn một file Excel!');
+            setError('Vui lòng chọn một file Excel!');
             return;
         }
 
         const validExtensions = ['.xlsx', '.xls'];
         const fileExtension = file.name.slice(file.name.lastIndexOf('.')).toLowerCase();
         if (!validExtensions.includes(fileExtension)) {
-            setLocalError('Chỉ hỗ trợ file Excel (.xlsx, .xls)!');
+            setError('Chỉ hỗ trợ file Excel (.xlsx, .xls)!');
             return;
         }
 
         try {
-            setLocalError(''); // Clear previous errors
+            setError(''); // Clear previous errors
+            setMessage(''); // Clear previous messages
 
             // Đọc file Excel
             const arrayBuffer = await file.arrayBuffer();
@@ -173,7 +173,7 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
             const rawData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
             if (rawData.length < 2) {
-                setLocalError('File Excel phải có ít nhất 2 dòng (header + dữ liệu)!');
+                setError('File Excel phải có ít nhất 2 dòng (header + dữ liệu)!');
                 return;
             }
 
@@ -191,21 +191,20 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
             });
 
             // Xử lý và validate dữ liệu
-            const processedData = processExcelDataLecturer(jsonData, existingLecturers);
+            const processedData = processExcelData(jsonData, existingLecturers);
 
             if (processedData.length === 0) {
-                setLocalError('Không có dữ liệu hợp lệ trong file Excel!');
+                setError('Không có dữ liệu hợp lệ trong file Excel!');
                 return;
             }
 
             // Hiển thị preview
             setPreviewData(processedData);
             setShowPreview(true);
-            onClose();
 
         } catch (error) {
             console.error('Error reading Excel file:', error);
-            setLocalError('Lỗi khi đọc file Excel! Vui lòng kiểm tra format file.');
+            setError('Lỗi khi đọc file Excel! Vui lòng kiểm tra format file.');
         }
 
         // Reset file input
@@ -213,12 +212,17 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
     };
 
     const handleImportSuccess = (result) => {
-        const { imported } = result;
+        const { imported, message: resultMessage } = result;
 
         if (imported && imported.length > 0) {
             // Add imported lecturers to the list
             imported.forEach(lecturer => onAddLecturer(lecturer));
-            onClose();
+
+            // Hiển thị thông báo thành công
+            setMessage(`Import thành công ${imported.length} giảng viên`);
+            setError('');
+        } else if (resultMessage) {
+            setError(resultMessage);
         }
 
         setShowPreview(false);
@@ -256,15 +260,26 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
                     </Box>
                 </DialogTitle>
                 <DialogContent>
-                    {(error || localError) && (
-                        <Alert severity="error" sx={{ mb: 2 }}>
-                            {error || localError}
-                        </Alert>
+                    {error && (
+                        <Typography color="error" sx={{ mb: 2 }}>
+                            {error}
+                        </Typography>
                     )}
                     {message && (
-                        <Alert severity="success" sx={{ mb: 2 }}>
+                        <div
+                            style={{
+                                marginBottom: '16px',
+                                color: '#4caf50',
+                                fontWeight: 'bold',
+                                fontSize: '16px',
+                                padding: '8px',
+                                backgroundColor: '#f1f8e9',
+                                border: '1px solid #4caf50',
+                                borderRadius: '4px'
+                            }}
+                        >
                             {message}
-                        </Alert>
+                        </div>
                     )}
                     <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2, mt: 2 }}>
                         <TextField
@@ -393,23 +408,17 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
                     </Box>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={onClose} variant="outlined" sx={{ color: '#1976d2' }} disabled={loading}>
+                    <Button onClick={onClose} variant="outlined" sx={{ color: '#1976d2' }}>
                         Hủy
                     </Button>
-                    <Button
-                        onClick={handleSubmit}
-                        variant="contained"
-                        sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
-                        disabled={loading}
-                        startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
-                    >
-                        {loading ? 'Đang thêm...' : 'Thêm'}
+                    <Button onClick={handleSubmit} variant="contained" sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}>
+                        Thêm
                     </Button>
                 </DialogActions>
             </Dialog>
 
             {/* Preview Modal */}
-            <PreviewLecturerModal
+            <PreviewLecturersModal
                 open={showPreview}
                 onClose={handleClosePreview}
                 previewData={previewData}

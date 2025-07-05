@@ -10,22 +10,18 @@ import {
   CircularProgress,
 } from '@mui/material';
 
-const DeleteStudentModal = ({ open, onClose, onDelete, student, loading }) => {
+const DeleteStudentModal = ({ open, onClose, onDelete, student }) => {
+  const [loading, setLoading] = React.useState(false);
 
   const handleDelete = async () => {
     try {
-      loading(true);
-      const response = await onDelete(student.student_id);
-      if (response && response.data) {
-        onDelete(student.student_id);
-        onClose();
-      }
+      setLoading(true);
+      await onDelete(student.student_id);
     } catch (error) {
       console.error('Error deleting student:', error);
       alert('Không thể xóa học viên. Vui lòng thử lại.');
     } finally {
-      loading(false);
-      onClose();
+      setLoading(false);
     }
   };
 
@@ -47,7 +43,7 @@ const DeleteStudentModal = ({ open, onClose, onDelete, student, loading }) => {
         </Typography>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Hủy</Button>
+        <Button onClick={onClose} disabled={loading}>Hủy</Button>
         <Button
           onClick={handleDelete}
           variant="contained"

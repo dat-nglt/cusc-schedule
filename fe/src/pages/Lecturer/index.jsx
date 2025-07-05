@@ -24,12 +24,30 @@ import EditLecturerModal from './EditLecturerModal';
 import DeleteLecturerModal from './DeleteLecturerModal';
 import useResponsive from '../../hooks/useResponsive';
 import LecturerTable from './LecturerTable';
-import { getAllLecturers, getLecturerById, createLecturer, updateLecturer, deleteLecturer } from '../../api/lecturerAPI';
+import { getAllLecturers } from '../../api/lecturerAPI';
 const Lecturer = () => {
     const { isSmallScreen, isMediumScreen } = useResponsive();
 
     // Dữ liệu mẫu cho danh sách giảng viên
     const [lecturers, setLecturers] = useState([]);
+
+    const fetchLecturers = async () => {
+        try {
+            const response = await getAllLecturers();
+            if (!response) {
+                throw new Error('Lỗi khi tải danh sách giảng viên');
+            }
+            setLecturers(response.data.data);
+        } catch (error) {
+            console.error('Error fetching lecturers:', error);
+            // Hiển thị thông báo lỗi hoặc xử lý lỗi ở đây
+        }
+    };
+
+    useEffect(() => {
+        fetchLecturers();
+    }, []);
+    console.log("giảng viên", lecturers);
     // State cho phân trang, tìm kiếm, lọc theo trạng thái và modal
     const [page, setPage] = useState(0);
     const [rowsPerPage] = useState(8);
@@ -42,53 +60,13 @@ const Lecturer = () => {
     const [editedLecturer, setEditedLecturer] = useState(null);
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
     const [lecturerToDelete, setLecturerToDelete] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState('');
-    const [message, setMessage] = useState('');
 
     // Danh sách trạng thái để lọc
     const statuses = ['Hoạt động', 'Tạm nghỉ'];
 
-    const fetchLecturers = async () => {
-        try {
-            setLoading(true);
-            const response = await getAllLecturers();
-            if (!response) {
-                console.error("Không có dữ liệu giảng viên");
-                return;
-            }
-            setLecturers(response.data.data);
-        } catch (error) {
-            console.error("Lỗi khi tải danh sách giảng viên:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchLecturers();
-    }, []);
-
     // Hàm xử lý khi nhấn nút Thêm giảng viên
     const handleAddLecturer = () => {
         setOpenAddModal(true);
-    };
-
-    // Hàm thêm giảng viên mới
-    const handleAddNewLecturer = async (newLecturer) => {
-        try {
-            setLoading(true);
-            const response = await createLecturer(newLecturer);
-            if (response && response.data) {
-                setMessage("Thêm giảng viên thành công!");
-                fetchLecturers(); // Tải lại danh sách giảng viên sau khi thêm thành công
-            }
-        } catch (error) {
-            console.error("Lỗi khi thêm giảng viên:", error);
-            setError("Không thể thêm giảng viên. Vui lòng kiểm tra lại thông tin.");
-        } finally {
-            setLoading(false);
-        }
     };
 
     // Hàm đóng modal thêm giảng viên
@@ -96,21 +74,19 @@ const Lecturer = () => {
         setOpenAddModal(false);
     };
 
-    // Hàm mở modal chỉnh sửa
-    const handleEditLecturer = async (id) => {
-        try {
-            setLoading(true);
-            const response = await getLecturerById(id);
-            if (response && response.data) {
-                setEditedLecturer(response.data.data);
-                setOpenEditModal(true);
-            }
-        } catch (error) {
-            console.error("Lỗi khi lấy thông tin giảng viên để chỉnh sửa:", error);
-            setError("Không thể lấy thông tin giảng viên để chỉnh sửa. Vui lòng thử lại.");
-        } finally {
-            setLoading(false);
-        }
+    // Hàm thêm giảng viên mới
+    const handleAddNewLecturer = (newLecturer) => {
+        setLecturers((prevLecturers) => {
+            const updatedLecturers = [...prevLecturers, { ...newLecturer, stt: prevLecturers.length + 1 }];
+            return updatedLecturers;
+        });
+    };
+
+    // Hàm xử lý khi nhấn nút chỉnh sửa
+    const handleEditLecturer = (id) => {
+        const lecturerToEdit = lecturers.find((l) => l.lecturer_id === id);
+        setEditedLecturer(lecturerToEdit);
+        setOpenEditModal(true);
     };
 
     // Hàm đóng modal chỉnh sửa
@@ -120,20 +96,9 @@ const Lecturer = () => {
     };
 
     // Hàm lưu thay đổi sau khi chỉnh sửa
-    const handleSaveEditedLecturer = async (updatedLecturer) => {
-        try {
-            setLoading(true);
-            const response = await updateLecturer(updatedLecturer.lecturer_id, updatedLecturer);
-            if (response && response.data) {
-                setMessage("Cập nhật giảng viên thành công!");
-                fetchLecturers(); // Tải lại danh sách giảng viên sau khi cập nhật thành công
-            }
-        } catch (error) {
-            console.error("Lỗi khi cập nhật giảng viên:", error);
-            setError("Không thể cập nhật giảng viên. Vui lòng kiểm tra lại thông tin.");
-        } finally {
-            setLoading(false);
-        }
+    const handleSaveEditedLecturer = (updatedLecturer) => {
+        // Refresh data from server after successful update
+        fetchLecturers();
     };
 
     // Hàm xử lý thay đổi trang
@@ -142,20 +107,10 @@ const Lecturer = () => {
     };
 
     // Hàm xử lý xem giảng viên
-    const handleViewLecturer = async (id) => {
-        try {
-            setLoading(true);
-            const response = await getLecturerById(id);
-            if (response && response.data) {
-                setSelectedLecturer(response.data.data);
-                setOpenDetail(true);
-            }
-        } catch (error) {
-            console.error("Lỗi khi lấy thông tin chi tiết giảng viên:", error);
-            setError("Không thể lấy thông tin chi tiết giảng viên. Vui lòng thử lại.");
-        } finally {
-            setLoading(false);
-        }
+    const handleViewLecturer = (id) => {
+        const lecturer = lecturers.find((l) => l.lecturer_id === id);
+        setSelectedLecturer(lecturer);
+        setOpenDetail(true);
     };
 
     // Hàm xử lý xóa giảng viên
@@ -166,22 +121,9 @@ const Lecturer = () => {
     };
 
     // Hàm xác nhận xóa giảng viên
-    const confirmDeleteLecturer = async (id) => {
-        try {
-            setLoading(true);
-            const response = await deleteLecturer(id);
-            if (response) {
-                setMessage("Xóa giảng viên thành công!");
-                fetchLecturers(); // Tải lại danh sách giảng viên sau khi xóa thành công
-            }
-        } catch (error) {
-            console.error("Lỗi khi xóa giảng viên:", error);
-            setError("Không thể xóa giảng viên. Vui lòng thử lại.");
-        } finally {
-            setLoading(false);
-            setOpenDeleteModal(false);
-            setLecturerToDelete(null);
-        }
+    const confirmDeleteLecturer = (id) => {
+        // Refresh data from server after successful delete
+        fetchLecturers();
     };
 
     // Hàm đóng modal chi tiết
@@ -297,8 +239,6 @@ const Lecturer = () => {
                                     handleViewLecturer={handleViewLecturer}
                                     handleEditLecturer={handleEditLecturer}
                                     handleDeleteLecturer={handleDeleteLecturer}
-                                    loading={loading}
-                                    error={error}
                                 />
                                 <TablePagination
                                     component="div"
@@ -324,17 +264,12 @@ const Lecturer = () => {
                 onClose={handleCloseAddModal}
                 onAddLecturer={handleAddNewLecturer}
                 existingLecturers={lecturers}
-                error={error}
-                loading={loading}
-                message={message}
             />
             <EditLecturerModal
                 open={openEditModal}
                 onClose={handleCloseEditModal}
                 lecturer={editedLecturer}
                 onSave={handleSaveEditedLecturer}
-                error={error}
-                loading={loading}
             />
             <DeleteLecturerModal
                 open={openDeleteModal}

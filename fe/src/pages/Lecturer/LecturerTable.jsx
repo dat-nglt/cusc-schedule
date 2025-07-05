@@ -13,7 +13,6 @@ import {
     Chip,
 } from '@mui/material';
 import { Visibility, Edit, Delete, Menu as MenuIcon } from '@mui/icons-material';
-import { getStatusChip } from '../../components/ui/StatusChip';
 
 export default function LecturerTable({ displayedLecturers, isSmallScreen, isMediumScreen, handleViewLecturer, handleEditLecturer, handleDeleteLecturer }) {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -31,7 +30,28 @@ export default function LecturerTable({ displayedLecturers, isSmallScreen, isMed
         setSelectedRowId(null);
     };
 
+    // Hàm hiển thị trạng thái với màu sắc
+    const getStatusChip = (status) => {
+        const statusColors = {
+            'Hoạt động': { color: '#4caf50', bgcolor: '#e8f5e8' },
+            'Tạm nghỉ': { color: '#f57c00', bgcolor: '#fff3e0' },
+            'Đang dạy': { color: '#2196f3', bgcolor: '#e3f2fd' }
+        };
+        const style = statusColors[status] || { color: '#757575', bgcolor: '#f5f5f5' };
 
+        return (
+            <Chip
+                label={status}
+                size="small"
+                sx={{
+                    color: style.color,
+                    bgcolor: style.bgcolor,
+                    fontWeight: 'bold',
+                    fontSize: '0.75rem'
+                }}
+            />
+        );
+    };
 
     return (
         <Table

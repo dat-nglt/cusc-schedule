@@ -7,18 +7,18 @@ export const getAllLecturers = async () => {
     }
     catch (error) {
         console.error('Error fetching lecturers:', error);
-        throw error;
+        throw new Error('Lỗi khi tải danh sách giảng viên');
     }
 };
 
 export const getLecturerById = async (id) => {
     try {
-        const response = await axiosInstance.get(`/api/lecturers/${id}`);
+        const response = await axiosInstance.get(`/api/lecturers/getById/${id}`);
         return response;
     }
     catch (error) {
         console.error('Error fetching lecturer by ID:', error);
-        throw error;
+        throw new Error('Lỗi khi tải thông tin giảng viên');
     }
 };
 
@@ -29,7 +29,7 @@ export const createLecturer = async (lecturerData) => {
     }
     catch (error) {
         console.error('Error creating lecturer:', error);
-        throw error;
+        throw new Error('Lỗi khi tạo giảng viên mới');
     }
 };
 
@@ -40,21 +40,34 @@ export const updateLecturer = async (id, lecturerData) => {
     }
     catch (error) {
         console.error('Error updating lecturer:', error);
-        throw error;
+        throw new Error('Lỗi khi cập nhật thông tin giảng viên');
     }
 };
 
-export const importLecturers = async (jsonData) => {
+export const importLecturers = async (file, jsonData = null) => {
     try {
-        // Import từ dữ liệu JSON đã được validate
-        const response = await axiosInstance.post('/api/lecturers/importJson', {
-            lecturers: jsonData
-        });
-        return response;
+        if (jsonData) {
+            // Import từ dữ liệu JSON đã được validate
+            const response = await axiosInstance.post('/api/lecturers/importJson', {
+                lecturers: jsonData
+            });
+            return response;
+        } else {
+            // Import từ file Excel
+            const formData = new FormData();
+            formData.append('excel_file', file);
+
+            const response = await axiosInstance.post('/api/lecturers/import', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            return response;
+        }
     }
     catch (error) {
         console.error('Error importing lecturers:', error);
-        throw error;
+        throw new Error('Lỗi khi nhập giảng viên từ tệp');
     }
 };
 
@@ -65,6 +78,6 @@ export const deleteLecturer = async (id) => {
     }
     catch (error) {
         console.error('Error deleting lecturer:', error);
-        throw error;
+        throw new Error('Lỗi khi xóa giảng viên');
     }
 };
