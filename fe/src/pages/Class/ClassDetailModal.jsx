@@ -13,9 +13,8 @@ import {
 } from '@mui/material';
 import {
   Code as CodeIcon,
-  Person as PersonIcon,
-  School as SchoolIcon,
-  Group as GroupIcon,
+  Label as LabelIcon,
+  People as PeopleIcon,
   ToggleOn as ToggleOnIcon,
   Event as EventIcon,
   Update as UpdateIcon,
@@ -27,7 +26,7 @@ const formatDateTime = (dateTime) => {
   try {
     const [date, time] = dateTime.split(' ');
     const [year, month, day] = date.split('-');
-    return `${day}/${month}/${year} ${time}`;
+    return `${day}/${month}/${year} ${time || ''}`;
   } catch {
     return 'Không hợp lệ';
   }
@@ -36,12 +35,12 @@ const formatDateTime = (dateTime) => {
 // Hàm kiểm tra giá trị và trả về giá trị hoặc thông báo mặc định
 const getValueOrDefault = (value) => value || 'Không có dữ liệu';
 
-const ClassDetailModal = ({ open, onClose, cls }) => {
-  if (!cls) return null;
+const ClassDetailModal = ({ open, onClose, classItem }) => {
+  if (!classItem) return null;
 
   // Hàm sao chép mã lớp học
   const handleCopyMaLopHoc = () => {
-    navigator.clipboard.writeText(cls.maLopHoc);
+    navigator.clipboard.writeText(classItem.class_id);
     alert('Đã sao chép mã lớp học!');
   };
 
@@ -69,7 +68,7 @@ const ClassDetailModal = ({ open, onClose, cls }) => {
         }}
       >
         <Typography variant="h6">
-          Chi tiết lớp học {cls.maLopHoc}
+          Chi tiết lớp học {classItem.class_id}
         </Typography>
         <Tooltip title="Sao chép mã lớp học">
           <IconButton
@@ -100,13 +99,13 @@ const ClassDetailModal = ({ open, onClose, cls }) => {
                   Mã lớp học
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#666' }}>
-                  {getValueOrDefault(cls.maLopHoc)}
+                  {getValueOrDefault(classItem.class_id)}
                 </Typography>
               </Box>
             </Box>
           </Grid>
 
-          {/* Mã học viên */}
+          {/* Tên lớp học */}
           <Grid item xs={12}>
             <Box
               sx={{
@@ -118,19 +117,19 @@ const ClassDetailModal = ({ open, onClose, cls }) => {
                 border: '1px solid #e0e0e0',
               }}
             >
-              <PersonIcon sx={{ mr: 1, color: '#1976d2' }} />
+              <LabelIcon sx={{ mr: 1, color: '#1976d2' }} />
               <Box>
                 <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#333' }}>
-                  Mã học viên
+                  Tên lớp học
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#666' }}>
-                  {getValueOrDefault(cls.maHocVien)}
+                  {getValueOrDefault(classItem.class_name)}
                 </Typography>
               </Box>
             </Box>
           </Grid>
 
-          {/* Mã khóa học */}
+          {/* Sĩ số */}
           <Grid item xs={6}>
             <Box
               sx={{
@@ -142,37 +141,13 @@ const ClassDetailModal = ({ open, onClose, cls }) => {
                 border: '1px solid #e0e0e0',
               }}
             >
-              <SchoolIcon sx={{ mr: 1, color: '#1976d2' }} />
+              <PeopleIcon sx={{ mr: 1, color: '#1976d2' }} />
               <Box>
                 <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#333' }}>
-                  Mã khóa học
+                  Sĩ số
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#666' }}>
-                  {getValueOrDefault(cls.maKhoaHoc)}
-                </Typography>
-              </Box>
-            </Box>
-          </Grid>
-
-          {/* Sĩ số lớp */}
-          <Grid item xs={6}>
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                bgcolor: '#f9f9f9',
-                p: 2,
-                borderRadius: 1,
-                border: '1px solid #e0e0e0',
-              }}
-            >
-              <GroupIcon sx={{ mr: 1, color: '#1976d2' }} />
-              <Box>
-                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#333' }}>
-                  Sĩ số lớp
-                </Typography>
-                <Typography variant="body1" sx={{ color: '#666' }}>
-                  {getValueOrDefault(cls.siSoLop)}
+                  {getValueOrDefault(classItem.class_size)}
                 </Typography>
               </Box>
             </Box>
@@ -196,7 +171,31 @@ const ClassDetailModal = ({ open, onClose, cls }) => {
                   Trạng thái
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#666' }}>
-                  {getValueOrDefault(cls.trangThai)}
+                  {getValueOrDefault(classItem.status)}
+                </Typography>
+              </Box>
+            </Box>
+          </Grid>
+
+          {/* Mã khóa học */}
+          <Grid item xs={6}>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                bgcolor: '#f9f9f9',
+                p: 2,
+                borderRadius: 1,
+                border: '1px solid #e0e0e0',
+              }}
+            >
+              <CodeIcon sx={{ mr: 1, color: '#1976d2' }} />
+              <Box>
+                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#333' }}>
+                  Mã khóa học
+                </Typography>
+                <Typography variant="body1" sx={{ color: '#666' }}>
+                  {getValueOrDefault(classItem.course_id)}
                 </Typography>
               </Box>
             </Box>
@@ -220,7 +219,7 @@ const ClassDetailModal = ({ open, onClose, cls }) => {
                   Thời gian tạo
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#666' }}>
-                  {formatDateTime(cls.thoiGianTao)}
+                  {formatDateTime(classItem.created_at)}
                 </Typography>
               </Box>
             </Box>
@@ -244,7 +243,7 @@ const ClassDetailModal = ({ open, onClose, cls }) => {
                   Thời gian cập nhật
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#666' }}>
-                  {formatDateTime(cls.thoiGianCapNhat)}
+                  {formatDateTime(classItem.updated_at)}
                 </Typography>
               </Box>
             </Box>

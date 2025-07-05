@@ -27,6 +27,7 @@ import DeleteClassModal from './DeleteClassModal';
 import useResponsive from '../../hooks/useResponsive';
 import ClassTable from './ClassTable';
 import { getClasses, getClassById, addClass, updateClass, deleteClass, listClasses } from '../../api/classAPI';
+import { getCourses } from '../../api/courseAPI';
 
 // Hàm định dạng timestamp thành YYYY-MM-DD HH:MM:SS.sss+07
 const formatTimestamp = (timestamp) => {
@@ -46,6 +47,7 @@ const Class = () => {
   const { isSmallScreen, isMediumScreen } = useResponsive();
 
   const [classes, setClasses] = useState([]);
+  const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(0);
@@ -104,8 +106,37 @@ const Class = () => {
     }
   };
 
+  const fetchCourses = async () => {
+    try {
+      setLoading(true);
+      const response = await getCourses();
+      console.log('Phản hồi từ API (khóa học):', response);
+      let coursesData = [];
+      if (Array.isArray(response)) {
+        coursesData = response.map((course) => ({
+          course_id: course.course_id,
+          course_name: course.course_name,
+        }));
+      } else if (response && typeof response === 'object' && Array.isArray(response.data)) {
+        coursesData = response.data.map((course) => ({
+          course_id: course.course_id,
+          course_name: course.course_name,
+        }));
+      } else {
+        throw new Error('Dữ liệu từ API không phải là mảng hợp lệ');
+      }
+      setCourses(coursesData);
+      setLoading(false);
+    } catch (err) {
+      console.error('Lỗi khi tải danh sách khóa học:', err.message);
+      setError(`Lỗi khi tải danh sách khóa học: ${err.message}`);
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchClasses();
+    fetchCourses();
   }, []);
 
   const handleViewClass = async (class_id) => {
@@ -363,7 +394,9 @@ const Class = () => {
         open={openAdd}
         onClose={() => setOpenAdd(false)}
         onAddClass={handleAddClass}
+        onImportSuccess={fetchClasses}
         existingClasses={classes}
+        existingCourses={courses}
       />
       <EditClassModal
         open={openEdit}

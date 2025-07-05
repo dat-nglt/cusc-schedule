@@ -5,7 +5,7 @@ import userRoutes from './userRoutes';
 import courseRoutes from './courseRoutes';
 import studentRoutes from './studentRoutes';
 import breakscheduleRoutes from './breakscheduleRoutes';
-import classRoutes from './classRotes';
+import classRoutes from './classRoutes';
 
 const router = express.Router();
 

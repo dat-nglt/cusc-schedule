@@ -9,9 +9,9 @@ import {
   Box,
 } from '@mui/material';
 
-const DeleteClassModal = ({ open, onClose, onDelete, cls }) => {
+const DeleteClassModal = ({ open, onClose, onDelete, classItem }) => {
   const handleDelete = () => {
-    onDelete(cls.id);
+    onDelete(classItem.class_id);
     onClose();
   };
 
@@ -23,12 +23,9 @@ const DeleteClassModal = ({ open, onClose, onDelete, cls }) => {
           Bạn có muốn xóa lớp học với mã{' '}
           <Box
             component="span"
-            sx={{
-              color: '#1976d2', // Màu xanh dương (tương tự màu primary của MUI)
-              fontWeight: 'bold', // In đậm
-            }}
+            sx={{ color: '#1976d2', fontWeight: 'bold' }}
           >
-            {cls?.maLopHoc}
+            {classItem?.class_id}
           </Box> không?
         </Typography>
       </DialogContent>
