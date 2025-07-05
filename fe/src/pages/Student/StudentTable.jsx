@@ -13,8 +13,6 @@ import {
     Chip,
 } from '@mui/material';
 import { Visibility, Edit, Delete, Menu as MenuIcon } from '@mui/icons-material';
-import { getStatusChip } from '../../components/ui/StatusChip';
-import { formatDateTime } from '../../utils/formatDateTime';
 
 export default function StudentTable({ displayedStudents, isSmallScreen, isMediumScreen, handleViewStudent, handleEditStudent, handleDeleteStudent }) {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -32,6 +30,29 @@ export default function StudentTable({ displayedStudents, isSmallScreen, isMediu
         setSelectedRowId(null);
     };
 
+    // Hàm hiển thị trạng thái với màu sắc
+    const getStatusChip = (status) => {
+        const statusColors = {
+            'Đang học': { color: '#4caf50', bgcolor: '#e8f5e8' },
+            'Tạm nghỉ': { color: '#f57c00', bgcolor: '#fff3e0' },
+            'Tốt nghiệp': { color: '#2196f3', bgcolor: '#e3f2fd' },
+            'Bảo lưu': { color: '#9c27b0', bgcolor: '#f3e5f5' }
+        };
+        const style = statusColors[status] || { color: '#757575', bgcolor: '#f5f5f5' };
+
+        return (
+            <Chip
+                label={status}
+                size="small"
+                sx={{
+                    color: style.color,
+                    bgcolor: style.bgcolor,
+                    fontWeight: 'bold',
+                    fontSize: '0.75rem'
+                }}
+            />
+        );
+    };
 
     return (
         <Table
@@ -105,7 +126,7 @@ export default function StudentTable({ displayedStudents, isSmallScreen, isMediu
                         )}
                         {!isSmallScreen && (
                             <TableCell sx={{ textAlign: 'left', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                                {formatDateTime(student.admission_year)}
+                                {student.admission_year}
                             </TableCell>
                         )}
                         <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>

@@ -6,7 +6,7 @@ export const getAllStudents = async () => {
         return response;
     } catch (error) {
         console.error("Error getting students:", error);
-        throw error;
+        throw new Error("Loi khi tải danh sách sinh viên");
     }
 };
 
@@ -16,7 +16,7 @@ export const getStudentById = async (id) => {
         return response;
     } catch (error) {
         console.error(`Error getting student with id ${id}:`, error);
-        throw error
+        throw new Error(`Lỗi khi tải thông tin sinh viên với ID ${id}`)
     }
 }
 
@@ -26,7 +26,7 @@ export const createStudent = async (studentData) => {
         return response;
     } catch (error) {
         console.error("Error creating student:", error);
-        throw error;
+        throw new Error("Lỗi khi tạo sinh viên mới");
     }
 }
 
@@ -36,7 +36,7 @@ export const updateStudent = async (id, studentData) => {
         return response;
     } catch (error) {
         console.error(`Error updating student with id ${id}:`, error);
-        throw error;
+        throw new Error(`Lỗi khi cập nhật thông tin sinh viên với ID ${id}`);
     }
 };
 
@@ -46,18 +46,23 @@ export const deleteStudent = async (id) => {
         return response;
     } catch (error) {
         console.error(`Error deleting student with id ${id}:`, error);
-        throw error;
+        throw new Error(`Lỗi khi xóa sinh viên với ID ${id}`);
     }
 };
 
-export const importStudents = async (jsonData) => {
+export const importStudents = async (file) => {
+    const formData = new FormData();
+    formData.append('excel_file', file);
+
     try {
-        const response = await axiosInstance.post('/api/students/importJson', {
-            students: jsonData
+        const response = await axiosInstance.post('/api/students/import', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
         });
         return response;
     } catch (error) {
         console.error('Error importing students:', error);
-        throw error;
+        throw new Error('Lỗi khi nhập sinh viên từ file Excel');
     }
 };

@@ -17,14 +17,6 @@ module.exports = {
         type: Sequelize.SMALLINT,
         allowNull: true
       },
-      theory_hours: {
-        type: Sequelize.SMALLINT,
-        allowNull: true
-      },
-      practice_hours: {
-        type: Sequelize.SMALLINT,
-        allowNull: true
-      },
       status: {
         type: Sequelize.STRING(30),
         allowNull: true

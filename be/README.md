@@ -92,7 +92,7 @@ Hệ thống quản lý **19 bảng dữ liệu** được thiết kế theo chu
 - **admins** - Quản trị viên hệ thống
 
 ### 🎓 **Quản lý Học tập (Academic Management)**  
-- **programs** - Chương trình đào tạo & ngành học
+- **training_programs** - Chương trình đào tạo & ngành học
 - **courses** - Khóa học theo chương trình
 - **subjects** - Môn học & tín chỉ
 - **classes** - Lớp học & sĩ số

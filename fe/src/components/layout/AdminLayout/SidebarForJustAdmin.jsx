@@ -32,7 +32,6 @@ const navItems = [
     { text: 'Quản lý giảng viên', icon: <Person />, path: '/lecturers' },
     { text: 'Quản lý học viên', icon: <School />, path: '/students' },
     { text: 'Quản lý chương trình', icon: <LibraryBooks />, path: '/programs' },
-    { text: 'Quản lý học kỳ', icon: <LibraryBooks />, path: '/semesters' },
     { text: 'Quản lý học phần', icon: <MenuBook />, path: '/subjects' },
     { text: 'Quản lý khóa học', icon: <Class />, path: '/courses' },
     { text: 'Quản lý lớp', icon: <Groups />, path: '/class' },

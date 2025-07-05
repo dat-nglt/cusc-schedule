@@ -12,11 +12,10 @@ import {
     InputLabel,
     Select,
     MenuItem,
-    Alert,
-    CircularProgress,
 } from '@mui/material';
+import { updateLecturer } from '../../api/lecturerAPI';
 
-export default function EditLecturerModal({ open, onClose, lecturer, onSave, error, loading }) {
+export default function EditLecturerModal({ open, onClose, lecturer, onSave }) {
     const [editedLecturer, setEditedLecturer] = useState({
         lecturer_id: '',
         name: '',
@@ -100,24 +99,32 @@ export default function EditLecturerModal({ open, onClose, lecturer, onSave, err
             return;
         }
 
-        const updatedLecturerData = {
-            lecturer_id: editedLecturer.lecturer_id,
-            name: editedLecturer.name,
-            email: editedLecturer.email,
-            day_of_birth: editedLecturer.day_of_birth,
-            gender: editedLecturer.gender,
-            address: editedLecturer.address,
-            phone_number: editedLecturer.phone_number,
-            department: editedLecturer.department,
-            hire_date: editedLecturer.hire_date,
-            degree: editedLecturer.degree,
-            status: editedLecturer.status,
-            updated_at: new Date().toISOString(),
-        };
+        try {
+            const updatedLecturerData = {
+                lecturer_id: editedLecturer.lecturer_id,
+                name: editedLecturer.name,
+                email: editedLecturer.email,
+                day_of_birth: editedLecturer.day_of_birth,
+                gender: editedLecturer.gender,
+                address: editedLecturer.address,
+                phone_number: editedLecturer.phone_number,
+                department: editedLecturer.department,
+                hire_date: editedLecturer.hire_date,
+                degree: editedLecturer.degree,
+                status: editedLecturer.status,
+            };
 
-        // Gọi hàm onSave được truyền từ component cha
-        await onSave(updatedLecturerData);
-        onClose();
+            const response = await updateLecturer(lecturer.lecturer_id, updatedLecturerData);
+
+            if (response && response.data) {
+                onSave(response.data.data);
+                onClose();
+                alert('Cập nhật giảng viên thành công!');
+            }
+        } catch (error) {
+            console.error('Error updating lecturer:', error);
+            alert('Lỗi khi cập nhật giảng viên: ' + error.message);
+        }
     };
 
     return (
@@ -126,11 +133,6 @@ export default function EditLecturerModal({ open, onClose, lecturer, onSave, err
                 <Typography variant="h6">Chỉnh sửa giảng viên</Typography>
             </DialogTitle>
             <DialogContent>
-                {error && (
-                    <Alert severity="error" sx={{ mb: 2 }}>
-                        {error}
-                    </Alert>
-                )}
                 <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2, mt: 2 }}>
                     <TextField
                         label="Mã giảng viên"
@@ -140,7 +142,6 @@ export default function EditLecturerModal({ open, onClose, lecturer, onSave, err
                         fullWidth
                         variant="outlined"
                         required
-                        disabled={true}
                     />
                     <TextField
                         label="Họ tên"
@@ -261,17 +262,11 @@ export default function EditLecturerModal({ open, onClose, lecturer, onSave, err
                 </Box>
             </DialogContent>
             <DialogActions>
-                <Button onClick={onClose} variant="outlined" sx={{ color: '#1976d2' }} disabled={loading}>
+                <Button onClick={onClose} variant="outlined" sx={{ color: '#1976d2' }}>
                     Hủy
                 </Button>
-                <Button
-                    onClick={handleSubmit}
-                    variant="contained"
-                    sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
-                    disabled={loading}
-                    startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
-                >
-                    {loading ? 'Đang lưu...' : 'Lưu'}
+                <Button onClick={handleSubmit} variant="contained" sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}>
+                    Lưu
                 </Button>
             </DialogActions>
         </Dialog>

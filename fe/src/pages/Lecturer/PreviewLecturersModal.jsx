@@ -24,18 +24,50 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ErrorIcon from '@mui/icons-material/Error';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import { importPrograms } from '../../api/programAPI';
-import { getErrorChip, getRowStatus } from '../../components/ui/ErrorChip';
+import { importLecturers } from '../../api/lecturerAPI';
 
-
-export default function PreviewProgramModal({ open, onClose, previewData, onImportSuccess }) {
+export default function PreviewLecturersModal({
+    open,
+    onClose,
+    previewData,
+    onImportSuccess
+}) {
     const [isImporting, setIsImporting] = useState(false);
     const [importError, setImportError] = useState('');
     const [importMessage, setImportMessage] = useState('');
 
+    const getRowStatus = (lecturer) => {
+        if (lecturer.errors && lecturer.errors.length > 0) {
+            return 'error';
+        }
+        return 'valid';
+    };
+
+    const getErrorChip = (error) => {
+        const errorMessages = {
+            'duplicate_id': 'Mã GV trùng lặp',
+            'missing_required': 'Thiếu dữ liệu bắt buộc',
+            'invalid_email': 'Email không hợp lệ',
+            'invalid_phone': 'SĐT không hợp lệ',
+            'invalid_date': 'Ngày không hợp lệ',
+            'invalid_department': 'Khoa không hợp lệ',
+            'invalid_degree': 'Bằng cấp không hợp lệ',
+            'invalid_gender': 'Giới tính không hợp lệ'
+        };
+
+        return (
+            <Chip
+                key={error}
+                label={errorMessages[error] || error}
+                color="error"
+                size="small"
+                sx={{ mr: 0.5, mb: 0.5 }}
+            />
+        );
+    };
+
     const validRows = previewData.filter(row => getRowStatus(row) === 'valid');
     const errorRows = previewData.filter(row => getRowStatus(row) === 'error');
-
 
     const handleConfirmImport = async () => {
         if (validRows.length === 0) {
@@ -50,19 +82,19 @@ export default function PreviewProgramModal({ open, onClose, previewData, onImpo
         try {
             // Tạo file Excel tạm thời chỉ với dữ liệu hợp lệ
             const validData = validRows.map(row => {
-                const { errors: _errors, rowIndex: _rowIndex, ...programData } = row;
-                return programData;
+                const { errors: _errors, rowIndex: _rowIndex, ...lecturerData } = row;
+                return lecturerData;
             });
-            console.log('Valid data to import:', validData);
+
             // Gọi API import với dữ liệu đã được validate
-            const response = await importPrograms(validData);
+            const response = await importLecturers(null, validData);
 
             if (response.data && response.data) {
-                setImportMessage(`Thêm thành công ${validRows.length} chuơng trình đào tạo!`);
+                setImportMessage(`Thêm thành công ${validRows.length} giảng viên`);
                 setImportError('');
 
                 // Delay để người dùng thấy thông báo thành công trước khi đóng modal
-                 setTimeout(() => {
+                setTimeout(() => {
                     onImportSuccess(response.data);
                     onClose();
                 }, 1500);
@@ -80,7 +112,7 @@ export default function PreviewProgramModal({ open, onClose, previewData, onImpo
     return (
         <Dialog open={open} onClose={onClose} maxWidth="lg" fullWidth>
             <DialogTitle>
-                <Typography >Xem trước dữ liệu đã nhập</Typography>
+                <Typography variant="h6">Xem trước dữ liệu đã nhập</Typography>
             </DialogTitle>
             <DialogContent>
                 {importError && (
@@ -137,19 +169,23 @@ export default function PreviewProgramModal({ open, onClose, previewData, onImpo
                                 <Table stickyHeader size="small">
                                     <TableHead>
                                         <TableRow>
-                                            <TableCell>Mã chương trình đào tạo</TableCell>
-                                            <TableCell>Tên chương trình đào tạo</TableCell>
-                                            <TableCell>Thời gian đào tạo</TableCell>
-                                            <TableCell>Mô tả</TableCell>
+                                            <TableCell>Mã GV</TableCell>
+                                            <TableCell>Họ tên</TableCell>
+                                            <TableCell>Email</TableCell>
+                                            <TableCell>SĐT</TableCell>
+                                            <TableCell>Khoa</TableCell>
+                                            <TableCell>Bằng cấp</TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {validRows.map((program, index) => (
+                                        {validRows.map((lecturer, index) => (
                                             <TableRow key={index}>
-                                                <TableCell>{program.program_id}</TableCell>
-                                                <TableCell>{program.program_name}</TableCell>
-                                                <TableCell>{program.training_duration}</TableCell>
-                                                <TableCell>{program.description}</TableCell>
+                                                <TableCell>{lecturer.lecturer_id}</TableCell>
+                                                <TableCell>{lecturer.name}</TableCell>
+                                                <TableCell>{lecturer.email}</TableCell>
+                                                <TableCell>{lecturer.phone_number}</TableCell>
+                                                <TableCell>{lecturer.department}</TableCell>
+                                                <TableCell>{lecturer.degree}</TableCell>
                                             </TableRow>
                                         ))}
                                     </TableBody>
@@ -172,26 +208,28 @@ export default function PreviewProgramModal({ open, onClose, previewData, onImpo
                                 <Table stickyHeader size="small">
                                     <TableHead>
                                         <TableRow>
-                                            <TableCell>Mã chương trình đào tạo</TableCell>
-                                            <TableCell>Tên chương trình đào tạo</TableCell>
-                                            <TableCell>Thời gian đào tạo</TableCell>
-                                            <TableCell>Mô tả</TableCell>
+                                            <TableCell>Mã GV</TableCell>
+                                            <TableCell>Họ tên</TableCell>
+                                            <TableCell>Email</TableCell>
+                                            <TableCell>SĐT</TableCell>
+                                            <TableCell>Khoa</TableCell>
                                             <TableCell>Lỗi</TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {errorRows.map((program, index) => (
+                                        {errorRows.map((lecturer, index) => (
                                             <TableRow
                                                 key={index}
                                                 sx={{ bgcolor: 'error.lighter' }}
                                             >
-                                                <TableCell>{program.program_id || '-'}</TableCell>
-                                                <TableCell>{program.program_name || '-'}</TableCell>
-                                                <TableCell>{program.training_duration || '-'}</TableCell>
-                                                <TableCell>{program.description || '-'}</TableCell>
+                                                <TableCell>{lecturer.lecturer_id || '-'}</TableCell>
+                                                <TableCell>{lecturer.name || '-'}</TableCell>
+                                                <TableCell>{lecturer.email || '-'}</TableCell>
+                                                <TableCell>{lecturer.phone_number || '-'}</TableCell>
+                                                <TableCell>{lecturer.department || '-'}</TableCell>
                                                 <TableCell>
                                                     <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-                                                        {program.errors.map((error) => getErrorChip(error, 'chương trình'))}
+                                                        {lecturer.errors.map((error) => getErrorChip(error))}
                                                     </Box>
                                                 </TableCell>
                                             </TableRow>
@@ -215,9 +253,9 @@ export default function PreviewProgramModal({ open, onClose, previewData, onImpo
                 >
                     {isImporting ? 'Đang thêm...' :
                         importMessage ? 'Đã thêm thành công' :
-                            `Thêm ${validRows.length} chương trình`}
+                            `Thêm ${validRows.length} giảng viên`}
                 </Button>
             </DialogActions>
         </Dialog>
-    )
+    );
 }
