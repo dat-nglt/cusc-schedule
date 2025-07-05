@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -14,156 +14,264 @@ import {
   IconButton,
   Button,
 } from '@mui/material';
-import { Add as AddIcon, Search as SearchIcon } from '@mui/icons-material';
+import {
+  Add as AddIcon,
+  Search as SearchIcon,
+  Edit as EditIcon,
+  Delete as DeleteIcon,
+} from '@mui/icons-material';
 import ClassDetailModal from './ClassDetailModal';
 import AddClassModal from './AddClassModal';
 import EditClassModal from './EditClassModal';
 import DeleteClassModal from './DeleteClassModal';
 import useResponsive from '../../hooks/useResponsive';
 import ClassTable from './ClassTable';
+import { getClasses, getClassById, addClass, updateClass, deleteClass, listClasses } from '../../api/classAPI';
+
+// Hàm định dạng timestamp thành YYYY-MM-DD HH:MM:SS.sss+07
+const formatTimestamp = (timestamp) => {
+  if (!timestamp) return '';
+  const date = new Date(timestamp);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+  const milliseconds = String(date.getMilliseconds()).padStart(3, '0');
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${milliseconds}+07`;
+};
 
 const Class = () => {
-  const { isExtraSmallScreen, isSmallScreen, isMediumScreen, isLargeScreen } = useResponsive();
+  const { isSmallScreen, isMediumScreen } = useResponsive();
 
-  // Dữ liệu mẫu cho danh sách lớp học
-  const [classes, setClasses] = useState([
-    { id: 1, stt: 1, maLopHoc: 'LH101', maHocVien: 'HV001', maKhoaHoc: 'KH001', siSoLop: 30, trangThai: 'Hoạt động', thoiGianTao: '2025-06-01 09:00', thoiGianCapNhat: '2025-06-05 14:30' },
-    { id: 2, stt: 2, maLopHoc: 'LH102', maHocVien: 'HV002', maKhoaHoc: 'KH002', siSoLop: 25, trangThai: 'Hoạt động', thoiGianTao: '2025-06-02 10:15', thoiGianCapNhat: '2025-06-06 15:00' },
-    { id: 3, stt: 3, maLopHoc: 'LH103', maHocVien: 'HV003', maKhoaHoc: 'KH003', siSoLop: 40, trangThai: 'Không hoạt động', thoiGianTao: '2025-06-03 11:30', thoiGianCapNhat: '2025-06-07 09:45' },
-    { id: 4, stt: 4, maLopHoc: 'LH104', maHocVien: 'HV004', maKhoaHoc: 'KH004', siSoLop: 35, trangThai: 'Hoạt động', thoiGianTao: '2025-06-04 14:00', thoiGianCapNhat: '2025-06-08 13:15' },
-  ]);
-
-  // State cho phân trang, tìm kiếm, lọc theo trạng thái và modal
+  const [classes, setClasses] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage] = useState(8);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedTrangThai, setSelectedTrangThai] = useState('');
+  const [selectedYear, setSelectedYear] = useState('');
   const [openDetail, setOpenDetail] = useState(false);
+  const [openAdd, setOpenAdd] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
   const [selectedClass, setSelectedClass] = useState(null);
-  const [openAddModal, setOpenAddModal] = useState(false);
-  const [openEditModal, setOpenEditModal] = useState(false);
-  const [openDeleteModal, setOpenDeleteModal] = useState(false);
-  const [editedClass, setEditedClass] = useState(null);
-  const [classToDelete, setClassToDelete] = useState(null);
 
-  // Danh sách trạng thái để lọc
-  const trangThaiOptions = ['Hoạt động', 'Không hoạt động'];
+  const years = ['2021', '2022', '2023', '2024', '2025'];
 
-  // Hàm xử lý khi nhấn nút Thêm lớp học
-  const handleAddClass = () => {
-    setOpenAddModal(true);
+  const fetchClasses = async () => {
+    try {
+      setLoading(true);
+      const response = await getClasses();
+      console.log('Phản hồi từ API (danh sách):', response);
+
+      let classesData = [];
+      if (Array.isArray(response)) {
+        classesData = response.map((classItem, index) => ({
+          stt: index + 1,
+          class_id: classItem.class_id,
+          class_name: classItem.class_name,
+          class_size: classItem.class_size,
+          status: classItem.status,
+          course_id: classItem.course_id,
+          created_at: formatTimestamp(classItem.created_at),
+          updated_at: formatTimestamp(classItem.updated_at),
+          course: classItem.Course ? { course_name: classItem.Course.course_name } : null,
+        }));
+      } else if (response && typeof response === 'object' && Array.isArray(response.data)) {
+        classesData = response.data.map((classItem, index) => ({
+          stt: index + 1,
+          class_id: classItem.class_id,
+          class_name: classItem.class_name,
+          class_size: classItem.class_size,
+          status: classItem.status,
+          course_id: classItem.course_id,
+          created_at: formatTimestamp(classItem.created_at),
+          updated_at: formatTimestamp(classItem.updated_at),
+          course: classItem.Course ? { course_name: classItem.Course.course_name } : null,
+        }));
+      } else {
+        throw new Error('Dữ liệu từ API không phải là mảng hợp lệ');
+      }
+
+      setClasses(classesData);
+      setLoading(false);
+    } catch (err) {
+      console.error('Lỗi chi tiết (danh sách):', err.message);
+      setError(`Lỗi khi tải danh sách lớp học: ${err.message}`);
+      setLoading(false);
+    }
   };
 
-  // Hàm đóng modal thêm lớp học
-  const handleCloseAddModal = () => {
-    setOpenAddModal(false);
+  useEffect(() => {
+    fetchClasses();
+  }, []);
+
+  const handleViewClass = async (class_id) => {
+    try {
+      setLoading(true);
+      const response = await getClassById(class_id);
+      console.log('Phản hồi từ API (chi tiết):', response);
+
+      let classData = {};
+      if (response && typeof response === 'object') {
+        if (Array.isArray(response.data)) {
+          classData = response.data[0] || {};
+        } else if (response.data) {
+          classData = response.data;
+        } else {
+          classData = response;
+        }
+      } else {
+        throw new Error('Dữ liệu từ API không phải là object hợp lệ');
+      }
+
+      setSelectedClass({
+        class_id: classData.class_id,
+        class_name: classData.class_name,
+        class_size: classData.class_size,
+        status: classData.status || 'Không có dữ liệu',
+        course_id: classData.course_id,
+        created_at: formatTimestamp(classData.created_at),
+        updated_at: formatTimestamp(classData.updated_at),
+        course: classData.Course ? { course_name: classData.Course.course_name } : null,
+      });
+      setOpenDetail(true);
+    } catch (err) {
+      console.error('Lỗi khi lấy chi tiết:', err.message);
+      setError(`Lỗi khi lấy chi tiết lớp học: ${err.message}`);
+      setOpenDetail(false);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Hàm thêm lớp học mới
-  const handleAddNewClass = (newClass) => {
-    setClasses((prevClasses) => {
-      const updatedClasses = [...prevClasses, { ...newClass, stt: prevClasses.length + 1 }];
-      return updatedClasses;
-    });
+  const handleAddClass = async (classData) => {
+    try {
+      setLoading(true);
+      console.log('Gửi dữ liệu thêm lớp học:', classData);
+      const response = await addClass({
+        class_id: classData.class_id,
+        class_name: classData.class_name,
+        class_size: classData.class_size,
+        status: classData.status || 'Hoạt động',
+        course_id: classData.course_id,
+      });
+      console.log('Phản hồi từ API (thêm):', response);
+
+      const newClass = response.data || response;
+      setClasses((prev) => [
+        ...prev,
+        {
+          stt: prev.length + 1,
+          class_id: newClass.class_id,
+          class_name: newClass.class_name,
+          class_size: newClass.class_size,
+          status: newClass.status,
+          course_id: newClass.course_id,
+          created_at: formatTimestamp(newClass.created_at),
+          updated_at: formatTimestamp(newClass.updated_at),
+          course: newClass.Course ? { course_name: newClass.Course.course_name } : null,
+        },
+      ]);
+    } catch (err) {
+      console.error('Lỗi khi thêm lớp học:', err.message, err.response?.data);
+      setError(`Lỗi khi thêm lớp học: ${err.message} - ${err.response?.data?.message || 'Kiểm tra định dạng dữ liệu'}`);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Hàm xử lý khi nhấn nút chỉnh sửa
-  const handleEditClass = (id) => {
-    const classToEdit = classes.find((c) => c.id === id);
-    setEditedClass(classToEdit);
-    setOpenEditModal(true);
+  const handleEditClass = (classItem) => {
+    setSelectedClass(classItem);
+    setOpenEdit(true);
   };
 
-  // Hàm đóng modal chỉnh sửa
-  const handleCloseEditModal = () => {
-    setOpenEditModal(false);
-    setEditedClass(null);
+  const handleSaveEditedClass = async (classData) => {
+    try {
+      setLoading(true);
+      console.log('Gửi dữ liệu chỉnh sửa lớp học:', classData);
+      const response = await updateClass(classData.class_id, {
+        class_id: classData.class_id,
+        class_name: classData.class_name,
+        class_size: classData.class_size,
+        status: classData.status,
+        course_id: classData.course_id,
+        updated_at: new Date().toISOString(),
+      });
+      console.log('Phản hồi từ API (chỉnh sửa):', response);
+
+      await fetchClasses();
+    } catch (err) {
+      console.error('Lỗi khi chỉnh sửa lớp học:', err.message);
+      setError(`Lỗi khi chỉnh sửa lớp học: ${err.message}`);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Hàm lưu thay đổi sau khi chỉnh sửa
-  const handleSaveEditedClass = (updatedClass) => {
-    setClasses((prevClasses) =>
-      prevClasses.map((cls) =>
-        cls.id === updatedClass.id ? { ...cls, ...updatedClass } : cls
-      )
-    );
+  const handleOpenDeleteModal = (classItem) => {
+    if (!classItem || !classItem.class_id) {
+      console.error('Invalid class data in handleOpenDeleteModal:', classItem);
+      setError('Dữ liệu lớp học không hợp lệ');
+      return;
+    }
+    setSelectedClass(classItem);
+    setOpenDelete(true);
   };
 
-  // Hàm xử lý thay đổi trang
+  const handleDeleteClass = async (class_id) => {
+    try {
+      setLoading(true);
+      if (!class_id) {
+        console.error('Invalid classId for deletion:', class_id);
+        setError('Dữ liệu lớp học không hợp lệ');
+        return;
+      }
+      console.log('Attempting to delete class with class_id:', class_id);
+      const response = await deleteClass(class_id);
+      console.log('Response from API (delete):', response);
+
+      await fetchClasses();
+    } catch (err) {
+      console.error('Lỗi khi xóa lớp học:', err.message);
+      setError(`Lỗi khi xóa lớp học: ${err.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
 
-  // Hàm xử lý xem lớp học
-  const handleViewClass = (id) => {
-    const cls = classes.find((c) => c.id === id);
-    setSelectedClass(cls);
-    setOpenDetail(true);
-  };
-
-  // Hàm xử lý xóa lớp học
-  const handleDeleteClass = (id) => {
-    const cls = classes.find((c) => c.id === id);
-    setClassToDelete(cls);
-    setOpenDeleteModal(true);
-  };
-
-  // Hàm xác nhận xóa lớp học
-  const confirmDeleteClass = (id) => {
-    setClasses((prevClasses) => {
-      const updatedClasses = prevClasses.filter((cls) => cls.id !== id)
-        .map((cls, index) => ({ ...cls, stt: index + 1 }));
-      return updatedClasses;
-    });
-    setOpenDeleteModal(false);
-    setClassToDelete(null);
-  };
-
-  // Hàm đóng modal chi tiết
-  const handleCloseDetail = () => {
-    setOpenDetail(false);
-    setSelectedClass(null);
-  };
-
-  // Hàm đóng modal xóa
-  const handleCloseDeleteModal = () => {
-    setOpenDeleteModal(false);
-    setClassToDelete(null);
-  };
-
-  // Lọc danh sách lớp học dựa trên từ khóa tìm kiếm và trạng thái
-  const filteredClasses = classes.filter((cls) => {
+  const filteredClasses = classes.filter((classItem) => {
     const matchesSearchTerm =
-      cls.maLopHoc.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      cls.maHocVien.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      cls.maKhoaHoc.toLowerCase().includes(searchTerm.toLowerCase());
-
-    const matchesTrangThai = selectedTrangThai
-      ? cls.trangThai === selectedTrangThai
+      classItem.class_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (classItem.class_name && classItem.class_name.toLowerCase().includes(searchTerm.toLowerCase()));
+    const matchesYear = selectedYear
+      ? classItem.created_at?.startsWith(selectedYear)
       : true;
-
-    return matchesSearchTerm && matchesTrangThai;
+    return matchesSearchTerm && matchesYear;
   });
 
-  // Tính toán dữ liệu hiển thị trên trang hiện tại
   const displayedClasses = filteredClasses.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   return (
-    <Box sx={{ p: 2, height: 'calc(100vh - 64px)', overflowY: 'auto', width: '100%' }}>
-      {/* Main Content */}
-      <Box sx={{ width: '100%', mb: 2 }}>
-        {/* Bảng danh sách lớp học */}
-        <Card sx={{ width: '100%', boxShadow: 1 }}>
+    <Box sx={{ p: 3, zIndex: 10, height: 'calc(100vh - 64px)', overflowY: 'auto' }}>
+      <Box sx={{ width: '100%', mb: 3 }}>
+        <Card sx={{ flexGrow: 1 }}>
           <CardContent>
-            <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'stretch', sm: 'center' }, mb: 2, gap: 2 }}>
-              <Typography variant="h6" sx={{ mb: { xs: 1, sm: 0 } }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, gap: 2 }}>
+              <Typography variant="h6">
                 Danh sách lớp học
               </Typography>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexGrow: 1, justifyContent: { xs: 'flex-start', sm: 'flex-end' } }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 {isSmallScreen ? (
                   <IconButton
                     color="primary"
-                    onClick={handleAddClass}
+                    onClick={() => setOpenAdd(true)}
                     sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
                   >
                     <AddIcon sx={{ color: '#fff' }} />
@@ -173,30 +281,24 @@ const Class = () => {
                     variant="contained"
                     color="primary"
                     startIcon={<AddIcon />}
-                    onClick={handleAddClass}
-                    sx={{
-                      bgcolor: '#1976d2',
-                      '&:hover': { bgcolor: '#115293' },
-                      minWidth: isSmallScreen ? 100 : 150,
-                      height: '56px'
-                    }}
+                    onClick={() => setOpenAdd(true)}
+                    sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' }, minWidth: isSmallScreen ? 100 : 150, height: '56px' }}
                   >
                     Thêm lớp học
                   </Button>
                 )}
-                <FormControl sx={{ minWidth: isSmallScreen ? 100 : 200, flexGrow: 1, maxWidth: { xs: '100%', sm: 200 } }} variant="outlined">
-                  <InputLabel id="trang-thai-filter-label">{isSmallScreen ? 'Trạng thái' : 'Lọc theo trạng thái'}</InputLabel>
+                <FormControl sx={{ minWidth: isSmallScreen ? 100 : 150 }} variant="outlined">
+                  <InputLabel id="year-filter-label">{isSmallScreen ? 'Lọc' : 'Lọc theo năm'}</InputLabel>
                   <Select
-                    labelId="trang-thai-filter-label"
-                    value={selectedTrangThai}
-                    onChange={(e) => setSelectedTrangThai(e.target.value)}
-                    label={isSmallScreen ? 'Trạng thái' : 'Lọc theo trạng thái'}
-                    sx={{ width: '100%' }}
+                    labelId="year-filter-label"
+                    value={selectedYear}
+                    onChange={(e) => setSelectedYear(e.target.value)}
+                    label={isSmallScreen ? 'Lọc' : 'Lọc theo năm'}
                   >
                     <MenuItem value="">Tất cả</MenuItem>
-                    {trangThaiOptions.map((trangThai) => (
-                      <MenuItem key={trangThai} value={trangThai}>
-                        {trangThai}
+                    {years.map((year) => (
+                      <MenuItem key={year} value={year}>
+                        {year}
                       </MenuItem>
                     ))}
                   </Select>
@@ -207,10 +309,10 @@ const Class = () => {
               <TextField
                 fullWidth
                 variant="outlined"
-                placeholder="Tìm kiếm theo mã lớp, mã học viên, mã khóa học..."
+                placeholder="Tìm kiếm theo mã hoặc tên lớp học..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                sx={{ bgcolor: '#fff', width: '100%' }}
+                sx={{ bgcolor: '#fff' }}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -220,19 +322,20 @@ const Class = () => {
                 }}
               />
             </Box>
-            {filteredClasses.length === 0 ? (
+            {loading && <Typography>Loading...</Typography>}
+            {error && <Typography color="error">{error}</Typography>}
+            {filteredClasses.length === 0 && !loading && !error && (
               <Typography>Không có lớp học nào để hiển thị.</Typography>
-            ) : (
-              <Box sx={{ width: '100%', overflowX: 'auto' }}>
+            )}
+            {!loading && !error && filteredClasses.length > 0 && (
+              <>
                 <ClassTable
                   displayedClasses={displayedClasses}
-                  isExtraSmallScreen={isExtraSmallScreen}
                   isSmallScreen={isSmallScreen}
                   isMediumScreen={isMediumScreen}
-                  isLargeScreen={isLargeScreen}
                   handleViewClass={handleViewClass}
                   handleEditClass={handleEditClass}
-                  handleDeleteClass={handleDeleteClass}
+                  handleDeleteClass={handleOpenDeleteModal}
                 />
                 <TablePagination
                   component="div"
@@ -242,35 +345,43 @@ const Class = () => {
                   rowsPerPage={rowsPerPage}
                   rowsPerPageOptions={[]}
                   labelDisplayedRows={({ from, to, count }) => `${from}-${to} trên ${count}`}
-                  sx={{ width: '100%', px: 0 }}
                 />
-              </Box>
+              </>
             )}
           </CardContent>
         </Card>
       </Box>
       <ClassDetailModal
         open={openDetail}
-        onClose={handleCloseDetail}
-        cls={selectedClass}
+        onClose={() => {
+          setOpenDetail(false);
+          setSelectedClass(null);
+        }}
+        classItem={selectedClass}
       />
       <AddClassModal
-        open={openAddModal}
-        onClose={handleCloseAddModal}
-        onAddClass={handleAddNewClass}
+        open={openAdd}
+        onClose={() => setOpenAdd(false)}
+        onAddClass={handleAddClass}
         existingClasses={classes}
       />
       <EditClassModal
-        open={openEditModal}
-        onClose={handleCloseEditModal}
-        cls={editedClass}
+        open={openEdit}
+        onClose={() => {
+          setOpenEdit(false);
+          setSelectedClass(null);
+        }}
+        classItem={selectedClass}
         onSave={handleSaveEditedClass}
       />
       <DeleteClassModal
-        open={openDeleteModal}
-        onClose={handleCloseDeleteModal}
-        onDelete={confirmDeleteClass}
-        cls={classToDelete}
+        open={openDelete}
+        onClose={() => {
+          setOpenDelete(false);
+          setSelectedClass(null);
+        }}
+        onDelete={handleDeleteClass}
+        classItem={selectedClass}
       />
     </Box>
   );

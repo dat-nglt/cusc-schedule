@@ -282,7 +282,12 @@ class ExcelUtils {
             'Loại lịch nghỉ': 'break_type',
             'Ngày bắt đầu': 'break_start_date',
             'Ngày kết thúc': 'break_end_date',
-            'Lý do': 'reason'
+            'Lý do': 'reason',
+
+            // Class columns
+            'Mã lớp học': 'class_id',
+            'Sĩ số': 'class_size',
+            'Tên lớp học': 'class_name',
         };
     }
 

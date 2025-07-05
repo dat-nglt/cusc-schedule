@@ -6,6 +6,8 @@ import StudentModel from './Student.js';
 import LecturerModel from './Lecturer.js';
 import AdminModel from './Admin.js';
 import TrainingOfficerModel from './TrainingOfficer.js';
+import Course from './Course.js';
+import Classes from './Classes.js';
 
 // Initialize models with sequelize instance
 const Student = StudentModel(sequelize, DataTypes);
@@ -18,7 +20,9 @@ const models = {
     Student,
     Lecturer,
     Admin,
-    TrainingOfficer
+    TrainingOfficer,
+    Course,
+    Classes
 };
 
 // Call associate methods if they exist
@@ -33,7 +37,9 @@ export {
     Lecturer,
     Admin,
     TrainingOfficer,
-    sequelize
+    sequelize,
+    Course,
+    Classes
 };
 
 export default models;
