@@ -9,6 +9,10 @@ module.exports = {
         primaryKey: true,
         allowNull: false
       },
+      class_name: {
+        type: Sequelize.STRING(50),
+        allowNull: true
+      },
       class_size: {
         type: Sequelize.SMALLINT,
         allowNull: true
@@ -16,26 +20,6 @@ module.exports = {
       status: {
         type: Sequelize.STRING(30),
         allowNull: true
-      },
-      created_at: {
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW,
-        allowNull: false
-      },
-      updated_at: {
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW,
-        allowNull: false
-      },
-      student_id: {
-        type: Sequelize.STRING(30),
-        allowNull: true,
-        references: {
-          model: 'students',
-          key: 'student_id'
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'SET NULL'
       },
       course_id: {
         type: Sequelize.STRING(30),
@@ -46,6 +30,16 @@ module.exports = {
         },
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL'
+      },
+      created_at: {
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW,
+        allowNull: false
+      },
+      updated_at: {
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW,
+        allowNull: false
       }
     });
   },

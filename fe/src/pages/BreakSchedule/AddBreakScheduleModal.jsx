@@ -15,16 +15,16 @@ import {
 } from '@mui/material';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import * as XLSX from 'xlsx';
-import PreviewCourseModal from './PreviewCourseModal';
+import PreviewBreakScheduleModal from './PreviewBreakScheduleModal';
 
 const validStatuses = ['Hoạt động', 'Ngừng hoạt động'];
 
-export default function AddCourseModal({ open, onClose, onAddCourse, onImportSuccess, existingCourses }) {
-  const [newCourse, setNewCourse] = useState({
-    course_id: '',
-    course_name: '',
-    start_date: '',
-    end_date: '',
+export default function AddBreakScheduleModal({ open, onClose, onAddBreakSchedule, onImportSuccess, existingBreakSchedules }) {
+  const [newBreakSchedule, setNewBreakSchedule] = useState({
+    break_id: '',
+    break_type: '',
+    break_start_date: '',
+    break_end_date: '',
     status: 'Hoạt động',
   });
 
@@ -34,18 +34,18 @@ export default function AddCourseModal({ open, onClose, onAddCourse, onImportSuc
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setNewCourse((prev) => ({ ...prev, [name]: value }));
+    setNewBreakSchedule((prev) => ({ ...prev, [name]: value }));
     setError('');
   };
 
   const handleSubmit = () => {
-    if (!newCourse.course_id || !newCourse.course_name || !newCourse.start_date || !newCourse.end_date) {
+    if (!newBreakSchedule.break_id || !newBreakSchedule.break_type || !newBreakSchedule.break_start_date || !newBreakSchedule.break_end_date) {
       setError('Vui lòng điền đầy đủ thông tin!');
       return;
     }
 
-    const startDate = new Date(newCourse.start_date);
-    const endDate = new Date(newCourse.end_date);
+    const startDate = new Date(newBreakSchedule.break_start_date);
+    const endDate = new Date(newBreakSchedule.break_end_date);
     const today = new Date();
     const maxFutureDate = new Date(today);
     maxFutureDate.setFullYear(today.getFullYear() + 5);
@@ -65,25 +65,25 @@ export default function AddCourseModal({ open, onClose, onAddCourse, onImportSuc
       return;
     }
 
-    const isDuplicate = existingCourses.some((course) => course.course_id === newCourse.course_id);
+    const isDuplicate = existingBreakSchedules.some((schedule) => schedule.break_id === newBreakSchedule.break_id);
     if (isDuplicate) {
-      setError(`Mã khóa học "${newCourse.course_id}" đã tồn tại!`);
+      setError(`Mã lịch nghỉ "${newBreakSchedule.break_id}" đã tồn tại!`);
       return;
     }
 
-    const courseToAdd = {
-      ...newCourse,
+    const scheduleToAdd = {
+      ...newBreakSchedule,
       id: Date.now(),
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
 
-    onAddCourse(courseToAdd);
-    setNewCourse({
-      course_id: '',
-      course_name: '',
-      start_date: '',
-      end_date: '',
+    onAddBreakSchedule(scheduleToAdd);
+    setNewBreakSchedule({
+      break_id: '',
+      break_type: '',
+      break_start_date: '',
+      break_end_date: '',
       status: 'Hoạt động',
     });
     setError('');
@@ -118,9 +118,9 @@ export default function AddCourseModal({ open, onClose, onAddCourse, onImportSuc
       }
 
       const headers = rawData[0];
-      const expectedHeader = ['Mã khóa học', 'Tên khóa học', 'Thời gian bắt đầu', 'Thời gian kết thúc', 'Trạng thái'];
+      const expectedHeader = ['Mã lịch nghỉ', 'Loại lịch nghỉ', 'Thời gian bắt đầu', 'Thời gian kết thúc', 'Trạng thái'];
       if (!expectedHeader.every((h, i) => h === headers[i])) {
-        setError('Định dạng cột không đúng! Cần: Mã khóa học, Tên khóa học, Thời gian bắt đầu, Thời gian kết thúc, Trạng thái');
+        setError('Định dạng cột không đúng! Cần: Mã lịch nghỉ, Loại lịch nghỉ, Thời gian bắt đầu, Thời gian kết thúc, Trạng thái');
         return;
       }
 
@@ -134,43 +134,43 @@ export default function AddCourseModal({ open, onClose, onAddCourse, onImportSuc
       });
 
       const processedData = jsonData.map((row, index) => ({
-        course_id: row['Mã khóa học'] || '',
-        course_name: row['Tên khóa học'] || '',
-        start_date: row['Thời gian bắt đầu'] || '',
-        end_date: row['Thời gian kết thúc'] || '',
+        break_id: row['Mã lịch nghỉ'] || '',
+        break_type: row['Loại lịch nghỉ'] || '',
+        break_start_date: row['Thời gian bắt đầu'] || '',
+        break_end_date: row['Thời gian kết thúc'] || '',
         status: row['Trạng thái'] || 'Hoạt động',
         rowIndex: index + 2,
         errors: [],
       }));
 
       const errors = [];
-      processedData.forEach((course, index) => {
-        if (!course.course_id || !course.course_name || !course.start_date || !course.end_date) {
-          course.errors.push('missing_required');
+      processedData.forEach((schedule, index) => {
+        if (!schedule.break_id || !schedule.break_type || !schedule.break_start_date || !schedule.break_end_date) {
+          schedule.errors.push('missing_required');
           errors.push(index + 2);
         }
-        const startDate = new Date(course.start_date);
-        const endDate = new Date(course.end_date);
+        const startDate = new Date(schedule.break_start_date);
+        const endDate = new Date(schedule.break_end_date);
         const today = new Date();
         const maxFutureDate = new Date(today);
         maxFutureDate.setFullYear(today.getFullYear() + 5);
         if (isNaN(startDate) || isNaN(endDate)) {
-          course.errors.push('invalid_date');
+          schedule.errors.push('invalid_date');
           errors.push(index + 2);
         } else if (startDate > endDate) {
-          course.errors.push('invalid_date');
+          schedule.errors.push('invalid_date');
           errors.push(index + 2);
         } else if (endDate > maxFutureDate) {
-          course.errors.push('invalid_date');
+          schedule.errors.push('invalid_date');
           errors.push(index + 2);
         }
-        if (!validStatuses.includes(course.status)) {
-          course.errors.push('invalid_status');
+        if (!validStatuses.includes(schedule.status)) {
+          schedule.errors.push('invalid_status');
           errors.push(index + 2);
         }
-        const isDuplicate = existingCourses.some(c => c.course_id === course.course_id);
+        const isDuplicate = existingBreakSchedules.some(s => s.break_id === schedule.break_id);
         if (isDuplicate) {
-          course.errors.push('duplicate_id');
+          schedule.errors.push('duplicate_id');
           errors.push(index + 2);
         }
       });
@@ -194,7 +194,7 @@ export default function AddCourseModal({ open, onClose, onAddCourse, onImportSuc
 
     if (imported && imported.length > 0) {
       setError('');
-      onImportSuccess(); // Call fetchCourses to refresh the list
+      onImportSuccess(); // Call fetchBreakSchedules to refresh the list
     } else if (resultMessage) {
       setError(resultMessage);
     }
@@ -213,7 +213,7 @@ export default function AddCourseModal({ open, onClose, onAddCourse, onImportSuc
       <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
         <DialogTitle>
           <Box display="flex" justifyContent="space-between" alignItems="center">
-            <Typography variant="h6">Thêm khóa học mới</Typography>
+            <Typography variant="h6">Thêm lịch nghỉ mới</Typography>
             <label htmlFor="excel-upload">
               <input
                 id="excel-upload"
@@ -241,18 +241,18 @@ export default function AddCourseModal({ open, onClose, onAddCourse, onImportSuc
           )}
           <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2, mt: 2 }}>
             <TextField
-              label="Mã khóa học"
-              name="course_id"
-              value={newCourse.course_id}
+              label="Mã lịch nghỉ"
+              name="break_id"
+              value={newBreakSchedule.break_id}
               onChange={handleChange}
               fullWidth
               variant="outlined"
               required
             />
             <TextField
-              label="Tên khóa học"
-              name="course_name"
-              value={newCourse.course_name}
+              label="Loại lịch nghỉ"
+              name="break_type"
+              value={newBreakSchedule.break_type}
               onChange={handleChange}
               fullWidth
               variant="outlined"
@@ -260,9 +260,9 @@ export default function AddCourseModal({ open, onClose, onAddCourse, onImportSuc
             />
             <TextField
               label="Thời gian bắt đầu"
-              name="start_date"
+              name="break_start_date"
               type="date"
-              value={newCourse.start_date}
+              value={newBreakSchedule.break_start_date}
               onChange={handleChange}
               fullWidth
               variant="outlined"
@@ -271,9 +271,9 @@ export default function AddCourseModal({ open, onClose, onAddCourse, onImportSuc
             />
             <TextField
               label="Thời gian kết thúc"
-              name="end_date"
+              name="break_end_date"
               type="date"
-              value={newCourse.end_date}
+              value={newBreakSchedule.break_end_date}
               onChange={handleChange}
               fullWidth
               variant="outlined"
@@ -284,7 +284,7 @@ export default function AddCourseModal({ open, onClose, onAddCourse, onImportSuc
               <InputLabel>Trạng thái</InputLabel>
               <Select
                 name="status"
-                value={newCourse.status}
+                value={newBreakSchedule.status}
                 onChange={handleChange}
                 label="Trạng thái"
               >
@@ -304,7 +304,7 @@ export default function AddCourseModal({ open, onClose, onAddCourse, onImportSuc
         </DialogActions>
       </Dialog>
 
-      <PreviewCourseModal
+      <PreviewBreakScheduleModal
         open={showPreview}
         onClose={handleClosePreview}
         previewData={previewData}

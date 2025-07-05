@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import { Visibility, Edit, Delete } from '@mui/icons-material';
 
-const ClassTable = ({ displayedClasses, isSmallScreen, isMediumScreen, handleViewClass, handleEditClass, handleDeleteClass }) => {
+const BreakScheduleTable = ({ displayedBreakSchedules, isSmallScreen, isMediumScreen, handleViewBreakSchedule, handleEditBreakSchedule, handleDeleteBreakSchedule }) => {
   return (
     <Table
       sx={{
@@ -27,16 +27,16 @@ const ClassTable = ({ displayedClasses, isSmallScreen, isMediumScreen, handleVie
           </TableCell>
           {!isSmallScreen && (
             <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '15%' }}>
-              Mã lớp học
+              Mã lịch nghỉ
             </TableCell>
           )}
           <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'left', borderRight: '1px solid #e0e0e0', width: isSmallScreen ? '60%' : '20%' }}>
-            Tên lớp học
+            Loại lịch nghỉ
           </TableCell>
           {!isSmallScreen && isMediumScreen && (
             <>
               <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '25%' }}>
-                Sĩ số
+                Thời gian bắt đầu
               </TableCell>
               <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '30%' }}>
                 Thời gian cập nhật
@@ -46,10 +46,10 @@ const ClassTable = ({ displayedClasses, isSmallScreen, isMediumScreen, handleVie
           {!isMediumScreen && (
             <>
               <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '12.5%' }}>
-                Sĩ số
+                Thời gian bắt đầu
               </TableCell>
               <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '12.5%' }}>
-                Tên khóa học
+                Thời gian kết thúc
               </TableCell>
             </>
           )}
@@ -59,9 +59,9 @@ const ClassTable = ({ displayedClasses, isSmallScreen, isMediumScreen, handleVie
         </TableRow>
       </TableHead>
       <TableBody>
-        {displayedClasses.map((classItem, index) => (
+        {displayedBreakSchedules.map((schedule, index) => (
           <TableRow
-            key={classItem.class_id}
+            key={schedule.break_id}
             sx={{
               backgroundColor: index % 2 === 0 ? '#fafafa' : '#ffffff',
               '&:hover': { backgroundColor: '#e3f2fd', cursor: 'pointer' },
@@ -69,33 +69,33 @@ const ClassTable = ({ displayedClasses, isSmallScreen, isMediumScreen, handleVie
             }}
           >
             <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5, width: '10%' }}>
-              {classItem.stt}
+              {schedule.stt}
             </TableCell>
             {!isSmallScreen && (
               <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5, width: '15%' }}>
-                {classItem.class_id}
+                {schedule.break_id}
               </TableCell>
             )}
             <TableCell sx={{ textAlign: 'left', borderRight: '1px solid #e0e0e0', py: 1.5, width: isSmallScreen ? '60%' : '20%' }}>
-              {classItem.class_name || 'N/A'}
+              {schedule.break_type}
             </TableCell>
             {!isSmallScreen && isMediumScreen && (
               <>
                 <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5, width: '25%' }}>
-                  {classItem.class_size || 'N/A'}
+                  {schedule.break_start_date}
                 </TableCell>
                 <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5, width: '30%' }}>
-                  {classItem.updated_at}
+                  {schedule.updated_at}
                 </TableCell>
               </>
             )}
             {!isMediumScreen && (
               <>
                 <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5, width: '12.5%' }}>
-                  {classItem.class_size || 'N/A'}
+                  {schedule.break_start_date}
                 </TableCell>
                 <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5, width: '12.5%' }}>
-                  {classItem.course ? classItem.course.course_name : 'N/A'}
+                  {schedule.break_end_date}
                 </TableCell>
               </>
             )}
@@ -104,21 +104,21 @@ const ClassTable = ({ displayedClasses, isSmallScreen, isMediumScreen, handleVie
                 <Visibility
                   color="primary"
                   style={{ cursor: 'pointer', marginRight: 8 }}
-                  onClick={() => handleViewClass(classItem.class_id)}
+                  onClick={() => handleViewBreakSchedule(schedule.break_id)}
                 />
               </Tooltip>
               <Tooltip title="Sửa">
                 <Edit
                   color="primary"
                   style={{ cursor: 'pointer', marginRight: 8 }}
-                  onClick={() => handleEditClass(classItem)}
+                  onClick={() => handleEditBreakSchedule(schedule)}
                 />
               </Tooltip>
               <Tooltip title="Xóa">
                 <Delete
                   color="error"
                   style={{ cursor: 'pointer' }}
-                  onClick={() => handleDeleteClass(classItem)}
+                  onClick={() => handleDeleteBreakSchedule(schedule)} // Thay bằng handleDeleteBreakSchedule với toàn bộ schedule object
                 />
               </Tooltip>
             </TableCell>
@@ -129,4 +129,4 @@ const ClassTable = ({ displayedClasses, isSmallScreen, isMediumScreen, handleVie
   );
 };
 
-export default ClassTable;
+export default BreakScheduleTable;

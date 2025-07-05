@@ -1,3 +1,4 @@
+// src/pages/BreakSchedule/BreakScheduleDetailModal.jsx
 import React from 'react';
 import {
   Dialog,
@@ -14,7 +15,7 @@ import {
 import {
   Code as CodeIcon,
   Label as LabelIcon,
-  People as PeopleIcon,
+  Schedule as ScheduleIcon,
   ToggleOn as ToggleOnIcon,
   Event as EventIcon,
   Update as UpdateIcon,
@@ -35,13 +36,13 @@ const formatDateTime = (dateTime) => {
 // Hàm kiểm tra giá trị và trả về giá trị hoặc thông báo mặc định
 const getValueOrDefault = (value) => value || 'Không có dữ liệu';
 
-const ClassDetailModal = ({ open, onClose, classItem }) => {
-  if (!classItem) return null;
+const BreakScheduleDetailModal = ({ open, onClose, breakSchedule }) => {
+  if (!breakSchedule) return null;
 
-  // Hàm sao chép mã lớp học
-  const handleCopyMaLopHoc = () => {
-    navigator.clipboard.writeText(classItem.class_id);
-    alert('Đã sao chép mã lớp học!');
+  // Hàm sao chép mã lịch nghỉ
+  const handleCopyMaLichNghi = () => {
+    navigator.clipboard.writeText(breakSchedule.break_id);
+    alert('Đã sao chép mã lịch nghỉ!');
   };
 
   return (
@@ -68,11 +69,11 @@ const ClassDetailModal = ({ open, onClose, classItem }) => {
         }}
       >
         <Typography variant="h6">
-          Chi tiết lớp học {classItem.class_id}
+          Chi tiết lịch nghỉ {breakSchedule.break_id}
         </Typography>
-        <Tooltip title="Sao chép mã lớp học">
+        <Tooltip title="Sao chép mã lịch nghỉ">
           <IconButton
-            onClick={handleCopyMaLopHoc}
+            onClick={handleCopyMaLichNghi}
             sx={{ color: '#fff' }}
           >
             <CodeIcon />
@@ -81,7 +82,7 @@ const ClassDetailModal = ({ open, onClose, classItem }) => {
       </DialogTitle>
       <DialogContent sx={{ mt: 2, px: 3 }}>
         <Grid container spacing={2}>
-          {/* Mã lớp học */}
+          {/* Mã lịch nghỉ */}
           <Grid item xs={12}>
             <Box
               sx={{
@@ -96,16 +97,16 @@ const ClassDetailModal = ({ open, onClose, classItem }) => {
               <CodeIcon sx={{ mr: 1, color: '#1976d2' }} />
               <Box>
                 <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#333' }}>
-                  Mã lớp học
+                  Mã lịch nghỉ
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#666' }}>
-                  {getValueOrDefault(classItem.class_id)}
+                  {getValueOrDefault(breakSchedule.break_id)}
                 </Typography>
               </Box>
             </Box>
           </Grid>
 
-          {/* Tên lớp học */}
+          {/* Loại lịch nghỉ */}
           <Grid item xs={12}>
             <Box
               sx={{
@@ -120,16 +121,16 @@ const ClassDetailModal = ({ open, onClose, classItem }) => {
               <LabelIcon sx={{ mr: 1, color: '#1976d2' }} />
               <Box>
                 <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#333' }}>
-                  Tên lớp học
+                  Loại lịch nghỉ
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#666' }}>
-                  {getValueOrDefault(classItem.class_name)}
+                  {getValueOrDefault(breakSchedule.break_type)}
                 </Typography>
               </Box>
             </Box>
           </Grid>
 
-          {/* Sĩ số */}
+          {/* Thời gian bắt đầu */}
           <Grid item xs={6}>
             <Box
               sx={{
@@ -141,13 +142,37 @@ const ClassDetailModal = ({ open, onClose, classItem }) => {
                 border: '1px solid #e0e0e0',
               }}
             >
-              <PeopleIcon sx={{ mr: 1, color: '#1976d2' }} />
+              <ScheduleIcon sx={{ mr: 1, color: '#1976d2' }} />
               <Box>
                 <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#333' }}>
-                  Sĩ số
+                  Thời gian bắt đầu
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#666' }}>
-                  {getValueOrDefault(classItem.class_size)}
+                  {formatDateTime(breakSchedule.break_start_date)}
+                </Typography>
+              </Box>
+            </Box>
+          </Grid>
+
+          {/* Thời gian kết thúc */}
+          <Grid item xs={6}>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                bgcolor: '#f9f9f9',
+                p: 2,
+                borderRadius: 1,
+                border: '1px solid #e0e0e0',
+              }}
+            >
+              <ScheduleIcon sx={{ mr: 1, color: '#1976d2' }} />
+              <Box>
+                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#333' }}>
+                  Thời gian kết thúc
+                </Typography>
+                <Typography variant="body1" sx={{ color: '#666' }}>
+                  {formatDateTime(breakSchedule.break_end_date)}
                 </Typography>
               </Box>
             </Box>
@@ -171,31 +196,7 @@ const ClassDetailModal = ({ open, onClose, classItem }) => {
                   Trạng thái
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#666' }}>
-                  {getValueOrDefault(classItem.status)}
-                </Typography>
-              </Box>
-            </Box>
-          </Grid>
-
-          {/* Mã khóa học */}
-          <Grid item xs={6}>
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                bgcolor: '#f9f9f9',
-                p: 2,
-                borderRadius: 1,
-                border: '1px solid #e0e0e0',
-              }}
-            >
-              <CodeIcon sx={{ mr: 1, color: '#1976d2' }} />
-              <Box>
-                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#333' }}>
-                  Mã khóa học
-                </Typography>
-                <Typography variant="body1" sx={{ color: '#666' }}>
-                  {getValueOrDefault(classItem.course_id)}
+                  {getValueOrDefault(breakSchedule.status)}
                 </Typography>
               </Box>
             </Box>
@@ -219,7 +220,7 @@ const ClassDetailModal = ({ open, onClose, classItem }) => {
                   Thời gian tạo
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#666' }}>
-                  {formatDateTime(classItem.created_at)}
+                  {formatDateTime(breakSchedule.created_at)}
                 </Typography>
               </Box>
             </Box>
@@ -243,7 +244,7 @@ const ClassDetailModal = ({ open, onClose, classItem }) => {
                   Thời gian cập nhật
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#666' }}>
-                  {formatDateTime(classItem.updated_at)}
+                  {formatDateTime(breakSchedule.updated_at)}
                 </Typography>
               </Box>
             </Box>
@@ -269,4 +270,4 @@ const ClassDetailModal = ({ open, onClose, classItem }) => {
   );
 };
 
-export default ClassDetailModal;
+export default BreakScheduleDetailModal;

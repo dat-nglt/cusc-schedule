@@ -14,55 +14,49 @@ import {
   MenuItem,
 } from '@mui/material';
 
-const EditClassModal = ({ open, onClose, classItem, onSave }) => {
-  const [editedClass, setEditedClass] = useState({
-    class_id: '',
-    class_name: '',
-    class_size: '',
+const EditBreakScheduleModal = ({ open, onClose, breakSchedule, onSave }) => {
+  const [editedBreakSchedule, setEditedBreakSchedule] = useState({
+    break_id: '',
+    break_type: '',
+    break_start_date: '',
+    break_end_date: '',
     status: '',
-    course_id: '',
     created_at: '',
     updated_at: '',
   });
 
   useEffect(() => {
-    if (classItem) {
-      console.log('Class data received:', classItem); // Debug giá trị ban đầu
-      setEditedClass({
-        class_id: classItem.class_id || '',
-        class_name: classItem.class_name || '',
-        class_size: classItem.class_size || '',
-        status: classItem.status || 'Hoạt động',
-        course_id: classItem.course_id || '',
-        created_at: classItem.created_at || '',
+    if (breakSchedule) {
+      console.log('BreakSchedule data received:', breakSchedule); // Debug giá trị ban đầu
+      setEditedBreakSchedule({
+        break_id: breakSchedule.break_id || '',
+        break_type: breakSchedule.break_type || '',
+        break_start_date: breakSchedule.break_start_date || '',
+        break_end_date: breakSchedule.break_end_date || '',
+        status: breakSchedule.status || 'inactive', // Đặt mặc định nếu không có
+        created_at: breakSchedule.created_at || '',
         updated_at: new Date().toISOString().slice(0, 16).replace('T', ' '),
       });
     }
-  }, [classItem]);
+  }, [breakSchedule]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setEditedClass((prev) => ({ ...prev, [name]: value }));
+    setEditedBreakSchedule((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSave = () => {
     if (
-      !editedClass.class_id ||
-      !editedClass.class_name ||
-      !editedClass.class_size ||
-      !editedClass.course_id
+      !editedBreakSchedule.break_id ||
+      !editedBreakSchedule.break_type ||
+      !editedBreakSchedule.break_start_date ||
+      !editedBreakSchedule.break_end_date ||
+      !editedBreakSchedule.status
     ) {
       alert('Vui lòng điền đầy đủ thông tin!');
       return;
     }
-
-    const classSize = parseInt(editedClass.class_size, 10);
-    if (isNaN(classSize) || classSize <= 0) {
-      alert('Sĩ số phải là số nguyên dương!');
-      return;
-    }
-
-    onSave(editedClass);
+    onSave(editedBreakSchedule);
     onClose();
   };
 
@@ -83,14 +77,14 @@ const EditClassModal = ({ open, onClose, classItem, onSave }) => {
       }}
     >
       <DialogTitle>
-        <Typography variant="h6">Chỉnh sửa lớp học</Typography>
+        <Typography variant="h6">Chỉnh sửa lịch nghỉ</Typography>
       </DialogTitle>
       <DialogContent>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
           <TextField
-            label="Mã lớp học"
-            name="class_id"
-            value={editedClass.class_id}
+            label="Mã lịch nghỉ"
+            name="break_id"
+            value={editedBreakSchedule.break_id}
             onChange={handleChange}
             fullWidth
             variant="outlined"
@@ -98,47 +92,49 @@ const EditClassModal = ({ open, onClose, classItem, onSave }) => {
             InputProps={{ readOnly: true }}
           />
           <TextField
-            label="Tên lớp học"
-            name="class_name"
-            value={editedClass.class_name}
+            label="Loại lịch nghỉ"
+            name="break_type"
+            value={editedBreakSchedule.break_type}
             onChange={handleChange}
             fullWidth
             variant="outlined"
             required
           />
           <TextField
-            label="Sĩ số"
-            name="class_size"
-            type="number"
-            value={editedClass.class_size}
+            label="Thời gian bắt đầu"
+            name="break_start_date"
+            type="date"
+            value={editedBreakSchedule.break_start_date}
             onChange={handleChange}
             fullWidth
             variant="outlined"
+            InputLabelProps={{ shrink: true }}
             required
-            InputProps={{ inputProps: { min: 1 } }}
+          />
+          <TextField
+            label="Thời gian kết thúc"
+            name="break_end_date"
+            type="date"
+            value={editedBreakSchedule.break_end_date}
+            onChange={handleChange}
+            fullWidth
+            variant="outlined"
+            InputLabelProps={{ shrink: true }}
+            required
           />
           <FormControl fullWidth variant="outlined" required>
             <InputLabel id="status-label">Trạng thái</InputLabel>
             <Select
               labelId="status-label"
               name="status"
-              value={editedClass.status}
+              value={editedBreakSchedule.status}
               onChange={handleChange}
               label="Trạng thái"
             >
-              <MenuItem value="Hoạt động">Hoạt động</MenuItem>
-              <MenuItem value="Ngừng hoạt động">Ngừng hoạt động</MenuItem>
+              <MenuItem value="active">Hoạt động</MenuItem>
+              <MenuItem value="inactive">Ngừng hoạt động</MenuItem>
             </Select>
           </FormControl>
-          <TextField
-            label="Mã khóa học"
-            name="course_id"
-            value={editedClass.course_id}
-            onChange={handleChange}
-            fullWidth
-            variant="outlined"
-            required
-          />
         </Box>
       </DialogContent>
       <DialogActions>
@@ -153,4 +149,4 @@ const EditClassModal = ({ open, onClose, classItem, onSave }) => {
   );
 };
 
-export default EditClassModal;
+export default EditBreakScheduleModal;

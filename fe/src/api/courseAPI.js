@@ -66,16 +66,29 @@ export const listCourses = async (filters = {}) => {
   }
 };
 
-export const importCoursesFromExcel = async (fileBuffer) => {
-  try {
-    const formData = new FormData();
-    formData.append('excel_file', new Blob([fileBuffer]), 'courses.xlsx');
-    const response = await axiosInstance.post('/api/courses/import', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
-    return response.data;
-  } catch (error) {
-    console.error('Error importing courses:', error);
-    throw new Error('Error importing courses: ' + error.response?.data?.message || error.message);
-  }
+// Nhập khóa học từ file Excel hoặc dữ liệu JSON đã được validate
+export const importCourses = async (file, jsonData = null) => {
+    try {
+        if (jsonData) {
+            // Import từ dữ liệu JSON đã được validate
+            const response = await axiosInstance.post('/api/courses/importJson', {
+                courses: jsonData
+            });
+            return response;
+        } else {
+            // Import từ file Excel
+            const formData = new FormData();
+            formData.append('excel_file', file);
+
+            const response = await axiosInstance.post('/api/courses/import', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            return response;
+        }
+    } catch (error) {
+        console.error('Error importing courses:', error);
+        throw new Error('Lỗi khi nhập khóa học từ tệp');
+    }
 };

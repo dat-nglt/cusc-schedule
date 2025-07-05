@@ -21,12 +21,12 @@ import {
   Delete as DeleteIcon,
 } from '@mui/icons-material';
 import CourseDetailModal from './CourseDetailModal';
-import AddCourseModal from './AddCourseModal'; // Import AddCourseModal mới
+import AddCourseModal from './AddCourseModal'; // Đã chỉnh sửa để hỗ trợ preview
 import EditCourseModal from './EditCourseModal';
 import DeleteCourseModal from './DeleteCourseModal';
 import useResponsive from '../../hooks/useResponsive';
 import CourseTable from './CourseTable';
-import { getCourses, getCourseById, addCourse, updateCourse, deleteCourse, listCourses } from '../../api/courseAPI';
+import { getCourses, getCourseById, addCourse, updateCourse, deleteCourse, listCourses, importCourses } from '../../api/courseAPI';
 
 // Hàm định dạng timestamp thành YYYY-MM-DD HH:MM:SS.sss+07
 const formatTimestamp = (timestamp) => {
@@ -45,7 +45,6 @@ const formatTimestamp = (timestamp) => {
 const Course = () => {
   const { isSmallScreen, isMediumScreen } = useResponsive();
 
-  // State cho danh sách khóa học, phân trang, tìm kiếm, lọc, và modal
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -59,10 +58,8 @@ const Course = () => {
   const [openDelete, setOpenDelete] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState(null);
 
-  // Danh sách năm để lọc
   const years = ['2021', '2022', '2023', '2024', '2025'];
 
-  // Load danh sách khóa học từ API
   const fetchCourses = async () => {
     try {
       setLoading(true);
@@ -107,7 +104,6 @@ const Course = () => {
     fetchCourses();
   }, []);
 
-  // Hàm lấy chi tiết khóa học theo ID
   const handleViewCourse = async (course_id) => {
     try {
       setLoading(true);
@@ -146,7 +142,6 @@ const Course = () => {
     }
   };
 
-  // Hàm thêm khóa học
   const handleAddCourse = async (courseData) => {
     try {
       setLoading(true);
@@ -181,13 +176,11 @@ const Course = () => {
     }
   };
 
-  // Hàm mở modal chỉnh sửa và set course
   const handleEditCourse = (course) => {
     setSelectedCourse(course);
     setOpenEdit(true);
   };
 
-  // Hàm cập nhật khóa học
   const handleSaveEditedCourse = async (courseData) => {
     try {
       setLoading(true);
@@ -211,7 +204,6 @@ const Course = () => {
     }
   };
 
-  // Hàm mở modal xóa và set course
   const handleOpenDeleteModal = (course) => {
     if (!course || !course.course_id) {
       console.error('Invalid course data in handleOpenDeleteModal:', course);
@@ -222,7 +214,6 @@ const Course = () => {
     setOpenDelete(true);
   };
 
-  // Hàm xóa khóa học
   const handleDeleteCourse = async (course_id) => {
     try {
       setLoading(true);
@@ -244,12 +235,10 @@ const Course = () => {
     }
   };
 
-  // Hàm xử lý thay đổi trang
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
 
-  // Lọc danh sách khóa học dựa trên từ khóa tìm kiếm và năm
   const filteredCourses = courses.filter((course) => {
     const matchesSearchTerm =
       course.course_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -260,7 +249,6 @@ const Course = () => {
     return matchesSearchTerm && matchesYear;
   });
 
-  // Tính toán dữ liệu hiển thị trên trang hiện tại
   const displayedCourses = filteredCourses.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   return (
@@ -287,7 +275,7 @@ const Course = () => {
                     color="primary"
                     startIcon={<AddIcon />}
                     onClick={() => setOpenAdd(true)}
-                    sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
+                    sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' }, minWidth: isSmallScreen ? 100 : 150, height: '56px' }}
                   >
                     Thêm khóa học
                   </Button>
@@ -368,7 +356,7 @@ const Course = () => {
         open={openAdd}
         onClose={() => setOpenAdd(false)}
         onAddCourse={handleAddCourse}
-        existingCourses={courses} // Truyền danh sách khóa học hiện tại để kiểm tra trùng lặp
+        existingCourses={courses}
       />
       <EditCourseModal
         open={openEdit}

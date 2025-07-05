@@ -52,7 +52,7 @@ const StyledSidebarContainer = styled(Box)(({ theme }) => ({
     overflowY: 'auto',
 }));
 
-const SidebarForJustAdmin = () => {
+const SidebarForJustStudent = () => {
     const theme = useTheme();
     const location = useLocation();
 
@@ -114,4 +114,4 @@ const SidebarForJustAdmin = () => {
     );
 };
 
-export default SidebarForJustAdmin;
+export default SidebarForJustStudent;
