@@ -272,6 +272,87 @@ export function createStudentTemplate() {
 }
 
 /**
+ * Tạo Excel template cho chương trình với tên cột tiếng Việt
+ * @returns {Buffer} Buffer của template Excel
+ */
+export function createProgramTemplate() {
+  const templateData = [
+    {
+      "Mã chương trình": "CT001",
+      "Tên chương trình": "Chương trình Đào tạo CNTT",
+      "Thời gian đào tạo": "4 năm",
+      "Mô tả": "Chương trình đào tạo về công nghệ thông tin",
+      "Trạng thái": "Hoạt động",
+    },
+    {
+      "Mã chương trình": "CT002",
+      "Tên chương trình": "Chương trình Đào tạo Kinh tế",
+      "Thời gian đào tạo": "3 năm",
+      "Mô tả": "Chương trình đào tạo về kinh tế và quản trị",
+      "Trạng thái": "Ngừng hoạt động",
+    },
+  ];
+
+  return createExcelFromJSON(templateData, "Programs");
+}
+
+/**
+ * Tạo Excel template cho học kỳ với tên cột tiếng Việt
+ * @returns {Buffer} Buffer của template Excel
+ */
+export function createSemesterTemplate() {
+  const templateData = [
+    {
+      "Mã học kỳ": "HK2024_1",
+      "Tên học kỳ": "Học kỳ 1 năm học 2024-2025",
+      "Ngày bắt đầu": "2024-09-01",
+      "Ngày kết thúc": "2025-01-15",
+      "Trạng thái": "Hoạt động",
+      "Mã chương trình đào tạo": "CT001",
+    },
+    {
+      "Mã học kỳ": "HK2024_2",
+      "Tên học kỳ": "Học kỳ 2 năm học 2024-2025",
+      "Ngày bắt đầu": "2025-02-01",
+      "Ngày kết thúc": "2025-06-30",
+      "Trạng thái": "Sắp diễn ra",
+      "Mã chương trình đào tạo": "CT001",
+    },
+  ];
+
+  return createExcelFromJSON(templateData, "Semesters");
+}
+
+/**
+ * Tạo Excel template cho môn học với tên cột tiếng Việt
+ * @returns {Buffer} Buffer của template Excel
+ */
+export function createSubjectTemplate() {
+  const templateData = [
+    {
+      "Mã môn học": "MH001",
+      "Tên môn học": "Lập trình cơ bản",
+      "Số tín chỉ": 3,
+      "Số giờ lý thuyết": 30,
+      "Số giờ thực hành": 15,
+      "Trạng thái": "Hoạt động",
+      "Mã học kỳ": "HK2024_1",
+    },
+    {
+      "Mã môn học": "MH002",
+      "Tên môn học": "Cơ sở dữ liệu",
+      "Số tín chỉ": 4,
+      "Số giờ lý thuyết": 45,
+      "Số giờ thực hành": 15,
+      "Trạng thái": "Hoạt động",
+      "Mã học kỳ": "HK2024_1",
+    },
+  ];
+
+  return createExcelFromJSON(templateData, "Subjects");
+}
+
+/**
  * Map cột tiếng Việt sang tiếng Anh
  * @returns {Object} Object mapping từ tiếng Việt sang tiếng Anh
  */
@@ -280,7 +361,7 @@ export function getVietnameseColumnMapping() {
     // Common columns
     "Họ tên": "name",
     Email: "email",
-    "Ngày sinh": "date_of_birth", // Changed from day_of_birth for better readability
+    "Ngày sinh": "date_of_birth",
     "Giới tính": "gender",
     "Địa chỉ": "address",
     "Số điện thoại": "phone_number",
@@ -303,6 +384,26 @@ export function getVietnameseColumnMapping() {
     Lớp: "class",
     "Năm nhập học": "admission_year",
     "Điểm trung bình": "gpa",
+
+    // Program specific columns
+    "Mã chương trình": "program_id",
+    "Tên chương trình": "program_name",
+    "Thời gian đào tạo": "training_duration",
+    "Mô tả": "description",
+
+    // Semester specific columns
+    "Mã học kỳ": "semester_id",
+    "Tên học kỳ": "semester_name",
+    "Ngày bắt đầu": "start_date",
+    "Ngày kết thúc": "end_date",
+    "Mã chương trình đào tạo": "training_program_id",
+
+    // Subject specific columns
+    "Mã môn học": "subject_id",
+    "Tên môn học": "subject_name",
+    "Số tín chỉ": "credit",
+    "Số giờ lý thuyết": "theory_hours",
+    "Số giờ thực hành": "practice_hours",
   };
 }
 
@@ -332,6 +433,9 @@ export default {
   createStudentTemplate,
   createCourseTemplate,
   createLecturerTemplate,
+  createProgramTemplate,
+  createSemesterTemplate,
+  createSubjectTemplate,
   cleanString,
   isValidEmail,
   formatExcelDate,

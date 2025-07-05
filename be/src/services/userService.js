@@ -1,4 +1,8 @@
-import { Student, Lecturer, Admin, TrainingOfficer } from '../models/index.js';
+import UserModels from '../models/User.js';
+
+
+const { Student, Lecturer, Admin, TrainingOfficer } = UserModels;
+
 
 export const getAllUsers = async () => {
     try {
