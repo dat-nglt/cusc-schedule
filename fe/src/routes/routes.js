@@ -10,11 +10,7 @@ const routes = [
     exact: true,
     title: "Trình điều khiển",
     isPrivate: false,
-<<<<<<< HEAD
-    layout: ScheduleLayout,
-=======
     layout: AdminLayout,
->>>>>>> origin/chuong
   },
   {
     path: "/login",

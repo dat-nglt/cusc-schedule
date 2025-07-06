@@ -1,19 +1,8 @@
-import { sequelize } from "../config/connectDB.js";
-import { DataTypes } from "sequelize";
-
 // Import model definitions
-import StudentModel from './Student.js';
-import LecturerModel from './Lecturer.js';
-import AdminModel from './Admin.js';
-import TrainingOfficerModel from './TrainingOfficer.js';
-import Course from './Course.js';
-import Classes from './Classes.js';
-
-// Initialize models with sequelize instance
-const Student = StudentModel(sequelize, DataTypes);
-const Lecturer = LecturerModel(sequelize, DataTypes);
-const Admin = AdminModel(sequelize, DataTypes);
-const TrainingOfficer = TrainingOfficerModel(sequelize, DataTypes);
+import Student from './Student.js';
+import Lecturer from './Lecturer.js';
+import Admin from './Admin.js';
+import TrainingOfficer from './TrainingOfficer.js';
 
 // Define associations if needed
 const models = {
@@ -21,8 +10,6 @@ const models = {
     Lecturer,
     Admin,
     TrainingOfficer,
-    Course,
-    Classes
 };
 
 // Call associate methods if they exist
@@ -37,7 +24,4 @@ export {
     Lecturer,
     Admin,
     TrainingOfficer,
-    sequelize,
-    Course,
-    Classes
 };

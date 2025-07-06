@@ -181,6 +181,22 @@ CLOUDINARY_API_SECRET=your_api_secret
 
 ### **5. Database Setup**
 ```bash
+
+#lệnh tạo config của sequelize migration
+npx sequelize init
+# code trong config
+```bash
+{
+  "development": {
+    "username": "postgres",
+    "password": "MyPostgreSQL@2025",
+    "database": "cusc_db",
+    "host": "127.0.0.1",
+    "dialect": "postgres",
+    "port": 5432
+  }
+}
+
 # Tạo database PostgreSQL
 psql -U postgres -c "CREATE DATABASE cusc_db;"
 

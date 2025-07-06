@@ -69,24 +69,6 @@ const ScheduleSidebar = () => {
   const [searchQuery, setSearchQuery] = useState('');
 
   const [drawerOpen, setDrawerOpen] = useState(false);
-<<<<<<< HEAD
-  const navItems = [
-    { text: 'Quản lý thời khóa biểu', icon: <TimetableIcon />, path: '/dashboard' },
-    { text: 'Quản lý giảng viên', icon: <PersonIcon />, path: '/lecturers' },
-    { text: 'Quản lý học viên', icon: <SchoolIcon />, path: '/students' },
-    { text: 'Quản lý chương trình đào tạo', icon: <LibraryBooksIcon />, path: '/programs' },
-    { text: 'Quản lý học phần', icon: <MenuBookIcon />, path: '/subjects' },
-    { text: 'Quản lý khóa học', icon: <ClassIcon />, path: '/courses' },
-    { text: 'Quản lý lớp', icon: <GroupsIcon />, path: '/class' },
-    { text: 'Quản lý lớp học phần', icon: <AccountBalanceIcon />, path: '/classsection' },
-    { text: 'Quản lý phòng', icon: <RoomIcon />, path: '/room' },
-    { text: 'Quản lý khung giờ', icon: <AccessTimeIcon />, path: '/slottime' },
-    { text: 'Quản lý thông báo', icon: <CalendarIcon />, path: '/notification' },
-    { text: 'Đăng xuất', icon: <LogoutIcon />, path: '/logout' },
-  ];
-=======
-
->>>>>>> origin/chuong
   // Handlers for drawer
   const handleDrawerOpen = () => {
     setDrawerOpen(true);

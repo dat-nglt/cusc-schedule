@@ -1,5 +1,5 @@
 import { DataTypes } from 'sequelize';
-import { sequelize } from '../config/database';
+import { sequelize } from '../config/connectDB';
 
 const BreakSchedule = sequelize.define('break_schedule', {
   break_id: {

@@ -1,6 +1,6 @@
-import db from "../models/User.js";
+import { Lecturer } from "../models/User.js";
 import ExcelUtils from "../utils/ExcelUtils.js";
-const { Lecturer } = db;
+
 
 // get all lecturers
 export const getAllLecturers = async () => {

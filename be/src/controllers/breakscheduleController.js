@@ -11,7 +11,7 @@ import {
 } from "../services/breakscheduleService.js";
 import { successResponse, errorResponse, APIResponse } from "../utils/APIResponse.js";
 import ExcelUtils from "../utils/ExcelUtils.js";
-const path = require('path');
+import path from "path";
 
 export const getAllBreakSchedulesController = async (req, res) => {
   try {
