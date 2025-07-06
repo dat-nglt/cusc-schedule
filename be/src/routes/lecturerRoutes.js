@@ -1,16 +1,15 @@
 import express from 'express';
-import authMiddleware, { requireRole, authenticateAndAuthorize } from '../middleware/authMiddleware.js';
+import { authenticateAndAuthorize } from '../middleware/authMiddleware.js';
 import {
     getAllLecturersController,
     getLecturerByIdController,
     createLecturerController,
     updateLecturerController,
     deleteLecturerController,
-    importLecturersController,
     importLecturersFromJsonController,
     downloadTemplateController,
 } from '../controllers/lecturerController.js';
-import { uploadExcel } from '../middleware/excelMiddleware';
+
 
 const lecturerRoutes = express.Router();
 
@@ -21,7 +20,6 @@ lecturerRoutes.put('/update/:id', authenticateAndAuthorize(['admin', 'training_o
 lecturerRoutes.delete('/delete/:id', authenticateAndAuthorize(['admin', 'training_officer']), deleteLecturerController);
 
 // Import Excel routes
-lecturerRoutes.post('/import', authenticateAndAuthorize(['admin', 'training_officer']), uploadExcel, importLecturersController);
 lecturerRoutes.post('/importJson', authenticateAndAuthorize(['admin', 'training_officer']), importLecturersFromJsonController);
 lecturerRoutes.get('/template/download', authenticateAndAuthorize(['admin', 'training_officer']), downloadTemplateController);
 export default lecturerRoutes;

@@ -13,6 +13,7 @@ import {
     Chip,
 } from '@mui/material';
 import { Visibility, Edit, Delete, Menu as MenuIcon } from '@mui/icons-material';
+import { getStatusChip } from '../../components/ui/StatusChip';
 
 export default function ProgramTable({ displayedPrograms, isSmallScreen, isMediumScreen, handleViewProgram, handleEditProgram, handleDeleteProgram }) {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -28,29 +29,6 @@ export default function ProgramTable({ displayedPrograms, isSmallScreen, isMediu
     const handleCloseMenu = () => {
         setAnchorEl(null);
         setSelectedRowId(null);
-    };
-
-    // Hàm hiển thị trạng thái với màu sắc
-    const getStatusChip = (status) => {
-        const statusColors = {
-            'Đang triển khai': { color: '#4caf50', bgcolor: '#e8f5e8' },
-            'Tạm dừng': { color: '#f57c00', bgcolor: '#fff3e0' },
-            'Kết thúc': { color: '#757575', bgcolor: '#f5f5f5' }
-        };
-        const style = statusColors[status] || { color: '#757575', bgcolor: '#f5f5f5' };
-
-        return (
-            <Chip
-                label={status}
-                size="small"
-                sx={{
-                    color: style.color,
-                    bgcolor: style.bgcolor,
-                    fontWeight: 'bold',
-                    fontSize: '0.75rem'
-                }}
-            />
-        );
     };
 
     return (
@@ -91,7 +69,7 @@ export default function ProgramTable({ displayedPrograms, isSmallScreen, isMediu
             <TableBody>
                 {displayedPrograms.map((program, index) => (
                     <TableRow
-                        key={program.id}
+                        key={program.program_id}
                         sx={{
                             backgroundColor: index % 2 === 0 ? '#fafafa' : '#ffffff',
                             '&:hover': { backgroundColor: '#e3f2fd', cursor: 'pointer' },
@@ -99,20 +77,20 @@ export default function ProgramTable({ displayedPrograms, isSmallScreen, isMediu
                         }}
                     >
                         <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                            {program.stt}
+                            {index + 1}
                         </TableCell>
                         {!isSmallScreen && (
                             <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                                {program.maChuongTrinh}
+                                {program.program_id}
                             </TableCell>
                         )}
                         <TableCell sx={{ textAlign: 'left', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                            {program.tenChuongTrinh}
+                            {program.program_name}
                         </TableCell>
                         {!isMediumScreen && (
                             <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
                                 <Chip
-                                    label={program.thoiGianDaoTao}
+                                    label={program.training_duration + ' năm'}
                                     size="small"
                                     sx={{
                                         bgcolor: '#e3f2fd',
@@ -123,14 +101,14 @@ export default function ProgramTable({ displayedPrograms, isSmallScreen, isMediu
                             </TableCell>
                         )}
                         <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                            {getStatusChip(program.trangThai)}
+                            {getStatusChip(program.status)}
                         </TableCell>
                         <TableCell sx={{ textAlign: 'center', py: 1.5 }}>
                             {isSmallScreen ? (
                                 <>
                                     <Tooltip title="Thao tác">
                                         <IconButton
-                                            onClick={(event) => handleOpenMenu(event, program.id)}
+                                            onClick={(event) => handleOpenMenu(event, program.program_id)}
                                             sx={{ color: '#1976d2' }}
                                         >
                                             <MenuIcon />
@@ -138,14 +116,14 @@ export default function ProgramTable({ displayedPrograms, isSmallScreen, isMediu
                                     </Tooltip>
                                     <Menu
                                         anchorEl={anchorEl}
-                                        open={Boolean(anchorEl) && selectedRowId === program.id}
+                                        open={Boolean(anchorEl) && selectedRowId === program.program_id}
                                         onClose={handleCloseMenu}
                                         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                                         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
                                     >
                                         <MenuItem
                                             onClick={() => {
-                                                handleViewProgram(program.id);
+                                                handleViewProgram(program.program_id);
                                                 handleCloseMenu();
                                             }}
                                         >
@@ -154,7 +132,7 @@ export default function ProgramTable({ displayedPrograms, isSmallScreen, isMediu
                                         </MenuItem>
                                         <MenuItem
                                             onClick={() => {
-                                                handleEditProgram(program.id);
+                                                handleEditProgram(program.program_id);
                                                 handleCloseMenu();
                                             }}
                                         >
@@ -163,7 +141,7 @@ export default function ProgramTable({ displayedPrograms, isSmallScreen, isMediu
                                         </MenuItem>
                                         <MenuItem
                                             onClick={() => {
-                                                handleDeleteProgram(program.id);
+                                                handleDeleteProgram(program.program_id);
                                                 handleCloseMenu();
                                             }}
                                         >
@@ -178,21 +156,21 @@ export default function ProgramTable({ displayedPrograms, isSmallScreen, isMediu
                                         <Visibility
                                             color="primary"
                                             style={{ cursor: 'pointer' }}
-                                            onClick={() => handleViewProgram(program.id)}
+                                            onClick={() => handleViewProgram(program.program_id)}
                                         />
                                     </Tooltip>
                                     <Tooltip title="Sửa">
                                         <Edit
                                             color="primary"
                                             style={{ cursor: 'pointer' }}
-                                            onClick={() => handleEditProgram(program.id)}
+                                            onClick={() => handleEditProgram(program.program_id)}
                                         />
                                     </Tooltip>
                                     <Tooltip title="Xóa">
                                         <Delete
                                             color="error"
                                             style={{ cursor: 'pointer' }}
-                                            onClick={() => handleDeleteProgram(program.id)}
+                                            onClick={() => handleDeleteProgram(program.program_id)}
                                         />
                                     </Tooltip>
                                 </Box>

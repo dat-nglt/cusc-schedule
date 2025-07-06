@@ -8,7 +8,6 @@ import morgan from "morgan"; // Import Morgan
 import logger from "./utils/logger.js"; // Import logger đã cấu hìnhwinston-daily-rotate-file'
 import setupRoutes from "./routes/router.js";
 import connectDB from "./config/connectDB.js";
-import models from "./models/index.js";
 import configurePassport from "./config/passport.js";
 
 dotenv.config();
@@ -18,7 +17,7 @@ const PORT = process.env.PORT || 3000;
 
 async function startServer() {
   try {
-    await connectDB(models);
+    await connectDB();
 
     configurePassport();
     logger.info("✅ Passport has been configured.");
@@ -41,7 +40,7 @@ async function startServer() {
     );
     app.use(passport.initialize());
     app.use(passport.session());
-    logger.info("✅ Middleware Session and Passport have been configured."); 
+    logger.info("✅ Middleware Session and Passport have been configured.");
 
     // Cấu hình các Middleware chung
     app.use(cors());
@@ -50,13 +49,12 @@ async function startServer() {
 
     // Cấu hình Router
     setupRoutes(app);
-    logger.info("✅ Router has been setup."); 
+    logger.info("✅ Router has been setup.");
 
     // Khởi động Server
     app.listen(PORT, () => {
       logger.info(
-        `✅ Server is running on port ${PORT} (${
-          process.env.NODE_ENV || "development"
+        `✅ Server is running on port ${PORT} (${process.env.NODE_ENV || "development"
         } environment)`
       );
     });

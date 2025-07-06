@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Box,
     Typography,
@@ -24,68 +24,13 @@ import EditSubjectModal from './EditSubjectModal';
 import DeleteSubjectModal from './DeleteSubjectModal';
 import useResponsive from '../../hooks/useResponsive';
 import SubjectTable from './SubjectTable';
+import { getAllSubjects } from '../../api/subjectAPI';
 
 const Subject = () => {
     const { isSmallScreen, isMediumScreen } = useResponsive();
 
     // Dữ liệu mẫu cho danh sách học phần
-    const [subjects, setSubjects] = useState([
-        {
-            id: 1,
-            stt: 1,
-            maHocPhan: 'HP001',
-            tenHocPhan: 'Lập trình C++',
-            soTietLyThuyet: 30,
-            soTietThucHanh: 30,
-            trangThai: 'Đang hoạt động',
-            thoiGianTao: '2025-01-15 09:00',
-            thoiGianCapNhat: '2025-01-20 14:30'
-        },
-        {
-            id: 2,
-            stt: 2,
-            maHocPhan: 'HP002',
-            tenHocPhan: 'Cơ sở dữ liệu',
-            soTietLyThuyet: 45,
-            soTietThucHanh: 15,
-            trangThai: 'Đang hoạt động',
-            thoiGianTao: '2025-01-16 10:15',
-            thoiGianCapNhat: '2025-01-21 15:00'
-        },
-        {
-            id: 3,
-            stt: 3,
-            maHocPhan: 'HP003',
-            tenHocPhan: 'Mạng máy tính',
-            soTietLyThuyet: 40,
-            soTietThucHanh: 20,
-            trangThai: 'Tạm dừng',
-            thoiGianTao: '2025-01-17 11:30',
-            thoiGianCapNhat: '2025-01-22 09:45'
-        },
-        {
-            id: 4,
-            stt: 4,
-            maHocPhan: 'HP004',
-            tenHocPhan: 'Hệ điều hành',
-            soTietLyThuyet: 35,
-            soTietThucHanh: 25,
-            trangThai: 'Đang hoạt động',
-            thoiGianTao: '2025-01-18 14:00',
-            thoiGianCapNhat: '2025-01-23 13:15'
-        },
-        {
-            id: 5,
-            stt: 5,
-            maHocPhan: 'HP005',
-            tenHocPhan: 'Toán rời rạc',
-            soTietLyThuyet: 50,
-            soTietThucHanh: 10,
-            trangThai: 'Đang hoạt động',
-            thoiGianTao: '2025-01-19 15:30',
-            thoiGianCapNhat: '2025-01-24 10:20'
-        }
-    ]);
+    const [subjects, setSubjects] = useState([]);
 
     // State cho phân trang, tìm kiếm, lọc theo trạng thái và modal
     const [page, setPage] = useState(0);
@@ -99,9 +44,37 @@ const Subject = () => {
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
     const [editedSubject, setEditedSubject] = useState(null);
     const [subjectToDelete, setSubjectToDelete] = useState(null);
-
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
     // Danh sách trạng thái để lọc
     const statuses = ['Đang hoạt động', 'Tạm dừng', 'Ngừng hoạt động'];
+
+
+
+    // Hàm lấy danh sách học phần từ API
+    const fetchSubjects = async () => {
+        try {
+            setError('');
+            setLoading(true);
+            const response = await getAllSubjects();
+            if (!response) {
+                setError('Không có dữ liệu học phần');
+                return;
+            }
+            setSubjects(response.data.data);
+        } catch (error) {
+            console.error('Lỗi khi lấy danh sách học phần:', error);
+            setError('Không thể lấy danh sách học phần. Vui lòng thử lại sau.');
+        }
+        finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchSubjects();
+    }, []);
+
 
     // Hàm xử lý khi nhấn nút Thêm học phần
     const handleAddSubject = () => {
@@ -116,7 +89,7 @@ const Subject = () => {
     // Hàm thêm học phần mới
     const handleAddNewSubject = (newSubject) => {
         setSubjects((prevSubjects) => {
-            const updatedSubjects = [...prevSubjects, { ...newSubject, stt: prevSubjects.length + 1 }];
+            const updatedSubjects = [...prevSubjects, { ...newSubject }];
             return updatedSubjects;
         });
     };

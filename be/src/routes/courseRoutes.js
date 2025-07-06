@@ -11,7 +11,7 @@ import {
   importCoursesFromJsonController,
   downloadTemplateController,
 } from '../controllers/courseController.js';
-import { uploadExcel } from '../middleware/excelMiddleware';
+// import { uploadExcel } from '../middleware/excelMiddleware';
 
 const courseRoutes = express.Router();
 

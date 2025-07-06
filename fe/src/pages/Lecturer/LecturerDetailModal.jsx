@@ -22,19 +22,8 @@ import {
     Update as UpdateIcon,
     CheckCircle as StatusIcon,
 } from '@mui/icons-material';
-
-// Hàm định dạng thời gian từ YYYY-MM-DD HH:mm thành DD/MM/YYYY HH:mm
-const formatDateTime = (dateTime) => {
-    if (!dateTime) return 'Không có dữ liệu';
-    try {
-        const [date, time] = dateTime.split(' ');
-        const [year, month, day] = date.split('-');
-        return `${day}/${month}/${year} ${time}`;
-    } catch {
-        return 'Không hợp lệ';
-    }
-};
-
+import { getStatusChip } from '../../components/ui/StatusChip';
+import { formatDateTime } from '../../utils/formatDateTime';
 // Hàm kiểm tra giá trị và trả về giá trị hoặc thông báo mặc định
 const getValueOrDefault = (value) => value || 'Không có dữ liệu';
 
@@ -47,27 +36,7 @@ export default function LecturerDetailModal({ open, onClose, lecturer }) {
         alert('Đã sao chép mã giảng viên!');
     };
 
-    // Hàm hiển thị trạng thái với màu sắc
-    const getStatusChip = (status) => {
-        const statusColors = {
-            'Hoạt động': { color: '#4caf50', bgcolor: '#e8f5e8' },
-            'Tạm nghỉ': { color: '#f57c00', bgcolor: '#fff3e0' },
-            'Nghỉ hưu': { color: '#9e9e9e', bgcolor: '#f5f5f5' },
-            'Đã nghỉ việc': { color: '#f44336', bgcolor: '#ffebee' },
-        };
-        const style = statusColors[status] || { color: '#757575', bgcolor: '#f5f5f5' };
 
-        return (
-            <Chip
-                label={status}
-                sx={{
-                    color: style.color,
-                    bgcolor: style.bgcolor,
-                    fontWeight: 'bold'
-                }}
-            />
-        );
-    };
 
     return (
         <Dialog

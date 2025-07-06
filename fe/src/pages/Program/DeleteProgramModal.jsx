@@ -10,9 +10,18 @@ import {
 } from '@mui/material';
 
 const DeleteProgramModal = ({ open, onClose, onDelete, program }) => {
-  const handleDelete = () => {
-    onDelete(program.id);
-    onClose();
+  const handleDelete = async () => {
+    try {
+      const response = await onDelete(program.program_id);
+      if (response && response.data) {
+        onDelete(program.program_id);
+        onClose();
+      }
+    } catch (error) {
+      console.error('Error deleting program:', error);
+    } finally {
+      onClose();
+    }
   };
 
   return (
@@ -28,7 +37,7 @@ const DeleteProgramModal = ({ open, onClose, onDelete, program }) => {
               fontWeight: 'bold', // In đậm
             }}
           >
-            {program?.maChuongTrinh}
+            {program?.program_id}
           </Box> không?
         </Typography>
       </DialogContent>

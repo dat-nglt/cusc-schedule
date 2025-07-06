@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Box,
     Typography,
@@ -24,114 +24,13 @@ import EditProgramModal from './EditProgramModal';
 import DeleteProgramModal from './DeleteProgramModal';
 import useResponsive from '../../hooks/useResponsive';
 import ProgramTable from './ProgramTable';
+import { getAllPrograms, getProgramById, createProgram, updateProgram, deleteProgram } from '../../api/programAPI';
 
 const Program = () => {
     const { isSmallScreen, isMediumScreen } = useResponsive();
 
     // Dữ liệu mẫu cho danh sách chương trình đào tạo
-    const [programs, setPrograms] = useState([
-        {
-            id: 1,
-            stt: 1,
-            maChuongTrinh: 'CT001',
-            tenChuongTrinh: 'Kỹ thuật phần mềm',
-            thoiGianDaoTao: '4 năm',
-            trangThai: 'Đang triển khai',
-            thoiGianTao: '2025-01-15 09:00',
-            thoiGianCapNhat: '2025-01-20 14:30'
-        },
-        {
-            id: 2,
-            stt: 2,
-            maChuongTrinh: 'CT002',
-            tenChuongTrinh: 'Công nghệ thực phẩm',
-            thoiGianDaoTao: '4 năm',
-            trangThai: 'Đang triển khai',
-            thoiGianTao: '2025-01-16 10:15',
-            thoiGianCapNhat: '2025-01-21 15:00'
-        },
-        {
-            id: 3,
-            stt: 3,
-            maChuongTrinh: 'CT003',
-            tenChuongTrinh: 'Kỹ thuật hệ thống công nghiệp',
-            thoiGianDaoTao: '4 năm',
-            trangThai: 'Tạm dừng',
-            thoiGianTao: '2025-01-17 11:30',
-            thoiGianCapNhat: '2025-01-22 09:45'
-        },
-        {
-            id: 4,
-            stt: 4,
-            maChuongTrinh: 'CT004',
-            tenChuongTrinh: 'Công nghệ kỹ thuật điện, điện tử',
-            thoiGianDaoTao: '4 năm',
-            trangThai: 'Đang triển khai',
-            thoiGianTao: '2025-01-18 14:00',
-            thoiGianCapNhat: '2025-01-23 13:15'
-        },
-        {
-            id: 5,
-            stt: 5,
-            maChuongTrinh: 'CT005',
-            tenChuongTrinh: 'Quản lý công nghiệp',
-            thoiGianDaoTao: '3.5 năm',
-            trangThai: 'Đang triển khai',
-            thoiGianTao: '2025-01-19 15:30',
-            thoiGianCapNhat: '2025-01-24 10:20'
-        },
-        {
-            id: 6,
-            stt: 6,
-            maChuongTrinh: 'CT006',
-            tenChuongTrinh: 'Công nghệ kỹ thuật điều khiển và tự động hóa',
-            thoiGianDaoTao: '4 năm',
-            trangThai: 'Đang triển khai',
-            thoiGianTao: '2025-01-20 09:45',
-            thoiGianCapNhat: '2025-01-25 16:10'
-        },
-        {
-            id: 7,
-            stt: 7,
-            maChuongTrinh: 'CT007',
-            tenChuongTrinh: 'Quản lý xây dựng',
-            thoiGianDaoTao: '4 năm',
-            trangThai: 'Tạm dừng',
-            thoiGianTao: '2025-01-21 11:00',
-            thoiGianCapNhat: '2025-01-26 13:40'
-        },
-        {
-            id: 8,
-            stt: 8,
-            maChuongTrinh: 'CT008',
-            tenChuongTrinh: 'Khoa học máy tính',
-            thoiGianDaoTao: '4 năm',
-            trangThai: 'Đang triển khai',
-            thoiGianTao: '2025-01-22 14:20',
-            thoiGianCapNhat: '2025-01-27 15:55'
-        },
-        {
-            id: 9,
-            stt: 9,
-            maChuongTrinh: 'CT009',
-            tenChuongTrinh: 'Công nghệ kỹ thuật cơ điện tử',
-            thoiGianDaoTao: '4 năm',
-            trangThai: 'Đang triển khai',
-            thoiGianTao: '2025-01-23 08:30',
-            thoiGianCapNhat: '2025-01-28 12:10'
-        },
-        {
-            id: 10,
-            stt: 10,
-            maChuongTrinh: 'CT010',
-            tenChuongTrinh: 'Kỹ thuật phần mềm (Chất lượng cao)',
-            thoiGianDaoTao: '4.5 năm',
-            trangThai: 'Đang triển khai',
-            thoiGianTao: '2025-01-24 09:10',
-            thoiGianCapNhat: '2025-01-29 14:50'
-        }
-    ]);
-
+    const [programs, setPrograms] = useState([]);
     // State cho phân trang, tìm kiếm, lọc theo trạng thái và modal
     const [page, setPage] = useState(0);
     const [rowsPerPage] = useState(8);
@@ -144,13 +43,53 @@ const Program = () => {
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
     const [editedProgram, setEditedProgram] = useState(null);
     const [programToDelete, setProgramToDelete] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+    const [message, setMessage] = useState('');
 
     // Danh sách trạng thái để lọc
     const statuses = ['Đang triển khai', 'Tạm dừng', 'Kết thúc'];
 
+    const fetchPrograms = async () => {
+        try {
+            setLoading(true);
+            const response = await getAllPrograms();
+            if (!response) {
+                console.error("Không có dữ liệu chương trình đào tạo");
+                return;
+            }
+            setPrograms(response.data.data);
+        } catch (error) {
+            console.error("Lỗi khi tải danh sách chương trình đào tạo:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchPrograms();
+    }, []);
+
     // Hàm xử lý khi nhấn nút Thêm chương trình
     const handleAddProgram = () => {
         setOpenAddModal(true);
+    };
+
+    // Hàm thêm chương trình mới
+    const handleAddNewProgram = async (newProgram) => {
+        try {
+            setLoading(true);
+            const response = await createProgram(newProgram);
+            if (response && response.data) {
+                setMessage("Thêm chương trình đào tạo thành công!");
+                fetchPrograms(); // Tải lại danh sách chương trình sau khi thêm thành công
+            }
+        } catch (error) {
+            console.error("Lỗi khi thêm chương trình đào tạo:", error);
+            setError("Không thể thêm chương trình đào tạo. Vui lòng kiểm tra lại thông tin.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     // Hàm đóng modal thêm chương trình
@@ -158,19 +97,21 @@ const Program = () => {
         setOpenAddModal(false);
     };
 
-    // Hàm thêm chương trình mới
-    const handleAddNewProgram = (newProgram) => {
-        setPrograms((prevPrograms) => {
-            const updatedPrograms = [...prevPrograms, { ...newProgram, stt: prevPrograms.length + 1 }];
-            return updatedPrograms;
-        });
-    };
-
     // Hàm xử lý khi nhấn nút chỉnh sửa
-    const handleEditProgram = (id) => {
-        const programToEdit = programs.find((p) => p.id === id);
-        setEditedProgram(programToEdit);
-        setOpenEditModal(true);
+    const handleEditProgram = async (id) => {
+        try {
+            setLoading(true);
+            const response = await getProgramById(id);
+            if (response && response.data) {
+                setEditedProgram(response.data.data);
+                setOpenEditModal(true);
+            }
+        } catch (error) {
+            console.error("Lỗi khi lấy thông tin chương trình đào tạo để chỉnh sửa:", error);
+            setError("Không thể lấy thông tin chương trình đào tạo để chỉnh sửa. Vui lòng thử lại.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     // Hàm đóng modal chỉnh sửa
@@ -180,12 +121,20 @@ const Program = () => {
     };
 
     // Hàm lưu thay đổi sau khi chỉnh sửa
-    const handleSaveEditedProgram = (updatedProgram) => {
-        setPrograms((prevPrograms) =>
-            prevPrograms.map((program) =>
-                program.id === updatedProgram.id ? { ...program, ...updatedProgram } : program
-            )
-        );
+    const handleSaveEditedProgram = async (updatedProgram) => {
+        try {
+            setLoading(true);
+            const response = await updateProgram(updatedProgram.program_id, updatedProgram);
+            if (response && response.data) {
+                setMessage("Cập nhật chương trình đào tạo thành công!");
+                fetchPrograms(); // Tải lại danh sách chương trình sau khi cập nhật thành công
+            }
+        } catch (error) {
+            console.error("Lỗi khi cập nhật chương trình đào tạo:", error);
+            setError("Không thể cập nhật chương trình đào tạo. Vui lòng kiểm tra lại thông tin.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     // Hàm xử lý thay đổi trang
@@ -194,28 +143,46 @@ const Program = () => {
     };
 
     // Hàm xử lý xem chương trình
-    const handleViewProgram = (id) => {
-        const program = programs.find((p) => p.id === id);
-        setSelectedProgram(program);
-        setOpenDetail(true);
+    const handleViewProgram = async (id) => {
+        try {
+            setLoading(true);
+            const response = await getProgramById(id);
+            if (response && response.data) {
+                setSelectedProgram(response.data.data);
+                setOpenDetail(true);
+            }
+        } catch (error) {
+            console.error("Lỗi khi lấy thông tin chi tiết chương trình đào tạo:", error);
+            setError("Không thể lấy thông tin chi tiết chương trình đào tạo. Vui lòng thử lại.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     // Hàm xử lý xóa chương trình
     const handleDeleteProgram = (id) => {
-        const program = programs.find((p) => p.id === id);
+        const program = programs.find((p) => p.program_id === id);
         setProgramToDelete(program);
         setOpenDeleteModal(true);
     };
 
     // Hàm xác nhận xóa chương trình
-    const confirmDeleteProgram = (id) => {
-        setPrograms((prevPrograms) => {
-            const updatedPrograms = prevPrograms.filter((program) => program.id !== id)
-                .map((program, index) => ({ ...program, stt: index + 1 }));
-            return updatedPrograms;
-        });
-        setOpenDeleteModal(false);
-        setProgramToDelete(null);
+    const confirmDeleteProgram = async (id) => {
+        try {
+            setLoading(true);
+            const response = await deleteProgram(id);
+            if (response) {
+                setMessage("Xóa chương trình đào tạo thành công!");
+                fetchPrograms(); // Tải lại danh sách chương trình sau khi xóa thành công
+            }
+        } catch (error) {
+            console.error("Lỗi khi xóa chương trình đào tạo:", error);
+            setError("Không thể xóa chương trình đào tạo. Vui lòng thử lại.");
+        } finally {
+            setLoading(false);
+            setOpenDeleteModal(false);
+            setProgramToDelete(null);
+        }
     };
 
     // Hàm đóng modal chi tiết
@@ -233,12 +200,12 @@ const Program = () => {
     // Lọc danh sách chương trình dựa trên từ khóa tìm kiếm và trạng thái
     const filteredPrograms = programs.filter((program) => {
         const matchesSearchTerm =
-            program.maChuongTrinh.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            program.tenChuongTrinh.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            program.thoiGianDaoTao.toLowerCase().includes(searchTerm.toLowerCase());
+            program.program_id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            program.program_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            program.training_duration?.toString().toLowerCase().includes(searchTerm.toLowerCase());
 
         const matchesStatus = selectedStatus
-            ? program.trangThai === selectedStatus
+            ? program.status === selectedStatus
             : true;
 
         return matchesSearchTerm && matchesStatus;
@@ -329,6 +296,8 @@ const Program = () => {
                                     handleViewProgram={handleViewProgram}
                                     handleEditProgram={handleEditProgram}
                                     handleDeleteProgram={handleDeleteProgram}
+                                    loading={loading}
+                                    error={error}
                                 />
                                 <TablePagination
                                     component="div"
@@ -354,12 +323,17 @@ const Program = () => {
                 onClose={handleCloseAddModal}
                 onAddProgram={handleAddNewProgram}
                 existingPrograms={programs}
+                error={error}
+                loading={loading}
+                message={message}
             />
             <EditProgramModal
                 open={openEditModal}
                 onClose={handleCloseEditModal}
                 program={editedProgram}
                 onSave={handleSaveEditedProgram}
+                error={error}
+                loading={loading}
             />
             <DeleteProgramModal
                 open={openDeleteModal}
