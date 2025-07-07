@@ -6,10 +6,9 @@ import {
     createStudentController,
     updateStudentController,
     deleteStudentController,
-    importStudentsController,
-    downloadTemplateController
+    importStudentsFromJSONController,
+    downloadTemplateController,
 } from '../controllers/studentController.js';
-import { uploadExcel } from '../middleware/excelMiddleware';
 
 const studentRoutes = express.Router();
 
@@ -20,6 +19,6 @@ studentRoutes.put('/update/:id', authenticateAndAuthorize(['admin', 'training_of
 studentRoutes.delete('/delete/:id', authenticateAndAuthorize(['admin', 'training_officer']), deleteStudentController);
 
 // Import Excel routes
-studentRoutes.post('/import', authenticateAndAuthorize(['admin', 'training_officer']), uploadExcel, importStudentsController);
+studentRoutes.post('/importJson', authenticateAndAuthorize(['admin', 'training_officer']), importStudentsFromJSONController);
 studentRoutes.get('/template/download', downloadTemplateController);
 export default studentRoutes;

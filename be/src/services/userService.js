@@ -1,4 +1,4 @@
-import { Student, Lecturer, Admin, TrainingOfficer } from '../models/index.js';
+import {Student, Lecturer, Admin, TrainingOfficer} from '../models/User.js';
 
 export const getAllUsers = async () => {
     try {

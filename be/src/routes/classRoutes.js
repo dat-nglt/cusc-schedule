@@ -34,7 +34,7 @@ classRoutes.delete('/delete/:class_id', authenticateAndAuthorize(['admin', 'trai
 classRoutes.get('/list', authenticateAndAuthorize(['admin', 'training_officer']), listClassesController);
 
 // Import Excel routes
-classRoutes.post('/import', authenticateAndAuthorize(['admin', 'training_officer']), uploadExcel, importClassesController);
+// classRoutes.post('/import', authenticateAndAuthorize(['admin', 'training_officer']), uploadExcel, importClassesController);
 classRoutes.post('/importJson', authenticateAndAuthorize(['admin', 'training_officer']), importClassesFromJsonController);
 classRoutes.get('/template/download', authenticateAndAuthorize(['admin', 'training_officer']), downloadTemplateController);
 

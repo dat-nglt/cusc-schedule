@@ -1,6 +1,5 @@
-import db from "../models";
+import { Student } from "../models/User.js";
 import ExcelUtils from "../utils/ExcelUtils.js";
-const { Student } = db;
 
 // get all students
 export const getAllStudents = async () => {
@@ -17,6 +16,9 @@ export const getAllStudents = async () => {
 export const getStudentById = async (id) => {
     try {
         const student = await Student.findByPk(id);
+        if (!student) {
+            throw new Error(`Student with id ${id} not found`);
+        }
         return student;
     } catch (error) {
         console.error(`Error getting Student with id ${id}:`, error);
@@ -65,18 +67,12 @@ export const deleteStudent = async (id) => {
     }
 };
 
-// Import students from Excel file
-export const importstudentsFromExcel = async (fileBuffer) => {
+//import student from JSON data (preview feature)
+export const importstudentsFromJSON = async (studentsData) => {
     try {
-        // Đọc file Excel từ buffer
-        const rawData = ExcelUtils.readExcelToJSON(fileBuffer);
-
-        if (!rawData || rawData.length === 0) {
-            throw new Error("File Excel không có dữ liệu hoặc định dạng không đúng");
+        if (!studentsData || !Array.isArray(studentsData)) {
+            throw new Error("Dữ liệu giảng viên không hợp lệ");
         }
-
-        // Chuyển đổi cột tiếng Việt sang tiếng Anh
-        const studentsData = ExcelUtils.convertVietnameseColumnsToEnglish(rawData);
 
         const results = {
             success: [],
@@ -84,67 +80,77 @@ export const importstudentsFromExcel = async (fileBuffer) => {
             total: studentsData.length
         };
 
-        // Validate và tạo Student cho từng row
+        //validate and create student for each item
         for (let i = 0; i < studentsData.length; i++) {
-            const row = studentsData[i];
-            const rowIndex = i + 2; // Bắt đầu từ row 2 (sau header)
+            const studentData = studentsData[i];
+            const index = i + 1;
 
             try {
-                // Validate required fields
-                if (!row.student_id || !row.name) {
+                //validate required fields
+                if (!studentData.student_id) {
                     results.errors.push({
-                        row: rowIndex,
-                        student_id: row.student_id || 'N/A',
-                        error: 'Mã học viên và Họ tên là bắt buộc'
+                        index: index,
+                        student_id: studentData.student_id || 'N/A',
+                        error: 'Mã học viên là bắt buộc'
+                    });
+                    continue;
+                }
+                if (!studentData.email) {
+                    results.errors.push({
+                        index: index,
+                        student_id: studentData.student_id || 'N/A',
+                        error: 'email là bắt buộc'
                     });
                     continue;
                 }
 
-                // Format data theo structure của database
-                const studentData = {
-                    student_id: ExcelUtils.cleanString(row.student_id),
-                    name: ExcelUtils.cleanString(row.name),
-                    email: ExcelUtils.cleanString(row.email),
-                    day_of_birth: ExcelUtils.formatExcelDate(row.day_of_birth),
-                    gender: ExcelUtils.cleanString(row.gender),
-                    address: ExcelUtils.cleanString(row.address),
-                    phone_number: ExcelUtils.cleanString(row.phone_number),
-                    class: ExcelUtils.cleanString(row.class),
-                    admission_year: ExcelUtils.cleanString(row.admission_year),
-                    gpa: ExcelUtils.cleanString(row.gpa),
-                    status: ExcelUtils.cleanString(row.status)
+                // clean and format data (chuyển sang kiểu chuỗi và xóa khoảng cách thừa ở đầu chuỗi và cuối chuỗi)
+                const cleanedData = {
+                    student_id: studentData.student_id.toString().trim(),
+                    name: studentData.name.toString().trim(),
+                    email: studentData.email.toString().trim(),
+                    day_of_birth: studentData.day_of_birth || null,
+                    gender: studentData.gender ? studentData.gender.toString().trim() : null,
+                    address: studentData.address ? studentData.address.toString().trim() : null,
+                    phone_number: studentData.phone_number ? studentData.phone_number.toString().trim() : null,
+                    class: studentData.class ? studentData.class.toString().trim() : null,
+                    admission_year: studentData.admission_year || null,
+                    gpa: studentData.gpa ? parseFloat(studentData.gpa) : null,
+                    status: studentData.status || 'Đang học'
                 };
 
                 // Validate email format nếu có
-                if (studentData.email && !ExcelUtils.isValidEmail(studentData.email)) {
+                if (cleanedData.email && !ExcelUtils.isValidEmail(cleanedData.email)) {
                     results.errors.push({
-                        row: rowIndex,
-                        student_id: studentData.student_id,
+                        index: index,
+                        student_id: cleanedData.student_id,
                         error: 'Email không đúng định dạng'
                     });
                     continue;
                 }
 
-                // Kiểm tra Student_id đã tồn tại chưa
-                const existingStudent = await Student.findByPk(studentData.student_id);
+                // Kiểm tra student_id đã tồn tại chưa
+                const existingStudent = await Student.findOne({
+                    where: { student_id: cleanedData.student_id }
+                });
                 if (existingStudent) {
                     results.errors.push({
-                        row: rowIndex,
-                        student_id: studentData.student_id,
+                        index: index,
+                        student_id: cleanedData.student_id,
                         error: 'Mã học viên đã tồn tại'
                     });
                     continue;
                 }
 
                 // Kiểm tra email đã tồn tại chưa (nếu có)
-                if (studentData.email) {
+                if (cleanedData.email) {
                     const existingEmail = await Student.findOne({
-                        where: { email: studentData.email }
+                        where: { email: cleanedData.email }
                     });
                     if (existingEmail) {
                         results.errors.push({
-                            row: rowIndex,
-                            student_id: studentData.student_id,
+                            index: index,
+                            student_id: cleanedData.student_id,
                             error: 'Email đã tồn tại'
                         });
                         continue;
@@ -152,38 +158,23 @@ export const importstudentsFromExcel = async (fileBuffer) => {
                 }
 
                 // Tạo Student mới
-                const newStudent = await Student.create(studentData);
-                results.success.push({
-                    row: rowIndex,
-                    student_id: newStudent.student_id,
-                    name: newStudent.name
-                });
+                const newStudent = await Student.create(cleanedData);
+                results.success.push(newStudent);
 
             } catch (error) {
                 results.errors.push({
-                    row: rowIndex,
-                    student_id: row.student_id || 'N/A',
+                    index: index,
+                    student_id: studentData.student_id || 'N/A',
                     error: error.message || 'Lỗi không xác định'
                 });
             }
         }
-
         return results;
     } catch (error) {
-        console.error("Error importing students from Excel:", error);
+        console.error("Error importing students from JSON:", error);
         throw error;
     }
 };
 
-// Validate Excel template structure
-export const validateExcelTemplate = (fileBuffer) => {
-    const requiredColumns = ['Mã học viên', 'Họ tên'];
-    const optionalColumns = ['Email', 'Ngày sinh', 'Giới tính', 'Địa chỉ', 'Số điện thoại', 'Mã lớp', 'Năm nhập học', 'Điểm', 'Trạng thái'];
-    const validation = ExcelUtils.validateTemplate(fileBuffer, requiredColumns, optionalColumns);
 
-    if (!validation.valid) {
-        throw new Error(validation.error);
-    }
 
-    return validation;
-};

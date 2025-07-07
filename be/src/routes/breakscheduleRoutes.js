@@ -34,7 +34,7 @@ breakscheduleRoutes.delete('/delete/:break_id', authenticateAndAuthorize(['admin
 breakscheduleRoutes.get('', authenticateAndAuthorize(['admin', 'training_officer']), listBreakSchedulesController);
 
 // Import Excel routes
-breakscheduleRoutes.post('/import', authenticateAndAuthorize(['admin', 'training_officer']), uploadExcel, importBreakSchedulesController);
+// breakscheduleRoutes.post('/import', authenticateAndAuthorize(['admin', 'training_officer']), uploadExcel, importBreakSchedulesController);
 breakscheduleRoutes.post('/importJson', authenticateAndAuthorize(['admin', 'training_officer']), importBreakSchedulesFromJsonController);
 breakscheduleRoutes.get('/template/download', authenticateAndAuthorize(['admin', 'training_officer']), downloadBreakScheduleTemplateController);
 

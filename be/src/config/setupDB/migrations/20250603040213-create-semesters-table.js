@@ -35,12 +35,12 @@ module.exports = {
         defaultValue: Sequelize.NOW,
         allowNull: false
       },
-      training_program_id: {
+      program_id: {
         type: Sequelize.STRING(30),
         allowNull: true,
         references: {
-          model: 'training_programs',
-          key: 'training_program_id'
+          model: 'programs',
+          key: 'program_id'
         },
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL'

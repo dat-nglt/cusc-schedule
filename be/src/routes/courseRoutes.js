@@ -11,7 +11,7 @@ import {
   importCoursesFromJsonController,
   downloadTemplateController,
 } from '../controllers/courseController.js';
-import { uploadExcel } from '../middleware/excelMiddleware';
+
 
 const courseRoutes = express.Router();
 
@@ -34,7 +34,7 @@ courseRoutes.delete('/delete/:course_id', authenticateAndAuthorize(['admin', 'tr
 courseRoutes.get('', authenticateAndAuthorize(['admin', 'training_officer']), listCoursesController);
 
 // Import Excel routes
-courseRoutes.post('/import', authenticateAndAuthorize(['admin', 'training_officer']), uploadExcel, importCoursesController);
+// courseRoutes.post('/import', authenticateAndAuthorize(['admin', 'training_officer']), uploadExcel, importCoursesController);
 courseRoutes.post('/importJson', authenticateAndAuthorize(['admin', 'training_officer']), importCoursesFromJsonController);
 courseRoutes.get('/template/download', authenticateAndAuthorize(['admin', 'training_officer']), downloadTemplateController);
 

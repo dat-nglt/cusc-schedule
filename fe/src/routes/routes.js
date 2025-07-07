@@ -10,11 +10,7 @@ const routes = [
     exact: true,
     title: "Trình điều khiển",
     isPrivate: false,
-<<<<<<< HEAD
-    layout: ScheduleLayout,
-=======
     layout: AdminLayout,
->>>>>>> origin/chuong
   },
   {
     path: "/login",
@@ -123,6 +119,14 @@ const routes = [
     component: "Lecturer",
     exact: true,
     title: "Quản lý Giảng viên",
+    isPrivate: false,
+    layout: AdminLayout,
+  },
+  {
+    path: "/semesters",
+    component: "Semester",
+    exact: true,
+    title: "Quản lý học kỳ",
     isPrivate: false,
     layout: AdminLayout,
   },
