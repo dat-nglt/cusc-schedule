@@ -29,26 +29,27 @@ const sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASSWORD, {
 const connectDB = async (models) => {
   try {
     await sequelize.authenticate();
+    
     logger.info("✅ PostgreSQL successfully connected to Sequelize."); // Changed from console.log
     logger.info("✅ Database connection successfully.");
 
     // ĐỒNG BỘ CƠ SỞ DỮ LIỆU
-    // if (process.env.NODE_ENV === "development") {
-    //   if (models && models.sequelize) {
-    //     // Ensure models and sequelize instance are available
-    //     await models.sequelize.sync({ alter: true }); // Use models.sequelize from the passed models object
-    //     logger.info("✅ Database schema synchronized (Development Mode)."); // Changed from console.log
-    //   } else {
-    //     logger.warn(
-    //       // Changed from console.warn
-    //       "⚠️ Models object or sequelize instance not found for synchronization."
-    //     );
-    //   }
-    // }
+    if (process.env.NODE_ENV === "development") {
+      if (models && models.sequelize) {
+        // Ensure models and sequelize instance are available
+        await models.sequelize.sync({ alter: true }); // Use models.sequelize from the passed models object
+        logger.info("✅ Database schema synchronized (Development Mode)."); // Changed from console.log
+      } else {
+        logger.warn(
+          // Changed from console.warn
+          "⚠️ Models object or sequelize instance not found for synchronization."
+        );
+      }
+    }
   } catch (error) {
     logger.error(
       // Changed from console.error
-      "❌ Database connection or synchronization error:",
+      // "❌ Database connection or synchronization error:",
       error.message
     );
     if (process.env.NODE_ENV === "development") {

@@ -1,19 +1,7 @@
-import { DataTypes, Model } from 'sequelize';
-import { sequelize } from '../config/connectDB';
+import { DataTypes } from 'sequelize';
 
-class Classes extends Model {
-  static associate(models) {
-    // Định nghĩa mối quan hệ với bảng Course
-    Classes.belongsTo(models.Course, {
-      foreignKey: 'course_id',
-      onUpdate: 'CASCADE',
-      onDelete: 'SET NULL',
-    });
-  }
-}
-
-Classes.init(
-  {
+const Classes = (sequelize) => {
+  const ClassesModel = sequelize.define('Classes', {
     class_id: {
       type: DataTypes.STRING(30),
       primaryKey: true,
@@ -45,15 +33,24 @@ Classes.init(
       defaultValue: DataTypes.NOW,
       allowNull: false,
     },
-  },
-  {
-    sequelize,
-    modelName: 'Classes',
+  }, {
     tableName: 'classes',
     timestamps: true,
     createdAt: 'created_at',
     updatedAt: 'updated_at',
-  }
-);
+  });
+
+  // Define associations within the factory function or in a separate file
+  // For simplicity, I'm including it here.
+  ClassesModel.associate = (models) => {
+    ClassesModel.belongsTo(models.Course, {
+      foreignKey: 'course_id',
+      onUpdate: 'CASCADE',
+      onDelete: 'SET NULL',
+    });
+  };
+
+  return ClassesModel;
+};
 
 export default Classes;
