@@ -1,45 +1,97 @@
+/**
+ * Chuẩn hóa cấu trúc phản hồi API cho tất cả các request.
+ * Tùy thuộc vào statusCode, nó sẽ tự động đặt trạng thái là 'success' hoặc 'error'.
+ *
+ * @param {Object} res - Đối tượng Response của Express.
+ * @param {number} statusCode - Mã trạng thái HTTP của phản hồi (ví dụ: 200, 201, 400, 404, 500).
+ * @param {any} [data] - Dữ liệu trả về cho client. Có thể là một đối tượng, mảng, chuỗi, hoặc null.
+ * @param {string} [message] - Tin nhắn mô tả kết quả của request.
+ * @returns {Object} Đối tượng response của Express với cấu trúc JSON đã được chuẩn hóa.
+ */
 export const APIResponse = (res, statusCode, data, message) => {
-  const response = {
-    status: statusCode >= 200 && statusCode < 300 ? 'success' : 'error'
-  };
+    const response = {
+        // Xác định trạng thái dựa trên mã HTTP: 'success' nếu 2xx, ngược lại là 'error'.
+        status: statusCode >= 200 && statusCode < 300 ? 'success' : 'error'
+    };
 
-  if (typeof data === 'string') {
-    response.message = data;
-    if (message) response.data = message;
-  } else {
-    if (message) response.message = message;
-    if (data) response.data = data;
-  }
+    // Logic để xử lý linh hoạt tham số 'data' và 'message'.
+    // Nếu 'data' là một chuỗi, nó được hiểu là tin nhắn chính, và 'message' (nếu có) là dữ liệu bổ sung.
+    // Điều này có thể gây nhầm lẫn. Cấu trúc dưới đây giả định 'data' luôn là dữ liệu
+    // và 'message' luôn là tin nhắn.
+    if (message) { // Nếu có tin nhắn, gán nó vào thuộc tính message
+        response.message = message;
+    } else if (typeof data === 'string') { // Nếu không có message, và data là string, coi data là message
+        response.message = data;
+    } else { // Trường hợp còn lại, không có message cụ thể
+        response.message = statusCode >= 200 && statusCode < 300 ? 'Thao tác thành công.' : 'Đã xảy ra lỗi.';
+    }
 
-  return res.status(statusCode).json(response);
+    if (data && typeof data !== 'string') { // Nếu 'data' tồn tại và không phải là chuỗi, gán nó vào thuộc tính data
+        response.data = data;
+    }
+
+
+    // Gửi phản hồi về client với mã trạng thái và cấu trúc JSON đã xây dựng.
+    return res.status(statusCode).json(response);
 };
 
-export const successResponse = (res, data, message = 'Success') => {
-  return res.status(200).json({
-    status: 'success',
-    message,
-    data,
-  });
+/**
+ * Tạo một phản hồi thành công (HTTP 200 OK).
+ *
+ * @param {Object} res - Đối tượng Response của Express.
+ * @param {any} data - Dữ liệu trả về cho client.
+ * @param {string} [message='Thành công'] - Tin nhắn mô tả thành công.
+ * @returns {Object} Đối tượng response của Express.
+ */
+export const successResponse = (res, data, message = 'Thành công') => {
+    return res.status(200).json({
+        status: 'success',
+        message,
+        data,
+    });
 };
 
-export const errorResponse = (res, message = 'Error', statusCode = 400) => {
-  return res.status(statusCode).json({
-    status: 'error',
-    message,
-  });
+/**
+ * Tạo một phản hồi lỗi chung (mặc định HTTP 400 Bad Request).
+ *
+ * @param {Object} res - Đối tượng Response của Express.
+ * @param {string} [message='Đã xảy ra lỗi'] - Tin nhắn mô tả lỗi.
+ * @param {number} [statusCode=400] - Mã trạng thái HTTP của lỗi.
+ * @returns {Object} Đối tượng response của Express.
+ */
+export const errorResponse = (res, message = 'Đã xảy ra lỗi', statusCode = 400) => {
+    return res.status(statusCode).json({
+        status: 'error',
+        message,
+    });
 };
 
-export const notFoundResponse = (res, message = 'Resource not found') => {
-  return res.status(404).json({
-    status: 'error',
-    message,
-  });
+/**
+ * Tạo một phản hồi lỗi khi không tìm thấy tài nguyên (HTTP 404 Not Found).
+ *
+ * @param {Object} res - Đối tượng Response của Express.
+ * @param {string} [message='Không tìm thấy tài nguyên'] - Tin nhắn mô tả lỗi không tìm thấy.
+ * @returns {Object} Đối tượng response của Express.
+ */
+export const notFoundResponse = (res, message = 'Không tìm thấy tài nguyên') => {
+    return res.status(404).json({
+        status: 'error',
+        message,
+    });
 };
 
+/**
+ * Tạo một phản hồi lỗi xác thực (HTTP 422 Unprocessable Entity).
+ * Thường dùng khi dữ liệu đầu vào không hợp lệ (validation failed).
+ *
+ * @param {Object} res - Đối tượng Response của Express.
+ * @param {Object|Array} errors - Chi tiết về các lỗi xác thực.
+ * @returns {Object} Đối tượng response của Express.
+ */
 export const validationErrorResponse = (res, errors) => {
-  return res.status(422).json({
-    status: 'error',
-    message: 'Validation Error',
-    errors,
-  });
+    return res.status(422).json({
+        status: 'error',
+        message: 'Lỗi xác thực dữ liệu đầu vào.',
+        errors,
+    });
 };
