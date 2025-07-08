@@ -1,4 +1,4 @@
-import { Lecturer } from "../models/User.js";
+import { Lecturer } from "../models/index.js";
 import ExcelUtils from "../utils/ExcelUtils.js";
 
 

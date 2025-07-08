@@ -1,4 +1,4 @@
-import { Student } from "../models/User.js";
+import { Student } from "../models/index.js";
 import ExcelUtils from "../utils/ExcelUtils.js";
 
 // get all students

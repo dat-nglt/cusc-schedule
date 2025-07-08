@@ -1,56 +1,52 @@
 import { DataTypes } from 'sequelize';
 
-const Subject = (sequelize) => {
-  const SubjectModel = sequelize.define('Subject', {
-    subject_id: {
+const Semester = (sequelize) => {
+  const SemesterModel = sequelize.define('Semester', {
+    semester_id: {
       type: DataTypes.STRING(30),
       primaryKey: true,
       allowNull: false
     },
-    subject_name: {
+    semester_name: {
       type: DataTypes.STRING(50),
       allowNull: true
     },
-    credit: {
-      type: DataTypes.SMALLINT,
+    start_date: {
+      type: DataTypes.DATEONLY,
       allowNull: true
     },
-    theory_hours: {
-      type: DataTypes.SMALLINT,
-      allowNull: true
-    },
-    practice_hours: {
-      type: DataTypes.SMALLINT,
+    end_date: {
+      type: DataTypes.DATEONLY,
       allowNull: true
     },
     status: {
       type: DataTypes.STRING(30),
       allowNull: true
     },
-    semester_id: {
+    program_id: {
       type: DataTypes.STRING(30),
       allowNull: true,
       // References are typically defined in associations, not here in define.
       // We'll move this to the associate method.
     }
   }, {
-    tableName: 'subjects',
+    tableName: 'semesters',
     timestamps: true,
     createdAt: 'created_at',
-    updatedAt: 'updated_at'
+    updatedAt: 'updated_at',
   });
 
   // Define associations
-  SubjectModel.associate = (models) => {
-    // A Subject belongs to a Semester
-    SubjectModel.belongsTo(models.Semester, {
-      foreignKey: 'semester_id',
+  SemesterModel.associate = (models) => {
+    // A Semester belongs to a Program
+    SemesterModel.belongsTo(models.Program, {
+      foreignKey: 'program_id',
       onUpdate: 'CASCADE',
       onDelete: 'SET NULL',
     });
   };
 
-  return SubjectModel;
+  return SemesterModel;
 };
 
-export default Subject;
+export default Semester;
