@@ -24,14 +24,14 @@ import EditSubjectModal from './EditSubjectModal';
 import DeleteSubjectModal from './DeleteSubjectModal';
 import useResponsive from '../../hooks/useResponsive';
 import SubjectTable from './SubjectTable';
-import { getAllSubjects } from '../../api/subjectAPI';
-
+import { getAllSubjects, getSubjectById, createSubject, updateSubject, deleteSubject } from '../../api/subjectAPI';
+import { getAllSemesters } from '../../api/semesterAPI';
 const Subject = () => {
     const { isSmallScreen, isMediumScreen } = useResponsive();
 
     // Dữ liệu mẫu cho danh sách học phần
     const [subjects, setSubjects] = useState([]);
-
+    const [semesters, setSemesters] = useState([]);
     // State cho phân trang, tìm kiếm, lọc theo trạng thái và modal
     const [page, setPage] = useState(0);
     const [rowsPerPage] = useState(8);
@@ -46,10 +46,25 @@ const Subject = () => {
     const [subjectToDelete, setSubjectToDelete] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [message, setMessage] = useState('');
+
     // Danh sách trạng thái để lọc
-    const statuses = ['Đang hoạt động', 'Tạm dừng', 'Ngừng hoạt động'];
+    const statuses = ['Hoạt động', 'Tạm dừng', 'Ngừng hoạt động'];
 
-
+    // Hàm lấy danh sách học kỳ từ API
+    const fetchSemesters = async () => {
+        try {
+            const response = await getAllSemesters();
+            if (response && response.data) {
+                setSemesters(response.data.data);
+            } else {
+                setError('Không có dữ liệu học kỳ');
+            }
+        } catch (error) {
+            console.error('Lỗi khi lấy danh sách học kỳ:', error);
+            setError('Không thể lấy danh sách học kỳ. Vui lòng thử lại sau.');
+        }
+    };
 
     // Hàm lấy danh sách học phần từ API
     const fetchSubjects = async () => {
@@ -73,6 +88,7 @@ const Subject = () => {
 
     useEffect(() => {
         fetchSubjects();
+        fetchSemesters();
     }, []);
 
 
@@ -87,18 +103,37 @@ const Subject = () => {
     };
 
     // Hàm thêm học phần mới
-    const handleAddNewSubject = (newSubject) => {
-        setSubjects((prevSubjects) => {
-            const updatedSubjects = [...prevSubjects, { ...newSubject }];
-            return updatedSubjects;
-        });
+    const handleAddNewSubject = async (newSubject) => {
+        try {
+            setLoading(true);
+            const response = await createSubject(newSubject);
+            if (response && response.data) {
+                setMessage("Thêm học phần thành công!");
+                fetchSubjects(); // Tải lại danh sách học phần sau khi thêm thành công
+            }
+        } catch (error) {
+            console.error("Lỗi khi thêm học phần:", error);
+            setError("Không thể thêm học phần. Vui lòng kiểm tra lại thông tin.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     // Hàm xử lý khi nhấn nút chỉnh sửa
-    const handleEditSubject = (id) => {
-        const subjectToEdit = subjects.find((s) => s.id === id);
-        setEditedSubject(subjectToEdit);
-        setOpenEditModal(true);
+    const handleEditSubject = async (id) => {
+        try {
+            setLoading(true);
+            const response = await getSubjectById(id);
+            if (response && response.data) {
+                setEditedSubject(response.data.data);
+                setOpenEditModal(true);
+            }
+        } catch (error) {
+            console.error("Lỗi khi lấy thông tin học phần để chỉnh sửa:", error);
+            setError("Không thể lấy thông tin học phần để chỉnh sửa. Vui lòng thử lại.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     // Hàm đóng modal chỉnh sửa
@@ -108,12 +143,20 @@ const Subject = () => {
     };
 
     // Hàm lưu thay đổi sau khi chỉnh sửa
-    const handleSaveEditedSubject = (updatedSubject) => {
-        setSubjects((prevSubjects) =>
-            prevSubjects.map((subject) =>
-                subject.id === updatedSubject.id ? { ...subject, ...updatedSubject } : subject
-            )
-        );
+    const handleSaveEditedSubject = async (updatedSubject) => {
+        try {
+            setLoading(true);
+            const response = await updateSubject(updatedSubject.subject_id, updatedSubject);
+            if (response && response.data) {
+                setMessage("Cập nhật học phần thành công!");
+                fetchSubjects(); // Tải lại danh sách học phần sau khi cập nhật thành công
+            }
+        } catch (error) {
+            console.error("Lỗi khi cập nhật học phần:", error);
+            setError("Không thể cập nhật học phần. Vui lòng kiểm tra lại thông tin.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     // Hàm xử lý thay đổi trang
@@ -122,28 +165,46 @@ const Subject = () => {
     };
 
     // Hàm xử lý xem học phần
-    const handleViewSubject = (id) => {
-        const subject = subjects.find((s) => s.id === id);
-        setSelectedSubject(subject);
-        setOpenDetail(true);
+    const handleViewSubject = async (id) => {
+        try {
+            setLoading(true);
+            const response = await getSubjectById(id);
+            if (response && response.data) {
+                setSelectedSubject(response.data.data);
+                setOpenDetail(true);
+            }
+        } catch (error) {
+            console.error("Lỗi khi lấy thông tin chi tiết học phần:", error);
+            setError("Không thể lấy thông tin chi tiết học phần. Vui lòng thử lại.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     // Hàm xử lý xóa học phần
     const handleDeleteSubject = (id) => {
-        const subject = subjects.find((s) => s.id === id);
+        const subject = subjects.find((s) => s.subject_id === id);
         setSubjectToDelete(subject);
         setOpenDeleteModal(true);
     };
 
     // Hàm xác nhận xóa học phần
-    const confirmDeleteSubject = (id) => {
-        setSubjects((prevSubjects) => {
-            const updatedSubjects = prevSubjects.filter((subject) => subject.id !== id)
-                .map((subject, index) => ({ ...subject, stt: index + 1 }));
-            return updatedSubjects;
-        });
-        setOpenDeleteModal(false);
-        setSubjectToDelete(null);
+    const confirmDeleteSubject = async (id) => {
+        try {
+            setLoading(true);
+            const response = await deleteSubject(id);
+            if (response) {
+                setMessage("Xóa học phần thành công!");
+                fetchSubjects(); // Tải lại danh sách học phần sau khi xóa thành công
+            }
+        } catch (error) {
+            console.error("Lỗi khi xóa học phần:", error);
+            setError("Không thể xóa học phần. Vui lòng thử lại.");
+        } finally {
+            setLoading(false);
+            setOpenDeleteModal(false);
+            setSubjectToDelete(null);
+        }
     };
 
     // Hàm đóng modal chi tiết
@@ -161,11 +222,11 @@ const Subject = () => {
     // Lọc danh sách học phần dựa trên từ khóa tìm kiếm và trạng thái
     const filteredSubjects = subjects.filter((subject) => {
         const matchesSearchTerm =
-            subject.maHocPhan.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            subject.tenHocPhan.toLowerCase().includes(searchTerm.toLowerCase());
+            subject.subject_id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            subject.subject_name?.toLowerCase().includes(searchTerm.toLowerCase());
 
         const matchesStatus = selectedStatus
-            ? subject.trangThai === selectedStatus
+            ? subject.status === selectedStatus
             : true;
 
         return matchesSearchTerm && matchesStatus;
@@ -256,6 +317,8 @@ const Subject = () => {
                                     handleViewSubject={handleViewSubject}
                                     handleEditSubject={handleEditSubject}
                                     handleDeleteSubject={handleDeleteSubject}
+                                    loading={loading}
+                                    error={error}
                                 />
                                 <TablePagination
                                     component="div"
@@ -280,12 +343,19 @@ const Subject = () => {
                 open={openAddModal}
                 onClose={handleCloseAddModal}
                 onAddSubject={handleAddNewSubject}
+                existingSubjects={subjects}
+                error={error}
+                loading={loading}
+                message={message}
+                semesters={semesters}
             />
             <EditSubjectModal
                 open={openEditModal}
                 onClose={handleCloseEditModal}
                 subject={editedSubject}
                 onSave={handleSaveEditedSubject}
+                error={error}
+                loading={loading}
             />
             <DeleteSubjectModal
                 open={openDeleteModal}

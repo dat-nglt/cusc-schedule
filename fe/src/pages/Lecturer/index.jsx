@@ -171,7 +171,6 @@ const Lecturer = () => {
             setLoading(true);
             const response = await deleteLecturer(id);
             if (response) {
-                setMessage("Xóa giảng viên thành công!");
                 fetchLecturers(); // Tải lại danh sách giảng viên sau khi xóa thành công
             }
         } catch (error) {
@@ -195,6 +194,7 @@ const Lecturer = () => {
         setOpenDeleteModal(false);
         setLecturerToDelete(null);
     };
+
 
     // Lọc danh sách giảng viên dựa trên từ khóa tìm kiếm và trạng thái
     const filteredLecturers = lecturers.filter((lecturer) => {
@@ -342,6 +342,7 @@ const Lecturer = () => {
                 onDelete={confirmDeleteLecturer}
                 lecturer={lecturerToDelete}
             />
+
         </Box>
     );
 };

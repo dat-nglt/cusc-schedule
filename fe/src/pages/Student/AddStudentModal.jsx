@@ -81,7 +81,22 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
             setLocalError(`Mã học viên "${newStudent.student_id}" đã tồn tại!`);
             return;
         }
-
+        // kiểm tra trùng email
+        const isEmailDuplicate = existingStudents.some(
+            (student) => student.email === newStudent.email
+        );
+        if (isEmailDuplicate) {
+            setLocalError(`Email "${newStudent.email}" đã tồn tại!`);
+            return;
+        }
+        // kiểm tra trùng số điện thoại
+        const isPhoneDuplicate = existingStudents.some(
+            (student) => student.phone_number === newStudent.phone_number
+        );
+        if (isPhoneDuplicate) {
+            setLocalError(`Số điện thoại "${newStudent.phone_number}" đã tồn tại!`);
+            return;
+        }
         // Kiểm tra ngày hợp lệ
         const birthDate = new Date(newStudent.day_of_birth);
         const today = new Date();

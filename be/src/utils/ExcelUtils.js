@@ -329,8 +329,8 @@ export function createSemesterTemplate() {
 export function createSubjectTemplate() {
   const templateData = [
     {
-      "Mã môn học": "MH001",
-      "Tên môn học": "Lập trình cơ bản",
+      "Mã học phần": "MH001",
+      "Tên học phần": "Lập trình cơ bản",
       "Số tín chỉ": 3,
       "Số giờ lý thuyết": 30,
       "Số giờ thực hành": 15,
@@ -338,8 +338,8 @@ export function createSubjectTemplate() {
       "Mã học kỳ": "HK2024_1",
     },
     {
-      "Mã môn học": "MH002",
-      "Tên môn học": "Cơ sở dữ liệu",
+      "Mã học phần": "MH002",
+      "Tên học phần": "Cơ sở dữ liệu",
       "Số tín chỉ": 4,
       "Số giờ lý thuyết": 45,
       "Số giờ thực hành": 15,
@@ -398,8 +398,8 @@ export function getVietnameseColumnMapping() {
     "Mã chương trình đào tạo": "training_program_id",
 
     // Subject specific columns
-    "Mã môn học": "subject_id",
-    "Tên môn học": "subject_name",
+    "Mã học phần": "subject_id",
+    "Tên học phần": "subject_name",
     "Số tín chỉ": "credit",
     "Số giờ lý thuyết": "theory_hours",
     "Số giờ thực hành": "practice_hours",
