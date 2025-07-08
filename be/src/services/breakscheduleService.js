@@ -2,39 +2,72 @@ import BreakSchedule from "../models/BreakSchedule.js";
 import { Op } from 'sequelize'; // Đảm bảo import Op nếu chưa có
 import ExcelUtils from "../utils/ExcelUtils.js";
 
+/**
+ * Lấy tất cả các lịch nghỉ.
+ * @returns {Promise<Array>} Danh sách các lịch nghỉ.
+ * @throws {Error} Nếu có lỗi khi lấy dữ liệu.
+ */
 export const getAllBreakSchedules = async () => {
   try {
     const breakSchedules = await BreakSchedule.findAll();
     return breakSchedules;
   } catch (error) {
-    throw new Error('Error fetching break schedules: ' + error.message);
+    throw new Error('Lỗi khi lấy danh sách lịch nghỉ: ' + error.message);
   }
 };
 
-// Get one break schedule by ID
+/**
+ * Lấy một lịch nghỉ theo ID.
+ * @param {string} break_id - ID của lịch nghỉ.
+ * @returns {Promise<Object|null>} Lịch nghỉ tìm thấy hoặc null nếu không tìm thấy.
+ */
 export const getBreakScheduleById = async (break_id) => {
   return await BreakSchedule.findByPk(break_id);
 };
 
-// Create a new break schedule
+/**
+ * Tạo một lịch nghỉ mới.
+ * @param {Object} data - Dữ liệu của lịch nghỉ mới.
+ * @returns {Promise<Object>} Lịch nghỉ đã được tạo.
+ */
 export const createBreakSchedule = async (data) => {
   return await BreakSchedule.create(data);
 };
 
-// Update a break schedule
+/**
+ * Cập nhật một lịch nghỉ.
+ * @param {string} break_id - ID của lịch nghỉ cần cập nhật.
+ * @param {Object} data - Dữ liệu cập nhật cho lịch nghỉ.
+ * @returns {Promise<Object>} Lịch nghỉ đã được cập nhật.
+ * @throws {Error} Nếu không tìm thấy lịch nghỉ.
+ */
 export const updateBreakSchedule = async (break_id, data) => {
   const breakSchedule = await BreakSchedule.findByPk(break_id);
-  if (!breakSchedule) throw new Error("Break schedule not found");
+  if (!breakSchedule) throw new Error("Không tìm thấy lịch nghỉ");
   return await breakSchedule.update(data);
 };
 
-// Delete a break schedule
+/**
+ * Xóa một lịch nghỉ.
+ * @param {string} break_id - ID của lịch nghỉ cần xóa.
+ * @returns {Promise<number>} Số hàng đã bị xóa.
+ * @throws {Error} Nếu không tìm thấy lịch nghỉ.
+ */
 export const deleteBreakSchedule = async (break_id) => {
   const breakSchedule = await BreakSchedule.findOne({ where: { break_id } });
-  if (!breakSchedule) throw new Error("Break schedule not found");
+  if (!breakSchedule) throw new Error("Không tìm thấy lịch nghỉ");
   return await breakSchedule.destroy();
 };
 
+/**
+ * Liệt kê các lịch nghỉ với các bộ lọc tùy chọn.
+ * @param {Object} filters - Các tiêu chí lọc.
+ * @param {string} [filters.break_id] - Lọc theo ID lịch nghỉ (tìm kiếm gần đúng).
+ * @param {string} [filters.break_type] - Lọc theo loại lịch nghỉ (tìm kiếm gần đúng).
+ * @param {string} [filters.break_start_date] - Lọc theo ngày bắt đầu (định dạng YYYY-MM-DD).
+ * @returns {Promise<Array>} Danh sách các lịch nghỉ phù hợp với bộ lọc.
+ * @throws {Error} Nếu có lỗi khi liệt kê dữ liệu.
+ */
 export const listBreakSchedules = async (filters) => {
   try {
     const whereClause = {};
@@ -66,10 +99,16 @@ export const listBreakSchedules = async (filters) => {
 
     return breakSchedules;
   } catch (error) {
-    throw new Error('Error listing break schedules: ' + error.message);
+    throw new Error('Lỗi khi liệt kê lịch nghỉ: ' + error.message);
   }
 };
 
+/**
+ * Nhập lịch nghỉ từ dữ liệu file Excel.
+ * @param {Buffer} fileBuffer - Buffer của file Excel.
+ * @returns {Promise<Object>} Kết quả nhập khẩu bao gồm danh sách thành công và lỗi.
+ * @throws {Error} Nếu file Excel không có dữ liệu hoặc định dạng không đúng, hoặc lỗi trong quá trình nhập.
+ */
 export const importBreakSchedulesFromExcel = async (fileBuffer) => {
   try {
     // Đọc file Excel từ buffer
@@ -91,10 +130,10 @@ export const importBreakSchedulesFromExcel = async (fileBuffer) => {
     // Validate và tạo break schedule cho từng row
     for (let i = 0; i < breakSchedulesData.length; i++) {
       const row = breakSchedulesData[i];
-      const rowIndex = i + 2; // Bắt đầu từ row 2 (sau header)
+      const rowIndex = i + 2; // Bắt đầu từ hàng 2 (sau tiêu đề)
 
       try {
-        // Validate required fields
+        // Validate các trường bắt buộc
         if (!row.break_id || !row.break_type || !row.break_start_date || !row.break_end_date) {
           results.errors.push({
             row: rowIndex,
@@ -104,7 +143,7 @@ export const importBreakSchedulesFromExcel = async (fileBuffer) => {
           continue;
         }
 
-        // Format data theo structure của database
+        // Định dạng dữ liệu theo cấu trúc của database
         const breakScheduleData = {
           break_id: ExcelUtils.cleanString(row.break_id),
           break_type: ExcelUtils.cleanString(row.break_type),
@@ -117,12 +156,12 @@ export const importBreakSchedulesFromExcel = async (fileBuffer) => {
           updated_at: new Date().toISOString(),
         };
 
-        // Validate date range
+        // Validate khoảng ngày
         const startDate = new Date(breakScheduleData.break_start_date);
         const endDate = new Date(breakScheduleData.break_end_date);
         const today = new Date();
         const maxFutureDate = new Date(today);
-        maxFutureDate.setFullYear(today.getFullYear() + 5);
+        maxFutureDate.setFullYear(today.getFullYear() + 5); // Giới hạn 5 năm trong tương lai
 
         if (isNaN(startDate) || isNaN(endDate)) {
           results.errors.push({
@@ -162,7 +201,7 @@ export const importBreakSchedulesFromExcel = async (fileBuffer) => {
           continue;
         }
 
-        // Tạo break schedule mới
+        // Tạo lịch nghỉ mới
         const newBreakSchedule = await BreakSchedule.create(breakScheduleData);
         results.success.push({
           row: rowIndex,
@@ -181,12 +220,17 @@ export const importBreakSchedulesFromExcel = async (fileBuffer) => {
 
     return results;
   } catch (error) {
-    console.error("Error importing break schedules from Excel:", error);
+    console.error("Lỗi khi nhập lịch nghỉ từ Excel:", error);
     throw error;
   }
 };
 
-// Import break schedules from JSON data (for preview feature)
+/**
+ * Nhập lịch nghỉ từ dữ liệu JSON (dùng cho tính năng xem trước).
+ * @param {Array<Object>} breakSchedulesData - Mảng các đối tượng lịch nghỉ.
+ * @returns {Promise<Object>} Kết quả nhập khẩu bao gồm danh sách thành công và lỗi.
+ * @throws {Error} Nếu dữ liệu JSON không hợp lệ hoặc lỗi trong quá trình nhập.
+ */
 export const importBreakSchedulesFromJson = async (breakSchedulesData) => {
   try {
     if (!breakSchedulesData || !Array.isArray(breakSchedulesData)) {
@@ -205,7 +249,7 @@ export const importBreakSchedulesFromJson = async (breakSchedulesData) => {
       const index = i + 1;
 
       try {
-        // Validate required fields
+        // Validate các trường bắt buộc
         if (!breakScheduleData.break_id || !breakScheduleData.break_type || !breakScheduleData.break_start_date || !breakScheduleData.break_end_date) {
           results.errors.push({
             index: index,
@@ -215,7 +259,7 @@ export const importBreakSchedulesFromJson = async (breakSchedulesData) => {
           continue;
         }
 
-        // Clean và format data
+        // Làm sạch và định dạng dữ liệu
         const cleanedData = {
           break_id: breakScheduleData.break_id.toString().trim(),
           break_type: breakScheduleData.break_type.toString().trim(),
@@ -226,12 +270,12 @@ export const importBreakSchedulesFromJson = async (breakSchedulesData) => {
           status: breakScheduleData.status || 'Hoạt động',
         };
 
-        // Validate date range
+        // Validate khoảng ngày
         const startDate = new Date(cleanedData.break_start_date);
         const endDate = new Date(cleanedData.break_end_date);
         const today = new Date();
         const maxFutureDate = new Date(today);
-        maxFutureDate.setFullYear(today.getFullYear() + 5);
+        maxFutureDate.setFullYear(today.getFullYear() + 5); // Giới hạn 5 năm trong tương lai
 
         if (isNaN(startDate) || isNaN(endDate)) {
           results.errors.push({
@@ -273,7 +317,7 @@ export const importBreakSchedulesFromJson = async (breakSchedulesData) => {
           continue;
         }
 
-        // Tạo break schedule mới
+        // Tạo lịch nghỉ mới
         const newBreakSchedule = await BreakSchedule.create(cleanedData);
         results.success.push(newBreakSchedule);
       } catch (error) {
@@ -287,12 +331,17 @@ export const importBreakSchedulesFromJson = async (breakSchedulesData) => {
 
     return results;
   } catch (error) {
-    console.error("Error importing break schedules from JSON:", error);
+    console.error("Lỗi khi nhập lịch nghỉ từ JSON:", error);
     throw error;
   }
 };
 
-// Validate Excel template structure
+/**
+ * Validate cấu trúc template Excel cho lịch nghỉ.
+ * @param {Buffer} fileBuffer - Buffer của file Excel.
+ * @returns {Object} Kết quả validation bao gồm valid (boolean) và error (string, nếu có).
+ * @throws {Error} Nếu template không hợp lệ.
+ */
 export const validateBreakScheduleExcelTemplate = (fileBuffer) => {
   const requiredColumns = ['Mã lịch nghỉ', 'Loại lịch nghỉ', 'Thời gian bắt đầu', 'Thời gian kết thúc'];
   const optionalColumns = ['Số ngày', 'Mô tả', 'Trạng thái'];
