@@ -3,7 +3,7 @@ import {
     getStudentById,
     createStudent,
     updateStudent,
-    importstudentsFromJSON, // Đảm bảo tên hàm này đúng trong service
+    importStudentsFromJSON, // Đảm bảo tên hàm này đúng trong service
     deleteStudent,
 } from "../services/studentService.js";
 import { APIResponse } from "../utils/APIResponse.js";
@@ -130,7 +130,7 @@ export const importStudentsFromJSONController = async (req, res) => {
         }
 
         // Tiến hành import dữ liệu từ JSON
-        const results = await importstudentsFromJSON(students); // Đảm bảo tên hàm đúng: importStudentsFromJSON
+        const results = await importStudentsFromJSON(students); // Đảm bảo tên hàm đúng: importStudentsFromJSON
 
         const responseData = {
             success: true, // Chỉ ra rằng request được xử lý

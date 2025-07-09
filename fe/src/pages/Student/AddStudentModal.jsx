@@ -20,7 +20,7 @@ import * as XLSX from 'xlsx';
 import PreviewStudentModal from './PreviewStudentModal';
 import { processExcelDataStudent } from '../../utils/ExcelValidation';
 
-export default function AddStudentModal({ open, onClose, onAddStudent, existingStudents, error, loading, message }) {
+export default function AddStudentModal({ open, onClose, onAddStudent, existingStudents, error, loading, message, fetchStudents }) {
     const [newStudent, setNewStudent] = useState({
         student_id: '',
         name: '',
@@ -196,19 +196,6 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
         e.target.value = '';
     };
 
-    const handleImportSuccess = (result) => {
-        const { imported } = result;
-
-        if (imported && imported.length > 0) {
-            // Add imported students to the list
-            imported.forEach(student => onAddStudent(student));
-            onClose();
-        }
-
-        setShowPreview(false);
-        setPreviewData([]);
-    };
-
     const handleClosePreview = () => {
         setShowPreview(false);
         setPreviewData([]);
@@ -351,8 +338,8 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
                                 label="Trạng thái"
                             >
                                 <MenuItem value="Đang học">Đang học</MenuItem>
-                                <MenuItem value="Tạm nghỉ">Tạm nghỉ</MenuItem>
-                                <MenuItem value="Tốt nghiệp">Tốt nghiệp</MenuItem>
+                                <MenuItem value="Đã nghỉ học">Đã nghỉ học</MenuItem>
+                                <MenuItem value="Đã tốt nghiệp">Đã tốt nghiệp</MenuItem>
                                 <MenuItem value="Bảo lưu">Bảo lưu</MenuItem>
                             </Select>
                         </FormControl>
@@ -379,8 +366,7 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
                 open={showPreview}
                 onClose={handleClosePreview}
                 previewData={previewData}
-                onImportSuccess={handleImportSuccess}
-                existingStudents={existingStudents}
+                fetchStudents={fetchStudents}
             />
         </>
     );

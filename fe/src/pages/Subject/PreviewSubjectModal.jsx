@@ -27,7 +27,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { getRowStatus, getErrorChip } from '../../components/ui/ErrorChip';
 import { importSubject } from "../../api/subjectAPI";
 
-export default function PreviewSubjectModal({ open, onClose, previewData }) {
+export default function PreviewSubjectModal({ open, onClose, previewData, fetchSubjects }) {
     const [isImporting, setIsImporting] = useState(false);
     const [importError, setImportError] = useState('');
     const [importMessage, setImportMessage] = useState('');
@@ -59,10 +59,12 @@ export default function PreviewSubjectModal({ open, onClose, previewData }) {
             if (response.data && response.data) {
                 setImportMessage(`Thêm thành công ${validRows.length} học phần`);
                 setImportError("");
+                fetchSubjects(); // Gọi lại hàm fetch để cập nhật danh sách học kỳ
 
                 // Delay để người dùng thấy thông báo thành công trước khi đóng modal
                 setTimeout(() => {
                     onClose();
+                    setImportMessage('');
                 }, 1500);
             } else {
                 setImportError(

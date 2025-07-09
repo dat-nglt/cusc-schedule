@@ -1,4 +1,5 @@
-import {Student, Lecturer, Admin, TrainingOfficer} from '../models/index.js';
+import models from '../models/index.js';
+const { Student, Lecturer, Admin, TrainingOfficer } = models;
 
 /**
  * Lấy tất cả người dùng từ các mô hình Student, Lecturer, Admin, và TrainingOfficer.

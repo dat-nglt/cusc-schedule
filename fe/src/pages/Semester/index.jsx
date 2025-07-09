@@ -48,7 +48,7 @@ const Semester = () => {
     const [message, setMessage] = useState('');
 
     // Danh sách trạng thái để lọc
-    const statuses = ['Đang triển khai', 'Tạm dừng', 'Kết thúc'];
+    const statuses = ['Đang triển khai', 'Đang mở đăng ký', 'Đang diễn ra', 'Tạm dừng', 'Đã kết thúc'];
 
     const fetchSemesters = async () => {
         try {
@@ -325,6 +325,7 @@ const Semester = () => {
                 error={error}
                 loading={loading}
                 message={message}
+                fetchSemesters={fetchSemesters}
             />
             <EditSemesterModal
                 open={openEditModal}

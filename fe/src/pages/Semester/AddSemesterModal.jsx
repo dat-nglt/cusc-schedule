@@ -20,7 +20,7 @@ import * as XLSX from 'xlsx';
 import PreviewSemesterModal from './PreviewSemesterModal';
 import { processExcelDataSemester } from '../../utils/ExcelValidation';
 
-export default function AddSemesterModal({ open, onClose, onAddSemester, existingSemesters, error, loading, message }) {
+export default function AddSemesterModal({ open, onClose, onAddSemester, existingSemesters, error, loading, message, fetchSemesters }) {
     const [newSemester, setNewSemester] = useState({
         semester_id: '',
         semester_name: '',
@@ -154,18 +154,6 @@ export default function AddSemesterModal({ open, onClose, onAddSemester, existin
         e.target.value = '';
     };
 
-    const handleImportSuccess = (result) => {
-        const { imported } = result;
-
-        if (imported && imported.length > 0) {
-            // Add imported semesters to the list
-            imported.forEach(semester => onAddSemester(semester));
-            onClose();
-        }
-
-        setShowPreview(false);
-        setPreviewData([]);
-    };
 
     const handleClosePreview = () => {
         setShowPreview(false);
@@ -262,8 +250,10 @@ export default function AddSemesterModal({ open, onClose, onAddSemester, existin
                                 label="Trạng thái"
                             >
                                 <MenuItem value="Đang triển khai">Đang triển khai</MenuItem>
+                                <MenuItem value="Đang mở đăng ký">Đang mở đăng ký</MenuItem>
+                                <MenuItem value="Đang diễn ra">Đang diễn ra</MenuItem>
                                 <MenuItem value="Tạm dừng">Tạm dừng</MenuItem>
-                                <MenuItem value="Kết thúc">Kết thúc</MenuItem>
+                                <MenuItem value="Đã kết thúc">Đã kết thúc</MenuItem>
                             </Select>
                         </FormControl>
                     </Box>
@@ -289,8 +279,7 @@ export default function AddSemesterModal({ open, onClose, onAddSemester, existin
                 open={showPreview}
                 onClose={handleClosePreview}
                 previewData={previewData}
-                onImportSuccess={handleImportSuccess}
-                existingSemesters={existingSemesters}
+                fetchSemesters={fetchSemesters} 
             />
         </>
     );

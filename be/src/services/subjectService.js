@@ -1,7 +1,8 @@
-import Subject from "../models/Subject";
+import models from '../models/index.js'; // Giả định bạn có models đã được export từ index.js
 import { Op } from 'sequelize'; // Import Op nếu cần cho các hàm list tương lai
 import ExcelUtils from "../utils/ExcelUtils.js"; // Giả định bạn có ExcelUtils cho các hàm import từ Excel
 
+const { Subject } = models; // Lấy model Subject từ models
 /**
  * Lấy tất cả các môn học.
  * @returns {Promise<Array>} Danh sách tất cả các môn học.

@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 
 const DeleteLecturerModal = ({ open, onClose, onDelete, lecturer }) => {
+  
   const handleDelete = async () => {
     try {
       const response = await onDelete(lecturer.lecturer_id);

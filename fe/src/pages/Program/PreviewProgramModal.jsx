@@ -28,7 +28,7 @@ import { importPrograms } from '../../api/programAPI';
 import { getErrorChip, getRowStatus } from '../../components/ui/ErrorChip';
 
 
-export default function PreviewProgramModal({ open, onClose, previewData, onImportSuccess }) {
+export default function PreviewProgramModal({ open, onClose, previewData, fetchPrograms }) {
     const [isImporting, setIsImporting] = useState(false);
     const [importError, setImportError] = useState('');
     const [importMessage, setImportMessage] = useState('');
@@ -60,11 +60,12 @@ export default function PreviewProgramModal({ open, onClose, previewData, onImpo
             if (response.data && response.data) {
                 setImportMessage(`Thêm thành công ${validRows.length} chuơng trình đào tạo!`);
                 setImportError('');
+                fetchPrograms(); // Gọi lại hàm fetch để cập nhật danh sách chương trình đào tạo
 
                 // Delay để người dùng thấy thông báo thành công trước khi đóng modal
-                 setTimeout(() => {
-                    onImportSuccess(response.data);
-                    onClose();
+                setTimeout(() => {
+                    onClose(); // Đóng modal sau khi cập nhật
+                    setImportMessage('');
                 }, 1500);
             } else {
                 setImportError(response.data?.message || 'Có lỗi xảy ra khi thêm dữ liệu!');

@@ -1,7 +1,8 @@
-import Program from "../models/Program";
+import models from '../models/index';
 import { Op } from 'sequelize'; // Import Op nếu cần cho các hàm list tương lai
-import ExcelUtils from "../utils/ExcelUtils.js"; // Giả định bạn có ExcelUtils cho các hàm import từ Excel
+import ExcelUtils from "../utils/ExcelUtils"; // Giả định bạn có ExcelUtils cho các hàm import từ Excel
 
+const { Program } = models;
 /**
  * Lấy tất cả các chương trình đào tạo.
  * @returns {Promise<Array>} Danh sách tất cả các chương trình.

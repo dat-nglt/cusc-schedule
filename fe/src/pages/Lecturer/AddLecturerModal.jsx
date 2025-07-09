@@ -38,7 +38,7 @@ const availableDegrees = [
     'Phó Giáo sư'
 ];
 
-export default function AddLecturerModal({ open, onClose, onAddLecturer, existingLecturers, error, loading, message }) {
+export default function AddLecturerModal({ open, onClose, onAddLecturer, existingLecturers, error, loading, message, fetchLecturers }) {
     const [newLecturer, setNewLecturer] = useState({
         lecturer_id: '',
         name: '',
@@ -50,7 +50,7 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
         department: '',
         hire_date: '',
         degree: '',
-        status: 'Hoạt động',
+        status: 'Đang giảng dạy',
     });
 
     const [localError, setLocalError] = useState('');
@@ -156,7 +156,7 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
             department: '',
             hire_date: '',
             degree: '',
-            status: 'Hoạt động',
+            status: 'Đang giảng dạy',
         });
         setLocalError('');
         onClose();
@@ -390,8 +390,10 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
                                 onChange={handleChange}
                                 label="Trạng thái"
                             >
-                                <MenuItem value="Hoạt động">Hoạt động</MenuItem>
+                                <MenuItem value="Đang giảng dạy">Đang giảng dạy</MenuItem>
                                 <MenuItem value="Tạm nghỉ">Tạm nghỉ</MenuItem>
+                                <MenuItem value="Đã nghỉ việc">Đã nghỉ việc</MenuItem>
+                                <MenuItem value="Nghỉ hưu">Nghỉ hưu</MenuItem>
                             </Select>
                         </FormControl>
                     </Box>
@@ -417,6 +419,7 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
                 open={showPreview}
                 onClose={handleClosePreview}
                 previewData={previewData}
+                fetchLecturers={fetchLecturers}
             />
         </>
     );

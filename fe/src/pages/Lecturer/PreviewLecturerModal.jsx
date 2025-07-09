@@ -27,7 +27,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { importLecturers } from '../../api/lecturerAPI';
 import { getRowStatus, getErrorChip } from '../../components/ui/ErrorChip';
 
-export default function PreviewLecturerModal({ open, onClose, previewData }) {
+export default function PreviewLecturerModal({ open, onClose, previewData, fetchLecturers }) {
   const [isImporting, setIsImporting] = useState(false);
   const [importError, setImportError] = useState('');
   const [importMessage, setImportMessage] = useState('');
@@ -56,12 +56,13 @@ export default function PreviewLecturerModal({ open, onClose, previewData }) {
       // Gọi API import với dữ liệu đã được validate
       const response = await importLecturers(validData);
 
-      if (response.data && response.data) {
+      if (response.data) {
         setImportMessage(`Thêm thành công ${validRows.length} giảng viên`);
         setImportError("");
-
+        fetchLecturers(); // Cập nhật danh sách giảng viên sau khi thêm thành công
         // Delay để người dùng thấy thông báo thành công trước khi đóng modal
         setTimeout(() => {
+          setImportMessage("");
           onClose();
         }, 1500);
       } else {

@@ -348,6 +348,7 @@ const Subject = () => {
                 loading={loading}
                 message={message}
                 semesters={semesters}
+                fetchSubjects={fetchSubjects}
             />
             <EditSubjectModal
                 open={openEditModal}

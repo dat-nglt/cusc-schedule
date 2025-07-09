@@ -47,7 +47,7 @@ const Lecturer = () => {
     const [message, setMessage] = useState('');
 
     // Danh sách trạng thái để lọc
-    const statuses = ['Hoạt động', 'Tạm nghỉ'];
+    const statuses = ['Đang giảng dạy', 'Tạm nghỉ', 'Đã nghỉ việc', 'Nghỉ hưu'];
 
     const fetchLecturers = async () => {
         try {
@@ -62,6 +62,8 @@ const Lecturer = () => {
             console.error("Lỗi khi tải danh sách giảng viên:", error);
         } finally {
             setLoading(false);
+            setError('');
+            setMessage('');
         }
     };
 
@@ -88,6 +90,8 @@ const Lecturer = () => {
             setError("Không thể thêm giảng viên. Vui lòng kiểm tra lại thông tin.");
         } finally {
             setLoading(false);
+            setMessage('');
+            setError('');
         }
     };
 
@@ -110,6 +114,8 @@ const Lecturer = () => {
             setError("Không thể lấy thông tin giảng viên để chỉnh sửa. Vui lòng thử lại.");
         } finally {
             setLoading(false);
+            setMessage('');
+            setError('');
         }
     };
 
@@ -133,6 +139,8 @@ const Lecturer = () => {
             setError("Không thể cập nhật giảng viên. Vui lòng kiểm tra lại thông tin.");
         } finally {
             setLoading(false);
+            setMessage('');
+            setError('');
         }
     };
 
@@ -155,6 +163,7 @@ const Lecturer = () => {
             setError("Không thể lấy thông tin chi tiết giảng viên. Vui lòng thử lại.");
         } finally {
             setLoading(false);
+            setError('');
         }
     };
 
@@ -180,6 +189,7 @@ const Lecturer = () => {
             setLoading(false);
             setOpenDeleteModal(false);
             setLecturerToDelete(null);
+            setError('');
         }
     };
 
@@ -327,6 +337,7 @@ const Lecturer = () => {
                 error={error}
                 loading={loading}
                 message={message}
+                fetchLecturers={fetchLecturers}
             />
             <EditLecturerModal
                 open={openEditModal}

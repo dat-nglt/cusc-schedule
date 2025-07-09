@@ -47,7 +47,7 @@ const Student = () => {
     const [error, setError] = useState('');
 
     // Danh sách trạng thái để lọc
-    const statuses = ['Đang học', 'Tạm nghỉ', 'Tốt nghiệp', 'Bảo lưu'];
+    const statuses = ['Đang học', 'Đã nghỉ học', 'Đã tốt nghiệp', 'Bảo lưu'];
 
 
     const fetchStudents = async () => {
@@ -326,6 +326,7 @@ const Student = () => {
                 existingStudents={students}
                 error={error}
                 loading={loading}
+                fetchStudents={fetchStudents}
             />
             <EditStudentModal
                 open={openEditModal}

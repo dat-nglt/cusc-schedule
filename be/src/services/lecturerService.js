@@ -1,8 +1,8 @@
-import { Lecturer } from "../models/index.js";
+import models from "../models/index.js";
 import ExcelUtils from "../utils/ExcelUtils.js";
 import { Op } from 'sequelize';
 
-
+const { Lecturer } = models;
 /**
  * Lấy tất cả giảng viên.
  * @returns {Promise<Array>} Danh sách tất cả giảng viên.

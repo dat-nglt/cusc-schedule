@@ -9,7 +9,7 @@ import * as XLSX from 'xlsx';
 import PreviewSubjectModal from './PreviewSubjectModal';
 import { processExcelDataSubject } from '../../utils/ExcelValidation';
 
-export default function AddSubjectModal({ open, onClose, onAddSubject, existingSubjects = [], error, loading, message, semesters }) {
+export default function AddSubjectModal({ open, onClose, onAddSubject, existingSubjects = [], error, loading, message, semesters, fetchSubjects }) {
     const [newSubject, setNewSubject] = useState({
         subject_id: '',
         subject_name: '',
@@ -294,6 +294,7 @@ export default function AddSubjectModal({ open, onClose, onAddSubject, existingS
                 open={showPreview}
                 onClose={handleClosePreview}
                 previewData={previewData}
+                fetchSubjects={fetchSubjects} // Gọi lại hàm fetch để cập nhật danh sách học kỳ
             />
         </>
     );
