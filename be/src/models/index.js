@@ -1,7 +1,8 @@
+// Kết nối Sequelize từ file config
 import { sequelize } from "../config/connectDB.js";
 import { DataTypes } from "sequelize";
 
-// Import model definitions
+// Import các định nghĩa model (mỗi file là một bảng)
 import AdminModel from "./Admin.js";
 import ClassesModel from "./Classes.js";
 import BreakScheduleModel from "./BreakSchedule.js";
@@ -13,7 +14,7 @@ import StudentModel from "./Student.js";
 import SubjectModel from "./Subject.js";
 import TrainingOfficerModel from "./TrainingOfficer.js";
 
-// Initialize models with sequelize instance and DataTypes
+// Khởi tạo từng model với instance của Sequelize
 const Admin = AdminModel(sequelize, DataTypes);
 const Classes = ClassesModel(sequelize, DataTypes);
 const BreakSchedule = BreakScheduleModel(sequelize, DataTypes);
@@ -25,7 +26,7 @@ const Student = StudentModel(sequelize, DataTypes);
 const Subject = SubjectModel(sequelize, DataTypes);
 const TrainingOfficer = TrainingOfficerModel(sequelize, DataTypes);
 
-// Define associations if needed
+// Gom tất cả model vào object `models`
 const models = {
   Admin,
   Classes,
@@ -37,14 +38,15 @@ const models = {
   Student,
   Subject,
   TrainingOfficer,
-  sequelize
+  sequelize, // export luôn cả instance Sequelize
 };
 
-// Call associate methods if they exist
+// Gọi phương thức associate nếu model có định nghĩa quan hệ
 Object.keys(models).forEach((modelName) => {
-  if (models[modelName].associate) {
+  if (typeof models[modelName].associate === 'function') {
     models[modelName].associate(models);
   }
 });
 
-export default models
+// Export toàn bộ models ra ngoài
+export default models;

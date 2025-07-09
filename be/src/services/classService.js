@@ -3,7 +3,11 @@ import Course from "../models/Course.js";
 import { Op } from 'sequelize';
 import ExcelUtils from "../utils/ExcelUtils.js";
 
-// Get all classes
+/**
+ * Lấy tất cả các lớp học.
+ * @returns {Promise<Array>} Danh sách các lớp học cùng với thông tin khóa học.
+ * @throws {Error} Nếu có lỗi khi lấy dữ liệu.
+ */
 export const getAllClasses = async () => {
   try {
     const classes = await Classes.findAll({
@@ -11,23 +15,37 @@ export const getAllClasses = async () => {
     });
     return classes;
   } catch (error) {
-    throw new Error('Error fetching classes: ' + error.message);
+    throw new Error('Lỗi khi lấy danh sách lớp học: ' + error.message);
   }
 };
 
-// Get one class by ID
+/**
+ * Lấy thông tin một lớp học theo ID.
+ * @param {string} class_id - ID của lớp học.
+ * @returns {Promise<Object|null>} Lớp học tìm thấy hoặc null nếu không tìm thấy, kèm thông tin khóa học.
+ */
 export const getClassById = async (class_id) => {
   return await Classes.findByPk(class_id, {
     include: [{ model: Course, attributes: ['course_id', 'course_name'] }],
   });
 };
 
-// Create a new class
+/**
+ * Tạo một lớp học mới.
+ * @param {Object} data - Dữ liệu của lớp học mới.
+ * @param {string} data.class_id - Mã lớp học.
+ * @param {string} [data.class_name] - Tên lớp học.
+ * @param {number} [data.class_size] - Sĩ số lớp học.
+ * @param {string} [data.status] - Trạng thái của lớp học.
+ * @param {string} [data.course_id] - Mã khóa học liên kết.
+ * @returns {Promise<Object>} Lớp học đã được tạo.
+ * @throws {Error} Nếu khóa học không tồn tại hoặc tên lớp học quá dài.
+ */
 export const createClass = async (data) => {
   const { course_id, class_name } = data;
   if (course_id) {
     const course = await Course.findByPk(course_id);
-    if (!course) throw new Error('Course not found');
+    if (!course) throw new Error('Không tìm thấy khóa học');
   }
   if (class_name && class_name.length > 50) {
     throw new Error('Tên lớp học không được vượt quá 50 ký tự');
@@ -35,13 +53,23 @@ export const createClass = async (data) => {
   return await Classes.create(data);
 };
 
-// Update a class
+/**
+ * Cập nhật thông tin một lớp học.
+ * @param {string} class_id - ID của lớp học cần cập nhật.
+ * @param {Object} data - Dữ liệu cập nhật cho lớp học.
+ * @param {string} [data.class_name] - Tên lớp học mới.
+ * @param {number} [data.class_size] - Sĩ số lớp học mới.
+ * @param {string} [data.status] - Trạng thái mới của lớp học.
+ * @param {string} [data.course_id] - Mã khóa học mới liên kết.
+ * @returns {Promise<Object>} Lớp học đã được cập nhật.
+ * @throws {Error} Nếu không tìm thấy lớp học, khóa học không tồn tại hoặc tên lớp học quá dài.
+ */
 export const updateClass = async (class_id, data) => {
   const classInstance = await Classes.findByPk(class_id);
-  if (!classInstance) throw new Error("Class not found");
+  if (!classInstance) throw new Error("Không tìm thấy lớp học");
   if (data.course_id) {
     const course = await Course.findByPk(data.course_id);
-    if (!course) throw new Error('Course not found');
+    if (!course) throw new Error('Không tìm thấy khóa học');
   }
   if (data.class_name && data.class_name.length > 50) {
     throw new Error('Tên lớp học không được vượt quá 50 ký tự');
@@ -49,40 +77,54 @@ export const updateClass = async (class_id, data) => {
   return await classInstance.update(data);
 };
 
-// Delete a class
+/**
+ * Xóa một lớp học.
+ * @param {string} class_id - ID của lớp học cần xóa.
+ * @returns {Promise<number>} Số hàng đã bị xóa.
+ * @throws {Error} Nếu không tìm thấy lớp học.
+ */
 export const deleteClass = async (class_id) => {
   const classInstance = await Classes.findOne({ where: { class_id } });
-  if (!classInstance) throw new Error("Class not found");
+  if (!classInstance) throw new Error("Không tìm thấy lớp học");
   return await classInstance.destroy();
 };
 
-// List classes with filters
+/**
+ * Liệt kê các lớp học với các bộ lọc tùy chọn.
+ * @param {Object} filters - Các tiêu chí lọc.
+ * @param {string} [filters.class_id] - Lọc theo ID lớp học (tìm kiếm gần đúng).
+ * @param {string} [filters.class_name] - Lọc theo tên lớp học (tìm kiếm gần đúng).
+ * @param {string} [filters.status] - Lọc theo trạng thái.
+ * @param {string} [filters.course_id] - Lọc theo ID khóa học (tìm kiếm gần đúng).
+ * @returns {Promise<Array>} Danh sách các lớp học phù hợp với bộ lọc, kèm thông tin khóa học.
+ * @throws {Error} Nếu có lỗi khi liệt kê dữ liệu.
+ */
 export const listClasses = async (filters) => {
   try {
     const whereClause = {};
 
-    // Filter by class_id
+    // Lọc theo class_id
     if (filters.class_id) {
       whereClause.class_id = {
         [Op.iLike]: `%${filters.class_id}%`,
       };
     }
 
-    // Filter by class_name
+    // Lọc theo class_name
     if (filters.class_name) {
       whereClause.class_name = {
         [Op.iLike]: `%${filters.class_name}%`,
       };
     }
 
-    // Filter by status
+    // Lọc theo status
     if (filters.status) {
       whereClause.status = {
         [Op.iLike]: `%${filters.status}%`,
       };
     }
 
-    // Filter by course_id
+    // Lọc theo course_id
     if (filters.course_id) {
       whereClause.course_id = {
         [Op.iLike]: `%${filters.course_id}%`,
@@ -98,21 +140,26 @@ export const listClasses = async (filters) => {
 
     return classes;
   } catch (error) {
-    throw new Error('Error listing classes: ' + error.message);
+    throw new Error('Lỗi khi liệt kê lớp học: ' + error.message);
   }
 };
 
-// Import classes from Excel
+/**
+ * Nhập dữ liệu lớp học từ file Excel.
+ * @param {Buffer} fileBuffer - Buffer của file Excel.
+ * @returns {Promise<Object>} Kết quả nhập khẩu bao gồm danh sách thành công và lỗi.
+ * @throws {Error} Nếu file Excel không có dữ liệu hoặc định dạng không đúng, hoặc lỗi trong quá trình nhập.
+ */
 export const importClassesFromExcel = async (fileBuffer) => {
   try {
-    // Read Excel file from buffer
+    // Đọc file Excel từ buffer
     const rawData = ExcelUtils.readExcelToJSON(fileBuffer);
 
     if (!rawData || rawData.length === 0) {
       throw new Error("File Excel không có dữ liệu hoặc định dạng không đúng");
     }
 
-    // Convert Vietnamese column names to English
+    // Chuyển đổi tên cột tiếng Việt sang tiếng Anh
     const classesData = ExcelUtils.convertVietnameseColumnsToEnglish(rawData);
 
     const results = {
@@ -121,13 +168,13 @@ export const importClassesFromExcel = async (fileBuffer) => {
       total: classesData.length,
     };
 
-    // Validate and create class for each row
+    // Duyệt qua từng hàng để validate và tạo lớp học
     for (let i = 0; i < classesData.length; i++) {
       const row = classesData[i];
-      const rowIndex = i + 2; // Start from row 2 (after header)
+      const rowIndex = i + 2; // Bắt đầu từ hàng 2 (sau tiêu đề)
 
       try {
-        // Validate required fields
+        // Validate các trường bắt buộc
         if (!row.class_id) {
           results.errors.push({
             row: rowIndex,
@@ -137,7 +184,7 @@ export const importClassesFromExcel = async (fileBuffer) => {
           continue;
         }
 
-        // Format data according to database structure
+        // Định dạng dữ liệu theo cấu trúc database
         const classData = {
           class_id: ExcelUtils.cleanString(row.class_id),
           class_name: ExcelUtils.cleanString(row.class_name) || null,
@@ -158,7 +205,7 @@ export const importClassesFromExcel = async (fileBuffer) => {
           continue;
         }
 
-        // Validate course_id if provided
+        // Validate course_id nếu được cung cấp
         if (classData.course_id) {
           const course = await Course.findByPk(classData.course_id);
           if (!course) {
@@ -181,7 +228,7 @@ export const importClassesFromExcel = async (fileBuffer) => {
           continue;
         }
 
-        // Check if class_id already exists
+        // Kiểm tra class_id đã tồn tại chưa
         const existingClass = await Classes.findByPk(classData.class_id);
         if (existingClass) {
           results.errors.push({
@@ -192,7 +239,7 @@ export const importClassesFromExcel = async (fileBuffer) => {
           continue;
         }
 
-        // Create new class
+        // Tạo lớp học mới
         const newClass = await Classes.create(classData);
         results.success.push({
           row: rowIndex,
@@ -212,12 +259,17 @@ export const importClassesFromExcel = async (fileBuffer) => {
 
     return results;
   } catch (error) {
-    console.error("Error importing classes from Excel:", error);
+    console.error("Lỗi khi nhập lớp học từ Excel:", error);
     throw error;
   }
 };
 
-// Import classes from JSON data (for preview feature)
+/**
+ * Nhập dữ liệu lớp học từ JSON (dùng cho tính năng xem trước).
+ * @param {Array<Object>} classesData - Mảng các đối tượng lớp học.
+ * @returns {Promise<Object>} Kết quả nhập khẩu bao gồm danh sách thành công và lỗi.
+ * @throws {Error} Nếu dữ liệu JSON không hợp lệ hoặc lỗi trong quá trình nhập.
+ */
 export const importClassesFromJson = async (classesData) => {
   try {
     if (!classesData || !Array.isArray(classesData)) {
@@ -230,13 +282,13 @@ export const importClassesFromJson = async (classesData) => {
       total: classesData.length,
     };
 
-    // Validate and create class for each item
+    // Duyệt qua từng item để validate và tạo lớp học
     for (let i = 0; i < classesData.length; i++) {
       const classData = classesData[i];
       const index = i + 1;
 
       try {
-        // Validate required fields
+        // Validate các trường bắt buộc
         if (!classData.class_id) {
           results.errors.push({
             index: index,
@@ -246,7 +298,7 @@ export const importClassesFromJson = async (classesData) => {
           continue;
         }
 
-        // Clean and format data
+        // Làm sạch và định dạng dữ liệu
         const cleanedData = {
           class_id: classData.class_id.toString().trim(),
           class_name: classData.class_name ? classData.class_name.toString().trim() : null,
@@ -265,7 +317,7 @@ export const importClassesFromJson = async (classesData) => {
           continue;
         }
 
-        // Validate course_id if provided
+        // Validate course_id nếu được cung cấp
         if (cleanedData.course_id) {
           const course = await Course.findByPk(cleanedData.course_id);
           if (!course) {
@@ -288,7 +340,7 @@ export const importClassesFromJson = async (classesData) => {
           continue;
         }
 
-        // Check if class_id already exists
+        // Kiểm tra class_id đã tồn tại chưa
         const existingClass = await Classes.findOne({
           where: { class_id: cleanedData.class_id },
         });
@@ -301,7 +353,7 @@ export const importClassesFromJson = async (classesData) => {
           continue;
         }
 
-        // Create new class
+        // Tạo lớp học mới
         const newClass = await Classes.create(cleanedData);
         results.success.push(newClass);
       } catch (error) {
@@ -315,12 +367,17 @@ export const importClassesFromJson = async (classesData) => {
 
     return results;
   } catch (error) {
-    console.error("Error importing classes from JSON:", error);
+    console.error("Lỗi khi nhập lớp học từ JSON:", error);
     throw error;
   }
 };
 
-// Validate Excel template structure
+/**
+ * Validate cấu trúc template Excel cho lớp học.
+ * @param {Buffer} fileBuffer - Buffer của file Excel.
+ * @returns {Object} Kết quả validation bao gồm valid (boolean) và error (string, nếu có).
+ * @throws {Error} Nếu template không hợp lệ.
+ */
 export const validateExcelTemplate = (fileBuffer) => {
   const requiredColumns = ['Mã lớp học'];
   const optionalColumns = ['Tên lớp học', 'Sĩ số', 'Trạng thái', 'Mã khóa học'];
