@@ -32,15 +32,7 @@ export default function SemesterDetailModal({ open, onClose, semester }) {
     // Hàm sao chép 
     const handleCopysemester_id = () => {
         navigator.clipboard.writeText(semester.semester_id);
-        toast.success('Đã sao chép mã học kỳ: ' + semester.semester_id, {
-            position: 'bottom-center',
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-        });
+        toast.success('Đã sao chép mã học kỳ: ' + semester.semester_id);
     };
     return (
         <Dialog

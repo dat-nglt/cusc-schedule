@@ -34,15 +34,7 @@ export default function LecturerDetailModal({ open, onClose, lecturer }) {
     // Hàm sao chép mã giảng viên
     const handleCopyMaGiangVien = () => {
         navigator.clipboard.writeText(lecturer.lecturer_id);
-        toast.success('Đã sao chép mã giảng viên: ' + lecturer.lecturer_id, {
-            position: 'bottom-center',
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-        });
+        toast.success('Đã sao chép mã giảng viên: ' + lecturer.lecturer_id);
     };
 
 

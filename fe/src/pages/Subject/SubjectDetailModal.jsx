@@ -33,15 +33,7 @@ export default function SubjectDetailModal({ open, onClose, subject }) {
     // Hàm sao chép mã học phần
     const handleCopyMaHocPhan = () => {
         navigator.clipboard.writeText(subject.subject_id);
-        toast.success('Đã sao chép mã học phần: ' + subject.subject_id, {
-            position: 'bottom-center',
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-        });
+        toast.success('Đã sao chép mã học phần: ' + subject.subject_id);
     };
 
     return (

@@ -32,15 +32,7 @@ export default function ProgramDetailModal({ open, onClose, program }) {
     // Hàm sao chép mã chương trình
     const handleCopyprogram_id = () => {
         navigator.clipboard.writeText(program.program_id);
-        toast.success('Đã sao chép mã chương trình: ' + program.program_id, {
-            position: 'bottom-center',
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-        });
+        toast.success('Đã sao chép mã chương trình: ' + program.program_id);
     };
 
 

@@ -34,15 +34,7 @@ export default function StudentDetailModal({ open, onClose, student }) {
     // Hàm sao chép mã học viên
     const handleCopyStudentId = () => {
         navigator.clipboard.writeText(student.student_id);
-        toast.success('Đã sao chép mã học viên: ' + student.student_id, {
-            position: 'bottom-center',
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-        });
+        toast.success('Đã sao chép mã học viên: ' + student.student_id);
     };
 
     return (
