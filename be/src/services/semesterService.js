@@ -1,7 +1,8 @@
-import Semester from "../models/Semester";
+import models from '../models/index'; // Import models từ index.js
 import { Op } from 'sequelize'; // Import Op nếu cần cho các hàm list tương lai
 import ExcelUtils from "../utils/ExcelUtils.js"; // Giả định bạn có ExcelUtils cho các hàm import từ Excel
 
+const { Semester } = models; // Lấy model Semester từ models
 /**
  * Lấy tất cả các học kỳ.
  * @returns {Promise<Array>} Danh sách tất cả các học kỳ.

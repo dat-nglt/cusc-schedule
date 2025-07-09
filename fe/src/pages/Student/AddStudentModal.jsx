@@ -20,7 +20,7 @@ import * as XLSX from 'xlsx';
 import PreviewStudentModal from './PreviewStudentModal';
 import { processExcelDataStudent } from '../../utils/ExcelValidation';
 
-export default function AddStudentModal({ open, onClose, onAddStudent, existingStudents, error, loading, message }) {
+export default function AddStudentModal({ open, onClose, onAddStudent, existingStudents, error, loading, message, fetchStudents }) {
     const [newStudent, setNewStudent] = useState({
         student_id: '',
         name: '',
@@ -81,7 +81,22 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
             setLocalError(`Mã học viên "${newStudent.student_id}" đã tồn tại!`);
             return;
         }
-
+        // kiểm tra trùng email
+        const isEmailDuplicate = existingStudents.some(
+            (student) => student.email === newStudent.email
+        );
+        if (isEmailDuplicate) {
+            setLocalError(`Email "${newStudent.email}" đã tồn tại!`);
+            return;
+        }
+        // kiểm tra trùng số điện thoại
+        const isPhoneDuplicate = existingStudents.some(
+            (student) => student.phone_number === newStudent.phone_number
+        );
+        if (isPhoneDuplicate) {
+            setLocalError(`Số điện thoại "${newStudent.phone_number}" đã tồn tại!`);
+            return;
+        }
         // Kiểm tra ngày hợp lệ
         const birthDate = new Date(newStudent.day_of_birth);
         const today = new Date();
@@ -179,19 +194,6 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
         }
         // Reset file input
         e.target.value = '';
-    };
-
-    const handleImportSuccess = (result) => {
-        const { imported } = result;
-
-        if (imported && imported.length > 0) {
-            // Add imported students to the list
-            imported.forEach(student => onAddStudent(student));
-            onClose();
-        }
-
-        setShowPreview(false);
-        setPreviewData([]);
     };
 
     const handleClosePreview = () => {
@@ -336,8 +338,8 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
                                 label="Trạng thái"
                             >
                                 <MenuItem value="Đang học">Đang học</MenuItem>
-                                <MenuItem value="Tạm nghỉ">Tạm nghỉ</MenuItem>
-                                <MenuItem value="Tốt nghiệp">Tốt nghiệp</MenuItem>
+                                <MenuItem value="Đã nghỉ học">Đã nghỉ học</MenuItem>
+                                <MenuItem value="Đã tốt nghiệp">Đã tốt nghiệp</MenuItem>
                                 <MenuItem value="Bảo lưu">Bảo lưu</MenuItem>
                             </Select>
                         </FormControl>
@@ -364,8 +366,7 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
                 open={showPreview}
                 onClose={handleClosePreview}
                 previewData={previewData}
-                onImportSuccess={handleImportSuccess}
-                existingStudents={existingStudents}
+                fetchStudents={fetchStudents}
             />
         </>
     );

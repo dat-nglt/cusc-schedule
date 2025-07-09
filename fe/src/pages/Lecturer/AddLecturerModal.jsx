@@ -38,7 +38,7 @@ const availableDegrees = [
     'Phó Giáo sư'
 ];
 
-export default function AddLecturerModal({ open, onClose, onAddLecturer, existingLecturers, error, loading, message }) {
+export default function AddLecturerModal({ open, onClose, onAddLecturer, existingLecturers, error, loading, message, fetchLecturers }) {
     const [newLecturer, setNewLecturer] = useState({
         lecturer_id: '',
         name: '',
@@ -50,7 +50,7 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
         department: '',
         hire_date: '',
         degree: '',
-        status: 'Hoạt động',
+        status: 'Đang giảng dạy',
     });
 
     const [localError, setLocalError] = useState('');
@@ -102,6 +102,22 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
             setLocalError(`Mã giảng viên "${newLecturer.lecturer_id}" đã tồn tại!`);
             return;
         }
+        // kiểm tra trùng email
+        const isEmailDuplicate = existingLecturers.some(
+            (lecturer) => lecturer.email === newLecturer.email
+        );
+        if (isEmailDuplicate) {
+            setLocalError(`Email "${newLecturer.email}" đã tồn tại!`);
+            return;
+        }
+        // kiểm tra trùng số điện thoại
+        const isPhoneDuplicate = existingLecturers.some(
+            (lecturer) => lecturer.phone_number === newLecturer.phone_number
+        );
+        if (isPhoneDuplicate) {
+            setLocalError(`Số điện thoại "${newLecturer.phone_number}" đã tồn tại!`);
+            return;
+        }
 
         // Kiểm tra ngày hợp lệ
         const birthDate = new Date(newLecturer.day_of_birth);
@@ -128,7 +144,6 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
 
         // Gọi hàm onAddLecturer được truyền từ component cha
         await onAddLecturer(lecturerToAdd);
-
         setNewLecturer({
             lecturer_id: '',
             name: '',
@@ -140,7 +155,7 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
             department: '',
             hire_date: '',
             degree: '',
-            status: 'Hoạt động',
+            status: 'Đang giảng dạy',
         });
         setLocalError('');
         onClose();
@@ -212,18 +227,6 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
         e.target.value = '';
     };
 
-    const handleImportSuccess = (result) => {
-        const { imported } = result;
-
-        if (imported && imported.length > 0) {
-            // Add imported lecturers to the list
-            imported.forEach(lecturer => onAddLecturer(lecturer));
-            onClose();
-        }
-
-        setShowPreview(false);
-        setPreviewData([]);
-    };
 
     const handleClosePreview = () => {
         setShowPreview(false);
@@ -386,8 +389,10 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
                                 onChange={handleChange}
                                 label="Trạng thái"
                             >
-                                <MenuItem value="Hoạt động">Hoạt động</MenuItem>
+                                <MenuItem value="Đang giảng dạy">Đang giảng dạy</MenuItem>
                                 <MenuItem value="Tạm nghỉ">Tạm nghỉ</MenuItem>
+                                <MenuItem value="Đã nghỉ việc">Đã nghỉ việc</MenuItem>
+                                <MenuItem value="Nghỉ hưu">Nghỉ hưu</MenuItem>
                             </Select>
                         </FormControl>
                     </Box>
@@ -413,8 +418,7 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
                 open={showPreview}
                 onClose={handleClosePreview}
                 previewData={previewData}
-                onImportSuccess={handleImportSuccess}
-                existingLecturers={existingLecturers}
+                fetchLecturers={fetchLecturers}
             />
         </>
     );

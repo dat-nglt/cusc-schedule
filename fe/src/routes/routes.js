@@ -10,7 +10,7 @@ const routes = [
     exact: true,
     title: "Trình điều khiển",
     isPrivate: false,
-    layout: AdminLayout,
+    layout: ScheduleLayout,
   },
   {
     path: "/login",

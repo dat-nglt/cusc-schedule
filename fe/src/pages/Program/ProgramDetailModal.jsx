@@ -22,7 +22,7 @@ import {
 } from '@mui/icons-material';
 import { getStatusChip } from '../../components/ui/StatusChip';
 import { formatDateTime } from '../../utils/formatDateTime';
-
+import { toast } from 'react-toastify';
 // Hàm kiểm tra giá trị và trả về giá trị hoặc thông báo mặc định
 const getValueOrDefault = (value) => value || 'Không có dữ liệu';
 
@@ -32,7 +32,7 @@ export default function ProgramDetailModal({ open, onClose, program }) {
     // Hàm sao chép mã chương trình
     const handleCopyprogram_id = () => {
         navigator.clipboard.writeText(program.program_id);
-        alert('Đã sao chép mã chương trình!');
+        toast.success('Đã sao chép mã chương trình: ' + program.program_id);
     };
 
 

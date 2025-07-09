@@ -28,7 +28,7 @@ export default function EditLecturerModal({ open, onClose, lecturer, onSave, err
         department: '',
         hire_date: '',
         degree: '',
-        status: 'Hoạt động',
+        status: 'Đang giảng dạy',
     });
 
     useEffect(() => {
@@ -44,7 +44,7 @@ export default function EditLecturerModal({ open, onClose, lecturer, onSave, err
                 department: lecturer.department || '',
                 hire_date: lecturer.hire_date || '',
                 degree: lecturer.degree || '',
-                status: lecturer.status || 'Hoạt động',
+                status: lecturer.status || 'Đang giảng dạy',
             });
         }
     }, [lecturer]);
@@ -254,8 +254,10 @@ export default function EditLecturerModal({ open, onClose, lecturer, onSave, err
                             onChange={handleChange}
                             label="Trạng thái"
                         >
-                            <MenuItem value="Hoạt động">Hoạt động</MenuItem>
+                            <MenuItem value="Đang giảng dạy">Đang giảng dạy</MenuItem>
                             <MenuItem value="Tạm nghỉ">Tạm nghỉ</MenuItem>
+                            <MenuItem value="Đã nghỉ việc">Đã nghỉ việc</MenuItem>
+                            <MenuItem value="Nghỉ hưu">Nghỉ hưu</MenuItem>
                         </Select>
                     </FormControl>
                 </Box>

@@ -344,25 +344,26 @@ export function createSemesterTemplate() {
  * @returns {Buffer} Buffer chứa nội dung của file Excel template môn học.
  */
 export function createSubjectTemplate() {
-    const templateData = [{
-            "Mã môn học": "MH001",
-            "Tên môn học": "Lập trình cơ bản",
-            "Số tín chỉ": 3,
-            "Số giờ lý thuyết": 30,
-            "Số giờ thực hành": 15,
-            "Trạng thái": "Hoạt động",
-            "Mã học kỳ": "HK2024_1",
-        },
-        {
-            "Mã môn học": "MH002",
-            "Tên môn học": "Cơ sở dữ liệu",
-            "Số tín chỉ": 4,
-            "Số giờ lý thuyết": 45,
-            "Số giờ thực hành": 15,
-            "Trạng thái": "Hoạt động",
-            "Mã học kỳ": "HK2024_1",
-        },
-    ];
+  const templateData = [
+    {
+      "Mã học phần": "MH001",
+      "Tên học phần": "Lập trình cơ bản",
+      "Số tín chỉ": 3,
+      "Số giờ lý thuyết": 30,
+      "Số giờ thực hành": 15,
+      "Trạng thái": "Hoạt động",
+      "Mã học kỳ": "HK2024_1",
+    },
+    {
+      "Mã học phần": "MH002",
+      "Tên học phần": "Cơ sở dữ liệu",
+      "Số tín chỉ": 4,
+      "Số giờ lý thuyết": 45,
+      "Số giờ thực hành": 15,
+      "Trạng thái": "Hoạt động",
+      "Mã học kỳ": "HK2024_1",
+    },
+  ];
 
     return createExcelFromJSON(templateData, "Subjects");
 }
@@ -415,13 +416,13 @@ export function getVietnameseColumnMapping() {
         // "Ngày kết thúc": "end_date", // Đã có ở cột chung
         "Mã chương trình đào tạo": "training_program_id",
 
-        // Cột dành riêng cho Môn học
-        "Mã môn học": "subject_id",
-        "Tên môn học": "subject_name",
-        "Số tín chỉ": "credit",
-        "Số giờ lý thuyết": "theory_hours",
-        "Số giờ thực hành": "practice_hours",
-    };
+    // Subject specific columns
+    "Mã học phần": "subject_id",
+    "Tên học phần": "subject_name",
+    "Số tín chỉ": "credit",
+    "Số giờ lý thuyết": "theory_hours",
+    "Số giờ thực hành": "practice_hours",
+  };
 }
 
 /**

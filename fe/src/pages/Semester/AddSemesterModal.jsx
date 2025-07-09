@@ -20,13 +20,14 @@ import * as XLSX from 'xlsx';
 import PreviewSemesterModal from './PreviewSemesterModal';
 import { processExcelDataSemester } from '../../utils/ExcelValidation';
 
-export default function AddSemesterModal({ open, onClose, onAddSemester, existingSemesters, error, loading, message }) {
+export default function AddSemesterModal({ open, onClose, onAddSemester, existingSemesters, error, loading, message, fetchSemesters, programs }) {
     const [newSemester, setNewSemester] = useState({
         semester_id: '',
         semester_name: '',
         start_date: '',
         end_date: '',
         status: 'Đang triển khai',
+        program_id: '',
     });
 
     const [localError, setLocalError] = useState('');
@@ -44,7 +45,8 @@ export default function AddSemesterModal({ open, onClose, onAddSemester, existin
             !newSemester.semester_id ||
             !newSemester.semester_name ||
             !newSemester.start_date ||
-            !newSemester.end_date
+            !newSemester.end_date ||
+            !newSemester.program_id
         ) {
             setLocalError('Vui lòng điền đầy đủ thông tin!');
             return;
@@ -84,6 +86,7 @@ export default function AddSemesterModal({ open, onClose, onAddSemester, existin
             start_date: '',
             end_date: '',
             status: 'Đang triển khai',
+            program_id: '',
         });
         setLocalError('');
         onClose();
@@ -154,18 +157,6 @@ export default function AddSemesterModal({ open, onClose, onAddSemester, existin
         e.target.value = '';
     };
 
-    const handleImportSuccess = (result) => {
-        const { imported } = result;
-
-        if (imported && imported.length > 0) {
-            // Add imported semesters to the list
-            imported.forEach(semester => onAddSemester(semester));
-            onClose();
-        }
-
-        setShowPreview(false);
-        setPreviewData([]);
-    };
 
     const handleClosePreview = () => {
         setShowPreview(false);
@@ -227,6 +218,21 @@ export default function AddSemesterModal({ open, onClose, onAddSemester, existin
                             variant="outlined"
                             required
                         />
+                        <FormControl fullWidth required>
+                            <InputLabel>Mã chương trình</InputLabel>
+                            <Select
+                                name="program_id"
+                                value={newSemester.program_id}
+                                onChange={handleChange}
+                                label="Mã chương trình"
+                            >
+                                {programs?.map((program) => (
+                                    <MenuItem key={program.id} value={program.program_id}>
+                                        {program.program_id} - {program.program_name}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
                         <TextField
                             label="Ngày bắt đầu"
                             name="start_date"
@@ -262,8 +268,10 @@ export default function AddSemesterModal({ open, onClose, onAddSemester, existin
                                 label="Trạng thái"
                             >
                                 <MenuItem value="Đang triển khai">Đang triển khai</MenuItem>
+                                <MenuItem value="Đang mở đăng ký">Đang mở đăng ký</MenuItem>
+                                <MenuItem value="Đang diễn ra">Đang diễn ra</MenuItem>
                                 <MenuItem value="Tạm dừng">Tạm dừng</MenuItem>
-                                <MenuItem value="Kết thúc">Kết thúc</MenuItem>
+                                <MenuItem value="Đã kết thúc">Đã kết thúc</MenuItem>
                             </Select>
                         </FormControl>
                     </Box>
@@ -289,8 +297,7 @@ export default function AddSemesterModal({ open, onClose, onAddSemester, existin
                 open={showPreview}
                 onClose={handleClosePreview}
                 previewData={previewData}
-                onImportSuccess={handleImportSuccess}
-                existingSemesters={existingSemesters}
+                fetchSemesters={fetchSemesters}
             />
         </>
     );

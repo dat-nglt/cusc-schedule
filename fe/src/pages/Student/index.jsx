@@ -25,6 +25,7 @@ import DeleteStudentModal from './DeleteStudentModal';
 import useResponsive from '../../hooks/useResponsive';
 import StudentTable from './StudentTable';
 import { getAllStudents, getStudentById, createStudent, updateStudent, deleteStudent } from '../../api/studentAPI';
+import { toast } from 'react-toastify';
 
 const Student = () => {
     const { isSmallScreen, isMediumScreen } = useResponsive();
@@ -47,7 +48,7 @@ const Student = () => {
     const [error, setError] = useState('');
 
     // Danh sách trạng thái để lọc
-    const statuses = ['Đang học', 'Tạm nghỉ', 'Tốt nghiệp', 'Bảo lưu'];
+    const statuses = ['Đang học', 'Đã nghỉ học', 'Đã tốt nghiệp', 'Bảo lưu'];
 
 
     const fetchStudents = async () => {
@@ -81,11 +82,13 @@ const Student = () => {
             setLoading(true);
             const response = await createStudent(newStudent);
             if (response && response.data) {
+                toast.success('Thêm học viên thành công!');
                 fetchStudents(); // Tải lại danh sách học viên sau khi thêm thành công
             }
         } catch (error) {
             console.error("Lỗi khi thêm học viên:", error);
             setError("Không thể thêm học viên. Vui lòng kiểm tra lại thông tin.");
+            toast.error('Thêm học viên thất bại! Vui lòng kiểm tra lại thông tin.');
         } finally {
             setLoading(false);
         }
@@ -108,6 +111,7 @@ const Student = () => {
         } catch (error) {
             console.error("Lỗi khi lấy thông tin học viên để chỉnh sửa:", error);
             setError("Không thể lấy thông tin học viên để chỉnh sửa. Vui lòng thử lại.");
+            toast.error('Lỗi khi lấy thông tin học viên để chỉnh sửa. Vui lòng thử lại.');
         } finally {
             setLoading(false);
         }
@@ -119,11 +123,13 @@ const Student = () => {
             setLoading(true);
             const response = await updateStudent(updatedStudent.student_id, updatedStudent);
             if (response && response.data) {
+                toast.success('Cập nhật học viên thành công!');
                 fetchStudents(); // Tải lại danh sách học viên sau khi cập nhật thành công
             }
         } catch (error) {
             console.error("Lỗi khi cập nhật học viên:", error);
             setError("Không thể cập nhật học viên. Vui lòng kiểm tra lại thông tin.");
+            toast.error('Cập nhật học viên thất bại! Vui lòng kiểm tra lại thông tin.');
         } finally {
             setLoading(false);
         }
@@ -147,6 +153,7 @@ const Student = () => {
         } catch (error) {
             console.error("Lỗi khi lấy thông tin chi tiết học viên:", error);
             setError("Không thể lấy thông tin chi tiết học viên. Vui lòng thử lại.");
+            toast.error('Lỗi khi lấy thông tin chi tiết học viên. Vui lòng thử lại.');
         } finally {
             setLoading(false);
         }
@@ -172,11 +179,13 @@ const Student = () => {
             setLoading(true);
             const response = await deleteStudent(id);
             if (response) {
+                toast.success('Xóa học viên thành công!');
                 fetchStudents(); // Tải lại danh sách học viên sau khi xóa thành công
             }
         } catch (error) {
             console.error("Lỗi khi xóa học viên:", error);
             error("Không thể xóa học viên. Vui lòng thử lại.");
+            toast.error('Xóa học viên thất bại! Vui lòng thử lại.');
         } finally {
             setLoading(false);
             setOpenDeleteModal(false);
@@ -326,6 +335,7 @@ const Student = () => {
                 existingStudents={students}
                 error={error}
                 loading={loading}
+                fetchStudents={fetchStudents}
             />
             <EditStudentModal
                 open={openEditModal}
