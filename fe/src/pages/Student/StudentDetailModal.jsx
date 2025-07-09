@@ -22,23 +22,8 @@ import {
     CheckCircle as StatusIcon,
 } from '@mui/icons-material';
 import { getStatusChip } from '../../components/ui/StatusChip';
-
-// Hàm định dạng thời gian từ YYYY-MM-DD HH:mm thành DD/MM/YYYY HH:mm
-const formatDateTime = (dateTime) => {
-    if (!dateTime) return 'Không có dữ liệu';
-    try {
-        const date = new Date(dateTime);
-        return date.toLocaleString('vi-VN', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-    } catch {
-        return 'Không hợp lệ';
-    }
-};
+import { toast } from 'react-toastify';
+import { formatDateTime } from '../../utils/formatDateTime';
 
 // Hàm kiểm tra giá trị và trả về giá trị hoặc thông báo mặc định
 const getValueOrDefault = (value) => value || 'Không có dữ liệu';
@@ -49,7 +34,15 @@ export default function StudentDetailModal({ open, onClose, student }) {
     // Hàm sao chép mã học viên
     const handleCopyStudentId = () => {
         navigator.clipboard.writeText(student.student_id);
-        alert('Đã sao chép mã học viên!');
+        toast.success('Đã sao chép mã học viên: ' + student.student_id, {
+            position: 'bottom-center',
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+        });
     };
 
     return (

@@ -26,6 +26,9 @@ import useResponsive from '../../hooks/useResponsive';
 import SubjectTable from './SubjectTable';
 import { getAllSubjects, getSubjectById, createSubject, updateSubject, deleteSubject } from '../../api/subjectAPI';
 import { getAllSemesters } from '../../api/semesterAPI';
+import { toast } from 'react-toastify'; // Thêm import cho toast thông báo
+
+
 const Subject = () => {
     const { isSmallScreen, isMediumScreen } = useResponsive();
 
@@ -46,7 +49,7 @@ const Subject = () => {
     const [subjectToDelete, setSubjectToDelete] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-    const [message, setMessage] = useState('');
+
 
     // Danh sách trạng thái để lọc
     const statuses = ['Hoạt động', 'Tạm dừng', 'Ngừng hoạt động'];
@@ -108,12 +111,13 @@ const Subject = () => {
             setLoading(true);
             const response = await createSubject(newSubject);
             if (response && response.data) {
-                setMessage("Thêm học phần thành công!");
+                toast.success('Học phần đã được thêm thành công!')
                 fetchSubjects(); // Tải lại danh sách học phần sau khi thêm thành công
             }
         } catch (error) {
             console.error("Lỗi khi thêm học phần:", error);
             setError("Không thể thêm học phần. Vui lòng kiểm tra lại thông tin.");
+            toast.error("Không thể thêm học phần. Vui lòng kiểm tra lại thông tin.");
         } finally {
             setLoading(false);
         }
@@ -131,6 +135,7 @@ const Subject = () => {
         } catch (error) {
             console.error("Lỗi khi lấy thông tin học phần để chỉnh sửa:", error);
             setError("Không thể lấy thông tin học phần để chỉnh sửa. Vui lòng thử lại.");
+            toast.error("Không thể lấy thông tin học phần để chỉnh sửa. Vui lòng thử lại.");
         } finally {
             setLoading(false);
         }
@@ -148,12 +153,13 @@ const Subject = () => {
             setLoading(true);
             const response = await updateSubject(updatedSubject.subject_id, updatedSubject);
             if (response && response.data) {
-                setMessage("Cập nhật học phần thành công!");
+                toast.success('Học phần đã được cập nhật thành công!');
                 fetchSubjects(); // Tải lại danh sách học phần sau khi cập nhật thành công
             }
         } catch (error) {
             console.error("Lỗi khi cập nhật học phần:", error);
             setError("Không thể cập nhật học phần. Vui lòng kiểm tra lại thông tin.");
+            toast.error("Không thể cập nhật học phần. Vui lòng kiểm tra lại thông tin.");
         } finally {
             setLoading(false);
         }
@@ -176,6 +182,7 @@ const Subject = () => {
         } catch (error) {
             console.error("Lỗi khi lấy thông tin chi tiết học phần:", error);
             setError("Không thể lấy thông tin chi tiết học phần. Vui lòng thử lại.");
+            toast.error("Không thể lấy thông tin chi tiết học phần. Vui lòng thử lại.");
         } finally {
             setLoading(false);
         }
@@ -194,12 +201,13 @@ const Subject = () => {
             setLoading(true);
             const response = await deleteSubject(id);
             if (response) {
-                setMessage("Xóa học phần thành công!");
+                toast.success('Học phần đã được xóa thành công!');
                 fetchSubjects(); // Tải lại danh sách học phần sau khi xóa thành công
             }
         } catch (error) {
             console.error("Lỗi khi xóa học phần:", error);
             setError("Không thể xóa học phần. Vui lòng thử lại.");
+            toast.error("Không thể xóa học phần. Vui lòng thử lại.");
         } finally {
             setLoading(false);
             setOpenDeleteModal(false);
@@ -346,7 +354,6 @@ const Subject = () => {
                 existingSubjects={subjects}
                 error={error}
                 loading={loading}
-                message={message}
                 semesters={semesters}
                 fetchSubjects={fetchSubjects}
             />

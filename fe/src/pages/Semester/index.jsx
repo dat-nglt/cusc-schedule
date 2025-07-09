@@ -25,6 +25,7 @@ import DeleteSemesterModal from './DeleteSemesterModal';
 import useResponsive from '../../hooks/useResponsive';
 import SemesterTable from './SemesterTable';
 import { getAllSemesters, getSemesterById, createSemester, updateSemester, deleteSemester } from '../../api/semesterAPI';
+import { toast } from 'react-toastify';
 
 const Semester = () => {
     const { isSmallScreen, isMediumScreen } = useResponsive();
@@ -45,7 +46,6 @@ const Semester = () => {
     const [semesterToDelete, setSemesterToDelete] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-    const [message, setMessage] = useState('');
 
     // Danh sách trạng thái để lọc
     const statuses = ['Đang triển khai', 'Đang mở đăng ký', 'Đang diễn ra', 'Tạm dừng', 'Đã kết thúc'];
@@ -86,12 +86,13 @@ const Semester = () => {
             setLoading(true);
             const response = await createSemester(newSemester);
             if (response && response.data) {
-                setMessage("Thêm học kỳ thành công!");
+                toast.success('Thêm học kỳ thành công!')
                 fetchSemesters(); // Tải lại danh sách học kỳ sau khi thêm thành công
             }
         } catch (error) {
             console.error("Lỗi khi thêm học kỳ:", error);
             setError("Không thể thêm học kỳ. Vui lòng kiểm tra lại thông tin.");
+            toast.error('Thêm học kỳ thất bại! Vui lòng thử lại.');
         } finally {
             setLoading(false);
         }
@@ -109,6 +110,7 @@ const Semester = () => {
         } catch (error) {
             console.error("Lỗi khi lấy thông tin học kỳ để chỉnh sửa:", error);
             setError("Không thể lấy thông tin học kỳ để chỉnh sửa. Vui lòng thử lại.");
+            toast.error('Lỗi khi lấy thông tin học kỳ để chỉnh sửa. Vui lòng thử lại.');
         } finally {
             setLoading(false);
         }
@@ -126,12 +128,13 @@ const Semester = () => {
             setLoading(true);
             const response = await updateSemester(updatedSemester.semester_id, updatedSemester);
             if (response && response.data) {
-                setMessage("Cập nhật học kỳ thành công!");
+                toast.success('Cập nhật học kỳ thành công!');
                 fetchSemesters(); // Tải lại danh sách học kỳ sau khi cập nhật thành công
             }
         } catch (error) {
             console.error("Lỗi khi cập nhật học kỳ:", error);
             setError("Không thể cập nhật học kỳ. Vui lòng kiểm tra lại thông tin.");
+            toast.error('Cập nhật học kỳ thất bại! Vui lòng thử lại.');
         } finally {
             setLoading(false);
         }
@@ -154,6 +157,7 @@ const Semester = () => {
         } catch (error) {
             console.error("Lỗi khi lấy thông tin chi tiết học kỳ:", error);
             setError("Không thể lấy thông tin chi tiết học kỳ. Vui lòng thử lại.");
+            toast.error('Lỗi khi lấy thông tin chi tiết học kỳ. Vui lòng thử lại.');
         } finally {
             setLoading(false);
         }
@@ -172,12 +176,13 @@ const Semester = () => {
             setLoading(true);
             const response = await deleteSemester(id);
             if (response) {
-                setMessage("Xóa học kỳ thành công!");
+                toast.success('Xóa học kỳ thành công!');
                 fetchSemesters(); // Tải lại danh sách học kỳ sau khi xóa thành công
             }
         } catch (error) {
             console.error("Lỗi khi xóa học kỳ:", error);
             setError("Không thể xóa học kỳ. Vui lòng thử lại.");
+            toast.error('Xóa học kỳ thất bại! Vui lòng thử lại.');
         } finally {
             setLoading(false);
             setOpenDeleteModal(false);
@@ -324,7 +329,6 @@ const Semester = () => {
                 existingSemesters={semesters}
                 error={error}
                 loading={loading}
-                message={message}
                 fetchSemesters={fetchSemesters}
             />
             <EditSemesterModal

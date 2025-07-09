@@ -144,7 +144,6 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
 
         // Gọi hàm onAddLecturer được truyền từ component cha
         await onAddLecturer(lecturerToAdd);
-
         setNewLecturer({
             lecturer_id: '',
             name: '',

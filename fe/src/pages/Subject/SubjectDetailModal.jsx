@@ -23,7 +23,7 @@ import {
 } from '@mui/icons-material';
 import { getStatusChip } from '../../components/ui/StatusChip';
 import { formatDateTime } from '../../utils/formatDateTime';
-
+import { toast } from 'react-toastify';
 // Hàm kiểm tra giá trị và trả về giá trị hoặc thông báo mặc định
 const getValueOrDefault = (value) => value || 'Không có dữ liệu';
 
@@ -33,7 +33,15 @@ export default function SubjectDetailModal({ open, onClose, subject }) {
     // Hàm sao chép mã học phần
     const handleCopyMaHocPhan = () => {
         navigator.clipboard.writeText(subject.subject_id);
-        alert('Đã sao chép mã học phần!');
+        toast.success('Đã sao chép mã học phần: ' + subject.subject_id, {
+            position: 'bottom-center',
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+        });
     };
 
     return (

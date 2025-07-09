@@ -25,6 +25,7 @@ import DeleteProgramModal from './DeleteProgramModal';
 import useResponsive from '../../hooks/useResponsive';
 import ProgramTable from './ProgramTable';
 import { getAllPrograms, getProgramById, createProgram, updateProgram, deleteProgram } from '../../api/programAPI';
+import { toast } from 'react-toastify';
 
 const Program = () => {
     const { isSmallScreen, isMediumScreen } = useResponsive();
@@ -45,7 +46,7 @@ const Program = () => {
     const [programToDelete, setProgramToDelete] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-    const [message, setMessage] = useState('');
+
 
     // Danh sách trạng thái để lọc
     const statuses = ['Đang triển khai', 'Đang áp dụng', 'Tạm dừng', 'Đã kết thúc'];
@@ -81,12 +82,13 @@ const Program = () => {
             setLoading(true);
             const response = await createProgram(newProgram);
             if (response && response.data) {
-                setMessage("Thêm chương trình đào tạo thành công!");
+                toast.success('Thêm chương trình đào tạo thành công!')
                 fetchPrograms(); // Tải lại danh sách chương trình sau khi thêm thành công
             }
         } catch (error) {
             console.error("Lỗi khi thêm chương trình đào tạo:", error);
             setError("Không thể thêm chương trình đào tạo. Vui lòng kiểm tra lại thông tin.");
+            toast.error('Thêm chương trình đào tạo thất bại! Vui lòng thử lại.');
         } finally {
             setLoading(false);
         }
@@ -109,6 +111,7 @@ const Program = () => {
         } catch (error) {
             console.error("Lỗi khi lấy thông tin chương trình đào tạo để chỉnh sửa:", error);
             setError("Không thể lấy thông tin chương trình đào tạo để chỉnh sửa. Vui lòng thử lại.");
+            toast.error('Lỗi khi lấy thông tin chương trình đào tạo để chỉnh sửa. Vui lòng thử lại.');
         } finally {
             setLoading(false);
         }
@@ -126,12 +129,13 @@ const Program = () => {
             setLoading(true);
             const response = await updateProgram(updatedProgram.program_id, updatedProgram);
             if (response && response.data) {
-                setMessage("Cập nhật chương trình đào tạo thành công!");
+                toast.success('Cập nhật chương trình đào tạo thành công!');
                 fetchPrograms(); // Tải lại danh sách chương trình sau khi cập nhật thành công
             }
         } catch (error) {
             console.error("Lỗi khi cập nhật chương trình đào tạo:", error);
             setError("Không thể cập nhật chương trình đào tạo. Vui lòng kiểm tra lại thông tin.");
+            toast.error('Cập nhật chương trình đào tạo thất bại! Vui lòng thử lại.');
         } finally {
             setLoading(false);
         }
@@ -154,6 +158,7 @@ const Program = () => {
         } catch (error) {
             console.error("Lỗi khi lấy thông tin chi tiết chương trình đào tạo:", error);
             setError("Không thể lấy thông tin chi tiết chương trình đào tạo. Vui lòng thử lại.");
+            toast.error('Lỗi khi lấy thông tin chi tiết chương trình đào tạo. Vui lòng thử lại.');
         } finally {
             setLoading(false);
         }
@@ -172,12 +177,13 @@ const Program = () => {
             setLoading(true);
             const response = await deleteProgram(id);
             if (response) {
-                setMessage("Xóa chương trình đào tạo thành công!");
+                toast.success('Xóa chương trình đào tạo thành công!');
                 fetchPrograms(); // Tải lại danh sách chương trình sau khi xóa thành công
             }
         } catch (error) {
             console.error("Lỗi khi xóa chương trình đào tạo:", error);
             setError("Không thể xóa chương trình đào tạo. Vui lòng thử lại.");
+            toast.error('Xóa chương trình đào tạo thất bại! Vui lòng thử lại.');
         } finally {
             setLoading(false);
             setOpenDeleteModal(false);
@@ -325,7 +331,6 @@ const Program = () => {
                 existingPrograms={programs}
                 error={error}
                 loading={loading}
-                message={message}
                 fetchPrograms={fetchPrograms}
             />
             <EditProgramModal
