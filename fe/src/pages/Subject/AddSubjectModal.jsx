@@ -252,7 +252,7 @@ export default function AddSubjectModal({ open, onClose, onAddSubject, existingS
                             >
                                 {semesters.map((semester) => (
                                     <MenuItem key={semester.semester_id} value={semester.semester_id}>
-                                        {semester.semester_name}
+                                        {semester.semester_id} - {semester.semester_name}
                                     </MenuItem>
                                 ))}
                             </Select>

@@ -26,12 +26,14 @@ import useResponsive from '../../hooks/useResponsive';
 import SemesterTable from './SemesterTable';
 import { getAllSemesters, getSemesterById, createSemester, updateSemester, deleteSemester } from '../../api/semesterAPI';
 import { toast } from 'react-toastify';
+import { getAllPrograms } from '../../api/programAPI';
 
 const Semester = () => {
     const { isSmallScreen, isMediumScreen } = useResponsive();
 
     // Dữ liệu mẫu cho danh sách học kỳ
     const [semesters, setSemesters] = useState([]);
+    const [programs, setPrograms] = useState([]);
     // State cho phân trang, tìm kiếm, lọc theo trạng thái và modal
     const [page, setPage] = useState(0);
     const [rowsPerPage] = useState(8);
@@ -50,6 +52,21 @@ const Semester = () => {
     // Danh sách trạng thái để lọc
     const statuses = ['Đang triển khai', 'Đang mở đăng ký', 'Đang diễn ra', 'Tạm dừng', 'Đã kết thúc'];
 
+    //hàm lấy danh sách chương trình từ API
+    const fetchPrograms = async () => {
+        try {
+            const response = await getAllPrograms();
+            if (!response) {
+                console.error("Không có dữ liệu chương trình");
+                return;
+            }
+            setPrograms(response.data.data);
+        } catch (error) {
+            console.error("Lỗi khi tải danh sách chương trình:", error);
+            throw error; // Ném lỗi để xử lý ở nơi gọi hàm
+        }
+    }
+    // Hàm lấy danh sách học kỳ từ API
     const fetchSemesters = async () => {
         try {
             setLoading(true);
@@ -68,6 +85,7 @@ const Semester = () => {
 
     useEffect(() => {
         fetchSemesters();
+        fetchPrograms();
     }, []);
 
     // Hàm xử lý khi nhấn nút Thêm học kỳ
@@ -330,6 +348,7 @@ const Semester = () => {
                 error={error}
                 loading={loading}
                 fetchSemesters={fetchSemesters}
+                programs={programs}
             />
             <EditSemesterModal
                 open={openEditModal}
