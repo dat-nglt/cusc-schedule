@@ -10,8 +10,7 @@ const models = {
     Lecturer,
     Admin,
     TrainingOfficer,
-};
-
+}
 // Call associate methods if they exist
 Object.keys(models).forEach((modelName) => {
   if (models[modelName].associate) {

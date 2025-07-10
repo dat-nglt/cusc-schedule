@@ -25,6 +25,9 @@ export const getClassById = async (class_id) => {
 // Thêm lớp học mới
 export const addClass = async (classData) => {
   try {
+    if (!classData.course_id) {
+      throw new Error('Mã khóa học là bắt buộc');
+    }
     const response = await axiosInstance.post('/api/classes/add', classData);
     return response.data;
   } catch (error) {
@@ -36,6 +39,10 @@ export const addClass = async (classData) => {
 // Cập nhật lớp học
 export const updateClass = async (class_id, classData) => {
   try {
+    if (!classData.course_id) {
+
+      throw new Error('Mã khóa học là bắt buộc');
+    }
     const response = await axiosInstance.put(`/api/classes/edit/${class_id}`, classData);
     return response.data;
   } catch (error) {
@@ -50,7 +57,7 @@ export const deleteClass = async (class_id) => {
     const response = await axiosInstance.delete(`/api/classes/delete/${class_id}`);
     return response.data;
   } catch (error) {
-    console.error('Error deleting class:', error.response?.data || error.message);
+    console.error('Error Deleting class:', error.response?.data || error.message);
     throw new Error('Error deleting class: ' + (error.response?.data?.message || error.message));
   }
 };

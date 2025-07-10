@@ -189,7 +189,7 @@ npx sequelize init
 {
   "development": {
     "username": "postgres",
-    "password": "MyPostgreSQL@2025",
+    "password": "MyPostgreSQL@2025", #changes with your password
     "database": "cusc_db",
     "host": "127.0.0.1",
     "dialect": "postgres",

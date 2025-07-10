@@ -1,13 +1,12 @@
-import Classes from "../models/Classes.js";
-import Course from "../models/Course.js";
+import db from "../models";
 import { Op } from 'sequelize';
 import ExcelUtils from "../utils/ExcelUtils.js";
 
 // Get all classes
 export const getAllClasses = async () => {
   try {
-    const classes = await Classes.findAll({
-      include: [{ model: Course, attributes: ['course_id', 'course_name'] }],
+    const classes = await db.Classes.findAll({
+      include: [{ model: db.Course, attributes: ['course_id', 'course_name'] }],
     });
     return classes;
   } catch (error) {
@@ -17,8 +16,8 @@ export const getAllClasses = async () => {
 
 // Get one class by ID
 export const getClassById = async (class_id) => {
-  return await Classes.findByPk(class_id, {
-    include: [{ model: Course, attributes: ['course_id', 'course_name'] }],
+  return await db.Classes.findByPk(class_id, {
+    include: [{ model: db.Course, attributes: ['course_id', 'course_name'] }],
   });
 };
 
@@ -26,21 +25,21 @@ export const getClassById = async (class_id) => {
 export const createClass = async (data) => {
   const { course_id, class_name } = data;
   if (course_id) {
-    const course = await Course.findByPk(course_id);
+    const course = await db.Course.findByPk(course_id);
     if (!course) throw new Error('Course not found');
   }
   if (class_name && class_name.length > 50) {
     throw new Error('Tên lớp học không được vượt quá 50 ký tự');
   }
-  return await Classes.create(data);
+  return await db.Classes.create(data);
 };
 
 // Update a class
 export const updateClass = async (class_id, data) => {
-  const classInstance = await Classes.findByPk(class_id);
+  const classInstance = await db.Classes.findByPk(class_id);
   if (!classInstance) throw new Error("Class not found");
   if (data.course_id) {
-    const course = await Course.findByPk(data.course_id);
+    const course = await db.Course.findByPk(data.course_id);
     if (!course) throw new Error('Course not found');
   }
   if (data.class_name && data.class_name.length > 50) {
@@ -51,7 +50,7 @@ export const updateClass = async (class_id, data) => {
 
 // Delete a class
 export const deleteClass = async (class_id) => {
-  const classInstance = await Classes.findOne({ where: { class_id } });
+  const classInstance = await db.Classes.findOne({ where: { class_id } });
   if (!classInstance) throw new Error("Class not found");
   return await classInstance.destroy();
 };
@@ -63,36 +62,28 @@ export const listClasses = async (filters) => {
 
     // Filter by class_id
     if (filters.class_id) {
-      whereClause.class_id = {
-        [Op.iLike]: `%${filters.class_id}%`,
-      };
+      whereClause.class_id = { [Op.iLike]: `%${filters.class_id}%` };
     }
 
     // Filter by class_name
     if (filters.class_name) {
-      whereClause.class_name = {
-        [Op.iLike]: `%${filters.class_name}%`,
-      };
+      whereClause.class_name = { [Op.iLike]: `%${filters.class_name}%` };
     }
 
     // Filter by status
     if (filters.status) {
-      whereClause.status = {
-        [Op.iLike]: `%${filters.status}%`,
-      };
+      whereClause.status = { [Op.iLike]: `%${filters.status}%` };
     }
 
     // Filter by course_id
     if (filters.course_id) {
-      whereClause.course_id = {
-        [Op.iLike]: `%${filters.course_id}%`,
-      };
+      whereClause.course_id = { [Op.iLike]: `%${filters.course_id}%` };
     }
 
-    const classes = await Classes.findAll({
+    const classes = await db.Classes.findAll({
       where: whereClause,
       attributes: ['class_id', 'class_name', 'class_size', 'status', 'course_id', 'created_at', 'updated_at'],
-      include: [{ model: Course, attributes: ['course_id', 'course_name'] }],
+      include: [{ model: db.Course, attributes: ['course_id', 'course_name'] }],
       order: [['created_at', 'DESC']],
     });
 
@@ -105,39 +96,26 @@ export const listClasses = async (filters) => {
 // Import classes from Excel
 export const importClassesFromExcel = async (fileBuffer) => {
   try {
-    // Read Excel file from buffer
     const rawData = ExcelUtils.readExcelToJSON(fileBuffer);
 
     if (!rawData || rawData.length === 0) {
       throw new Error("File Excel không có dữ liệu hoặc định dạng không đúng");
     }
 
-    // Convert Vietnamese column names to English
     const classesData = ExcelUtils.convertVietnameseColumnsToEnglish(rawData);
 
-    const results = {
-      success: [],
-      errors: [],
-      total: classesData.length,
-    };
+    const results = { success: [], errors: [], total: classesData.length };
 
-    // Validate and create class for each row
     for (let i = 0; i < classesData.length; i++) {
       const row = classesData[i];
-      const rowIndex = i + 2; // Start from row 2 (after header)
+      const rowIndex = i + 2;
 
       try {
-        // Validate required fields
         if (!row.class_id) {
-          results.errors.push({
-            row: rowIndex,
-            class_id: row.class_id || 'N/A',
-            error: 'Mã lớp học là bắt buộc',
-          });
+          results.errors.push({ row: rowIndex, class_id: row.class_id || 'N/A', error: 'Mã lớp học là bắt buộc' });
           continue;
         }
 
-        // Format data according to database structure
         const classData = {
           class_id: ExcelUtils.cleanString(row.class_id),
           class_name: ExcelUtils.cleanString(row.class_name) || null,
@@ -148,65 +126,34 @@ export const importClassesFromExcel = async (fileBuffer) => {
           updated_at: new Date().toISOString(),
         };
 
-        // Validate class_name
         if (classData.class_name && classData.class_name.length > 50) {
-          results.errors.push({
-            row: rowIndex,
-            class_id: classData.class_id,
-            error: 'Tên lớp học không được vượt quá 50 ký tự',
-          });
+          results.errors.push({ row: rowIndex, class_id: classData.class_id, error: 'Tên lớp học không được vượt quá 50 ký tự' });
           continue;
         }
 
-        // Validate course_id if provided
         if (classData.course_id) {
-          const course = await Course.findByPk(classData.course_id);
+          const course = await db.Course.findByPk(classData.course_id);
           if (!course) {
-            results.errors.push({
-              row: rowIndex,
-              class_id: classData.class_id,
-              error: 'Mã khóa học không tồn tại',
-            });
+            results.errors.push({ row: rowIndex, class_id: classData.class_id, error: 'Mã khóa học không tồn tại' });
             continue;
           }
         }
 
-        // Validate class_size
         if (classData.class_size && (isNaN(classData.class_size) || classData.class_size < 0)) {
-          results.errors.push({
-            row: rowIndex,
-            class_id: classData.class_id,
-            error: 'Sĩ số lớp học không hợp lệ',
-          });
+          results.errors.push({ row: rowIndex, class_id: classData.class_id, error: 'Sĩ số lớp học không hợp lệ' });
           continue;
         }
 
-        // Check if class_id already exists
-        const existingClass = await Classes.findByPk(classData.class_id);
+        const existingClass = await db.Classes.findByPk(classData.class_id);
         if (existingClass) {
-          results.errors.push({
-            row: rowIndex,
-            class_id: classData.class_id,
-            error: 'Mã lớp học đã tồn tại',
-          });
+          results.errors.push({ row: rowIndex, class_id: classData.class_id, error: 'Mã lớp học đã tồn tại' });
           continue;
         }
 
-        // Create new class
-        const newClass = await Classes.create(classData);
-        results.success.push({
-          row: rowIndex,
-          class_id: newClass.class_id,
-          class_name: newClass.class_name,
-          course_id: newClass.course_id,
-        });
-
+        const newClass = await db.Classes.create(classData);
+        results.success.push({ row: rowIndex, class_id: newClass.class_id, class_name: newClass.class_name, course_id: newClass.course_id });
       } catch (error) {
-        results.errors.push({
-          row: rowIndex,
-          class_id: row.class_id || 'N/A',
-          error: error.message || 'Lỗi không xác định',
-        });
+        results.errors.push({ row: rowIndex, class_id: row.class_id || 'N/A', error: error.message || 'Lỗi không xác định' });
       }
     }
 
@@ -217,36 +164,25 @@ export const importClassesFromExcel = async (fileBuffer) => {
   }
 };
 
-// Import classes from JSON data (for preview feature)
+// Import classes from JSON data
 export const importClassesFromJson = async (classesData) => {
   try {
     if (!classesData || !Array.isArray(classesData)) {
       throw new Error("Dữ liệu lớp học không hợp lệ");
     }
 
-    const results = {
-      success: [],
-      errors: [],
-      total: classesData.length,
-    };
+    const results = { success: [], errors: [], total: classesData.length };
 
-    // Validate and create class for each item
     for (let i = 0; i < classesData.length; i++) {
       const classData = classesData[i];
       const index = i + 1;
 
       try {
-        // Validate required fields
         if (!classData.class_id) {
-          results.errors.push({
-            index: index,
-            class_id: classData.class_id || 'N/A',
-            error: 'Mã lớp học là bắt buộc',
-          });
+          results.errors.push({ index, class_id: classData.class_id || 'N/A', error: 'Mã lớp học là bắt buộc' });
           continue;
         }
 
-        // Clean and format data
         const cleanedData = {
           class_id: classData.class_id.toString().trim(),
           class_name: classData.class_name ? classData.class_name.toString().trim() : null,
@@ -255,61 +191,34 @@ export const importClassesFromJson = async (classesData) => {
           course_id: classData.course_id ? classData.course_id.toString().trim() : null,
         };
 
-        // Validate class_name
         if (cleanedData.class_name && cleanedData.class_name.length > 50) {
-          results.errors.push({
-            index: index,
-            class_id: cleanedData.class_id,
-            error: 'Tên lớp học không được vượt quá 50 ký tự',
-          });
+          results.errors.push({ index, class_id: cleanedData.class_id, error: 'Tên lớp học không được vượt quá 50 ký tự' });
           continue;
         }
 
-        // Validate course_id if provided
         if (cleanedData.course_id) {
-          const course = await Course.findByPk(cleanedData.course_id);
+          const course = await db.Course.findByPk(cleanedData.course_id);
           if (!course) {
-            results.errors.push({
-              index: index,
-              class_id: cleanedData.class_id,
-              error: 'Mã khóa học không tồn tại',
-            });
+            results.errors.push({ index, class_id: cleanedData.class_id, error: 'Mã khóa học không tồn tại' });
             continue;
           }
         }
 
-        // Validate class_size
         if (cleanedData.class_size && (isNaN(cleanedData.class_size) || cleanedData.class_size < 0)) {
-          results.errors.push({
-            index: index,
-            class_id: cleanedData.class_id,
-            error: 'Sĩ số lớp học không hợp lệ',
-          });
+          results.errors.push({ index, class_id: cleanedData.class_id, error: 'Sĩ số lớp học không hợp lệ' });
           continue;
         }
 
-        // Check if class_id already exists
-        const existingClass = await Classes.findOne({
-          where: { class_id: cleanedData.class_id },
-        });
+        const existingClass = await db.Classes.findOne({ where: { class_id: cleanedData.class_id } });
         if (existingClass) {
-          results.errors.push({
-            index: index,
-            class_id: cleanedData.class_id,
-            error: 'Mã lớp học đã tồn tại',
-          });
+          results.errors.push({ index, class_id: cleanedData.class_id, error: 'Mã lớp học đã tồn tại' });
           continue;
         }
 
-        // Create new class
-        const newClass = await Classes.create(cleanedData);
+        const newClass = await db.Classes.create(cleanedData);
         results.success.push(newClass);
       } catch (error) {
-        results.errors.push({
-          index: index,
-          class_id: classData.class_id || 'N/A',
-          error: error.message || 'Lỗi không xác định',
-        });
+        results.errors.push({ index, class_id: classData.class_id || 'N/A', error: error.message || 'Lỗi không xác định' });
       }
     }
 
