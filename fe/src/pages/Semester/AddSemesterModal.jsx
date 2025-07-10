@@ -226,11 +226,17 @@ export default function AddSemesterModal({ open, onClose, onAddSemester, existin
                                 onChange={handleChange}
                                 label="Mã chương trình"
                             >
-                                {programs?.map((program) => (
-                                    <MenuItem key={program.id} value={program.program_id}>
-                                        {program.program_id} - {program.program_name}
+                                {programs && programs.length > 0 ? (
+                                    programs.map((program) => (
+                                        <MenuItem key={program.id} value={program.program_id}>
+                                            {program.program_id} - {program.program_name}
+                                        </MenuItem>
+                                    ))
+                                ) : (
+                                    <MenuItem disabled>
+                                        Chưa có mã chương trình nào
                                     </MenuItem>
-                                ))}
+                                )}
                             </Select>
                         </FormControl>
                         <TextField

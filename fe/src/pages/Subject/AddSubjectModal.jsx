@@ -250,11 +250,17 @@ export default function AddSubjectModal({ open, onClose, onAddSubject, existingS
                                 onChange={handleChange}
                                 label="Học kỳ"
                             >
-                                {semesters.map((semester) => (
-                                    <MenuItem key={semester.semester_id} value={semester.semester_id}>
-                                        {semester.semester_id} - {semester.semester_name}
+                                {semesters.length > 0 ? (
+                                    semesters.map((semester) => (
+                                        <MenuItem key={semester.semester_id} value={semester.semester_id}>
+                                            {semester.semester_id} - {semester.semester_name}
+                                        </MenuItem>
+                                    ))
+                                ) : (
+                                    <MenuItem disabled>
+                                        Chưa có mã học kỳ nào
                                     </MenuItem>
-                                ))}
+                                )}
                             </Select>
                         </FormControl>
                         <FormControl fullWidth required>

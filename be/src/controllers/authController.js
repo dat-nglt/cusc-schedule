@@ -50,12 +50,6 @@ export const login = async (req, res) => {
         // Trả về phản hồi thành công với token và thông tin người dùng.
         return APIResponse(res, 200, {
             token,
-            user: {
-                id: userId,
-                name: user.name, // Lấy tên người dùng
-                email: user.email, // Lấy email người dùng
-                role: role // Vai trò của người dùng
-            }
         }, 'Đăng nhập thành công.');
     } catch (error) {
         // Ghi log lỗi để debug và trả về lỗi máy chủ.
@@ -116,12 +110,7 @@ export const googleCallback = async (req, res) => {
         // Chuyển hướng người dùng về URL frontend.
         // Truyền token và thông tin người dùng qua URL params (cần encode để tránh lỗi ký tự).
         const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5000';
-        return res.redirect(`${frontendUrl}/auth/callback?token=${token}&user=${encodeURIComponent(JSON.stringify({
-            id: userObj.id,
-            name: userObj.user.name,
-            email: userObj.user.email,
-            role: userObj.role
-        }))}`);
+        return res.redirect(`${frontendUrl}/auth/callback?token=${token}&user=${encodeURIComponent(JSON.stringify())}`);
     } catch (error) {
         // Ghi log lỗi và chuyển hướng về frontend với lỗi máy chủ.
         console.error('Lỗi trong quá trình xử lý Google callback:', error);
