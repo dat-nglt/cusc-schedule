@@ -27,7 +27,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { importStudents } from '../../api/studentAPI';
 import { getRowStatus, getErrorChip } from '../../components/ui/ErrorChip';
 
-export default function PreviewStudentModal({ open, onClose, previewData, onImportSuccess }) {
+export default function PreviewStudentModal({ open, onClose, previewData, fetchStudents }) {
     const [isImporting, setIsImporting] = useState(false);
     const [importError, setImportError] = useState('');
     const [importMessage, setImportMessage] = useState('');
@@ -58,14 +58,14 @@ export default function PreviewStudentModal({ open, onClose, previewData, onImpo
             // Gọi API import với dữ liệu đã được validate
             const response = await importStudents(validData);
 
-            if (response.data && response.data) {
+            if (response.data) {
                 setImportMessage(`Thêm thành công ${validRows.length} học viên`);
                 setImportError('');
-
+                fetchStudents(); // Gọi lại hàm fetch để cập nhật danh sách học viên
                 // Delay để người dùng thấy thông báo thành công trước khi đóng modal
                 setTimeout(() => {
-                    onImportSuccess(response.data);
                     onClose();
+                    setImportMessage("");
                 }, 1500);
             } else {
                 setImportError(response.data?.message || 'Có lỗi xảy ra khi thêm dữ liệu!');

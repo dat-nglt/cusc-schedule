@@ -132,9 +132,9 @@ export default function EditProgramModal({ open, onClose, program, onSave, error
                             label="Trạng thái"
                         >
                             <MenuItem value="Đang triển khai">Đang triển khai</MenuItem>
-                            <MenuItem value="Hoạt động">Hoạt động</MenuItem>
-                            <MenuItem value="Ngừng hoạt động">Ngừng Hoạt động</MenuItem>
-                            <MenuItem value="Kết thúc">Kết thúc</MenuItem>
+                            <MenuItem value="Đang áp dụng">Đang áp dụng</MenuItem>
+                            <MenuItem value="Tạm dừng">Tạm dừng</MenuItem>
+                            <MenuItem value="Đã kết thúc">Đã kết thúc</MenuItem>
                         </Select>
                     </FormControl>
                 </Box>

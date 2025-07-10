@@ -73,7 +73,7 @@ export default function EditSemesterModal({ open, onClose, semester, onSave, err
         }
 
         // Kiểm tra ngày kết thúc không được trong quá khứ
-        if (endDate < today && editedSemester.status !== 'Kết thúc') {
+        if (endDate < today && editedSemester.status !== 'Đã kết thúc') {
             alert('Ngày kết thúc không được là ngày trong quá khứ!');
             return;
         }
@@ -159,9 +159,10 @@ export default function EditSemesterModal({ open, onClose, semester, onSave, err
                             label="Trạng thái"
                         >
                             <MenuItem value="Đang triển khai">Đang triển khai</MenuItem>
-                            <MenuItem value="Hoạt động">Hoạt động</MenuItem>
-                            <MenuItem value="Ngừng hoạt động">Ngừng Hoạt động</MenuItem>
-                            <MenuItem value="Kết thúc">Kết thúc</MenuItem>
+                            <MenuItem value="Đang mở đăng ký">Đang mở đăng ký</MenuItem>
+                            <MenuItem value="Đang diễn ra">Đang diễn ra</MenuItem>
+                            <MenuItem value="Tạm dừng">Tạm dừng</MenuItem>
+                            <MenuItem value="Đã kết thúc">Đã kết thúc</MenuItem>
                         </Select>
                     </FormControl>
                 </Box>

@@ -10,7 +10,6 @@ import {
     Menu,
     MenuItem,
     Tooltip,
-    Chip,
 } from '@mui/material';
 import { Visibility, Edit, Delete, Menu as MenuIcon } from '@mui/icons-material';
 import { getStatusChip } from '../../components/ui/StatusChip';

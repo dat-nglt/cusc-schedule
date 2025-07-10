@@ -22,7 +22,7 @@ import { processExcelDataProgram } from '../../utils/ExcelValidation';
 
 const availableTrainingDurations = [1, 2, 3, 4];
 
-export default function AddProgramModal({ open, onClose, onAddProgram, existingPrograms, error, loading, message }) {
+export default function AddProgramModal({ open, onClose, onAddProgram, existingPrograms, error, loading, message,fetchPrograms }) {
     const [newProgram, setNewProgram] = useState({
         program_id: '',
         program_name: '',
@@ -144,19 +144,6 @@ export default function AddProgramModal({ open, onClose, onAddProgram, existingP
         e.target.value = '';
     };
 
-    const handleImportSuccess = (result) => {
-        const { imported } = result;
-
-        if (imported && imported.length > 0) {
-            // Add imported programs to the list
-            imported.forEach(program => onAddProgram(program));
-            onClose();
-        }
-
-        setShowPreview(false);
-        setPreviewData([]);
-    };
-
     const handleClosePreview = () => {
         setShowPreview(false);
         setPreviewData([]);
@@ -241,8 +228,9 @@ export default function AddProgramModal({ open, onClose, onAddProgram, existingP
                                 label="Trạng thái"
                             >
                                 <MenuItem value="Đang triển khai">Đang triển khai</MenuItem>
+                                <MenuItem value="Đang áp dụng">Đang áp dụng</MenuItem>
                                 <MenuItem value="Tạm dừng">Tạm dừng</MenuItem>
-                                <MenuItem value="Kết thúc">Kết thúc</MenuItem>
+                                <MenuItem value="Đã kết thúc">Đã kết thúc</MenuItem>
                             </Select>
                         </FormControl>
                     </Box>
@@ -267,8 +255,8 @@ export default function AddProgramModal({ open, onClose, onAddProgram, existingP
             <PreviewProgramModal
                 open={showPreview}
                 onClose={handleClosePreview}
-                onImportSuccess={handleImportSuccess}
                 previewData={previewData}
+                fetchPrograms={fetchPrograms} 
             />
         </>
     );

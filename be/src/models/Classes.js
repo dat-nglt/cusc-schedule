@@ -1,111 +1,68 @@
 import { DataTypes } from 'sequelize';
-import { sequelize } from '../config/connectDB';
 
-const Classes = sequelize.define('Classes', {
-  class_id: {
-    type: DataTypes.STRING(30),
-    primaryKey: true,
-    allowNull: false,
-  },
-  class_name: {
-    type: DataTypes.STRING(50),
-    allowNull: true,
-  },
-  class_size: {
-    type: DataTypes.SMALLINT,
-    allowNull: true,
-  },
-  status: {
-    type: DataTypes.STRING(30),
-    allowNull: true,
-  },
-  course_id: {
-    type: DataTypes.STRING(30),
-    allowNull: true,
-  },
-  created_at: {
-    type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW,
-    allowNull: false,
-  },
-  updated_at: {
-    type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW,
-    allowNull: false,
-  },
-}, {
-  tableName: 'classes',
-  timestamps: true,
-  createdAt: 'created_at',
-  updatedAt: 'updated_at',
-});
+// Định nghĩa model Classes - Đại diện cho một lớp học
+const Classes = (sequelize) => {
+  const ClassesModel = sequelize.define(
+    'Classes', // Tên model dạng PascalCase
+    {
+      // Mã lớp học (Primary key)
+      class_id: {
+        type: DataTypes.STRING(30),
+        primaryKey: true,
+        allowNull: false,
+      },
+      // Tên lớp học
+      class_name: {
+        type: DataTypes.STRING(50),
+        allowNull: true,
+      },
+      // Sĩ số lớp
+      class_size: {
+        type: DataTypes.SMALLINT,
+        allowNull: true,
+      },
+      // Trạng thái lớp (VD: active, inactive,...)
+      status: {
+        type: DataTypes.STRING(30),
+        allowNull: true,
+      },
+      // Khóa học liên kết (foreign key đến Course)
+      course_id: {
+        type: DataTypes.STRING(30),
+        allowNull: true,
+      },
+      // Thời điểm tạo bản ghi
+      created_at: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+        allowNull: false,
+      },
+      // Thời điểm cập nhật bản ghi
+      updated_at: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+        allowNull: false,
+      },
+    },
+    {
+      tableName: 'classes',          // Tên bảng trong CSDL
+      timestamps: true,              // Tự động xử lý createdAt và updatedAt
+      createdAt: 'created_at',       // Đặt tên cột createdAt
+      updatedAt: 'updated_at',       // Đặt tên cột updatedAt
+    }
+  );
 
-// Định nghĩa mối quan hệ với bảng Course
-Classes.associate = function (models) {
-  Classes.belongsTo(models.Course, {
-    foreignKey: 'course_id',
-    onUpdate: 'CASCADE',
-    onDelete: 'SET NULL',
-  });
+  // Khai báo mối quan hệ (association)
+  ClassesModel.associate = (models) => {
+    // Một lớp học thuộc về một khóa học
+    ClassesModel.belongsTo(models.Course, {
+      foreignKey: 'course_id',
+      onUpdate: 'CASCADE',       // Nếu thay đổi ID khóa học, cập nhật theo
+      onDelete: 'SET NULL',      // Nếu xóa khóa học, để null trường course_id
+    });
+  };
+
+  return ClassesModel;
 };
 
 export default Classes;
-// import { DataTypes, Model } from 'sequelize';
-// import { sequelize } from '../config/connectDB';
-
-// class Classes extends Model {
-//   static associate(models) {
-//     // Định nghĩa mối quan hệ với bảng Course
-//     Classes.belongsTo(models.Course, {
-//       foreignKey: 'course_id',
-//       onUpdate: 'CASCADE',
-//       onDelete: 'SET NULL',
-//     });
-//   }
-// }
-
-// Classes.init(
-//   {
-//     class_id: {
-//       type: DataTypes.STRING(30),
-//       primaryKey: true,
-//       allowNull: false,
-//     },
-//     class_name: {
-//       type: DataTypes.STRING(50),
-//       allowNull: true,
-//     },
-//     class_size: {
-//       type: DataTypes.SMALLINT,
-//       allowNull: true,
-//     },
-//     status: {
-//       type: DataTypes.STRING(30),
-//       allowNull: true,
-//     },
-//     course_id: {
-//       type: DataTypes.STRING(30),
-//       allowNull: true,
-//     },
-//     created_at: {
-//       type: DataTypes.DATE,
-//       defaultValue: DataTypes.NOW,
-//       allowNull: false,
-//     },
-//     updated_at: {
-//       type: DataTypes.DATE,
-//       defaultValue: DataTypes.NOW,
-//       allowNull: false,
-//     },
-//   },
-//   {
-//     sequelize,
-//     modelName: 'Classes',
-//     tableName: 'classes',
-//     timestamps: true,
-//     createdAt: 'created_at',
-//     updatedAt: 'updated_at',
-//   }
-// );
-
-// export default Classes;

@@ -1,41 +1,73 @@
-import Course from "../models/Course.js";
-import { Op } from 'sequelize'; // Đảm bảo import Op nếu chưa có
+import models from '../models/index.js';
+import { Op } from 'sequelize';
 import ExcelUtils from "../utils/ExcelUtils.js";
 
+/**
+ * Lấy tất cả các khóa học.
+ * @returns {Promise<Array>} Danh sách các khóa học.
+ * @throws {Error} Nếu có lỗi khi lấy dữ liệu.
+ */
 export const getAllCourses = async () => {
   try {
-    const courses = await Course.findAll();
+    const courses = await models.Course.findAll();
     return courses;
   } catch (error) {
-    throw new Error('Error fetching courses: ' + error.message);
+    throw Error('Lỗi khi lấy danh sách khóa học: ' + error.message);
   }
 };
 
-// Get one course by ID
+/**
+ * Lấy thông tin một khóa học theo ID.
+ * @param {string} course_id - ID của khóa học.
+ * @returns {Promise<Object|null>} Khóa học tìm thấy hoặc null nếu không tìm thấy.
+ */
 export const getCourseById = async (course_id) => {
-  return await Course.findByPk(course_id);
+  return await models.Course.findByPk(course_id);
 };
 
-// Create a new course
+/**
+ * Tạo một khóa học mới.
+ * @param {Object} data - Dữ liệu của khóa học mới.
+ * @returns {Promise<Object>} Khóa học đã được tạo.
+ */
 export const createCourse = async (data) => {
-  return await Course.create(data);
+  return await models.Course.create(data);
 };
 
-// Update a course
+/**
+ * Cập nhật thông tin một khóa học.
+ * @param {string} course_id - ID của khóa học cần cập nhật.
+ * @param {Object} data - Dữ liệu cập nhật cho khóa học.
+ * @returns {Promise<Object>} Khóa học đã được cập nhật.
+ * @throws {Error} Nếu không tìm thấy khóa học.
+ */
 export const updateCourse = async (course_id, data) => {
-  const course = await Course.findByPk(course_id);
-  if (!course) throw new Error("Course not found");
+  const course = await models.Course.findByPk(course_id);
+  if (!course) throw new Error("Không tìm thấy khóa học");
   return await course.update(data);
 };
 
-// Delete a course
+/**
+ * Xóa một khóa học.
+ * @param {string} course_id - ID của khóa học cần xóa.
+ * @returns {Promise<number>} Số hàng đã bị xóa.
+ * @throws {Error} Nếu không tìm thấy khóa học.
+ */
 export const deleteCourse = async (course_id) => {
-  const course = await Course.findOne({ where: { course_id } });
-  if (!course) throw new Error("Course not found");
+  const course = await models.Course.findOne({ where: { course_id } });
+  if (!course) throw new Error("Không tìm thấy khóa học");
   return await course.destroy();
 };
 
-
+/**
+ * Liệt kê các khóa học với các bộ lọc tùy chọn.
+ * @param {Object} filters - Các tiêu chí lọc.
+ * @param {string} [filters.course_id] - Lọc theo ID khóa học (tìm kiếm gần đúng).
+ * @param {string} [filters.course_name] - Lọc theo tên khóa học (tìm kiếm gần đúng).
+ * @param {string} [filters.start_date] - Lọc theo ngày bắt đầu (định dạng YYYY-MM-DD).
+ * @returns {Promise<Array>} Danh sách các khóa học phù hợp với bộ lọc.
+ * @throws {Error} Nếu có lỗi khi liệt kê dữ liệu.
+ */
 export const listCourses = async (filters) => {
   try {
     const whereClause = {};
@@ -59,7 +91,7 @@ export const listCourses = async (filters) => {
       whereClause.start_date = filters.start_date; // YYYY-MM-DD
     }
 
-    const courses = await Course.findAll({
+    const courses = await models.Course.findAll({
       where: whereClause,
       attributes: ['course_id', 'course_name', 'start_date', 'end_date', 'status', 'created_at', 'updated_at'],
       order: [['created_at', 'DESC']]
@@ -67,240 +99,253 @@ export const listCourses = async (filters) => {
 
     return courses;
   } catch (error) {
-    throw new Error('Error listing courses: ' + error.message);
+    throw new Error('Lỗi khi liệt kê khóa học: ' + error.message);
   }
 };
 
-
-// ... (các hàm hiện có giữ nguyên)
-
+/**
+ * Nhập dữ liệu khóa học từ file Excel.
+ * @param {Buffer} fileBuffer - Buffer của file Excel.
+ * @returns {Promise<Object>} Kết quả nhập khẩu bao gồm danh sách thành công và lỗi.
+ * @throws {Error} Nếu file Excel không có dữ liệu hoặc định dạng không đúng, hoặc lỗi trong quá trình nhập.
+ */
 export const importCoursesFromExcel = async (fileBuffer) => {
-    try {
-        // Đọc file Excel từ buffer
-        const rawData = ExcelUtils.readExcelToJSON(fileBuffer);
+  try {
+    // Đọc file Excel từ buffer
+    const rawData = ExcelUtils.readExcelToJSON(fileBuffer);
 
-        if (!rawData || rawData.length === 0) {
-            throw new Error("File Excel không có dữ liệu hoặc định dạng không đúng");
+    if (!rawData || rawData.length === 0) {
+      throw new Error("File Excel không có dữ liệu hoặc định dạng không đúng");
+    }
+
+    // Chuyển đổi tên cột tiếng Việt sang tiếng Anh
+    const coursesData = ExcelUtils.convertVietnameseColumnsToEnglish(rawData);
+
+    const results = {
+      success: [],
+      errors: [],
+      total: coursesData.length
+    };
+
+    // Duyệt qua từng hàng để validate và tạo khóa học
+    for (let i = 0; i < coursesData.length; i++) {
+      const row = coursesData[i];
+      const rowIndex = i + 2; // Bắt đầu từ hàng 2 (sau tiêu đề)
+
+      try {
+        // Validate các trường bắt buộc
+        if (!row.course_id || !row.course_name || !row.start_date || !row.end_date) {
+          results.errors.push({
+            row: rowIndex,
+            course_id: row.course_id || 'N/A',
+            error: 'Mã khóa học, Tên khóa học, Thời gian bắt đầu và Thời gian kết thúc là bắt buộc'
+          });
+          continue;
         }
 
-        // Chuyển đổi cột tiếng Việt sang tiếng Anh
-        const coursesData = ExcelUtils.convertVietnameseColumnsToEnglish(rawData);
-
-        const results = {
-            success: [],
-            errors: [],
-            total: coursesData.length
+        // Định dạng dữ liệu theo cấu trúc database
+        const courseData = {
+          course_id: ExcelUtils.cleanString(row.course_id),
+          course_name: ExcelUtils.cleanString(row.course_name),
+          start_date: ExcelUtils.formatExcelDate(row.start_date),
+          end_date: ExcelUtils.formatExcelDate(row.end_date),
+          status: ExcelUtils.cleanString(row.status) || 'Hoạt động',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
         };
 
-        // Validate và tạo course cho từng row
-        for (let i = 0; i < coursesData.length; i++) {
-            const row = coursesData[i];
-            const rowIndex = i + 2; // Bắt đầu từ row 2 (sau header)
+        // Validate khoảng ngày
+        const startDate = new Date(courseData.start_date);
+        const endDate = new Date(courseData.end_date);
+        const today = new Date();
+        const maxFutureDate = new Date(today);
+        maxFutureDate.setFullYear(today.getFullYear() + 5); // Giới hạn 5 năm trong tương lai
 
-            try {
-                // Validate required fields
-                if (!row.course_id || !row.course_name || !row.start_date || !row.end_date) {
-                    results.errors.push({
-                        row: rowIndex,
-                        course_id: row.course_id || 'N/A',
-                        error: 'Mã khóa học, Tên khóa học, Thời gian bắt đầu và Thời gian kết thúc là bắt buộc'
-                    });
-                    continue;
-                }
-
-                // Format data theo structure của database
-                const courseData = {
-                    course_id: ExcelUtils.cleanString(row.course_id),
-                    course_name: ExcelUtils.cleanString(row.course_name),
-                    start_date: ExcelUtils.formatExcelDate(row.start_date),
-                    end_date: ExcelUtils.formatExcelDate(row.end_date),
-                    status: ExcelUtils.cleanString(row.status) || 'Hoạt động',
-                    created_at: new Date().toISOString(),
-                    updated_at: new Date().toISOString(),
-                };
-
-                // Validate date range
-                const startDate = new Date(courseData.start_date);
-                const endDate = new Date(courseData.end_date);
-                const today = new Date();
-                const maxFutureDate = new Date(today);
-                maxFutureDate.setFullYear(today.getFullYear() + 5);
-
-                if (isNaN(startDate) || isNaN(endDate)) {
-                    results.errors.push({
-                        row: rowIndex,
-                        course_id: courseData.course_id,
-                        error: 'Định dạng ngày không hợp lệ'
-                    });
-                    continue;
-                }
-
-                if (startDate > endDate) {
-                    results.errors.push({
-                        row: rowIndex,
-                        course_id: courseData.course_id,
-                        error: 'Thời gian bắt đầu không được lớn hơn thời gian kết thúc'
-                    });
-                    continue;
-                }
-
-                if (endDate > maxFutureDate) {
-                    results.errors.push({
-                        row: rowIndex,
-                        course_id: courseData.course_id,
-                        error: 'Thời gian kết thúc không được quá 5 năm trong tương lai'
-                    });
-                    continue;
-                }
-
-                // Kiểm tra course_id đã tồn tại chưa
-                const existingCourse = await Course.findByPk(courseData.course_id);
-                if (existingCourse) {
-                    results.errors.push({
-                        row: rowIndex,
-                        course_id: courseData.course_id,
-                        error: 'Mã khóa học đã tồn tại'
-                    });
-                    continue;
-                }
-
-                // Tạo course mới
-                const newCourse = await Course.create(courseData);
-                results.success.push({
-                    row: rowIndex,
-                    course_id: newCourse.course_id,
-                    course_name: newCourse.course_name
-                });
-
-            } catch (error) {
-                results.errors.push({
-                    row: rowIndex,
-                    course_id: row.course_id || 'N/A',
-                    error: error.message || 'Lỗi không xác định'
-                });
-            }
+        if (isNaN(startDate) || isNaN(endDate)) {
+          results.errors.push({
+            row: rowIndex,
+            course_id: courseData.course_id,
+            error: 'Định dạng ngày không hợp lệ'
+          });
+          continue;
         }
 
-        return results;
-    } catch (error) {
-        console.error("Error importing courses from Excel:", error);
-        throw error;
+        if (startDate > endDate) {
+          results.errors.push({
+            row: rowIndex,
+            course_id: courseData.course_id,
+            error: 'Thời gian bắt đầu không được lớn hơn thời gian kết thúc'
+          });
+          continue;
+        }
+
+        if (endDate > maxFutureDate) {
+          results.errors.push({
+            row: rowIndex,
+            course_id: courseData.course_id,
+            error: 'Thời gian kết thúc không được quá 5 năm trong tương lai'
+          });
+          continue;
+        }
+
+        // Kiểm tra course_id đã tồn tại chưa
+        const existingCourse = await models.Course.findByPk(courseData.course_id);
+        if (existingCourse) {
+          results.errors.push({
+            row: rowIndex,
+            course_id: courseData.course_id,
+            error: 'Mã khóa học đã tồn tại'
+          });
+          continue;
+        }
+
+        // Tạo khóa học mới
+        const newCourse = await models.Course.create(courseData);
+        results.success.push({
+          row: rowIndex,
+          course_id: newCourse.course_id,
+          course_name: newCourse.course_name
+        });
+
+      } catch (error) {
+        results.errors.push({
+          row: rowIndex,
+          course_id: row.course_id || 'N/A',
+          error: error.message || 'Lỗi không xác định'
+        });
+      }
     }
+
+    return results;
+  } catch (error) {
+    console.error("Lỗi khi nhập khóa học từ Excel:", error);
+    throw error;
+  }
 };
 
-// Import courses from JSON data (for preview feature)
+/**
+ * Nhập dữ liệu khóa học từ JSON (dùng cho tính năng xem trước).
+ * @param {Array<Object>} coursesData - Mảng các đối tượng khóa học.
+ * @returns {Promise<Object>} Kết quả nhập khẩu bao gồm danh sách thành công và lỗi.
+ * @throws {Error} Nếu dữ liệu JSON không hợp lệ hoặc lỗi trong quá trình nhập.
+ */
 export const importCoursesFromJson = async (coursesData) => {
-    try {
-        if (!coursesData || !Array.isArray(coursesData)) {
-            throw new Error("Dữ liệu khóa học không hợp lệ");
+  try {
+    if (!coursesData || !Array.isArray(coursesData)) {
+      throw new Error("Dữ liệu khóa học không hợp lệ");
+    }
+
+    const results = {
+      success: [],
+      errors: [],
+      total: coursesData.length
+    };
+
+    // Duyệt qua từng item để validate và tạo khóa học
+    for (let i = 0; i < coursesData.length; i++) {
+      const courseData = coursesData[i];
+      const index = i + 1;
+
+      try {
+        // Validate các trường bắt buộc
+        if (!courseData.course_id || !courseData.course_name || !courseData.start_date || !courseData.end_date) {
+          results.errors.push({
+            index: index,
+            course_id: courseData.course_id || 'N/A',
+            error: 'Mã khóa học, Tên khóa học, Thời gian bắt(drop) bắt đầu và Thời gian kết thúc là bắt buộc'
+          });
+          continue;
         }
 
-        const results = {
-            success: [],
-            errors: [],
-            total: coursesData.length
+        // Làm sạch và định dạng dữ liệu
+        const cleanedData = {
+          course_id: courseData.course_id.toString().trim(),
+          course_name: courseData.course_name.toString().trim(),
+          start_date: courseData.start_date || null,
+          end_date: courseData.end_date || null,
+          status: courseData.status || 'Hoạt động',
         };
 
-        // Validate và tạo course cho từng item
-        for (let i = 0; i < coursesData.length; i++) {
-            const courseData = coursesData[i];
-            const index = i + 1;
+        // Validate khoảng ngày
+        const startDate = new Date(cleanedData.start_date);
+        const endDate = new Date(cleanedData.end_date);
+        const today = new Date();
+        const maxFutureDate = new Date(today);
+        maxFutureDate.setFullYear(today.getFullYear() + 5); // Giới hạn 5 năm trong tương lai
 
-            try {
-                // Validate required fields
-                if (!courseData.course_id || !courseData.course_name || !courseData.start_date || !courseData.end_date) {
-                    results.errors.push({
-                        index: index,
-                        course_id: courseData.course_id || 'N/A',
-                        error: 'Mã khóa học, Tên khóa học, Thời gian bắt đầu và Thời gian kết thúc là bắt buộc'
-                    });
-                    continue;
-                }
-
-                // Clean và format data
-                const cleanedData = {
-                    course_id: courseData.course_id.toString().trim(),
-                    course_name: courseData.course_name.toString().trim(),
-                    start_date: courseData.start_date || null,
-                    end_date: courseData.end_date || null,
-                    status: courseData.status || 'Hoạt động',
-                };
-
-                // Validate date range
-                const startDate = new Date(cleanedData.start_date);
-                const endDate = new Date(cleanedData.end_date);
-                const today = new Date();
-                const maxFutureDate = new Date(today);
-                maxFutureDate.setFullYear(today.getFullYear() + 5);
-
-                if (isNaN(startDate) || isNaN(endDate)) {
-                    results.errors.push({
-                        index: index,
-                        course_id: cleanedData.course_id,
-                        error: 'Định dạng ngày không hợp lệ'
-                    });
-                    continue;
-                }
-
-                if (startDate > endDate) {
-                    results.errors.push({
-                        index: index,
-                        course_id: cleanedData.course_id,
-                        error: 'Thời gian bắt đầu không được lớn hơn thời gian kết thúc'
-                    });
-                    continue;
-                }
-
-                if (endDate > maxFutureDate) {
-                    results.errors.push({
-                        index: index,
-                        course_id: cleanedData.course_id,
-                        error: 'Thời gian kết thúc không được quá 5 năm trong tương lai'
-                    });
-                    continue;
-                }
-
-                // Kiểm tra course_id đã tồn tại chưa
-                const existingCourse = await Course.findOne({
-                    where: { course_id: cleanedData.course_id }
-                });
-                if (existingCourse) {
-                    results.errors.push({
-                        index: index,
-                        course_id: cleanedData.course_id,
-                        error: 'Mã khóa học đã tồn tại'
-                    });
-                    continue;
-                }
-
-                // Tạo course mới
-                const newCourse = await Course.create(cleanedData);
-                results.success.push(newCourse);
-            } catch (error) {
-                results.errors.push({
-                    index: index,
-                    course_id: courseData.course_id || 'N/A',
-                    error: error.message || 'Lỗi không xác định'
-                });
-            }
+        if (isNaN(startDate) || isNaN(endDate)) {
+          results.errors.push({
+            index: index,
+            course_id: cleanedData.course_id,
+            error: 'Định dạng ngày không hợp lệ'
+          });
+          continue;
         }
 
-        return results;
-    } catch (error) {
-        console.error("Error importing courses from JSON:", error);
-        throw error;
+        if (startDate > endDate) {
+          results.errors.push({
+            index: index,
+            course_id: cleanedData.course_id,
+            error: 'Thời gian bắt đầu không được lớn hơn thời gian kết thúc'
+          });
+          continue;
+        }
+
+        if (endDate > maxFutureDate) {
+          results.errors.push({
+            index: index,
+            course_id: cleanedData.course_id,
+            error: 'Thời gian kết thúc không được quá 5 năm trong tương lai'
+          });
+          continue;
+        }
+
+        // Kiểm tra course_id đã tồn tại chưa
+        const existingCourse = await models.Course.findOne({
+          where: { course_id: cleanedData.course_id }
+        });
+        if (existingCourse) {
+          results.errors.push({
+            index: index,
+            course_id: cleanedData.course_id,
+            error: 'Mã khóa học đã tồn tại'
+          });
+          continue;
+        }
+
+        // Tạo khóa học mới
+        const newCourse = await models.Course.create(cleanedData);
+        results.success.push(newCourse);
+      } catch (error) {
+        results.errors.push({
+          index: index,
+          course_id: courseData.course_id || 'N/A',
+          error: error.message || 'Lỗi không xác định'
+        });
+      }
     }
+
+    return results;
+  } catch (error) {
+    console.error("Lỗi khi nhập khóa học từ JSON:", error);
+    throw error;
+  }
 };
 
-// Validate Excel template structure
+/**
+ * Validate cấu trúc template Excel cho khóa học.
+ * @param {Buffer} fileBuffer - Buffer của file Excel.
+ * @returns {Object} Kết quả validation bao gồm valid (boolean) và error (string, nếu có).
+ * @throws {Error} Nếu template không hợp lệ.
+ */
 export const validateExcelTemplate = (fileBuffer) => {
-    const requiredColumns = ['Mã khóa học', 'Tên khóa học', 'Thời gian bắt đầu', 'Thời gian kết thúc'];
-    const optionalColumns = ['Trạng thái'];
-    const validation = ExcelUtils.validateTemplate(fileBuffer, requiredColumns, optionalColumns);
+  const requiredColumns = ['Mã khóa học', 'Tên khóa học', 'Thời gian bắt đầu', 'Thời gian kết thúc'];
+  const optionalColumns = ['Trạng thái'];
+  const validation = ExcelUtils.validateTemplate(fileBuffer, requiredColumns, optionalColumns);
 
-    if (!validation.valid) {
-        throw new Error(validation.error);
-    }
+  if (!validation.valid) {
+    throw new Error(validation.error);
+  }
 
-    return validation;
-};
+  return validation;
+};                     

@@ -14,7 +14,6 @@ const DeleteStudentModal = ({ open, onClose, onDelete, student, loading }) => {
 
   const handleDelete = async () => {
     try {
-      loading(true);
       const response = await onDelete(student.student_id);
       if (response && response.data) {
         onDelete(student.student_id);
@@ -24,7 +23,6 @@ const DeleteStudentModal = ({ open, onClose, onDelete, student, loading }) => {
       console.error('Error deleting student:', error);
       alert('Không thể xóa học viên. Vui lòng thử lại.');
     } finally {
-      loading(false);
       onClose();
     }
   };

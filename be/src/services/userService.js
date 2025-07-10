@@ -1,5 +1,11 @@
-import {Student, Lecturer, Admin, TrainingOfficer} from '../models/User.js';
+import models from '../models/index.js';
+const { Student, Lecturer, Admin, TrainingOfficer } = models;
 
+/**
+ * Lấy tất cả người dùng từ các mô hình Student, Lecturer, Admin, và TrainingOfficer.
+ * @returns {Promise<Object>} Một đối tượng chứa danh sách sinh viên, giảng viên, quản trị viên và cán bộ đào tạo.
+ * @throws {Error} Nếu có lỗi trong quá trình lấy dữ liệu người dùng.
+ */
 export const getAllUsers = async () => {
     try {
         const students = await Student.findAll();
@@ -14,11 +20,15 @@ export const getAllUsers = async () => {
             trainingOfficers
         };
     } catch (error) {
-        throw new Error('Error fetching users: ' + error.message);
+        throw new Error('Lỗi khi lấy danh sách người dùng: ' + error.message);
     }
 };
 
-// Service để tìm kiếm user từ tất cả các model
+/**
+ * Tìm kiếm người dùng bằng email trên tất cả các mô hình.
+ * @param {string} email - Địa chỉ email của người dùng cần tìm.
+ * @returns {Promise<Object|null>} Một đối tượng chứa thông tin người dùng, vai trò và mô hình nếu tìm thấy, ngược lại trả về null.
+ */
 export const findUserByEmail = async (email) => {
     // Tìm trong Student
     let user = await Student.findOne({ where: { email } });
@@ -47,7 +57,11 @@ export const findUserByEmail = async (email) => {
     return null;
 };
 
-// Service để tìm kiếm user bằng google_id
+/**
+ * Tìm kiếm người dùng bằng google_id trên tất cả các mô hình.
+ * @param {string} googleId - Google ID của người dùng cần tìm.
+ * @returns {Promise<Object|null>} Một đối tượng chứa thông tin người dùng, vai trò và mô hình nếu tìm thấy, ngược lại trả về null.
+ */
 export const findUserByGoogleId = async (googleId) => {
     // Tìm trong Student
     let user = await Student.findOne({ where: { google_id: googleId } });
@@ -76,7 +90,11 @@ export const findUserByGoogleId = async (googleId) => {
     return null;
 };
 
-// Service để tìm kiếm user bằng ID
+/**
+ * Tìm kiếm người dùng bằng ID trên tất cả các mô hình.
+ * @param {string} id - ID của người dùng cần tìm.
+ * @returns {Promise<Object|null>} Một đối tượng chứa thông tin người dùng, vai trò và mô hình nếu tìm thấy, ngược lại trả về null.
+ */
 export const findUserById = async (id) => {
     // Tìm trong Student
     let user = await Student.findByPk(id);
@@ -105,7 +123,13 @@ export const findUserById = async (id) => {
     return null;
 };
 
-// Service để cập nhật google_id cho user
+/**
+ * Cập nhật Google ID cho một người dùng.
+ * @param {Object} userInfo - Thông tin người dùng bao gồm đối tượng user và tên mô hình.
+ * @param {string} googleId - Google ID mới cần cập nhật.
+ * @returns {Promise<Array>} Kết quả của hoạt động cập nhật từ Sequelize.
+ * @throws {Error} Nếu mô hình người dùng không hợp lệ.
+ */
 export const updateUserGoogleId = async (userInfo, googleId) => {
     const { user, model } = userInfo;
 
@@ -127,11 +151,16 @@ export const updateUserGoogleId = async (userInfo, googleId) => {
                 where: { staff_id: user.staff_id }
             });
         default:
-            throw new Error('Invalid user model');
+            throw new Error('Mô hình người dùng không hợp lệ');
     }
 };
 
-// Service để lấy ID của user
+/**
+ * Lấy ID đặc trưng của người dùng dựa trên vai trò của họ.
+ * @param {Object} userInfo - Thông tin người dùng bao gồm đối tượng user và tên mô hình.
+ * @returns {string} ID của người dùng.
+ * @throws {Error} Nếu mô hình người dùng không hợp lệ.
+ */
 export const getUserId = (userInfo) => {
     const { user, model } = userInfo;
 
@@ -145,6 +174,6 @@ export const getUserId = (userInfo) => {
         case 'TrainingOfficer':
             return user.staff_id;
         default:
-            throw new Error('Invalid user model');
+            throw new Error('Mô hình người dùng không hợp lệ');
     }
 };

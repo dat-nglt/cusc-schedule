@@ -24,6 +24,7 @@ import EditLecturerModal from './EditLecturerModal';
 import DeleteLecturerModal from './DeleteLecturerModal';
 import useResponsive from '../../hooks/useResponsive';
 import LecturerTable from './LecturerTable';
+import { toast } from 'react-toastify';
 import { getAllLecturers, getLecturerById, createLecturer, updateLecturer, deleteLecturer } from '../../api/lecturerAPI';
 const Lecturer = () => {
     const { isSmallScreen, isMediumScreen } = useResponsive();
@@ -44,10 +45,10 @@ const Lecturer = () => {
     const [lecturerToDelete, setLecturerToDelete] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-    const [message, setMessage] = useState('');
+
 
     // Danh sách trạng thái để lọc
-    const statuses = ['Hoạt động', 'Tạm nghỉ'];
+    const statuses = ['Đang giảng dạy', 'Tạm nghỉ', 'Đã nghỉ việc', 'Nghỉ hưu'];
 
     const fetchLecturers = async () => {
         try {
@@ -62,6 +63,7 @@ const Lecturer = () => {
             console.error("Lỗi khi tải danh sách giảng viên:", error);
         } finally {
             setLoading(false);
+            setError('');
         }
     };
 
@@ -80,14 +82,16 @@ const Lecturer = () => {
             setLoading(true);
             const response = await createLecturer(newLecturer);
             if (response && response.data) {
-                setMessage("Thêm giảng viên thành công!");
                 fetchLecturers(); // Tải lại danh sách giảng viên sau khi thêm thành công
+                toast.success('Thêm giảng viên thành công!');
             }
         } catch (error) {
             console.error("Lỗi khi thêm giảng viên:", error);
             setError("Không thể thêm giảng viên. Vui lòng kiểm tra lại thông tin.");
+            toast.error('Thêm giảng viên thất bại! Vui lòng kiểm tra lại thông tin.');
         } finally {
             setLoading(false);
+            setError('');
         }
     };
 
@@ -108,8 +112,10 @@ const Lecturer = () => {
         } catch (error) {
             console.error("Lỗi khi lấy thông tin giảng viên để chỉnh sửa:", error);
             setError("Không thể lấy thông tin giảng viên để chỉnh sửa. Vui lòng thử lại.");
+            toast.error('Lỗi khi lấy thông tin giảng viên để chỉnh sửa. Vui lòng thử lại.');
         } finally {
             setLoading(false);
+            setError('');
         }
     };
 
@@ -125,14 +131,16 @@ const Lecturer = () => {
             setLoading(true);
             const response = await updateLecturer(updatedLecturer.lecturer_id, updatedLecturer);
             if (response && response.data) {
-                setMessage("Cập nhật giảng viên thành công!");
+                toast.success('Cập nhật giảng viên thành công!');
                 fetchLecturers(); // Tải lại danh sách giảng viên sau khi cập nhật thành công
             }
         } catch (error) {
             console.error("Lỗi khi cập nhật giảng viên:", error);
             setError("Không thể cập nhật giảng viên. Vui lòng kiểm tra lại thông tin.");
+            toast.error('Cập nhật giảng viên thất bại! Vui lòng kiểm tra lại thông tin.');
         } finally {
             setLoading(false);
+            setError('');
         }
     };
 
@@ -153,8 +161,10 @@ const Lecturer = () => {
         } catch (error) {
             console.error("Lỗi khi lấy thông tin chi tiết giảng viên:", error);
             setError("Không thể lấy thông tin chi tiết giảng viên. Vui lòng thử lại.");
+            toast.error('Lỗi khi lấy thông tin chi tiết giảng viên. Vui lòng thử lại.');
         } finally {
             setLoading(false);
+            setError('');
         }
     };
 
@@ -171,16 +181,18 @@ const Lecturer = () => {
             setLoading(true);
             const response = await deleteLecturer(id);
             if (response) {
-                setMessage("Xóa giảng viên thành công!");
+                toast.success('Xóa giảng viên thành công!');
                 fetchLecturers(); // Tải lại danh sách giảng viên sau khi xóa thành công
             }
         } catch (error) {
             console.error("Lỗi khi xóa giảng viên:", error);
             setError("Không thể xóa giảng viên. Vui lòng thử lại.");
+            toast.error('Xóa giảng viên thất bại! Vui lòng thử lại.');
         } finally {
             setLoading(false);
             setOpenDeleteModal(false);
             setLecturerToDelete(null);
+            setError('');
         }
     };
 
@@ -195,6 +207,7 @@ const Lecturer = () => {
         setOpenDeleteModal(false);
         setLecturerToDelete(null);
     };
+
 
     // Lọc danh sách giảng viên dựa trên từ khóa tìm kiếm và trạng thái
     const filteredLecturers = lecturers.filter((lecturer) => {
@@ -326,7 +339,7 @@ const Lecturer = () => {
                 existingLecturers={lecturers}
                 error={error}
                 loading={loading}
-                message={message}
+                fetchLecturers={fetchLecturers}
             />
             <EditLecturerModal
                 open={openEditModal}

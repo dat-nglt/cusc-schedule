@@ -28,7 +28,7 @@ import { importSemesters } from '../../api/semesterAPI';
 import { getErrorChip, getRowStatus } from '../../components/ui/ErrorChip';
 import { formatDateTime } from '../../utils/formatDateTime';
 
-export default function PreviewSemesterModal({ open, onClose, previewData, onImportSuccess }) {
+export default function PreviewSemesterModal({ open, onClose, previewData, fetchSemesters }) {
     const [isImporting, setIsImporting] = useState(false);
     const [importError, setImportError] = useState('');
     const [importMessage, setImportMessage] = useState('');
@@ -60,11 +60,13 @@ export default function PreviewSemesterModal({ open, onClose, previewData, onImp
             if (response.data && response.data) {
                 setImportMessage(`Thêm thành công ${validRows.length} học kỳ`);
                 setImportError('');
+                fetchSemesters(); // Gọi lại hàm fetch để cập nhật danh sách học kỳ
 
                 // Delay để người dùng thấy thông báo thành công trước khi đóng modal
                 setTimeout(() => {
-                    onImportSuccess(response.data);
                     onClose();
+                    setImportMessage('');
+                    setImportError('');
                 }, 1500);
             } else {
                 setImportError(response.data?.message || 'Có lỗi xảy ra khi thêm dữ liệu!');

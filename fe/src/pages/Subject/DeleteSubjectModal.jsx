@@ -10,9 +10,18 @@ import {
 } from '@mui/material';
 
 const DeleteSubjectModal = ({ open, onClose, onDelete, subject }) => {
-  const handleDelete = () => {
-    onDelete(subject.id);
-    onClose();
+  const handleDelete = async () => {
+    try {
+      const response = await onDelete(subject.subject_id);
+      if (response && response.data) {
+        onDelete(subject.id);
+        onClose();
+      }
+    } catch (error) {
+      console.error('Error deleting subject:', error);
+    } finally {
+      onClose();
+    }
   };
 
   return (
@@ -28,7 +37,7 @@ const DeleteSubjectModal = ({ open, onClose, onDelete, subject }) => {
               fontWeight: 'bold', // In đậm
             }}
           >
-            {subject?.maHocPhan}
+            {subject?.subject_id}
           </Box> không?
         </Typography>
       </DialogContent>

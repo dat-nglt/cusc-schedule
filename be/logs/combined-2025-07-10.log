@@ -242,3 +242,100 @@
 2025-07-10 10:48:55 info: ::1 - - [10/Jul/2025:03:48:55 +0000] "OPTIONS /api/students/getAll HTTP/1.1" 204 0 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
 2025-07-10 10:48:55 info: ::1 - - [10/Jul/2025:03:48:55 +0000] "GET /api/students/getAll HTTP/1.1" 200 72 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
 2025-07-10 10:48:55 info: ::1 - - [10/Jul/2025:03:48:55 +0000] "GET /api/students/getAll HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:19:51 info: ✅ Kết nối PostgreSQL với Sequelize thành công.
+2025-07-10 15:19:51 info: ✅ Kết nối cơ sở dữ liệu thành công.
+2025-07-10 15:19:52 info: ✅ Schema cơ sở dữ liệu đã được đồng bộ hóa (Chế độ phát triển).
+2025-07-10 15:19:52 info: ✅ Cấu hình Passport đã được tải.
+2025-07-10 15:19:52 info: ✅ Passport has been configured.
+2025-07-10 15:19:52 info: ✅ Middleware Morgan for HTTP request logging configured.
+2025-07-10 15:19:52 info: ✅ Middleware Session and Passport have been configured.
+2025-07-10 15:19:52 info: ✅ Router has been setup.
+2025-07-10 15:19:52 info: ✅ Server is running on port 3000 (development environment)
+2025-07-10 15:20:58 info: ::1 - - [10/Jul/2025:08:20:58 +0000] "GET /auth/google HTTP/1.1" 302 0 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:20:59 info: Đăng nhập thành công qua Google cho user: dhchuong2100264@student.ctuet.edu.vn (Google ID: 106447088690535741067)
+2025-07-10 15:20:59 info: ::1 - - [10/Jul/2025:08:20:59 +0000] "GET /auth/google/callback?code=4%2F0AVMBsJhnoTzwqWk_5ofwe5oe8-GOXqnOuo2R5EJ1pends9CLObS_QfRrQbpNPFOth94Jzg&scope=email+profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+openid+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile&authuser=0&hd=student.ctuet.edu.vn&prompt=none HTTP/1.1" 302 440 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:21:21 info: ::1 - - [10/Jul/2025:08:21:21 +0000] "OPTIONS /api/courses HTTP/1.1" 204 0 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:21:21 info: ::1 - - [10/Jul/2025:08:21:21 +0000] "OPTIONS /api/courses HTTP/1.1" 204 0 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:21:22 info: ::1 - - [10/Jul/2025:08:21:22 +0000] "GET /api/courses HTTP/1.1" 500 112 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:21:22 info: ::1 - - [10/Jul/2025:08:21:22 +0000] "GET /api/courses HTTP/1.1" 500 112 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:21:30 info: ::1 - - [10/Jul/2025:08:21:30 +0000] "OPTIONS /api/subjects/getAll HTTP/1.1" 204 0 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:21:30 info: ::1 - - [10/Jul/2025:08:21:30 +0000] "OPTIONS /api/semesters/getAll HTTP/1.1" 204 0 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:21:30 info: ::1 - - [10/Jul/2025:08:21:30 +0000] "OPTIONS /api/subjects/getAll HTTP/1.1" 204 0 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:21:30 info: ::1 - - [10/Jul/2025:08:21:30 +0000] "OPTIONS /api/semesters/getAll HTTP/1.1" 204 0 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:21:30 info: ::1 - - [10/Jul/2025:08:21:30 +0000] "GET /api/subjects/getAll HTTP/1.1" 200 84 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:21:30 info: ::1 - - [10/Jul/2025:08:21:30 +0000] "GET /api/semesters/getAll HTTP/1.1" 200 84 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:21:30 info: ::1 - - [10/Jul/2025:08:21:30 +0000] "GET /api/subjects/getAll HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:21:30 info: ::1 - - [10/Jul/2025:08:21:30 +0000] "GET /api/semesters/getAll HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:21:31 info: ::1 - - [10/Jul/2025:08:21:31 +0000] "OPTIONS /api/courses HTTP/1.1" 204 0 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:21:31 info: ::1 - - [10/Jul/2025:08:21:31 +0000] "OPTIONS /api/courses HTTP/1.1" 204 0 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:21:31 info: ::1 - - [10/Jul/2025:08:21:31 +0000] "GET /api/courses HTTP/1.1" 500 112 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:21:31 info: ::1 - - [10/Jul/2025:08:21:31 +0000] "GET /api/courses HTTP/1.1" 500 112 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:22:22 info: ::1 - - [10/Jul/2025:08:22:22 +0000] "OPTIONS /api/classes HTTP/1.1" 204 0 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:22:22 info: ::1 - - [10/Jul/2025:08:22:22 +0000] "OPTIONS /api/courses HTTP/1.1" 204 0 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:22:22 info: ::1 - - [10/Jul/2025:08:22:22 +0000] "OPTIONS /api/classes HTTP/1.1" 204 0 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:22:22 info: ::1 - - [10/Jul/2025:08:22:22 +0000] "OPTIONS /api/courses HTTP/1.1" 204 0 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:22:22 info: ::1 - - [10/Jul/2025:08:22:22 +0000] "GET /api/courses HTTP/1.1" 500 112 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:22:22 info: ::1 - - [10/Jul/2025:08:22:22 +0000] "GET /api/classes HTTP/1.1" 200 350 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:22:22 info: ::1 - - [10/Jul/2025:08:22:22 +0000] "GET /api/courses HTTP/1.1" 500 112 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:22:22 info: ::1 - - [10/Jul/2025:08:22:22 +0000] "GET /api/classes HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:22:29 info: ::1 - - [10/Jul/2025:08:22:29 +0000] "OPTIONS /api/courses HTTP/1.1" 204 0 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:22:29 info: ::1 - - [10/Jul/2025:08:22:29 +0000] "OPTIONS /api/courses HTTP/1.1" 204 0 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:22:29 info: ::1 - - [10/Jul/2025:08:22:29 +0000] "GET /api/courses HTTP/1.1" 500 112 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:22:29 info: ::1 - - [10/Jul/2025:08:22:29 +0000] "GET /api/courses HTTP/1.1" 500 112 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:22:45 info: ::1 - - [10/Jul/2025:08:22:45 +0000] "OPTIONS /api/courses HTTP/1.1" 204 0 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:22:45 info: ::1 - - [10/Jul/2025:08:22:45 +0000] "OPTIONS /api/courses HTTP/1.1" 204 0 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:22:46 info: ::1 - - [10/Jul/2025:08:22:46 +0000] "GET /api/courses HTTP/1.1" 500 112 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:22:46 info: ::1 - - [10/Jul/2025:08:22:46 +0000] "GET /api/courses HTTP/1.1" 500 112 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:24:57 info: ::1 - - [10/Jul/2025:08:24:57 +0000] "OPTIONS /api/breakschedules HTTP/1.1" 204 0 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:24:57 info: ::1 - - [10/Jul/2025:08:24:57 +0000] "OPTIONS /api/breakschedules HTTP/1.1" 204 0 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:24:57 info: ::1 - - [10/Jul/2025:08:24:57 +0000] "GET /api/breakschedules HTTP/1.1" 500 121 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:24:57 info: ::1 - - [10/Jul/2025:08:24:57 +0000] "GET /api/breakschedules HTTP/1.1" 500 121 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:31:05 info: ✅ Kết nối PostgreSQL với Sequelize thành công.
+2025-07-10 15:31:05 info: ✅ Kết nối cơ sở dữ liệu thành công.
+2025-07-10 15:31:06 info: ✅ Schema cơ sở dữ liệu đã được đồng bộ hóa (Chế độ phát triển).
+2025-07-10 15:31:06 info: ✅ Cấu hình Passport đã được tải.
+2025-07-10 15:31:06 info: ✅ Passport has been configured.
+2025-07-10 15:31:06 info: ✅ Middleware Morgan for HTTP request logging configured.
+2025-07-10 15:31:06 info: ✅ Middleware Session and Passport have been configured.
+2025-07-10 15:31:06 info: ✅ Router has been setup.
+2025-07-10 15:31:06 info: ✅ Server is running on port 3000 (development environment)
+2025-07-10 15:31:12 info: ✅ Kết nối PostgreSQL với Sequelize thành công.
+2025-07-10 15:31:12 info: ✅ Kết nối cơ sở dữ liệu thành công.
+2025-07-10 15:31:13 info: ✅ Schema cơ sở dữ liệu đã được đồng bộ hóa (Chế độ phát triển).
+2025-07-10 15:31:13 info: ✅ Cấu hình Passport đã được tải.
+2025-07-10 15:31:13 info: ✅ Passport has been configured.
+2025-07-10 15:31:13 info: ✅ Middleware Morgan for HTTP request logging configured.
+2025-07-10 15:31:13 info: ✅ Middleware Session and Passport have been configured.
+2025-07-10 15:31:13 info: ✅ Router has been setup.
+2025-07-10 15:31:13 info: ✅ Server is running on port 3000 (development environment)
+2025-07-10 15:34:39 info: ✅ Kết nối PostgreSQL với Sequelize thành công.
+2025-07-10 15:34:39 info: ✅ Kết nối cơ sở dữ liệu thành công.
+2025-07-10 15:34:39 info: ✅ Schema cơ sở dữ liệu đã được đồng bộ hóa (Chế độ phát triển).
+2025-07-10 15:34:39 info: ✅ Cấu hình Passport đã được tải.
+2025-07-10 15:34:39 info: ✅ Passport has been configured.
+2025-07-10 15:34:39 info: ✅ Middleware Morgan for HTTP request logging configured.
+2025-07-10 15:34:39 info: ✅ Middleware Session and Passport have been configured.
+2025-07-10 15:34:39 info: ✅ Router has been setup.
+2025-07-10 15:34:39 info: ✅ Server is running on port 3000 (development environment)
+2025-07-10 15:34:48 info: ::1 - - [10/Jul/2025:08:34:48 +0000] "OPTIONS /api/courses HTTP/1.1" 204 0 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:34:48 info: ::1 - - [10/Jul/2025:08:34:48 +0000] "OPTIONS /api/courses HTTP/1.1" 204 0 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:34:48 info: ::1 - - [10/Jul/2025:08:34:48 +0000] "GET /api/courses HTTP/1.1" 200 331 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:34:48 info: ::1 - - [10/Jul/2025:08:34:48 +0000] "GET /api/courses HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:34:53 info: ::1 - - [10/Jul/2025:08:34:53 +0000] "OPTIONS /api/courses/CS106 HTTP/1.1" 204 0 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:34:53 info: ::1 - - [10/Jul/2025:08:34:53 +0000] "GET /api/courses/CS106 HTTP/1.1" 200 329 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:34:56 info: ::1 - - [10/Jul/2025:08:34:56 +0000] "OPTIONS /api/classes HTTP/1.1" 204 0 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:34:56 info: ::1 - - [10/Jul/2025:08:34:56 +0000] "OPTIONS /api/courses HTTP/1.1" 204 0 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:34:56 info: ::1 - - [10/Jul/2025:08:34:56 +0000] "OPTIONS /api/classes HTTP/1.1" 204 0 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:34:56 info: ::1 - - [10/Jul/2025:08:34:56 +0000] "OPTIONS /api/courses HTTP/1.1" 204 0 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:34:56 info: ::1 - - [10/Jul/2025:08:34:56 +0000] "GET /api/classes HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:34:56 info: ::1 - - [10/Jul/2025:08:34:56 +0000] "GET /api/courses HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:34:56 info: ::1 - - [10/Jul/2025:08:34:56 +0000] "GET /api/classes HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:34:56 info: ::1 - - [10/Jul/2025:08:34:56 +0000] "GET /api/courses HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:35:02 info: ::1 - - [10/Jul/2025:08:35:02 +0000] "OPTIONS /api/lecturers/getAll HTTP/1.1" 204 0 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:35:02 info: ::1 - - [10/Jul/2025:08:35:02 +0000] "OPTIONS /api/lecturers/getAll HTTP/1.1" 204 0 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:35:02 info: ::1 - - [10/Jul/2025:08:35:02 +0000] "GET /api/lecturers/getAll HTTP/1.1" 200 87 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:35:02 info: ::1 - - [10/Jul/2025:08:35:02 +0000] "GET /api/lecturers/getAll HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:35:04 info: ::1 - - [10/Jul/2025:08:35:04 +0000] "OPTIONS /api/breakschedules HTTP/1.1" 204 0 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:35:04 info: ::1 - - [10/Jul/2025:08:35:04 +0000] "OPTIONS /api/breakschedules HTTP/1.1" 204 0 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:35:04 info: ::1 - - [10/Jul/2025:08:35:04 +0000] "GET /api/breakschedules HTTP/1.1" 500 121 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-10 15:35:04 info: ::1 - - [10/Jul/2025:08:35:04 +0000] "GET /api/breakschedules HTTP/1.1" 500 121 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
