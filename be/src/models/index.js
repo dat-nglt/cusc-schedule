@@ -13,8 +13,10 @@ import SemesterModel from "./Semester.js";
 import StudentModel from "./Student.js";
 import SubjectModel from "./Subject.js";
 import TrainingOfficerModel from "./TrainingOfficer.js";
+import AccountModel from "./Accounts.js";
 
 // Khởi tạo từng model với instance của Sequelize
+const Account = AccountModel(sequelize, DataTypes);
 const Admin = AdminModel(sequelize, DataTypes);
 const Classes = ClassesModel(sequelize, DataTypes);
 const BreakSchedule = BreakScheduleModel(sequelize, DataTypes);
@@ -28,6 +30,7 @@ const TrainingOfficer = TrainingOfficerModel(sequelize, DataTypes);
 
 // Gom tất cả model vào object `models`
 const models = {
+  Account,
   Admin,
   Classes,
   BreakSchedule,
@@ -43,7 +46,7 @@ const models = {
 
 // Gọi phương thức associate nếu model có định nghĩa quan hệ
 Object.keys(models).forEach((modelName) => {
-  if (typeof models[modelName].associate === 'function') {
+  if (typeof models[modelName].associate === "function") {
     models[modelName].associate(models);
   }
 });

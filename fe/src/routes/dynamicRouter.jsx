@@ -5,6 +5,8 @@ import routes from "./routes"; // Import định nghĩa các route
 import Loader from "../components/common/Loader"; // Component hiển thị khi đang tải
 import NotFound from "../components/layout/NotFound"; // Component cho trang 404
 import { useAuth } from "../hooks/useAuth"; // Hook kiểm tra trạng thái đăng nhập
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // Import động tất cả các component từ thư mục `pages`
 const pageComponents = import.meta.glob("../pages/*/index.jsx");
@@ -56,6 +58,18 @@ const DynamicRouter = () => {
                                 ) : (
                                     <Layout>
                                         <Component /> {/* Render component của route bên trong Layout */}
+                                        <ToastContainer
+                                            position="top-right"
+                                            autoClose={3000}
+                                            hideProgressBar={false}
+                                            newestOnTop={false}
+                                            closeOnClick
+                                            rtl={false}
+                                            pauseOnFocusLoss
+                                            draggable
+                                            pauseOnHover
+                                            limit={3}
+                                        />
                                     </Layout>
                                 )
                             }

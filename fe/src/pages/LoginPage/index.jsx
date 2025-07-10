@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'; // Import useEffect
 import {
     Box,
     Card,
@@ -12,7 +12,8 @@ import {
     Container,
     Link,
     Paper,
-    alpha
+    alpha,
+    Alert // Import Alert để hiển thị thông báo lỗi
 } from '@mui/material';
 import GoogleIcon from '@mui/icons-material/Google';
 import SchoolIcon from '@mui/icons-material/School';
@@ -20,14 +21,18 @@ import { motion } from 'framer-motion';
 import PersonIcon from '@mui/icons-material/Person';
 import EngineeringIcon from '@mui/icons-material/Engineering';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
-
+import loginWithGoogle from '../../api/authAPI';
+import { useLocation, useNavigate } from 'react-router-dom'; // Import useLocation và useNavigate
+import { toast } from 'react-toastify';
 const LoginPage = () => {
     const [selectedRole, setSelectedRole] = useState('Học viên');
     const theme = useTheme();
+    const location = useLocation(); // Hook để truy cập đối tượng location
+    const navigate = useNavigate(); // Hook để điều hướng
 
     const handleGoogleLogin = () => {
         // Redirect to backend Google OAuth
-        window.location.href = 'http://localhost:3000/auth/google';
+        loginWithGoogle();
     };
 
     const roles = [
@@ -36,6 +41,43 @@ const LoginPage = () => {
         { name: 'Cán bộ đào tạo', icon: <EngineeringIcon fontSize="large" /> },
         { name: 'Quản trị viên', icon: <AdminPanelSettingsIcon fontSize="large" /> },
     ];
+
+    // Sử dụng useEffect để đọc tham số lỗi từ URL khi component được mount hoặc URL thay đổi
+    useEffect(() => {
+        const queryParams = new URLSearchParams(location.search);
+        const errorParam = queryParams.get('error');
+
+        if (errorParam) {
+            // Giải mã tham số lỗi và hiển thị thông báo phù hợp
+            switch (errorParam) {
+                
+                case 'account_not_found':
+                    toast.error('Tài khoản Google của bạn không tồn tại trong hệ thống. Vui lòng liên hệ quản trị viên để được cấp quyền hoặc đăng ký tài khoản.');
+                    break;
+                case 'account_already_linked':
+                    toast.error('Tài khoản Google này đã được liên kết với một tài khoản khác trong hệ thống. Vui lòng sử dụng tài khoản Google đã liên kết.');
+                    break;
+                case 'authentication_failed':
+                    toast.error('Đăng nhập Google thất bại. Vui lòng thử lại.');
+                    break;
+                case 'server_error_oauth':
+                    toast.error('Đã xảy ra lỗi máy chủ trong quá trình xác thực. Vui lòng thử lại sau.');
+                    break;
+                case 'email_not_available':
+                    toast.error('Không thể lấy địa chỉ email từ tài khoản Google của bạn. Vui lòng thử lại với tài khoản Google khác.');
+                    break;
+                case 'user_not_found_session':
+                    toast.error('Phiên đăng nhập không hợp lệ. Vui lòng đăng nhập lại.');
+                    break;
+                default:
+                    toast.error('Đã xảy ra lỗi không xác định trong quá trình đăng nhập. Vui lòng thử lại.');
+            }
+
+
+            navigate(location.pathname, { replace: true });
+        }
+
+    }, [location.search, navigate]); // Dependencies cho useEffect
 
     return (
         <Box
@@ -59,11 +101,11 @@ const LoginPage = () => {
                         overflow: 'hidden',
                         p: 4,
                         background: `
-      linear-gradient(135deg, 
-        ${alpha(theme.palette.primary.main, 0.9)} 0%, 
-        ${alpha(theme.palette.primary.dark, 0.9)} 100%),
-      url('https://cusc.ctu.edu.vn/images/banners/bg-cusc.jpg')
-    `,
+        linear-gradient(135deg, 
+          ${alpha(theme.palette.primary.main, 0.9)} 0%, 
+          ${alpha(theme.palette.primary.dark, 0.9)} 100%),
+        url('https://cusc.ctu.edu.vn/images/banners/bg-cusc.jpg')
+      `,
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
                         '&::before': {
@@ -74,8 +116,8 @@ const LoginPage = () => {
                             width: '100%',
                             height: '100%',
                             background: `radial-gradient(circle at 75% 30%, 
-        ${alpha(theme.palette.secondary.light, 0.15)} 0%, 
-        transparent 40%)`,
+          ${alpha(theme.palette.secondary.light, 0.15)} 0%, 
+          transparent 40%)`,
                         }
                     }}
                 >
@@ -313,6 +355,13 @@ const LoginPage = () => {
                         </Box>
 
                         <CardContent sx={{ p: 4 }}>
+                            {/* Hiển thị thông báo lỗi nếu có */}
+                            {/* {errorMessage && (
+                                <Alert severity="error" sx={{ mb: 3 }}>
+                                    {errorMessage}
+                                </Alert>
+                            )} */}
+
                             {/* Role selection với hiệu ứng card */}
                             <Box
                                 sx={{
@@ -467,7 +516,8 @@ const LoginPage = () => {
                                         >
                                             Đăng nhập với tư cách {selectedRole}
                                         </Typography>
-                                    </Divider>                                    {/* Google Button cải tiến */}
+                                    </Divider>
+                                    {/* Google Button cải tiến */}
                                     <Button
                                         fullWidth
                                         variant="contained"
