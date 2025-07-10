@@ -5,6 +5,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "db:setup": "npx sequelize db:create && npx sequelize db:migrate",
+    "db:drop": "npx sequelize db:drop",
+    "db:seed": "npx sequelize db:seed:all",
     "start": "babel-node src/server.js",
     "dev": "nodemon --exec babel-node src/server.js"
   },
