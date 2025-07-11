@@ -14,9 +14,11 @@ import { findUserById } from '../services/userService.js'; // Đảm bảo đư�
 const authMiddleware = async (req, res, next) => {
     // Lấy token từ cookie có tên 'jwt'
     // Bạn cần đảm bảo đã cài đặt và sử dụng `cookie-parser` middleware trong Express app của mình
-    const token = req.cookies.jwt; 
+    console.log(req.cookies.jwt);
+    
+    const token = req.cookies.jwt;
 
-    // Kiểm tra nếu token không tồn tại trong cookie
+        // Kiểm tra nếu token không tồn tại trong cookie
     if (!token) {
         return APIResponse(res, 401, 'Truy cập bị từ chối. Không tìm thấy token xác thực.');
     }
@@ -34,10 +36,7 @@ const authMiddleware = async (req, res, next) => {
         }
 
         // Gán thông tin người dùng vào đối tượng request để các middleware/route tiếp theo có thể sử dụng
-        req.userId = decoded.id;
-        // Ưu tiên role từ token, nếu không có thì lấy từ thông tin người dùng trong DB
-        req.userRole = decoded.role || userInfo.role; 
-        req.userInfo = userInfo; // Chứa toàn bộ thông tin người dùng (user object và role, model)
+        req.user = userInfo; // Chứa toàn bộ thông tin người dùng (user object và role, model)
 
         console.log(`Người dùng đã xác thực: ID=${req.userId}, Vai trò=${req.userRole}`);
         next(); // Chuyển sang middleware/route tiếp theo
