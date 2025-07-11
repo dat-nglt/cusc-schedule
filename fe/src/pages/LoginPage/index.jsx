@@ -21,7 +21,7 @@ import { motion } from 'framer-motion';
 import PersonIcon from '@mui/icons-material/Person';
 import EngineeringIcon from '@mui/icons-material/Engineering';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
-import loginWithGoogle from '../../api/authAPI';
+import {loginWithGoogle} from '../../api/authAPI';
 import { useLocation, useNavigate } from 'react-router-dom'; // Import useLocation và useNavigate
 import { toast } from 'react-toastify';
 const LoginPage = () => {

@@ -86,31 +86,21 @@ export const findUserByGoogleId = async (googleId) => {
  * @returns {Promise<Object|null>} Một đối tượng chứa thông tin người dùng, vai trò và mô hình nếu tìm thấy, ngược lại trả về null.
  */
 export const findUserById = async (id) => {
-  // Tìm trong Student
-  let user = await Student.findByPk(id);
-  if (user) {
-    return { user, role: "student", model: "Student" };
-  }
+  try {
+    const account = await Account.findByPk(id);
 
-  // Tìm trong Lecturer
-  user = await Lecturer.findByPk(id);
-  if (user) {
-    return { user, role: "lecturer", model: "Lecturer" };
+    if (account) {
+      return {
+        user: account, // Trả về toàn bộ đối tượng account
+        id: account.id, // ID của người dùng
+        role: account.role, // Vai trò của người dùng (lấy từ trường 'role' trong bảng Account)
+      };
+    }
+    return null;
+  } catch (error) {
+    console.error("Lỗi khi tìm người dùng trong bảng Account:", error);
+    throw new Error("Không thể tìm kiếm thông tin người dùng.");
   }
-
-  // Tìm trong Admin
-  user = await Admin.findByPk(id);
-  if (user) {
-    return { user, role: "admin", model: "Admin" };
-  }
-
-  // Tìm trong TrainingOfficer
-  user = await TrainingOfficer.findByPk(id);
-  if (user) {
-    return { user, role: "training_officer", model: "TrainingOfficer" };
-  }
-
-  return null;
 };
 
 /**

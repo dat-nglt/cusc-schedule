@@ -60,10 +60,10 @@ module.exports = {
         type: Sequelize.STRING(100),
         allowNull: true
       },
-      // academic_rank: { // Ví dụ: Học hàm, học vị (GS, PGS) - bổ sung nếu cần
-      //    type: Sequelize.STRING(50),
-      //    allowNull: true
-      // },
+      academic_rank: { // Ví dụ: Học hàm, học vị (GS, PGS) - bổ sung nếu cần
+         type: Sequelize.STRING(50),
+         allowNull: true
+      },
       // *** BỎ google_id ở đây vì nó đã có trong bảng accounts ***
       // google_id: {
       //   type: Sequelize.STRING(100),

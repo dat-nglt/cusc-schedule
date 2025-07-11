@@ -1,10 +1,11 @@
 // Import các module và component cần thiết
 import React, { Suspense, lazy, useEffect } from "react";
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
-import routes from "./routes"; // Import định nghĩa các route
+import { Routes, Route, useLocation } from "react-router-dom"; // Không cần Navigate ở đây nữa
+import routes from "./routes"; // Import định nghĩa các route của bạn
 import Loader from "../components/common/Loader"; // Component hiển thị khi đang tải
 import NotFound from "../components/layout/NotFound"; // Component cho trang 404
-import { useAuth } from "../hooks/useAuth"; // Hook kiểm tra trạng thái đăng nhập
+import PrivateRoute from "./PrivateRoute"; // Đã có
+import PublicRoute from "./PublicRoute"; // <-- Import PublicRoute mới
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -29,7 +30,6 @@ const lazyPages = Object.fromEntries(
 );
 
 const DynamicRouter = () => {
-    const { isAuthenticated } = useAuth(); // Kiểm tra người dùng đã đăng nhập hay chưa
     const location = useLocation(); // Lấy thông tin về route hiện tại
 
     useEffect(() => {
@@ -41,43 +41,60 @@ const DynamicRouter = () => {
     }, [location.pathname]);
 
     return (
-        <Suspense fallback={<Loader />}> {/* Hiển thị loader khi đang tải component */}
+        // <Suspense fallback={<Loader />}> {/* Hiển thị loader khi đang tải component */}
+        <Suspense > {/* Không hiển thị loader khi đang tải component */}
             <Routes>
                 {routes.map((route) => {
-                    const Component = lazyPages[route.component] || NotFound; // Lấy component hoặc fallback về NotFound
-                    const Layout = route.layout || React.Fragment; // Sử dụng layout tùy chỉnh hoặc mặc định là React.Fragment
-                    const isPrivate = route.isPrivate; // Kiểm tra route có yêu cầu đăng nhập không
+                    const Component = lazyPages[route.component] || NotFound;
+                    const Layout = route.layout || React.Fragment;
+                    const isPrivate = route.isPrivate;
+                    const allowedRoles = route.roles;
+                    const isPublicRestricted = route.isPublicRestricted; // <-- Thêm thuộc tính mới
+
+                    // Nội dung của route (component + layout + toast)
+                    const routeContent = (
+                        <Layout>
+                            <Component />
+                            <ToastContainer
+                                position="top-right"
+                                autoClose={3000}
+                                hideProgressBar={false}
+                                newestOnTop={false}
+                                closeOnClick
+                                rtl={false}
+                                pauseOnFocusLoss
+                                draggable
+                                pauseOnHover
+                                limit={3}
+                            />
+                        </Layout>
+                    );
 
                     return (
                         <Route
-                            key={route.path} // Khóa duy nhất cho mỗi route
-                            path={route.path} // Đường dẫn của route
+                            key={route.path}
+                            path={route.path}
                             element={
-                                isPrivate && !isAuthenticated ? ( // Chuyển hướng đến trang đăng nhập nếu route yêu cầu đăng nhập và người dùng chưa đăng nhập
-                                    <Navigate to="/login" replace />
+                                isPrivate ? (
+                                    // Bảo vệ route riêng tư bằng PrivateRoute
+                                    <PrivateRoute allowedRoles={allowedRoles}>
+                                        {routeContent}
+                                    </PrivateRoute>
+                                ) : isPublicRestricted ? (
+                                    // Bảo vệ route công khai (không cho người dùng đã đăng nhập vào) bằng PublicRoute
+                                    <PublicRoute>
+                                        {routeContent}
+                                    </PublicRoute>
                                 ) : (
-                                    <Layout>
-                                        <Component /> {/* Render component của route bên trong Layout */}
-                                        <ToastContainer
-                                            position="top-right"
-                                            autoClose={3000}
-                                            hideProgressBar={false}
-                                            newestOnTop={false}
-                                            closeOnClick
-                                            rtl={false}
-                                            pauseOnFocusLoss
-                                            draggable
-                                            pauseOnHover
-                                            limit={3}
-                                        />
-                                    </Layout>
+                                    // Các route công khai khác mà mọi người đều có thể truy cập
+                                    routeContent
                                 )
                             }
                         />
                     );
                 })}
 
-                <Route path="*" element={<NotFound />} /> {/* Route fallback cho các đường dẫn không xác định */}
+                <Route path="*" element={<NotFound />} />
             </Routes>
         </Suspense>
     );

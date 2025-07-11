@@ -2,6 +2,7 @@
 import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import session from "express-session";
 import passport from "passport";
 import morgan from "morgan"; // Import Morgan
@@ -52,6 +53,7 @@ async function startServer() {
         allowedHeaders: ["Content-Type", "Authorization"], // Các headers bạn cho phép
       })
     );
+    app.use(cookieParser());
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
 
