@@ -48,6 +48,9 @@ const Subject = (sequelize) => {
       timestamps: true,              // Tự động thêm created_at và updated_at
       createdAt: 'created_at',
       updatedAt: 'updated_at',
+      deletedAt: 'deleted_at',       // Tên cột thời gian xóa mềm (nếu sử dụng soft delete)
+      paranoid: true,                // Bật chế độ xóa mềm (soft delete)
+
     }
   );
 
@@ -57,7 +60,7 @@ const Subject = (sequelize) => {
     SubjectModel.belongsTo(models.Semester, {
       foreignKey: 'semester_id',
       onUpdate: 'CASCADE',
-      onDelete: 'SET NULL',
+       onDelete: "CASCADE", // Xóa môn học nếu học kỳ bị xóa
     });
 
     // Gợi ý thêm: Một môn học có thể do nhiều giảng viên dạy hoặc sinh viên đăng ký

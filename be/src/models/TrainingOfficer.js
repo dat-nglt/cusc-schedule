@@ -75,7 +75,8 @@ const TrainingOfficer = (sequelize) => {
       timestamps: true,               // Tự động tạo created_at và updated_at
       createdAt: 'created_at',
       updatedAt: 'updated_at',
-      underscored: true,              // Dùng snake_case cho tên cột
+      deletedAt: 'deleted_at', // Tên cột thời gian xóa mềm (nếu sử dụng soft delete)
+      paranoid: true,            // Bật chế độ xóa mềm (soft delete)
     }
   );
 

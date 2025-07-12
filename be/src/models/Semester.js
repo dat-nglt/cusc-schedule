@@ -1,4 +1,5 @@
 import { DataTypes } from 'sequelize';
+import { Hooks } from 'sequelize/lib/hooks';
 
 // Định nghĩa model Semester - Đại diện cho một học kỳ
 const Semester = (sequelize) => {
@@ -43,6 +44,8 @@ const Semester = (sequelize) => {
       timestamps: true,               // Tự động tạo created_at và updated_at
       createdAt: 'created_at',        // Tên cột thời gian tạo
       updatedAt: 'updated_at',        // Tên cột thời gian cập nhật
+      deletedAt: 'deleted_at',        // Tên cột thời gian xóa mềm (nếu sử dụng soft delete)
+      paranoid: true,                 // Bật chế độ xóa mềm (soft delete)
     }
   );
 
@@ -52,7 +55,7 @@ const Semester = (sequelize) => {
     SemesterModel.belongsTo(models.Program, {
       foreignKey: 'program_id',
       onUpdate: 'CASCADE',       // Khi cập nhật khóa ngoại ở bảng chương trình
-      onDelete: 'SET NULL',      // Nếu xóa chương trình, set program_id = null
+      onDelete: "CASCADE", // Xóa học kỳ nếu chương trình bị xóa
     });
   };
 

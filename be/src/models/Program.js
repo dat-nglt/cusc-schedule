@@ -37,15 +37,17 @@ const Program = (sequelize) => {
       timestamps: true, // Tự động thêm created_at và updated_at
       createdAt: "created_at", // Đặt tên cột createdAt
       updatedAt: "updated_at", // Đặt tên cột updatedAt
+      deletedAt: "deleted_at", // Thêm cột deleted_at để hỗ trợ soft delete
+      paranoid: true, // Bật chế độ soft delete
     }
   );
 
   // Khai báo mối quan hệ (association)
   ProgramModel.associate = (models) => {
-    ProgramModel.hasMany(models.Course, {
+    ProgramModel.hasMany(models.Semester, {
       foreignKey: "program_id",
       onUpdate: "CASCADE",
-      onDelete: "SET NULL",
+      onDelete: "CASCADE", // Xóa tất cả học kỳ liên quan nếu chương trình bị xóa
     });
   };
 

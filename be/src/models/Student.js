@@ -84,7 +84,9 @@ const Student = (sequelize) => {
       timestamps: true,              // Tự động thêm created_at và updated_at
       createdAt: 'created_at',       // Tên cột thời gian tạo
       updatedAt: 'updated_at',       // Tên cột thời gian cập nhật
-      underscored: true,             // Dùng snake_case cho tên cột
+      deletedAt: 'deleted_at',       // Tên cột thời gian xóa mềm
+      paranoid: true,                // Bật chế độ xóa mềm (soft delete)
+   
     }
   );
 
@@ -94,7 +96,7 @@ const Student = (sequelize) => {
     StudentModel.belongsTo(models.Classes, {
       foreignKey: 'class_id',
       onUpdate: 'CASCADE',
-      onDelete: 'SET NULL',
+       onDelete: "CASCADE", // Xóa sinh viên nếu lớp học bị xóa
     });
 
     // Một sinh viên có thể đăng ký nhiều khóa học (mối quan hệ nhiều-nhiều)

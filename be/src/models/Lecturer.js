@@ -80,7 +80,8 @@ const Lecturer = (sequelize) => {
       timestamps: true,                // Tự động thêm created_at và updated_at
       createdAt: 'created_at',         // Đặt tên cột createdAt
       updatedAt: 'updated_at',         // Đặt tên cột updatedAt
-      underscored: true,               // Tên cột dạng snake_case
+      deletedAt: "deleted_at", // Thêm cột deleted_at để hỗ trợ soft delete
+      paranoid: true, // Bật chế độ soft delete
     }
   );
 

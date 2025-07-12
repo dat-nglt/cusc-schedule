@@ -83,7 +83,7 @@ export const updateStudent = async (id, studentData) => {
 export const deleteStudent = async (id) => {
   try {
     const student = await Student.findByPk(id);
-    if (!student) { // Changed from `!Student` to `!student`
+    if (!student) {
       throw new Error(`Không tìm thấy sinh viên với ID ${id}`);
     }
     await student.destroy();
