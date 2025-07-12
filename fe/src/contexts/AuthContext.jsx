@@ -30,7 +30,7 @@ export const AuthProvider = ({ children }) => {
   // Hàm để xóa trạng thái đăng nhập và vai trò
   const logout = useCallback(async () => {
     try {
-      await logoutUser(); // Gọi API để đăng xuất và xóa cookie
+      await logoutUser();
     } catch (error) {
       console.error('Lỗi khi gọi API đăng xuất:', error);
     } finally {
