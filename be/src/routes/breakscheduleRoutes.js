@@ -1,5 +1,5 @@
 import express from 'express';
-import authMiddleware, { authenticateAndAuthorize } from '../middleware/authMiddleware.js';
+import { authenticateAndAuthorize } from '../middleware/authMiddleware.js';
 import {
     getAllBreakSchedulesController,
     getBreakScheduleByIdController,

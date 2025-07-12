@@ -145,7 +145,7 @@ module.exports = {
           {
             id: testUserAccountId,
             email: "nguyenletandat.contact@gmail.com",
-            role: "student", // Vai trò mặc định cho tài khoản này
+            role: "admin", // Vai trò mặc định cho tài khoản này
             google_id: null,
             created_at: new Date(),
             updated_at: new Date(),
