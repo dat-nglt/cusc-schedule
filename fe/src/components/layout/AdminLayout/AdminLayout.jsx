@@ -5,8 +5,7 @@ import '../ScheduleLayout/ScheduleLayout.css';
 import Header from '../Header';
 import MainContainer from '../MainContainer';
 import SidebarForJustAdmin from './SidebarForJustAdmin';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+
 
 const AdminLayout = ({ children }) => {
     const theme = useTheme();
@@ -19,18 +18,6 @@ const AdminLayout = ({ children }) => {
             {!isSmallScreen && <SidebarForJustAdmin />} {/* Ẩn Sidebar khi màn hình < 700px */}
             <Box sx={{ mt: '64px', ml: isSmallScreen ? 0 : '350px', p: 2, flexGrow: 1 }}>
                 {children} {/* Render children passed from DynamicRouter */}
-                <ToastContainer
-                    position="bottom-right"
-                    autoClose={3000}
-                    hideProgressBar={false}
-                    newestOnTop={false}
-                    closeOnClick
-                    rtl={false}
-                    pauseOnFocusLoss
-                    draggable
-                    pauseOnHover
-                    limit={3}
-                />
             </Box>
         </MainContainer>
     );

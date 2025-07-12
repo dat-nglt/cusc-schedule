@@ -44,17 +44,17 @@ const connectDB = async (models) => {
 
         // ĐỒNG BỘ CƠ SỞ DỮ LIỆU (chỉ trong môi trường phát triển)
         // `alter: true` sẽ cố gắng thực hiện các thay đổi cần thiết trong DB để phù hợp với models
-        if (process.env.NODE_ENV === "development") {
-            // Đảm bảo đối tượng models và instance sequelize có sẵn trước khi đồng bộ hóa
-            if (models && models.sequelize) {
-                await models.sequelize.sync({ alter: true }); // Sử dụng instance sequelize từ đối tượng models đã truyền vào
-                logger.info("✅ Schema cơ sở dữ liệu đã được đồng bộ hóa (Chế độ phát triển).");
-            } else {
-                logger.warn(
-                    "⚠️ Không tìm thấy đối tượng models hoặc instance sequelize để đồng bộ hóa. Bỏ qua đồng bộ hóa schema."
-                );
-            }
-        }
+        // if (process.env.NODE_ENV === "development") {
+        //     // Đảm bảo đối tượng models và instance sequelize có sẵn trước khi đồng bộ hóa
+        //     if (models && models.sequelize) {
+        //         await models.sequelize.sync({ alter: true }); // Sử dụng instance sequelize từ đối tượng models đã truyền vào
+        //         logger.info("✅ Schema cơ sở dữ liệu đã được đồng bộ hóa (Chế độ phát triển).");
+        //     } else {
+        //         logger.warn(
+        //             "⚠️ Không tìm thấy đối tượng models hoặc instance sequelize để đồng bộ hóa. Bỏ qua đồng bộ hóa schema."
+        //         );
+        //     }
+        // }
     } catch (error) {
         // Ghi lại lỗi kết nối hoặc đồng bộ hóa
         logger.error(`❌ Lỗi kết nối hoặc đồng bộ hóa cơ sở dữ liệu: ${error.message}`);

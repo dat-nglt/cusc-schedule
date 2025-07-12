@@ -1,10 +1,10 @@
 import jwt from 'jsonwebtoken';
 import { APIResponse } from '../utils/APIResponse.js';
-import { findUserById } from '../services/userService.js';
+import { findUserById } from '../services/userService.js'; // Đảm bảo đường dẫn này đúng
 
 /**
- * Middleware xác thực người dùng dựa trên JWT.
- * Kiểm tra sự tồn tại và tính hợp lệ của token trong header Authorization.
+ * Middleware xác thực người dùng dựa trên JWT trong HTTP-Only Cookie.
+ * Kiểm tra sự tồn tại và tính hợp lệ của token trong cookie 'jwt'.
  * Gán `req.userId`, `req.userRole`, và `req.userInfo` nếu xác thực thành công.
  *
  * @param {Object} req - Đối tượng Request của Express.
@@ -12,20 +12,15 @@ import { findUserById } from '../services/userService.js';
  * @param {Function} next - Hàm middleware tiếp theo.
  */
 const authMiddleware = async (req, res, next) => {
-    // Lấy header Authorization
-    const authHeader = req.headers['authorization'];
+    // Lấy token từ cookie có tên 'jwt'
+    // Bạn cần đảm bảo đã cài đặt và sử dụng `cookie-parser` middleware trong Express app của mình
+    console.log(req.cookies.jwt);
+    
+    const token = req.cookies.jwt;
 
-    // Kiểm tra nếu header Authorization không tồn tại
-    if (!authHeader) {
-        return APIResponse(res, 401, 'Truy cập bị từ chối. Không có header Authorization.');
-    }
-
-    // Tách token từ chuỗi "Bearer <token>"
-    const token = authHeader.split(' ')[1];
-
-    // Kiểm tra nếu token không tồn tại sau khi tách
+        // Kiểm tra nếu token không tồn tại trong cookie
     if (!token) {
-        return APIResponse(res, 401, 'Truy cập bị từ chối. Không tìm thấy token trong header Authorization.');
+        return APIResponse(res, 401, 'Truy cập bị từ chối. Không tìm thấy token xác thực.');
     }
 
     try {
@@ -41,10 +36,7 @@ const authMiddleware = async (req, res, next) => {
         }
 
         // Gán thông tin người dùng vào đối tượng request để các middleware/route tiếp theo có thể sử dụng
-        req.userId = decoded.id;
-        // Ưu tiên role từ token, nếu không có thì lấy từ thông tin người dùng trong DB
-        req.userRole = decoded.role || userInfo.role;
-        req.userInfo = userInfo; // Chứa toàn bộ thông tin người dùng (user object và role, model)
+        req.user = userInfo; // Chứa toàn bộ thông tin người dùng (user object và role, model)
 
         console.log(`Người dùng đã xác thực: ID=${req.userId}, Vai trò=${req.userRole}`);
         next(); // Chuyển sang middleware/route tiếp theo
@@ -53,9 +45,12 @@ const authMiddleware = async (req, res, next) => {
         console.error('Lỗi xác minh token:', error);
 
         if (error.name === 'TokenExpiredError') {
-            return APIResponse(res, 401, 'Token đã hết hạn. Vui lòng đăng nhập lại.');
+            // Xóa cookie nếu nó đã hết hạn để yêu cầu đăng nhập lại
+            res.clearCookie('jwt', { path: '/', httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'Lax' });
+            return APIResponse(res, 401, 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
         } else if (error.name === 'JsonWebTokenError') {
             // Lỗi khi token không hợp lệ (ví dụ: sai định dạng, sai chữ ký)
+            res.clearCookie('jwt', { path: '/', httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'Lax' });
             return APIResponse(res, 401, 'Token không hợp lệ.');
         } else if (error.name === 'NotBeforeError') {
             // Lỗi khi token chưa có hiệu lực
@@ -78,6 +73,7 @@ export const requireRole = (allowedRoles) => {
     return (req, res, next) => {
         // Đảm bảo người dùng đã được xác thực trước đó bởi `authMiddleware`
         if (!req.userId || !req.userRole) {
+            // Nếu authMiddleware chưa chạy hoặc không thành công
             return APIResponse(res, 401, 'Yêu cầu xác thực để kiểm tra quyền.');
         }
 
@@ -103,11 +99,11 @@ export const requireRole = (allowedRoles) => {
  */
 export const authenticateAndAuthorize = (allowedRoles) => {
     return async (req, res, next) => {
-        // Bước 1: Xác thực (Authentication) - Tương tự như `authMiddleware`
-        const token = req.headers['authorization']?.split(' ')[1];
+        // Bước 1: Xác thực (Authentication) - Lấy token từ cookie
+        const token = req.cookies.jwt; // Thay đổi từ header sang cookie
 
         if (!token) {
-            return APIResponse(res, 401, 'Truy cập bị từ chối. Không tìm thấy token.');
+            return APIResponse(res, 401, 'Truy cập bị từ chối. Không tìm thấy token xác thực.');
         }
 
         try {
@@ -122,7 +118,7 @@ export const authenticateAndAuthorize = (allowedRoles) => {
             req.userRole = decoded.role || userInfo.role;
             req.userInfo = userInfo;
 
-            // Bước 2: Phân quyền (Authorization) - Tương tự như `requireRole`
+            // Bước 2: Phân quyền (Authorization)
             const rolesArray = Array.isArray(allowedRoles) ? allowedRoles : [allowedRoles];
 
             if (!rolesArray.includes(req.userRole)) {
@@ -134,8 +130,10 @@ export const authenticateAndAuthorize = (allowedRoles) => {
             // Xử lý lỗi xác thực và phân quyền
             console.error('Lỗi xác thực hoặc phân quyền:', error);
             if (error.name === 'TokenExpiredError') {
+                res.clearCookie('jwt', { path: '/', httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'Lax' });
                 return APIResponse(res, 401, 'Token đã hết hạn.');
             } else if (error.name === 'JsonWebTokenError') {
+                res.clearCookie('jwt', { path: '/', httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'Lax' });
                 return APIResponse(res, 401, 'Token không hợp lệ.');
             } else {
                 return APIResponse(res, 401, 'Xác thực thất bại.');

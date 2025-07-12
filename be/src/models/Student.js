@@ -1,83 +1,60 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes } from "sequelize";
 
 // Định nghĩa model Student - Đại diện cho sinh viên
 const Student = (sequelize) => {
   const StudentModel = sequelize.define(
-    'Student',
+    "Student", // Tên model
     {
-      // Mã số sinh viên (khóa chính)
+      // Khóa ngoại account_id liên kết với bảng Accounts
+      account_id: {
+        type: DataTypes.UUID, // Phải khớp với kiểu của 'id' trong bảng 'accounts'
+        allowNull: false,
+        unique: true, // Đảm bảo mối quan hệ 1-1: Một Account chỉ có thể là một Student
+        references: {
+          model: "accounts", // Tên bảng đích (Accounts)
+          key: "id", // Tên cột khóa chính của bảng đích
+        },
+        onUpdate: "CASCADE", // Hành động khi ID trong Accounts thay đổi
+        onDelete: "CASCADE", // Hành động khi Account bị xóa
+      },
+      // Mã số sinh viên (khóa chính riêng, nếu có ý nghĩa nghiệp vụ)
       student_id: {
         type: DataTypes.STRING(50),
-        primaryKey: true,
+        primaryKey: true, // Giữ lại primary key riêng nếu cần
         allowNull: false,
       },
-      // Họ tên sinh viên
+      // Họ tên sinh viên (có thể lấy từ Account nếu muốn giữ name ở Account)
       name: {
         type: DataTypes.STRING(50),
         allowNull: true,
       },
-      // Email sinh viên - duy nhất, kiểm tra định dạng email
-      email: {
-        type: DataTypes.STRING(70),
-        allowNull: true,
-        unique: true,
-        validate: {
-          isEmail: true,
-        },
-      },
-      // Ngày sinh
-      day_of_birth: {
-        type: DataTypes.DATEONLY,
-        allowNull: true,
-      },
-      // Giới tính
-      gender: {
-        type: DataTypes.STRING(30),
-        allowNull: true,
-      },
-      // Địa chỉ thường trú
-      address: {
-        type: DataTypes.STRING(100),
-        allowNull: true,
-      },
-      // Số điện thoại
-      phone_number: {
-        type: DataTypes.STRING(20),
-        allowNull: true,
-        validate: {
-          isNumeric: true,
-        },
-      },
-      // Mã lớp học (khuyến nghị nên đổi tên thành 'class_id' để liên kết với model Classes)
+      // Mã lớp học
       class_id: {
-        type: DataTypes.STRING(100),
+        type: DataTypes.STRING(100), // Kiểu dữ liệu phải khớp với ID của model Classes
         allowNull: true,
       },
-      // Năm nhập học
+      // Năm nhập học (đặc thù của sinh viên)
       admission_year: {
-        type: DataTypes.DATEONLY,
+        type: DataTypes.DATEONLY, // Hoặc DataTypes.INTEGER nếu chỉ lưu năm
         allowNull: true,
       },
-      // Điểm trung bình (GPA)
+      // Điểm trung bình (GPA) (đặc thù của sinh viên)
       gpa: {
-        type: DataTypes.DECIMAL(3, 2),
+        type: DataTypes.DECIMAL(3, 2), // Ví dụ: 3 chữ số tổng, 2 chữ số thập phân (4.00)
         allowNull: true,
         validate: {
           min: 0.0,
           max: 4.0,
         },
       },
-      // ID Google dùng cho đăng nhập OAuth
-      google_id: {
-        type: DataTypes.STRING(100),
-        allowNull: true,
-        unique: true,
-      },
-      // Trạng thái (active, inactive, suspended,...)
-      status: {
-        type: DataTypes.STRING(30),
-        allowNull: true,
-      },
+      // BỎ CÁC TRƯỜNG DƯ THỪA ĐÃ CHUYỂN SANG BẢNG ACCOUNTS:
+      // email: đã có trong Account
+      // day_of_birth: có thể giữ ở đây hoặc chuyển sang Account nếu muốn chung hơn
+      // gender: có thể giữ ở đây hoặc chuyển sang Account nếu muốn chung hơn
+      // address: có thể giữ ở đây hoặc chuyển sang Account nếu muốn chung hơn
+      // phone_number: có thể giữ ở đây hoặc chuyển sang Account nếu muốn chung hơn
+      // google_id: đã có trong Account
+      // status: đã có trong Account
     },
     {
       tableName: 'students',         // Tên bảng trong CSDL
@@ -86,23 +63,31 @@ const Student = (sequelize) => {
       updatedAt: 'updated_at',       // Tên cột thời gian cập nhật
       deletedAt: 'deleted_at',       // Tên cột thời gian xóa mềm
       paranoid: true,                // Bật chế độ xóa mềm (soft delete)
-   
+
     }
   );
 
   // Khai báo mối quan hệ (association)
   StudentModel.associate = (models) => {
+    // Student thuộc về một Account (mối quan hệ 1-1 ngược lại với hasOne của Account)
+    StudentModel.belongsTo(models.Account, {
+      foreignKey: "account_id", // Tên cột khóa ngoại trong bảng 'students'
+      as: "account", // Alias để truy cập bản ghi Account từ Student (e.g., student.getAccount())
+    });
+
     // Mỗi sinh viên thuộc về một lớp học
     StudentModel.belongsTo(models.Classes, {
       foreignKey: 'class_id',
       onUpdate: 'CASCADE',
-       onDelete: "CASCADE", // Xóa sinh viên nếu lớp học bị xóa
+      onDelete: "CASCADE", // Xóa sinh viên nếu lớp học bị xóa
     });
 
     // Một sinh viên có thể đăng ký nhiều khóa học (mối quan hệ nhiều-nhiều)
     // StudentModel.belongsToMany(models.Course, {
-    //   through: 'StudentCourses',
-    //   foreignKey: 'student_id',
+    //   through: 'StudentCourses', // Tên bảng trung gian
+    //   foreignKey: 'student_id',  // Khóa ngoại trong StudentCourses trỏ về Student
+    //   otherKey: 'course_id',     // Khóa ngoại trong StudentCourses trỏ về Course
+    //   as: 'courses',             // Alias để truy cập các khóa học của sinh viên
     // });
   };
 

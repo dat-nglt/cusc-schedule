@@ -1,14 +1,26 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes } from "sequelize";
 
 // Định nghĩa model Lecturer - Đại diện cho giảng viên
 const Lecturer = (sequelize) => {
   const LecturerModel = sequelize.define(
-    'Lecturer',
+    "Lecturer", // Tên model
     {
-      // Mã giảng viên (khóa chính)
+      // Khóa ngoại account_id liên kết với bảng Accounts
+      account_id: {
+        type: DataTypes.UUID, // Phải khớp với kiểu của 'id' trong bảng 'accounts'
+        allowNull: false,
+        unique: true, // Đảm bảo mối quan hệ 1-1: Một Account chỉ có thể là một Lecturer
+        references: {
+          model: "accounts", // Tên bảng đích (Accounts)
+          key: "id", // Tên cột khóa chính của bảng đích
+        },
+        onUpdate: "CASCADE", // Hành động khi ID trong Accounts thay đổi
+        onDelete: "CASCADE", // Hành động khi Account bị xóa
+      },
+      // Mã giảng viên (khóa chính riêng, nếu có ý nghĩa nghiệp vụ)
       lecturer_id: {
         type: DataTypes.STRING(50),
-        primaryKey: true,
+        primaryKey: true, // Giữ lại primary key riêng nếu cần
         allowNull: false,
       },
       // Họ tên giảng viên
@@ -16,78 +28,53 @@ const Lecturer = (sequelize) => {
         type: DataTypes.STRING(50),
         allowNull: true,
       },
-      // Email giảng viên - duy nhất, kiểm tra định dạng
-      email: {
-        type: DataTypes.STRING(70),
-        allowNull: true,
-        unique: true,
-        validate: {
-          isEmail: true,
-        },
-      },
-      // Ngày sinh
-      day_of_birth: {
-        type: DataTypes.DATEONLY,
-        allowNull: true,
-      },
-      // Giới tính
-      gender: {
-        type: DataTypes.STRING(30),
-        allowNull: true,
-      },
-      // Địa chỉ thường trú
-      address: {
-        type: DataTypes.STRING(100),
-        allowNull: true,
-      },
-      // Số điện thoại (chỉ số)
-      phone_number: {
-        type: DataTypes.STRING(20),
-        allowNull: true,
-        validate: {
-          isNumeric: true,
-        },
-      },
-      // Khoa hoặc bộ môn đang công tác
+      // Khoa hoặc bộ môn đang công tác (đặc thù của giảng viên)
       department: {
         type: DataTypes.STRING(100),
         allowNull: true,
       },
-      // Ngày bắt đầu làm việc
+      // Ngày bắt đầu làm việc (đặc thù của giảng viên)
       hire_date: {
         type: DataTypes.DATEONLY,
         allowNull: true,
       },
-      // Học vị (cử nhân, thạc sĩ, tiến sĩ,...)
+      // Học vị (cử nhân, thạc sĩ, tiến sĩ,...) (đặc thù của giảng viên)
       degree: {
         type: DataTypes.STRING(100),
         allowNull: true,
       },
-      // ID Google dùng cho đăng nhập OAuth (nếu có)
-      google_id: {
-        type: DataTypes.STRING(100),
-        allowNull: true,
-        unique: true,
-      },
-      // Trạng thái tài khoản (active, inactive,...)
-      status: {
-        type: DataTypes.STRING(30),
+      // Học hàm (GS, PGS) - ví dụ trường đặc thù khác nếu cần
+      academic_rank: {
+        type: DataTypes.STRING(50),
         allowNull: true,
       },
+      // BỎ CÁC TRƯỜNG DƯ THỪA ĐÃ CHUYỂN SANG BẢNG ACCOUNTS:
+      // email: đã có trong Account
+      // day_of_birth: có thể giữ ở đây hoặc chuyển sang Account nếu muốn chung hơn
+      // gender: có thể giữ ở đây hoặc chuyển sang Account nếu muốn chung hơn
+      // address: có thể giữ ở đây hoặc chuyển sang Account nếu muốn chung hơn
+      // phone_number: có thể giữ ở đây hoặc chuyển sang Account nếu muốn chung hơn
+      // google_id: đã có trong Account
+      // status: đã có trong Account
     },
     {
-      tableName: 'lecturers',          // Tên bảng trong CSDL
-      timestamps: true,                // Tự động thêm created_at và updated_at
-      createdAt: 'created_at',         // Đặt tên cột createdAt
-      updatedAt: 'updated_at',         // Đặt tên cột updatedAt
-      deletedAt: "deleted_at", // Thêm cột deleted_at để hỗ trợ soft delete
-      paranoid: true, // Bật chế độ soft delete
+      tableName: "lecturers", // Tên bảng trong CSDL
+      timestamps: true, // Tự động thêm created_at và updated_at
+      createdAt: "created_at", // Đặt tên cột createdAt
+      updatedAt: "updated_at", // Đặt tên cột updatedAt
+      underscored: true, // Tên cột dạng snake_case
     }
   );
 
   // Khai báo mối quan hệ (association)
   LecturerModel.associate = (models) => {
-    // Ví dụ: Giảng viên có thể dạy nhiều lớp hoặc môn học
+    // Lecturer thuộc về một Account (mối quan hệ 1-1 ngược lại với hasOne của Account)
+    LecturerModel.belongsTo(models.Account, {
+      foreignKey: "account_id", // Tên cột khóa ngoại trong bảng 'lecturers'
+      as: "account", // Alias để truy cập bản ghi Account từ Lecturer (e.g., lecturer.getAccount())
+    });
+
+    // Các mối quan hệ khác của Giảng viên (ví dụ: Giảng viên dạy nhiều lớp hoặc môn học)
     // LecturerModel.hasMany(models.Class, { foreignKey: 'lecturer_id' });
     // LecturerModel.hasMany(models.Subject, { foreignKey: 'lecturer_id' });
   };
