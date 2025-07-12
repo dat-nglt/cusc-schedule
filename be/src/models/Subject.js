@@ -1,4 +1,5 @@
 import { DataTypes } from 'sequelize';
+import { on } from 'winston-daily-rotate-file';
 
 // Định nghĩa model Subject - Đại diện cho môn học
 const Subject = (sequelize) => {
@@ -39,8 +40,7 @@ const Subject = (sequelize) => {
       // Mã học kỳ (liên kết đến bảng Semester)
       semester_id: {
         type: DataTypes.STRING(30),
-        allowNull: true,
-        // Quan hệ được định nghĩa rõ hơn bên dưới
+        allowNull: true,  // Cho phép null
       },
     },
     {
@@ -60,7 +60,21 @@ const Subject = (sequelize) => {
     SubjectModel.belongsTo(models.Semester, {
       foreignKey: 'semester_id',
       onUpdate: 'CASCADE',
-       onDelete: "CASCADE", // Xóa môn học nếu học kỳ bị xóa
+      onDelete: 'SET NULL', // Nếu học kỳ bị xóa, môn học sẽ không bị xóa mà chỉ đặt semester_id thành NULL
+    });
+
+    // Mối quan hệ nhiều-nhiều: Một Subject có thể được nhiều Lecturer dạy
+    SubjectModel.belongsToMany(models.Lecturer, {
+      through: models.LecturerAssignment,
+      foreignKey: 'subject_id',
+      otherKey: 'lecturer_id',
+      as: 'lecturers'
+    });
+
+    // Mối quan hệ một-nhiều với bảng junction LecturerAssignment
+    SubjectModel.hasMany(models.LecturerAssignment, {
+      foreignKey: 'subject_id',
+      as: 'lecturerAssignments'
     });
 
     // Gợi ý thêm: Một môn học có thể do nhiều giảng viên dạy hoặc sinh viên đăng ký

@@ -17,7 +17,7 @@ export default function AddSubjectModal({ open, onClose, onAddSubject, existingS
         theory_hours: 0,
         practice_hours: 0,
         status: 'Hoạt động',
-        semester_id: ''
+        semester_id: null
     });
 
     const [localError, setLocalError] = useState('');

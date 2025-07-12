@@ -55,9 +55,9 @@ export const getLecturerByIdController = async (req, res) => {
  * @access Private (admin, training_officer)
  */
 export const createLecturerController = async (req, res) => {
-    const lecturerData = req.body;
+    const { subjectIds, ...lecturerData } = req.body;
     try {
-        const lecturer = await createLecturer(lecturerData);
+        const lecturer = await createLecturer(lecturerData, subjectIds);
         return APIResponse(res, 201, lecturer, "Tạo giảng viên thành công.");
     } catch (error) {
         console.error("Lỗi khi tạo giảng viên:", error);

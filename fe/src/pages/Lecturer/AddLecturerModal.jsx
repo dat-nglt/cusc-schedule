@@ -38,7 +38,7 @@ const availableDegrees = [
     'Phó Giáo sư'
 ];
 
-export default function AddLecturerModal({ open, onClose, onAddLecturer, existingLecturers, error, loading, message, fetchLecturers }) {
+export default function AddLecturerModal({ open, onClose, onAddLecturer, existingLecturers, error, loading, message, fetchLecturers, subjects }) {
     const [newLecturer, setNewLecturer] = useState({
         lecturer_id: '',
         name: '',
@@ -50,7 +50,9 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
         department: '',
         hire_date: '',
         degree: '',
+        academic_rank: '',
         status: 'Đang giảng dạy',
+        subjectIds: [],
     });
 
     const [localError, setLocalError] = useState('');
@@ -74,7 +76,8 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
             !newLecturer.phone_number ||
             !newLecturer.department ||
             !newLecturer.hire_date ||
-            !newLecturer.degree
+            !newLecturer.degree ||
+            !newLecturer.subjectIds.length
         ) {
             setLocalError('Vui lòng điền đầy đủ thông tin!');
             return;
@@ -156,6 +159,7 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
             hire_date: '',
             degree: '',
             status: 'Đang giảng dạy',
+            subjectIds: [],
         });
         setLocalError('');
         onClose();
@@ -393,6 +397,27 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
                                 <MenuItem value="Tạm nghỉ">Tạm nghỉ</MenuItem>
                                 <MenuItem value="Đã nghỉ việc">Đã nghỉ việc</MenuItem>
                                 <MenuItem value="Nghỉ hưu">Nghỉ hưu</MenuItem>
+                            </Select>
+                        </FormControl>
+                        <FormControl fullWidth required>
+                            <InputLabel>Môn học</InputLabel>
+                            <Select
+                                name="subjectIds"
+                                value={newLecturer.subjectIds}
+                                onChange={handleChange}
+                                label="Môn học"
+                                multiple
+                                renderValue={(selected) =>
+                                    selected.map(id =>
+                                        subjects?.find(subject => subject.subject_id === id)?.subject_name
+                                    ).join(', ')
+                                }
+                            >
+                                {subjects && subjects.map((subject) => (
+                                    <MenuItem key={subject.subject_id} value={subject.subject_id}>
+                                        {subject.subject_id} - {subject.subject_name}
+                                    </MenuItem>
+                                ))}
                             </Select>
                         </FormControl>
                     </Box>

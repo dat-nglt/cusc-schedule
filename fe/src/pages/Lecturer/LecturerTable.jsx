@@ -96,29 +96,35 @@ export default function LecturerTable({ displayedLecturers, isSmallScreen, isMed
                         {!isSmallScreen && (
                             <TableCell sx={{ textAlign: 'left', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                    {/* {lecturer.department.slice(0, 2).map((d, idx) => (
-                                        <Chip
-                                            key={idx}
-                                            label={d}
-                                            size="small"
-                                            sx={{ fontSize: '0.7rem', maxWidth: '120px' }}
-                                        />
-                                    ))}
-                                    {lecturer.department.length > 2 && (
-                                        <Chip
-                                            label={`+${lecturer.department.length - 2}`}
-                                            size="small"
-                                            variant="outlined"
-                                            sx={{ fontSize: '0.7rem' }}
-                                        />
-                                    )} */}
+                                    {lecturer.subjects && lecturer.subjects.length > 0 ? (
+                                        lecturer.subjects.map((s) => (
+                                            <Box
+                                                sx={{
+                                                    display: 'inline-block',
+                                                    backgroundColor: '#e3f2fd',
+                                                    color: '#1565c0',
+                                                    padding: '4px 8px',
+                                                    margin: '2px',
+                                                    borderRadius: '4px',
+                                                    fontSize: '0.75rem',
+                                                    fontWeight: '500',
+                                                    border: '1px solid #bbdefb',
+                                                    whiteSpace: 'nowrap'
+                                                }}
+                                                key={s.subject_id}>
+                                                {s.subject_id}
+                                            </Box>
+                                        ))
+                                    ) : (
+                                        <Box sx={{ color: '#999' }}>Chưa có môn giảng dạy</Box>
+                                    )}
                                 </Box>
                             </TableCell>
                         )}
                         {!isMediumScreen && (
                             <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
                                 <Box sx={{ fontSize: '0.85rem' }}>
-                                    <div>{lecturer.email}</div>
+                                    <div>{lecturer.account.email}</div>
                                     <div style={{ color: '#666', marginTop: '2px' }}>{lecturer.phone_number}</div>
                                 </Box>
                             </TableCell>
