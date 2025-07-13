@@ -3,62 +3,44 @@ import { DataTypes } from 'sequelize';
 // Định nghĩa model Admin
 const Admin = (sequelize) => {
   const AdminModel = sequelize.define(
-    'Admin',
+    'Admin', // Tên model
     {
-      // Khoá chính - ID của admin
+      // Khóa ngoại user_id liên kết với bảng Accounts
+      account_id: {
+        type: DataTypes.UUID, // Phải khớp với kiểu của 'id' trong bảng 'accounts'
+        allowNull: false,
+        unique: true, // Đảm bảo mối quan hệ 1-1: Một Account chỉ có thể là một Admin
+        references: {
+          model: 'accounts', // Tên bảng đích (Accounts)
+          key: 'id',         // Tên cột khóa chính của bảng đích
+        },
+        onUpdate: 'CASCADE', // Hành động khi ID trong Accounts thay đổi
+        onDelete: 'CASCADE', // Hành động khi Account bị xóa
+      },
+      // Khoá chính - ID của admin (có thể là mã số riêng của admin trong hệ thống nghiệp vụ)
       admin_id: {
         type: DataTypes.STRING(30),
-        primaryKey: true,
+        primaryKey: true, // Giữ lại primary key riêng nếu có ý nghĩa nghiệp vụ
         allowNull: false,
       },
-      // Tên của admin
+      // Tên của admin (Họ tên đầy đủ)
       name: {
         type: DataTypes.STRING(50),
         allowNull: true,
       },
-      // Email - duy nhất, kiểm tra định dạng email
-      email: {
-        type: DataTypes.STRING(70),
-        allowNull: true,
-        unique: true,
-        validate: {
-          isEmail: true,
-        },
-      },
-      // Ngày sinh
-      day_of_birth: {
-        type: DataTypes.DATEONLY,
+      // Thêm các trường đặc thù cho Admin nếu có. Ví dụ:
+      admin_type: { // Loại quản trị viên (ví dụ: 'Super Admin', 'Content Admin', 'User Manager')
+        type: DataTypes.STRING(50),
         allowNull: true,
       },
-      // Giới tính
-      gender: {
-        type: DataTypes.STRING(30),
-        allowNull: true,
-      },
-      // Địa chỉ
-      address: {
-        type: DataTypes.STRING(100),
-        allowNull: true,
-      },
-      // Số điện thoại - chỉ cho phép ký tự số
-      phone_number: {
-        type: DataTypes.STRING(20),
-        allowNull: true,
-        validate: {
-          isNumeric: true,
-        },
-      },
-      // ID Google dùng cho đăng nhập OAuth
-      google_id: {
-        type: DataTypes.STRING(100),
-        allowNull: true,
-        unique: true,
-      },
-      // Trạng thái của admin (ví dụ: hoạt động, đã khóa, ...)
-      status: {
-        type: DataTypes.STRING(30),
-        allowNull: true,
-      },
+      // BỎ CÁC TRƯỜNG DƯ THỪA ĐÃ CHUYỂN SANG BẢNG ACCOUNTS:
+      // email: đã có trong Account
+      // day_of_birth: có thể giữ ở đây hoặc chuyển sang Account nếu muốn chung hơn
+      // gender: có thể giữ ở đây hoặc chuyển sang Account nếu muốn chung hơn
+      // address: có thể giữ ở đây hoặc chuyển sang Account nếu muốn chung hơn
+      // phone_number: có thể giữ ở đây hoặc chuyển sang Account nếu muốn chung hơn
+      // google_id: đã có trong Account
+      // status: đã có trong Account
     },
     {
       // Cấu hình bảng
@@ -70,9 +52,16 @@ const Admin = (sequelize) => {
     }
   );
 
-  // Khai báo các mối quan hệ (association) nếu có
+  // Khai báo các mối quan hệ (association)
   AdminModel.associate = (models) => {
-    // Ví dụ: AdminModel.hasMany(models.BlogPost, { foreignKey: 'admin_id' });
+    // Admin thuộc về một Account (mối quan hệ 1-1 ngược lại với hasOne của Account)
+    AdminModel.belongsTo(models.Account, {
+      foreignKey: 'account_id', // Tên cột khóa ngoại trong bảng 'admins'
+      as: 'account',         // Alias để truy cập bản ghi Account từ Admin (e.g., admin.getAccount())
+    });
+
+    // Các mối quan hệ khác của Admin (ví dụ: Admin quản lý nhiều BlogPost)
+    // AdminModel.hasMany(models.BlogPost, { foreignKey: 'admin_id' });
   };
 
   return AdminModel;

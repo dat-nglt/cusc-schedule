@@ -3,11 +3,11 @@ import axiosInstance from './axiosConfig';
 // Lấy danh sách khóa học từ API
 export const getCourses = async (params = {}) => {
   try {
-    const response = await axiosInstance.get('/api/courses', { params });
+    const response = await axiosInstance.get('/api/courses/list', { params });
     return response.data;
   } catch (error) {
     console.error('Error fetching courses:', error.response?.data || error.message);
-    throw new Error('Error fetching courses: ' + (error.response?.data?.message || error.message));
+    throw Error('Error fetching courses: ' + (error.response?.data?.message || error.message));
   }
 };
 
@@ -18,7 +18,7 @@ export const getCourseById = async (course_id) => { // Thay courseid bằng cour
     return response.data;
   } catch (error) {
     console.error('Error fetching course detail:', error.response?.data || error.message);
-    throw new Error('Error fetching course detail: ' + (error.response?.data?.message || error.message));
+    throw Error('Error fetching course detail: ' + (error.response?.data?.message || error.message));
   }
 };
 
@@ -29,7 +29,7 @@ export const addCourse = async (courseData) => {
     return response.data;
   } catch (error) {
     console.error('Error adding course:', error.response?.data || error.message);
-    throw new Error('Error adding course: ' + (error.response?.data?.message || error.message));
+    throw Error('Error adding course: ' + (error.response?.data?.message || error.message));
   }
 };
 
@@ -40,7 +40,7 @@ export const updateCourse = async (course_id, courseData) => { // Thay courseid 
     return response.data;
   } catch (error) {
     console.error('Error updating course:', error.response?.data || error.message);
-    throw new Error('Error updating course: ' + (error.response?.data?.message || error.message));
+    throw Error('Error updating course: ' + (error.response?.data?.message || error.message));
   }
 };
 
@@ -51,7 +51,7 @@ export const deleteCourse = async (course_id) => { // Thay courseid bằng cours
     return response.data;
   } catch (error) {
     console.error('Error deleting course:', error.response?.data || error.message);
-    throw new Error('Error deleting course: ' + (error.response?.data?.message || error.message));
+    throw Error('Error deleting course: ' + (error.response?.data?.message || error.message));
   }
 };
 
@@ -62,7 +62,7 @@ export const listCourses = async (filters = {}) => {
     return response.data;
   } catch (error) {
     console.error('Error listing courses:', error.response?.data || error.message);
-    throw new Error('Error listing courses: ' + (error.response?.data?.message || error.message));
+    throw Error('Error listing courses: ' + (error.response?.data?.message || error.message));
   }
 };
 
@@ -89,6 +89,6 @@ export const importCourses = async (file, jsonData = null) => {
         }
     } catch (error) {
         console.error('Error importing courses:', error);
-        throw new Error('Lỗi khi nhập khóa học từ tệp');
+        throw Error('Lỗi khi nhập khóa học từ tệp');
     }
 };
