@@ -15,7 +15,7 @@ export const getAllLecturers = async () => {
       include: [{
         model: Account,
         as: 'account',
-        attributes: ['email', 'role', 'status', 'created_at', 'updated_at']
+        attributes: ['email', 'role', 'status']
       },
       {
         model: Subject,
@@ -44,7 +44,7 @@ export const getLecturerById = async (id) => {
       include: [{
         model: Account,
         as: 'account',
-        attributes: ['email', 'role', 'status', 'created_at', 'updated_at']
+        attributes: ['email', 'role', 'status']
       }]
     });
     if (!lecturer) {
@@ -144,7 +144,7 @@ export const createLecturer = async (lecturerData, subjectIds = []) => {
         {
           model: Account,
           as: 'account',
-          attributes: ['email', 'role', 'status', 'created_at', 'updated_at']
+          attributes: ['email', 'role', 'status']
         },
         {
           model: models.Subject,
@@ -207,6 +207,10 @@ export const updateLecturer = async (id, lecturerData) => {
     // Cập nhật thông tin giảng viên
     const updateData = {};
     if (lecturerData.name) updateData.name = lecturerData.name;
+    if (lecturerData.day_of_birth !== undefined) updateData.day_of_birth = lecturerData.day_of_birth;
+    if (lecturerData.gender !== undefined) updateData.gender = lecturer.gender;
+    if (lecturerData.address !== undefined) updateData.address = lecturerData.address;
+    if (lecturerData.phone_number !== undefined) updateData.phone_number = lecturerData.phone_number;
     if (lecturerData.department !== undefined) updateData.department = lecturerData.department;
     if (lecturerData.hire_date !== undefined) updateData.hire_date = lecturerData.hire_date;
     if (lecturerData.degree !== undefined) updateData.degree = lecturerData.degree;
@@ -221,11 +225,13 @@ export const updateLecturer = async (id, lecturerData) => {
       include: [{
         model: Account,
         as: 'account',
-        attributes: ['email', 'role', 'status', 'created_at', 'updated_at']
+        attributes: ['email', 'role', 'status']
       }]
     });
   } catch (error) {
-    await transaction.rollback();
+    if (!transaction.finished) { // Kiểm tra nếu transaction chưa hoàn thành
+      await transaction.rollback(); // Rollback transaction nếu có lỗi
+    }
     console.error(`Lỗi khi cập nhật giảng viên với ID ${id}:`, error);
     throw error;
   }
@@ -258,7 +264,9 @@ export const deleteLecturer = async (id) => {
 
     return { message: "Giảng viên đã được xóa thành công" };
   } catch (error) {
-    await transaction.rollback();
+    if (!transaction.finished) { // Kiểm tra nếu transaction chưa hoàn thành
+      await transaction.rollback(); // Rollback transaction nếu có lỗi
+    }
     console.error(`Lỗi khi xóa giảng viên với ID ${id}:`, error);
     throw error;
   }
@@ -424,8 +432,44 @@ export const importLecturersFromJson = async (lecturersData) => {
           department: lecturerData.department ? lecturerData.department.toString().trim() : null,
           hire_date: lecturerData.hire_date || null,
           degree: lecturerData.degree ? lecturerData.degree.toString().trim() : null,
-          status: lecturerData.status || 'Hoạt động'
+          academic_rank: lecturerData.academic_rank ? lecturerData.academic_rank.toString().trim() : null,
+          status: lecturerData.status || 'Đang công tác'
         };
+
+        // Xử lý subjectIds (môn học)
+        let subjectIds = [];
+        if (lecturerData.subjectIds) {
+          if (Array.isArray(lecturerData.subjectIds)) {
+            subjectIds = lecturerData.subjectIds.map(id => id.toString().trim()).filter(id => id);
+          } else if (typeof lecturerData.subjectIds === 'string') {
+            // Nếu là chuỗi, tách bằng dấu phẩy
+            subjectIds = lecturerData.subjectIds.split(',').map(id => id.trim()).filter(id => id);
+          }
+        }
+
+        // Validate các môn học nếu có
+        if (subjectIds.length > 0) {
+          const existingSubjects = await Subject.findAll({
+            where: {
+              subject_id: {
+                [Op.in]: subjectIds
+              }
+            },
+            attributes: ['subject_id']
+          });
+
+          const existingSubjectIds = existingSubjects.map(s => s.subject_id);
+          const invalidSubjectIds = subjectIds.filter(id => !existingSubjectIds.includes(id));
+
+          if (invalidSubjectIds.length > 0) {
+            results.errors.push({
+              index: index,
+              lecturer_id: cleanedData.lecturer_id,
+              error: `Các môn học không tồn tại: ${invalidSubjectIds.join(', ')}`
+            });
+            continue;
+          }
+        }
 
         // Validate email format nếu có
         if (cleanedData.email && !ExcelUtils.isValidEmail(cleanedData.email)) {
@@ -465,8 +509,8 @@ export const importLecturersFromJson = async (lecturersData) => {
           }
         }
 
-        // Tạo lecturer mới
-        const newLecturer = await createLecturer(cleanedData);
+        // Tạo lecturer mới với subjects
+        const newLecturer = await createLecturer(cleanedData, subjectIds);
         results.success.push(newLecturer);
 
       } catch (error) {

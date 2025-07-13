@@ -28,6 +28,22 @@ const Student = (sequelize) => {
         type: DataTypes.STRING(50),
         allowNull: true,
       },
+      day_of_birth: {
+        type: DataTypes.DATEONLY,
+        allowNull: true,
+      },
+      gender: {
+        type: DataTypes.STRING(10),
+        allowNull: true
+      },
+      address: {
+        type: DataTypes.STRING(100),
+        allowNull: true,
+      },
+      phone_number: {
+        type: DataTypes.STRING(15),
+        allowNull: true,
+      },
       // Mã lớp học
       class_id: {
         type: DataTypes.STRING(100), // Kiểu dữ liệu phải khớp với ID của model Classes
@@ -71,16 +87,16 @@ const Student = (sequelize) => {
   StudentModel.associate = (models) => {
     // Student thuộc về một Account (mối quan hệ 1-1 ngược lại với hasOne của Account)
     StudentModel.belongsTo(models.Account, {
-      foreignKey: "account_id", // Tên cột khóa ngoại trong bảng 'students'
-      as: "account", // Alias để truy cập bản ghi Account từ Student (e.g., student.getAccount())
+      foreignKey: "account_id", // Tên cột khóa ngoại trong bảng 'lecturers'
+      as: "account", // Alias để truy cập bản ghi Account từ Lecturer (e.g., lecturer.getAccount())
     });
 
     // Mỗi sinh viên thuộc về một lớp học
-    StudentModel.belongsTo(models.Classes, {
-      foreignKey: 'class_id',
-      onUpdate: 'CASCADE',
-      onDelete: "CASCADE", // Xóa sinh viên nếu lớp học bị xóa
-    });
+    // StudentModel.belongsTo(models.Classes, {
+    //   foreignKey: 'class_id',
+    //   onUpdate: 'CASCADE',
+    //   onDelete: "CASCADE", // Xóa sinh viên nếu lớp học bị xóa
+    // });
 
     // Một sinh viên có thể đăng ký nhiều khóa học (mối quan hệ nhiều-nhiều)
     // StudentModel.belongsToMany(models.Course, {

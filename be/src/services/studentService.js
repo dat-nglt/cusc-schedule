@@ -2,7 +2,7 @@ import models from "../models/index.js";
 import ExcelUtils from "../utils/ExcelUtils.js";
 import { Op } from 'sequelize';
 
-const { Student } = models;
+const { Student, Account, sequelize } = models;
 /**
  * Lấy tất cả sinh viên.
  * @returns {Promise<Array>} Danh sách tất cả sinh viên.
@@ -10,7 +10,13 @@ const { Student } = models;
  */
 export const getAllStudents = async () => {
   try {
-    const students = await Student.findAll();
+    const students = await Student.findAll({
+      include: [{
+        model: Account,
+        as: 'account', // Giả sử có quan hệ với Account
+        attributes: ['email', 'role', 'status'] // Chỉ lấy các trường cần thiết từ Account
+      }]
+    });
     return students;
   } catch (error) {
     console.error("Lỗi khi lấy danh sách sinh viên:", error);
@@ -26,7 +32,13 @@ export const getAllStudents = async () => {
  */
 export const getStudentById = async (id) => {
   try {
-    const student = await Student.findByPk(id);
+    const student = await Student.findByPk(id, {
+      include: [{
+        model: Account,
+        as: 'account', // Giả sử có quan hệ với Account
+        attributes: ['email', 'role', 'status'] // Chỉ lấy các trường cần thiết từ Account
+      }]
+    });
     if (!student) {
       throw new Error(`Không tìm thấy sinh viên với ID ${id}`);
     }
@@ -44,10 +56,60 @@ export const getStudentById = async (id) => {
  * @throws {Error} Nếu có lỗi khi tạo sinh viên.
  */
 export const createStudent = async (studentData) => {
+  const transaction = await sequelize.transaction();
   try {
-    const student = await Student.create(studentData);
-    return student;
+    // Kiểm tra xem student_id đã tồn tại chưa
+    const existingStudent = await Student.findByPk(studentData.student_id);
+    if (existingStudent) {
+      throw new Error(`Mã học viên ${studentData.student_id} đã tồn tại`);
+    }
+
+    // Kiểm tra xem email đã tồn tại chưa
+    const existingAccount = await Account.findOne({
+      where: { email: studentData.email }
+    });
+    if (existingAccount) {
+      throw new Error('Email đã tồn tại');
+    }
+    // Tạo tài khoản trước
+    const account = await Account.create({
+      email: studentData.email,
+      role: 'student',
+      status: 'active'
+    }, { transaction });
+
+    // Tạo sinh viên với account_id
+    const student = await Student.create({
+      student_id: studentData.student_id,
+      account_id: account.id, // Giả sử có trường account_id trong Student
+      name: studentData.name,
+      gender: studentData.gender || null,
+      address: studentData.address || null,
+      day_of_birth: studentData.day_of_birth || null,
+      phone_number: studentData.phone_number || null,
+      class: studentData.class || null,
+      admission_year: studentData.admission_year || null,
+      gpa: studentData.gpa || null,
+      status: studentData.status || 'Đang học'
+    }, { transaction });
+    await transaction.commit();
+
+    // trả về sinh viên kèm theo thông tin tài khoản
+    const result = await Student.findByPk(student.student_id, {
+      include: [
+        {
+          model: Account,
+          as: 'account',
+          attributes: ['email', 'role', 'status']
+        }
+      ]
+    });
+    return result;
+
   } catch (error) {
+    if (!transaction.finished) {
+      await transaction.rollback();
+    }
     console.error("Lỗi khi tạo sinh viên:", error);
     throw error;
   }
@@ -61,14 +123,61 @@ export const createStudent = async (studentData) => {
  * @throws {Error} Nếu không tìm thấy sinh viên hoặc có lỗi.
  */
 export const updateStudent = async (id, studentData) => {
+  const transaction = await sequelize.transaction();
   try {
-    const student = await Student.findByPk(id);
+    const student = await Student.findByPk(id, {
+      include: [{
+        model: Account,
+        as: 'account', // Giả sử có quan hệ với Account
+      }]
+    }
+    );
     if (!student) {
       throw new Error(`Không tìm thấy sinh viên với ID ${id}`);
     }
-    await student.update(studentData);
-    return student;
+    // Kiểm tra xem email đã tồn tại chưa (nếu có)
+    if (studentData.email && studentData.email !== student.account.email) {
+      const existingAccount = await Account.findOne({
+        where: {
+          email: studentData.email,
+          id: { [Op.ne]: student.account.id } // Tránh trùng với tài khoản hiện tại
+        }
+      });
+      if (existingAccount) {
+        throw new Error('Email đã tồn tại');
+      }
+    }
+    await student.account.update({
+      email: studentData.email
+    }, { transaction });
+
+    // Cập nhật thông tin sinh viên
+    const updateData = {};
+    if (studentData.name) updateData.name = studentData.name;
+    if (studentData.day_of_birth !== undefined) updateData.day_of_birth = studentData.day_of_birth;
+    if (studentData.gender !== undefined) updateData.gender = student.gender;
+    if (studentData.address !== undefined) updateData.address = studentData.address;
+    if (studentData.phone_number !== undefined) updateData.phone_number = studentData.phone_number;
+    if (studentData.class !== undefined) updateData.class = studentData.class;
+    if (studentData.admission_year !== undefined) updateData.admission_year = studentData.admission_year;
+    if (studentData.gpa !== undefined) updateData.gpa = studentData.gpa;
+    if (studentData.status !== undefined) updateData.status = studentData.status;
+
+    await student.update(updateData, { transaction });
+    await transaction.commit();
+
+    return await Student.findByPk(id, {
+      include: [{
+        model: Account,
+        as: 'account',
+        attributes: ['email', 'role', 'status']
+      }]
+    });
+
   } catch (error) {
+    if (!transaction.finished) { // Kiểm tra xem transaction đã hoàn thành chưa
+      await transaction.rollback(); // Rollback transaction nếu có lỗi
+    }
     console.error(`Lỗi khi cập nhật sinh viên với ID ${id}:`, error);
     throw error;
   }
@@ -81,14 +190,25 @@ export const updateStudent = async (id, studentData) => {
  * @throws {Error} Nếu không tìm thấy sinh viên hoặc có lỗi.
  */
 export const deleteStudent = async (id) => {
+  const transaction = await models.sequelize.transaction();
   try {
-    const student = await Student.findByPk(id);
+    const student = await Student.findByPk(id, {
+      include: [{
+        model: Account,
+        as: 'account'
+      }]
+    });
     if (!student) {
       throw new Error(`Không tìm thấy sinh viên với ID ${id}`);
     }
-    await student.destroy();
+    await student.destroy({ transaction });
+    await transaction.commit();
+
     return { message: "Sinh viên đã được xóa thành công" };
   } catch (error) {
+    if (!transaction.finished) { // Kiểm tra xem transaction đã hoàn thành chưa
+      await transaction.rollback(); // Rollback transaction nếu có lỗi
+    }
     console.error(`Lỗi khi xóa sinh viên với ID ${id}:`, error);
     throw error;
   }
@@ -196,7 +316,7 @@ export const importStudentsFromJSON = async (studentsData) => {
 
         // Kiểm tra email đã tồn tại chưa (nếu có)
         if (cleanedData.email) {
-          const existingEmail = await Student.findOne({
+          const existingEmail = await Account.findOne({
             where: { email: cleanedData.email }
           });
           if (existingEmail) {
@@ -210,7 +330,7 @@ export const importStudentsFromJSON = async (studentsData) => {
         }
 
         // Tạo Student mới
-        const newStudent = await Student.create(cleanedData);
+        const newStudent = await createStudent(cleanedData);
         results.success.push(newStudent);
 
       } catch (error) {
@@ -398,7 +518,6 @@ export const importStudentsFromExcel = async (fileBuffer) => {
           row: rowIndex,
           student_id: newStudent.student_id,
           name: newStudent.name,
-          email: newStudent.email
         });
 
       } catch (error) {
