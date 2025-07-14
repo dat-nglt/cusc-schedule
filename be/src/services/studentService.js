@@ -1,11 +1,12 @@
 import models from "../models/index.js";
+import Lecturer from "../models/Lecturer.js";
 import ExcelUtils from "../utils/ExcelUtils.js";
 import { Op } from 'sequelize';
 
 const { Student, Account, sequelize } = models;
 /**
- * Lấy tất cả sinh viên.
- * @returns {Promise<Array>} Danh sách tất cả sinh viên.
+ * Lấy tất cả Học viên.
+ * @returns {Promise<Array>} Danh sách tất cả Học viên.
  * @throws {Error} Nếu có lỗi khi lấy dữ liệu.
  */
 export const getAllStudents = async () => {
@@ -14,21 +15,21 @@ export const getAllStudents = async () => {
       include: [{
         model: Account,
         as: 'account', // Giả sử có quan hệ với Account
-        attributes: ['email', 'role', 'status'] // Chỉ lấy các trường cần thiết từ Account
+        attributes: ['id', 'email', 'role', 'status'] // Chỉ lấy các trường cần thiết từ Account
       }]
     });
     return students;
   } catch (error) {
-    console.error("Lỗi khi lấy danh sách sinh viên:", error);
+    console.error("Lỗi khi lấy danh sách Học viên:", error);
     throw error;
   }
 };
 
 /**
- * Lấy thông tin chi tiết một sinh viên theo ID.
- * @param {string} id - ID của sinh viên.
- * @returns {Promise<Object>} Thông tin sinh viên.
- * @throws {Error} Nếu không tìm thấy sinh viên hoặc có lỗi.
+ * Lấy thông tin chi tiết một Học viên theo ID.
+ * @param {string} id - ID của Học viên.
+ * @returns {Promise<Object>} Thông tin Học viên.
+ * @throws {Error} Nếu không tìm thấy Học viên hoặc có lỗi.
  */
 export const getStudentById = async (id) => {
   try {
@@ -36,24 +37,24 @@ export const getStudentById = async (id) => {
       include: [{
         model: Account,
         as: 'account', // Giả sử có quan hệ với Account
-        attributes: ['email', 'role', 'status'] // Chỉ lấy các trường cần thiết từ Account
+        attributes: ['id', 'email', 'role', 'status'] // Chỉ lấy các trường cần thiết từ Account
       }]
     });
     if (!student) {
-      throw new Error(`Không tìm thấy sinh viên với ID ${id}`);
+      throw new Error(`Không tìm thấy Học viên với ID ${id}`);
     }
     return student;
   } catch (error) {
-    console.error(`Lỗi khi lấy sinh viên với ID ${id}:`, error);
+    console.error(`Lỗi khi lấy Học viên với ID ${id}:`, error);
     throw error;
   }
 };
 
 /**
- * Tạo một sinh viên mới.
- * @param {Object} studentData - Dữ liệu của sinh viên mới.
- * @returns {Promise<Object>} Sinh viên đã được tạo.
- * @throws {Error} Nếu có lỗi khi tạo sinh viên.
+ * Tạo một Học viên mới.
+ * @param {Object} studentData - Dữ liệu của Học viên mới.
+ * @returns {Promise<Object>} Học viên đã được tạo.
+ * @throws {Error} Nếu có lỗi khi tạo Học viên.
  */
 export const createStudent = async (studentData) => {
   const transaction = await sequelize.transaction();
@@ -78,7 +79,7 @@ export const createStudent = async (studentData) => {
       status: 'active'
     }, { transaction });
 
-    // Tạo sinh viên với account_id
+    // Tạo Học viên với account_id
     const student = await Student.create({
       student_id: studentData.student_id,
       account_id: account.id, // Giả sử có trường account_id trong Student
@@ -94,7 +95,7 @@ export const createStudent = async (studentData) => {
     }, { transaction });
     await transaction.commit();
 
-    // trả về sinh viên kèm theo thông tin tài khoản
+    // trả về Học viên kèm theo thông tin tài khoản
     const result = await Student.findByPk(student.student_id, {
       include: [
         {
@@ -110,17 +111,17 @@ export const createStudent = async (studentData) => {
     if (!transaction.finished) {
       await transaction.rollback();
     }
-    console.error("Lỗi khi tạo sinh viên:", error);
+    console.error("Lỗi khi tạo Học viên:", error);
     throw error;
   }
 };
 
 /**
- * Cập nhật thông tin một sinh viên theo ID.
- * @param {string} id - ID của sinh viên cần cập nhật.
+ * Cập nhật thông tin một Học viên theo ID.
+ * @param {string} id - ID của Học viên cần cập nhật.
  * @param {Object} studentData - Dữ liệu cập nhật.
- * @returns {Promise<Object>} Sinh viên đã được cập nhật.
- * @throws {Error} Nếu không tìm thấy sinh viên hoặc có lỗi.
+ * @returns {Promise<Object>} Học viên đã được cập nhật.
+ * @throws {Error} Nếu không tìm thấy Học viên hoặc có lỗi.
  */
 export const updateStudent = async (id, studentData) => {
   const transaction = await sequelize.transaction();
@@ -133,7 +134,7 @@ export const updateStudent = async (id, studentData) => {
     }
     );
     if (!student) {
-      throw new Error(`Không tìm thấy sinh viên với ID ${id}`);
+      throw new Error(`Không tìm thấy Học viên với ID ${id}`);
     }
     // Kiểm tra xem email đã tồn tại chưa (nếu có)
     if (studentData.email && studentData.email !== student.account.email) {
@@ -151,7 +152,7 @@ export const updateStudent = async (id, studentData) => {
       email: studentData.email
     }, { transaction });
 
-    // Cập nhật thông tin sinh viên
+    // Cập nhật thông tin Học viên
     const updateData = {};
     if (studentData.name) updateData.name = studentData.name;
     if (studentData.day_of_birth !== undefined) updateData.day_of_birth = studentData.day_of_birth;
@@ -178,16 +179,16 @@ export const updateStudent = async (id, studentData) => {
     if (!transaction.finished) { // Kiểm tra xem transaction đã hoàn thành chưa
       await transaction.rollback(); // Rollback transaction nếu có lỗi
     }
-    console.error(`Lỗi khi cập nhật sinh viên với ID ${id}:`, error);
+    console.error(`Lỗi khi cập nhật Học viên với ID ${id}:`, error);
     throw error;
   }
 };
 
 /**
- * Xóa một sinh viên theo ID.
- * @param {string} id - ID của sinh viên cần xóa.
+ * Xóa một Học viên theo ID.
+ * @param {string} id - ID của Học viên cần xóa.
  * @returns {Promise<Object>} Thông báo xóa thành công.
- * @throws {Error} Nếu không tìm thấy sinh viên hoặc có lỗi.
+ * @throws {Error} Nếu không tìm thấy Học viên hoặc có lỗi.
  */
 export const deleteStudent = async (id) => {
   const transaction = await models.sequelize.transaction();
@@ -199,31 +200,38 @@ export const deleteStudent = async (id) => {
       }]
     });
     if (!student) {
-      throw new Error(`Không tìm thấy sinh viên với ID ${id}`);
+      throw new Error(`Không tìm thấy Học viên với ID ${id}`);
     }
-    await student.destroy({ transaction });
+    // Xóa tài khoản liên kết với Học viên
+    const accountId = student.account.id;
+
+    //xóa account liên kết với Học viên
+    await Account.destroy({
+      where: { id: accountId },
+      transaction
+    });
     await transaction.commit();
 
-    return { message: "Sinh viên đã được xóa thành công" };
+    return { message: "Học viên đã được xóa thành công" };
   } catch (error) {
     if (!transaction.finished) { // Kiểm tra xem transaction đã hoàn thành chưa
       await transaction.rollback(); // Rollback transaction nếu có lỗi
     }
-    console.error(`Lỗi khi xóa sinh viên với ID ${id}:`, error);
+    console.error(`Lỗi khi xóa Học viên với ID ${id}:`, error);
     throw error;
   }
 };
 
 /**
- * Nhập dữ liệu sinh viên từ JSON (dùng cho tính năng xem trước).
- * @param {Array<Object>} studentsData - Mảng các đối tượng sinh viên.
+ * Nhập dữ liệu Học viên từ JSON (dùng cho tính năng xem trước).
+ * @param {Array<Object>} studentsData - Mảng các đối tượng Học viên.
  * @returns {Promise<Object>} Kết quả nhập khẩu bao gồm danh sách thành công và lỗi.
  * @throws {Error} Nếu dữ liệu JSON không hợp lệ hoặc lỗi trong quá trình nhập.
  */
 export const importStudentsFromJSON = async (studentsData) => {
   try {
     if (!studentsData || !Array.isArray(studentsData)) {
-      throw new Error("Dữ liệu sinh viên không hợp lệ"); // Changed "giảng viên" to "sinh viên"
+      throw new Error("Dữ liệu Học viên không hợp lệ"); // Changed "giảng viên" to "Học viên"
     }
 
     const results = {
@@ -232,7 +240,7 @@ export const importStudentsFromJSON = async (studentsData) => {
       total: studentsData.length
     };
 
-    // Validate và tạo sinh viên cho từng item
+    // Validate và tạo Học viên cho từng item
     for (let i = 0; i < studentsData.length; i++) {
       const studentData = studentsData[i];
       const index = i + 1;
@@ -343,23 +351,23 @@ export const importStudentsFromJSON = async (studentsData) => {
     }
     return results;
   } catch (error) {
-    console.error("Lỗi khi nhập sinh viên từ JSON:", error);
+    console.error("Lỗi khi nhập Học viên từ JSON:", error);
     throw error;
   }
 };
 
 
 /**
- * Liệt kê các sinh viên với các bộ lọc tùy chọn.
+ * Liệt kê các Học viên với các bộ lọc tùy chọn.
  * @param {Object} filters - Các tiêu chí lọc.
- * @param {string} [filters.student_id] - Lọc theo ID sinh viên (tìm kiếm gần đúng).
- * @param {string} [filters.name] - Lọc theo tên sinh viên (tìm kiếm gần đúng).
+ * @param {string} [filters.student_id] - Lọc theo ID Học viên (tìm kiếm gần đúng).
+ * @param {string} [filters.name] - Lọc theo tên Học viên (tìm kiếm gần đúng).
  * @param {string} [filters.email] - Lọc theo email (tìm kiếm gần đúng).
  * @param {string} [filters.gender] - Lọc theo giới tính.
  * @param {string} [filters.class] - Lọc theo lớp.
  * @param {number} [filters.admission_year] - Lọc theo năm nhập học.
  * @param {string} [filters.status] - Lọc theo trạng thái.
- * @returns {Promise<Array>} Danh sách các sinh viên phù hợp với bộ lọc.
+ * @returns {Promise<Array>} Danh sách các Học viên phù hợp với bộ lọc.
  * @throws {Error} Nếu có lỗi khi liệt kê dữ liệu.
  */
 export const listStudents = async (filters) => {
@@ -408,12 +416,12 @@ export const listStudents = async (filters) => {
 
     return students;
   } catch (error) {
-    throw new Error('Lỗi khi liệt kê sinh viên: ' + error.message);
+    throw new Error('Lỗi khi liệt kê Học viên: ' + error.message);
   }
 };
 
 /**
- * Nhập dữ liệu sinh viên từ file Excel.
+ * Nhập dữ liệu Học viên từ file Excel.
  * @param {Buffer} fileBuffer - Buffer của file Excel.
  * @returns {Promise<Object>} Kết quả nhập khẩu bao gồm danh sách thành công và lỗi.
  * @throws {Error} Nếu file Excel không có dữ liệu hoặc định dạng không đúng, hoặc lỗi trong quá trình nhập.
@@ -436,7 +444,7 @@ export const importStudentsFromExcel = async (fileBuffer) => {
       total: studentsData.length
     };
 
-    // Validate và tạo sinh viên cho từng hàng
+    // Validate và tạo Học viên cho từng hàng
     for (let i = 0; i < studentsData.length; i++) {
       const row = studentsData[i];
       const rowIndex = i + 2; // Bắt đầu từ hàng 2 (sau tiêu đề)
@@ -531,13 +539,13 @@ export const importStudentsFromExcel = async (fileBuffer) => {
 
     return results;
   } catch (error) {
-    console.error("Lỗi khi nhập sinh viên từ Excel:", error);
+    console.error("Lỗi khi nhập Học viên từ Excel:", error);
     throw error;
   }
 };
 
 /**
- * Validate cấu trúc template Excel cho sinh viên.
+ * Validate cấu trúc template Excel cho Học viên.
  * @param {Buffer} fileBuffer - Buffer của file Excel.
  * @returns {Object} Kết quả validation bao gồm valid (boolean) và error (string, nếu có).
  * @throws {Error} Nếu template không hợp lệ.

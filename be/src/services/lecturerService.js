@@ -15,7 +15,7 @@ export const getAllLecturers = async () => {
       include: [{
         model: Account,
         as: 'account',
-        attributes: ['email', 'role', 'status']
+        attributes: ['id', 'email', 'role', 'status']
       },
       {
         model: Subject,
@@ -41,11 +41,19 @@ export const getAllLecturers = async () => {
 export const getLecturerById = async (id) => {
   try {
     const lecturer = await Lecturer.findByPk(id, {
-      include: [{
-        model: Account,
-        as: 'account',
-        attributes: ['email', 'role', 'status']
-      }]
+      include: [
+        {
+          model: Account,
+          as: 'account',
+          attributes: ['id', 'email', 'role', 'status']
+        },
+        {
+          model: Subject,
+          as: 'subjects',
+          through: { attributes: [] }, // Loại bỏ attributes của bảng trung gian
+          attributes: ['subject_id', 'subject_name']
+        }
+      ]
     });
     if (!lecturer) {
       throw new Error(`Không tìm thấy giảng viên với ID ${id}`);
@@ -257,15 +265,20 @@ export const deleteLecturer = async (id) => {
     if (!lecturer) {
       throw new Error(`Không tìm thấy giảng viên với ID ${id}`);
     }
+    // lấy account_id từ giảng viên
+    const accountId = lecturer.account.id;
+    // Xóa account liên kết với giảng viên
+    await Account.destroy({
+      where: { id: accountId },
+      transaction
+    });
 
-    // Xóa giảng viên (sẽ tự động xóa account do CASCADE)
-    await lecturer.destroy({ transaction });
     await transaction.commit();
 
-    return { message: "Giảng viên đã được xóa thành công" };
+    return { message: "Giảng viên và tài khoản đã được xóa thành công" };
   } catch (error) {
-    if (!transaction.finished) { // Kiểm tra nếu transaction chưa hoàn thành
-      await transaction.rollback(); // Rollback transaction nếu có lỗi
+    if (!transaction.finished) {
+      await transaction.rollback();
     }
     console.error(`Lỗi khi xóa giảng viên với ID ${id}:`, error);
     throw error;

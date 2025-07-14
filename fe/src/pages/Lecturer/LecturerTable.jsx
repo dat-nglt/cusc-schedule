@@ -123,9 +123,24 @@ export default function LecturerTable({ displayedLecturers, isSmallScreen, isMed
                         )}
                         {!isMediumScreen && (
                             <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                                <Box sx={{ fontSize: '0.85rem' }}>
-                                    <div>{lecturer.account.email}</div>
-                                    <div style={{ color: '#666', marginTop: '2px' }}>{lecturer.phone_number}</div>
+                                <Box sx={{ fontSize: '0.85rem', maxWidth: '150px' }}>
+                                    <Box sx={{
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        whiteSpace: 'nowrap',
+                                        title: lecturer.account.email
+                                    }}>
+                                        {lecturer.account.email}
+                                    </Box>
+                                    <Box sx={{
+                                        color: '#666',
+                                        marginTop: '2px',
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        whiteSpace: 'nowrap'
+                                    }}>
+                                        {lecturer.phone_number}
+                                    </Box>
                                 </Box>
                             </TableCell>
                         )}

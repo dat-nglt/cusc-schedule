@@ -84,7 +84,6 @@ const Lecturer = (sequelize) => {
       createdAt: "created_at", // Đặt tên cột createdAt
       updatedAt: "updated_at", // Đặt tên cột updatedAt
       deletedAt: 'deleted_at', // Đặt tên cột deletedAt nếu cần
-      paranoid: true, // Sử dụng chế độ xóa mềm (soft delete)
     }
   );
 

@@ -32,7 +32,7 @@ module.exports = {
         allowNull: true,
       },
       // *** Ngày sinh của sinh viên ***
-        day_of_birth: {
+      day_of_birth: {
         type: Sequelize.DATEONLY,
         allowNull: true
       },
@@ -73,6 +73,11 @@ module.exports = {
       },
       gpa: {
         type: Sequelize.DECIMAL(3, 2),
+        allowNull: true,
+      },
+      // *** Trạng thái của sinh viên (đang học, tốt nghiệp) *** 
+      status: {
+        type: Sequelize.STRING(30),
         allowNull: true,
       },
 
