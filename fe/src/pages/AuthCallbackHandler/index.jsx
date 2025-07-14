@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { getCurrentUser } from '../../api/authAPI'; // Hoặc đường dẫn đúng tới service của bạn
+import { getCurrentUserData } from '../../api/authAPI'; // Hoặc đường dẫn đúng tới service của bạn
 // Import các component MUI
 import {
   CircularProgress, // Biểu tượng loading hình tròn
@@ -25,7 +25,7 @@ function AuthCallbackHandler() {
       setLoading(true); // Bắt đầu loading
       setIsError(false); // Đặt lại trạng thái lỗi
       try {
-        const response = await getCurrentUser();
+        const response = await getCurrentUserData();
         console.log("API Response:", response); // Log đầy đủ phản hồi để debug
 
         if (response && response.success) { // Giả sử API trả về { success: true, role: '...' }

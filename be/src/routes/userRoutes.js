@@ -1,5 +1,5 @@
 import express from 'express';
-import { getAllUsersController, getCurrentUser } from '../controllers/userController.js';
+import { getAllUsersController, getCurrentUserData } from '../controllers/userController.js';
 import authMiddleware, { authenticateAndAuthorize } from '../middleware/authMiddleware.js';
 
 const userRoutes = express.Router();
@@ -10,7 +10,7 @@ const userRoutes = express.Router();
  * Bất kỳ người dùng nào đã xác thực đều có thể truy cập tuyến đường này.
  * @access Private (yêu cầu xác thực)
  */
-userRoutes.get('/me', authMiddleware, getCurrentUser);
+userRoutes.get('/me', authMiddleware, getCurrentUserData);
 
 /**
  * @route GET /api/users/getAll
