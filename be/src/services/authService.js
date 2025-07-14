@@ -7,7 +7,7 @@ import { findUserByEmail, getUserId } from "./userService.js";
  * @param {string} role - Vai trò của người dùng (admin, user, lecturer, v.v.)
  * @returns {string} - Mã JWT
  */
-export const generateToken = (userId, role) => {
+export const generateAccessToken = (userId, role) => {
   return jwt.sign({ id: userId, role }, process.env.JWT_SECRET, {
     expiresIn: "12h", // Token có hiệu lực trong 12 giờ
   });
@@ -18,10 +18,10 @@ export const generateToken = (userId, role) => {
  * @param {string} token - Chuỗi token cần xác thực
  * @returns {Object} - Dữ liệu giải mã từ token
  */
-export const verifyToken = (token) => {
+export const verifyToken = (accessToken) => {
   try {
-    return jwt.verify(token, process.env.JWT_SECRET);
+    return jwt.verify(accessToken, process.env.JWT_SECRET);
   } catch (error) {
-    throw new Error("Token không hợp lệ");
+    throw new Error("accessToken không hợp lệ");
   }
 };

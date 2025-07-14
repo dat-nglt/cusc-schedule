@@ -21,7 +21,7 @@ import { motion } from 'framer-motion';
 import PersonIcon from '@mui/icons-material/Person';
 import EngineeringIcon from '@mui/icons-material/Engineering';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
-import {loginWithGoogle} from '../../api/authAPI';
+import { loginWithGoogle } from '../../api/authAPI';
 import { useLocation, useNavigate } from 'react-router-dom'; // Import useLocation và useNavigate
 import { toast } from 'react-toastify';
 const LoginPage = () => {
@@ -31,7 +31,6 @@ const LoginPage = () => {
     const navigate = useNavigate(); // Hook để điều hướng
 
     const handleGoogleLogin = () => {
-        // Redirect to backend Google OAuth
         loginWithGoogle();
     };
 
@@ -42,15 +41,13 @@ const LoginPage = () => {
         { name: 'Quản trị viên', icon: <AdminPanelSettingsIcon fontSize="large" /> },
     ];
 
-    // Sử dụng useEffect để đọc tham số lỗi từ URL khi component được mount hoặc URL thay đổi
     useEffect(() => {
         const queryParams = new URLSearchParams(location.search);
         const errorParam = queryParams.get('error');
 
         if (errorParam) {
-            // Giải mã tham số lỗi và hiển thị thông báo phù hợp
             switch (errorParam) {
-                
+
                 case 'account_not_found':
                     toast.error('Tài khoản Google của bạn không tồn tại trong hệ thống. Vui lòng liên hệ quản trị viên để được cấp quyền hoặc đăng ký tài khoản.');
                     break;

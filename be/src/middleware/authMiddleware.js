@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { APIResponse } from "../utils/APIResponse.js";
-import { findUserById } from "../services/userService.js"; // Đảm bảo đường dẫn này đúng
+import { findExistsUserByID } from "../services/userService.js"; // Đảm bảo đường dẫn này đúng
 
 /**
  * Middleware xác thực người dùng dựa trên JWT trong HTTP-Only Cookie.
@@ -33,7 +33,7 @@ const authMiddleware = async (req, res, next) => {
 
     // Xác minh người dùng vẫn còn tồn tại trong cơ sở dữ liệu
     // decoded.id được lấy từ payload của JWT (thường là ID người dùng)
-    const userInfo = await findUserById(decoded.id);
+    const userInfo = await findExistsUserByID(decoded.id);
     if (!userInfo) {
       // Nếu người dùng không được tìm thấy (ví dụ: đã bị xóa)
       return APIResponse(res, 401, "Người dùng không tồn tại hoặc đã bị xóa.");
@@ -105,7 +105,7 @@ export const authenticateAndAuthorize = (allowedRoles) => {
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-      const userInfo = await findUserById(decoded.id);
+      const userInfo = await findExistsUserByID(decoded.id);
       if (!userInfo) {
         return APIResponse(
           res,

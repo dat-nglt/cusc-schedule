@@ -1,23 +1,19 @@
 // BE: controllers/authController.js
-import { generateToken } from "../services/authService.js";
+import { generateAccessToken } from "../services/authService.js";
 import { APIResponse } from "../utils/APIResponse.js";
-
-export const logout = (req, res) => {
-  res.clearCookie("jwt", {
-    path: "/",
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "Lax",
-  });
-  return APIResponse(res, 200, "Người dùng đã đăng xuất thành công.");
-};
 
 export const googleCallback = async (req, res) => {
   try {
-    const userObj = req.user; // Từ Passport.js
+    const authenticatedUser = req.authenticatedUser;
 
-    if (!userObj || !userObj.id || !userObj.role) {
-      console.error("Passport.js callback: userObj is null or missing id/role");
+    if (
+      !authenticatedUser ||
+      !authenticatedUser.id ||
+      !authenticatedUser.role
+    ) {
+      console.error(
+        "Passport.js callback: authenticatedUser is null or missing id/role"
+      );
       const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5000";
       return res.redirect(
         `${frontendUrl}/login?error=${encodeURIComponent(
@@ -26,9 +22,9 @@ export const googleCallback = async (req, res) => {
       );
     }
 
-    const token = generateToken(userObj.id, userObj.role);
+    const token = generateAccessToken(authenticatedUser.id, authenticatedUser.role);
 
-    res.cookie("jwt", token, {
+    res.cookie("accessToken", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "Lax",
@@ -56,7 +52,7 @@ export const googleCallback = async (req, res) => {
 
 // Endpoint này sẽ được Frontend gọi để lấy thông tin người dùng
 export const getCurrentUser = async (req, res) => {
-  // req.user được gắn bởi middleware xác thực JWT từ cookie
+  // req.user được gắn bởi middleware xác thực accessToken từ cookie
   if (!req.user || !req.user.id || !req.user.role) {
     return res
       .status(401)
@@ -68,4 +64,14 @@ export const getCurrentUser = async (req, res) => {
     id: req.user.id,
     role: req.user.role,
   });
+};
+
+export const logout = (req, res) => {
+  res.clearCookie("accessToken", {
+    path: "/",
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "Lax",
+  });
+  return APIResponse(res, 200, "Người dùng đã đăng xuất thành công.");
 };

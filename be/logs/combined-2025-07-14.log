@@ -1,0 +1,123 @@
+2025-07-14 21:21:38 error: ❌ Lỗi kết nối hoặc đồng bộ hóa cơ sở dữ liệu: database "cusc_db" does not exist
+2025-07-14 21:22:43 info: ✅ Kết nối PostgreSQL với Sequelize thành công.
+2025-07-14 21:22:43 info: ✅ Kết nối cơ sở dữ liệu thành công.
+2025-07-14 21:22:43 info: ✅ Cấu hình Passport đã được tải.
+2025-07-14 21:22:43 info: ✅ Passport has been configured.
+2025-07-14 21:22:43 info: ✅ Middleware Morgan for HTTP request logging configured.
+2025-07-14 21:22:43 info: ✅ Middleware Session and Passport have been configured.
+2025-07-14 21:22:43 info: ✅ Router has been setup.
+2025-07-14 21:22:43 info: ✅ Server is running on port 3000 (development environment)
+2025-07-14 21:23:12 info: ::1 - - [14/Jul/2025:14:23:12 +0000] "GET /auth/google HTTP/1.1" 302 0 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-14 21:23:13 info: Đã liên kết Google ID mới (102315443281111998634) cho user: nguyenletandat.contact@gmail.com
+2025-07-14 21:23:13 info: Đăng nhập Google thành công cho user hiện có: nguyenletandat.contact@gmail.com (ID: 3742efe8-a0d3-4afb-b555-77020e0fb3ba)
+2025-07-14 21:23:13 info: ::1 - - [14/Jul/2025:14:23:13 +0000] "GET /auth/google/callback?code=4%2F0AVMBsJh8f8ajc9zw5GaFbj5IctUuZQJ4_wOi8AL1D0OGPef438KmjtJzPz-5UuW3u_DrEg&scope=email+profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+openid+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&authuser=0&prompt=none HTTP/1.1" 302 64 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-14 21:23:15 info: ::1 - - [14/Jul/2025:14:23:15 +0000] "GET /auth/current-user HTTP/1.1" 401 56 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-14 21:23:15 info: ::1 - - [14/Jul/2025:14:23:15 +0000] "GET /auth/current-user HTTP/1.1" 401 56 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-14 21:23:15 info: ::1 - - [14/Jul/2025:14:23:15 +0000] "OPTIONS /auth/logout HTTP/1.1" 204 0 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-14 21:23:15 info: ::1 - - [14/Jul/2025:14:23:15 +0000] "POST /auth/logout HTTP/1.1" 401 56 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-14 21:23:15 info: ::1 - - [14/Jul/2025:14:23:15 +0000] "POST /auth/logout HTTP/1.1" 401 56 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-14 21:24:07 info: ✅ Kết nối PostgreSQL với Sequelize thành công.
+2025-07-14 21:24:07 info: ✅ Kết nối cơ sở dữ liệu thành công.
+2025-07-14 21:24:07 info: ✅ Cấu hình Passport đã được tải.
+2025-07-14 21:24:07 info: ✅ Passport has been configured.
+2025-07-14 21:24:07 info: ✅ Middleware Morgan for HTTP request logging configured.
+2025-07-14 21:24:07 info: ✅ Middleware Session and Passport have been configured.
+2025-07-14 21:24:07 info: ✅ Router has been setup.
+2025-07-14 21:24:07 info: ✅ Server is running on port 3000 (development environment)
+2025-07-14 21:24:45 info: ::1 - - [14/Jul/2025:14:24:45 +0000] "GET /auth/google HTTP/1.1" 302 0 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-14 21:24:46 info: Đăng nhập Google thành công cho user: nguyenletandat.contact@gmail.com (ID: 3742efe8-a0d3-4afb-b555-77020e0fb3ba)
+2025-07-14 21:24:46 info: ::1 - - [14/Jul/2025:14:24:46 +0000] "GET /auth/google/callback?code=4%2F0AVMBsJhNLLiKXSxzJcGZIDRq2OCnNbKSzyFWTEvR2LPNB_Ym81mUSY1sO7SKLlJTgPxU-g&scope=email+profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+openid+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&authuser=0&prompt=none HTTP/1.1" 302 64 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-14 21:24:53 info: ::1 - - [14/Jul/2025:14:24:53 +0000] "GET /auth/current-user HTTP/1.1" 200 75 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-14 21:24:53 info: ::1 - - [14/Jul/2025:14:24:53 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-14 21:25:00 info: ::1 - - [14/Jul/2025:14:25:00 +0000] "OPTIONS /auth/logout HTTP/1.1" 204 0 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-14 21:25:00 info: ::1 - - [14/Jul/2025:14:25:00 +0000] "POST /auth/logout HTTP/1.1" 200 80 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-14 21:27:44 info: ✅ Kết nối PostgreSQL với Sequelize thành công.
+2025-07-14 21:27:44 info: ✅ Kết nối cơ sở dữ liệu thành công.
+2025-07-14 21:27:44 info: ✅ Cấu hình Passport đã được tải.
+2025-07-14 21:27:44 info: ✅ Passport has been configured.
+2025-07-14 21:27:44 info: ✅ Middleware Morgan for HTTP request logging configured.
+2025-07-14 21:27:44 info: ✅ Middleware Session and Passport have been configured.
+2025-07-14 21:27:44 info: ✅ Router has been setup.
+2025-07-14 21:27:44 info: ✅ Server is running on port 3000 (development environment)
+2025-07-14 21:27:48 info: ✅ Kết nối PostgreSQL với Sequelize thành công.
+2025-07-14 21:27:48 info: ✅ Kết nối cơ sở dữ liệu thành công.
+2025-07-14 21:27:48 info: ✅ Cấu hình Passport đã được tải.
+2025-07-14 21:27:48 info: ✅ Passport has been configured.
+2025-07-14 21:27:48 info: ✅ Middleware Morgan for HTTP request logging configured.
+2025-07-14 21:27:48 info: ✅ Middleware Session and Passport have been configured.
+2025-07-14 21:27:48 info: ✅ Router has been setup.
+2025-07-14 21:27:48 info: ✅ Server is running on port 3000 (development environment)
+2025-07-14 21:27:52 info: ✅ Kết nối PostgreSQL với Sequelize thành công.
+2025-07-14 21:27:52 info: ✅ Kết nối cơ sở dữ liệu thành công.
+2025-07-14 21:27:52 info: ✅ Cấu hình Passport đã được tải.
+2025-07-14 21:27:52 info: ✅ Passport has been configured.
+2025-07-14 21:27:52 info: ✅ Middleware Morgan for HTTP request logging configured.
+2025-07-14 21:27:52 info: ✅ Middleware Session and Passport have been configured.
+2025-07-14 21:27:52 info: ✅ Router has been setup.
+2025-07-14 21:27:52 info: ✅ Server is running on port 3000 (development environment)
+2025-07-14 21:27:59 info: ::1 - - [14/Jul/2025:14:27:59 +0000] "GET /auth/google HTTP/1.1" 302 0 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-14 21:28:00 info: Đăng nhập Google thành công cho user: nguyenletandat.contact@gmail.com (ID: 3742efe8-a0d3-4afb-b555-77020e0fb3ba)
+2025-07-14 21:28:00 info: ::1 - - [14/Jul/2025:14:28:00 +0000] "GET /auth/google/callback?code=4%2F0AVMBsJgca_YIoF7yp-xxX38nplEDZlC1fdC6m-QifAqMg1dkFoyRc77se4O2qkb1tEfo2g&scope=email+profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+openid&authuser=0&prompt=none HTTP/1.1" 302 91 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-14 21:28:17 info: ✅ Kết nối PostgreSQL với Sequelize thành công.
+2025-07-14 21:28:17 info: ✅ Kết nối cơ sở dữ liệu thành công.
+2025-07-14 21:28:17 info: ✅ Cấu hình Passport đã được tải.
+2025-07-14 21:28:17 info: ✅ Passport has been configured.
+2025-07-14 21:28:17 info: ✅ Middleware Morgan for HTTP request logging configured.
+2025-07-14 21:28:17 info: ✅ Middleware Session and Passport have been configured.
+2025-07-14 21:28:17 info: ✅ Router has been setup.
+2025-07-14 21:28:17 info: ✅ Server is running on port 3000 (development environment)
+2025-07-14 21:28:31 info: ✅ Kết nối PostgreSQL với Sequelize thành công.
+2025-07-14 21:28:31 info: ✅ Kết nối cơ sở dữ liệu thành công.
+2025-07-14 21:28:31 info: ✅ Cấu hình Passport đã được tải.
+2025-07-14 21:28:31 info: ✅ Passport has been configured.
+2025-07-14 21:28:31 info: ✅ Middleware Morgan for HTTP request logging configured.
+2025-07-14 21:28:31 info: ✅ Middleware Session and Passport have been configured.
+2025-07-14 21:28:31 info: ✅ Router has been setup.
+2025-07-14 21:28:31 info: ✅ Server is running on port 3000 (development environment)
+2025-07-14 21:28:31 info: ::1 - - [14/Jul/2025:14:28:31 +0000] "GET /auth/google HTTP/1.1" 302 0 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-14 21:28:31 info: Đăng nhập Google thành công cho user: nguyenletandat.contact@gmail.com (ID: 3742efe8-a0d3-4afb-b555-77020e0fb3ba)
+2025-07-14 21:28:31 info: ::1 - - [14/Jul/2025:14:28:31 +0000] "GET /auth/google/callback?code=4%2F0AVMBsJgCxpsMT-ZP4NdcM3OEViJ3FfCW_kw9oQFIwIz-HWfHwuO5L-yPvMSb_Fm_eQs2mA&scope=email+profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+openid+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile&authuser=0&prompt=none HTTP/1.1" 302 64 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-14 21:28:36 info: ::1 - - [14/Jul/2025:14:28:36 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-14 21:28:36 info: ::1 - - [14/Jul/2025:14:28:36 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-14 21:29:35 info: ::1 - - [14/Jul/2025:14:29:35 +0000] "OPTIONS /auth/logout HTTP/1.1" 204 0 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-14 21:29:35 info: ::1 - - [14/Jul/2025:14:29:35 +0000] "POST /auth/logout HTTP/1.1" 200 80 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-14 21:30:26 info: ✅ Kết nối PostgreSQL với Sequelize thành công.
+2025-07-14 21:30:26 info: ✅ Kết nối cơ sở dữ liệu thành công.
+2025-07-14 21:30:26 info: ✅ Cấu hình Passport đã được tải.
+2025-07-14 21:30:26 info: ✅ Passport has been configured.
+2025-07-14 21:30:26 info: ✅ Middleware Morgan for HTTP request logging configured.
+2025-07-14 21:30:26 info: ✅ Middleware Session and Passport have been configured.
+2025-07-14 21:30:26 info: ✅ Router has been setup.
+2025-07-14 21:30:26 info: ✅ Server is running on port 3000 (development environment)
+2025-07-14 21:31:01 info: ✅ Kết nối PostgreSQL với Sequelize thành công.
+2025-07-14 21:31:01 info: ✅ Kết nối cơ sở dữ liệu thành công.
+2025-07-14 21:31:01 info: ✅ Cấu hình Passport đã được tải.
+2025-07-14 21:31:01 info: ✅ Passport has been configured.
+2025-07-14 21:31:01 info: ✅ Middleware Morgan for HTTP request logging configured.
+2025-07-14 21:31:01 info: ✅ Middleware Session and Passport have been configured.
+2025-07-14 21:31:01 info: ✅ Router has been setup.
+2025-07-14 21:31:01 info: ✅ Server is running on port 3000 (development environment)
+2025-07-14 21:31:11 info: ✅ Kết nối PostgreSQL với Sequelize thành công.
+2025-07-14 21:31:11 info: ✅ Kết nối cơ sở dữ liệu thành công.
+2025-07-14 21:31:11 info: ✅ Cấu hình Passport đã được tải.
+2025-07-14 21:31:11 info: ✅ Passport has been configured.
+2025-07-14 21:31:11 info: ✅ Middleware Morgan for HTTP request logging configured.
+2025-07-14 21:31:11 info: ✅ Middleware Session and Passport have been configured.
+2025-07-14 21:31:11 info: ✅ Router has been setup.
+2025-07-14 21:31:11 info: ✅ Server is running on port 3000 (development environment)
+2025-07-14 21:31:16 info: ✅ Kết nối PostgreSQL với Sequelize thành công.
+2025-07-14 21:31:16 info: ✅ Kết nối cơ sở dữ liệu thành công.
+2025-07-14 21:31:16 info: ✅ Cấu hình Passport đã được tải.
+2025-07-14 21:31:16 info: ✅ Passport has been configured.
+2025-07-14 21:31:16 info: ✅ Middleware Morgan for HTTP request logging configured.
+2025-07-14 21:31:16 info: ✅ Middleware Session and Passport have been configured.
+2025-07-14 21:31:16 info: ✅ Router has been setup.
+2025-07-14 21:31:16 info: ✅ Server is running on port 3000 (development environment)
+2025-07-14 21:31:40 info: ✅ Kết nối PostgreSQL với Sequelize thành công.
+2025-07-14 21:31:40 info: ✅ Kết nối cơ sở dữ liệu thành công.
+2025-07-14 21:31:40 info: ✅ Cấu hình Passport đã được tải.
+2025-07-14 21:31:40 info: ✅ Passport has been configured.
+2025-07-14 21:31:40 info: ✅ Middleware Morgan for HTTP request logging configured.
+2025-07-14 21:31:40 info: ✅ Middleware Session and Passport have been configured.
+2025-07-14 21:31:40 info: ✅ Router has been setup.
+2025-07-14 21:31:40 info: ✅ Server is running on port 3000 (development environment)
