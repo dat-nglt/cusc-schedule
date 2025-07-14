@@ -15,21 +15,19 @@ import {
     TableRow,
     Paper,
     Chip,
-    Avatar,
     Tabs,
     Tab,
     IconButton
 } from '@mui/material';
 import {
-    People as PeopleIcon,
+    Book as BookIcon,
     Close as CloseIcon,
-    Email as EmailIcon,
-    Phone as PhoneIcon,
     CheckCircle as CheckCircleIcon,
-    Block as BlockIcon
+    Block as BlockIcon,
+    AccessTime as AccessTimeIcon,
+    School as SchoolIcon
 } from '@mui/icons-material';
 import PropTypes from 'prop-types';
-
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -64,7 +62,7 @@ function a11yProps(index) {
     };
 }
 
-function TeacherDetailsModal({ open, onClose, lecturerData }) {
+export default function SubjectDetailsModal({ open, onClose, subjectData }) {
     const [tabValue, setTabValue] = useState(0);
 
     const handleChangeTab = (event, newValue) => {
@@ -75,20 +73,20 @@ function TeacherDetailsModal({ open, onClose, lecturerData }) {
         <Dialog open={open} onClose={onClose} maxWidth="lg" fullWidth>
             <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <PeopleIcon sx={{ mr: 1 }} />
-                    <Typography variant="h6">Chi tiết giảng viên</Typography>
+                    <BookIcon sx={{ mr: 1 }} />
+                    <Typography variant="h6">Chi tiết học phần</Typography>
                 </Box>
                 <IconButton onClick={onClose}>
                     <CloseIcon />
                 </IconButton>
             </DialogTitle>
             <DialogContent dividers>
-                <Tabs value={tabValue} onChange={handleChangeTab} aria-label="teacher tabs">
-                    <Tab label="Danh sách giảng viên" {...a11yProps(0)} />
+                <Tabs value={tabValue} onChange={handleChangeTab} aria-label="subject tabs">
+                    <Tab label="Danh sách học phần" {...a11yProps(0)} />
                     <Tab label="Lịch giảng dạy" {...a11yProps(1)} />
                 </Tabs>
                 <TabPanel value={tabValue} index={0}>
-                    {!lecturerData || lecturerData.length === 0 ? (
+                    {!subjectData || subjectData.length === 0 ? (
                         <Box sx={{ textAlign: 'center', py: 4 }}>
                             <Typography variant="body1" color="text.secondary">
                                 Chưa có dữ liệu
@@ -99,60 +97,75 @@ function TeacherDetailsModal({ open, onClose, lecturerData }) {
                             <Table>
                                 <TableHead>
                                     <TableRow>
-                                        <TableCell>Mã GV</TableCell>
-                                        <TableCell>Họ và tên</TableCell>
-                                        <TableCell>Bộ môn/Khoa</TableCell>
-                                        <TableCell>Môn giảng dạy</TableCell>
-                                        <TableCell>Liên hệ</TableCell>
+                                        <TableCell>Mã học phần</TableCell>
+                                        <TableCell>Tên học phần</TableCell>
+                                        <TableCell>Số tín chỉ</TableCell>
+                                        <TableCell>Số tiết</TableCell>
+                                        <TableCell>Học kỳ</TableCell>
                                         <TableCell>Trạng thái</TableCell>
+                                        <TableCell>Ngày tạo</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {lecturerData.map((lecturer) => (
-                                        <TableRow key={lecturer.lecturer_id}>
-                                            <TableCell>{lecturer.lecturer_id}</TableCell>
+                                    {subjectData.map((subject) => (
+                                        <TableRow key={subject.subject_id}>
+                                            <TableCell>
+                                                <Typography variant="body2" fontWeight="bold">
+                                                    {subject.subject_id}
+                                                </Typography>
+                                            </TableCell>
                                             <TableCell>
                                                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                                    <Avatar sx={{ width: 32, height: 32, mr: 1 }}>
-                                                        {lecturer.name.charAt(0)}
-                                                    </Avatar>
-                                                    {lecturer.name}
-                                                </Box>
-                                            </TableCell>
-                                            <TableCell>{lecturer.department}</TableCell>
-                                            <TableCell>
-                                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                                    {lecturer.subjects.slice(0, 3).map(subject => (
-                                                        <Chip key={subject.subject_id} label={subject.subject_name} size="small" />
-                                                    ))}
-                                                    {lecturer.subjects.length > 3 && (
-                                                        <Chip
-                                                            label={`+${lecturer.subjects.length - 3}`}
-                                                            size="small"
-                                                            variant="outlined"
-                                                        />
-                                                    )}
+                                                    <SchoolIcon sx={{ width: 20, height: 20, mr: 1, color: 'primary.main' }} />
+                                                    <Typography variant="body2" fontWeight="medium">
+                                                        {subject.subject_name}
+                                                    </Typography>
                                                 </Box>
                                             </TableCell>
                                             <TableCell>
-                                                <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                                                <Chip
+                                                    label={`${subject.credit} tín chỉ`}
+                                                    size="small"
+                                                    color="info"
+                                                    variant="outlined"
+                                                />
+                                            </TableCell>
+                                            <TableCell>
+                                                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
                                                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                                        <EmailIcon fontSize="small" sx={{ mr: 0.5 }} />
-                                                        <Typography variant="body2">{lecturer.account?.email || 'N/A'}</Typography>
+                                                        <AccessTimeIcon fontSize="small" sx={{ mr: 0.5, color: 'primary.main' }} />
+                                                        <Typography variant="caption">
+                                                            LT: {subject.theory_hours}h
+                                                        </Typography>
                                                     </Box>
                                                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                                        <PhoneIcon fontSize="small" sx={{ mr: 0.5 }} />
-                                                        <Typography variant="body2">{lecturer.phone_number || 'N/A'}</Typography>
+                                                        <AccessTimeIcon fontSize="small" sx={{ mr: 0.5, color: 'secondary.main' }} />
+                                                        <Typography variant="caption">
+                                                            TH: {subject.practice_hours}h
+                                                        </Typography>
                                                     </Box>
                                                 </Box>
                                             </TableCell>
                                             <TableCell>
                                                 <Chip
-                                                    icon={lecturer.status === 'Đang công tác' ? <CheckCircleIcon /> : <BlockIcon />}
-                                                    label={lecturer.status}
-                                                    color={lecturer.status === 'Đang công tác' ? 'success' : 'error'}
+                                                    label={subject.semester_id}
+                                                    size="small"
+                                                    color="secondary"
+                                                    variant="outlined"
+                                                />
+                                            </TableCell>
+                                            <TableCell>
+                                                <Chip
+                                                    icon={subject.status === 'Hoạt động' ? <CheckCircleIcon /> : <BlockIcon />}
+                                                    label={subject.status}
+                                                    color={subject.status === 'Hoạt động' ? 'success' : 'error'}
                                                     size="small"
                                                 />
+                                            </TableCell>
+                                            <TableCell>
+                                                <Typography variant="body2" color="text.secondary">
+                                                    {new Date(subject.created_at).toLocaleDateString('vi-VN')}
+                                                </Typography>
                                             </TableCell>
                                         </TableRow>
                                     ))}
@@ -163,7 +176,7 @@ function TeacherDetailsModal({ open, onClose, lecturerData }) {
                 </TabPanel>
                 <TabPanel value={tabValue} index={1}>
                     <Typography variant="body1" paragraph>
-                        Lịch giảng dạy của các giảng viên sẽ được hiển thị tại đây.
+                        Lịch giảng dạy của các học phần sẽ được hiển thị tại đây.
                     </Typography>
                 </TabPanel>
             </DialogContent>
@@ -174,6 +187,4 @@ function TeacherDetailsModal({ open, onClose, lecturerData }) {
             </DialogActions>
         </Dialog>
     );
-};
-
-export default TeacherDetailsModal;
+}
