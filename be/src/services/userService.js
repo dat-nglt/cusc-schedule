@@ -1,4 +1,5 @@
 import models from "../models/index.js";
+import logger from "../utils/logger.js";
 const { Student, Lecturer, Admin, TrainingOfficer, Account } = models;
 
 /**
@@ -77,14 +78,16 @@ export const findUserByGoogleId = async (googleId) => {
  * @param {string} id - ID của người dùng cần tìm.
  * @returns {Promise<Object|null>} Một đối tượng chứa thông tin người dùng, vai trò và mô hình nếu tìm thấy, ngược lại trả về null.
  */
-export const findExistsUserByID = async (id) => {
+export const findExistsUserByIdService = async (id) => {
   try {
     const account = await Account.findByPk(id);
+    console.log(account.dataValues);
+
     if (account) {
       return {
-        userData: account, // Trả về toàn bộ đối tượng account
-        id: account.id, // ID của người dùng
-        role: account.role, // Vai trò của người dùng (lấy từ trường 'role' trong bảng Account)
+        userData: account.dataValues, // Trả về toàn bộ đối tượng account
+        id: account.dataValues.id, // ID của người dùng
+        role: account.dataValues.role, // Vai trò của người dùng (lấy từ trường 'role' trong bảng Account)
       };
     }
     return null;

@@ -12,7 +12,7 @@ const API_BASE_URL = "http://localhost:3000";
  * @returns {Promise<Object>} Thông tin người dùng (id, role, v.v.)
  * @throws {Error} Nếu có lỗi trong quá trình gọi API hoặc xác thực.
  */
-export const getCurrentUser = async () => {
+export const getCurrentUserData = async () => {
   try {
     // Axios sẽ tự động gửi cookie HTTP-Only 'jwt' với yêu cầu này
     const response = await axiosInstance.get(

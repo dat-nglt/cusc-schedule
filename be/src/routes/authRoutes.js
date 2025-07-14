@@ -1,9 +1,10 @@
 import express from "express";
 import passport from "passport";
 import {
-  logout,
-  googleCallback,
-  getCurrentUser,
+  logoutController,
+  googleCallbackController,
+  getCurrentUserDataController,
+  refreshTokenController,
 } from "../controllers/authController.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 
@@ -14,9 +15,11 @@ const router = express.Router();
  * @desc Đăng xuất người dùng. Yêu cầu người dùng phải xác thực trước khi thực hiện.
  * @access Private
  */
-router.post("/logout", authMiddleware, logout);
+router.post("/logout", authMiddleware, logoutController);
 
-router.get("/current-user", authMiddleware, getCurrentUser);
+router.get("/current-user", authMiddleware, getCurrentUserDataController);
+
+router.post("/refresh-token", refreshTokenController);
 
 // --- Tuyến đường xác thực Google OAuth ---
 
@@ -80,7 +83,7 @@ router.get(
       next();
     })(req, res, next);
   },
-  googleCallback
+  googleCallbackController
 );
 
 export default router;

@@ -1,6 +1,6 @@
 // src/contexts/AuthContext.js
 import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
-import { getCurrentUser, logoutUser } from '../api/authAPI';
+import { getCurrentUserData, logoutUser } from '../api/authAPI';
 
 const AuthContext = createContext(null);
 
@@ -43,7 +43,7 @@ export const AuthProvider = ({ children }) => {
     setLoading(true);
     try {
       if (isLoggedIn) {
-        const response = await getCurrentUser();
+        const response = await getCurrentUserData();
         if (response.success === 200) {
           login(response.role); // Cập nhật trạng thái đăng nhập từ dữ liệu backend
           return true;
