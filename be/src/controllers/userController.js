@@ -26,7 +26,7 @@ export const getAllUsersController = async (req, res) => {
  * @param {Object} res - Đối tượng Response của Express.
  * @access Private (authenticated user)
  */
-export const getCurrentUser = async (req, res) => {
+export const getCurrentUserData = async (req, res) => {
     try {
         // req.userInfo được giả định là đã được gắn vào bởi middleware xác thực
         // và chứa đối tượng user và role của người dùng.

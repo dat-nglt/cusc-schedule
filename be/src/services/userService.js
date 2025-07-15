@@ -1,4 +1,5 @@
 import models from "../models/index.js";
+import logger from "../utils/logger.js";
 const { Student, Lecturer, Admin, TrainingOfficer, Account } = models;
 
 /**
@@ -36,7 +37,7 @@ export const findUserByEmail = async (email) => {
     where: { email },
     // Không cần include các bảng chi tiết ở đây cho mục đích tìm kiếm ban đầu.
     // Thông tin chi tiết có thể được lấy sau khi xác thực và người dùng đã đăng nhập,
-    // ví dụ, thông qua hàm findUserById hoặc một API riêng.
+    // ví dụ, thông qua hàm findExistsUserByID hoặc một API riêng.
   });
 
   if (account) {
@@ -58,25 +59,17 @@ export const findUserByEmail = async (email) => {
  * @returns {Promise<Object|null>} Một đối tượng chứa thông tin người dùng, vai trò và mô hình nếu tìm thấy, ngược lại trả về null.
  */
 export const findUserByGoogleId = async (googleId) => {
-  // Chỉ cần tìm kiếm trong bảng Accounts (User dùng chung)
   const account = await Account.findOne({
     where: { google_id: googleId },
-    // Có thể include các bảng chi tiết nếu bạn muốn lấy luôn thông tin đầy đủ,
-    // nhưng với mục đích xác thực ban đầu thì không cần thiết.
-    // Ví dụ: include: [{ model: Student, required: false }, { model: Lecturer, required: false }]
-    // Nhưng tốt nhất là chỉ lấy thông tin tài khoản chung ở đây để giữ cho hàm này đơn giản,
-    // và lấy thông tin chi tiết qua một API khác sau khi user đã login.
   });
 
   if (account) {
-    // Trả về thông tin từ bảng Accounts
     return {
       id: account.id, // Chuyển instance Sequelize thành plain object
       role: account.role,
     };
   }
 
-  // Nếu không tìm thấy trong bảng Accounts, trả về null
   return null;
 };
 
@@ -85,15 +78,16 @@ export const findUserByGoogleId = async (googleId) => {
  * @param {string} id - ID của người dùng cần tìm.
  * @returns {Promise<Object|null>} Một đối tượng chứa thông tin người dùng, vai trò và mô hình nếu tìm thấy, ngược lại trả về null.
  */
-export const findUserById = async (id) => {
+export const findExistsUserByIdService = async (id) => {
   try {
     const account = await Account.findByPk(id);
+    console.log(account.dataValues);
 
     if (account) {
       return {
-        user: account, // Trả về toàn bộ đối tượng account
-        id: account.id, // ID của người dùng
-        role: account.role, // Vai trò của người dùng (lấy từ trường 'role' trong bảng Account)
+        userData: account.dataValues, // Trả về toàn bộ đối tượng account
+        id: account.dataValues.id, // ID của người dùng
+        role: account.dataValues.role, // Vai trò của người dùng (lấy từ trường 'role' trong bảng Account)
       };
     }
     return null;
@@ -111,7 +105,6 @@ export const findUserById = async (id) => {
  * @throws {Error} Nếu mô hình người dùng không hợp lệ.
  */
 export const updateUserGoogleId = async (accountId, googleId) => {
-  // Tìm bản ghi Account bằng ID để đảm bảo nó tồn tại
   const account = await Account.findByPk(accountId);
 
   if (!account) {

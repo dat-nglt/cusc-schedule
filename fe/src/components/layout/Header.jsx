@@ -31,6 +31,7 @@ import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { Link } from 'react-router-dom';
 import { useThemeContext } from '../../contexts/ThemeContext';
+import { useAuth } from '../../contexts/AuthContext';
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
     backgroundColor: theme.palette.background.default,
@@ -48,6 +49,7 @@ const headerMenuItems = [
 
 const Header = ({ onMenuToggle }) => {
     const theme = useTheme();
+    const { logout } = useAuth();
     const { isDarkMode, toggleTheme } = useThemeContext();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -70,6 +72,14 @@ const Header = ({ onMenuToggle }) => {
         setAnchorEl(null);
         setNotificationsAnchorEl(null);
     };
+
+    const handleLogout = async () => {
+        try {
+            logout()
+        } catch (error) {
+            console.error("Lỗi khi đăng xuất:", error);
+        }
+    }
 
     return (
         <StyledAppBar position="fixed" sx={{ zIndex: 10000 }}>
@@ -269,7 +279,8 @@ const Header = ({ onMenuToggle }) => {
                         ))
                     }
                     <Divider />
-                    <MenuItem>
+                    <MenuItem
+                        onClick={handleLogout}>
                         <ListItemIcon>
                             <LogoutIcon fontSize="small" />
                         </ListItemIcon>

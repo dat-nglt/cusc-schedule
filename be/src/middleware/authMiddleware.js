@@ -1,6 +1,7 @@
-import jwt from 'jsonwebtoken';
-import { APIResponse } from '../utils/APIResponse.js';
-import { findUserById } from '../services/userService.js'; // Đảm bảo đường dẫn này đúng
+import jwt from "jsonwebtoken";
+import { APIResponse } from "../utils/APIResponse.js";
+import { findExistsUserByIdService } from "../services/userService.js"; // Đảm bảo đường dẫn này đúng
+import logger from "../utils/logger.js";
 
 /**
  * Middleware xác thực người dùng dựa trên JWT trong HTTP-Only Cookie.
@@ -12,82 +13,80 @@ import { findUserById } from '../services/userService.js'; // Đảm bảo đư�
  * @param {Function} next - Hàm middleware tiếp theo.
  */
 const authMiddleware = async (req, res, next) => {
-    // Lấy token từ cookie có tên 'jwt'
-    // Bạn cần đảm bảo đã cài đặt và sử dụng `cookie-parser` middleware trong Express app của mình
-    console.log(req.cookies.jwt);
-    
-    const token = req.cookies.jwt;
+  logger.info("-----------------------------------------------------");
 
-        // Kiểm tra nếu token không tồn tại trong cookie
-    if (!token) {
-        return APIResponse(res, 401, 'Truy cập bị từ chối. Không tìm thấy token xác thực.');
+  logger.info(req.cookies.accessToken);
+
+  logger.info("-----------------------------------------------------");
+
+  const accessToken = req.cookies.accessToken;
+
+  // Kiểm tra nếu token không tồn tại trong cookie
+  if (!accessToken) {
+    return APIResponse(
+      res,
+      401,
+      "Truy cập bị từ chối. Không tìm thấy token xác thực."
+    );
+  }
+
+  try {
+    // Xác minh token sử dụng JWT_SECRET từ biến môi trường
+    const decoded = jwt.verify(accessToken, process.env.JWT_SECRET);
+
+    // Xác minh người dùng vẫn còn tồn tại trong cơ sở dữ liệu
+    // decoded.id được lấy từ payload của JWT (thường là ID người dùng)
+    const userInfo = await findExistsUserByIdService(decoded.id);
+    if (!userInfo) {
+      // Nếu người dùng không được tìm thấy (ví dụ: đã bị xóa)
+      return APIResponse(res, 401, "Người dùng không tồn tại hoặc đã bị xóa.");
     }
 
-    try {
-        // Xác minh token sử dụng JWT_SECRET từ biến môi trường
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    // Gán thông tin người dùng vào đối tượng request để các middleware/route tiếp theo có thể sử dụng
+    req.user = userInfo; // Chứa toàn bộ thông tin người dùng (user object và role, model)
 
-        // Xác minh người dùng vẫn còn tồn tại trong cơ sở dữ liệu
-        // decoded.id được lấy từ payload của JWT (thường là ID người dùng)
-        const userInfo = await findUserById(decoded.id);
-        if (!userInfo) {
-            // Nếu người dùng không được tìm thấy (ví dụ: đã bị xóa)
-            return APIResponse(res, 401, 'Người dùng không tồn tại hoặc đã bị xóa.');
-        }
+    logger.info("-----------------------------------------------------");
 
-        // Gán thông tin người dùng vào đối tượng request để các middleware/route tiếp theo có thể sử dụng
-        req.user = userInfo; // Chứa toàn bộ thông tin người dùng (user object và role, model)
+    logger.info(
+      `Người dùng đã xác thực: ID=${req.userId}, Vai trò=${req.userRole}`
+    );
 
-        console.log(`Người dùng đã xác thực: ID=${req.userId}, Vai trò=${req.userRole}`);
-        next(); // Chuyển sang middleware/route tiếp theo
-    } catch (error) {
-        // Xử lý các lỗi liên quan đến xác minh token
-        console.error('Lỗi xác minh token:', error);
+    logger.info("-----------------------------------------------------");
+    next(); // Chuyển sang middleware/route tiếp theo
+  } catch (error) {
+    // Xử lý các lỗi liên quan đến xác minh token
+    console.error("Lỗi xác minh token:", error);
 
-        if (error.name === 'TokenExpiredError') {
-            // Xóa cookie nếu nó đã hết hạn để yêu cầu đăng nhập lại
-            res.clearCookie('jwt', { path: '/', httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'Lax' });
-            return APIResponse(res, 401, 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
-        } else if (error.name === 'JsonWebTokenError') {
-            // Lỗi khi token không hợp lệ (ví dụ: sai định dạng, sai chữ ký)
-            res.clearCookie('jwt', { path: '/', httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'Lax' });
-            return APIResponse(res, 401, 'Token không hợp lệ.');
-        } else if (error.name === 'NotBeforeError') {
-            // Lỗi khi token chưa có hiệu lực
-            return APIResponse(res, 401, 'Token chưa có hiệu lực.');
-        } else {
-            // Các lỗi xác thực khác
-            return APIResponse(res, 401, 'Xác thực thất bại.');
-        }
+    if (error.name === "TokenExpiredError") {
+      // Xóa cookie nếu nó đã hết hạn để yêu cầu đăng nhập lại
+      res.clearCookie("accessToken", {
+        path: "/",
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "Lax",
+      });
+      return APIResponse(
+        res,
+        401,
+        "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại."
+      );
+    } else if (error.name === "JsonWebTokenError") {
+      // Lỗi khi token không hợp lệ (ví dụ: sai định dạng, sai chữ ký)
+      res.clearCookie("accessToken", {
+        path: "/",
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "Lax",
+      });
+      return APIResponse(res, 401, "Token không hợp lệ.");
+    } else if (error.name === "NotBeforeError") {
+      // Lỗi khi token chưa có hiệu lực
+      return APIResponse(res, 401, "Token chưa có hiệu lực.");
+    } else {
+      // Các lỗi xác thực khác
+      return APIResponse(res, 401, "Xác thực thất bại.");
     }
-};
-
-/**
- * Middleware để kiểm tra vai trò của người dùng.
- * Yêu cầu `authMiddleware` phải chạy trước để `req.userId` và `req.userRole` được thiết lập.
- *
- * @param {Array<string>} allowedRoles - Mảng các vai trò được phép truy cập.
- * @returns {Function} Hàm middleware Express.
- */
-export const requireRole = (allowedRoles) => {
-    return (req, res, next) => {
-        // Đảm bảo người dùng đã được xác thực trước đó bởi `authMiddleware`
-        if (!req.userId || !req.userRole) {
-            // Nếu authMiddleware chưa chạy hoặc không thành công
-            return APIResponse(res, 401, 'Yêu cầu xác thực để kiểm tra quyền.');
-        }
-
-        // Đảm bảo `allowedRoles` là một mảng
-        const rolesArray = Array.isArray(allowedRoles) ? allowedRoles : [allowedRoles];
-
-        // Kiểm tra xem vai trò của người dùng có nằm trong danh sách các vai trò được phép không
-        if (!rolesArray.includes(req.userRole)) {
-            // Nếu không có quyền, trả về lỗi 403 Forbidden
-            return APIResponse(res, 403, `Truy cập bị từ chối. Yêu cầu vai trò: ${rolesArray.join(' hoặc ')}, nhưng người dùng có vai trò: ${req.userRole}`);
-        }
-
-        next(); // Người dùng có quyền, chuyển sang middleware/route tiếp theo
-    };
+  }
 };
 
 /**
@@ -98,48 +97,74 @@ export const requireRole = (allowedRoles) => {
  * @returns {Function} Hàm middleware Express.
  */
 export const authenticateAndAuthorize = (allowedRoles) => {
-    return async (req, res, next) => {
-        // Bước 1: Xác thực (Authentication) - Lấy token từ cookie
-        const token = req.cookies.jwt; // Thay đổi từ header sang cookie
+  return async (req, res, next) => {
+    // Bước 1: Xác thực (Authentication) - Lấy token từ cookie
+    const token = req.cookies.jwt; // Thay đổi từ header sang cookie
 
-        if (!token) {
-            return APIResponse(res, 401, 'Truy cập bị từ chối. Không tìm thấy token xác thực.');
-        }
+    if (!token) {
+      return APIResponse(
+        res,
+        401,
+        "Truy cập bị từ chối. Không tìm thấy token xác thực."
+      );
+    }
 
-        try {
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-            const userInfo = await findUserById(decoded.id);
-            if (!userInfo) {
-                return APIResponse(res, 401, 'Người dùng không tồn tại hoặc đã bị xóa.');
-            }
+      const userInfo = await findExistsUserByID(decoded.id);
+      if (!userInfo) {
+        return APIResponse(
+          res,
+          401,
+          "Người dùng không tồn tại hoặc đã bị xóa."
+        );
+      }
 
-            req.userId = decoded.id;
-            req.userRole = decoded.role || userInfo.role;
-            req.userInfo = userInfo;
+      req.userId = decoded.id;
+      req.userRole = decoded.role || userInfo.role;
+      req.userInfo = userInfo;
 
-            // Bước 2: Phân quyền (Authorization)
-            const rolesArray = Array.isArray(allowedRoles) ? allowedRoles : [allowedRoles];
+      // Bước 2: Phân quyền (Authorization)
+      const rolesArray = Array.isArray(allowedRoles)
+        ? allowedRoles
+        : [allowedRoles];
 
-            if (!rolesArray.includes(req.userRole)) {
-                return APIResponse(res, 403, `Truy cập bị từ chối. Yêu cầu vai trò: ${rolesArray.join(' hoặc ')}, nhưng người dùng có vai trò: ${req.userRole}`);
-            }
+      if (!rolesArray.includes(req.userRole)) {
+        return APIResponse(
+          res,
+          403,
+          `Truy cập bị từ chối. Yêu cầu vai trò: ${rolesArray.join(
+            " hoặc "
+          )}, nhưng người dùng có vai trò: ${req.userRole}`
+        );
+      }
 
-            next(); // Xác thực và phân quyền thành công, chuyển sang middleware/route tiếp theo
-        } catch (error) {
-            // Xử lý lỗi xác thực và phân quyền
-            console.error('Lỗi xác thực hoặc phân quyền:', error);
-            if (error.name === 'TokenExpiredError') {
-                res.clearCookie('jwt', { path: '/', httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'Lax' });
-                return APIResponse(res, 401, 'Token đã hết hạn.');
-            } else if (error.name === 'JsonWebTokenError') {
-                res.clearCookie('jwt', { path: '/', httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'Lax' });
-                return APIResponse(res, 401, 'Token không hợp lệ.');
-            } else {
-                return APIResponse(res, 401, 'Xác thực thất bại.');
-            }
-        }
-    };
+      next(); // Xác thực và phân quyền thành công, chuyển sang middleware/route tiếp theo
+    } catch (error) {
+      // Xử lý lỗi xác thực và phân quyền
+      console.error("Lỗi xác thực hoặc phân quyền:", error);
+      if (error.name === "TokenExpiredError") {
+        res.clearCookie("accessToken", {
+          path: "/",
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "Lax",
+        });
+        return APIResponse(res, 401, "Token đã hết hạn.");
+      } else if (error.name === "JsonWebTokenError") {
+        res.clearCookie("accessToken", {
+          path: "/",
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "Lax",
+        });
+        return APIResponse(res, 401, "Token không hợp lệ.");
+      } else {
+        return APIResponse(res, 401, "Xác thực thất bại.");
+      }
+    }
+  };
 };
 
 export default authMiddleware;
