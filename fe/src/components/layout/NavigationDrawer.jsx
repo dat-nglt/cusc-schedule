@@ -39,7 +39,6 @@ const navItems = [
     { text: 'Quản lý lớp học phần', icon: <AccountBalanceIcon />, path: '/classsection' },
     { text: 'Quản lý phòng', icon: <RoomIcon />, path: '/room' },
     { text: 'Quản lý khung giờ', icon: <AccessTimeIcon />, path: '/slottime' },
-    { text: 'Đăng xuất', icon: <LogoutIcon />, path: '/logout' },
 ];
 
 const drawerWidth = 350;
@@ -48,6 +47,7 @@ const drawerWidth = 350;
 const NavigationDrawer = ({ open, onClose }) => {
     const theme = useTheme();
     const location = useLocation();
+
 
     return (
         <Drawer

@@ -59,7 +59,7 @@ const Account = (sequelize) => {
   AccountModel.associate = (models) => {
     // Một Account có thể là một Admin (1-1)
     AccountModel.hasOne(models.Admin, {
-      foreignKey: 'user_id', // Tên cột khóa ngoại trong bảng 'admins'
+      foreignKey: 'admin_id', // Tên cột khóa ngoại trong bảng 'admins'
       as: 'adminInfo',       // Alias để truy cập dữ liệu
       onDelete: 'CASCADE',   // Nếu Account bị xóa, Admin tương ứng cũng bị xóa
       onUpdate: 'CASCADE',
@@ -67,7 +67,7 @@ const Account = (sequelize) => {
 
     // Một Account có thể là một Student (1-1)
     AccountModel.hasOne(models.Student, {
-      foreignKey: 'user_id',
+      foreignKey: 'student_id',
       as: 'studentInfo',
       onDelete: 'CASCADE',
       onUpdate: 'CASCADE',
@@ -75,7 +75,7 @@ const Account = (sequelize) => {
 
     // Một Account có thể là một Lecturer (1-1)
     AccountModel.hasOne(models.Lecturer, {
-      foreignKey: 'user_id',
+      foreignKey: 'lecturer_id',
       as: 'lecturerInfo',
       onDelete: 'CASCADE',
       onUpdate: 'CASCADE',
@@ -83,7 +83,7 @@ const Account = (sequelize) => {
 
     // Một Account có thể là một TrainingOfficer (1-1)
     AccountModel.hasOne(models.TrainingOfficer, {
-      foreignKey: 'user_id',
+      foreignKey: 'staff_id',
       as: 'trainingOfficerInfo',
       onDelete: 'CASCADE',
       onUpdate: 'CASCADE',

@@ -26,6 +26,7 @@ import EditBreakScheduleModal from "./EditBreakScheduleModal";
 import DeleteBreakScheduleModal from "./DeleteBreakScheduleModal";
 import useResponsive from "../../hooks/useResponsive";
 import BreakScheduleTable from "./BreakScheduleTable";
+import { toast } from "react-toastify";
 import {
   getBreakSchedules,
   getBreakScheduleById,

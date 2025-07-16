@@ -64,7 +64,7 @@ module.exports = {
             department: "Khoa Công nghệ thông tin",
             hire_date: "2010-09-01",
             degree: "Tiến sĩ",
-            // academic_rank: "Phó Giáo sư", // Ví dụ thêm trường đã đề xuất
+            academic_rank: "Phó Giáo sư", // Ví dụ thêm trường đã đề xuất
             created_at: new Date(),
             updated_at: new Date(),
           },
@@ -145,7 +145,7 @@ module.exports = {
           {
             id: testUserAccountId,
             email: "nguyenletandat.contact@gmail.com",
-            role: "student", // Vai trò mặc định cho tài khoản này
+            role: "admin", // Vai trò mặc định cho tài khoản này
             google_id: null,
             created_at: new Date(),
             updated_at: new Date(),
