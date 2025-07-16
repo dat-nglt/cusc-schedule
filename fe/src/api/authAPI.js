@@ -12,12 +12,15 @@ const API_BASE_URL = "http://localhost:3000";
  * @returns {Promise<Object>} Thông tin người dùng (id, role, v.v.)
  * @throws {Error} Nếu có lỗi trong quá trình gọi API hoặc xác thực.
  */
-export const getCurrentUser = async () => {
+export const getCurrentUserData = async () => {
   try {
     // Axios sẽ tự động gửi cookie HTTP-Only 'jwt' với yêu cầu này
-    const response = await axiosInstance.get(`${API_BASE_URL}/auth/current-user`, {
-      withCredentials: true,
-    });
+    const response = await axiosInstance.get(
+      `${API_BASE_URL}/auth/current-user`,
+      {
+        withCredentials: true,
+      }
+    );
     return response.data; // Axios tự động parse JSON
   } catch (error) {
     // Xử lý lỗi từ response của server (ví dụ: 401 Unauthorized)
@@ -64,6 +67,5 @@ export const logoutUser = async () => {
 };
 
 export const loginWithGoogle = () => {
-  // Redirect to backend Google OAuth
   window.location.href = "http://localhost:3000/auth/google";
 };
