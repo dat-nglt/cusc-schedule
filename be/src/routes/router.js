@@ -9,6 +9,7 @@ import semesterRoutes from './semesterRoutes';
 import subjectRoutes from './subjectRoutes';
 import breakscheduleRoutes from './breakscheduleRoutes';
 import classRoutes from './classRoutes';
+import roomRoutes from './roomRoutes';
 
 const router = express.Router();
 
@@ -24,6 +25,7 @@ const setupRoutes = (app) => {
     app.use('/api/subjects', subjectRoutes)
     app.use('/api/breakschedules', breakscheduleRoutes);
     app.use('/api/classes', classRoutes);
+    app.use('/api/rooms', roomRoutes);
 };
 
 export default setupRoutes;
