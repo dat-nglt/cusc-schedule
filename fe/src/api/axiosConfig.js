@@ -73,7 +73,7 @@ axiosInstance.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const refreshResponse = await axiosInstance.post("/auth/refresh-token"); // <-- Thay bằng endpoint làm mới token của bạn
+        await axiosInstance.post("/auth/refresh-token"); // <-- Thay bằng endpoint làm mới token của bạn
         // Server sẽ đặt cookie accessToken và refreshToken mới vào phản hồi
 
         isRefreshing = false;

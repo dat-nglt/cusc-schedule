@@ -25,20 +25,26 @@ import { loginWithGoogle } from '../../api/authAPI';
 import { useLocation, useNavigate } from 'react-router-dom'; // Import useLocation và useNavigate
 import { toast } from 'react-toastify';
 const LoginPage = () => {
-    const [selectedRole, setSelectedRole] = useState('Học viên');
+    const [selectedRole, setRoleName] = useState('Học viên');
+    const [selectedRoleCode, setRoleCode] = useState("student");
     const theme = useTheme();
     const location = useLocation(); // Hook để truy cập đối tượng location
     const navigate = useNavigate(); // Hook để điều hướng
 
+    const handleRole = (roleName, roleCode) => {
+        setRoleCode(roleCode)
+        setRoleName(roleName)
+    }
+
     const handleGoogleLogin = () => {
-        loginWithGoogle();
+        loginWithGoogle(selectedRoleCode);
     };
 
     const roles = [
-        { name: 'Học viên', icon: <SchoolIcon fontSize="large" /> },
-        { name: 'Giảng viên', icon: <PersonIcon fontSize="large" /> },
-        { name: 'Cán bộ đào tạo', icon: <EngineeringIcon fontSize="large" /> },
-        { name: 'Quản trị viên', icon: <AdminPanelSettingsIcon fontSize="large" /> },
+        { code: 'student', name: "Học viên", icon: <SchoolIcon fontSize="large" /> },
+        { code: 'lecturer', name: "Giảng viên", icon: <PersonIcon fontSize="large" /> },
+        { code: 'trainingofficer', name: "Cán bộ đào tạo", icon: <EngineeringIcon fontSize="large" /> },
+        { code: 'admin', name: "Quản trị viên", icon: <AdminPanelSettingsIcon fontSize="large" /> },
     ];
 
     useEffect(() => {
@@ -67,7 +73,7 @@ const LoginPage = () => {
                     toast.error('Phiên đăng nhập không hợp lệ. Vui lòng đăng nhập lại.');
                     break;
                 default:
-                    toast.error('Đã xảy ra lỗi không xác định trong quá trình đăng nhập. Vui lòng thử lại.');
+                    toast.error('Xác thực không thành công! Vui lòng thử lại!');
             }
 
 
@@ -380,7 +386,7 @@ const LoginPage = () => {
                                         <Paper
                                             key={role.name}
                                             elevation={selectedRole === role.name ? 6 : 2}
-                                            onClick={() => setSelectedRole(role.name)}
+                                            onClick={() => handleRole(role.name, role.code)}
                                             sx={{
                                                 flex: 1,
                                                 p: { xs: 2, md: 3 },
@@ -443,7 +449,7 @@ const LoginPage = () => {
                                         <Paper
                                             key={role.name}
                                             elevation={selectedRole === role.name ? 6 : 2}
-                                            onClick={() => setSelectedRole(role.name)}
+                                            onClick={() => handleRole(role.name, role.code)}
                                             sx={{
                                                 flex: 1,
                                                 p: { xs: 2, md: 3 },

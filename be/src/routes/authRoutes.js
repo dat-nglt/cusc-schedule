@@ -32,6 +32,13 @@ router.post("/refresh-token", refreshTokenController);
 
 router.get(
   "/google",
+  (req, res, next) => {
+    const roleLogin = req.query.role || null;
+
+    req.roleFromGoogleAuth = roleLogin  ;
+
+    next();
+  },
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
