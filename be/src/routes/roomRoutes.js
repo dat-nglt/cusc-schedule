@@ -11,12 +11,12 @@ import {
 
 const roomRoutes = express.Router();
 
-roomRoutes.get("/getAll", authenticateAndAuthorize, getAllRoomsController);
-roomRoutes.get("/:id", authenticateAndAuthorize, getRoomByIdController);
-roomRoutes.post("/create", authenticateAndAuthorize, createRoomController);
-roomRoutes.put("/update/:id", authenticateAndAuthorize, updateRoomController);
-roomRoutes.delete("/delete/:id", authenticateAndAuthorize, deleteRoomController);
+roomRoutes.get("/getAll",  authenticateAndAuthorize(['admin', 'training_officer']), getAllRoomsController);
+roomRoutes.get("/:id",  authenticateAndAuthorize(['admin', 'training_officer']), getRoomByIdController);
+roomRoutes.post("/create",  authenticateAndAuthorize(['admin', 'training_officer']), createRoomController);
+roomRoutes.put("/update/:id",  authenticateAndAuthorize(['admin', 'training_officer']), updateRoomController);
+roomRoutes.delete("/delete/:id",  authenticateAndAuthorize(['admin', 'training_officer']), deleteRoomController);
 
 // import JSON routes
-roomRoutes.post("/importJson", authenticateAndAuthorize, importRoomsFromJSONController);
+roomRoutes.post("/importJson",  authenticateAndAuthorize(['admin', 'training_officer']), importRoomsFromJSONController);
 export default roomRoutes;
