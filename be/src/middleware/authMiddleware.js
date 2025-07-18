@@ -112,7 +112,7 @@ export const authenticateAndAuthorize = (allowedRoles) => {
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-      const userInfo = await findExistsUserByID(decoded.id);
+      const userInfo = await findExistsUserByIdService(decoded.id);
       if (!userInfo) {
         return APIResponse(
           res,

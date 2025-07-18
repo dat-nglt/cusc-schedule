@@ -1,7 +1,8 @@
 import { DataTypes } from "sequelize";
-import { sequelize } from "../config/connectDB";
-
-const Room = sequelize.define('Room', {
+const Room = (sequelize) => {
+    const RoomModel = sequelize.define(
+        "Room", 
+        {
     room_id: {
         type: DataTypes.STRING(30),
         primaryKey: true,
@@ -35,11 +36,18 @@ const Room = sequelize.define('Room', {
         type: DataTypes.STRING(50),
         allowNull: true
     },
-}, { 
+
+},
+ { 
     tableName: 'rooms',
     timestamps: true,
     createdAt: 'created_at',
     updatedAt: 'updated_at',
 });
+ RoomModel.associate = (models) => {
+  };
+
+  return RoomModel;
+};
 
 export default Room;

@@ -11,7 +11,7 @@ import {
 
 const roomRoutes = express.Router();
 
-roomRoutes.get("/getAll",  authenticateAndAuthorize(['admin', 'training_officer']), getAllRoomsController);
+roomRoutes.get("/getAll",   authenticateAndAuthorize(["admin", "training_officer"]), getAllRoomsController);
 roomRoutes.get("/:id",  authenticateAndAuthorize(['admin', 'training_officer']), getRoomByIdController);
 roomRoutes.post("/create",  authenticateAndAuthorize(['admin', 'training_officer']), createRoomController);
 roomRoutes.put("/update/:id",  authenticateAndAuthorize(['admin', 'training_officer']), updateRoomController);

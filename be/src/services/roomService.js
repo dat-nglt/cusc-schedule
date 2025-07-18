@@ -1,6 +1,7 @@
 
-import { error } from "winston";
-import Room from "../models/Room";
+import model from "../models/index";
+
+const { Room } = model;
 
 export const getAllRooms = async () => {
     try {
