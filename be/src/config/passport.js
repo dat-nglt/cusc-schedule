@@ -19,40 +19,46 @@ const configurePassport = () => {
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
         callbackURL: process.env.GOOGLE_CALLBACK_URL,
+        passReqToCallback: true,
       },
       async (req, accessToken, refreshToken, profile, done) => {
         try {
+          const clientIntendedRole = req.session.role || null; // <--- LẤY ROLE TỪ ĐÂY
           const email =
             profile.emails && profile.emails[0]
               ? profile.emails[0].value
               : null;
           const googleId = profile.id;
-          // const clientIntendedRole = req.roleFromGoogleAuth;
-
-          // logger.warn(clientIntendedRole);
 
           if (!email) {
             logger.warn(
               "Google Profile không cung cấp email. Không thể xác định người dùng."
             );
-            return done(
-              new Error("Email không khả dụng từ Google Profile."),
-              null
-            );
+            return done(new Error("email_not_available"), null);
           }
 
           // --- BƯỚC 1: Tìm người dùng bằng google_id trong bảng Accounts ---
           const foundByGoogleId = await findUserByGoogleId(googleId);
 
           if (foundByGoogleId) {
-            logger.info(
-              `Đăng nhập Google thành công cho user: ${email} (ID: ${foundByGoogleId.id})`
-            );
-
-            return done(null, {
-              id: foundByGoogleId.id, // ID từ bảng Accounts
-              role: foundByGoogleId.role, // Vai trò từ bảng Accounts
-            });
+            if (foundByGoogleId.role == clientIntendedRole) {
+              logger.info(
+                `Đăng nhập Google thành công cho user: ${email} (ID: ${foundByGoogleId.id})`
+              );
+              // Bạn có thể xóa role khỏi session sau khi sử dụng thành công
+              delete req.session.role;
+              return done(null, {
+                id: foundByGoogleId.id,
+                role: foundByGoogleId.role,
+              });
+            } else {
+              // *** TRẢ VỀ LỖI CỤ THỂ HƠN TẠI ĐÂY ***
+              logger.warn(
+                `Google ID ${googleId} tồn tại nhưng vai trò không khớp. User: ${email}, DB Role: ${foundByGoogleId.role}, Client Role: ${clientIntendedRole}`
+              );
+              delete req.session.role; // Xóa role khỏi session để tránh các lần thử không khớp sau này
+              return done(new Error("invalid_role_access"), null);
+            }
           }
 
           const foundByEmail = await findUserByEmail(email);
@@ -68,25 +74,29 @@ const configurePassport = () => {
               logger.warn(
                 `Email ${email} đã tồn tại với Google ID khác trong hệ thống. (Cũ: ${foundByEmail.googleId}, Mới: ${googleId})`
               );
-              return done(
-                new Error(
-                  "Tài khoản của bạn đã được liên kết với một tài khoản Google khác. Vui lòng sử dụng tài khoản Google đã liên kết hoặc liên hệ quản trị viên."
-                ),
-                null
-              );
+              return done(new Error("valid_linked_account"), null);
             }
-            console.log("___________________________________________");
 
-            logger.info(
-              `Đăng nhập Google thành công cho user hiện có: ${email} (ID: ${foundByEmail.id})`
-            );
-
-            console.log("___________________________________________");
-
-            return done(null, {
-              id: foundByEmail.id,
-              role: foundByEmail.role,
-            });
+            if (foundByEmail.role == clientIntendedRole) {
+              console.log("___________________________________________");
+              logger.info(
+                `Đăng nhập Google thành công cho user hiện có: ${email} (ID: ${foundByEmail.id})`
+              );
+              console.log("___________________________________________");
+              // Bạn có thể xóa role khỏi session sau khi sử dụng thành công
+              delete req.session.role;
+              return done(null, {
+                id: foundByEmail.id,
+                role: foundByEmail.role,
+              });
+            } else {
+              // *** TRẢ VỀ LỖI CỤ THỂ HƠN TẠI ĐÂY ***
+              logger.warn(
+                `Email ${email} tồn tại nhưng vai trò không khớp. DB Role: ${foundByEmail.role}, Client Role: ${clientIntendedRole}`
+              );
+              delete req.session.role; // Xóa role khỏi session
+              return done(new Error("invalid_role_access"), null);
+            }
           }
 
           console.log("___________________________________________");
@@ -94,13 +104,8 @@ const configurePassport = () => {
             `Email ${email} từ Google không tìm thấy trong hệ thống. Không được phép tạo mới.`
           );
           console.log("___________________________________________");
-
-          return done(
-            new Error(
-              "Tài khoản của bạn không tồn tại trong hệ thống. Vui lòng liên hệ quản trị viên."
-            ),
-            null
-          );
+          delete req.session.role; // Xóa role khỏi session
+          return done(new Error("account_not_found"), null);
         } catch (error) {
           console.log("___________________________________________");
           logger.error(
@@ -109,7 +114,7 @@ const configurePassport = () => {
           );
           console.log("___________________________________________");
 
-          return done(error, null);
+          return done("authentication_failed", null);
         }
       }
     )
