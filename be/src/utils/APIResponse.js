@@ -9,30 +9,26 @@
  * @returns {Object} Đối tượng response của Express với cấu trúc JSON đã được chuẩn hóa.
  */
 export const APIResponse = (res, statusCode, data, message) => {
-    const response = {
-        // Xác định trạng thái dựa trên mã HTTP: 'success' nếu 2xx, ngược lại là 'error'.
-        status: statusCode >= 200 && statusCode < 300 ? 'success' : 'error'
-    };
+  const response = {
+    status: statusCode >= 200 && statusCode < 300 ? "success" : "error",
+  };
 
-    // Logic để xử lý linh hoạt tham số 'data' và 'message'.
-    // Nếu 'data' là một chuỗi, nó được hiểu là tin nhắn chính, và 'message' (nếu có) là dữ liệu bổ sung.
-    // Điều này có thể gây nhầm lẫn. Cấu trúc dưới đây giả định 'data' luôn là dữ liệu
-    // và 'message' luôn là tin nhắn.
-    if (message) { // Nếu có tin nhắn, gán nó vào thuộc tính message
-        response.message = message;
-    } else if (typeof data === 'string') { // Nếu không có message, và data là string, coi data là message
-        response.message = data;
-    } else { // Trường hợp còn lại, không có message cụ thể
-        response.message = statusCode >= 200 && statusCode < 300 ? 'Thao tác thành công.' : 'Đã xảy ra lỗi.';
-    }
+  if (message) {
+    response.message = message;
+  } else if (typeof data === "string") {
+    response.message = data;
+  } else {
+    response.message =
+      statusCode >= 200 && statusCode < 300
+        ? "Thao tác thành công."
+        : "Đã xảy ra lỗi.";
+  }
 
-    if (data && typeof data !== 'string') { // Nếu 'data' tồn tại và không phải là chuỗi, gán nó vào thuộc tính data
-        response.data = data;
-    }
+  if (data && typeof data !== "string") {
+    response.data = data;
+  }
 
-
-    // Gửi phản hồi về client với mã trạng thái và cấu trúc JSON đã xây dựng.
-    return res.status(statusCode).json(response);
+  return res.status(statusCode).json(response);
 };
 
 /**
@@ -43,12 +39,12 @@ export const APIResponse = (res, statusCode, data, message) => {
  * @param {string} [message='Thành công'] - Tin nhắn mô tả thành công.
  * @returns {Object} Đối tượng response của Express.
  */
-export const successResponse = (res, data, message = 'Thành công') => {
-    return res.status(200).json({
-        status: 'success',
-        message,
-        data,
-    });
+export const successResponse = (res, data, message = "Thành công") => {
+  return res.status(200).json({
+    status: "success",
+    message,
+    data,
+  });
 };
 
 /**
@@ -59,11 +55,15 @@ export const successResponse = (res, data, message = 'Thành công') => {
  * @param {number} [statusCode=400] - Mã trạng thái HTTP của lỗi.
  * @returns {Object} Đối tượng response của Express.
  */
-export const errorResponse = (res, message = 'Đã xảy ra lỗi', statusCode = 400) => {
-    return res.status(statusCode).json({
-        status: 'error',
-        message,
-    });
+export const errorResponse = (
+  res,
+  message = "Đã xảy ra lỗi",
+  statusCode = 400
+) => {
+  return res.status(statusCode).json({
+    status: "error",
+    message,
+  });
 };
 
 /**
@@ -73,11 +73,14 @@ export const errorResponse = (res, message = 'Đã xảy ra lỗi', statusCode =
  * @param {string} [message='Không tìm thấy tài nguyên'] - Tin nhắn mô tả lỗi không tìm thấy.
  * @returns {Object} Đối tượng response của Express.
  */
-export const notFoundResponse = (res, message = 'Không tìm thấy tài nguyên') => {
-    return res.status(404).json({
-        status: 'error',
-        message,
-    });
+export const notFoundResponse = (
+  res,
+  message = "Không tìm thấy tài nguyên"
+) => {
+  return res.status(404).json({
+    status: "error",
+    message,
+  });
 };
 
 /**
@@ -89,9 +92,9 @@ export const notFoundResponse = (res, message = 'Không tìm thấy tài nguyên
  * @returns {Object} Đối tượng response của Express.
  */
 export const validationErrorResponse = (res, errors) => {
-    return res.status(422).json({
-        status: 'error',
-        message: 'Lỗi xác thực dữ liệu đầu vào.',
-        errors,
-    });
+  return res.status(422).json({
+    status: "error",
+    message: "Lỗi xác thực dữ liệu đầu vào.",
+    errors,
+  });
 };

@@ -8,6 +8,8 @@ const IS_LOGGED_IN_KEY = 'isLoggedIn';
 const USER_ROLE_KEY = 'userRole';
 
 export const AuthProvider = ({ children }) => {
+
+  // const [roleForLogin, setRoleForLogin]
   // Lấy trạng thái ban đầu từ localStorage
   const [isLoggedIn, setIsLoggedIn] = useState(
     localStorage.getItem(IS_LOGGED_IN_KEY) === 'true'

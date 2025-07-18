@@ -99,18 +99,18 @@ const authMiddleware = async (req, res, next) => {
 export const authenticateAndAuthorize = (allowedRoles) => {
   return async (req, res, next) => {
     // Bước 1: Xác thực (Authentication) - Lấy token từ cookie
-    const token = req.cookies.jwt; // Thay đổi từ header sang cookie
+    const accessToken = req.cookies.accessToken; // Thay đổi từ header sang cookie
 
-    if (!token) {
+    if (!accessToken) {
       return APIResponse(
         res,
         401,
-        "Truy cập bị từ chối. Không tìm thấy token xác thực."
+        "Truy cập bị từ chối. Không tìm thấy accessToken xác thực."
       );
     }
 
     try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const decoded = jwt.verify(accessToken, process.env.JWT_SECRET);
 
       const userInfo = await findExistsUserByID(decoded.id);
       if (!userInfo) {

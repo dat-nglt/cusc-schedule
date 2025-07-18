@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import { v4 as uuidv4 } from "uuid";
 import { findUserByEmail, getUserId } from "./userService.js";
 import logger from "../utils/logger.js";
 
@@ -10,14 +11,16 @@ import logger from "../utils/logger.js";
  */
 export const generateAccessTokenService = (userId, role) => {
   return jwt.sign({ id: userId, role }, process.env.JWT_SECRET, {
-    expiresIn: "1h", // Token có hiệu lực trong 12 giờ
+    expiresIn: "15m", // Token có hiệu lực trong 30 giây
   });
 };
 
-export const generateRefreshTokenService = (userID) => {
-  return jwt.sign({ id: userID }, process.env.JWT_REFRESH_SECRET, {
-    expiresIn: "7d",
-  });
+export const generateRefreshTokenService = (userId) => {
+  return jwt.sign(
+    { id: userId, jti: uuidv4() }, // Thêm jti vào payload
+    process.env.JWT_REFRESH_SECRET,
+    { expiresIn: "7d" }
+  );
 };
 
 /**
@@ -28,9 +31,22 @@ export const generateRefreshTokenService = (userID) => {
 export const verifyTokenService = (typeToken, secret) => {
   try {
     const decode = jwt.verify(typeToken, secret);
-    return decode.id;
+    return {
+      existsUserID: decode.id,
+      existsUserJTI: decode.jti,
+      exp: decode.exp,
+    };
   } catch (error) {
     logger.error("Token verification failed:", error.message);
     throw new Error("accessToken không hợp lệ");
   }
+};
+
+export const clearSpecificCookie = (res, name, option = {}) => {
+  res.clearCookie(name, {
+    path: option.path || "/",
+    httpOnly: option.httpOnly || true,
+    secure: option.secure || process.env.NODE_ENV === "production",
+    samsite: option.samsite || "Lax",
+  });
 };
