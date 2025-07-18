@@ -1662,3 +1662,139 @@ SyntaxError: C:\Users\ngltd\REPO\cusc-schedule\be\src\routes\authRoutes.js: Unex
     at Parser.parseMaybeAssign (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:301:21)
     at Parser.parseExpressionBase (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:226:23)
     at C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:217:39
+2025-07-18 09:35:24 error: uncaughtException: C:\Users\ngltd\REPO\cusc-schedule\be\src\config\passport.js: Unexpected token (48:49)
+
+[0m [90m 46 |[39m           [36mconst[39m foundByGoogleId [33m=[39m [36mawait[39m findUserByGoogleId(googleId)[33m;[39m
+ [90m 47 |[39m
+[31m[1m>[22m[39m[90m 48 |[39m           [36mif[39m (foundByGoogleId [33m&&[39m foundByGoogleId[33m.[39m) {
+ [90m    |[39m                                                  [31m[1m^[22m[39m
+ [90m 49 |[39m             logger[33m.[39minfo(
+ [90m 50 |[39m               [32m`Đăng nhập Google thành công cho user: ${email} (ID: ${foundByGoogleId.id})`[39m
+ [90m 51 |[39m             )[33m;[39m[0m
+SyntaxError: C:\Users\ngltd\REPO\cusc-schedule\be\src\config\passport.js: Unexpected token (48:49)
+
+[0m [90m 46 |[39m           [36mconst[39m foundByGoogleId [33m=[39m [36mawait[39m findUserByGoogleId(googleId)[33m;[39m
+ [90m 47 |[39m
+[31m[1m>[22m[39m[90m 48 |[39m           [36mif[39m (foundByGoogleId [33m&&[39m foundByGoogleId[33m.[39m) {
+ [90m    |[39m                                                  [31m[1m^[22m[39m
+ [90m 49 |[39m             logger[33m.[39minfo(
+ [90m 50 |[39m               [32m`Đăng nhập Google thành công cho user: ${email} (ID: ${foundByGoogleId.id})`[39m
+ [90m 51 |[39m             )[33m;[39m[0m
+    at toParseError (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parse-error.ts:95:45)
+    at Parser.raise (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\tokenizer\index.ts:1503:19)
+    at Parser.unexpected (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\tokenizer\index.ts:1543:16)
+    at Parser.parseIdentifierName (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:2790:12)
+    at Parser.parseIdentifier (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:2759:23)
+    at Parser.parseMember (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:842:28)
+    at Parser.parseSubscript (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:799:21)
+    at Parser.parseSubscripts (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:749:19)
+    at Parser.parseExprSubscripts (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:734:17)
+    at Parser.parseUpdate (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:707:21)
+    at Parser.parseMaybeUnary (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:669:23)
+    at Parser.parseMaybeUnaryOrPrivate (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:403:14)
+    at Parser.parseExprOpBaseRightExpr (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:583:12)
+    at Parser.parseExprOpRightExpr (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:568:21)
+    at Parser.parseExprOp (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:499:27)
+    at Parser.parseExprOps (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:421:17)
+    at Parser.parseMaybeConditional (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:370:23)
+    at Parser.parseMaybeAssign (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:301:21)
+    at Parser.parseExpressionBase (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:226:23)
+    at callback (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:217:39)
+    at Parser.allowInAnd (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:3144:16)
+    at Parser.parseExpression (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:217:17)
+    at Parser.parseHeaderExpression (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\statement.ts:897:22)
+    at Parser.parseIfStatement (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\statement.ts:1068:22)
+    at Parser.parseStatementContent (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\statement.ts:515:21)
+    at Parser.parseStatementLike (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\statement.ts:456:17)
+    at Parser.parseStatementListItem (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\statement.ts:405:17)
+    at Parser.parseBlockOrModuleBlockBody (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\statement.ts:1424:16)
+    at Parser.parseBlockBody (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\statement.ts:1397:10)
+    at Parser.parseBlock (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\statement.ts:1365:10)
+    at Parser.parseTryStatement (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\statement.ts:1185:23)
+    at Parser.parseStatementContent (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\statement.ts:523:21)
+    at Parser.parseStatementLike (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\statement.ts:456:17)
+    at Parser.parseStatementListItem (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\statement.ts:405:17)
+    at Parser.parseBlockOrModuleBlockBody (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\statement.ts:1424:16)
+    at Parser.parseBlockBody (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\statement.ts:1397:10)
+    at Parser.parseBlock (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\statement.ts:1365:10)
+    at Parser.parseFunctionBody (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:2580:24)
+    at Parser.parseArrowExpression (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:2521:10)
+    at Parser.parseAsyncArrowFromCallExpression (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:1050:10)
+    at Parser.parseCoverCallAndAsyncArrowHead (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:929:27)
+    at Parser.parseSubscript (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:790:19)
+    at Parser.parseSubscripts (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:749:19)
+    at Parser.parseExprSubscripts (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:734:17)
+    at Parser.parseUpdate (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:707:21)
+    at Parser.parseMaybeUnary (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:669:23)
+    at Parser.parseMaybeUnaryOrPrivate (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:403:14)
+    at Parser.parseExprOps (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:415:23)
+    at Parser.parseMaybeConditional (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:370:23)
+    at Parser.parseMaybeAssign (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:301:21)
+2025-07-18 09:40:34 error: uncaughtException: C:\Users\ngltd\REPO\cusc-schedule\be\src\config\passport.js: Unexpected token, expected "," (35:42)
+
+[0m [90m 33 |[39m           console[33m.[39mlog([32m"----------------"[39m)[33m;[39m
+ [90m 34 |[39m           console[33m.[39mlog(clientIntendedRole)[33m;[39m
+[31m[1m>[22m[39m[90m 35 |[39m           console[33m.[39mlog(([32m"----------------"[39m)[33m;[39m)[33m;[39m
+ [90m    |[39m                                           [31m[1m^[22m[39m
+ [90m 36 |[39m           
+ [90m 37 |[39m
+ [90m 38 |[39m           [36mif[39m ([33m![39memail) {[0m
+SyntaxError: C:\Users\ngltd\REPO\cusc-schedule\be\src\config\passport.js: Unexpected token, expected "," (35:42)
+
+[0m [90m 33 |[39m           console[33m.[39mlog([32m"----------------"[39m)[33m;[39m
+ [90m 34 |[39m           console[33m.[39mlog(clientIntendedRole)[33m;[39m
+[31m[1m>[22m[39m[90m 35 |[39m           console[33m.[39mlog(([32m"----------------"[39m)[33m;[39m)[33m;[39m
+ [90m    |[39m                                           [31m[1m^[22m[39m
+ [90m 36 |[39m           
+ [90m 37 |[39m
+ [90m 38 |[39m           [36mif[39m ([33m![39memail) {[0m
+    at toParseError (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parse-error.ts:95:45)
+    at Parser.raise (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\tokenizer\index.ts:1503:19)
+    at Parser.unexpected (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\tokenizer\index.ts:1543:16)
+    at Parser.expect (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\util.ts:158:12)
+    at Parser.parseCallExpressionArguments (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:1019:14)
+    at Parser.parseCoverCallAndAsyncArrowHead (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:908:29)
+    at Parser.parseSubscript (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:790:19)
+    at Parser.parseSubscripts (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:749:19)
+    at Parser.parseExprSubscripts (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:734:17)
+    at Parser.parseUpdate (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:707:21)
+    at Parser.parseMaybeUnary (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:669:23)
+    at Parser.parseMaybeUnaryOrPrivate (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:403:14)
+    at Parser.parseExprOps (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:415:23)
+    at Parser.parseMaybeConditional (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:370:23)
+    at Parser.parseMaybeAssign (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:301:21)
+    at Parser.parseExpressionBase (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:226:23)
+    at callback (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:217:39)
+    at Parser.allowInAnd (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:3144:16)
+    at Parser.parseExpression (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:217:17)
+    at Parser.parseStatementContent (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\statement.ts:663:23)
+    at Parser.parseStatementLike (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\statement.ts:456:17)
+    at Parser.parseStatementListItem (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\statement.ts:405:17)
+    at Parser.parseBlockOrModuleBlockBody (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\statement.ts:1424:16)
+    at Parser.parseBlockBody (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\statement.ts:1397:10)
+    at Parser.parseBlock (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\statement.ts:1365:10)
+    at Parser.parseTryStatement (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\statement.ts:1185:23)
+    at Parser.parseStatementContent (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\statement.ts:523:21)
+    at Parser.parseStatementLike (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\statement.ts:456:17)
+    at Parser.parseStatementListItem (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\statement.ts:405:17)
+    at Parser.parseBlockOrModuleBlockBody (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\statement.ts:1424:16)
+    at Parser.parseBlockBody (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\statement.ts:1397:10)
+    at Parser.parseBlock (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\statement.ts:1365:10)
+    at Parser.parseFunctionBody (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:2580:24)
+    at Parser.parseArrowExpression (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:2521:10)
+    at Parser.parseAsyncArrowFromCallExpression (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:1050:10)
+    at Parser.parseCoverCallAndAsyncArrowHead (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:929:27)
+    at Parser.parseSubscript (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:790:19)
+    at Parser.parseSubscripts (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:749:19)
+    at Parser.parseExprSubscripts (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:734:17)
+    at Parser.parseUpdate (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:707:21)
+    at Parser.parseMaybeUnary (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:669:23)
+    at Parser.parseMaybeUnaryOrPrivate (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:403:14)
+    at Parser.parseExprOps (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:415:23)
+    at Parser.parseMaybeConditional (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:370:23)
+    at Parser.parseMaybeAssign (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:301:21)
+    at callback (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:257:12)
+    at Parser.allowInAnd (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:3149:12)
+    at Parser.parseMaybeAssignAllowIn (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:256:17)
+    at Parser.parseExprListItem (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:2743:18)
+    at Parser.parseExprList (C:\Users\ngltd\REPO\cusc-schedule\be\node_modules\@babel\parser\src\parser\expression.ts:2696:22)
