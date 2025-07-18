@@ -13,7 +13,7 @@ module.exports = {
         [
           {
             id: adminAccountId,
-            email: "admin@example.com",
+            email: "ththai2100666@student.ctuet.edu.vn",
             role: "admin",
             google_id: null,
             created_at: new Date(),

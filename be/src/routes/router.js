@@ -9,6 +9,7 @@ import semesterRoutes from './semesterRoutes';
 import subjectRoutes from './subjectRoutes';
 import breakscheduleRoutes from './breakscheduleRoutes';
 import classRoutes from './classRoutes';
+import timeslotRoutes from './timeslotRoutes';
 
 const router = express.Router();
 
@@ -23,6 +24,7 @@ const setupRoutes = (app) => {
     app.use('/api/semesters', semesterRoutes);
     app.use('/api/subjects', subjectRoutes)
     app.use('/api/breakschedules', breakscheduleRoutes);
+    app.use('/api/timeslots', timeslotRoutes);
     app.use('/api/classes', classRoutes);
 };
 
