@@ -1,0 +1,385 @@
+2025-07-16 21:29:48 info: ✅ Kết nối PostgreSQL với Sequelize thành công.
+2025-07-16 21:29:48 info: ✅ Kết nối cơ sở dữ liệu thành công.
+2025-07-16 21:29:48 info: ✅ Cấu hình Passport đã được tải.
+2025-07-16 21:29:48 info: ✅ Passport has been configured.
+2025-07-16 21:29:48 info: ✅ Middleware Morgan for HTTP request logging configured.
+2025-07-16 21:29:48 info: ✅ Middleware Session and Passport have been configured.
+2025-07-16 21:29:48 info: ✅ Router has been setup.
+2025-07-16 21:29:48 info: ✅ Server is running on port 3000 (development environment)
+2025-07-16 21:30:01 info: ::1 - - [16/Jul/2025:14:30:01 +0000] "GET /auth/google HTTP/1.1" 302 0 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:30:03 info: Đăng nhập Google thành công cho user: dhchuong2100264@student.ctuet.edu.vn (ID: 78a4d2f0-ee50-4a1a-bed7-dc4fccedbd78)
+2025-07-16 21:30:03 info: ::1 - - [16/Jul/2025:14:30:03 +0000] "GET /auth/google/callback?code=4%2F0AVMBsJhWenKEBJiImPoqiKs7FRRVmTrP_VA2onEqrkDnbS4_qFAjrxjYnv9DIer4jzjEIA&scope=email+profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+openid&authuser=0&hd=student.ctuet.edu.vn&prompt=none HTTP/1.1" 302 94 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:33:36 info: ✅ Kết nối PostgreSQL với Sequelize thành công.
+2025-07-16 21:33:36 info: ✅ Kết nối cơ sở dữ liệu thành công.
+2025-07-16 21:33:36 info: ✅ Cấu hình Passport đã được tải.
+2025-07-16 21:33:36 info: ✅ Passport has been configured.
+2025-07-16 21:33:36 info: ✅ Middleware Morgan for HTTP request logging configured.
+2025-07-16 21:33:36 info: ✅ Middleware Session and Passport have been configured.
+2025-07-16 21:33:36 info: ✅ Router has been setup.
+2025-07-16 21:33:36 info: ✅ Server is running on port 3000 (development environment)
+2025-07-16 21:33:40 info: ✅ Kết nối PostgreSQL với Sequelize thành công.
+2025-07-16 21:33:40 info: ✅ Kết nối cơ sở dữ liệu thành công.
+2025-07-16 21:33:40 info: ✅ Cấu hình Passport đã được tải.
+2025-07-16 21:33:40 info: ✅ Passport has been configured.
+2025-07-16 21:33:40 info: ✅ Middleware Morgan for HTTP request logging configured.
+2025-07-16 21:33:40 info: ✅ Middleware Session and Passport have been configured.
+2025-07-16 21:33:40 info: ✅ Router has been setup.
+2025-07-16 21:33:40 info: ✅ Server is running on port 3000 (development environment)
+2025-07-16 21:33:43 info: ✅ Kết nối PostgreSQL với Sequelize thành công.
+2025-07-16 21:33:43 info: ✅ Kết nối cơ sở dữ liệu thành công.
+2025-07-16 21:33:43 info: ✅ Cấu hình Passport đã được tải.
+2025-07-16 21:33:43 info: ✅ Passport has been configured.
+2025-07-16 21:33:43 info: ✅ Middleware Morgan for HTTP request logging configured.
+2025-07-16 21:33:43 info: ✅ Middleware Session and Passport have been configured.
+2025-07-16 21:33:43 info: ✅ Router has been setup.
+2025-07-16 21:33:43 info: ✅ Server is running on port 3000 (development environment)
+2025-07-16 21:33:50 info: ✅ Kết nối PostgreSQL với Sequelize thành công.
+2025-07-16 21:33:50 info: ✅ Kết nối cơ sở dữ liệu thành công.
+2025-07-16 21:33:50 info: ✅ Cấu hình Passport đã được tải.
+2025-07-16 21:33:50 info: ✅ Passport has been configured.
+2025-07-16 21:33:50 info: ✅ Middleware Morgan for HTTP request logging configured.
+2025-07-16 21:33:50 info: ✅ Middleware Session and Passport have been configured.
+2025-07-16 21:33:50 info: ✅ Router has been setup.
+2025-07-16 21:33:50 info: ✅ Server is running on port 3000 (development environment)
+2025-07-16 21:36:00 info: ::1 - - [16/Jul/2025:14:36:00 +0000] "GET /auth/google HTTP/1.1" 302 0 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:36:02 info: Đăng nhập Google thành công cho user: dhchuong2100264@student.ctuet.edu.vn (ID: 78a4d2f0-ee50-4a1a-bed7-dc4fccedbd78)
+2025-07-16 21:36:02 info: ::1 - - [16/Jul/2025:14:36:02 +0000] "GET /auth/google/callback?code=4%2F0AVMBsJhyDNb3mfUj1GqbwjWkMF_HoYMIpjTFlGmYlMYUXQ9JdoDghkI_J9ZOaBofc5-N1Q&scope=email+profile+openid+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&authuser=0&hd=student.ctuet.edu.vn&prompt=none HTTP/1.1" 302 94 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:41:59 info: ✅ Kết nối PostgreSQL với Sequelize thành công.
+2025-07-16 21:41:59 info: ✅ Kết nối cơ sở dữ liệu thành công.
+2025-07-16 21:41:59 info: ✅ Cấu hình Passport đã được tải.
+2025-07-16 21:41:59 info: ✅ Passport has been configured.
+2025-07-16 21:41:59 info: ✅ Middleware Morgan for HTTP request logging configured.
+2025-07-16 21:41:59 info: ✅ Middleware Session and Passport have been configured.
+2025-07-16 21:41:59 info: ✅ Router has been setup.
+2025-07-16 21:41:59 info: ✅ Server is running on port 3000 (development environment)
+2025-07-16 21:42:57 info: ::1 - - [16/Jul/2025:14:42:57 +0000] "GET /auth/google HTTP/1.1" 302 0 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:42:59 info: Đã liên kết Google ID mới (106447088690535741067) cho user: dhchuong2100264@student.ctuet.edu.vn
+2025-07-16 21:42:59 info: Đăng nhập Google thành công cho user hiện có: dhchuong2100264@student.ctuet.edu.vn (ID: 4f44b9d0-fb79-4b37-aed0-6cfdd4b3a6c4)
+2025-07-16 21:42:59 info: ::1 - - [16/Jul/2025:14:42:59 +0000] "GET /auth/google/callback?code=4%2F0AVMBsJgEeoreF_s9XLn1MS_r0ziy7gOC-X4xubQ9HxpoPZmLQ09qyyMnhGyGsXAaOPcgDA&scope=email+profile+openid+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile&authuser=0&hd=student.ctuet.edu.vn&prompt=none HTTP/1.1" 302 94 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:47:37 info: ::1 - - [16/Jul/2025:14:47:37 +0000] "GET /auth/google HTTP/1.1" 302 0 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:47:38 info: Đăng nhập Google thành công cho user: dhchuong2100264@student.ctuet.edu.vn (ID: 4f44b9d0-fb79-4b37-aed0-6cfdd4b3a6c4)
+2025-07-16 21:47:38 info: ::1 - - [16/Jul/2025:14:47:38 +0000] "GET /auth/google/callback?code=4%2F0AVMBsJjvyJcn0aX8E-0HwLvJABhFZQh4UQr_qZ62b9tsQWe2Zj-QU4Jf3fBBvrGuzRksbg&scope=email+profile+openid+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile&authuser=0&hd=student.ctuet.edu.vn&prompt=none HTTP/1.1" 302 94 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:48:27 info: ✅ Kết nối PostgreSQL với Sequelize thành công.
+2025-07-16 21:48:27 info: ✅ Kết nối cơ sở dữ liệu thành công.
+2025-07-16 21:48:27 info: ✅ Cấu hình Passport đã được tải.
+2025-07-16 21:48:27 info: ✅ Passport has been configured.
+2025-07-16 21:48:27 info: ✅ Middleware Morgan for HTTP request logging configured.
+2025-07-16 21:48:27 info: ✅ Middleware Session and Passport have been configured.
+2025-07-16 21:48:27 info: ✅ Router has been setup.
+2025-07-16 21:48:27 info: ✅ Server is running on port 3000 (development environment)
+2025-07-16 21:48:34 info: ::1 - - [16/Jul/2025:14:48:34 +0000] "GET /auth/google HTTP/1.1" 302 0 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:48:35 info: Đăng nhập Google thành công cho user: dhchuong2100264@student.ctuet.edu.vn (ID: 4f44b9d0-fb79-4b37-aed0-6cfdd4b3a6c4)
+2025-07-16 21:48:36 info: ::1 - - [16/Jul/2025:14:48:36 +0000] "GET /auth/google/callback?code=4%2F0AVMBsJi4PcotBchpwh3yu-sLhnfUvLtoS4oAHu7M6YVhni3oTnLIYWdXeEJioiR-FivxBg&scope=email+profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+openid&authuser=0&hd=student.ctuet.edu.vn&prompt=none HTTP/1.1" 302 64 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:48:37 info: -----------------------------------------------------
+2025-07-16 21:48:37 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjRmNDRiOWQwLWZiNzktNGIzNy1hZWQwLTZjZmRkNGIzYTZjNCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MjY3NzMxNSwiZXhwIjoxNzUyNjgwOTE1fQ.gJijZgIwFKKq3zeX9KsSOVAslH6Lh-1bSSBCDANa-1U
+2025-07-16 21:48:37 info: -----------------------------------------------------
+2025-07-16 21:48:37 info: -----------------------------------------------------
+2025-07-16 21:48:37 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-16 21:48:37 info: -----------------------------------------------------
+2025-07-16 21:48:37 info: ::1 - - [16/Jul/2025:14:48:37 +0000] "GET /auth/current-user HTTP/1.1" 200 75 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:48:37 info: -----------------------------------------------------
+2025-07-16 21:48:37 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjRmNDRiOWQwLWZiNzktNGIzNy1hZWQwLTZjZmRkNGIzYTZjNCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MjY3NzMxNSwiZXhwIjoxNzUyNjgwOTE1fQ.gJijZgIwFKKq3zeX9KsSOVAslH6Lh-1bSSBCDANa-1U
+2025-07-16 21:48:37 info: -----------------------------------------------------
+2025-07-16 21:48:37 info: -----------------------------------------------------
+2025-07-16 21:48:37 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-16 21:48:37 info: -----------------------------------------------------
+2025-07-16 21:48:37 info: ::1 - - [16/Jul/2025:14:48:37 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:48:49 info: ::1 - - [16/Jul/2025:14:48:49 +0000] "GET /api/courses/list HTTP/1.1" 500 67 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:48:49 info: ::1 - - [16/Jul/2025:14:48:49 +0000] "GET /api/courses/list HTTP/1.1" 500 67 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:49:08 info: ::1 - - [16/Jul/2025:14:49:08 +0000] "OPTIONS /api/courses/add HTTP/1.1" 204 0 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:49:08 info: ::1 - - [16/Jul/2025:14:49:08 +0000] "POST /api/courses/add HTTP/1.1" 400 67 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:49:49 info: ::1 - - [16/Jul/2025:14:49:49 +0000] "GET /api/classes HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:49:49 info: ::1 - - [16/Jul/2025:14:49:49 +0000] "GET /api/classes HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:49:49 info: existsUserID: 4f44b9d0-fb79-4b37-aed0-6cfdd4b3a6c4
+2025-07-16 21:49:49 info: ::1 - - [16/Jul/2025:14:49:49 +0000] "GET /api/courses/list HTTP/1.1" 500 67 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:49:49 info: existsUser: 4f44b9d0-fb79-4b37-aed0-6cfdd4b3a6c4
+2025-07-16 21:49:50 info: ::1 - - [16/Jul/2025:14:49:50 +0000] "POST /auth/refresh-token HTTP/1.1" 200 44 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:49:50 info: ::1 - - [16/Jul/2025:14:49:50 +0000] "GET /api/courses/list HTTP/1.1" 500 67 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:49:50 info: ::1 - - [16/Jul/2025:14:49:50 +0000] "GET /api/classes HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:49:50 info: ::1 - - [16/Jul/2025:14:49:50 +0000] "GET /api/classes HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:49:54 info: -----------------------------------------------------
+2025-07-16 21:49:54 info: undefined
+2025-07-16 21:49:54 info: -----------------------------------------------------
+2025-07-16 21:49:54 info: ::1 - - [16/Jul/2025:14:49:54 +0000] "GET /auth/current-user HTTP/1.1" 401 97 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:49:54 info: -----------------------------------------------------
+2025-07-16 21:49:54 info: undefined
+2025-07-16 21:49:54 info: -----------------------------------------------------
+2025-07-16 21:49:54 info: ::1 - - [16/Jul/2025:14:49:54 +0000] "GET /auth/current-user HTTP/1.1" 401 97 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:49:54 info: existsUserID: 4f44b9d0-fb79-4b37-aed0-6cfdd4b3a6c4
+2025-07-16 21:49:54 info: existsUser: 4f44b9d0-fb79-4b37-aed0-6cfdd4b3a6c4
+2025-07-16 21:49:54 info: ::1 - - [16/Jul/2025:14:49:54 +0000] "POST /auth/refresh-token HTTP/1.1" 200 44 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:49:54 info: -----------------------------------------------------
+2025-07-16 21:49:54 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjRmNDRiOWQwLWZiNzktNGIzNy1hZWQwLTZjZmRkNGIzYTZjNCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MjY3NzM5NCwiZXhwIjoxNzUyNjgwOTk0fQ.1Pk8FrhiyxYmsMvD-2asHevvmfOOITzw1RWm1NfmY-I
+2025-07-16 21:49:54 info: -----------------------------------------------------
+2025-07-16 21:49:54 info: -----------------------------------------------------
+2025-07-16 21:49:54 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-16 21:49:54 info: -----------------------------------------------------
+2025-07-16 21:49:54 info: ::1 - - [16/Jul/2025:14:49:54 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:49:54 info: -----------------------------------------------------
+2025-07-16 21:49:54 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjRmNDRiOWQwLWZiNzktNGIzNy1hZWQwLTZjZmRkNGIzYTZjNCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MjY3NzM5NCwiZXhwIjoxNzUyNjgwOTk0fQ.1Pk8FrhiyxYmsMvD-2asHevvmfOOITzw1RWm1NfmY-I
+2025-07-16 21:49:54 info: -----------------------------------------------------
+2025-07-16 21:49:54 info: -----------------------------------------------------
+2025-07-16 21:49:54 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-16 21:49:54 info: -----------------------------------------------------
+2025-07-16 21:49:54 info: ::1 - - [16/Jul/2025:14:49:54 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:49:55 info: ::1 - - [16/Jul/2025:14:49:55 +0000] "GET /api/classes HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:49:55 info: ::1 - - [16/Jul/2025:14:49:55 +0000] "GET /api/classes HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:49:55 info: ::1 - - [16/Jul/2025:14:49:55 +0000] "GET /api/courses/list HTTP/1.1" 500 67 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:49:55 info: existsUserID: 4f44b9d0-fb79-4b37-aed0-6cfdd4b3a6c4
+2025-07-16 21:49:55 info: existsUser: 4f44b9d0-fb79-4b37-aed0-6cfdd4b3a6c4
+2025-07-16 21:49:55 info: ::1 - - [16/Jul/2025:14:49:55 +0000] "POST /auth/refresh-token HTTP/1.1" 200 44 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:49:55 info: ::1 - - [16/Jul/2025:14:49:55 +0000] "GET /api/courses/list HTTP/1.1" 500 67 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:49:55 info: ::1 - - [16/Jul/2025:14:49:55 +0000] "GET /api/classes HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:49:55 info: ::1 - - [16/Jul/2025:14:49:55 +0000] "GET /api/classes HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:50:03 info: ::1 - - [16/Jul/2025:14:50:03 +0000] "GET /api/programs/getAll HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:50:04 info: ::1 - - [16/Jul/2025:14:50:04 +0000] "GET /api/programs/getAll HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:50:04 info: existsUserID: 4f44b9d0-fb79-4b37-aed0-6cfdd4b3a6c4
+2025-07-16 21:50:04 info: existsUser: 4f44b9d0-fb79-4b37-aed0-6cfdd4b3a6c4
+2025-07-16 21:50:04 info: ::1 - - [16/Jul/2025:14:50:04 +0000] "POST /auth/refresh-token HTTP/1.1" 200 44 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:50:04 info: ::1 - - [16/Jul/2025:14:50:04 +0000] "GET /api/programs/getAll HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:50:04 info: ::1 - - [16/Jul/2025:14:50:04 +0000] "GET /api/programs/getAll HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:50:14 info: ::1 - - [16/Jul/2025:14:50:14 +0000] "OPTIONS /api/programs/create HTTP/1.1" 204 0 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:50:14 info: ::1 - - [16/Jul/2025:14:50:14 +0000] "POST /api/programs/create HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:50:14 info: existsUserID: 4f44b9d0-fb79-4b37-aed0-6cfdd4b3a6c4
+2025-07-16 21:50:14 info: existsUser: 4f44b9d0-fb79-4b37-aed0-6cfdd4b3a6c4
+2025-07-16 21:50:14 info: ::1 - - [16/Jul/2025:14:50:14 +0000] "POST /auth/refresh-token HTTP/1.1" 200 44 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:50:14 info: ::1 - - [16/Jul/2025:14:50:14 +0000] "POST /api/programs/create HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:50:19 info: ::1 - - [16/Jul/2025:14:50:19 +0000] "GET /api/programs/getAll HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:50:19 info: ::1 - - [16/Jul/2025:14:50:19 +0000] "GET /api/semesters/getAll HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:50:19 info: existsUserID: 4f44b9d0-fb79-4b37-aed0-6cfdd4b3a6c4
+2025-07-16 21:50:19 info: existsUser: 4f44b9d0-fb79-4b37-aed0-6cfdd4b3a6c4
+2025-07-16 21:50:19 info: ::1 - - [16/Jul/2025:14:50:19 +0000] "GET /api/programs/getAll HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:50:19 info: ::1 - - [16/Jul/2025:14:50:19 +0000] "POST /auth/refresh-token HTTP/1.1" 200 44 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:50:19 info: ::1 - - [16/Jul/2025:14:50:19 +0000] "GET /api/semesters/getAll HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:50:19 info: ::1 - - [16/Jul/2025:14:50:19 +0000] "GET /api/programs/getAll HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:50:19 info: existsUserID: 4f44b9d0-fb79-4b37-aed0-6cfdd4b3a6c4
+2025-07-16 21:50:19 info: existsUser: 4f44b9d0-fb79-4b37-aed0-6cfdd4b3a6c4
+2025-07-16 21:50:19 info: ::1 - - [16/Jul/2025:14:50:19 +0000] "GET /api/semesters/getAll HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:50:19 info: ::1 - - [16/Jul/2025:14:50:19 +0000] "POST /auth/refresh-token HTTP/1.1" 200 44 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:50:19 info: ::1 - - [16/Jul/2025:14:50:19 +0000] "GET /api/programs/getAll HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:50:19 info: ::1 - - [16/Jul/2025:14:50:19 +0000] "GET /api/semesters/getAll HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:50:30 info: ::1 - - [16/Jul/2025:14:50:30 +0000] "GET /api/students/getAll HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:50:30 info: ::1 - - [16/Jul/2025:14:50:30 +0000] "GET /api/students/getAll HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:50:30 info: existsUserID: 4f44b9d0-fb79-4b37-aed0-6cfdd4b3a6c4
+2025-07-16 21:50:30 info: existsUser: 4f44b9d0-fb79-4b37-aed0-6cfdd4b3a6c4
+2025-07-16 21:50:30 info: ::1 - - [16/Jul/2025:14:50:30 +0000] "POST /auth/refresh-token HTTP/1.1" 200 44 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:50:30 info: ::1 - - [16/Jul/2025:14:50:30 +0000] "GET /api/students/getAll HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:50:30 info: ::1 - - [16/Jul/2025:14:50:30 +0000] "GET /api/students/getAll HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:51:09 info: ::1 - - [16/Jul/2025:14:51:09 +0000] "OPTIONS /api/students/create HTTP/1.1" 204 0 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:51:09 info: ::1 - - [16/Jul/2025:14:51:09 +0000] "POST /api/students/create HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:51:09 info: existsUserID: 4f44b9d0-fb79-4b37-aed0-6cfdd4b3a6c4
+2025-07-16 21:51:09 info: existsUser: 4f44b9d0-fb79-4b37-aed0-6cfdd4b3a6c4
+2025-07-16 21:51:09 info: ::1 - - [16/Jul/2025:14:51:09 +0000] "POST /auth/refresh-token HTTP/1.1" 200 44 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:51:09 info: ::1 - - [16/Jul/2025:14:51:09 +0000] "POST /api/students/create HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:51:12 info: ::1 - - [16/Jul/2025:14:51:12 +0000] "GET /api/courses/list HTTP/1.1" 500 67 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:51:12 info: ::1 - - [16/Jul/2025:14:51:12 +0000] "GET /api/courses/list HTTP/1.1" 500 67 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:51:26 info: ::1 - - [16/Jul/2025:14:51:26 +0000] "GET /api/breakschedules HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:51:26 info: ::1 - - [16/Jul/2025:14:51:26 +0000] "GET /api/breakschedules HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:51:26 info: existsUserID: 4f44b9d0-fb79-4b37-aed0-6cfdd4b3a6c4
+2025-07-16 21:51:26 info: existsUser: 4f44b9d0-fb79-4b37-aed0-6cfdd4b3a6c4
+2025-07-16 21:51:26 info: ::1 - - [16/Jul/2025:14:51:26 +0000] "POST /auth/refresh-token HTTP/1.1" 200 44 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:51:26 info: ::1 - - [16/Jul/2025:14:51:26 +0000] "GET /api/breakschedules HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:51:26 info: ::1 - - [16/Jul/2025:14:51:26 +0000] "GET /api/breakschedules HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:51:36 info: ::1 - - [16/Jul/2025:14:51:36 +0000] "OPTIONS /api/breakschedules/add HTTP/1.1" 204 0 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:51:36 info: ::1 - - [16/Jul/2025:14:51:36 +0000] "POST /api/breakschedules/add HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:51:36 info: existsUserID: 4f44b9d0-fb79-4b37-aed0-6cfdd4b3a6c4
+2025-07-16 21:51:36 info: existsUser: 4f44b9d0-fb79-4b37-aed0-6cfdd4b3a6c4
+2025-07-16 21:51:36 info: ::1 - - [16/Jul/2025:14:51:36 +0000] "POST /auth/refresh-token HTTP/1.1" 200 44 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:51:36 info: ::1 - - [16/Jul/2025:14:51:36 +0000] "POST /api/breakschedules/add HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:56:20 info: -----------------------------------------------------
+2025-07-16 21:56:20 info: undefined
+2025-07-16 21:56:20 info: -----------------------------------------------------
+2025-07-16 21:56:20 info: ::1 - - [16/Jul/2025:14:56:20 +0000] "GET /auth/current-user HTTP/1.1" 401 97 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:56:20 info: -----------------------------------------------------
+2025-07-16 21:56:20 info: undefined
+2025-07-16 21:56:20 info: -----------------------------------------------------
+2025-07-16 21:56:20 info: ::1 - - [16/Jul/2025:14:56:20 +0000] "GET /auth/current-user HTTP/1.1" 401 97 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:56:20 info: existsUserID: 4f44b9d0-fb79-4b37-aed0-6cfdd4b3a6c4
+2025-07-16 21:56:20 info: existsUser: 4f44b9d0-fb79-4b37-aed0-6cfdd4b3a6c4
+2025-07-16 21:56:20 info: ::1 - - [16/Jul/2025:14:56:20 +0000] "POST /auth/refresh-token HTTP/1.1" 200 44 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:56:20 info: -----------------------------------------------------
+2025-07-16 21:56:20 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjRmNDRiOWQwLWZiNzktNGIzNy1hZWQwLTZjZmRkNGIzYTZjNCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MjY3Nzc4MCwiZXhwIjoxNzUyNjgxMzgwfQ.DAYTWrLU1W0j_xcj2H4iJdo43Z288JcVAen6qU_cVVY
+2025-07-16 21:56:20 info: -----------------------------------------------------
+2025-07-16 21:56:20 info: -----------------------------------------------------
+2025-07-16 21:56:20 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-16 21:56:20 info: -----------------------------------------------------
+2025-07-16 21:56:20 info: ::1 - - [16/Jul/2025:14:56:20 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 21:56:20 info: -----------------------------------------------------
+2025-07-16 21:56:20 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjRmNDRiOWQwLWZiNzktNGIzNy1hZWQwLTZjZmRkNGIzYTZjNCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MjY3Nzc4MCwiZXhwIjoxNzUyNjgxMzgwfQ.DAYTWrLU1W0j_xcj2H4iJdo43Z288JcVAen6qU_cVVY
+2025-07-16 21:56:20 info: -----------------------------------------------------
+2025-07-16 21:56:20 info: -----------------------------------------------------
+2025-07-16 21:56:20 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-16 21:56:20 info: -----------------------------------------------------
+2025-07-16 21:56:20 info: ::1 - - [16/Jul/2025:14:56:20 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 22:03:31 info: ::1 - - [16/Jul/2025:15:03:31 +0000] "GET /api/courses HTTP/1.1" 500 107 "-" "PostmanRuntime/7.44.1"
+2025-07-16 22:03:56 info: ::1 - - [16/Jul/2025:15:03:56 +0000] "GET /api/class HTTP/1.1" 404 148 "-" "PostmanRuntime/7.44.1"
+2025-07-16 22:04:09 info: ::1 - - [16/Jul/2025:15:04:09 +0000] "GET /api/classes HTTP/1.1" 401 97 "-" "PostmanRuntime/7.44.1"
+2025-07-16 22:05:07 info: ::1 - - [16/Jul/2025:15:05:07 +0000] "GET /api/classes HTTP/1.1" 401 97 "-" "PostmanRuntime/7.44.1"
+2025-07-16 22:05:46 info: ::1 - - [16/Jul/2025:15:05:46 +0000] "GET /api/classes HTTP/1.1" 401 97 "-" "PostmanRuntime/7.44.1"
+2025-07-16 22:06:10 info: -----------------------------------------------------
+2025-07-16 22:06:10 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjRmNDRiOWQwLWZiNzktNGIzNy1hZWQwLTZjZmRkNGIzYTZjNCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MjY3Nzc4MCwiZXhwIjoxNzUyNjgxMzgwfQ.DAYTWrLU1W0j_xcj2H4iJdo43Z288JcVAen6qU_cVVY
+2025-07-16 22:06:10 info: -----------------------------------------------------
+2025-07-16 22:06:10 info: -----------------------------------------------------
+2025-07-16 22:06:10 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-16 22:06:10 info: -----------------------------------------------------
+2025-07-16 22:06:10 info: ::1 - - [16/Jul/2025:15:06:10 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 22:06:10 info: -----------------------------------------------------
+2025-07-16 22:06:10 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjRmNDRiOWQwLWZiNzktNGIzNy1hZWQwLTZjZmRkNGIzYTZjNCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MjY3Nzc4MCwiZXhwIjoxNzUyNjgxMzgwfQ.DAYTWrLU1W0j_xcj2H4iJdo43Z288JcVAen6qU_cVVY
+2025-07-16 22:06:10 info: -----------------------------------------------------
+2025-07-16 22:06:10 info: -----------------------------------------------------
+2025-07-16 22:06:10 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-16 22:06:10 info: -----------------------------------------------------
+2025-07-16 22:06:10 info: ::1 - - [16/Jul/2025:15:06:10 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 22:07:06 info: ::1 - - [16/Jul/2025:15:07:06 +0000] "GET /api/classes HTTP/1.1" 401 97 "-" "PostmanRuntime/7.44.1"
+2025-07-16 22:07:21 info: ::1 - - [16/Jul/2025:15:07:21 +0000] "GET /api/classes HTTP/1.1" 401 97 "-" "PostmanRuntime/7.44.1"
+2025-07-16 22:07:55 info: ::1 - - [16/Jul/2025:15:07:55 +0000] "GET /api/classes HTTP/1.1" 401 97 "-" "PostmanRuntime/7.44.1"
+2025-07-16 22:08:06 info: ::1 - - [16/Jul/2025:15:08:06 +0000] "GET /api/class HTTP/1.1" 404 148 "-" "PostmanRuntime/7.44.1"
+2025-07-16 22:08:24 info: ::1 - - [16/Jul/2025:15:08:24 +0000] "GET /api/coursees HTTP/1.1" 404 151 "-" "PostmanRuntime/7.44.1"
+2025-07-16 22:08:32 info: ::1 - - [16/Jul/2025:15:08:32 +0000] "GET /api/courses HTTP/1.1" 500 107 "-" "PostmanRuntime/7.44.1"
+2025-07-16 22:08:48 info: ::1 - - [16/Jul/2025:15:08:48 +0000] "GET /api/breakschedules HTTP/1.1" 401 97 "-" "PostmanRuntime/7.44.1"
+2025-07-16 22:09:07 info: -----------------------------------------------------
+2025-07-16 22:09:07 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjRmNDRiOWQwLWZiNzktNGIzNy1hZWQwLTZjZmRkNGIzYTZjNCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MjY3Nzc4MCwiZXhwIjoxNzUyNjgxMzgwfQ.DAYTWrLU1W0j_xcj2H4iJdo43Z288JcVAen6qU_cVVY
+2025-07-16 22:09:07 info: -----------------------------------------------------
+2025-07-16 22:09:07 info: -----------------------------------------------------
+2025-07-16 22:09:07 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-16 22:09:07 info: -----------------------------------------------------
+2025-07-16 22:09:07 info: ::1 - - [16/Jul/2025:15:09:07 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Mobile Safari/537.36"
+2025-07-16 22:09:07 info: -----------------------------------------------------
+2025-07-16 22:09:07 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjRmNDRiOWQwLWZiNzktNGIzNy1hZWQwLTZjZmRkNGIzYTZjNCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MjY3Nzc4MCwiZXhwIjoxNzUyNjgxMzgwfQ.DAYTWrLU1W0j_xcj2H4iJdo43Z288JcVAen6qU_cVVY
+2025-07-16 22:09:07 info: -----------------------------------------------------
+2025-07-16 22:09:07 info: -----------------------------------------------------
+2025-07-16 22:09:07 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-16 22:09:07 info: -----------------------------------------------------
+2025-07-16 22:09:07 info: ::1 - - [16/Jul/2025:15:09:07 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Mobile Safari/537.36"
+2025-07-16 22:09:21 info: ::1 - - [16/Jul/2025:15:09:21 +0000] "GET /api/breakschedules HTTP/1.1" 401 97 "-" "PostmanRuntime/7.44.1"
+2025-07-16 22:09:49 info: ::1 - - [16/Jul/2025:15:09:49 +0000] "GET /api/breakschedules HTTP/1.1" 401 97 "-" "PostmanRuntime/7.44.1"
+2025-07-16 22:12:55 info: ::1 - - [16/Jul/2025:15:12:55 +0000] "GET /api/courses/list HTTP/1.1" 500 67 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 22:12:55 info: ::1 - - [16/Jul/2025:15:12:55 +0000] "GET /api/courses/list HTTP/1.1" 500 67 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 22:15:02 info: -----------------------------------------------------
+2025-07-16 22:15:02 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjRmNDRiOWQwLWZiNzktNGIzNy1hZWQwLTZjZmRkNGIzYTZjNCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MjY3Nzc4MCwiZXhwIjoxNzUyNjgxMzgwfQ.DAYTWrLU1W0j_xcj2H4iJdo43Z288JcVAen6qU_cVVY
+2025-07-16 22:15:02 info: -----------------------------------------------------
+2025-07-16 22:15:02 info: -----------------------------------------------------
+2025-07-16 22:15:02 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-16 22:15:02 info: -----------------------------------------------------
+2025-07-16 22:15:02 info: ::1 - - [16/Jul/2025:15:15:02 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 22:15:02 info: -----------------------------------------------------
+2025-07-16 22:15:02 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjRmNDRiOWQwLWZiNzktNGIzNy1hZWQwLTZjZmRkNGIzYTZjNCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MjY3Nzc4MCwiZXhwIjoxNzUyNjgxMzgwfQ.DAYTWrLU1W0j_xcj2H4iJdo43Z288JcVAen6qU_cVVY
+2025-07-16 22:15:02 info: -----------------------------------------------------
+2025-07-16 22:15:02 info: -----------------------------------------------------
+2025-07-16 22:15:02 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-16 22:15:02 info: -----------------------------------------------------
+2025-07-16 22:15:02 info: ::1 - - [16/Jul/2025:15:15:02 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 22:15:04 info: ::1 - - [16/Jul/2025:15:15:04 +0000] "GET /api/courses/list HTTP/1.1" 500 67 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 22:15:04 info: ::1 - - [16/Jul/2025:15:15:04 +0000] "GET /api/courses/list HTTP/1.1" 500 67 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 22:23:09 info: ::1 - - [16/Jul/2025:15:23:09 +0000] "GET /api/courses HTTP/1.1" 500 107 "-" "PostmanRuntime/7.44.1"
+2025-07-16 22:28:41 info: ✅ Kết nối PostgreSQL với Sequelize thành công.
+2025-07-16 22:28:41 info: ✅ Kết nối cơ sở dữ liệu thành công.
+2025-07-16 22:28:41 info: ✅ Cấu hình Passport đã được tải.
+2025-07-16 22:28:41 info: ✅ Passport has been configured.
+2025-07-16 22:28:41 info: ✅ Middleware Morgan for HTTP request logging configured.
+2025-07-16 22:28:41 info: ✅ Middleware Session and Passport have been configured.
+2025-07-16 22:28:41 info: ✅ Router has been setup.
+2025-07-16 22:28:41 info: ✅ Server is running on port 3000 (development environment)
+2025-07-16 22:28:45 info: -----------------------------------------------------
+2025-07-16 22:28:45 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjRmNDRiOWQwLWZiNzktNGIzNy1hZWQwLTZjZmRkNGIzYTZjNCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MjY3Nzc4MCwiZXhwIjoxNzUyNjgxMzgwfQ.DAYTWrLU1W0j_xcj2H4iJdo43Z288JcVAen6qU_cVVY
+2025-07-16 22:28:45 info: -----------------------------------------------------
+2025-07-16 22:28:45 info: -----------------------------------------------------
+2025-07-16 22:28:45 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-16 22:28:45 info: -----------------------------------------------------
+2025-07-16 22:28:45 info: ::1 - - [16/Jul/2025:15:28:45 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 22:28:45 info: -----------------------------------------------------
+2025-07-16 22:28:45 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjRmNDRiOWQwLWZiNzktNGIzNy1hZWQwLTZjZmRkNGIzYTZjNCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MjY3Nzc4MCwiZXhwIjoxNzUyNjgxMzgwfQ.DAYTWrLU1W0j_xcj2H4iJdo43Z288JcVAen6qU_cVVY
+2025-07-16 22:28:45 info: -----------------------------------------------------
+2025-07-16 22:28:45 info: -----------------------------------------------------
+2025-07-16 22:28:45 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-16 22:28:45 info: -----------------------------------------------------
+2025-07-16 22:28:45 info: ::1 - - [16/Jul/2025:15:28:45 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 22:28:47 info: ::1 - - [16/Jul/2025:15:28:47 +0000] "GET /api/courses/list HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 22:28:47 info: ::1 - - [16/Jul/2025:15:28:47 +0000] "GET /api/courses/list HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 22:28:47 info: existsUserID: 4f44b9d0-fb79-4b37-aed0-6cfdd4b3a6c4
+2025-07-16 22:28:47 info: existsUser: 4f44b9d0-fb79-4b37-aed0-6cfdd4b3a6c4
+2025-07-16 22:28:47 info: ::1 - - [16/Jul/2025:15:28:47 +0000] "POST /auth/refresh-token HTTP/1.1" 200 44 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 22:28:47 info: ::1 - - [16/Jul/2025:15:28:47 +0000] "GET /api/courses/list HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 22:28:47 info: ::1 - - [16/Jul/2025:15:28:47 +0000] "GET /api/courses/list HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 22:29:24 info: -----------------------------------------------------
+2025-07-16 22:29:24 info: undefined
+2025-07-16 22:29:24 info: -----------------------------------------------------
+2025-07-16 22:29:24 info: ::1 - - [16/Jul/2025:15:29:24 +0000] "GET /auth/current-user HTTP/1.1" 401 97 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 22:29:24 info: -----------------------------------------------------
+2025-07-16 22:29:24 info: undefined
+2025-07-16 22:29:24 info: -----------------------------------------------------
+2025-07-16 22:29:24 info: ::1 - - [16/Jul/2025:15:29:24 +0000] "GET /auth/current-user HTTP/1.1" 401 97 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 22:29:24 info: existsUserID: 4f44b9d0-fb79-4b37-aed0-6cfdd4b3a6c4
+2025-07-16 22:29:25 info: existsUser: 4f44b9d0-fb79-4b37-aed0-6cfdd4b3a6c4
+2025-07-16 22:29:25 info: ::1 - - [16/Jul/2025:15:29:25 +0000] "POST /auth/refresh-token HTTP/1.1" 200 44 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 22:29:25 info: -----------------------------------------------------
+2025-07-16 22:29:25 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjRmNDRiOWQwLWZiNzktNGIzNy1hZWQwLTZjZmRkNGIzYTZjNCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MjY3OTc2NSwiZXhwIjoxNzUyNjgzMzY1fQ.fU5NP-GUbwwa6anCRP6PeVOFbVcd_TYYt5FoVE84iHA
+2025-07-16 22:29:25 info: -----------------------------------------------------
+2025-07-16 22:29:25 info: -----------------------------------------------------
+2025-07-16 22:29:25 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-16 22:29:25 info: -----------------------------------------------------
+2025-07-16 22:29:25 info: ::1 - - [16/Jul/2025:15:29:25 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 22:29:25 info: -----------------------------------------------------
+2025-07-16 22:29:25 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjRmNDRiOWQwLWZiNzktNGIzNy1hZWQwLTZjZmRkNGIzYTZjNCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MjY3OTc2NSwiZXhwIjoxNzUyNjgzMzY1fQ.fU5NP-GUbwwa6anCRP6PeVOFbVcd_TYYt5FoVE84iHA
+2025-07-16 22:29:25 info: -----------------------------------------------------
+2025-07-16 22:29:25 info: -----------------------------------------------------
+2025-07-16 22:29:25 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-16 22:29:25 info: -----------------------------------------------------
+2025-07-16 22:29:25 info: ::1 - - [16/Jul/2025:15:29:25 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 22:29:26 info: ::1 - - [16/Jul/2025:15:29:26 +0000] "GET /api/courses HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 22:29:26 info: ::1 - - [16/Jul/2025:15:29:26 +0000] "GET /api/courses HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 22:29:26 info: existsUserID: 4f44b9d0-fb79-4b37-aed0-6cfdd4b3a6c4
+2025-07-16 22:29:26 info: existsUser: 4f44b9d0-fb79-4b37-aed0-6cfdd4b3a6c4
+2025-07-16 22:29:26 info: ::1 - - [16/Jul/2025:15:29:26 +0000] "POST /auth/refresh-token HTTP/1.1" 200 44 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 22:29:26 info: ::1 - - [16/Jul/2025:15:29:26 +0000] "GET /api/courses HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 22:29:26 info: ::1 - - [16/Jul/2025:15:29:26 +0000] "GET /api/courses HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 22:31:17 info: ::1 - - [16/Jul/2025:15:31:17 +0000] "GET /api/semesters/getAll HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 22:31:17 info: ::1 - - [16/Jul/2025:15:31:17 +0000] "GET /api/programs/getAll HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 22:31:17 info: existsUserID: 4f44b9d0-fb79-4b37-aed0-6cfdd4b3a6c4
+2025-07-16 22:31:17 info: ::1 - - [16/Jul/2025:15:31:17 +0000] "GET /api/semesters/getAll HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 22:31:17 info: ::1 - - [16/Jul/2025:15:31:17 +0000] "GET /api/programs/getAll HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 22:31:17 info: existsUser: 4f44b9d0-fb79-4b37-aed0-6cfdd4b3a6c4
+2025-07-16 22:31:17 info: ::1 - - [16/Jul/2025:15:31:17 +0000] "POST /auth/refresh-token HTTP/1.1" 200 44 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 22:31:17 info: ::1 - - [16/Jul/2025:15:31:17 +0000] "GET /api/semesters/getAll HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 22:31:17 info: ::1 - - [16/Jul/2025:15:31:17 +0000] "GET /api/programs/getAll HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 22:31:17 info: ::1 - - [16/Jul/2025:15:31:17 +0000] "GET /api/semesters/getAll HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 22:31:17 info: ::1 - - [16/Jul/2025:15:31:17 +0000] "GET /api/programs/getAll HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 22:31:51 info: ::1 - - [16/Jul/2025:15:31:51 +0000] "GET /api/programs/getAll HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 22:31:51 info: existsUserID: 4f44b9d0-fb79-4b37-aed0-6cfdd4b3a6c4
+2025-07-16 22:31:51 info: ::1 - - [16/Jul/2025:15:31:51 +0000] "GET /api/programs/getAll HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 22:31:51 info: existsUser: 4f44b9d0-fb79-4b37-aed0-6cfdd4b3a6c4
+2025-07-16 22:31:51 info: ::1 - - [16/Jul/2025:15:31:51 +0000] "POST /auth/refresh-token HTTP/1.1" 200 44 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 22:31:51 info: ::1 - - [16/Jul/2025:15:31:51 +0000] "GET /api/programs/getAll HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 22:31:51 info: ::1 - - [16/Jul/2025:15:31:51 +0000] "GET /api/programs/getAll HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 22:32:54 info: -----------------------------------------------------
+2025-07-16 22:32:54 info: undefined
+2025-07-16 22:32:54 info: -----------------------------------------------------
+2025-07-16 22:32:54 info: ::1 - - [16/Jul/2025:15:32:54 +0000] "GET /auth/current-user HTTP/1.1" 401 97 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 22:32:54 info: -----------------------------------------------------
+2025-07-16 22:32:54 info: undefined
+2025-07-16 22:32:54 info: -----------------------------------------------------
+2025-07-16 22:32:54 info: ::1 - - [16/Jul/2025:15:32:54 +0000] "GET /auth/current-user HTTP/1.1" 401 97 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 22:32:55 info: existsUserID: 4f44b9d0-fb79-4b37-aed0-6cfdd4b3a6c4
+2025-07-16 22:32:55 info: existsUser: 4f44b9d0-fb79-4b37-aed0-6cfdd4b3a6c4
+2025-07-16 22:32:55 info: ::1 - - [16/Jul/2025:15:32:55 +0000] "POST /auth/refresh-token HTTP/1.1" 200 44 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 22:32:55 info: -----------------------------------------------------
+2025-07-16 22:32:55 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjRmNDRiOWQwLWZiNzktNGIzNy1hZWQwLTZjZmRkNGIzYTZjNCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MjY3OTk3NSwiZXhwIjoxNzUyNjgzNTc1fQ.xdabVNYAvP8CMiZi8Z6FN5k-07uzXd4e45XTeb5OLEM
+2025-07-16 22:32:55 info: -----------------------------------------------------
+2025-07-16 22:32:55 info: -----------------------------------------------------
+2025-07-16 22:32:55 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-16 22:32:55 info: -----------------------------------------------------
+2025-07-16 22:32:55 info: ::1 - - [16/Jul/2025:15:32:55 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 22:32:55 info: -----------------------------------------------------
+2025-07-16 22:32:55 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjRmNDRiOWQwLWZiNzktNGIzNy1hZWQwLTZjZmRkNGIzYTZjNCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MjY3OTk3NSwiZXhwIjoxNzUyNjgzNTc1fQ.xdabVNYAvP8CMiZi8Z6FN5k-07uzXd4e45XTeb5OLEM
+2025-07-16 22:32:55 info: -----------------------------------------------------
+2025-07-16 22:32:55 info: -----------------------------------------------------
+2025-07-16 22:32:55 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-16 22:32:55 info: -----------------------------------------------------
+2025-07-16 22:32:55 info: ::1 - - [16/Jul/2025:15:32:55 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 22:32:56 info: ::1 - - [16/Jul/2025:15:32:56 +0000] "GET /api/programs/getAll HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 22:32:56 info: ::1 - - [16/Jul/2025:15:32:56 +0000] "GET /api/programs/getAll HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 22:32:56 info: existsUserID: 4f44b9d0-fb79-4b37-aed0-6cfdd4b3a6c4
+2025-07-16 22:32:56 info: existsUser: 4f44b9d0-fb79-4b37-aed0-6cfdd4b3a6c4
+2025-07-16 22:32:56 info: ::1 - - [16/Jul/2025:15:32:56 +0000] "POST /auth/refresh-token HTTP/1.1" 200 44 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 22:32:56 info: ::1 - - [16/Jul/2025:15:32:56 +0000] "GET /api/programs/getAll HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-16 22:32:56 info: ::1 - - [16/Jul/2025:15:32:56 +0000] "GET /api/programs/getAll HTTP/1.1" 401 54 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
