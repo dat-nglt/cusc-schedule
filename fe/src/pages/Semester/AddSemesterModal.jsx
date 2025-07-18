@@ -304,6 +304,7 @@ export default function AddSemesterModal({ open, onClose, onAddSemester, existin
                 onClose={handleClosePreview}
                 previewData={previewData}
                 fetchSemesters={fetchSemesters}
+                programs={programs}
             />
         </>
     );

@@ -27,14 +27,43 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { importLecturers } from '../../api/lecturerAPI';
 import { getRowStatus, getErrorChip } from '../../components/ui/ErrorChip';
 
-export default function PreviewLecturerModal({ open, onClose, previewData, fetchLecturers }) {
+export default function PreviewLecturerModal({ open, onClose, previewData, fetchLecturers, subjects }) {
   const [isImporting, setIsImporting] = useState(false);
   const [importError, setImportError] = useState('');
   const [importMessage, setImportMessage] = useState('');
 
+  // Validate preview data with subject checking
+  const validatePreviewData = (data) => {
+    return data.map(row => {
+      let errors = row.errors || [];
 
-  const validRows = previewData.filter((row) => getRowStatus(row) === "valid");
-  const errorRows = previewData.filter((row) => getRowStatus(row) === "error");
+      // If there are already errors, keep only the first one
+      if (errors.length > 0) {
+        errors = [errors[0]];
+      } else {
+        // Check if subjectIds exist in subjects array (if subjects are provided)
+        if (row.subjectIds && row.subjectIds.length > 0) {
+          const invalidSubjects = row.subjectIds.filter(subjectId => {
+            return subjects && !subjects.some(subject => subject.subject_id === subjectId.trim());
+          });
+
+          if (invalidSubjects.length > 0) {
+            errors = [`Mã học phần "${invalidSubjects.join(', ')}" không tồn tại trong hệ thống`];
+          }
+        }
+      }
+
+      return {
+        ...row,
+        errors
+      };
+    });
+  };
+
+  // Validate data with subject checking
+  const validatedData = validatePreviewData(previewData);
+  const validRows = validatedData.filter((row) => getRowStatus(row) === "valid");
+  const errorRows = validatedData.filter((row) => getRowStatus(row) === "error");
 
   const handleConfirmImport = async () => {
     if (validRows.length === 0) {

@@ -16,6 +16,10 @@ import { Visibility, Edit, Delete, Menu as MenuIcon } from '@mui/icons-material'
 import { getStatusChip } from '../../components/ui/StatusChip';
 import { formatDateTime } from '../../utils/formatDateTime';
 
+
+// Hàm kiểm tra giá trị và trả về giá trị hoặc thông báo mặc định
+const getValueOrDefault = (value) => value || 'Không có dữ liệu';
+
 export default function StudentTable({ displayedStudents, isSmallScreen, isMediumScreen, handleViewStudent, handleEditStudent, handleDeleteStudent }) {
     const [anchorEl, setAnchorEl] = useState(null);
     const [selectedRowId, setSelectedRowId] = useState(null);
@@ -88,24 +92,28 @@ export default function StudentTable({ displayedStudents, isSmallScreen, isMediu
                         </TableCell>
                         {!isSmallScreen && (
                             <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                                {student.student_id}
+                                {getValueOrDefault(student.student_id)}
                             </TableCell>
                         )}
                         <TableCell sx={{ textAlign: 'left', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                            {student.name}
+                            {getValueOrDefault(student.name)}
                         </TableCell>
                         {!isMediumScreen && (
                             <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
                                 <Chip
-                                    label={student.class}
+                                    label={student.class ? student.class.class_id : 'Chưa phân lớp'}
                                     size="small"
-                                    sx={{ bgcolor: '#e3f2fd', color: '#1976d2', fontWeight: 'bold' }}
+                                    sx={{
+                                        bgcolor: student.class ? '#e3f2fd' : '#f5f5f5',
+                                        color: student.class ? '#1976d2' : '#666',
+                                        fontWeight: 'bold'
+                                    }}
                                 />
                             </TableCell>
                         )}
                         {!isSmallScreen && (
                             <TableCell sx={{ textAlign: 'left', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                                {formatDateTime(student.admission_year)}
+                                {student.admission_year ? formatDateTime(student.admission_year) : getValueOrDefault(student.admission_year)}
                             </TableCell>
                         )}
                         <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>

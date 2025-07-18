@@ -1,9 +1,8 @@
 import models from "../models/index.js";
-import Lecturer from "../models/Lecturer.js";
 import ExcelUtils from "../utils/ExcelUtils.js";
 import { Op } from 'sequelize';
 
-const { Student, Account, sequelize } = models;
+const { Student, Account, Classes, sequelize } = models;
 /**
  * Lấy tất cả Học viên.
  * @returns {Promise<Array>} Danh sách tất cả Học viên.
@@ -12,11 +11,18 @@ const { Student, Account, sequelize } = models;
 export const getAllStudents = async () => {
   try {
     const students = await Student.findAll({
-      include: [{
-        model: Account,
-        as: 'account', // Giả sử có quan hệ với Account
-        attributes: ['id', 'email', 'role', 'status'] // Chỉ lấy các trường cần thiết từ Account
-      }]
+      include: [
+        {
+          model: Account,
+          as: 'account', // Giả sử có quan hệ với Account
+          attributes: ['id', 'email', 'role', 'status'] // Chỉ lấy các trường cần thiết từ Account
+        },
+        {
+          model: Classes,
+          as: 'class', // Giả sử có quan hệ với Class
+          attributes: ['class_id', 'class_name'] // Chỉ lấy các trường cần thiết từ Class
+        }
+      ]
     });
     return students;
   } catch (error) {
@@ -38,6 +44,10 @@ export const getStudentById = async (id) => {
         model: Account,
         as: 'account', // Giả sử có quan hệ với Account
         attributes: ['id', 'email', 'role', 'status'] // Chỉ lấy các trường cần thiết từ Account
+      }, {
+        model: Classes,
+        as: 'class', // Giả sử có quan hệ với Class
+        attributes: ['class_id', 'class_name'] // Chỉ lấy các trường cần thiết từ Class
       }]
     });
     if (!student) {
@@ -88,10 +98,10 @@ export const createStudent = async (studentData) => {
       address: studentData.address || null,
       day_of_birth: studentData.day_of_birth || null,
       phone_number: studentData.phone_number || null,
-      class: studentData.class || null,
+      class_id: studentData.class_id || studentData.class || null, // Use class_id instead of class
       admission_year: studentData.admission_year || null,
       gpa: studentData.gpa || null,
-      status: studentData.status || 'Đang học'
+      status: studentData.status || 'Đang học', // Default status
     }, { transaction });
     await transaction.commit();
 
@@ -156,10 +166,10 @@ export const updateStudent = async (id, studentData) => {
     const updateData = {};
     if (studentData.name) updateData.name = studentData.name;
     if (studentData.day_of_birth !== undefined) updateData.day_of_birth = studentData.day_of_birth;
-    if (studentData.gender !== undefined) updateData.gender = student.gender;
+    if (studentData.gender !== undefined) updateData.gender = studentData.gender; // Fixed: use studentData.gender instead of student.gender
     if (studentData.address !== undefined) updateData.address = studentData.address;
     if (studentData.phone_number !== undefined) updateData.phone_number = studentData.phone_number;
-    if (studentData.class !== undefined) updateData.class = studentData.class;
+    if (studentData.class_id !== undefined || studentData.class !== undefined) updateData.class_id = studentData.class_id || studentData.class; // Use class_id
     if (studentData.admission_year !== undefined) updateData.admission_year = studentData.admission_year;
     if (studentData.gpa !== undefined) updateData.gpa = studentData.gpa;
     if (studentData.status !== undefined) updateData.status = studentData.status;
@@ -282,7 +292,7 @@ export const importStudentsFromJSON = async (studentsData) => {
           gender: studentData.gender ? studentData.gender.toString().trim() : null,
           address: studentData.address ? studentData.address.toString().trim() : null,
           phone_number: studentData.phone_number ? studentData.phone_number.toString().trim() : null,
-          class: studentData.class ? studentData.class.toString().trim() : null,
+          class_id: studentData.class_id || studentData.class ? (studentData.class_id || studentData.class).toString().trim() : null, // Map class to class_id
           admission_year: studentData.admission_year || null,
           gpa: studentData.gpa ? parseFloat(studentData.gpa) : null,
           status: studentData.status || 'Đang học'
@@ -384,33 +394,47 @@ export const listStudents = async (filters) => {
         [Op.iLike]: `%${filters.name}%`
       };
     }
-    if (filters.email) {
-      whereClause.email = {
-        [Op.iLike]: `%${filters.email}%`
-      };
-    }
     if (filters.gender) {
       whereClause.gender = {
         [Op.iLike]: `%${filters.gender}%`
       };
     }
-    if (filters.class) {
-      whereClause.class = {
-        [Op.iLike]: `%${filters.class}%`
+    if (filters.class_id || filters.class) {
+      whereClause.class_id = {
+        [Op.iLike]: `%${filters.class_id || filters.class}%`
       };
     }
     if (filters.admission_year) {
       whereClause.admission_year = filters.admission_year;
     }
-    if (filters.status) {
-      whereClause.status = {
-        [Op.iLike]: `%${filters.status}%`
-      };
+
+    // Handle email filter through Account association
+    let includeClause = [
+      {
+        model: Account,
+        as: 'account',
+        attributes: ['email', 'role', 'status']
+      }
+    ];
+
+    if (filters.email || filters.status) {
+      const accountWhere = {};
+      if (filters.email) {
+        accountWhere.email = {
+          [Op.iLike]: `%${filters.email}%`
+        };
+      }
+      if (filters.status) {
+        accountWhere.status = {
+          [Op.iLike]: `%${filters.status}%`
+        };
+      }
+      includeClause[0].where = accountWhere;
     }
 
     const students = await Student.findAll({
       where: whereClause,
-      attributes: ['student_id', 'name', 'email', 'day_of_birth', 'gender', 'address', 'phone_number', 'class', 'admission_year', 'gpa', 'status', 'created_at', 'updated_at'],
+      include: includeClause,
       order: [['created_at', 'DESC']]
     });
 
@@ -469,10 +493,9 @@ export const importStudentsFromExcel = async (fileBuffer) => {
           gender: ExcelUtils.cleanString(row.gender) || null,
           address: ExcelUtils.cleanString(row.address) || null,
           phone_number: ExcelUtils.cleanString(row.phone_number) || null,
-          class: ExcelUtils.cleanString(row.class) || null,
+          class_id: ExcelUtils.cleanString(row.class_id || row.class) || null, // Map class to class_id
           admission_year: row.admission_year || null,
           gpa: row.gpa ? parseFloat(row.gpa) : null,
-          status: ExcelUtils.cleanString(row.status) || 'Đang học',
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         };

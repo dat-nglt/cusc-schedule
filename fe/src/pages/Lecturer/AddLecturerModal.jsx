@@ -52,7 +52,7 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
         degree: '',
         academic_rank: '',
         status: 'Đang giảng dạy',
-        subjectIds: [],
+        subjects: [],
     });
 
     const [localError, setLocalError] = useState('');
@@ -77,7 +77,7 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
             !newLecturer.department ||
             !newLecturer.hire_date ||
             !newLecturer.degree ||
-            !newLecturer.subjectIds.length
+            !newLecturer.subjects.length
         ) {
             setLocalError('Vui lòng điền đầy đủ thông tin!');
             return;
@@ -159,7 +159,7 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
             hire_date: '',
             degree: '',
             status: 'Đang giảng dạy',
-            subjectIds: [],
+            subjects: [],
         });
         setLocalError('');
         onClose();
@@ -400,12 +400,12 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
                             </Select>
                         </FormControl>
                         <FormControl fullWidth required>
-                            <InputLabel>Môn học</InputLabel>
+                            <InputLabel>Môn giảng dạy</InputLabel>
                             <Select
-                                name="subjectIds"
-                                value={newLecturer.subjectIds}
+                                name="subjects"
+                                value={newLecturer.subjects}
                                 onChange={handleChange}
-                                label="Môn học"
+                                label="Môn giảng dạy"
                                 multiple
                                 renderValue={(selected) =>
                                     selected.map(id =>
@@ -413,11 +413,18 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
                                     ).join(', ')
                                 }
                             >
-                                {subjects && subjects.map((subject) => (
-                                    <MenuItem key={subject.subject_id} value={subject.subject_id}>
-                                        {subject.subject_id} - {subject.subject_name}
+                                {subjects && subjects.length > 0 ? (
+                                    subjects.map((subject) => (
+                                        <MenuItem key={subject.subject_id} value={subject.subject_id}>
+                                            {subject.subject_id} - {subject.subject_name}
+                                        </MenuItem>
+                                    ))
+                                ) : (
+                                    <MenuItem disabled>
+                                        <em>Không có môn học nào</em>
                                     </MenuItem>
-                                ))}
+                                )} 
+
                             </Select>
                         </FormControl>
                     </Box>
@@ -444,6 +451,7 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
                 onClose={handleClosePreview}
                 previewData={previewData}
                 fetchLecturers={fetchLecturers}
+                subjects={subjects}
             />
         </>
     );

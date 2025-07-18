@@ -28,7 +28,7 @@ import { importSemesters } from '../../api/semesterAPI';
 import { getErrorChip, getRowStatus } from '../../components/ui/ErrorChip';
 import { formatDateTime } from '../../utils/formatDateTime';
 
-export default function PreviewSemesterModal({ open, onClose, previewData, fetchSemesters }) {
+export default function PreviewSemesterModal({ open, onClose, previewData, fetchSemesters, programs }) {
     const [isImporting, setIsImporting] = useState(false);
     const [importError, setImportError] = useState('');
     const [importMessage, setImportMessage] = useState('');

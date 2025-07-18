@@ -67,6 +67,10 @@ const Student = (sequelize) => {
           max: 4.0,
         },
       },
+      status: {
+        type: DataTypes.STRING(30), // Trạng thái sinh viên (active, inactive
+        allowNull: true,
+      },
       // BỎ CÁC TRƯỜNG DƯ THỪA ĐÃ CHUYỂN SANG BẢNG ACCOUNTS:
       // email: đã có trong Account
       // day_of_birth: có thể giữ ở đây hoặc chuyển sang Account nếu muốn chung hơn
@@ -96,11 +100,10 @@ const Student = (sequelize) => {
     });
 
     // Mỗi sinh viên thuộc về một lớp học
-    // StudentModel.belongsTo(models.Classes, {
-    //   foreignKey: 'class_id',
-    //   onUpdate: 'CASCADE',
-    //   onDelete: "CASCADE", // Xóa sinh viên nếu lớp học bị xóa
-    // });
+    StudentModel.belongsTo(models.Classes, {
+      foreignKey: 'class_id',
+      as: 'class', // Change from 'classes' to 'class' for singular relationship
+    });
 
     // Một sinh viên có thể đăng ký nhiều khóa học (mối quan hệ nhiều-nhiều)
     // StudentModel.belongsToMany(models.Course, {

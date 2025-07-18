@@ -3,7 +3,7 @@ import axiosInstance from './axiosConfig';
 // Lấy danh sách lớp học từ API
 export const getClasses = async (params = {}) => {
   try {
-    const response = await axiosInstance.get('/api/classes', { params });
+    const response = await axiosInstance.get('/api/classes/', { params });
     return response.data;
   } catch (error) {
     console.error('Error fetching classes:', error.response?.data || error.message);
