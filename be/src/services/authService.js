@@ -1,11 +1,5 @@
 import jwt from "jsonwebtoken";
-<<<<<<< HEAD
-import dotenv from "dotenv";
-dotenv.config();
-
-=======
 import { v4 as uuidv4 } from "uuid";
->>>>>>> 7ad926c480cc318cfd6f55c69e3f8ef661f601b5
 import { findUserByEmail, getUserId } from "./userService.js";
 import logger from "../utils/logger.js";
 
@@ -21,25 +15,6 @@ export const generateAccessTokenService = (userId, role) => {
   }
 
   return jwt.sign({ id: userId, role }, process.env.JWT_SECRET, {
-<<<<<<< HEAD
-    expiresIn: "1h", // Token có hiệu lực trong 1 giờ
-  });
-};
-
-/**
- * Tạo refresh token
- * @param {string} userID - ID của người dùng
- * @returns {string} - Refresh Token
- */
-export const generateRefreshTokenService = (userID) => {
-  if (!process.env.JWT_REFRESH_SECRET) {
-    throw new Error("JWT_REFRESH_SECRET is not defined in environment variables");
-  }
-
-  return jwt.sign({ id: userID }, process.env.JWT_REFRESH_SECRET, {
-    expiresIn: "7d",
-  });
-=======
     expiresIn: "15m", // Token có hiệu lực trong 30 giây
   });
 };
@@ -50,7 +25,6 @@ export const generateRefreshTokenService = (userId) => {
     process.env.JWT_REFRESH_SECRET,
     { expiresIn: "7d" }
   );
->>>>>>> 7ad926c480cc318cfd6f55c69e3f8ef661f601b5
 };
 
 /**
@@ -61,17 +35,12 @@ export const generateRefreshTokenService = (userId) => {
  */
 export const verifyTokenService = (token, secret) => {
   try {
-<<<<<<< HEAD
-    const decoded = jwt.verify(token, secret);
-    return decoded.id;
-=======
     const decode = jwt.verify(typeToken, secret);
     return {
       existsUserID: decode.id,
       existsUserJTI: decode.jti,
       exp: decode.exp,
     };
->>>>>>> 7ad926c480cc318cfd6f55c69e3f8ef661f601b5
   } catch (error) {
     logger.error("Token verification failed:", error.message);
     throw new Error("accessToken không hợp lệ");

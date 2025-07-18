@@ -42,11 +42,7 @@ const Program = (sequelize) => {
 
   // Khai báo mối quan hệ (association)
   ProgramModel.associate = (models) => {
-    ProgramModel.hasMany(models.Course, {
-      foreignKey: "program_id",
-      onUpdate: "CASCADE",
-      onDelete: "SET NULL",
-    });
+   
   };
 
   return ProgramModel;

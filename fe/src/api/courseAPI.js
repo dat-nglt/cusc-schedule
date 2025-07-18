@@ -1,15 +1,15 @@
 import axiosInstance from './axiosConfig';
 
 // Lấy danh sách khóa học từ API
-export const getCourses = async (params = {}) => {
-  try {
-    const response = await axiosInstance.get('/api/courses/list', { params });
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching courses:', error.response?.data || error.message);
-    throw Error('Error fetching courses: ' + (error.response?.data?.message || error.message));
-  }
-};
+export const getCourses = async () => {
+    try {
+        const response = await axiosInstance.get('/api/courses/getAll');
+        return response;
+    } catch (error) {
+        console.error("Error fetching courses:", error);
+        throw error;
+    }
+}
 
 // Lấy chi tiết khóa học theo ID
 export const getCourseById = async (course_id) => { // Thay courseid bằng course_id
