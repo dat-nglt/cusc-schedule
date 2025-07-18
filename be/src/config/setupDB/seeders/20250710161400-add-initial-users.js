@@ -112,7 +112,7 @@ module.exports = {
         [
           {
             id: trainingOfficerAccountId,
-            email: "training_officer@example.com",
+            email: "dhchuong@student.ctuet.edu.vn",
             role: "training_officer",
             google_id: null,
             created_at: new Date(),

@@ -1,5 +1,5 @@
-import Course from "../models/Course.js";
-import { Op } from 'sequelize'; // Đảm bảo import Op nếu chưa có
+import models from '../models/index.js';
+import { Op } from 'sequelize';
 import ExcelUtils from "../utils/ExcelUtils.js";
 
 /**
@@ -9,10 +9,10 @@ import ExcelUtils from "../utils/ExcelUtils.js";
  */
 export const getAllCourses = async () => {
   try {
-    const courses = await Course.findAll();
+    const courses = await models.Course.findAll();
     return courses;
   } catch (error) {
-    throw new Error('Lỗi khi lấy danh sách khóa học: ' + error.message);
+    throw Error('Lỗi khi lấy danh sách khóa học: ' + error.message);
   }
 };
 
@@ -22,7 +22,7 @@ export const getAllCourses = async () => {
  * @returns {Promise<Object|null>} Khóa học tìm thấy hoặc null nếu không tìm thấy.
  */
 export const getCourseById = async (course_id) => {
-  return await Course.findByPk(course_id);
+  return await models.Course.findByPk(course_id);
 };
 
 /**
@@ -31,7 +31,7 @@ export const getCourseById = async (course_id) => {
  * @returns {Promise<Object>} Khóa học đã được tạo.
  */
 export const createCourse = async (data) => {
-  return await Course.create(data);
+  return await models.Course.create(data);
 };
 
 /**
@@ -42,7 +42,7 @@ export const createCourse = async (data) => {
  * @throws {Error} Nếu không tìm thấy khóa học.
  */
 export const updateCourse = async (course_id, data) => {
-  const course = await Course.findByPk(course_id);
+  const course = await models.Course.findByPk(course_id);
   if (!course) throw new Error("Không tìm thấy khóa học");
   return await course.update(data);
 };
@@ -54,7 +54,7 @@ export const updateCourse = async (course_id, data) => {
  * @throws {Error} Nếu không tìm thấy khóa học.
  */
 export const deleteCourse = async (course_id) => {
-  const course = await Course.findOne({ where: { course_id } });
+  const course = await models.Course.findOne({ where: { course_id } });
   if (!course) throw new Error("Không tìm thấy khóa học");
   return await course.destroy();
 };
@@ -91,7 +91,7 @@ export const listCourses = async (filters) => {
       whereClause.start_date = filters.start_date; // YYYY-MM-DD
     }
 
-    const courses = await Course.findAll({
+    const courses = await models.Course.findAll({
       where: whereClause,
       attributes: ['course_id', 'course_name', 'start_date', 'end_date', 'status', 'created_at', 'updated_at'],
       order: [['created_at', 'DESC']]
@@ -189,7 +189,7 @@ export const importCoursesFromExcel = async (fileBuffer) => {
         }
 
         // Kiểm tra course_id đã tồn tại chưa
-        const existingCourse = await Course.findByPk(courseData.course_id);
+        const existingCourse = await models.Course.findByPk(courseData.course_id);
         if (existingCourse) {
           results.errors.push({
             row: rowIndex,
@@ -200,7 +200,7 @@ export const importCoursesFromExcel = async (fileBuffer) => {
         }
 
         // Tạo khóa học mới
-        const newCourse = await Course.create(courseData);
+        const newCourse = await models.Course.create(courseData);
         results.success.push({
           row: rowIndex,
           course_id: newCourse.course_id,
@@ -252,7 +252,7 @@ export const importCoursesFromJson = async (coursesData) => {
           results.errors.push({
             index: index,
             course_id: courseData.course_id || 'N/A',
-            error: 'Mã khóa học, Tên khóa học, Thời gian bắt đầu và Thời gian kết thúc là bắt buộc'
+            error: 'Mã khóa học, Tên khóa học, Thời gian bắt(drop) bắt đầu và Thời gian kết thúc là bắt buộc'
           });
           continue;
         }
@@ -301,7 +301,7 @@ export const importCoursesFromJson = async (coursesData) => {
         }
 
         // Kiểm tra course_id đã tồn tại chưa
-        const existingCourse = await Course.findOne({
+        const existingCourse = await models.Course.findOne({
           where: { course_id: cleanedData.course_id }
         });
         if (existingCourse) {
@@ -314,7 +314,7 @@ export const importCoursesFromJson = async (coursesData) => {
         }
 
         // Tạo khóa học mới
-        const newCourse = await Course.create(cleanedData);
+        const newCourse = await models.Course.create(cleanedData);
         results.success.push(newCourse);
       } catch (error) {
         results.errors.push({
@@ -348,4 +348,4 @@ export const validateExcelTemplate = (fileBuffer) => {
   }
 
   return validation;
-};
+};                     

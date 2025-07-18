@@ -23,10 +23,10 @@ import path from 'path';
 export const getAllCoursesController = async (req, res) => {
     try {
         const courses = await getAllCourses();
-        return successResponse(res, courses, "Lấy tất cả khóa học thành công.");
+        return APIResponse(res, 200, courses, "Lấy tất cả khóa học thành công.");
     } catch (error) {
         console.error("Lỗi khi lấy tất cả khóa học:", error);
-        return errorResponse(res, error.message || "Lỗi khi lấy tất cả khóa học.", 500);
+        return APIResponse(res, 500, null, error.message || "Đã xảy ra lỗi khi lấy danh sách khóa học.");
     }
 };
 
@@ -121,27 +121,27 @@ export const deleteCourseController = async (req, res) => {
  * @param {Object} res - Đối tượng Response của Express.
  * @access Private (admin, training_officer)
  */
-export const listCoursesController = async (req, res) => {
-    try {
-        // Lấy các tham số lọc từ query string
-        const { course_id, course_name, start_date } = req.query;
+// export const listCoursesController = async (req, res) => {
+//     try {
+//         // Lấy các tham số lọc từ query string
+//         const { course_id, course_name, start_date } = req.query;
 
-        // Xây dựng đối tượng filters
-        const filters = {
-            ...(course_id && { course_id }), // Thêm course_id nếu nó tồn tại
-            ...(course_name && { course_name }),
-            ...(start_date && { start_date }),
-        };
+//         // Xây dựng đối tượng filters
+//         const filters = {
+//             ...(course_id && { course_id }), // Thêm course_id nếu nó tồn tại
+//             ...(course_name && { course_name }),
+//             ...(start_date && { start_date }),
+//         };
 
-        const courses = await listCourses(filters);
+//         const courses = await listCourses(filters);
 
-        // Sử dụng APIResponse để trả về nhất quán
-        return successResponse(res, courses, "Lấy danh sách khóa học thành công.");
-    } catch (error) {
-        console.error("Lỗi khi liệt kê khóa học:", error);
-        return errorResponse(res, error.message || "Lỗi khi liệt kê khóa học.", 500);
-    }
-};
+//         // Sử dụng APIResponse để trả về nhất quán
+//         return successResponse(res, courses, "Lấy danh sách khóa học thành công.");
+//     } catch (error) {
+//         console.error("Lỗi khi liệt kê khóa học:", error);
+//         return errorResponse(res, error.message || "Lỗi khi liệt kê khóa học.", 500);
+//     }
+// };
 
 /**
  * @route POST /api/courses/import
