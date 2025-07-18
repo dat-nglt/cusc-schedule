@@ -25,20 +25,26 @@ import { loginWithGoogle } from '../../api/authAPI';
 import { useLocation, useNavigate } from 'react-router-dom'; // Import useLocation và useNavigate
 import { toast } from 'react-toastify';
 const LoginPage = () => {
-    const [selectedRole, setSelectedRole] = useState('Học viên');
+    const [selectedRole, setRoleName] = useState('Học viên');
+    const [selectedRoleCode, setRoleCode] = useState("student");
     const theme = useTheme();
     const location = useLocation(); // Hook để truy cập đối tượng location
     const navigate = useNavigate(); // Hook để điều hướng
 
+    const handleRole = (roleName, roleCode) => {
+        setRoleCode(roleCode)
+        setRoleName(roleName)
+    }
+
     const handleGoogleLogin = () => {
-        loginWithGoogle();
+        loginWithGoogle(selectedRoleCode);
     };
 
     const roles = [
-        { name: 'Học viên', icon: <SchoolIcon fontSize="large" /> },
-        { name: 'Giảng viên', icon: <PersonIcon fontSize="large" /> },
-        { name: 'Cán bộ đào tạo', icon: <EngineeringIcon fontSize="large" /> },
-        { name: 'Quản trị viên', icon: <AdminPanelSettingsIcon fontSize="large" /> },
+        { code: 'student', name: "Học viên", icon: <SchoolIcon fontSize="large" /> },
+        { code: 'lecturer', name: "Giảng viên", icon: <PersonIcon fontSize="large" /> },
+        { code: 'trainingofficer', name: "Cán bộ đào tạo", icon: <EngineeringIcon fontSize="large" /> },
+        { code: 'admin', name: "Quản trị viên", icon: <AdminPanelSettingsIcon fontSize="large" /> },
     ];
 
     useEffect(() => {
@@ -49,25 +55,22 @@ const LoginPage = () => {
             switch (errorParam) {
 
                 case 'account_not_found':
-                    toast.error('Tài khoản Google của bạn không tồn tại trong hệ thống. Vui lòng liên hệ quản trị viên để được cấp quyền hoặc đăng ký tài khoản.');
+                    toast.error('Tài khoản Google của bạn không tồn tại trong hệ thống. Vui lòng liên hệ quản trị viên để được cấp quyền hoặc đăng ký tài khoản!');
                     break;
-                case 'account_already_linked':
-                    toast.error('Tài khoản Google này đã được liên kết với một tài khoản khác trong hệ thống. Vui lòng sử dụng tài khoản Google đã liên kết.');
+                case 'valid_linked_account':
+                    toast.error('Tài khoản Google này đã được liên kết với một tài khoản khác trong hệ thống. Vui lòng sử dụng tài khoản Google đã liên kết!');
                     break;
                 case 'authentication_failed':
-                    toast.error('Đăng nhập Google thất bại. Vui lòng thử lại.');
-                    break;
-                case 'server_error_oauth':
-                    toast.error('Đã xảy ra lỗi máy chủ trong quá trình xác thực. Vui lòng thử lại sau.');
+                    toast.error('Đăng nhập Google thất bại. Vui lòng thử lại!');
                     break;
                 case 'email_not_available':
-                    toast.error('Không thể lấy địa chỉ email từ tài khoản Google của bạn. Vui lòng thử lại với tài khoản Google khác.');
+                    toast.error('Không thể lấy địa chỉ email từ tài khoản Google của bạn. Vui lòng thử lại với tài khoản Google khác!');
                     break;
-                case 'user_not_found_session':
-                    toast.error('Phiên đăng nhập không hợp lệ. Vui lòng đăng nhập lại.');
+                case 'invalid_role_access':
+                    toast.error('Quyền truy cập hệ thống không hợp lệ. Vui lòng kiểm tra lại!');
                     break;
                 default:
-                    toast.error('Đã xảy ra lỗi không xác định trong quá trình đăng nhập. Vui lòng thử lại.');
+                    toast.error('Đăng nhập không thành công! Vui lòng thử lại!');
             }
 
 
@@ -380,7 +383,7 @@ const LoginPage = () => {
                                         <Paper
                                             key={role.name}
                                             elevation={selectedRole === role.name ? 6 : 2}
-                                            onClick={() => setSelectedRole(role.name)}
+                                            onClick={() => handleRole(role.name, role.code)}
                                             sx={{
                                                 flex: 1,
                                                 p: { xs: 2, md: 3 },
@@ -443,7 +446,7 @@ const LoginPage = () => {
                                         <Paper
                                             key={role.name}
                                             elevation={selectedRole === role.name ? 6 : 2}
-                                            onClick={() => setSelectedRole(role.name)}
+                                            onClick={() => handleRole(role.name, role.code)}
                                             sx={{
                                                 flex: 1,
                                                 p: { xs: 2, md: 3 },

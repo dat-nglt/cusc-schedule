@@ -95,7 +95,7 @@ module.exports = {
             account_id: studentAccountId, // Sử dụng account_id để khớp với định nghĩa model
             student_id: "SV001",
             name: "Lê Văn C (Sinh viên)",
-            class_id: "L001", // Giả sử có lớp L001
+            class_id: null, // Giả sử có lớp L001
             admission_year: "2023-09-01",
             gpa: 3.5,
             created_at: new Date(),
@@ -112,7 +112,7 @@ module.exports = {
         [
           {
             id: trainingOfficerAccountId,
-            email: "training_officer@example.com",
+            email: "dhchuong@student.ctuet.edu.vn",
             role: "training_officer",
             google_id: null,
             created_at: new Date(),

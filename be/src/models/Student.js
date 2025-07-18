@@ -46,8 +46,12 @@ const Student = (sequelize) => {
       },
       // Mã lớp học
       class_id: {
-        type: DataTypes.STRING(100), // Kiểu dữ liệu phải khớp với ID của model Classes
+        type: DataTypes.STRING(30), // Kiểu dữ liệu phải khớp với ID của model Classes
         allowNull: true,
+        references: {
+          model: "classes", // Tên bảng đích (Classes)
+          key: "class_id", // Tên cột khóa chính của bảng đích
+        },
       },
       // Năm nhập học (đặc thù của sinh viên)
       admission_year: {

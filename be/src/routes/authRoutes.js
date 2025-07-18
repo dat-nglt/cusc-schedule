@@ -7,6 +7,7 @@ import {
   refreshTokenController,
 } from "../controllers/authController.js";
 import authMiddleware from "../middleware/authMiddleware.js";
+import { error, log } from "winston";
 
 const router = express.Router();
 
@@ -32,6 +33,17 @@ router.post("/refresh-token", refreshTokenController);
 
 router.get(
   "/google",
+  (req, res, next) => {
+    const role = req.query.role || null;
+
+    console.log("-------");
+    console.log(role);
+    console.log("-------");
+
+    req.session.role = role; // Hoặc một tên biến khác tùy bạn
+
+    next();
+  },
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
@@ -47,28 +59,9 @@ router.get(
   (req, res, next) => {
     passport.authenticate("google", (err, authenticatedUser, info) => {
       if (err) {
-        let errorMessage = "authentication_failed"; // Mặc định
-        if (err.message === "account_not_found") {
-          // <--- Đảm bảo bạn đang kiểm tra chuỗi này
-          errorMessage = "account_not_found";
-        } else if (err.message === "server_error_oauth") {
-          errorMessage = "server_error_oauth";
-        } else if (err.message === "account_already_linked") {
-          errorMessage = "account_already_linked";
-        } else if (err.message === "Email không khả dụng từ Google Profile.") {
-          // Trường hợp email trống
-          errorMessage = "email_not_available";
-        } else if (err.message === "user_not_found_deserialize") {
-          // Từ deserializeUser
-          errorMessage = "user_not_found_session";
-        }
-        // Các lỗi khác từ Passport như email không khả dụng, v.v.
-        else {
-          errorMessage = "google_auth_error";
-        }
         const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5000";
         return res.redirect(
-          `${frontendUrl}/login?error=${encodeURIComponent(errorMessage)}`
+          `${frontendUrl}/login?error=${encodeURIComponent(err.message)}`
         );
       }
       if (!authenticatedUser) {

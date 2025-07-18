@@ -66,6 +66,15 @@ export const logoutUser = async () => {
   }
 };
 
-export const loginWithGoogle = () => {
-  window.location.href = "http://localhost:3000/auth/google";
+export const loginWithGoogle = (role) => {
+  // Đảm bảo `role` được truyền vào và là giá trị hợp lệ
+  if (!role || typeof role !== "string") {
+    console.error("Invalid role provided for Google login.");
+    return; // Dừng hàm nếu role không hợp lệ
+  }
+
+  // const encodedRole = encodeURIComponent(role);
+
+  // Thêm role làm query parameter
+  window.location.href = `http://localhost:3000/auth/google?role=${role}`;
 };

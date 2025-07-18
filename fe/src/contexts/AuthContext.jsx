@@ -8,6 +8,8 @@ const IS_LOGGED_IN_KEY = 'isLoggedIn';
 const USER_ROLE_KEY = 'userRole';
 
 export const AuthProvider = ({ children }) => {
+
+  // const [roleForLogin, setRoleForLogin]
   // Lấy trạng thái ban đầu từ localStorage
   const [isLoggedIn, setIsLoggedIn] = useState(
     localStorage.getItem(IS_LOGGED_IN_KEY) === 'true'
@@ -56,7 +58,7 @@ export const AuthProvider = ({ children }) => {
     } finally {
       setTimeout(() => {
         setLoading(false); // Kết thúc trạng thái loading sau khi xác minh
-      }, 500); // Giả lập thời gian xác minh
+      }, 1000); // Giả lập thời gian xác minh
     }
   }, [login, logout]);
 

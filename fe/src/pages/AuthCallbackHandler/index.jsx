@@ -1,105 +1,172 @@
-// src/pages/AuthCallbackHandler.js
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
-import { getCurrentUserData } from '../../api/authAPI'; // Hoặc đường dẫn đúng tới service của bạn
-// Import các component MUI
-import {
-  CircularProgress, // Biểu tượng loading hình tròn
-  Box,              // Component bao bọc đơn giản
-  Typography,       // Để hiển thị văn bản
-  Alert,            // Để hiển thị thông báo lỗi/thành công
-  Container,        // Để căn giữa nội dung
-} from '@mui/material';
-import { CheckCircleOutline, ErrorOutline } from '@mui/icons-material'; // Icons cho thông báo
+  // src/pages/AuthCallbackHandler.js
+  import React, { useEffect, useState } from 'react';
+  import { useNavigate } from 'react-router-dom';
+  import { useAuth } from '../../contexts/AuthContext';
+  import { getCurrentUserData } from '../../api/authAPI';
+  import {
+    LinearProgress,
+    Box,
+    Typography,
+    Container,
+    Fade,
+    Stack,
+    useTheme
+  } from '@mui/material';
+  import {
+    CheckCircle,
+    Error as ErrorIcon,
+    AccountCircle
+  } from '@mui/icons-material';
 
-function AuthCallbackHandler() {
-  const navigate = useNavigate();
-  const { login, logout } = useAuth();
-  const [message, setMessage] = useState('Đang xác thực, vui lòng chờ...');
-  const [loading, setLoading] = useState(true); // Thêm trạng thái loading
-  const [isError, setIsError] = useState(false); // Trạng thái lỗi để hiển thị Alert phù hợp
+  function AuthCallbackHandler() {
+    const navigate = useNavigate();
+    const { login, logout } = useAuth();
+    const [message, setMessage] = useState('Đang xác thực tài khoản...');
+    const [loading, setLoading] = useState(true);
+    const [isError, setIsError] = useState(false);
+    const [progress, setProgress] = useState(0);
 
-  useEffect(() => {
-    const handleAuthProcess = async () => {
-      setLoading(true); // Bắt đầu loading
-      setIsError(false); // Đặt lại trạng thái lỗi
-      try {
-        const response = await getCurrentUserData();
-        console.log("API Response:", response); // Log đầy đủ phản hồi để debug
+    useEffect(() => {
+      const timer = setInterval(() => {
+        setProgress((oldProgress) => {
+          if (oldProgress === 100) {
+            return 100;
+          }
+          const diff = Math.random() * 10;
+          return Math.min(oldProgress + diff, 90);
+        });
+      }, 500);
 
-        if (response && response.success) { // Giả sử API trả về { success: true, role: '...' }
-          login(response.role);
-          setMessage('Xác thực thành công! Đang chuyển hướng đến Dashboard...');
-          // Sử dụng icon CheckCircleOutline cho thông báo thành công
-          // Tự động chuyển hướng sau 1.5 giây để người dùng kịp nhìn thấy thông báo
-          setTimeout(() => {
-            navigate('/dashboard', { replace: true });
-          }, 1500);
-        } else {
-          // Xử lý trường hợp API trả về success: false hoặc không có dữ liệu mong muốn
-          const errorMessage = response?.message || 'Lỗi không xác định từ server.';
-          console.error('Lỗi khi lấy thông tin người dùng:', errorMessage);
+      const handleAuthProcess = async () => {
+        try {
+          const response = await getCurrentUserData();
+
+          if (response?.success) {
+            setProgress(100);
+            login(response.role);
+            setMessage('Xác thực thành công!');
+            setTimeout(() => navigate('/dashboard', { replace: true }), 1000);
+          } else {
+            const errorMessage = response?.message || 'Xác thực không thành công';
+            throw new Error(errorMessage);
+          }
+        } catch (error) {
+          setProgress(100);
           logout();
-          setMessage(`Xác thực thất bại: ${errorMessage}`);
-          setIsError(true); // Đặt trạng thái lỗi
-          // Tự động chuyển hướng về trang đăng nhập sau 2.5 giây
+          setMessage(error.message);
+          setIsError(true);
           setTimeout(() => {
-            navigate(`/login?error=${encodeURIComponent(errorMessage)}`, { replace: true });
-          }, 2500);
+            navigate(`/login?error=${encodeURIComponent(error.message)}`, { replace: true });
+          }, 2000);
+        } finally {
+          setLoading(false);
+          clearInterval(timer);
         }
-      } catch (error) {
-        console.error('Lỗi trong quá trình xử lý callback frontend:', error);
-        logout();
-        const clientErrorMessage = error.message || 'Có lỗi xảy ra trong quá trình xác thực.';
-        setMessage(`Có lỗi xảy ra: ${clientErrorMessage}`);
-        setIsError(true); // Đặt trạng thái lỗi
-        // Tự động chuyển hướng về trang đăng nhập sau 2.5 giây
-        setTimeout(() => {
-          navigate(`/login?error=${encodeURIComponent(clientErrorMessage)}`, { replace: true });
-        }, 1500);
-      } finally {
-        setLoading(false); // Kết thúc loading
-      }
-    };
+      };
 
-    handleAuthProcess();
-  }, [navigate, login, logout]);
+      handleAuthProcess();
 
-  return (
-    <Container
-      maxWidth="sm" // Giới hạn chiều rộng của container
-      sx={{
+      return () => clearInterval(timer);
+    }, [navigate, login, logout]);
+
+    return (
+      <Container maxWidth="sm" sx={{
+        height: '100vh',
         display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
         alignItems: 'center',
-        minHeight: '100vh', // Chiếm toàn bộ chiều cao màn hình
-        textAlign: 'center',
-        p: 3, // Padding
-      }}
-    >
-      <Box sx={{ my: 4 }}>
-        {loading ? (
-          <>
-            <CircularProgress size={60} sx={{ mb: 2 }} />
-            <Typography variant="h6" color="text.secondary">
-              {message}
+        // background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`
+      }}>
+        <Fade in={true} timeout={500}>
+          <Box sx={{
+            width: '100%',
+            textAlign: 'center',
+            backgroundColor: 'background.paper',
+            borderRadius: 4,
+            p: 4,
+            boxShadow: 24
+          }}>
+            <Stack direction="row" alignItems="flex-end" justifyContent="center" spacing={4} mb={4}>
+              <img
+                src="https://cusc.ctu.edu.vn/themes/cusc/images/cusc/logo/CUSC%20Logo%20Series.png"
+                alt="CUSC Logo"
+                style={{ width: '100px', height: 'auto' }}
+              />
+              <Box>
+                <Typography variant="subtitle1" sx={{
+                  fontWeight: 700,
+                  color: 'primary.main',
+                  lineHeight: 1.2
+                }}>
+                  TRUNG TÂM CÔNG NGHỆ PHẦN MỀM
+                </Typography>
+                <Typography variant="subtitle1" sx={{
+                  fontWeight: 700,
+                  color: 'primary.main'
+                }}>
+                  ĐẠI HỌC CẦN THƠ
+                </Typography>
+              </Box>
+            </Stack>
+
+            <Box sx={{
+              p: 2,
+              borderRadius: 3,
+            }}>
+              <Stack direction="row" alignItems="center" justifyContent="center" spacing={2}>
+                {loading ? (
+                  <AccountCircle sx={{
+                    fontSize: 32,
+                    color: 'primary.main',
+                    flexShrink: 0
+                  }} />
+                ) : isError ? (
+                  <ErrorIcon sx={{
+                    fontSize: 32,
+                    color: 'error.main',
+                    flexShrink: 0
+                  }} />
+                ) : (
+                  <CheckCircle sx={{
+                    fontSize: 32,
+                    color: 'success.main',
+                    flexShrink: 0
+                  }} />
+                )}
+                <Typography variant="body1" sx={{
+                  fontWeight: 500,
+                  color: isError ? 'error.dark' : loading ? 'text.primary' : 'success.dark'
+                }}>
+                  {message}
+                </Typography>
+              </Stack>
+            </Box>
+
+            <LinearProgress
+              variant="determinate"
+              value={progress}
+              color={isError ? 'error' : 'primary'}
+              sx={{
+                width: '80%',
+                margin: '0 auto',
+                height: 3,
+                borderRadius: 4,
+                mb: 2,
+                transition: 'all 0.3s ease',
+                backgroundColor: 'divider'
+              }}
+            />
+
+            <Typography variant="caption" sx={{
+              color: 'text.secondary',
+              display: 'block',
+              fontStyle: 'italic'
+            }}>
+              {loading ? 'Vui lòng chờ trong giây lát...' : isError ? 'Đang chuyển về trang đăng nhập' : 'Đang chuyển hướng...'}
             </Typography>
-          </>
-        ) : (
-          <Alert
-            severity={isError ? "error" : "success"}
-            icon={isError ? <ErrorOutline fontSize="inherit" /> : <CheckCircleOutline fontSize="inherit" />}
-            sx={{ width: '100%' }}
-          >
-            <Typography variant="body1">{message}</Typography>
-          </Alert>
-        )}
-      </Box>
+          </Box>
+        </Fade>
+      </Container>
+    );
+  }
 
-    </Container>
-  );
-}
-
-export default AuthCallbackHandler;
+  export default AuthCallbackHandler;
