@@ -4,6 +4,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import GlobalStyle from './assets/styles/GlobalStyle';
 import DynamicRouter from './routes/dynamicRouter';
 import { lightTheme, darkTheme } from '../theme';
+import { AuthProvider } from './contexts/AuthContext';
 import { TimetableProvider } from './contexts/TimetableContext';
 import ThemeWrapper from '../themeWrapper';
 
@@ -19,7 +20,9 @@ function App() {
       <GlobalStyle />
       <BrowserRouter>
         <TimetableProvider>
-          <DynamicRouter />
+          <AuthProvider>
+            <DynamicRouter />
+          </AuthProvider>
         </TimetableProvider>
       </BrowserRouter>
     </ThemeWrapper>

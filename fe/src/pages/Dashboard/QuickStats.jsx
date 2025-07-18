@@ -51,6 +51,7 @@ import RoomDetailsModal from './QuickStart/RoomDetailsModal';
 import TeacherDetailsModal from './QuickStart/TeacherDetailsModal';
 import ClassDetailsModal from './QuickStart/ClassDetailsModal';
 import ConflictDetailsModal from './QuickStart/ConflictDetailsModal';
+import SubjectDetailsModal from './QuickStart/SubjectDetailsModal';
 
 const StatCard = ({ icon, title, value, maxValue, isError, tooltip, onClick }) => {
     const percentage = maxValue ? Math.min(100, (value / maxValue) * 100) : 0;
@@ -175,11 +176,12 @@ function a11yProps(index) {
     };
 }
 
-const QuickStats = ({ stats }) => {
+const QuickStats = ({ stats, lecturer, subject }) => {
     const [openRooms, setOpenRooms] = useState(false);
     const [openTeachers, setOpenTeachers] = useState(false);
     const [openClasses, setOpenClasses] = useState(false);
     const [openConflicts, setOpenConflicts] = useState(false);
+    const [openSubjects, setOpenSubjects] = useState(false);
 
     // Sample data for demonstration
     const roomData = [
@@ -192,20 +194,6 @@ const QuickStats = ({ stats }) => {
             equipment: ['Máy chiếu', 'Bảng thông minh'], status: 'Bảo trì', building: 'Khu B'
         },
         // Add more rooms as needed
-    ];
-
-    const teacherData = [
-        {
-            id: 1, code: 'GV001', name: 'Nguyễn Văn A', department: 'Công nghệ thông tin',
-            subjects: ['Lập trình Java', 'Cấu trúc dữ liệu', 'Toán rời rạc'],
-            email: 'nguyenvana@university.edu.vn', phone: '0987654321', status: 'Đang dạy'
-        },
-        {
-            id: 2, code: 'GV002', name: 'Trần Thị B', department: 'Kế toán',
-            subjects: ['Kế toán tài chính', 'Kế toán quản trị'],
-            email: 'tranthib@university.edu.vn', phone: '0912345678', status: 'Nghỉ phép'
-        },
-        // Add more teachers as needed
     ];
 
     const classData = [
@@ -233,6 +221,7 @@ const QuickStats = ({ stats }) => {
         },
         // Add more conflicts as needed
     ];
+
 
     return (
         <>
@@ -272,12 +261,12 @@ const QuickStats = ({ stats }) => {
 
                 <Grid item xs={12} sm={6} md={3}>
                     <StatCard
-                        icon={<RoomIcon />}
+                        icon={<BookIcon />}
                         title="Học phần"
                         value={stats.course}
                         maxValue={40}
-                        tooltip={`Tổng số học phần: ${stats.rooms}`}
-                        onClick={() => setOpenRooms(true)}
+                        tooltip={`Tổng số học phần: ${stats.course}`}
+                        onClick={() => setOpenSubjects(true)}
                     />
                 </Grid>
 
@@ -302,7 +291,7 @@ const QuickStats = ({ stats }) => {
             <TeacherDetailsModal
                 open={openTeachers}
                 onClose={() => setOpenTeachers(false)}
-                teachers={teacherData}
+                lecturerData={lecturer}
             />
 
             <ClassDetailsModal
@@ -315,6 +304,12 @@ const QuickStats = ({ stats }) => {
                 open={openConflicts}
                 onClose={() => setOpenConflicts(false)}
                 conflicts={conflictData}
+            />
+
+            <SubjectDetailsModal
+                open={openSubjects}
+                onClose={() => setOpenSubjects(false)}
+                subjectData={subject}
             />
         </>
     );

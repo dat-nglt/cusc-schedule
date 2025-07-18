@@ -21,19 +21,9 @@ import {
     Update as UpdateIcon,
     CheckCircle as StatusIcon,
 } from '@mui/icons-material';
-
-// Hàm định dạng thời gian từ YYYY-MM-DD HH:mm thành DD/MM/YYYY HH:mm
-const formatDateTime = (dateTime) => {
-    if (!dateTime) return 'Không có dữ liệu';
-    try {
-        const [date, time] = dateTime.split(' ');
-        const [year, month, day] = date.split('-');
-        return `${day}/${month}/${year} ${time}`;
-    } catch {
-        return 'Không hợp lệ';
-    }
-};
-
+import { getStatusChip } from '../../components/ui/StatusChip';
+import { formatDateTime } from '../../utils/formatDateTime';
+import { toast } from 'react-toastify';
 // Hàm kiểm tra giá trị và trả về giá trị hoặc thông báo mặc định
 const getValueOrDefault = (value) => value || 'Không có dữ liệu';
 
@@ -42,29 +32,8 @@ export default function SubjectDetailModal({ open, onClose, subject }) {
 
     // Hàm sao chép mã học phần
     const handleCopyMaHocPhan = () => {
-        navigator.clipboard.writeText(subject.maHocPhan);
-        alert('Đã sao chép mã học phần!');
-    };
-
-    // Hàm hiển thị trạng thái với màu sắc
-    const getStatusChip = (status) => {
-        const statusColors = {
-            'Đang hoạt động': { color: '#4caf50', bgcolor: '#e8f5e8' },
-            'Tạm dừng': { color: '#f57c00', bgcolor: '#fff3e0' },
-            'Ngừng hoạt động': { color: '#d32f2f', bgcolor: '#ffebee' },
-        };
-        const style = statusColors[status] || { color: '#757575', bgcolor: '#f5f5f5' };
-
-        return (
-            <Chip
-                label={status}
-                sx={{
-                    color: style.color,
-                    bgcolor: style.bgcolor,
-                    fontWeight: 'bold'
-                }}
-            />
-        );
+        navigator.clipboard.writeText(subject.subject_id);
+        toast.success('Đã sao chép mã học phần: ' + subject.subject_id);
     };
 
     return (
@@ -91,7 +60,7 @@ export default function SubjectDetailModal({ open, onClose, subject }) {
                 }}
             >
                 <Typography variant="h6">
-                    Chi tiết học phần {subject.maHocPhan}
+                    Chi tiết học phần {subject.subject_id}
                 </Typography>
                 <Tooltip title="Sao chép mã học phần">
                     <IconButton
@@ -125,7 +94,7 @@ export default function SubjectDetailModal({ open, onClose, subject }) {
                                     Mã học phần
                                 </Typography>
                                 <Typography variant="body1" sx={{ color: '#666' }}>
-                                    {getValueOrDefault(subject.maHocPhan)}
+                                    {getValueOrDefault(subject.subject_id)}
                                 </Typography>
                             </Box>
                         </Box>
@@ -152,7 +121,7 @@ export default function SubjectDetailModal({ open, onClose, subject }) {
                                     Tên học phần
                                 </Typography>
                                 <Typography variant="body1" sx={{ color: '#666' }}>
-                                    {getValueOrDefault(subject.tenHocPhan)}
+                                    {getValueOrDefault(subject.subject_name)}
                                 </Typography>
                             </Box>
                         </Box>
@@ -179,7 +148,7 @@ export default function SubjectDetailModal({ open, onClose, subject }) {
                                     Số tiết lý thuyết
                                 </Typography>
                                 <Typography variant="body1" sx={{ color: '#666' }}>
-                                    {subject.soTietLyThuyet ? `${subject.soTietLyThuyet} tiết` : 'Không có dữ liệu'}
+                                    {subject.theory_hours ? `${subject.theory_hours} tiết` : 'Không có dữ liệu'}
                                 </Typography>
                             </Box>
                         </Box>
@@ -206,7 +175,7 @@ export default function SubjectDetailModal({ open, onClose, subject }) {
                                     Số tiết thực hành
                                 </Typography>
                                 <Typography variant="body1" sx={{ color: '#666' }}>
-                                    {subject.soTietThucHanh ? `${subject.soTietThucHanh} tiết` : 'Không có dữ liệu'}
+                                    {subject.practice_hours ? `${subject.practice_hours} tiết` : 'Không có dữ liệu'}
                                 </Typography>
                             </Box>
                         </Box>
@@ -233,7 +202,7 @@ export default function SubjectDetailModal({ open, onClose, subject }) {
                                     Trạng thái
                                 </Typography>
                                 <Box sx={{ mt: 0.5 }}>
-                                    {getStatusChip(subject.trangThai)}
+                                    {getStatusChip(subject.status)}
                                 </Box>
                             </Box>
                         </Box>
@@ -260,7 +229,7 @@ export default function SubjectDetailModal({ open, onClose, subject }) {
                                     Thời gian tạo
                                 </Typography>
                                 <Typography variant="body1" sx={{ color: '#666' }}>
-                                    {formatDateTime(subject.thoiGianTao)}
+                                    {formatDateTime(subject.created_at)}
                                 </Typography>
                             </Box>
                         </Box>
@@ -287,7 +256,7 @@ export default function SubjectDetailModal({ open, onClose, subject }) {
                                     Thời gian cập nhật
                                 </Typography>
                                 <Typography variant="body1" sx={{ color: '#666' }}>
-                                    {formatDateTime(subject.thoiGianCapNhat)}
+                                    {formatDateTime(subject.updated_at)}
                                 </Typography>
                             </Box>
                         </Box>

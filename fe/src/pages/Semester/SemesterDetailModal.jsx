@@ -22,17 +22,17 @@ import {
 } from '@mui/icons-material';
 import { getStatusChip } from '../../components/ui/StatusChip';
 import { formatDateTime } from '../../utils/formatDateTime';
-
+import { toast } from 'react-toastify';
 // Hàm kiểm tra giá trị và trả về giá trị hoặc thông báo mặc định
 const getValueOrDefault = (value) => value || 'Không có dữ liệu';
 
 export default function SemesterDetailModal({ open, onClose, semester }) {
     if (!semester) return null;
 
-    // Hàm sao chép mã chương trình
+    // Hàm sao chép 
     const handleCopysemester_id = () => {
         navigator.clipboard.writeText(semester.semester_id);
-        alert('Đã sao chép mã học kỳ!');
+        toast.success('Đã sao chép mã học kỳ: ' + semester.semester_id);
     };
     return (
         <Dialog

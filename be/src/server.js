@@ -2,12 +2,14 @@
 import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import session from "express-session";
 import passport from "passport";
 import morgan from "morgan"; // Import Morgan
 import logger from "./utils/logger.js"; // Import logger đã cấu hìnhwinston-daily-rotate-file'
 import setupRoutes from "./routes/router.js";
 import connectDB from "./config/connectDB.js";
+import models from "./models/index.js";
 import configurePassport from "./config/passport.js";
 
 dotenv.config();
@@ -17,7 +19,7 @@ const PORT = process.env.PORT || 3000;
 
 async function startServer() {
   try {
-    await connectDB();
+    await connectDB(models);
 
     configurePassport();
     logger.info("✅ Passport has been configured.");
@@ -43,7 +45,15 @@ async function startServer() {
     logger.info("✅ Middleware Session and Passport have been configured.");
 
     // Cấu hình các Middleware chung
-    app.use(cors());
+    app.use(
+      cors({
+        origin: process.env.FRONTEND_URL, // Hoặc một mảng các origins được phép
+        credentials: true, // RẤT QUAN TRỌNG để cho phép gửi/nhận cookies
+        methods: ["GET", "POST", "PUT", "DELETE"],
+        allowedHeaders: ["Content-Type", "Authorization"], // Các headers bạn cho phép
+      })
+    );
+    app.use(cookieParser());
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
 
@@ -54,7 +64,8 @@ async function startServer() {
     // Khởi động Server
     app.listen(PORT, () => {
       logger.info(
-        `✅ Server is running on port ${PORT} (${process.env.NODE_ENV || "development"
+        `✅ Server is running on port ${PORT} (${
+          process.env.NODE_ENV || "development"
         } environment)`
       );
     });

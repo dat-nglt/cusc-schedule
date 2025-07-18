@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Box, CssBaseline, useMediaQuery } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
@@ -6,6 +5,7 @@ import '../ScheduleLayout/ScheduleLayout.css';
 import Header from '../Header';
 import MainContainer from '../MainContainer';
 import SidebarForJustAdmin from './SidebarForJustAdmin';
+
 
 const AdminLayout = ({ children }) => {
     const theme = useTheme();

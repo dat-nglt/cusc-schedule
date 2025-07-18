@@ -120,6 +120,8 @@ export const processExcelDataLecturer = (rawData, existingLecturers) => {
             gender: row['Giới tính'] || row['gender'] || '',
             address: row['Địa chỉ'] || row['address'] || '',
             phone_number: row['Số điện thoại'] || row['phone_number'] || '',
+            academic_rank: row['Học hàm'] || row['academic_rank'] || '',
+            subjectIds: row['Mã học phần'] ? row['Mã học phần'].split(',').map(id => id.trim()) : [],
             department: row['Khoa/Bộ môn'] || row['department'] || '',
             hire_date: formatDate(row['Ngày tuyển dụng'] || row['hire_date']),
             degree: row['Học vị'] || row['degree'] || '',
@@ -410,3 +412,95 @@ export const processExcelDataSemester = (rawData, existingSemesters) => {
     return processedData;
 };
 
+
+//validate subject data
+const requiredSubjectFields = [
+    'subject_id',
+    'subject_name',
+    'credit',
+    'theory_hours',
+    'practice_hours',
+    'status',
+    'semester_id',
+];
+
+const validateSubjectData = (subject, existingSubjects, allImportData = []) => {
+    const errors = [];
+
+    // Kiểm tra trùng lặp mã môn học với dữ liệu hiện có
+    const isDuplicateExisting = existingSubjects.some(
+        existing => existing.subject_id === subject.subject_id
+    );
+
+    // Kiểm tra trùng lặp trong dữ liệu import
+    const isDuplicateImport = allImportData.filter(
+        item => item.subject_id === subject.subject_id
+    ).length > 1;
+
+    if (isDuplicateExisting || isDuplicateImport) {
+        errors.push('duplicate_id');
+    }
+
+    // Kiểm tra các trường bắt buộc
+    const missingFields = requiredSubjectFields.filter(field => {
+        const value = subject[field];
+        return !value || (typeof value === 'string' && value.trim() === '');
+    });
+
+    if (missingFields.length > 0) {
+        errors.push('missing_required');
+    }
+
+    // Kiểm tra credit format (phải là số dương)
+    if (subject.credit) {
+        const credit = parseFloat(subject.credit);
+        if (isNaN(credit) || credit <= 0) {
+            errors.push('invalid_credit');
+        }
+    }
+
+    // Kiểm tra theory_hours format (phải là số không âm)
+    if (subject.theory_hours) {
+        const theoryHours = parseFloat(subject.theory_hours);
+        if (isNaN(theoryHours) || theoryHours < 0) {
+            errors.push('invalid_theory_hours');
+        }
+    }
+
+    // Kiểm tra practice_hours format (phải là số không âm)
+    if (subject.practice_hours) {
+        const practiceHours = parseFloat(subject.practice_hours);
+        if (isNaN(practiceHours) || practiceHours < 0) {
+            errors.push('invalid_practice_hours');
+        }
+    }
+
+    return errors;
+};
+
+export const processExcelDataSubject = (rawData, existingSubjects) => {
+    // Xử lý dữ liệu thô từ Excel
+    const processedData = rawData.map((row, index) => {
+        // Chuẩn hóa dữ liệu
+        const subject = {
+            subject_id: row['Mã học phần'] || row['subject_id'] || '',
+            subject_name: row['Tên học phần'] || row['subject_name'] || '',
+            credit: row['Số tín chỉ'] || row['credit'] || '',
+            theory_hours: row['Số giờ lý thuyết'] || row['theory_hours'] || '',
+            practice_hours: row['Số giờ thực hành'] || row['practice_hours'] || '',
+            status: row['Trạng thái'] || row['status'] || 'Hoạt động',
+            semester_id: row['Mã học kỳ'] || row['semester_id'] || '',
+            rowIndex: index + 2 // +2 vì Excel bắt đầu từ row 1 và có header
+        };
+
+        // Validate dữ liệu
+        const errors = validateSubjectData(subject, existingSubjects, rawData);
+
+        return {
+            ...subject,
+            errors
+        };
+    });
+
+    return processedData;
+};

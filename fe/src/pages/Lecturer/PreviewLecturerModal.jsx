@@ -1,25 +1,25 @@
 import React, { useState } from "react";
 import {
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    Typography,
-    Button,
-    Box,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Paper,
-    Chip,
-    Tooltip,
-    IconButton,
-    Accordion,
-    AccordionSummary,
-    AccordionDetails,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Typography,
+  Button,
+  Box,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Chip,
+  Tooltip,
+  IconButton,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ErrorIcon from '@mui/icons-material/Error';
@@ -27,10 +27,10 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { importLecturers } from '../../api/lecturerAPI';
 import { getRowStatus, getErrorChip } from '../../components/ui/ErrorChip';
 
-export default function PreviewLecturerModal({ open, onClose, previewData, onImportSuccess }) {
-    const [isImporting, setIsImporting] = useState(false);
-    const [importError, setImportError] = useState('');
-    const [importMessage, setImportMessage] = useState('');
+export default function PreviewLecturerModal({ open, onClose, previewData, fetchLecturers }) {
+  const [isImporting, setIsImporting] = useState(false);
+  const [importError, setImportError] = useState('');
+  const [importMessage, setImportMessage] = useState('');
 
 
   const validRows = previewData.filter((row) => getRowStatus(row) === "valid");
@@ -46,23 +46,23 @@ export default function PreviewLecturerModal({ open, onClose, previewData, onImp
     setImportError("");
     setImportMessage("");
 
-        try {
-            // Tạo file Excel tạm thời chỉ với dữ liệu hợp lệ
-            const validData = validRows.map(row => {
-                const { errors: _errors, rowIndex: _rowIndex, ...lecturerData } = row;
-                return lecturerData;
-            });
-            console.log('Valid data to import:', validData);
-            // Gọi API import với dữ liệu đã được validate
-            const response = await importLecturers(validData);
+    try {
+      // Tạo file Excel tạm thời chỉ với dữ liệu hợp lệ
+      const validData = validRows.map(row => {
+        const { errors: _errors, rowIndex: _rowIndex, ...lecturerData } = row;
+        return lecturerData;
+      });
+      console.log('Valid data to import:', validData);
+      // Gọi API import với dữ liệu đã được validate
+      const response = await importLecturers(validData);
 
-      if (response.data && response.data) {
+      if (response.data) {
         setImportMessage(`Thêm thành công ${validRows.length} giảng viên`);
         setImportError("");
-
+        fetchLecturers(); // Cập nhật danh sách giảng viên sau khi thêm thành công
         // Delay để người dùng thấy thông báo thành công trước khi đóng modal
         setTimeout(() => {
-          onImportSuccess(response.data);
+          setImportMessage("");
           onClose();
         }, 1500);
       } else {
@@ -80,31 +80,31 @@ export default function PreviewLecturerModal({ open, onClose, previewData, onImp
     }
   };
 
-    return (
-        <Dialog open={open} onClose={onClose} maxWidth="lg" fullWidth>
-            <DialogTitle>
-                <Typography >Xem trước dữ liệu đã nhập</Typography>
-            </DialogTitle>
-            <DialogContent>
-                {importError && (
-                    <Typography color="error" sx={{ mb: 2 }}>
-                        {importError}
-                    </Typography>
-                )}
-                {importMessage && (
-                    <div style={{
-                        marginBottom: '16px',
-                        fontWeight: 'bold',
-                        color: 'success.main',
-                        fontSize: '16px',
-                        padding: '8px',
-                        backgroundColor: '#f1f8e9',
-                        border: '1px solid #4caf50',
-                        borderRadius: '4px'
-                    }}>
-                        {importMessage}
-                    </div>
-                )}
+  return (
+    <Dialog open={open} onClose={onClose} maxWidth="lg" fullWidth>
+      <DialogTitle>
+        <Typography >Xem trước dữ liệu đã nhập</Typography>
+      </DialogTitle>
+      <DialogContent>
+        {importError && (
+          <Typography color="error" sx={{ mb: 2 }}>
+            {importError}
+          </Typography>
+        )}
+        {importMessage && (
+          <div style={{
+            marginBottom: '16px',
+            fontWeight: 'bold',
+            color: 'success.main',
+            fontSize: '16px',
+            padding: '8px',
+            backgroundColor: '#f1f8e9',
+            border: '1px solid #4caf50',
+            borderRadius: '4px'
+          }}>
+            {importMessage}
+          </div>
+        )}
 
         <Box sx={{ mb: 3 }}>
           <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
@@ -144,8 +144,7 @@ export default function PreviewLecturerModal({ open, onClose, previewData, onImp
                       <TableCell>Họ tên</TableCell>
                       <TableCell>Email</TableCell>
                       <TableCell>SĐT</TableCell>
-                      <TableCell>Khoa</TableCell>
-                      <TableCell>Bằng cấp</TableCell>
+                      <TableCell>Học phần</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -155,8 +154,21 @@ export default function PreviewLecturerModal({ open, onClose, previewData, onImp
                         <TableCell>{lecturer.name}</TableCell>
                         <TableCell>{lecturer.email}</TableCell>
                         <TableCell>{lecturer.phone_number}</TableCell>
-                        <TableCell>{lecturer.department}</TableCell>
-                        <TableCell>{lecturer.degree}</TableCell>
+                        <TableCell>
+                          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                            {lecturer.subjectIds && lecturer.subjectIds.length > 0
+                              ? lecturer.subjectIds.map((subjectId, idx) => (
+                                <Chip
+                                  key={idx}
+                                  label={subjectId}
+                                  size="small"
+                                  variant="outlined"
+                                  sx={{ fontSize: '0.75rem' }}
+                                />
+                              ))
+                              : <Typography variant="body2" color="text.secondary">-</Typography>}
+                          </Box>
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -166,67 +178,81 @@ export default function PreviewLecturerModal({ open, onClose, previewData, onImp
           </Accordion>
         )}
 
-                {/* Hiển thị dữ liệu có lỗi */}
-                {errorRows.length > 0 && (
-                    <Accordion defaultExpanded sx={{ mt: 2 }}>
-                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                            <Typography variant="h6" color="error.main">
-                                Dữ liệu không hợp lệ ({errorRows.length} dòng)
-                            </Typography>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                            <TableContainer component={Paper} sx={{ maxHeight: 300 }}>
-                                <Table stickyHeader size="small">
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell>Mã GV</TableCell>
-                                            <TableCell>Họ tên</TableCell>
-                                            <TableCell>Email</TableCell>
-                                            <TableCell>SĐT</TableCell>
-                                            <TableCell>Khoa</TableCell>
-                                            <TableCell>Lỗi</TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {errorRows.map((lecturer, index) => (
-                                            <TableRow
-                                                key={index}
-                                                sx={{ bgcolor: 'error.lighter' }}
-                                            >
-                                                <TableCell>{lecturer.lecturer_id || '-'}</TableCell>
-                                                <TableCell>{lecturer.name || '-'}</TableCell>
-                                                <TableCell>{lecturer.email || '-'}</TableCell>
-                                                <TableCell>{lecturer.phone_number || '-'}</TableCell>
-                                                <TableCell>{lecturer.department || '-'}</TableCell>
-                                                <TableCell>
-                                                    <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-                                                        {lecturer.errors.map((error) => getErrorChip(error, 'giảng viên'))}
-                                                    </Box>
-                                                </TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-                        </AccordionDetails>
-                    </Accordion>
-                )}
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={onClose} variant="outlined">
-                    Hủy
-                </Button>
-                <Button
-                    onClick={handleConfirmImport}
-                    variant="contained"
-                    disabled={validRows.length === 0 || isImporting || importMessage}
-                    sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
-                >
-                    {isImporting ? 'Đang thêm...' :
-                        importMessage ? 'Đã thêm thành công' :
-                            `Thêm ${validRows.length} giảng viên`}
-                </Button>
-            </DialogActions>
-        </Dialog>
-    );
+        {/* Hiển thị dữ liệu có lỗi */}
+        {errorRows.length > 0 && (
+          <Accordion defaultExpanded sx={{ mt: 2 }}>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography variant="h6" color="error.main">
+                Dữ liệu không hợp lệ ({errorRows.length} dòng)
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <TableContainer component={Paper} sx={{ maxHeight: 300 }}>
+                <Table stickyHeader size="small">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Mã GV</TableCell>
+                      <TableCell>Họ tên</TableCell>
+                      <TableCell>Email</TableCell>
+                      <TableCell>SĐT</TableCell>
+                      <TableCell>Học phần</TableCell>
+                      <TableCell>Lỗi</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {errorRows.map((lecturer, index) => (
+                      <TableRow
+                        key={index}
+                        sx={{ bgcolor: 'error.lighter' }}
+                      >
+                        <TableCell>{lecturer.lecturer_id || '-'}</TableCell>
+                        <TableCell>{lecturer.name || '-'}</TableCell>
+                        <TableCell>{lecturer.email || '-'}</TableCell>
+                        <TableCell>{lecturer.phone_number || '-'}</TableCell>
+                        <TableCell>
+                          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                            {lecturer.subjectIds && lecturer.subjectIds.length > 0
+                              ? lecturer.subjectIds.map((subjectId, idx) => (
+                                <Chip
+                                  key={idx}
+                                  label={subjectId}
+                                  size="small"
+                                  variant="outlined"
+                                  sx={{ fontSize: '0.75rem' }}
+                                />
+                              ))
+                              : <Typography variant="body2" color="text.secondary">-</Typography>}
+                          </Box>
+                        </TableCell>
+                        <TableCell>
+                          <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
+                            {lecturer.errors.map((error) => getErrorChip(error, 'giảng viên'))}
+                          </Box>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </AccordionDetails>
+          </Accordion>
+        )}
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose} variant="outlined">
+          Hủy
+        </Button>
+        <Button
+          onClick={handleConfirmImport}
+          variant="contained"
+          disabled={validRows.length === 0 || isImporting || importMessage}
+          sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
+        >
+          {isImporting ? 'Đang thêm...' :
+            importMessage ? 'Đã thêm thành công' :
+              `Thêm ${validRows.length} giảng viên`}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
 }

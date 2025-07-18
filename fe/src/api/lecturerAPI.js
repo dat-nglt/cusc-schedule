@@ -22,9 +22,13 @@ export const getLecturerById = async (id) => {
     }
 };
 
-export const createLecturer = async (lecturerData) => {
+export const createLecturer = async (lecturerData, subjectIds = []) => {
     try {
-        const response = await axiosInstance.post('/api/lecturers/create', lecturerData);
+        const requestData = {
+            ...lecturerData,
+            subjectIds
+        };
+        const response = await axiosInstance.post('/api/lecturers/create', requestData);
         return response;
     }
     catch (error) {

@@ -1,44 +1,36 @@
-import jwt from 'jsonwebtoken';
-import { findUserByEmail, getUserId } from './userService.js';
+import jwt from "jsonwebtoken";
+import { findUserByEmail, getUserId } from "./userService.js";
+import logger from "../utils/logger.js";
 
-
-export const generateToken = (userId, role) => {
-    return jwt.sign({ id: userId, role: role }, process.env.JWT_SECRET, { expiresIn: '12h' });
+/**
+ * Tạo JWT token cho user
+ * @param {string} userId - ID của người dùng
+ * @param {string} role - Vai trò của người dùng (admin, user, lecturer, v.v.)
+ * @returns {string} - Mã JWT
+ */
+export const generateAccessTokenService = (userId, role) => {
+  return jwt.sign({ id: userId, role }, process.env.JWT_SECRET, {
+    expiresIn: "1h", // Token có hiệu lực trong 12 giờ
+  });
 };
 
-export const loginUser = async (email, password) => {
-    const userInfo = await findUserByEmail(email);
-    if (!userInfo) {
-        throw new Error('Invalid credentials');
-    }
-
-    const { user, role } = userInfo;
-
-    // Note: Google OAuth users không có password, chỉ dùng cho traditional login nếu có
-    if (user.password) {
-        const isPasswordValid = await user.comparePassword(password);
-        if (!isPasswordValid) {
-            throw new Error('Invalid credentials');
-        }
-    } else {
-        throw new Error('This account uses Google login only');
-    }
-
-    const userId = getUserId(userInfo);
-    const token = jwt.sign({ id: userId, role: role }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    return { user, token, role };
+export const generateRefreshTokenService = (userID) => {
+  return jwt.sign({ id: userID }, process.env.JWT_REFRESH_SECRET, {
+    expiresIn: "7d",
+  });
 };
 
-export const verifyToken = (token) => {
-    try {
-        return jwt.verify(token, process.env.JWT_SECRET);
-    } catch (error) {
-        throw new Error('Invalid token');
-    }
-};
-
-// Chức năng register bị disabled vì chúng ta không tạo user mới qua API
-// Chỉ admin mới có thể tạo user trong database
-export const registerUser = async (name, email, password) => {
-    throw new Error('Registration is disabled. Please contact administrator.');
+/**
+ * Xác minh token JWT
+ * @param {string} token - Chuỗi token cần xác thực
+ * @returns {Object} - Dữ liệu giải mã từ token
+ */
+export const verifyTokenService = (typeToken, secret) => {
+  try {
+    const decode = jwt.verify(typeToken, secret);
+    return decode.id;
+  } catch (error) {
+    logger.error("Token verification failed:", error.message);
+    throw new Error("accessToken không hợp lệ");
+  }
 };

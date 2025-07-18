@@ -20,25 +20,17 @@ import {
     Event as EventIcon,
     Update as UpdateIcon,
     CheckCircle as StatusIcon,
+    Email as EmailIcon,
+    Phone as PhoneIcon,
+    Home as HomeIcon,
+    CalendarToday as CalendarIcon,
+    Wc as GenderIcon,
+    Grade as GpaIcon,
+    AccountCircle as RoleIcon,
 } from '@mui/icons-material';
 import { getStatusChip } from '../../components/ui/StatusChip';
-
-// Hàm định dạng thời gian từ YYYY-MM-DD HH:mm thành DD/MM/YYYY HH:mm
-const formatDateTime = (dateTime) => {
-    if (!dateTime) return 'Không có dữ liệu';
-    try {
-        const date = new Date(dateTime);
-        return date.toLocaleString('vi-VN', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-    } catch {
-        return 'Không hợp lệ';
-    }
-};
+import { toast } from 'react-toastify';
+import { formatDateTime } from '../../utils/formatDateTime';
 
 // Hàm kiểm tra giá trị và trả về giá trị hoặc thông báo mặc định
 const getValueOrDefault = (value) => value || 'Không có dữ liệu';
@@ -49,14 +41,14 @@ export default function StudentDetailModal({ open, onClose, student }) {
     // Hàm sao chép mã học viên
     const handleCopyStudentId = () => {
         navigator.clipboard.writeText(student.student_id);
-        alert('Đã sao chép mã học viên!');
+        toast.success('Đã sao chép mã học viên: ' + student.student_id);
     };
 
     return (
         <Dialog
             open={open}
             onClose={onClose}
-            maxWidth="md"
+            maxWidth="lg"
             fullWidth
             sx={{
                 '& .MuiDialog-paper': {
@@ -90,7 +82,7 @@ export default function StudentDetailModal({ open, onClose, student }) {
             <DialogContent sx={{ mt: 2, px: 3 }}>
                 <Grid container spacing={2}>
                     {/* Mã học viên */}
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12} md={4}>
                         <Box
                             sx={{
                                 display: 'flex',
@@ -117,7 +109,7 @@ export default function StudentDetailModal({ open, onClose, student }) {
                     </Grid>
 
                     {/* Họ tên */}
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12} md={4}>
                         <Box
                             sx={{
                                 display: 'flex',
@@ -143,8 +135,120 @@ export default function StudentDetailModal({ open, onClose, student }) {
                         </Box>
                     </Grid>
 
+                    {/* Email */}
+                    <Grid item xs={12} md={4}>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                bgcolor: '#f9f9f9',
+                                p: 2,
+                                borderRadius: 1,
+                                border: '1px solid #e0e0e0',
+                            }}
+                        >
+                            <EmailIcon sx={{ mr: 1, color: '#1976d2' }} />
+                            <Box>
+                                <Typography
+                                    variant="body2"
+                                    sx={{ fontWeight: 'bold', color: '#333' }}
+                                >
+                                    Email
+                                </Typography>
+                                <Typography variant="body1" sx={{ color: '#666' }}>
+                                    {getValueOrDefault(student.account?.email)}
+                                </Typography>
+                            </Box>
+                        </Box>
+                    </Grid>
+
+                    {/* Ngày sinh */}
+                    <Grid item xs={12} md={4}>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                bgcolor: '#f9f9f9',
+                                p: 2,
+                                borderRadius: 1,
+                                border: '1px solid #e0e0e0',
+                            }}
+                        >
+                            <CalendarIcon sx={{ mr: 1, color: '#1976d2' }} />
+                            <Box>
+                                <Typography
+                                    variant="body2"
+                                    sx={{ fontWeight: 'bold', color: '#333' }}
+                                >
+                                    Ngày sinh
+                                </Typography>
+                                <Typography variant="body1" sx={{ color: '#666' }}>
+                                    {student.day_of_birth
+                                        ? new Date(student.day_of_birth).toLocaleDateString(
+                                            'vi-VN'
+                                        )
+                                        : 'Không có dữ liệu'}
+                                </Typography>
+                            </Box>
+                        </Box>
+                    </Grid>
+
+                    {/* Giới tính */}
+                    <Grid item xs={12} md={4}>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                bgcolor: '#f9f9f9',
+                                p: 2,
+                                borderRadius: 1,
+                                border: '1px solid #e0e0e0',
+                            }}
+                        >
+                            <GenderIcon sx={{ mr: 1, color: '#1976d2' }} />
+                            <Box>
+                                <Typography
+                                    variant="body2"
+                                    sx={{ fontWeight: 'bold', color: '#333' }}
+                                >
+                                    Giới tính
+                                </Typography>
+                                <Typography variant="body1" sx={{ color: '#666' }}>
+                                    {getValueOrDefault(student.gender)}
+                                </Typography>
+                            </Box>
+                        </Box>
+                    </Grid>
+
+                    {/* Số điện thoại */}
+                    <Grid item xs={12} md={4}>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                bgcolor: '#f9f9f9',
+                                p: 2,
+                                borderRadius: 1,
+                                border: '1px solid #e0e0e0',
+                            }}
+                        >
+                            <PhoneIcon sx={{ mr: 1, color: '#1976d2' }} />
+                            <Box>
+                                <Typography
+                                    variant="body2"
+                                    sx={{ fontWeight: 'bold', color: '#333' }}
+                                >
+                                    Số điện thoại
+                                </Typography>
+                                <Typography variant="body1" sx={{ color: '#666' }}>
+                                    {getValueOrDefault(student.phone_number)}
+                                </Typography>
+                            </Box>
+                        </Box>
+                    </Grid>
+
                     {/* Mã lớp */}
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12} md={4}>
                         <Box
                             sx={{
                                 display: 'flex',
@@ -164,14 +268,14 @@ export default function StudentDetailModal({ open, onClose, student }) {
                                     Mã lớp
                                 </Typography>
                                 <Typography variant="body1" sx={{ color: '#666' }}>
-                                    {getValueOrDefault(student.class)}
+                                    {getValueOrDefault(student.class_id)}
                                 </Typography>
                             </Box>
                         </Box>
                     </Grid>
 
                     {/* Năm nhập học */}
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12} md={4}>
                         <Box
                             sx={{
                                 display: 'flex',
@@ -191,14 +295,70 @@ export default function StudentDetailModal({ open, onClose, student }) {
                                     Năm nhập học
                                 </Typography>
                                 <Typography variant="body1" sx={{ color: '#666' }}>
-                                    {getValueOrDefault(student.admission_year)}
+                                    {student.admission_year
+                                        ? new Date(student.admission_year).getFullYear()
+                                        : 'Không có dữ liệu'}
+                                </Typography>
+                            </Box>
+                        </Box>
+                    </Grid>
+
+                    {/* GPA */}
+                    <Grid item xs={12} md={4}>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                bgcolor: '#f9f9f9',
+                                p: 2,
+                                borderRadius: 1,
+                                border: '1px solid #e0e0e0',
+                            }}
+                        >
+                            <GpaIcon sx={{ mr: 1, color: '#1976d2' }} />
+                            <Box>
+                                <Typography
+                                    variant="body2"
+                                    sx={{ fontWeight: 'bold', color: '#333' }}
+                                >
+                                    GPA
+                                </Typography>
+                                <Typography variant="body1" sx={{ color: '#666' }}>
+                                    {getValueOrDefault(student.gpa)}
+                                </Typography>
+                            </Box>
+                        </Box>
+                    </Grid>
+
+                    {/* Vai trò */}
+                    <Grid item xs={12} md={4}>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                bgcolor: '#f9f9f9',
+                                p: 2,
+                                borderRadius: 1,
+                                border: '1px solid #e0e0e0',
+                            }}
+                        >
+                            <RoleIcon sx={{ mr: 1, color: '#1976d2' }} />
+                            <Box>
+                                <Typography
+                                    variant="body2"
+                                    sx={{ fontWeight: 'bold', color: '#333' }}
+                                >
+                                    Vai trò
+                                </Typography>
+                                <Typography variant="body1" sx={{ color: '#666' }}>
+                                    {getValueOrDefault(student.account?.role)}
                                 </Typography>
                             </Box>
                         </Box>
                     </Grid>
 
                     {/* Trạng thái */}
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12} md={4}>
                         <Box
                             sx={{
                                 display: 'flex',
@@ -218,8 +378,35 @@ export default function StudentDetailModal({ open, onClose, student }) {
                                     Trạng thái
                                 </Typography>
                                 <Box sx={{ mt: 0.5 }}>
-                                    {getStatusChip(student.status)}
+                                    {getStatusChip(student.account?.status)}
                                 </Box>
+                            </Box>
+                        </Box>
+                    </Grid>
+
+                    {/* Địa chỉ */}
+                    <Grid item xs={12}>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                bgcolor: '#f9f9f9',
+                                p: 2,
+                                borderRadius: 1,
+                                border: '1px solid #e0e0e0',
+                            }}
+                        >
+                            <HomeIcon sx={{ mr: 1, color: '#1976d2' }} />
+                            <Box>
+                                <Typography
+                                    variant="body2"
+                                    sx={{ fontWeight: 'bold', color: '#333' }}
+                                >
+                                    Địa chỉ
+                                </Typography>
+                                <Typography variant="body1" sx={{ color: '#666' }}>
+                                    {getValueOrDefault(student.address)}
+                                </Typography>
                             </Box>
                         </Box>
                     </Grid>

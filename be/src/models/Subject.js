@@ -1,47 +1,95 @@
-import { DataTypes } from "sequelize";
-import { sequelize } from "../config/connectDB";
+import { DataTypes } from 'sequelize';
+import { on } from 'winston-daily-rotate-file';
 
-const Subject = sequelize.define("Subject", {
-    subject_id: {
+// Định nghĩa model Subject - Đại diện cho môn học
+const Subject = (sequelize) => {
+  const SubjectModel = sequelize.define(
+    'Subject',
+    {
+      // Mã môn học (primary key)
+      subject_id: {
         type: DataTypes.STRING(30),
         primaryKey: true,
-        allowNull: false
-    },
-    subject_name: {
+        allowNull: false,
+      },
+      // Tên môn học
+      subject_name: {
         type: DataTypes.STRING(50),
-        allowNull: true
-    },
-    credit: {
+        allowNull: true,
+      },
+      // Số tín chỉ
+      credit: {
         type: DataTypes.SMALLINT,
-        allowNull: true
-    },
-    theory_hours: {
+        allowNull: true,
+      },
+      // Số giờ lý thuyết
+      theory_hours: {
         type: DataTypes.SMALLINT,
-        allowNull: true
-    },
-    practice_hours: {
+        allowNull: true,
+      },
+      // Số giờ thực hành
+      practice_hours: {
         type: DataTypes.SMALLINT,
-        allowNull: true
-    },
-    status: {
-        type: DataTypes.STRING(30),
-        allowNull: true
-    },
-    semester_id: {
+        allowNull: true,
+      },
+      // Trạng thái môn học (VD: active, inactive,...)
+      status: {
         type: DataTypes.STRING(30),
         allowNull: true,
-        references: {
-            model: 'semesters',
-            key: 'semester_id'
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'SET NULL'
+      },
+      // Mã học kỳ (liên kết đến bảng Semester)
+      semester_id: {
+        type: DataTypes.STRING(30),
+        allowNull: true,  // Cho phép null
+      },
+    },
+    {
+      tableName: 'subjects',         // Tên bảng trong CSDL
+      timestamps: true,              // Tự động thêm created_at và updated_at
+      createdAt: 'created_at',
+      updatedAt: 'updated_at',
+      deletedAt: 'deleted_at',       // Tên cột thời gian xóa mềm (nếu sử dụng soft delete)
+      paranoid: true,                // Bật chế độ xóa mềm (soft delete)
+
     }
-}, {
-    tableName: "subjects",
-    timestamps: true,
-    createdAt: "created_at",
-    updatedAt: "updated_at"
-});
+  );
+
+  // Khai báo mối quan hệ (association)
+  SubjectModel.associate = (models) => {
+    // Mỗi môn học thuộc về một học kỳ
+    SubjectModel.belongsTo(models.Semester, {
+      foreignKey: 'semester_id',
+      onUpdate: 'CASCADE',
+      onDelete: 'SET NULL', // Nếu học kỳ bị xóa, môn học sẽ không bị xóa mà chỉ đặt semester_id thành NULL
+    });
+
+    // Mối quan hệ nhiều-nhiều: Một Subject có thể được nhiều Lecturer dạy
+    SubjectModel.belongsToMany(models.Lecturer, {
+      through: models.LecturerAssignment,
+      foreignKey: 'subject_id',
+      otherKey: 'lecturer_id',
+      as: 'lecturers'
+    });
+
+    // Mối quan hệ một-nhiều với bảng junction LecturerAssignment
+    SubjectModel.hasMany(models.LecturerAssignment, {
+      foreignKey: 'subject_id',
+      as: 'lecturerAssignments'
+    });
+
+    // Gợi ý thêm: Một môn học có thể do nhiều giảng viên dạy hoặc sinh viên đăng ký
+    // SubjectModel.belongsToMany(models.Lecturer, {
+    //   through: 'LecturerSubjects',
+    //   foreignKey: 'subject_id',
+    // });
+
+    // SubjectModel.belongsToMany(models.Student, {
+    //   through: 'StudentSubjects',
+    //   foreignKey: 'subject_id',
+    // });
+  };
+
+  return SubjectModel;
+};
 
 export default Subject;

@@ -38,7 +38,7 @@ const availableDegrees = [
     'Phó Giáo sư'
 ];
 
-export default function AddLecturerModal({ open, onClose, onAddLecturer, existingLecturers, error, loading, message }) {
+export default function AddLecturerModal({ open, onClose, onAddLecturer, existingLecturers, error, loading, message, fetchLecturers, subjects }) {
     const [newLecturer, setNewLecturer] = useState({
         lecturer_id: '',
         name: '',
@@ -50,7 +50,9 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
         department: '',
         hire_date: '',
         degree: '',
-        status: 'Hoạt động',
+        academic_rank: '',
+        status: 'Đang giảng dạy',
+        subjectIds: [],
     });
 
     const [localError, setLocalError] = useState('');
@@ -74,7 +76,8 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
             !newLecturer.phone_number ||
             !newLecturer.department ||
             !newLecturer.hire_date ||
-            !newLecturer.degree
+            !newLecturer.degree ||
+            !newLecturer.subjectIds.length
         ) {
             setLocalError('Vui lòng điền đầy đủ thông tin!');
             return;
@@ -100,6 +103,22 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
         );
         if (isDuplicate) {
             setLocalError(`Mã giảng viên "${newLecturer.lecturer_id}" đã tồn tại!`);
+            return;
+        }
+        // kiểm tra trùng email
+        const isEmailDuplicate = existingLecturers.some(
+            (lecturer) => lecturer.email === newLecturer.email
+        );
+        if (isEmailDuplicate) {
+            setLocalError(`Email "${newLecturer.email}" đã tồn tại!`);
+            return;
+        }
+        // kiểm tra trùng số điện thoại
+        const isPhoneDuplicate = existingLecturers.some(
+            (lecturer) => lecturer.phone_number === newLecturer.phone_number
+        );
+        if (isPhoneDuplicate) {
+            setLocalError(`Số điện thoại "${newLecturer.phone_number}" đã tồn tại!`);
             return;
         }
 
@@ -128,7 +147,6 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
 
         // Gọi hàm onAddLecturer được truyền từ component cha
         await onAddLecturer(lecturerToAdd);
-
         setNewLecturer({
             lecturer_id: '',
             name: '',
@@ -140,7 +158,8 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
             department: '',
             hire_date: '',
             degree: '',
-            status: 'Hoạt động',
+            status: 'Đang giảng dạy',
+            subjectIds: [],
         });
         setLocalError('');
         onClose();
@@ -212,18 +231,6 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
         e.target.value = '';
     };
 
-    const handleImportSuccess = (result) => {
-        const { imported } = result;
-
-        if (imported && imported.length > 0) {
-            // Add imported lecturers to the list
-            imported.forEach(lecturer => onAddLecturer(lecturer));
-            onClose();
-        }
-
-        setShowPreview(false);
-        setPreviewData([]);
-    };
 
     const handleClosePreview = () => {
         setShowPreview(false);
@@ -386,8 +393,31 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
                                 onChange={handleChange}
                                 label="Trạng thái"
                             >
-                                <MenuItem value="Hoạt động">Hoạt động</MenuItem>
+                                <MenuItem value="Đang giảng dạy">Đang giảng dạy</MenuItem>
                                 <MenuItem value="Tạm nghỉ">Tạm nghỉ</MenuItem>
+                                <MenuItem value="Đã nghỉ việc">Đã nghỉ việc</MenuItem>
+                                <MenuItem value="Nghỉ hưu">Nghỉ hưu</MenuItem>
+                            </Select>
+                        </FormControl>
+                        <FormControl fullWidth required>
+                            <InputLabel>Môn học</InputLabel>
+                            <Select
+                                name="subjectIds"
+                                value={newLecturer.subjectIds}
+                                onChange={handleChange}
+                                label="Môn học"
+                                multiple
+                                renderValue={(selected) =>
+                                    selected.map(id =>
+                                        subjects?.find(subject => subject.subject_id === id)?.subject_name
+                                    ).join(', ')
+                                }
+                            >
+                                {subjects && subjects.map((subject) => (
+                                    <MenuItem key={subject.subject_id} value={subject.subject_id}>
+                                        {subject.subject_id} - {subject.subject_name}
+                                    </MenuItem>
+                                ))}
                             </Select>
                         </FormControl>
                     </Box>
@@ -413,8 +443,7 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
                 open={showPreview}
                 onClose={handleClosePreview}
                 previewData={previewData}
-                onImportSuccess={handleImportSuccess}
-                existingLecturers={existingLecturers}
+                fetchLecturers={fetchLecturers}
             />
         </>
     );

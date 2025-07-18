@@ -235,8 +235,8 @@ export default function EditStudentModal({ open, onClose, student, onSave, error
                             label="Trạng thái"
                         >
                             <MenuItem value="Đang học">Đang học</MenuItem>
-                            <MenuItem value="Tạm nghỉ">Tạm nghỉ</MenuItem>
-                            <MenuItem value="Tốt nghiệp">Tốt nghiệp</MenuItem>
+                            <MenuItem value="Đã nghỉ học">Đã nghỉ học</MenuItem>
+                            <MenuItem value="Đã tốt nghiệp">Đã tốt nghiệp</MenuItem>
                             <MenuItem value="Bảo lưu">Bảo lưu</MenuItem>
                         </Select>
                     </FormControl>
