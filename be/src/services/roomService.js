@@ -95,17 +95,6 @@ export const importRoomsFromJSON = async (roomsData) => {
                     note: roomData.note ? roomData.note.toString().trim(): null, 
                 }
 
-                // Kiểm tra trang thái phòng
-                const allowedStatus = ['Hoạt động', 'Không hoạt động'];
-                if (!allowedStatus.includes(cleanedData.status)) {
-                    results.errors.push({
-                        index: index,
-                        room_id: cleanedData.room_id,
-                        error: 'Trạng thái không hợp lệ. Chỉ cho phép "Hoạt động" Hoặc "Không hoạt động"'
-                    });
-                    continue;
-                }
-
                 // Validate capacity if provided
                 if (cleanedData.capacity !== null && (isNaN(cleanedData.capacity) || cleanedData.capacity < 0)) {
                     results.errors.push({

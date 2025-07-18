@@ -27,7 +27,6 @@ const Room = () => {
 
   // Dữ liệu mẫu cho danh sách phòng học
   const [rooms, setRooms] = useState([
-    { id: 1, stt: 1, maPhongHoc: 'P101', tenPhongHoc: 'Phòng 101', toaNha: 'A', tang: 1, sucChua: 50, loaiPhongHoc: 'Phòng lý thuyết', trangThai: 'Hoạt động', thoiGianTao: '2025-05-15 09:00', thoiGianCapNhat: '2025-05-20 14:30' },
     { id: 2, stt: 2, maPhongHoc: 'P102', tenPhongHoc: 'Phòng 102', toaNha: 'A', tang: 1, sucChua: 40, loaiPhongHoc: 'Phòng thực hành', trangThai: 'Hoạt động', thoiGianTao: '2025-05-16 10:15', thoiGianCapNhat: '2025-05-21 15:00' },
     { id: 3, stt: 3, maPhongHoc: 'P201', tenPhongHoc: 'Phòng 201', toaNha: 'A', tang: 2, sucChua: 60, loaiPhongHoc: 'Phòng lý thuyết', trangThai: 'Hoạt động', thoiGianTao: '2025-05-17 11:30', thoiGianCapNhat: '2025-05-22 09:45' },
     { id: 4, stt: 4, maPhongHoc: 'P202', tenPhongHoc: 'Phòng 202', toaNha: 'A', tang: 2, sucChua: 30, loaiPhongHoc: 'Phòng thực hành', trangThai: 'Không hoạt động', thoiGianTao: '2025-05-18 14:00', thoiGianCapNhat: '2025-05-23 13:15' },
