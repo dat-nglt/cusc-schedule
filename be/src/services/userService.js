@@ -81,8 +81,6 @@ export const findUserByGoogleId = async (googleId) => {
 export const findExistsUserByIdService = async (id) => {
   try {
     const account = await Account.findByPk(id);
-    console.log(account.dataValues);
-
     if (account) {
       return {
         userData: account.dataValues, // Trả về toàn bộ đối tượng account
