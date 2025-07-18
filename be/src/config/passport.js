@@ -20,13 +20,16 @@ const configurePassport = () => {
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
         callbackURL: process.env.GOOGLE_CALLBACK_URL,
       },
-      async (accessToken, refreshToken, profile, done) => {
+      async (req, accessToken, refreshToken, profile, done) => {
         try {
           const email =
             profile.emails && profile.emails[0]
               ? profile.emails[0].value
               : null;
           const googleId = profile.id;
+          // const clientIntendedRole = req.roleFromGoogleAuth;
+
+          // logger.warn(clientIntendedRole);
 
           if (!email) {
             logger.warn(
@@ -46,19 +49,15 @@ const configurePassport = () => {
               `Đăng nhập Google thành công cho user: ${email} (ID: ${foundByGoogleId.id})`
             );
 
-            // Trả về thông tin người dùng đã tìm thấy (từ bảng Accounts)
             return done(null, {
               id: foundByGoogleId.id, // ID từ bảng Accounts
               role: foundByGoogleId.role, // Vai trò từ bảng Accounts
             });
           }
 
-          // --- BƯỚC 2: Nếu không tìm thấy bằng google_id, tìm bằng email ---
           const foundByEmail = await findUserByEmail(email);
 
           if (foundByEmail) {
-            // Người dùng tồn tại trong hệ thống bằng email, nhưng chưa có google_id
-            // Cập nhật google_id để liên kết tài khoản Google với tài khoản hiện có.
             if (!foundByEmail.googleId) {
               await updateUserGoogleId(foundByEmail.id, googleId);
               foundByEmail.googleId = googleId; // Cập nhật tạm thời đối tượng để sử dụng ngay
