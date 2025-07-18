@@ -58,7 +58,7 @@ export const AuthProvider = ({ children }) => {
     } finally {
       setTimeout(() => {
         setLoading(false); // Kết thúc trạng thái loading sau khi xác minh
-      }, 500); // Giả lập thời gian xác minh
+      }, 1000); // Giả lập thời gian xác minh
     }
   }, [login, logout]);
 
