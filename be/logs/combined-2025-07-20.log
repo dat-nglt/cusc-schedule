@@ -1235,3 +1235,11 @@
 2025-07-20 11:05:40 info: ✅ Middleware Session and Passport have been configured.
 2025-07-20 11:05:40 info: ✅ Router has been setup.
 2025-07-20 11:05:40 info: ✅ Server is running on port 3000 (development environment)
+2025-07-20 11:06:09 info: ✅ Kết nối PostgreSQL với Sequelize thành công.
+2025-07-20 11:06:09 info: ✅ Kết nối cơ sở dữ liệu thành công.
+2025-07-20 11:06:09 info: ✅ Cấu hình Passport đã được tải.
+2025-07-20 11:06:09 info: ✅ Passport has been configured.
+2025-07-20 11:06:09 info: ✅ Middleware Morgan for HTTP request logging configured.
+2025-07-20 11:06:09 info: ✅ Middleware Session and Passport have been configured.
+2025-07-20 11:06:09 info: ✅ Router has been setup.
+2025-07-20 11:06:09 info: ✅ Server is running on port 3000 (development environment)
