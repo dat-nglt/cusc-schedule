@@ -37,16 +37,16 @@ export default function PreviewLecturerModal({ open, onClose, previewData, fetch
     return data.map(row => {
       let errors = row.errors || [];
 
-      // If there are already errors, keep only the first one
+      // Nếu đã có lỗi từ trước, chỉ giữ lại lỗi đầu tiên để tránh spam lỗi
       if (errors.length > 0) {
         errors = [errors[0]];
       } else {
-        // Check if subjectIds exist in subjects array (if subjects are provided)
+        // Kiểm tra nếu dòng có danh sách mã học phần
         if (row.subjectIds && row.subjectIds.length > 0) {
           const invalidSubjects = row.subjectIds.filter(subjectId => {
             return subjects && !subjects.some(subject => subject.subject_id === subjectId.trim());
           });
-
+          // Nếu có mã học phần không hợp lệ, tạo thông báo lỗi
           if (invalidSubjects.length > 0) {
             errors = [`Mã học phần "${invalidSubjects.join(', ')}" không tồn tại trong hệ thống`];
           }
@@ -54,8 +54,8 @@ export default function PreviewLecturerModal({ open, onClose, previewData, fetch
       }
 
       return {
-        ...row,
-        errors
+        ...row, // Giữ nguyên tất cả thuộc tính của dòng
+        errors // Cập nhật mảng lỗi mới
       };
     });
   };

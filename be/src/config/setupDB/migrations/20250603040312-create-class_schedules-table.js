@@ -81,12 +81,12 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL'
       },
-      class_section_id: {
+      class_id: {
         type: Sequelize.STRING(30),
         allowNull: true,
         references: {
-          model: 'class_sections',
-          key: 'class_section_id'
+          model: 'classes',
+          key: 'class_id'
         },
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL'
