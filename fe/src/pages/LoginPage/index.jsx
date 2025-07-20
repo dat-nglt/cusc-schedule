@@ -538,7 +538,7 @@ const LoginPage = () => {
                                                 background: 'linear-gradient(90deg, #357ABD 0%, #2D9144 100%)'
                                             },
                                             '& .MuiButton-startIcon': {
-                                                backgroundColor: 'white',
+                                                border: '1px solid white',
                                                 borderRadius: '50%',
                                                 p: 0.5,
                                                 ml: -1,
@@ -546,11 +546,11 @@ const LoginPage = () => {
                                             }
                                         }}
                                     >
-                                        Sign in with Google
+                                        Đăng nhập với Google
                                     </Button>
 
                                     {/* Help text */}
-                                    <Typography
+                                    {/* <Typography
                                         variant="caption"
                                         display="block"
                                         textAlign="center"
@@ -558,7 +558,7 @@ const LoginPage = () => {
                                         color="text.secondary"
                                     >
                                         Bạn sẽ được chuyển hướng đến Google để đăng nhập an toàn
-                                    </Typography>
+                                    </Typography> */}
                                 </Box>
                             )}
                         </CardContent>
