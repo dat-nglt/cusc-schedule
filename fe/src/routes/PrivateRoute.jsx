@@ -92,7 +92,7 @@ const PrivateRoute = ({ children, allowedRoles }) => {
                 }}
               />
               <Typography variant="h5" component="h1" fontWeight="600">
-                QUẢN LÝ TỔ CHỨC ĐÀO TẠO
+                HỆ THỐNG QUẢN LÝ THỜI KHOÁ BIỂU
               </Typography>
               <Typography variant="caption" sx={{ color: 'text.main', fontStyle: 'italic' }}>
                 Vui lòng chờ trong giây lát
@@ -166,7 +166,7 @@ const PrivateRoute = ({ children, allowedRoles }) => {
                 }}
               />
               <Typography variant="h5" component="h1" fontWeight="600">
-                QUẢN LÝ TỔ CHỨC ĐÀO TẠO
+                HỆ THỐNG QUẢN LÝ THỜI KHOÁ BIỂU
               </Typography>
               <Typography variant="body2" sx={{ color: 'text.main' }}>
                 Bạn không có quyền truy cập trang này

@@ -340,8 +340,8 @@ const LoginPage = () => {
                                     boxShadow: theme.shadows[3]
                                 }}
                             />
-                            <Typography variant="h5" component="h1" fontWeight="600">
-                                QUẢN LÝ TỔ CHỨC ĐÀO TẠO
+                            <Typography variant="h6" component="h1" fontWeight="600">
+                                HỆ THỐNG QUẢN LÝ THỜI KHOÁ BIỂU
                             </Typography>
                             <Typography
                                 variant="subtitle1"

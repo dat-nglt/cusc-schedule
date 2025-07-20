@@ -1,6 +1,6 @@
 import models from "../models/index.js";
 import ExcelUtils from "../utils/ExcelUtils.js";
-import { Op } from 'sequelize';
+import { Op } from "sequelize";
 
 const { Lecturer } = models;
 /**
@@ -8,10 +8,10 @@ const { Lecturer } = models;
  * @returns {Promise<Array>} Danh sách tất cả giảng viên.
  * @throws {Error} Nếu có lỗi khi lấy dữ liệu.
  */
-export const getAllLecturers = async () => {
+export const getAllLecturersService = async () => {
   try {
-    const lecturers = await Lecturer.findAll();
-    return lecturers;
+    const alllecturersData = await Lecturer.findAll();
+    return alllecturersData;
   } catch (error) {
     console.error("Lỗi khi lấy danh sách giảng viên:", error);
     throw error;
@@ -24,13 +24,10 @@ export const getAllLecturers = async () => {
  * @returns {Promise<Object>} Thông tin giảng viên.
  * @throws {Error} Nếu không tìm thấy giảng viên hoặc có lỗi.
  */
-export const getLecturerById = async (id) => {
+export const getLecturerByIdService = async (lecturerID) => {
   try {
-    const lecturer = await Lecturer.findByPk(id);
-    if (!lecturer) {
-      throw new Error(`Không tìm thấy giảng viên với ID ${id}`);
-    }
-    return lecturer;
+    const lecturerByIdData = await Lecturer.findByPk(lecturerID);
+    return lecturerByIdData;
   } catch (error) {
     console.error(`Lỗi khi lấy giảng viên với ID ${id}:`, error);
     throw error;
@@ -115,7 +112,7 @@ export const importLecturersFromExcel = async (fileBuffer) => {
     const results = {
       success: [],
       errors: [],
-      total: lecturersData.length
+      total: lecturersData.length,
     };
 
     // Validate và tạo giảng viên cho từng hàng
@@ -128,8 +125,8 @@ export const importLecturersFromExcel = async (fileBuffer) => {
         if (!row.lecturer_id || !row.name || !row.email) {
           results.errors.push({
             row: rowIndex,
-            lecturer_id: row.lecturer_id || 'N/A',
-            error: 'Mã giảng viên, Tên và Email là bắt buộc'
+            lecturer_id: row.lecturer_id || "N/A",
+            error: "Mã giảng viên, Tên và Email là bắt buộc",
           });
           continue;
         }
@@ -139,14 +136,18 @@ export const importLecturersFromExcel = async (fileBuffer) => {
           lecturer_id: ExcelUtils.cleanString(row.lecturer_id),
           name: ExcelUtils.cleanString(row.name),
           email: ExcelUtils.cleanString(row.email),
-          day_of_birth: row.day_of_birth ? ExcelUtils.formatExcelDate(row.day_of_birth) : null,
+          day_of_birth: row.day_of_birth
+            ? ExcelUtils.formatExcelDate(row.day_of_birth)
+            : null,
           gender: ExcelUtils.cleanString(row.gender) || null,
           address: ExcelUtils.cleanString(row.address) || null,
           phone_number: ExcelUtils.cleanString(row.phone_number) || null,
           department: ExcelUtils.cleanString(row.department) || null,
-          hire_date: row.hire_date ? ExcelUtils.formatExcelDate(row.hire_date) : null,
+          hire_date: row.hire_date
+            ? ExcelUtils.formatExcelDate(row.hire_date)
+            : null,
           degree: ExcelUtils.cleanString(row.degree) || null,
-          status: ExcelUtils.cleanString(row.status) || 'Hoạt động',
+          status: ExcelUtils.cleanString(row.status) || "Hoạt động",
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         };
@@ -156,29 +157,33 @@ export const importLecturersFromExcel = async (fileBuffer) => {
           results.errors.push({
             row: rowIndex,
             lecturer_id: lecturerData.lecturer_id,
-            error: 'Email không đúng định dạng'
+            error: "Email không đúng định dạng",
           });
           continue;
         }
 
         // Kiểm tra lecturer_id đã tồn tại chưa
-        const existingLecturerById = await Lecturer.findByPk(lecturerData.lecturer_id);
+        const existingLecturerById = await Lecturer.findByPk(
+          lecturerData.lecturer_id
+        );
         if (existingLecturerById) {
           results.errors.push({
             row: rowIndex,
             lecturer_id: lecturerData.lecturer_id,
-            error: 'Mã giảng viên đã tồn tại'
+            error: "Mã giảng viên đã tồn tại",
           });
           continue;
         }
 
         // Kiểm tra email đã tồn tại chưa
-        const existingLecturerByEmail = await Lecturer.findOne({ where: { email: lecturerData.email } });
+        const existingLecturerByEmail = await Lecturer.findOne({
+          where: { email: lecturerData.email },
+        });
         if (existingLecturerByEmail) {
           results.errors.push({
             row: rowIndex,
             lecturer_id: lecturerData.lecturer_id,
-            error: 'Email đã tồn tại'
+            error: "Email đã tồn tại",
           });
           continue;
         }
@@ -189,14 +194,13 @@ export const importLecturersFromExcel = async (fileBuffer) => {
           row: rowIndex,
           lecturer_id: newLecturer.lecturer_id,
           name: newLecturer.name,
-          email: newLecturer.email
+          email: newLecturer.email,
         });
-
       } catch (error) {
         results.errors.push({
           row: rowIndex,
-          lecturer_id: row.lecturer_id || 'N/A',
-          error: error.message || 'Lỗi không xác định'
+          lecturer_id: row.lecturer_id || "N/A",
+          error: error.message || "Lỗi không xác định",
         });
       }
     }
@@ -223,7 +227,7 @@ export const importLecturersFromJson = async (lecturersData) => {
     const results = {
       success: [],
       errors: [],
-      total: lecturersData.length
+      total: lecturersData.length,
     };
 
     // Validate và tạo lecturer cho từng item
@@ -233,11 +237,15 @@ export const importLecturersFromJson = async (lecturersData) => {
 
       try {
         // Validate required fields
-        if (!lecturerData.lecturer_id || !lecturerData.name || !lecturerData.email) {
+        if (
+          !lecturerData.lecturer_id ||
+          !lecturerData.name ||
+          !lecturerData.email
+        ) {
           results.errors.push({
             index: index,
-            lecturer_id: lecturerData.lecturer_id || 'N/A',
-            error: 'Mã giảng viên, Tên và Email là bắt buộc'
+            lecturer_id: lecturerData.lecturer_id || "N/A",
+            error: "Mã giảng viên, Tên và Email là bắt buộc",
           });
           continue;
         }
@@ -246,15 +254,27 @@ export const importLecturersFromJson = async (lecturersData) => {
         const cleanedData = {
           lecturer_id: lecturerData.lecturer_id.toString().trim(),
           name: lecturerData.name.toString().trim(),
-          email: lecturerData.email ? lecturerData.email.toString().trim() : null,
+          email: lecturerData.email
+            ? lecturerData.email.toString().trim()
+            : null,
           day_of_birth: lecturerData.day_of_birth || null,
-          gender: lecturerData.gender ? lecturerData.gender.toString().trim() : null,
-          address: lecturerData.address ? lecturerData.address.toString().trim() : null,
-          phone_number: lecturerData.phone_number ? lecturerData.phone_number.toString().trim() : null,
-          department: lecturerData.department ? lecturerData.department.toString().trim() : null,
+          gender: lecturerData.gender
+            ? lecturerData.gender.toString().trim()
+            : null,
+          address: lecturerData.address
+            ? lecturerData.address.toString().trim()
+            : null,
+          phone_number: lecturerData.phone_number
+            ? lecturerData.phone_number.toString().trim()
+            : null,
+          department: lecturerData.department
+            ? lecturerData.department.toString().trim()
+            : null,
           hire_date: lecturerData.hire_date || null,
-          degree: lecturerData.degree ? lecturerData.degree.toString().trim() : null,
-          status: lecturerData.status || 'Hoạt động'
+          degree: lecturerData.degree
+            ? lecturerData.degree.toString().trim()
+            : null,
+          status: lecturerData.status || "Hoạt động",
         };
 
         // Validate email format nếu có
@@ -262,20 +282,20 @@ export const importLecturersFromJson = async (lecturersData) => {
           results.errors.push({
             index: index,
             lecturer_id: cleanedData.lecturer_id,
-            error: 'Email không đúng định dạng'
+            error: "Email không đúng định dạng",
           });
           continue;
         }
 
         // Kiểm tra lecturer_id đã tồn tại chưa
         const existingLecturerById = await Lecturer.findOne({
-          where: { lecturer_id: cleanedData.lecturer_id }
+          where: { lecturer_id: cleanedData.lecturer_id },
         });
         if (existingLecturerById) {
           results.errors.push({
             index: index,
             lecturer_id: cleanedData.lecturer_id,
-            error: 'Mã giảng viên đã tồn tại'
+            error: "Mã giảng viên đã tồn tại",
           });
           continue;
         }
@@ -283,13 +303,13 @@ export const importLecturersFromJson = async (lecturersData) => {
         // Kiểm tra email đã tồn tại chưa (nếu có)
         if (cleanedData.email) {
           const existingLecturerByEmail = await Lecturer.findOne({
-            where: { email: cleanedData.email }
+            where: { email: cleanedData.email },
           });
           if (existingLecturerByEmail) {
             results.errors.push({
               index: index,
               lecturer_id: cleanedData.lecturer_id,
-              error: 'Email đã tồn tại'
+              error: "Email đã tồn tại",
             });
             continue;
           }
@@ -298,12 +318,11 @@ export const importLecturersFromJson = async (lecturersData) => {
         // Tạo lecturer mới
         const newLecturer = await Lecturer.create(cleanedData);
         results.success.push(newLecturer);
-
       } catch (error) {
         results.errors.push({
           index: index,
-          lecturer_id: lecturerData.lecturer_id || 'N/A',
-          error: error.message || 'Lỗi không xác định'
+          lecturer_id: lecturerData.lecturer_id || "N/A",
+          error: error.message || "Lỗi không xác định",
         });
       }
     }
@@ -334,49 +353,63 @@ export const listLecturers = async (filters) => {
 
     if (filters.lecturer_id) {
       whereClause.lecturer_id = {
-        [Op.iLike]: `%${filters.lecturer_id}%`
+        [Op.iLike]: `%${filters.lecturer_id}%`,
       };
     }
     if (filters.name) {
       whereClause.name = {
-        [Op.iLike]: `%${filters.name}%`
+        [Op.iLike]: `%${filters.name}%`,
       };
     }
     if (filters.email) {
       whereClause.email = {
-        [Op.iLike]: `%${filters.email}%`
+        [Op.iLike]: `%${filters.email}%`,
       };
     }
     if (filters.gender) {
       whereClause.gender = {
-        [Op.iLike]: `%${filters.gender}%`
+        [Op.iLike]: `%${filters.gender}%`,
       };
     }
     if (filters.department) {
       whereClause.department = {
-        [Op.iLike]: `%${filters.department}%`
+        [Op.iLike]: `%${filters.department}%`,
       };
     }
     if (filters.degree) {
       whereClause.degree = {
-        [Op.iLike]: `%${filters.degree}%`
+        [Op.iLike]: `%${filters.degree}%`,
       };
     }
     if (filters.status) {
       whereClause.status = {
-        [Op.iLike]: `%${filters.status}%`
+        [Op.iLike]: `%${filters.status}%`,
       };
     }
 
     const lecturers = await Lecturer.findAll({
       where: whereClause,
-      attributes: ['lecturer_id', 'name', 'email', 'day_of_birth', 'gender', 'address', 'phone_number', 'department', 'hire_date', 'degree', 'status', 'created_at', 'updated_at'],
-      order: [['created_at', 'DESC']]
+      attributes: [
+        "lecturer_id",
+        "name",
+        "email",
+        "day_of_birth",
+        "gender",
+        "address",
+        "phone_number",
+        "department",
+        "hire_date",
+        "degree",
+        "status",
+        "created_at",
+        "updated_at",
+      ],
+      order: [["created_at", "DESC"]],
     });
 
     return lecturers;
   } catch (error) {
-    throw new Error('Lỗi khi liệt kê giảng viên: ' + error.message);
+    throw new Error("Lỗi khi liệt kê giảng viên: " + error.message);
   }
 };
 
@@ -387,9 +420,22 @@ export const listLecturers = async (filters) => {
  * @throws {Error} Nếu template không hợp lệ.
  */
 export const validateExcelTemplate = (fileBuffer) => {
-  const requiredColumns = ['Mã giảng viên', 'Tên giảng viên', 'Email'];
-  const optionalColumns = ['Ngày sinh', 'Giới tính', 'Địa chỉ', 'Số điện thoại', 'Khoa/Bộ môn', 'Ngày vào làm', 'Học vị', 'Trạng thái'];
-  const validation = ExcelUtils.validateTemplate(fileBuffer, requiredColumns, optionalColumns);
+  const requiredColumns = ["Mã giảng viên", "Tên giảng viên", "Email"];
+  const optionalColumns = [
+    "Ngày sinh",
+    "Giới tính",
+    "Địa chỉ",
+    "Số điện thoại",
+    "Khoa/Bộ môn",
+    "Ngày vào làm",
+    "Học vị",
+    "Trạng thái",
+  ];
+  const validation = ExcelUtils.validateTemplate(
+    fileBuffer,
+    requiredColumns,
+    optionalColumns
+  );
 
   if (!validation.valid) {
     throw new Error(validation.error);

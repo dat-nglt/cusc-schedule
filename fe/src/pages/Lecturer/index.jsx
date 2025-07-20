@@ -25,7 +25,7 @@ import DeleteLecturerModal from './DeleteLecturerModal';
 import useResponsive from '../../hooks/useResponsive';
 import LecturerTable from './LecturerTable';
 import { toast } from 'react-toastify';
-import { getAllLecturers, getLecturerById, createLecturer, updateLecturer, deleteLecturer } from '../../api/lecturerAPI';
+import { getAllLecturersAPI, getLecturerByIdAPI, createLecturer, updateLecturer, deleteLecturer } from '../../api/lecturerAPI';
 const Lecturer = () => {
     const { isSmallScreen, isMediumScreen } = useResponsive();
 
@@ -53,12 +53,12 @@ const Lecturer = () => {
     const fetchLecturers = async () => {
         try {
             setLoading(true);
-            const response = await getAllLecturers();
-            if (!response) {
+            const response = await getAllLecturersAPI();
+            if (!response && !response.data) {
                 console.error("Không có dữ liệu giảng viên");
                 return;
             }
-            setLecturers(response.data.data);
+            setLecturers(response.data);
         } catch (error) {
             console.error("Lỗi khi tải danh sách giảng viên:", error);
         } finally {
@@ -104,9 +104,9 @@ const Lecturer = () => {
     const handleEditLecturer = async (id) => {
         try {
             setLoading(true);
-            const response = await getLecturerById(id);
+            const response = await getLecturerByIdAPI(id);
             if (response && response.data) {
-                setEditedLecturer(response.data.data);
+                setEditedLecturer(response.data);
                 setOpenEditModal(true);
             }
         } catch (error) {
@@ -153,9 +153,9 @@ const Lecturer = () => {
     const handleViewLecturer = async (id) => {
         try {
             setLoading(true);
-            const response = await getLecturerById(id);
+            const response = await getLecturerByIdAPI(id);
             if (response && response.data) {
-                setSelectedLecturer(response.data.data);
+                setSelectedLecturer(response.data);
                 setOpenDetail(true);
             }
         } catch (error) {

@@ -91,7 +91,7 @@ export const refreshTokenController = async (req, res) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "Lax",
-      maxAge: 40 * 1000, // 15 phút
+      maxAge: 15 * 60 * 1000, // 15 phút
       path: "/",
     });
 
@@ -173,7 +173,7 @@ export const googleCallbackController = async (req, res) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "Lax",
-      maxAge: 40 * 1000,
+      maxAge: 15 * 60 * 1000,
       path: "/",
     });
 
