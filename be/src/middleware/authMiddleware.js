@@ -98,15 +98,12 @@ const authMiddleware = async (req, res, next) => {
  */
 export const authenticateAndAuthorize = (allowedRoles) => {
   return async (req, res, next) => {
-    // Bước 1: Xác thực (Authentication) - Lấy token từ cookie
     const accessToken = req.cookies.accessToken; // Thay đổi từ header sang cookie
 
     if (!accessToken) {
-      return APIResponse(
-        res,
-        401,
-        "Truy cập bị từ chối. Không tìm thấy accessToken xác thực."
-      );
+      return res
+        .status(401)
+        .json({ message: "Unauthorized: No access token provided." });
     }
 
     try {
@@ -114,11 +111,9 @@ export const authenticateAndAuthorize = (allowedRoles) => {
 
       const userInfo = await findExistsUserByIdService(decoded.id);
       if (!userInfo) {
-        return APIResponse(
-          res,
-          401,
-          "Người dùng không tồn tại hoặc đã bị xóa."
-        );
+        return res
+          .status(401)
+          .json({ message: "Unauthorized: User not found" });
       }
 
       req.userId = decoded.id;
@@ -131,18 +126,26 @@ export const authenticateAndAuthorize = (allowedRoles) => {
         : [allowedRoles];
 
       if (!rolesArray.includes(req.userRole)) {
-        return APIResponse(
-          res,
-          403,
-          `Truy cập bị từ chối. Yêu cầu vai trò: ${rolesArray.join(
-            " hoặc "
-          )}, nhưng người dùng có vai trò: ${req.userRole}`
-        );
+        res.clearCookie("refreshToken", {
+          path: "/auth/refresh-token",
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "Lax",
+        });
+        res.clearCookie("accessToken", {
+          path: "/",
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "Lax",
+        });
+        return res.status(403).json({
+          message:
+            "Access denied: You do not have permission to access this resource!",
+        });
       }
 
       next(); // Xác thực và phân quyền thành công, chuyển sang middleware/route tiếp theo
     } catch (error) {
-      // Xử lý lỗi xác thực và phân quyền
       console.error("Lỗi xác thực hoặc phân quyền:", error);
       if (error.name === "TokenExpiredError") {
         res.clearCookie("accessToken", {

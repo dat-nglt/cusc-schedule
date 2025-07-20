@@ -8,26 +8,12 @@
  * @param {string} [message] - Tin nhắn mô tả kết quả của request.
  * @returns {Object} Đối tượng response của Express với cấu trúc JSON đã được chuẩn hóa.
  */
-export const APIResponse = (res, statusCode, data, message) => {
+export const APIResponse = (res, statusCode, data = {}, message = null) => {
   const response = {
-    status: statusCode >= 200 && statusCode < 300 ? "success" : "error",
+    success: statusCode >= 200 && statusCode < 300 ? true : false,
+    message: message,
+    data: data,
   };
-
-  if (message) {
-    response.message = message;
-  } else if (typeof data === "string") {
-    response.message = data;
-  } else {
-    response.message =
-      statusCode >= 200 && statusCode < 300
-        ? "Thao tác thành công."
-        : "Đã xảy ra lỗi.";
-  }
-
-  if (data && typeof data !== "string") {
-    response.data = data;
-  }
-
   return res.status(statusCode).json(response);
 };
 

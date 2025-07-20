@@ -27,7 +27,6 @@ import LecturerTable from './LecturerTable';
 import { toast } from 'react-toastify';
 import { getAllLecturers, getLecturerById, createLecturer, updateLecturer, deleteLecturer } from '../../api/lecturerAPI';
 import { getAllSubjects } from '../../api/subjectAPI';
-
 const Lecturer = () => {
     const { isSmallScreen, isMediumScreen } = useResponsive();
 
@@ -57,12 +56,12 @@ const Lecturer = () => {
     const fetchLecturers = async () => {
         try {
             setLoading(true);
-            const response = await getAllLecturers();
-            if (!response) {
+            const response = await getAllLecturersAPI();
+            if (!response && !response.data) {
                 console.error("Không có dữ liệu giảng viên");
                 return;
             }
-            setLecturers(response.data.data);
+            setLecturers(response.data);
         } catch (error) {
             console.error("Lỗi khi tải danh sách giảng viên:", error);
         } finally {
@@ -103,7 +102,7 @@ const Lecturer = () => {
         try {
             setLoading(true);
             const { subjectIds, ...lecturerData } = newLecturer;
-            const response = await createLecturer(lecturerData, subjectIds);
+            const response = await createLecturerAPI(lecturerData, subjectIds);
             if (response && response.data) {
                 fetchLecturers(); // Tải lại danh sách giảng viên sau khi thêm thành công
                 toast.success('Thêm giảng viên thành công!');
@@ -127,9 +126,9 @@ const Lecturer = () => {
     const handleEditLecturer = async (id) => {
         try {
             setLoading(true);
-            const response = await getLecturerById(id);
+            const response = await getLecturerByIdAPI(id);
             if (response && response.data) {
-                setEditedLecturer(response.data.data);
+                setEditedLecturer(response.data);
                 setOpenEditModal(true);
             }
         } catch (error) {
@@ -176,9 +175,9 @@ const Lecturer = () => {
     const handleViewLecturer = async (id) => {
         try {
             setLoading(true);
-            const response = await getLecturerById(id);
+            const response = await getLecturerByIdAPI(id);
             if (response && response.data) {
-                setSelectedLecturer(response.data.data);
+                setSelectedLecturer(response.data);
                 setOpenDetail(true);
             }
         } catch (error) {

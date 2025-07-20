@@ -62,7 +62,7 @@ const routes = [
     exact: true,
     title: "Bảng điều khiển sinh viên",
     isPrivate: true, // Riêng tư
-    roles: ["student"], // Chỉ sinh viên
+    roles: ["admin", "student"], // Chỉ sinh viên
     layout: StudentLayout,
   },
   {

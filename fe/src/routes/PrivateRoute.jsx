@@ -7,17 +7,15 @@ import {
   Typography,
   LinearProgress,
   Fade,
-  Stack
+  Stack,
+  useTheme,
+  Avatar
 } from '@mui/material';
-import {
-  CheckCircle,
-  Error as ErrorIcon,
-  Lock
-} from '@mui/icons-material';
 
 const PrivateRoute = ({ children, allowedRoles }) => {
   const { isLoggedIn, userRole, loading } = useAuth();
   const location = useLocation();
+  const theme = useTheme();
   const navigate = useNavigate();
   const [showContent, setShowContent] = React.useState(false);
   const [countdown, setCountdown] = React.useState(3);
@@ -60,49 +58,61 @@ const PrivateRoute = ({ children, allowedRoles }) => {
         alignItems: 'center',
       }}>
         <Fade in={showContent} timeout={500}>
-          <Box sx={{
-            width: '100%',
-            textAlign: 'center',
-            backgroundColor: 'background.paper',
-            borderRadius: 4,
-            p: 4,
-            boxShadow: 3
-          }}>
-            <Stack direction="row" alignItems="center" justifyContent="center" spacing={2} mb={4}>
-              <img
-                src="https://cusc.ctu.edu.vn/themes/cusc/images/cusc/logo/CUSC%20Logo%20Series.png"
-                alt="CUSC Logo"
-                style={{ width: '80px', height: 'auto' }}
-              />
-              <Box>
-                <Typography variant="subtitle1" sx={{ fontWeight: 700, color: 'primary.main' }}>
-                  TRUNG TÂM CÔNG NGHỆ PHẦN MỀM
-                </Typography>
-                <Typography variant="subtitle2" sx={{ fontWeight: 600, color: 'text.secondary' }}>
-                  ĐẠI HỌC CẦN THƠ
-                </Typography>
-              </Box>
-            </Stack>
-
-            <Typography variant="caption" sx={{ color: 'text.secondary', fontStyle: 'italic' }}>
-              Vui lòng chờ trong giây lát
-            </Typography>
-
-            <LinearProgress
-              color="primary"
+          <Stack direction="row" alignItems="center" justifyContent="center" spacing={2} mb={4}>
+            <Box
               sx={{
-                width: '80%',
-                margin: '0 auto',
-                height: 4,
-                mt: 1,
-                borderRadius: 3,
-                '& .MuiLinearProgress-bar': {
-                  animationDuration: '2s',
+                background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
+                color: 'white',
+                p: 4,
+                borderRadius: 2,
+                textAlign: 'center',
+                position: 'relative',
+                overflow: 'hidden',
+                '&::before': {
+                  content: '""',
+                  position: 'absolute',
+                  top: -50,
+                  right: -50,
+                  width: 100,
+                  height: 100,
+                  borderRadius: '50%',
+                  background: 'rgba(255, 255, 255, 0.1)'
                 }
               }}
-            />
+            >
+              <Avatar
+                src="https://sanvieclamcantho.com/upload/imagelogo/trung-tam-cong-nghe-phan-mem-dai-hoc-can-tho1573111986.png"
+                alt="Logo"
+                sx={{
+                  width: 72,
+                  height: 72,
+                  margin: '0 auto 16px',
+                  border: '3px solid white',
+                  boxShadow: theme.shadows[3]
+                }}
+              />
+              <Typography variant="h5" component="h1" fontWeight="600">
+                HỆ THỐNG QUẢN LÝ THỜI KHOÁ BIỂU
+              </Typography>
+              <Typography variant="caption" sx={{ color: 'text.main', fontStyle: 'italic' }}>
+                Vui lòng chờ trong giây lát
+              </Typography>
 
-          </Box>
+              <LinearProgress
+                color="primary"
+                sx={{
+                  width: '80%',
+                  margin: '0 auto',
+                  height: 4,
+                  mt: 2,
+                  borderRadius: 3,
+                  '& .MuiLinearProgress-bar': {
+                    animationDuration: '2s',
+                  }
+                }}
+              />
+            </Box>
+          </Stack>
         </Fade>
       </Container>
     );
@@ -122,63 +132,71 @@ const PrivateRoute = ({ children, allowedRoles }) => {
         alignItems: 'center',
       }}>
         <Fade in={showContent} timeout={500}>
-          <Box sx={{
-            width: '100%',
-            textAlign: 'center',
-            backgroundColor: 'background.paper',
-            borderRadius: 4,
-            p: 4,
-            boxShadow: 3
-          }}>
-            <Stack direction="row" alignItems="center" justifyContent="center" spacing={2} mb={4}>
-              <img
-                src="https://cusc.ctu.edu.vn/themes/cusc/images/cusc/logo/CUSC%20Logo%20Series.png"
-                alt="CUSC Logo"
-                style={{ width: '80px', height: 'auto' }}
-              />
-              <Box>
-                <Typography variant="subtitle1" sx={{ fontWeight: 700, color: 'primary.main' }}>
-                  TRUNG TÂM CÔNG NGHỆ PHẦN MỀM
-                </Typography>
-                <Typography variant="subtitle2" sx={{ fontWeight: 600, color: 'text.secondary' }}>
-                  ĐẠI HỌC CẦN THƠ
-                </Typography>
-              </Box>
-            </Stack>
-
-            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              Bạn không có quyền truy cập trang này
-            </Typography>
-
-            <Typography variant="caption" sx={{ color: 'text.secondary', fontStyle: 'italic' }}>
-              Tự động chuyển hướng sau {countdown} giây...
-            </Typography>
-
-            <LinearProgress
-              variant="buffer"
-              value={100}
-              valueBuffer={100}
-              color="error"
+          <Stack direction="row" alignItems="center" justifyContent="center" spacing={2} mb={4}>
+            <Box
               sx={{
-                width: '80%',
-                margin: '0 auto',
-                height: 4,
-                borderRadius: 3,
-                mt: 1,
-                '& .MuiLinearProgress-bar': {
-                  animation: 'none',
+                background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
+                color: 'white',
+                p: 4,
+                borderRadius: 2,
+                textAlign: 'center',
+                position: 'relative',
+                overflow: 'hidden',
+                '&::before': {
+                  content: '""',
+                  position: 'absolute',
+                  top: -50,
+                  right: -50,
+                  width: 100,
+                  height: 100,
+                  borderRadius: '50%',
+                  background: 'rgba(255, 255, 255, 0.1)'
                 }
               }}
-            />
-
-
-          </Box>
+            >
+              <Avatar
+                src="https://sanvieclamcantho.com/upload/imagelogo/trung-tam-cong-nghe-phan-mem-dai-hoc-can-tho1573111986.png"
+                alt="Logo"
+                sx={{
+                  width: 72,
+                  height: 72,
+                  margin: '0 auto 16px',
+                  border: '3px solid white',
+                  boxShadow: theme.shadows[3]
+                }}
+              />
+              <Typography variant="h5" component="h1" fontWeight="600">
+                HỆ THỐNG QUẢN LÝ THỜI KHOÁ BIỂU
+              </Typography>
+              <Typography variant="body2" sx={{ color: 'text.main' }}>
+                Bạn không có quyền truy cập trang này
+              </Typography>
+              <LinearProgress
+                variant="buffer"
+                value={100}
+                valueBuffer={100}
+                color="error"
+                sx={{
+                  width: '80%',
+                  margin: '0 auto',
+                  height: 4,
+                  borderRadius: 3,
+                  mt: 1,
+                  '& .MuiLinearProgress-bar': {
+                    animation: 'none',
+                  }
+                }}
+              />
+              <Typography variant="caption" sx={{ color: 'text.main', fontStyle: 'italic' }}>
+                Tự động chuyển hướng sau {countdown} giây...
+              </Typography>
+            </Box>
+          </Stack>
         </Fade>
-      </Container>
+      </Container >
     );
   }
 
-  // 4. Authenticated and authorized
   return children;
 };
 
