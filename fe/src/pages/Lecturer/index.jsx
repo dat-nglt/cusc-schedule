@@ -25,7 +25,7 @@ import DeleteLecturerModal from './DeleteLecturerModal';
 import useResponsive from '../../hooks/useResponsive';
 import LecturerTable from './LecturerTable';
 import { toast } from 'react-toastify';
-import { getAllLecturersAPI, getLecturerByIdAPI, createLecturer, updateLecturer, deleteLecturer } from '../../api/lecturerAPI';
+import { getAllLecturersAPI, getLecturerByIdAPI, createLecturerAPI, updateLecturer, deleteLecturer } from '../../api/lecturerAPI';
 const Lecturer = () => {
     const { isSmallScreen, isMediumScreen } = useResponsive();
 
@@ -80,7 +80,7 @@ const Lecturer = () => {
     const handleAddNewLecturer = async (newLecturer) => {
         try {
             setLoading(true);
-            const response = await createLecturer(newLecturer);
+            const response = await createLecturerAPI(newLecturer);
             if (response && response.data) {
                 fetchLecturers(); // Tải lại danh sách giảng viên sau khi thêm thành công
                 toast.success('Thêm giảng viên thành công!');

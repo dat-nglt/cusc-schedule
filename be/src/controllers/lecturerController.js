@@ -84,7 +84,6 @@ export const createLecturerController = async (req, res) => {
     return APIResponse(res, 201, lecturer, "Tạo giảng viên thành công.");
   } catch (error) {
     console.error("Lỗi khi tạo giảng viên:", error);
-    // Có thể thêm logic kiểm tra lỗi cụ thể hơn từ service (ví dụ: duplicate entry)
     return APIResponse(
       res,
       500,

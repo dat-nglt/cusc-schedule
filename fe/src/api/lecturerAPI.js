@@ -20,7 +20,7 @@ export const getLecturerByIdAPI = async (id) => {
   }
 };
 
-export const createLecturer = async (lecturerData) => {
+export const createLecturerAPI = async (lecturerData) => {
   try {
     const response = await axiosInstance.post(
       "/api/lecturers/create",
