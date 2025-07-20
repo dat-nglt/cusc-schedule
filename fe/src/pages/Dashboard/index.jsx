@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Box,
     Typography,
@@ -31,8 +31,16 @@ import { BarChart, PieChart } from '@mui/x-charts';
 import WeeklyCalendar from './WeeklyCalendar';
 import QuickStats from './QuickStats';
 import RecentConflicts from './RecentConflicts';
+import { getAllLecturers } from '../../api/lecturerAPI';
+import { getAllSubjects } from '../../api/subjectAPI';
+
 
 const Dashboard = () => {
+    //state
+    const [lecturers, setLecturers] = useState([]);
+    const [subjects, setSubjects] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
 
     const [scheduleItems, setScheduleItems] = useState([
         {
@@ -91,6 +99,48 @@ const Dashboard = () => {
             checkOutTime: '2025-06-13T16:05:00'
         }
     ]);
+    //fetch data
+    const fetchLecturers = async () => {
+        try {
+            setLoading(true);
+            const response = await getAllLecturers();
+            if (!response) {
+                console.error("Không có dữ liệu giảng viên");
+                return;
+            }
+            setLecturers(response.data.data);
+        } catch (error) {
+            console.error("Lỗi khi tải danh sách giảng viên:", error);
+        } finally {
+            setLoading(false);
+            setError('');
+        }
+    };
+
+
+    const fetchSubjects = async () => {
+        try {
+            setLoading(true);
+            const response = await getAllSubjects();
+            if (!response) {
+                console.error("Không có dữ liệu học phần");
+                return;
+            }
+            setSubjects(response.data.data);
+        } catch (error) {
+            console.error("Lỗi khi tải danh sách học phần:", error);
+        } finally {
+            setLoading(false);
+            setError('');
+        }
+    };
+
+    //useEffect
+    useEffect(() => {
+        fetchLecturers();
+        fetchSubjects();
+    }, []);
+
 
     const handleItemMove = (itemId, newStartTime) => {
         setScheduleItems(prevItems =>
@@ -107,49 +157,19 @@ const Dashboard = () => {
         console.log('Thêm lịch học mới');
     };
 
-    const recentConflicts = [
-        { id: 1, type: 'Lớp học', name: 'Lớp Toán A1', time: '2023-10-15 08:00', conflictWith: 'Phòng 301 đã được đặt' },
-        { id: 2, type: 'Giảng viên', name: 'TS. Nguyễn Văn A', time: '2023-10-15 09:00', conflictWith: 'Đã có lớp khác' },
-        { id: 3, type: 'Phòng học', name: 'Phòng 202', time: '2023-10-14 14:00', conflictWith: 'Thiết bị đang bảo trì' },
-    ];
-
-    // Chart data
-    const weeklyData = {
-        labels: ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'],
-        values: [12, 8, 10, 9, 11, 2]
-    };
-
-    const monthlyData = {
-        labels: ['Tuần 1', 'Tuần 2', 'Tuần 3', 'Tuần 4'],
-        values: [40, 35, 45, 38]
-    };
-
-    const teacherDistribution = [
-        { id: 0, value: 8, label: 'Toán' },
-        { id: 1, value: 5, label: 'Lý' },
-        { id: 2, value: 7, label: 'Hóa' },
-        { id: 3, value: 6, label: 'Văn' },
-        { id: 4, value: 2, label: 'Sử' }
-    ];
-
-    const roomDistribution = [
-        { id: 0, value: 6, label: 'Phòng 100-200' },
-        { id: 1, value: 5, label: 'Phòng 300-400' },
-        { id: 2, value: 4, label: 'Phòng Lab' }
-    ];
 
     const stats = {
         classes: 42,
-        teachers: 28,
+        teachers: lecturers.length,
         rooms: 15,
-        course: 15,
+        course: subjects.length,
         conflicts: 3
     };
 
     return (
         <Box sx={{ p: 3, zIndex: 10 }}>
             {/* Quick Stats */}
-            <QuickStats stats={stats} />
+            <QuickStats stats={stats} lecturer={lecturers} subject={subjects} />
 
             {/* Main Content */}
             <Box sx={

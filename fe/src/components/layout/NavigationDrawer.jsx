@@ -26,6 +26,7 @@ import {
     Room as RoomIcon,
     AccessTime as AccessTimeIcon,
     Logout as LogoutIcon,
+    Event
 } from '@mui/icons-material';
 
 const navItems = [
@@ -33,6 +34,8 @@ const navItems = [
     { text: 'Quản lý giảng viên', icon: <PersonIcon />, path: '/lecturers' },
     { text: 'Quản lý học viên', icon: <SchoolIcon />, path: '/students' },
     { text: 'Quản lý chương trình đào tạo', icon: <LibraryBooksIcon />, path: '/programs' },
+    { text: 'Quản lý học kỳ', icon: <LibraryBooksIcon />, path: '/semesters' },
+    { text: 'Quản lý lịch nghỉ', icon: <Event />, path: '/braekschedules' },
     { text: 'Quản lý học phần', icon: <MenuBookIcon />, path: '/subjects' },
     { text: 'Quản lý khóa học', icon: <ClassIcon />, path: '/courses' },
     { text: 'Quản lý lớp', icon: <GroupsIcon />, path: '/class' },

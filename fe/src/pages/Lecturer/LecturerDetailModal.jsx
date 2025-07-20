@@ -21,12 +21,19 @@ import {
     Event as EventIcon,
     Update as UpdateIcon,
     CheckCircle as StatusIcon,
+    Work as WorkIcon,
+    MenuBook as DegreeIcon,
+    Star as RankIcon,
+    Wc as GenderIcon,
+    Home as AddressIcon,
+    Cake as BirthdayIcon,
+    Class as SubjectIcon,
 } from '@mui/icons-material';
 import { getStatusChip } from '../../components/ui/StatusChip';
 import { formatDateTime } from '../../utils/formatDateTime';
 import { toast } from 'react-toastify';
 // Hàm kiểm tra giá trị và trả về giá trị hoặc thông báo mặc định
-const getValueOrDefault = (value) => value || 'Không có dữ liệu';
+const getValueOrDefault = (value) => value || 'Chưa có dữ liệu';
 
 export default function LecturerDetailModal({ open, onClose, lecturer }) {
     if (!lecturer) return null;
@@ -130,6 +137,168 @@ export default function LecturerDetailModal({ open, onClose, lecturer }) {
                         </Box>
                     </Grid>
 
+                    {/* Giới tính */}
+                    <Grid item xs={12} md={6}>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                bgcolor: '#f9f9f9',
+                                p: 2,
+                                borderRadius: 1,
+                                border: '1px solid #e0e0e0',
+                            }}
+                        >
+                            <GenderIcon sx={{ mr: 1, color: '#1976d2' }} />
+                            <Box>
+                                <Typography
+                                    variant="body2"
+                                    sx={{ fontWeight: 'bold', color: '#333' }}
+                                >
+                                    Giới tính
+                                </Typography>
+                                <Typography variant="body1" sx={{ color: '#666' }}>
+                                    {getValueOrDefault(lecturer.gender)}
+                                </Typography>
+                            </Box>
+                        </Box>
+                    </Grid>
+
+                    {/* Ngày sinh */}
+                    <Grid item xs={12} md={6}>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                bgcolor: '#f9f9f9',
+                                p: 2,
+                                borderRadius: 1,
+                                border: '1px solid #e0e0e0',
+                            }}
+                        >
+                            <BirthdayIcon sx={{ mr: 1, color: '#1976d2' }} />
+                            <Box>
+                                <Typography
+                                    variant="body2"
+                                    sx={{ fontWeight: 'bold', color: '#333' }}
+                                >
+                                    Ngày sinh
+                                </Typography>
+                                <Typography variant="body1" sx={{ color: '#666' }}>
+                                    {lecturer.day_of_birth ? formatDateTime(lecturer.day_of_birth, 'date') : 'Chưa có dữ liệu'}
+                                </Typography>
+                            </Box>
+                        </Box>
+                    </Grid>
+
+                    {/* Khoa */}
+                    <Grid item xs={12} md={6}>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                bgcolor: '#f9f9f9',
+                                p: 2,
+                                borderRadius: 1,
+                                border: '1px solid #e0e0e0',
+                            }}
+                        >
+                            <SchoolIcon sx={{ mr: 1, color: '#1976d2' }} />
+                            <Box>
+                                <Typography
+                                    variant="body2"
+                                    sx={{ fontWeight: 'bold', color: '#333' }}
+                                >
+                                    Khoa
+                                </Typography>
+                                <Typography variant="body1" sx={{ color: '#666' }}>
+                                    {getValueOrDefault(lecturer.department)}
+                                </Typography>
+                            </Box>
+                        </Box>
+                    </Grid>
+
+                    {/* Bằng cấp */}
+                    <Grid item xs={12} md={6}>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                bgcolor: '#f9f9f9',
+                                p: 2,
+                                borderRadius: 1,
+                                border: '1px solid #e0e0e0',
+                            }}
+                        >
+                            <DegreeIcon sx={{ mr: 1, color: '#1976d2' }} />
+                            <Box>
+                                <Typography
+                                    variant="body2"
+                                    sx={{ fontWeight: 'bold', color: '#333' }}
+                                >
+                                    Bằng cấp
+                                </Typography>
+                                <Typography variant="body1" sx={{ color: '#666' }}>
+                                    {getValueOrDefault(lecturer.degree)}
+                                </Typography>
+                            </Box>
+                        </Box>
+                    </Grid>
+
+                    {/* Học hàm */}
+                    <Grid item xs={12} md={6}>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                bgcolor: '#f9f9f9',
+                                p: 2,
+                                borderRadius: 1,
+                                border: '1px solid #e0e0e0',
+                            }}
+                        >
+                            <RankIcon sx={{ mr: 1, color: '#1976d2' }} />
+                            <Box>
+                                <Typography
+                                    variant="body2"
+                                    sx={{ fontWeight: 'bold', color: '#333' }}
+                                >
+                                    Học hàm
+                                </Typography>
+                                <Typography variant="body1" sx={{ color: '#666' }}>
+                                    {getValueOrDefault(lecturer.academic_rank)}
+                                </Typography>
+                            </Box>
+                        </Box>
+                    </Grid>
+
+                    {/* Ngày vào làm */}
+                    <Grid item xs={12} md={6}>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                bgcolor: '#f9f9f9',
+                                p: 2,
+                                borderRadius: 1,
+                                border: '1px solid #e0e0e0',
+                            }}
+                        >
+                            <WorkIcon sx={{ mr: 1, color: '#1976d2' }} />
+                            <Box>
+                                <Typography
+                                    variant="body2"
+                                    sx={{ fontWeight: 'bold', color: '#333' }}
+                                >
+                                    Ngày vào làm
+                                </Typography>
+                                <Typography variant="body1" sx={{ color: '#666' }}>
+                                    {lecturer.hire_date ? formatDateTime(lecturer.hire_date, 'date') : 'Chưa có dữ liệu'}
+                                </Typography>
+                            </Box>
+                        </Box>
+                    </Grid>
+
                     {/* Môn giảng dạy */}
                     <Grid item xs={12}>
                         <Box
@@ -142,7 +311,7 @@ export default function LecturerDetailModal({ open, onClose, lecturer }) {
                                 border: '1px solid #e0e0e0',
                             }}
                         >
-                            <SchoolIcon sx={{ mr: 1, color: '#1976d2', mt: 0.5 }} />
+                            <SubjectIcon sx={{ mr: 1, color: '#1976d2', mt: 0.5 }} />
                             <Box sx={{ width: '100%' }}>
                                 <Typography
                                     variant="body2"
@@ -151,27 +320,47 @@ export default function LecturerDetailModal({ open, onClose, lecturer }) {
                                     Môn giảng dạy
                                 </Typography>
                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                                    {lecturer.department && lecturer.department.length > 0 ? (
-                                        Array.isArray(lecturer.department) ? (
-                                            lecturer.department.map((mon, idx) => (
-                                                <Chip
-                                                    key={idx}
-                                                    label={mon}
-                                                    sx={{ bgcolor: '#e3f2fd', color: '#1976d2' }}
-                                                />
-                                            ))
-                                        ) : (
+                                    {lecturer.subjects && lecturer.subjects.length > 0 ? (
+                                        lecturer.subjects.map((s) => (
                                             <Chip
-                                                label={lecturer.department}
+                                                key={s.subjects_id}
+                                                label={s.subject_name}
                                                 sx={{ bgcolor: '#e3f2fd', color: '#1976d2' }}
                                             />
-                                        )
+                                        ))
                                     ) : (
                                         <Typography variant="body1" sx={{ color: '#666' }}>
-                                            Không có dữ liệu
+                                            Chưa có dữ liệu
                                         </Typography>
                                     )}
                                 </Box>
+                            </Box>
+                        </Box>
+                    </Grid>
+
+                    {/* Địa chỉ */}
+                    <Grid item xs={12}>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                bgcolor: '#f9f9f9',
+                                p: 2,
+                                borderRadius: 1,
+                                border: '1px solid #e0e0e0',
+                            }}
+                        >
+                            <AddressIcon sx={{ mr: 1, color: '#1976d2' }} />
+                            <Box>
+                                <Typography
+                                    variant="body2"
+                                    sx={{ fontWeight: 'bold', color: '#333' }}
+                                >
+                                    Địa chỉ
+                                </Typography>
+                                <Typography variant="body1" sx={{ color: '#666' }}>
+                                    {getValueOrDefault(lecturer.address)}
+                                </Typography>
                             </Box>
                         </Box>
                     </Grid>

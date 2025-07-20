@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -13,32 +13,41 @@ import {
   InputAdornment,
   IconButton,
   Button,
-} from '@mui/material';
+} from "@mui/material";
 import {
   Add as AddIcon,
   Search as SearchIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
-} from '@mui/icons-material';
-import CourseDetailModal from './CourseDetailModal';
-import AddCourseModal from './AddCourseModal'; // Đã chỉnh sửa để hỗ trợ preview
-import EditCourseModal from './EditCourseModal';
-import DeleteCourseModal from './DeleteCourseModal';
-import useResponsive from '../../hooks/useResponsive';
-import CourseTable from './CourseTable';
-import { getCourses, getCourseById, addCourse, updateCourse, deleteCourse, listCourses, importCourses } from '../../api/courseAPI';
+} from "@mui/icons-material";
+import CourseDetailModal from "./CourseDetailModal";
+import AddCourseModal from "./AddCourseModal"; // Đã chỉnh sửa để hỗ trợ preview
+import EditCourseModal from "./EditCourseModal";
+import DeleteCourseModal from "./DeleteCourseModal";
+import useResponsive from "../../hooks/useResponsive";
+import CourseTable from "./CourseTable";
+import { toast } from "react-toastify";
+import {
+  getCourses,
+  getCourseById,
+  addCourse,
+  updateCourse,
+  deleteCourse,
+  listCourses,
+  importCourses,
+} from "../../api/courseAPI";
 
 // Hàm định dạng timestamp thành YYYY-MM-DD HH:MM:SS.sss+07
 const formatTimestamp = (timestamp) => {
-  if (!timestamp) return '';
+  if (!timestamp) return "";
   const date = new Date(timestamp);
   const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-  const seconds = String(date.getSeconds()).padStart(2, '0');
-  const milliseconds = String(date.getMilliseconds()).padStart(3, '0');
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  const seconds = String(date.getSeconds()).padStart(2, "0");
+  const milliseconds = String(date.getMilliseconds()).padStart(3, "0");
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${milliseconds}+07`;
 };
 
@@ -50,52 +59,28 @@ const Course = () => {
   const [error, setError] = useState(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage] = useState(8);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedYear, setSelectedYear] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedYear, setSelectedYear] = useState("");
   const [openDetail, setOpenDetail] = useState(false);
   const [openAdd, setOpenAdd] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState(null);
 
-  const years = ['2021', '2022', '2023', '2024', '2025'];
+  const years = ["2021", "2022", "2023", "2024", "2025"];
 
   const fetchCourses = async () => {
     try {
       setLoading(true);
       const response = await getCourses();
-      console.log('Phản hồi từ API (danh sách):', response);
-
-      let coursesData = [];
-      if (Array.isArray(response)) {
-        coursesData = response.map((course, index) => ({
-          stt: index + 1,
-          course_id: course.course_id,
-          course_name: course.course_name,
-          start_date: course.start_date,
-          end_date: course.end_date,
-          created_at: formatTimestamp(course.created_at),
-          updated_at: formatTimestamp(course.updated_at),
-        }));
-      } else if (response && typeof response === 'object' && Array.isArray(response.data)) {
-        coursesData = response.data.map((course, index) => ({
-          stt: index + 1,
-          course_id: course.course_id,
-          course_name: course.course_name,
-          start_date: course.start_date,
-          end_date: course.end_date,
-          created_at: formatTimestamp(course.created_at),
-          updated_at: formatTimestamp(course.updated_at),
-        }));
-      } else {
-        throw new Error('Dữ liệu từ API không phải là mảng hợp lệ');
+      if (!response) {
+        console.error("Không có dữ liệu khóa học");
+        return;
       }
-
-      setCourses(coursesData);
-      setLoading(false);
-    } catch (err) {
-      console.error('Lỗi chi tiết (danh sách):', err.message);
-      setError(`Lỗi khi tải danh sách khóa học: ${err.message}`);
+      setCourses(response.data.data);
+    } catch (error) {
+      console.error("Lỗi khi tải danh sách khóa học:", error);
+    } finally {
       setLoading(false);
     }
   };
@@ -104,14 +89,15 @@ const Course = () => {
     fetchCourses();
   }, []);
 
+  // Hàm xem chi tiết khóa học
   const handleViewCourse = async (course_id) => {
     try {
       setLoading(true);
       const response = await getCourseById(course_id);
-      console.log('Phản hồi từ API (chi tiết):', response);
+      console.log("Phản hồi từ API (chi tiết):", response);
 
       let courseData = {};
-      if (response && typeof response === 'object') {
+      if (response && typeof response === "object") {
         if (Array.isArray(response.data)) {
           courseData = response.data[0] || {};
         } else if (response.data) {
@@ -120,7 +106,7 @@ const Course = () => {
           courseData = response;
         }
       } else {
-        throw new Error('Dữ liệu từ API không phải là object hợp lệ');
+        throw new Error("Dữ liệu từ API không phải là object hợp lệ");
       }
 
       setSelectedCourse({
@@ -128,13 +114,13 @@ const Course = () => {
         course_name: courseData.course_name,
         start_date: courseData.start_date,
         end_date: courseData.end_date,
-        status: courseData.status || 'Không có dữ liệu',
+        status: courseData.status || "Không có dữ liệu",
         created_at: formatTimestamp(courseData.created_at),
         updated_at: formatTimestamp(courseData.updated_at),
       });
       setOpenDetail(true);
     } catch (err) {
-      console.error('Lỗi khi lấy chi tiết:', err.message);
+      console.error("Lỗi khi lấy chi tiết:", err.message);
       setError(`Lỗi khi lấy chi tiết khóa học: ${err.message}`);
       setOpenDetail(false);
     } finally {
@@ -142,40 +128,38 @@ const Course = () => {
     }
   };
 
+  // Hàm thêm khóa học
   const handleAddCourse = async (courseData) => {
     try {
       setLoading(true);
-      console.log('Gửi dữ liệu thêm khóa học:', courseData);
+      console.log("Gửi dữ liệu thêm khóa học:", courseData);
+
+      // Chỉ gửi các trường cần thiết
       const response = await addCourse({
         course_id: courseData.course_id,
         course_name: courseData.course_name,
         start_date: courseData.start_date,
         end_date: courseData.end_date,
-        status: courseData.status || 'inactive',
+        status: courseData.status || "Hoạt động", // Thống nhất giá trị mặc định
       });
-      console.log('Phản hồi từ API (thêm):', response);
 
-      const newCourse = response.data || response;
-      setCourses((prev) => [
-        ...prev,
-        {
-          stt: prev.length + 1,
-          course_id: newCourse.course_id,
-          course_name: newCourse.course_name,
-          start_date: newCourse.start_date,
-          end_date: newCourse.end_date,
-          created_at: formatTimestamp(newCourse.created_at),
-          updated_at: formatTimestamp(newCourse.updated_at),
-        },
-      ]);
+      // Xử lý response đúng cách
+      if (response.data) {
+        toast.success("Thêm khóa học thành công!");
+        // Gọi lại API để cập nhật danh sách mới nhất
+        await fetchCourses();
+      } else {
+        throw new Error(response.message || "Lỗi không xác định");
+      }
     } catch (err) {
-      console.error('Lỗi khi thêm khóa học:', err.message, err.response?.data);
-      setError(`Lỗi khi thêm khóa học: ${err.message} - ${err.response?.data?.message || 'Kiểm tra định dạng dữ liệu'}`);
+      console.error("Lỗi khi thêm khóa học:", err);
+      toast.error(err.message || "Lỗi khi thêm khóa học");
     } finally {
       setLoading(false);
     }
   };
 
+  // Hàm chỉnh sửa khóa học
   const handleEditCourse = (course) => {
     setSelectedCourse(course);
     setOpenEdit(true);
@@ -184,7 +168,7 @@ const Course = () => {
   const handleSaveEditedCourse = async (courseData) => {
     try {
       setLoading(true);
-      console.log('Gửi dữ liệu chỉnh sửa khóa học:', courseData);
+      console.log("Gửi dữ liệu chỉnh sửa khóa học:", courseData);
       const response = await updateCourse(courseData.course_id, {
         course_id: courseData.course_id,
         course_name: courseData.course_name,
@@ -193,43 +177,48 @@ const Course = () => {
         status: courseData.status,
         updated_at: new Date().toISOString(),
       });
-      console.log('Phản hồi từ API (chỉnh sửa):', response);
+      if (response && response.data) {
+        toast.success("Chỉnh sửa khóa học thành công!");
+        fetchCourses();
+      }
 
       await fetchCourses();
     } catch (err) {
-      console.error('Lỗi khi chỉnh sửa khóa học:', err.message);
-      setError(`Lỗi khi chỉnh sửa khóa học: ${err.message}`);
+      toast.error("Lỗi khi chỉnh sửa khóa học!");
     } finally {
       setLoading(false);
     }
   };
-
+  // Hàm mở modal xóa khóa học
   const handleOpenDeleteModal = (course) => {
     if (!course || !course.course_id) {
-      console.error('Invalid course data in handleOpenDeleteModal:', course);
-      setError('Dữ liệu khóa học không hợp lệ');
+      console.error("Invalid course data in handleOpenDeleteModal:", course);
+      setError("Dữ liệu khóa học không hợp lệ");
       return;
     }
     setSelectedCourse(course);
     setOpenDelete(true);
   };
 
+  // Hàm xóa khóa học
   const handleDeleteCourse = async (course_id) => {
     try {
       setLoading(true);
       if (!course_id) {
-        console.error('Invalid courseId for deletion:', course_id);
-        setError('Dữ liệu khóa học không hợp lệ');
+        console.error("Invalid courseId for deletion:", course_id);
+        setError("Dữ liệu khóa học không hợp lệ");
         return;
       }
-      console.log('Attempting to delete course with course_id:', course_id);
+      console.log("Attempting to delete course with course_id:", course_id);
       const response = await deleteCourse(course_id);
-      console.log('Response from API (delete):', response);
+      if (response && response.data) {
+        toast.success("Xóa khóa học thành công!");
+        fetchCourses();
+      }
 
       await fetchCourses();
     } catch (err) {
-      console.error('Lỗi khi xóa khóa học:', err.message);
-      setError(`Lỗi khi xóa khóa học: ${err.message}`);
+      toast.error("Lỗi khi xóa khóa học!");
     } finally {
       setLoading(false);
     }
@@ -249,25 +238,39 @@ const Course = () => {
     return matchesSearchTerm && matchesYear;
   });
 
-  const displayedCourses = filteredCourses.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+  const displayedCourses = filteredCourses.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
 
   return (
-    <Box sx={{ p: 3, zIndex: 10, height: 'calc(100vh - 64px)', overflowY: 'auto' }}>
-      <Box sx={{ width: '100%', mb: 3 }}>
+    <Box
+      sx={{ p: 3, zIndex: 10, height: "calc(100vh - 64px)", overflowY: "auto" }}
+    >
+      <Box sx={{ width: "100%", mb: 3 }}>
         <Card sx={{ flexGrow: 1 }}>
           <CardContent>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, gap: 2 }}>
-              <Typography variant="h6">
-                Danh sách khóa học
-              </Typography>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                mb: 2,
+                gap: 2,
+              }}
+            >
+              <Typography variant="h6">Danh sách khóa học</Typography>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 {isSmallScreen ? (
                   <IconButton
                     color="primary"
                     onClick={() => setOpenAdd(true)}
-                    sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
+                    sx={{
+                      bgcolor: "#1976d2",
+                      "&:hover": { bgcolor: "#115293" },
+                    }}
                   >
-                    <AddIcon sx={{ color: '#fff' }} />
+                    <AddIcon sx={{ color: "#fff" }} />
                   </IconButton>
                 ) : (
                   <Button
@@ -275,18 +278,28 @@ const Course = () => {
                     color="primary"
                     startIcon={<AddIcon />}
                     onClick={() => setOpenAdd(true)}
-                    sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' }, minWidth: isSmallScreen ? 100 : 150, height: '56px' }}
+                    sx={{
+                      bgcolor: "#1976d2",
+                      "&:hover": { bgcolor: "#115293" },
+                      minWidth: isSmallScreen ? 100 : 150,
+                      height: "56px",
+                    }}
                   >
                     Thêm khóa học
                   </Button>
                 )}
-                <FormControl sx={{ minWidth: isSmallScreen ? 100 : 150 }} variant="outlined">
-                  <InputLabel id="year-filter-label">{isSmallScreen ? 'Lọc' : 'Lọc theo năm'}</InputLabel>
+                <FormControl
+                  sx={{ minWidth: isSmallScreen ? 100 : 150 }}
+                  variant="outlined"
+                >
+                  <InputLabel id="year-filter-label">
+                    {isSmallScreen ? "Lọc" : "Lọc theo năm"}
+                  </InputLabel>
                   <Select
                     labelId="year-filter-label"
                     value={selectedYear}
                     onChange={(e) => setSelectedYear(e.target.value)}
-                    label={isSmallScreen ? 'Lọc' : 'Lọc theo năm'}
+                    label={isSmallScreen ? "Lọc" : "Lọc theo năm"}
                   >
                     <MenuItem value="">Tất cả</MenuItem>
                     {years.map((year) => (
@@ -305,7 +318,7 @@ const Course = () => {
                 placeholder="Tìm kiếm theo mã hoặc tên khóa học..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                sx={{ bgcolor: '#fff' }}
+                sx={{ bgcolor: "#fff" }}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -337,7 +350,9 @@ const Course = () => {
                   onPageChange={handleChangePage}
                   rowsPerPage={rowsPerPage}
                   rowsPerPageOptions={[]}
-                  labelDisplayedRows={({ from, to, count }) => `${from}-${to} trên ${count}`}
+                  labelDisplayedRows={({ from, to, count }) =>
+                    `${from}-${to} trên ${count}`
+                  }
                 />
               </>
             )}
