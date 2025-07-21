@@ -110,139 +110,145 @@ const RoomManagement = () => {
   };
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ p: 1 }}>
       {/* Header and Filters */}
-      <Box sx={{
-        display: 'flex',
-        flexDirection: isSmallScreen ? 'column' : 'row',
-        justifyContent: 'space-between',
-        alignItems: isSmallScreen ? 'stretch' : 'center',
-        mb: 3,
-        gap: 2
-      }}>
-        <Typography variant="h5" fontWeight="600">
-          Quản lý Phòng học
-        </Typography>
+      <Card sx={{ width: '100%', boxShadow: 1 }}>
+        <CardContent>
 
-        <Box sx={{
-          display: 'flex',
-          gap: 2,
-          flexDirection: isSmallScreen ? 'column' : 'row',
-          width: isSmallScreen ? '100%' : 'auto'
-        }}>
-          <TextField
-            size="small"
-            placeholder="Tìm phòng..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
-            sx={{
-              minWidth: 200,
-              backgroundColor: theme.palette.background.paper
-            }}
-          />
 
-          <FormControl size="small" sx={{ minWidth: 120 }}>
-            <InputLabel>Tòa nhà</InputLabel>
-            <Select
-              value={buildingFilter}
-              onChange={(e) => setBuildingFilter(e.target.value)}
-              label="Tòa nhà"
-            >
-              <MenuItem value="">Tất cả</MenuItem>
-              <MenuItem value="A">Tòa A</MenuItem>
-              <MenuItem value="B">Tòa B</MenuItem>
-              <MenuItem value="C">Tòa C</MenuItem>
-            </Select>
-          </FormControl>
-
-          <FormControl size="small" sx={{ minWidth: 120 }}>
-            <InputLabel>Loại phòng</InputLabel>
-            <Select
-              value={typeFilter}
-              onChange={(e) => setTypeFilter(e.target.value)}
-              label="Loại phòng"
-            >
-              <MenuItem value="">Tất cả</MenuItem>
-              <MenuItem value="Lý thuyết">Lý thuyết</MenuItem>
-              <MenuItem value="Thực hành">Thực hành</MenuItem>
-              <MenuItem value="Hội thảo">Hội thảo</MenuItem>
-            </Select>
-          </FormControl>
-
-          <Button
-            variant="contained"
-            startIcon={<AddIcon />}
-            onClick={() => setOpenAddModal(true)}
-            sx={{ ml: isSmallScreen ? 0 : 'auto' }}
-          >
-            Thêm phòng
-          </Button>
-        </Box>
-      </Box>
-
-      {/* Room Matrix Visualization */}
-      <Box sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 4,
-        mt: 3
-      }}>
-        {Object.values(groupedRooms).map(group => (
-          <Box key={`${group.building}-${group.floor}`}>
-            <Typography variant="body1" sx={{ mb: 2, bgcolor: theme.palette.primary.light, color: theme.palette.primary.contrastText, p: 1, borderRadius: 1 }}>
-              Tòa {group.building} - Tầng {group.floor}
+          <Box sx={{
+            display: 'flex',
+            flexDirection: isSmallScreen ? 'column' : 'row',
+            justifyContent: 'space-between',
+            alignItems: isSmallScreen ? 'stretch' : 'center',
+            mb: 3,
+            gap: 2
+          }}>
+            <Typography variant="h5" fontWeight="600">
+              Quản lý Phòng học
             </Typography>
 
             <Box sx={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-              gap: 3
+              display: 'flex',
+              gap: 2,
+              flexDirection: isSmallScreen ? 'column' : 'row',
+              width: isSmallScreen ? '100%' : 'auto'
             }}>
-              {group.rooms.map(room => (
-                <RoomCard
-                  key={room.id}
-                  room={room}
-                  onClick={() => handleRoomClick(room)}
-                  onEdit={() => {
-                    setSelectedRoom(room);
-                    setOpenEditModal(true);
-                  }}
-                  onDelete={() => handleDeleteRoom(room.id)}
-                />
-              ))}
+              <TextField
+                size="small"
+                placeholder="Tìm phòng..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon />
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{
+                  minWidth: 200,
+                  backgroundColor: theme.palette.background.paper
+                }}
+              />
+
+              <FormControl size="small" sx={{ minWidth: 120 }}>
+                <InputLabel>Tòa nhà</InputLabel>
+                <Select
+                  value={buildingFilter}
+                  onChange={(e) => setBuildingFilter(e.target.value)}
+                  label="Tòa nhà"
+                >
+                  <MenuItem value="">Tất cả</MenuItem>
+                  <MenuItem value="A">Tòa A</MenuItem>
+                  <MenuItem value="B">Tòa B</MenuItem>
+                  <MenuItem value="C">Tòa C</MenuItem>
+                </Select>
+              </FormControl>
+
+              <FormControl size="small" sx={{ minWidth: 120 }}>
+                <InputLabel>Loại phòng</InputLabel>
+                <Select
+                  value={typeFilter}
+                  onChange={(e) => setTypeFilter(e.target.value)}
+                  label="Loại phòng"
+                >
+                  <MenuItem value="">Tất cả</MenuItem>
+                  <MenuItem value="Lý thuyết">Lý thuyết</MenuItem>
+                  <MenuItem value="Thực hành">Thực hành</MenuItem>
+                  <MenuItem value="Hội thảo">Hội thảo</MenuItem>
+                </Select>
+              </FormControl>
+
+              <Button
+                variant="contained"
+                startIcon={<AddIcon />}
+                onClick={() => setOpenAddModal(true)}
+                sx={{ ml: isSmallScreen ? 0 : 'auto' }}
+              >
+                Thêm phòng
+              </Button>
             </Box>
           </Box>
-        ))}
-      </Box>
 
-      {/* Room Detail Modal */}
-      <RoomDetailModal
-        open={openDetailModal}
-        onClose={() => setOpenDetailModal(false)}
-        room={selectedRoom}
-      />
+          {/* Room Matrix Visualization */}
+          <Box sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 4,
+            mt: 3
+          }}>
+            {Object.values(groupedRooms).map(group => (
+              <Box key={`${group.building}-${group.floor}`}>
+                <Typography variant="body1" sx={{ mb: 2, bgcolor: theme.palette.primary.light, color: theme.palette.primary.contrastText, p: 1, borderRadius: 1 }}>
+                  Tòa {group.building} - Tầng {group.floor}
+                </Typography>
 
-      {/* Add Room Modal */}
-      <AddRoomModal
-        open={openAddModal}
-        onClose={() => setOpenAddModal(false)}
-        onSave={handleAddRoom}
-      />
+                <Box sx={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                  gap: 3
+                }}>
+                  {group.rooms.map(room => (
+                    <RoomCard
+                      key={room.id}
+                      room={room}
+                      onClick={() => handleRoomClick(room)}
+                      onEdit={() => {
+                        setSelectedRoom(room);
+                        setOpenEditModal(true);
+                      }}
+                      onDelete={() => handleDeleteRoom(room.id)}
+                    />
+                  ))}
+                </Box>
+              </Box>
+            ))}
+          </Box>
 
-      {/* Edit Room Modal */}
-      <EditRoomModal
-        open={openEditModal}
-        onClose={() => setOpenEditModal(false)}
-        room={selectedRoom}
-        onSave={handleEditRoom}
-      />
+          {/* Room Detail Modal */}
+          <RoomDetailModal
+            open={openDetailModal}
+            onClose={() => setOpenDetailModal(false)}
+            room={selectedRoom}
+          />
+
+          {/* Add Room Modal */}
+          <AddRoomModal
+            open={openAddModal}
+            onClose={() => setOpenAddModal(false)}
+            onSave={handleAddRoom}
+          />
+
+          {/* Edit Room Modal */}
+          <EditRoomModal
+            open={openEditModal}
+            onClose={() => setOpenEditModal(false)}
+            room={selectedRoom}
+            onSave={handleEditRoom}
+          />
+        </CardContent>
+      </Card>
     </Box>
   );
 };

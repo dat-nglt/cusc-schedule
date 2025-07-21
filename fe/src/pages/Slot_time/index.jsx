@@ -164,7 +164,7 @@ const SlotTime = () => {
   const displayedSlotTimes = filteredSlotTimes.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   return (
-    <Box sx={{ p: 3, zIndex: 10, height: 'calc(100vh - 64px)', overflowY: 'auto' }}>
+    <Box sx={{ p: 1, zIndex: 10, height: 'calc(100vh - 64px)', overflowY: 'auto' }}>
       {/* Main Content */}
       <Box sx={{ width: '100%', mb: 3 }}>
         {/* Bảng danh sách khung giờ */}

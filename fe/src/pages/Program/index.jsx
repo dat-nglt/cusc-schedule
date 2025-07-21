@@ -13,6 +13,7 @@ import {
     InputAdornment,
     IconButton,
     Button,
+    useTheme,
 } from '@mui/material';
 import {
     Add as AddIcon,
@@ -29,7 +30,7 @@ import { toast } from 'react-toastify';
 
 const Program = () => {
     const { isSmallScreen, isMediumScreen } = useResponsive();
-
+    const theme = useTheme()
     // Dữ liệu mẫu cho danh sách chương trình đào tạo
     const [programs, setPrograms] = useState([]);
     // State cho phân trang, tìm kiếm, lọc theo trạng thái và modal
@@ -221,48 +222,54 @@ const Program = () => {
     const displayedPrograms = filteredPrograms.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
     return (
-        <Box sx={{ p: 3, zIndex: 10, height: 'calc(100vh - 64px)', overflowY: 'auto' }}>
+        <Box sx={{ p: 1, zIndex: 10, height: 'calc(100vh - 64px)', overflowY: 'auto' }}>
             {/* Main Content */}
             <Box sx={{ width: '100%', mb: 3 }}>
                 {/* Bảng danh sách chương trình đào tạo */}
                 <Card sx={{ flexGrow: 1 }}>
                     <CardContent>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, gap: 2 }}>
-                            <Typography variant="h6">
+                        <Box sx={{
+                            display: 'flex',
+                            flexDirection: isSmallScreen ? 'column' : 'row',
+                            justifyContent: 'space-between',
+                            alignItems: isSmallScreen ? 'stretch' : 'center',
+                            mb: 3,
+                            gap: 2
+                        }}>
+                            <Typography variant="h5" fontWeight="600">
                                 Danh sách chương trình đào tạo
                             </Typography>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                {isSmallScreen ? (
-                                    <IconButton
-                                        color="primary"
-                                        onClick={handleAddProgram}
-                                        sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
-                                    >
-                                        <AddIcon sx={{ color: '#fff' }} />
-                                    </IconButton>
-                                ) : (
-                                    <Button
-                                        variant="contained"
-                                        color="primary"
-                                        startIcon={<AddIcon />}
-                                        onClick={handleAddProgram}
-                                        sx={{
-                                            bgcolor: '#1976d2',
-                                            '&:hover': { bgcolor: '#115293' },
-                                            minWidth: isSmallScreen ? 100 : 150,
-                                            height: '56px'
-                                        }}
-                                    >
-                                        Thêm chương trình
-                                    </Button>
-                                )}
-                                <FormControl sx={{ minWidth: isSmallScreen ? 100 : 150 }} variant="outlined">
-                                    <InputLabel id="status-filter-label">{isSmallScreen ? 'Lọc' : 'Lọc theo trạng thái'}</InputLabel>
+
+                            <Box sx={{
+                                display: 'flex',
+                                gap: 2,
+                                flexDirection: isSmallScreen ? 'column' : 'row',
+                                width: isSmallScreen ? '100%' : 'auto'
+                            }}>
+                                <TextField
+                                    size="small"
+                                    placeholder="Tìm kiếm theo mã, tên chương trình hoặc thời gian đào tạo..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <SearchIcon />
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                    sx={{
+                                        minWidth: 200,
+                                        backgroundColor: theme.palette.background.paper
+                                    }}
+                                />
+
+                                <FormControl size="small" sx={{ minWidth: 120 }}>
+                                    <InputLabel>Trạng thái</InputLabel>
                                     <Select
-                                        labelId="status-filter-label"
                                         value={selectedStatus}
                                         onChange={(e) => setSelectedStatus(e.target.value)}
-                                        label={isSmallScreen ? 'Lọc' : 'Lọc theo trạng thái'}
+                                        label="Trạng thái"
                                     >
                                         <MenuItem value="">Tất cả</MenuItem>
                                         {statuses.map((status) => (
@@ -272,24 +279,16 @@ const Program = () => {
                                         ))}
                                     </Select>
                                 </FormControl>
+
+                                <Button
+                                    variant="contained"
+                                    startIcon={<AddIcon />}
+                                    onClick={handleAddProgram}
+                                    sx={{ ml: isSmallScreen ? 0 : 'auto' }}
+                                >
+                                    Thêm chương trình
+                                </Button>
                             </Box>
-                        </Box>
-                        <Box sx={{ mb: 2 }}>
-                            <TextField
-                                fullWidth
-                                variant="outlined"
-                                placeholder="Tìm kiếm theo mã, tên chương trình hoặc thời gian đào tạo..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                sx={{ bgcolor: '#fff' }}
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            <SearchIcon color="action" />
-                                        </InputAdornment>
-                                    ),
-                                }}
-                            />
                         </Box>
                         {filteredPrograms.length === 0 ? (
                             <Typography>Không có chương trình đào tạo nào để hiển thị.</Typography>
