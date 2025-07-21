@@ -1,0 +1,318 @@
+2025-07-21 00:04:49 info: -----------------------------------------------------
+2025-07-21 00:04:49 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdmZTJmOGZmLTM4NzAtNGU4MS05NmU1LTMyMGQ4NmRhNDY1NiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MzAzMDUzMCwiZXhwIjoxNzUzMDMxNDMwfQ.m0Z7sARZZohlw95XH-rowvSUDHwhp39y9z3HP_XtSn8
+2025-07-21 00:04:49 info: -----------------------------------------------------
+2025-07-21 00:04:49 info: -----------------------------------------------------
+2025-07-21 00:04:49 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-21 00:04:49 info: -----------------------------------------------------
+2025-07-21 00:04:49 info: ::1 - - [20/Jul/2025:17:04:49 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:04:49 info: -----------------------------------------------------
+2025-07-21 00:04:49 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdmZTJmOGZmLTM4NzAtNGU4MS05NmU1LTMyMGQ4NmRhNDY1NiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MzAzMDUzMCwiZXhwIjoxNzUzMDMxNDMwfQ.m0Z7sARZZohlw95XH-rowvSUDHwhp39y9z3HP_XtSn8
+2025-07-21 00:04:49 info: -----------------------------------------------------
+2025-07-21 00:04:49 info: -----------------------------------------------------
+2025-07-21 00:04:49 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-21 00:04:49 info: -----------------------------------------------------
+2025-07-21 00:04:50 info: ::1 - - [20/Jul/2025:17:04:50 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:05:29 info: -----------------------------------------------------
+2025-07-21 00:05:29 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdmZTJmOGZmLTM4NzAtNGU4MS05NmU1LTMyMGQ4NmRhNDY1NiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MzAzMDUzMCwiZXhwIjoxNzUzMDMxNDMwfQ.m0Z7sARZZohlw95XH-rowvSUDHwhp39y9z3HP_XtSn8
+2025-07-21 00:05:29 info: -----------------------------------------------------
+2025-07-21 00:05:30 info: -----------------------------------------------------
+2025-07-21 00:05:30 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-21 00:05:30 info: -----------------------------------------------------
+2025-07-21 00:05:30 info: ::1 - - [20/Jul/2025:17:05:30 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:05:30 info: -----------------------------------------------------
+2025-07-21 00:05:30 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdmZTJmOGZmLTM4NzAtNGU4MS05NmU1LTMyMGQ4NmRhNDY1NiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MzAzMDUzMCwiZXhwIjoxNzUzMDMxNDMwfQ.m0Z7sARZZohlw95XH-rowvSUDHwhp39y9z3HP_XtSn8
+2025-07-21 00:05:30 info: -----------------------------------------------------
+2025-07-21 00:05:30 info: -----------------------------------------------------
+2025-07-21 00:05:30 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-21 00:05:30 info: -----------------------------------------------------
+2025-07-21 00:05:30 info: ::1 - - [20/Jul/2025:17:05:30 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:05:34 info: -----------------------------------------------------
+2025-07-21 00:05:34 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdmZTJmOGZmLTM4NzAtNGU4MS05NmU1LTMyMGQ4NmRhNDY1NiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MzAzMDUzMCwiZXhwIjoxNzUzMDMxNDMwfQ.m0Z7sARZZohlw95XH-rowvSUDHwhp39y9z3HP_XtSn8
+2025-07-21 00:05:34 info: -----------------------------------------------------
+2025-07-21 00:05:34 info: -----------------------------------------------------
+2025-07-21 00:05:34 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-21 00:05:34 info: -----------------------------------------------------
+2025-07-21 00:05:34 info: ::1 - - [20/Jul/2025:17:05:34 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:05:34 info: -----------------------------------------------------
+2025-07-21 00:05:34 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdmZTJmOGZmLTM4NzAtNGU4MS05NmU1LTMyMGQ4NmRhNDY1NiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MzAzMDUzMCwiZXhwIjoxNzUzMDMxNDMwfQ.m0Z7sARZZohlw95XH-rowvSUDHwhp39y9z3HP_XtSn8
+2025-07-21 00:05:34 info: -----------------------------------------------------
+2025-07-21 00:05:34 info: -----------------------------------------------------
+2025-07-21 00:05:34 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-21 00:05:34 info: -----------------------------------------------------
+2025-07-21 00:05:34 info: ::1 - - [20/Jul/2025:17:05:34 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:05:37 info: -----------------------------------------------------
+2025-07-21 00:05:37 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdmZTJmOGZmLTM4NzAtNGU4MS05NmU1LTMyMGQ4NmRhNDY1NiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MzAzMDUzMCwiZXhwIjoxNzUzMDMxNDMwfQ.m0Z7sARZZohlw95XH-rowvSUDHwhp39y9z3HP_XtSn8
+2025-07-21 00:05:37 info: -----------------------------------------------------
+2025-07-21 00:05:37 info: -----------------------------------------------------
+2025-07-21 00:05:37 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-21 00:05:37 info: -----------------------------------------------------
+2025-07-21 00:05:37 info: ::1 - - [20/Jul/2025:17:05:37 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:05:37 info: -----------------------------------------------------
+2025-07-21 00:05:37 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdmZTJmOGZmLTM4NzAtNGU4MS05NmU1LTMyMGQ4NmRhNDY1NiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MzAzMDUzMCwiZXhwIjoxNzUzMDMxNDMwfQ.m0Z7sARZZohlw95XH-rowvSUDHwhp39y9z3HP_XtSn8
+2025-07-21 00:05:37 info: -----------------------------------------------------
+2025-07-21 00:05:37 info: -----------------------------------------------------
+2025-07-21 00:05:37 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-21 00:05:37 info: -----------------------------------------------------
+2025-07-21 00:05:37 info: ::1 - - [20/Jul/2025:17:05:37 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:06:03 info: -----------------------------------------------------
+2025-07-21 00:06:03 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdmZTJmOGZmLTM4NzAtNGU4MS05NmU1LTMyMGQ4NmRhNDY1NiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MzAzMDUzMCwiZXhwIjoxNzUzMDMxNDMwfQ.m0Z7sARZZohlw95XH-rowvSUDHwhp39y9z3HP_XtSn8
+2025-07-21 00:06:03 info: -----------------------------------------------------
+2025-07-21 00:06:04 info: -----------------------------------------------------
+2025-07-21 00:06:04 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-21 00:06:04 info: -----------------------------------------------------
+2025-07-21 00:06:04 info: ::1 - - [20/Jul/2025:17:06:04 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:06:04 info: -----------------------------------------------------
+2025-07-21 00:06:04 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdmZTJmOGZmLTM4NzAtNGU4MS05NmU1LTMyMGQ4NmRhNDY1NiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MzAzMDUzMCwiZXhwIjoxNzUzMDMxNDMwfQ.m0Z7sARZZohlw95XH-rowvSUDHwhp39y9z3HP_XtSn8
+2025-07-21 00:06:04 info: -----------------------------------------------------
+2025-07-21 00:06:04 info: -----------------------------------------------------
+2025-07-21 00:06:04 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-21 00:06:04 info: -----------------------------------------------------
+2025-07-21 00:06:04 info: ::1 - - [20/Jul/2025:17:06:04 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:06:24 info: -----------------------------------------------------
+2025-07-21 00:06:24 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdmZTJmOGZmLTM4NzAtNGU4MS05NmU1LTMyMGQ4NmRhNDY1NiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MzAzMDUzMCwiZXhwIjoxNzUzMDMxNDMwfQ.m0Z7sARZZohlw95XH-rowvSUDHwhp39y9z3HP_XtSn8
+2025-07-21 00:06:24 info: -----------------------------------------------------
+2025-07-21 00:06:24 info: -----------------------------------------------------
+2025-07-21 00:06:24 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-21 00:06:24 info: -----------------------------------------------------
+2025-07-21 00:06:24 info: ::1 - - [20/Jul/2025:17:06:24 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:06:24 info: -----------------------------------------------------
+2025-07-21 00:06:24 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdmZTJmOGZmLTM4NzAtNGU4MS05NmU1LTMyMGQ4NmRhNDY1NiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MzAzMDUzMCwiZXhwIjoxNzUzMDMxNDMwfQ.m0Z7sARZZohlw95XH-rowvSUDHwhp39y9z3HP_XtSn8
+2025-07-21 00:06:24 info: -----------------------------------------------------
+2025-07-21 00:06:24 info: -----------------------------------------------------
+2025-07-21 00:06:24 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-21 00:06:24 info: -----------------------------------------------------
+2025-07-21 00:06:24 info: ::1 - - [20/Jul/2025:17:06:24 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:07:43 info: -----------------------------------------------------
+2025-07-21 00:07:43 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdmZTJmOGZmLTM4NzAtNGU4MS05NmU1LTMyMGQ4NmRhNDY1NiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MzAzMDUzMCwiZXhwIjoxNzUzMDMxNDMwfQ.m0Z7sARZZohlw95XH-rowvSUDHwhp39y9z3HP_XtSn8
+2025-07-21 00:07:43 info: -----------------------------------------------------
+2025-07-21 00:07:43 info: -----------------------------------------------------
+2025-07-21 00:07:43 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-21 00:07:43 info: -----------------------------------------------------
+2025-07-21 00:07:43 info: ::1 - - [20/Jul/2025:17:07:43 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:07:43 info: -----------------------------------------------------
+2025-07-21 00:07:43 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdmZTJmOGZmLTM4NzAtNGU4MS05NmU1LTMyMGQ4NmRhNDY1NiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MzAzMDUzMCwiZXhwIjoxNzUzMDMxNDMwfQ.m0Z7sARZZohlw95XH-rowvSUDHwhp39y9z3HP_XtSn8
+2025-07-21 00:07:43 info: -----------------------------------------------------
+2025-07-21 00:07:43 info: -----------------------------------------------------
+2025-07-21 00:07:43 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-21 00:07:43 info: -----------------------------------------------------
+2025-07-21 00:07:43 info: ::1 - - [20/Jul/2025:17:07:43 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:07:52 info: -----------------------------------------------------
+2025-07-21 00:07:52 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdmZTJmOGZmLTM4NzAtNGU4MS05NmU1LTMyMGQ4NmRhNDY1NiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MzAzMDUzMCwiZXhwIjoxNzUzMDMxNDMwfQ.m0Z7sARZZohlw95XH-rowvSUDHwhp39y9z3HP_XtSn8
+2025-07-21 00:07:52 info: -----------------------------------------------------
+2025-07-21 00:07:52 info: -----------------------------------------------------
+2025-07-21 00:07:52 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-21 00:07:52 info: -----------------------------------------------------
+2025-07-21 00:07:52 info: ::1 - - [20/Jul/2025:17:07:52 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:07:52 info: -----------------------------------------------------
+2025-07-21 00:07:52 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdmZTJmOGZmLTM4NzAtNGU4MS05NmU1LTMyMGQ4NmRhNDY1NiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MzAzMDUzMCwiZXhwIjoxNzUzMDMxNDMwfQ.m0Z7sARZZohlw95XH-rowvSUDHwhp39y9z3HP_XtSn8
+2025-07-21 00:07:52 info: -----------------------------------------------------
+2025-07-21 00:07:52 info: -----------------------------------------------------
+2025-07-21 00:07:52 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-21 00:07:52 info: -----------------------------------------------------
+2025-07-21 00:07:52 info: ::1 - - [20/Jul/2025:17:07:52 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:09:26 info: -----------------------------------------------------
+2025-07-21 00:09:26 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdmZTJmOGZmLTM4NzAtNGU4MS05NmU1LTMyMGQ4NmRhNDY1NiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MzAzMDUzMCwiZXhwIjoxNzUzMDMxNDMwfQ.m0Z7sARZZohlw95XH-rowvSUDHwhp39y9z3HP_XtSn8
+2025-07-21 00:09:26 info: -----------------------------------------------------
+2025-07-21 00:09:26 info: -----------------------------------------------------
+2025-07-21 00:09:26 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-21 00:09:26 info: -----------------------------------------------------
+2025-07-21 00:09:26 info: ::1 - - [20/Jul/2025:17:09:26 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:09:26 info: -----------------------------------------------------
+2025-07-21 00:09:26 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdmZTJmOGZmLTM4NzAtNGU4MS05NmU1LTMyMGQ4NmRhNDY1NiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MzAzMDUzMCwiZXhwIjoxNzUzMDMxNDMwfQ.m0Z7sARZZohlw95XH-rowvSUDHwhp39y9z3HP_XtSn8
+2025-07-21 00:09:26 info: -----------------------------------------------------
+2025-07-21 00:09:26 info: -----------------------------------------------------
+2025-07-21 00:09:26 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-21 00:09:26 info: -----------------------------------------------------
+2025-07-21 00:09:26 info: ::1 - - [20/Jul/2025:17:09:26 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:09:54 info: -----------------------------------------------------
+2025-07-21 00:09:54 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdmZTJmOGZmLTM4NzAtNGU4MS05NmU1LTMyMGQ4NmRhNDY1NiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MzAzMDUzMCwiZXhwIjoxNzUzMDMxNDMwfQ.m0Z7sARZZohlw95XH-rowvSUDHwhp39y9z3HP_XtSn8
+2025-07-21 00:09:54 info: -----------------------------------------------------
+2025-07-21 00:09:54 info: -----------------------------------------------------
+2025-07-21 00:09:54 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-21 00:09:54 info: -----------------------------------------------------
+2025-07-21 00:09:54 info: ::1 - - [20/Jul/2025:17:09:54 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:09:54 info: -----------------------------------------------------
+2025-07-21 00:09:54 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdmZTJmOGZmLTM4NzAtNGU4MS05NmU1LTMyMGQ4NmRhNDY1NiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MzAzMDUzMCwiZXhwIjoxNzUzMDMxNDMwfQ.m0Z7sARZZohlw95XH-rowvSUDHwhp39y9z3HP_XtSn8
+2025-07-21 00:09:54 info: -----------------------------------------------------
+2025-07-21 00:09:54 info: -----------------------------------------------------
+2025-07-21 00:09:54 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-21 00:09:54 info: -----------------------------------------------------
+2025-07-21 00:09:54 info: ::1 - - [20/Jul/2025:17:09:54 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:26:25 info: -----------------------------------------------------
+2025-07-21 00:26:25 info: undefined
+2025-07-21 00:26:25 info: -----------------------------------------------------
+2025-07-21 00:26:25 info: ::1 - - [20/Jul/2025:17:26:25 +0000] "GET /auth/current-user HTTP/1.1" 401 108 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:26:25 info: -----------------------------------------------------
+2025-07-21 00:26:25 info: undefined
+2025-07-21 00:26:25 info: -----------------------------------------------------
+2025-07-21 00:26:25 info: ::1 - - [20/Jul/2025:17:26:25 +0000] "GET /auth/current-user HTTP/1.1" 401 108 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:26:25 info: ::1 - - [20/Jul/2025:17:26:25 +0000] "POST /auth/refresh-token HTTP/1.1" 200 44 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:26:25 info: -----------------------------------------------------
+2025-07-21 00:26:25 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdmZTJmOGZmLTM4NzAtNGU4MS05NmU1LTMyMGQ4NmRhNDY1NiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MzAzMjM4NSwiZXhwIjoxNzUzMDMzMjg1fQ.wDnHXaEY1Xuehz0mBrLRt0WrzfXD-YbkL9OCkfswTH4
+2025-07-21 00:26:25 info: -----------------------------------------------------
+2025-07-21 00:26:25 info: -----------------------------------------------------
+2025-07-21 00:26:25 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-21 00:26:25 info: -----------------------------------------------------
+2025-07-21 00:26:25 info: ::1 - - [20/Jul/2025:17:26:25 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:26:25 info: -----------------------------------------------------
+2025-07-21 00:26:25 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdmZTJmOGZmLTM4NzAtNGU4MS05NmU1LTMyMGQ4NmRhNDY1NiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MzAzMjM4NSwiZXhwIjoxNzUzMDMzMjg1fQ.wDnHXaEY1Xuehz0mBrLRt0WrzfXD-YbkL9OCkfswTH4
+2025-07-21 00:26:25 info: -----------------------------------------------------
+2025-07-21 00:26:25 info: -----------------------------------------------------
+2025-07-21 00:26:25 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-21 00:26:25 info: -----------------------------------------------------
+2025-07-21 00:26:25 info: ::1 - - [20/Jul/2025:17:26:25 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:29:04 info: -----------------------------------------------------
+2025-07-21 00:29:04 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdmZTJmOGZmLTM4NzAtNGU4MS05NmU1LTMyMGQ4NmRhNDY1NiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MzAzMjM4NSwiZXhwIjoxNzUzMDMzMjg1fQ.wDnHXaEY1Xuehz0mBrLRt0WrzfXD-YbkL9OCkfswTH4
+2025-07-21 00:29:04 info: -----------------------------------------------------
+2025-07-21 00:29:04 info: -----------------------------------------------------
+2025-07-21 00:29:04 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-21 00:29:04 info: -----------------------------------------------------
+2025-07-21 00:29:04 info: ::1 - - [20/Jul/2025:17:29:04 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:29:04 info: -----------------------------------------------------
+2025-07-21 00:29:04 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdmZTJmOGZmLTM4NzAtNGU4MS05NmU1LTMyMGQ4NmRhNDY1NiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MzAzMjM4NSwiZXhwIjoxNzUzMDMzMjg1fQ.wDnHXaEY1Xuehz0mBrLRt0WrzfXD-YbkL9OCkfswTH4
+2025-07-21 00:29:04 info: -----------------------------------------------------
+2025-07-21 00:29:04 info: -----------------------------------------------------
+2025-07-21 00:29:04 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-21 00:29:04 info: -----------------------------------------------------
+2025-07-21 00:29:04 info: ::1 - - [20/Jul/2025:17:29:04 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:29:19 info: -----------------------------------------------------
+2025-07-21 00:29:19 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdmZTJmOGZmLTM4NzAtNGU4MS05NmU1LTMyMGQ4NmRhNDY1NiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MzAzMjM4NSwiZXhwIjoxNzUzMDMzMjg1fQ.wDnHXaEY1Xuehz0mBrLRt0WrzfXD-YbkL9OCkfswTH4
+2025-07-21 00:29:19 info: -----------------------------------------------------
+2025-07-21 00:29:19 info: -----------------------------------------------------
+2025-07-21 00:29:19 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-21 00:29:19 info: -----------------------------------------------------
+2025-07-21 00:29:19 info: ::1 - - [20/Jul/2025:17:29:19 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:29:19 info: -----------------------------------------------------
+2025-07-21 00:29:19 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdmZTJmOGZmLTM4NzAtNGU4MS05NmU1LTMyMGQ4NmRhNDY1NiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MzAzMjM4NSwiZXhwIjoxNzUzMDMzMjg1fQ.wDnHXaEY1Xuehz0mBrLRt0WrzfXD-YbkL9OCkfswTH4
+2025-07-21 00:29:19 info: -----------------------------------------------------
+2025-07-21 00:29:19 info: -----------------------------------------------------
+2025-07-21 00:29:19 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-21 00:29:19 info: -----------------------------------------------------
+2025-07-21 00:29:19 info: ::1 - - [20/Jul/2025:17:29:19 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:32:48 info: ::1 - - [20/Jul/2025:17:32:48 +0000] "GET /api/lecturers/getAll HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:32:48 info: ::1 - - [20/Jul/2025:17:32:48 +0000] "GET /api/lecturers/getAll HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:35:55 info: -----------------------------------------------------
+2025-07-21 00:35:55 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdmZTJmOGZmLTM4NzAtNGU4MS05NmU1LTMyMGQ4NmRhNDY1NiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MzAzMjM4NSwiZXhwIjoxNzUzMDMzMjg1fQ.wDnHXaEY1Xuehz0mBrLRt0WrzfXD-YbkL9OCkfswTH4
+2025-07-21 00:35:55 info: -----------------------------------------------------
+2025-07-21 00:35:56 info: -----------------------------------------------------
+2025-07-21 00:35:56 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-21 00:35:56 info: -----------------------------------------------------
+2025-07-21 00:35:56 info: ::1 - - [20/Jul/2025:17:35:56 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:35:56 info: -----------------------------------------------------
+2025-07-21 00:35:56 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdmZTJmOGZmLTM4NzAtNGU4MS05NmU1LTMyMGQ4NmRhNDY1NiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MzAzMjM4NSwiZXhwIjoxNzUzMDMzMjg1fQ.wDnHXaEY1Xuehz0mBrLRt0WrzfXD-YbkL9OCkfswTH4
+2025-07-21 00:35:56 info: -----------------------------------------------------
+2025-07-21 00:35:56 info: -----------------------------------------------------
+2025-07-21 00:35:56 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-21 00:35:56 info: -----------------------------------------------------
+2025-07-21 00:35:56 info: ::1 - - [20/Jul/2025:17:35:56 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:36:20 info: -----------------------------------------------------
+2025-07-21 00:36:20 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdmZTJmOGZmLTM4NzAtNGU4MS05NmU1LTMyMGQ4NmRhNDY1NiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MzAzMjM4NSwiZXhwIjoxNzUzMDMzMjg1fQ.wDnHXaEY1Xuehz0mBrLRt0WrzfXD-YbkL9OCkfswTH4
+2025-07-21 00:36:20 info: -----------------------------------------------------
+2025-07-21 00:36:21 info: -----------------------------------------------------
+2025-07-21 00:36:21 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-21 00:36:21 info: -----------------------------------------------------
+2025-07-21 00:36:21 info: ::1 - - [20/Jul/2025:17:36:21 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:36:21 info: -----------------------------------------------------
+2025-07-21 00:36:21 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdmZTJmOGZmLTM4NzAtNGU4MS05NmU1LTMyMGQ4NmRhNDY1NiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MzAzMjM4NSwiZXhwIjoxNzUzMDMzMjg1fQ.wDnHXaEY1Xuehz0mBrLRt0WrzfXD-YbkL9OCkfswTH4
+2025-07-21 00:36:21 info: -----------------------------------------------------
+2025-07-21 00:36:21 info: -----------------------------------------------------
+2025-07-21 00:36:21 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-21 00:36:21 info: -----------------------------------------------------
+2025-07-21 00:36:21 info: ::1 - - [20/Jul/2025:17:36:21 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:36:44 info: -----------------------------------------------------
+2025-07-21 00:36:44 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdmZTJmOGZmLTM4NzAtNGU4MS05NmU1LTMyMGQ4NmRhNDY1NiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MzAzMjM4NSwiZXhwIjoxNzUzMDMzMjg1fQ.wDnHXaEY1Xuehz0mBrLRt0WrzfXD-YbkL9OCkfswTH4
+2025-07-21 00:36:44 info: -----------------------------------------------------
+2025-07-21 00:36:45 info: -----------------------------------------------------
+2025-07-21 00:36:45 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-21 00:36:45 info: -----------------------------------------------------
+2025-07-21 00:36:45 info: ::1 - - [20/Jul/2025:17:36:45 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:36:45 info: -----------------------------------------------------
+2025-07-21 00:36:45 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdmZTJmOGZmLTM4NzAtNGU4MS05NmU1LTMyMGQ4NmRhNDY1NiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MzAzMjM4NSwiZXhwIjoxNzUzMDMzMjg1fQ.wDnHXaEY1Xuehz0mBrLRt0WrzfXD-YbkL9OCkfswTH4
+2025-07-21 00:36:45 info: -----------------------------------------------------
+2025-07-21 00:36:45 info: -----------------------------------------------------
+2025-07-21 00:36:45 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-21 00:36:45 info: -----------------------------------------------------
+2025-07-21 00:36:45 info: ::1 - - [20/Jul/2025:17:36:45 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:37:08 info: -----------------------------------------------------
+2025-07-21 00:37:08 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdmZTJmOGZmLTM4NzAtNGU4MS05NmU1LTMyMGQ4NmRhNDY1NiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MzAzMjM4NSwiZXhwIjoxNzUzMDMzMjg1fQ.wDnHXaEY1Xuehz0mBrLRt0WrzfXD-YbkL9OCkfswTH4
+2025-07-21 00:37:08 info: -----------------------------------------------------
+2025-07-21 00:37:09 info: -----------------------------------------------------
+2025-07-21 00:37:09 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-21 00:37:09 info: -----------------------------------------------------
+2025-07-21 00:37:09 info: ::1 - - [20/Jul/2025:17:37:09 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:37:09 info: -----------------------------------------------------
+2025-07-21 00:37:09 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdmZTJmOGZmLTM4NzAtNGU4MS05NmU1LTMyMGQ4NmRhNDY1NiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MzAzMjM4NSwiZXhwIjoxNzUzMDMzMjg1fQ.wDnHXaEY1Xuehz0mBrLRt0WrzfXD-YbkL9OCkfswTH4
+2025-07-21 00:37:09 info: -----------------------------------------------------
+2025-07-21 00:37:09 info: -----------------------------------------------------
+2025-07-21 00:37:09 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-21 00:37:09 info: -----------------------------------------------------
+2025-07-21 00:37:09 info: ::1 - - [20/Jul/2025:17:37:09 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:37:27 info: -----------------------------------------------------
+2025-07-21 00:37:27 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdmZTJmOGZmLTM4NzAtNGU4MS05NmU1LTMyMGQ4NmRhNDY1NiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MzAzMjM4NSwiZXhwIjoxNzUzMDMzMjg1fQ.wDnHXaEY1Xuehz0mBrLRt0WrzfXD-YbkL9OCkfswTH4
+2025-07-21 00:37:27 info: -----------------------------------------------------
+2025-07-21 00:37:27 info: -----------------------------------------------------
+2025-07-21 00:37:27 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-21 00:37:27 info: -----------------------------------------------------
+2025-07-21 00:37:27 info: ::1 - - [20/Jul/2025:17:37:27 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:37:27 info: -----------------------------------------------------
+2025-07-21 00:37:27 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdmZTJmOGZmLTM4NzAtNGU4MS05NmU1LTMyMGQ4NmRhNDY1NiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MzAzMjM4NSwiZXhwIjoxNzUzMDMzMjg1fQ.wDnHXaEY1Xuehz0mBrLRt0WrzfXD-YbkL9OCkfswTH4
+2025-07-21 00:37:27 info: -----------------------------------------------------
+2025-07-21 00:37:27 info: -----------------------------------------------------
+2025-07-21 00:37:27 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-21 00:37:27 info: -----------------------------------------------------
+2025-07-21 00:37:27 info: ::1 - - [20/Jul/2025:17:37:27 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:37:35 info: ::1 - - [20/Jul/2025:17:37:35 +0000] "GET /api/lecturers/getAll HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:37:35 info: ::1 - - [20/Jul/2025:17:37:35 +0000] "GET /api/lecturers/getAll HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:38:55 info: ::1 - - [20/Jul/2025:17:38:55 +0000] "GET /api/lecturers/GV001 HTTP/1.1" 200 400 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:39:00 info: ::1 - - [20/Jul/2025:17:39:00 +0000] "GET /api/lecturers/GV001 HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:39:17 info: ::1 - - [20/Jul/2025:17:39:17 +0000] "GET /api/lecturers/getAll HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:39:17 info: ::1 - - [20/Jul/2025:17:39:17 +0000] "GET /api/lecturers/getAll HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:39:19 info: ::1 - - [20/Jul/2025:17:39:19 +0000] "GET /api/students/getAll HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:39:19 info: ::1 - - [20/Jul/2025:17:39:19 +0000] "GET /api/students/getAll HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:39:21 info: ::1 - - [20/Jul/2025:17:39:21 +0000] "GET /api/lecturers/getAll HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:39:21 info: ::1 - - [20/Jul/2025:17:39:21 +0000] "GET /api/lecturers/getAll HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:39:24 info: ::1 - - [20/Jul/2025:17:39:24 +0000] "GET /api/students/getAll HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:39:24 info: ::1 - - [20/Jul/2025:17:39:24 +0000] "GET /api/students/getAll HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:39:26 info: ::1 - - [20/Jul/2025:17:39:26 +0000] "GET /api/lecturers/getAll HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:39:26 info: ::1 - - [20/Jul/2025:17:39:26 +0000] "GET /api/lecturers/getAll HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:43:14 info: -----------------------------------------------------
+2025-07-21 00:43:14 info: undefined
+2025-07-21 00:43:14 info: -----------------------------------------------------
+2025-07-21 00:43:14 info: ::1 - - [20/Jul/2025:17:43:14 +0000] "GET /auth/current-user HTTP/1.1" 401 108 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:43:14 info: -----------------------------------------------------
+2025-07-21 00:43:14 info: undefined
+2025-07-21 00:43:14 info: -----------------------------------------------------
+2025-07-21 00:43:14 info: ::1 - - [20/Jul/2025:17:43:14 +0000] "GET /auth/current-user HTTP/1.1" 401 108 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:43:15 info: ::1 - - [20/Jul/2025:17:43:15 +0000] "POST /auth/refresh-token HTTP/1.1" 200 44 "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:43:15 info: -----------------------------------------------------
+2025-07-21 00:43:15 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdmZTJmOGZmLTM4NzAtNGU4MS05NmU1LTMyMGQ4NmRhNDY1NiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MzAzMzM5NSwiZXhwIjoxNzUzMDM0Mjk1fQ._r7mn_E5YWXSo-MdUg5tqG8AzfeRxjAZMmCcrGUBnu0
+2025-07-21 00:43:15 info: -----------------------------------------------------
+2025-07-21 00:43:15 info: -----------------------------------------------------
+2025-07-21 00:43:15 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-21 00:43:15 info: -----------------------------------------------------
+2025-07-21 00:43:15 info: ::1 - - [20/Jul/2025:17:43:15 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:43:15 info: -----------------------------------------------------
+2025-07-21 00:43:15 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdmZTJmOGZmLTM4NzAtNGU4MS05NmU1LTMyMGQ4NmRhNDY1NiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MzAzMzM5NSwiZXhwIjoxNzUzMDM0Mjk1fQ._r7mn_E5YWXSo-MdUg5tqG8AzfeRxjAZMmCcrGUBnu0
+2025-07-21 00:43:15 info: -----------------------------------------------------
+2025-07-21 00:43:15 info: -----------------------------------------------------
+2025-07-21 00:43:15 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-21 00:43:15 info: -----------------------------------------------------
+2025-07-21 00:43:15 info: ::1 - - [20/Jul/2025:17:43:15 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:43:16 info: ::1 - - [20/Jul/2025:17:43:16 +0000] "GET /api/lecturers/getAll HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:43:16 info: ::1 - - [20/Jul/2025:17:43:16 +0000] "GET /api/lecturers/getAll HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:45:52 info: -----------------------------------------------------
+2025-07-21 00:45:52 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdmZTJmOGZmLTM4NzAtNGU4MS05NmU1LTMyMGQ4NmRhNDY1NiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MzAzMzM5NSwiZXhwIjoxNzUzMDM0Mjk1fQ._r7mn_E5YWXSo-MdUg5tqG8AzfeRxjAZMmCcrGUBnu0
+2025-07-21 00:45:52 info: -----------------------------------------------------
+2025-07-21 00:45:53 info: -----------------------------------------------------
+2025-07-21 00:45:53 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-21 00:45:53 info: -----------------------------------------------------
+2025-07-21 00:45:53 info: ::1 - - [20/Jul/2025:17:45:53 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:45:53 info: -----------------------------------------------------
+2025-07-21 00:45:53 info: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdmZTJmOGZmLTM4NzAtNGU4MS05NmU1LTMyMGQ4NmRhNDY1NiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1MzAzMzM5NSwiZXhwIjoxNzUzMDM0Mjk1fQ._r7mn_E5YWXSo-MdUg5tqG8AzfeRxjAZMmCcrGUBnu0
+2025-07-21 00:45:53 info: -----------------------------------------------------
+2025-07-21 00:45:53 info: -----------------------------------------------------
+2025-07-21 00:45:53 info: Người dùng đã xác thực: ID=undefined, Vai trò=undefined
+2025-07-21 00:45:53 info: -----------------------------------------------------
+2025-07-21 00:45:53 info: ::1 - - [20/Jul/2025:17:45:53 +0000] "GET /auth/current-user HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:45:54 info: ::1 - - [20/Jul/2025:17:45:54 +0000] "GET /api/lecturers/getAll HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-07-21 00:45:54 info: ::1 - - [20/Jul/2025:17:45:54 +0000] "GET /api/lecturers/getAll HTTP/1.1" 304 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"

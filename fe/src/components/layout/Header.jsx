@@ -12,7 +12,8 @@ import {
     Divider,
     ListItemIcon,
     Badge,
-    Switch
+    Switch,
+    Chip
 } from '@mui/material';
 import {
     Add as AddIcon,
@@ -24,14 +25,19 @@ import {
     Menu as MenuIcon,
     Warning,
     LightMode,
-    DarkMode
+    DarkMode,
+    WarningAmber,
+    Construction,
+    PersonAdd,
+    ArrowForward
 } from '@mui/icons-material';
-import { styled } from '@mui/material/styles';
+import { alpha, styled } from '@mui/material/styles';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { Link } from 'react-router-dom';
 import { useThemeContext } from '../../contexts/ThemeContext';
 import { useAuth } from '../../contexts/AuthContext';
+import UserMenu from './UserMenu';
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
     backgroundColor: theme.palette.background.default,
@@ -42,14 +48,9 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
     backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9))',
 }));
 
-const headerMenuItems = [
-    { icon: <AccountIcon fontSize="small" />, label: 'Hồ sơ cá nhân', path: '/profile' },
-    { icon: <SettingsIcon fontSize="small" />, label: 'Cài đặt', path: '/settings' },
-];
-
 const Header = ({ onMenuToggle }) => {
     const theme = useTheme();
-    const { logout } = useAuth();
+    const { logout, userRole } = useAuth();
     const { isDarkMode, toggleTheme } = useThemeContext();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -189,157 +190,199 @@ const Header = ({ onMenuToggle }) => {
                     onClose={handleClose}
                     onClick={handleClose}
                     PaperProps={{
-                        elevation: 0,
+                        elevation: 8,
                         sx: {
-                            overflow: 'visible',
-                            filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                            minWidth: 360,
+                            maxHeight: 480,
+                            overflow: 'hidden',
                             mt: 1.5,
-                            minWidth: 300,
-                            '& .MuiAvatar-root': {
-                                width: 32,
-                                height: 32,
-                                ml: -0.5,
-                                mr: 1,
+                            py: 0.5,
+                            borderRadius: 2,
+                            border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+                            boxShadow: theme.shadows[16],
+                            '& .MuiMenuItem-root': {
+                                py: 1.5,
+                                px: 2,
+                                mx: 1,
+                                my: 0.25,
+                                borderRadius: 1,
+                                transition: 'all 0.2s ease',
+                                '&:hover': {
+                                    backgroundColor: alpha(theme.palette.primary.main, 0.08),
+                                },
+                                '&.Mui-selected': {
+                                    backgroundColor: alpha(theme.palette.primary.main, 0.15),
+                                }
+                            },
+                            '& .MuiDivider-root': {
+                                my: 1,
+                                borderColor: alpha(theme.palette.divider, 0.08),
                             },
                         },
                     }}
                     transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                     anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                 >
-                    <MenuItem dense sx={{ pointerEvents: 'none' }}>
-                        <Typography variant="subtitle2" fontWeight="bold">Thông báo mới (3)</Typography>
-                    </MenuItem>
-                    <Divider />
-                    <MenuItem>
-                        <ListItemIcon>
-                            <Warning fontSize="small" color="error" />
-                        </ListItemIcon>
-                        Xung đột lịch dạy - Toán A1
-                    </MenuItem>
-                    <MenuItem>
-                        <ListItemIcon>
-                            <Warning fontSize="small" color="warning" />
-                        </ListItemIcon>
-                        Phòng 301 bảo trì
-                    </MenuItem>
-                    <MenuItem>
-                        <ListItemIcon>
-                            <AccountIcon fontSize="small" color="info" />
-                        </ListItemIcon>
-                        Giảng viên mới đăng ký
-                    </MenuItem>
-                    <Divider />
-                    <MenuItem sx={{ justifyContent: 'center' }}>
-                        <Typography variant="caption" color="text.secondary">
-                            Xem tất cả thông báo
+                    {/* Header */}
+                    <MenuItem dense sx={{
+                        pointerEvents: 'none',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        py: 1.5,
+                    }}>
+                        <Typography variant="subtitle1" fontWeight="bold">
+                            Thông báo
                         </Typography>
+                        <Chip
+                            label="3 mới"
+                            size="small"
+                            color="primary"
+                            sx={{
+                                height: 20,
+                                fontSize: '0.75rem',
+                                fontWeight: 600,
+                            }}
+                        />
+                    </MenuItem>
+
+                    <Divider />
+
+                    {/* Notification Items */}
+                    <MenuItem sx={{ alignItems: 'flex-start' }}>
+                        <ListItemIcon sx={{
+                            minWidth: 40,
+                            mt: 0.5
+                        }}>
+                            <WarningAmber
+                                fontSize="small"
+                                sx={{
+                                    color: theme.palette.error.main,
+                                    backgroundColor: alpha(theme.palette.error.main, 0.1),
+                                    borderRadius: '50%',
+                                    p: 0.5,
+                                }}
+                            />
+                        </ListItemIcon>
+                        <Box>
+                            <Typography variant="subtitle2" fontWeight="medium">
+                                Xung đột lịch dạy
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
+                                Môn Toán A1 trùng lịch với Lý B2
+                            </Typography>
+                            <Typography variant="caption" sx={{
+                                display: 'block',
+                                mt: 0.5,
+                                color: theme.palette.primary.main,
+                            }}>
+                                10 phút trước
+                            </Typography>
+                        </Box>
+                    </MenuItem>
+
+                    <MenuItem sx={{ alignItems: 'flex-start' }}>
+                        <ListItemIcon sx={{
+                            minWidth: 40,
+                            mt: 0.5
+                        }}>
+                            <Construction
+                                fontSize="small"
+                                sx={{
+                                    color: theme.palette.warning.main,
+                                    backgroundColor: alpha(theme.palette.warning.main, 0.1),
+                                    borderRadius: '50%',
+                                    p: 0.5,
+                                }}
+                            />
+                        </ListItemIcon>
+                        <Box>
+                            <Typography variant="subtitle2" fontWeight="medium">
+                                Bảo trì phòng học
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
+                                Phòng 301 sẽ đóng cửa để bảo trì từ 15/10
+                            </Typography>
+                            <Typography variant="caption" sx={{
+                                display: 'block',
+                                mt: 0.5,
+                                color: theme.palette.primary.main,
+                            }}>
+                                2 giờ trước
+                            </Typography>
+                        </Box>
+                    </MenuItem>
+
+                    <MenuItem sx={{ alignItems: 'flex-start' }}>
+                        <ListItemIcon sx={{
+                            minWidth: 40,
+                            mt: 0.5
+                        }}>
+                            <PersonAdd
+                                fontSize="small"
+                                sx={{
+                                    color: theme.palette.info.main,
+                                    backgroundColor: alpha(theme.palette.info.main, 0.1),
+                                    borderRadius: '50%',
+                                    p: 0.5,
+                                }}
+                            />
+                        </ListItemIcon>
+                        <Box>
+                            <Typography variant="subtitle2" fontWeight="medium">
+                                Giảng viên mới
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
+                                TS. Nguyễn Văn A đã đăng ký tài khoản
+                            </Typography>
+                            <Typography variant="caption" sx={{
+                                display: 'block',
+                                mt: 0.5,
+                                color: theme.palette.primary.main,
+                            }}>
+                                Hôm qua
+                            </Typography>
+                        </Box>
+                    </MenuItem>
+
+                    <Divider />
+
+                    {/* Footer */}
+                    <MenuItem sx={{
+                        justifyContent: 'center',
+                        py: 1,
+                        '&:hover': {
+                            backgroundColor: 'transparent',
+                        }
+                    }}>
+                        <Button
+                            variant="text"
+                            size="small"
+                            color="primary"
+                            endIcon={<ArrowForward fontSize="small" />}
+                            sx={{
+                                fontSize: '0.75rem',
+                                fontWeight: 500,
+                                textTransform: 'none',
+                            }}
+                        >
+                            Xem tất cả thông báo
+                        </Button>
                     </MenuItem>
                 </Menu>
 
                 {/* User Menu */}
-                <Menu
+                <UserMenu
                     anchorEl={anchorEl}
                     open={open}
-                    onClose={handleClose}
-                    onClick={handleClose}
-                    PaperProps={{
-                        elevation: 0,
-                        sx: {
-                            overflow: 'visible',
-                            filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-                            mt: 1.5,
-                            '& .MuiAvatar-root': {
-                                width: 32,
-                                height: 32,
-                                ml: -0.5,
-                                mr: 1,
-                            },
-                        },
-                    }}
-                    transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-                    anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-                >
-                    <MenuItem dense sx={{ pointerEvents: 'none' }}>
-                        <Avatar
-                            alt="Remy Sharp"
-                            src="/static/images/avatar/1.jpg"
-                            sx={{ width: 24, height: 24 }}
-                        />
-                        <Typography variant="subtitle1" fontWeight="bold">admin@eduschedule.edu.vn</Typography>
-                    </MenuItem>
-                    <Divider />
-                    {
-                        headerMenuItems.map((item, index) => (
-                            <MenuItem key={index} component={Link} to={item.path}>
-                                <ListItemIcon>
-                                    {item.icon}
-                                </ListItemIcon>
-                                {item.label}
-                            </MenuItem>
-                        ))
-                    }
-                    <Divider />
-                    <MenuItem
-                        onClick={handleLogout}>
-                        <ListItemIcon>
-                            <LogoutIcon fontSize="small" />
-                        </ListItemIcon>
-                        Đăng xuất
-                    </MenuItem>
-                    <Divider />
-                    <Box
-                        sx={{
-                            px: 2,
-                            py: 1.5,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                            bgcolor: 'background.paper',
-                            borderRadius: 1,
-                        }}
-                    >
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    color: isDarkMode ? 'warning.light' : 'text.secondary'
-                                }}
-                            >
-                                {isDarkMode ? (
-                                    <>
-                                        <LightMode fontSize="small" sx={{ mr: 1 }} />
-                                        Chuyển sang sáng
-                                    </>
-                                ) : (
-                                    <>
-                                        <DarkMode fontSize="small" sx={{ mr: 1 }} />
-                                        Chuyển sang tối
-                                    </>
-                                )}
-                            </Box>
-                            {/* <Typography variant="body2" color="text.primary">
-                       {isDarkMode ? 'Light Mode' : 'Dark Mode'}
-                     </Typography> */}
-                        </Box>
-                        <Switch
-                            checked={isDarkMode}
-                            onChange={toggleTheme}
-                            size="small"
-                            sx={{
-                                ml: 1,
-                                '& .MuiSwitch-thumb': {
-                                    color: isDarkMode ? 'warning.light' : 'grey.500'
-                                },
-                                '& .MuiSwitch-track': {
-                                    backgroundColor: isDarkMode ? 'warning.dark' : 'grey.300'
-                                }
-                            }}
-                        />
-                    </Box>
-
-                </Menu>
+                    handleClose={handleClose}
+                    handleLogout={handleLogout}
+                    isDarkMode={isDarkMode}
+                    toggleTheme={toggleTheme}
+                    userRole={userRole}
+                    // userEmail={userEmail}
+                    userEmail={"Tài khoản người dùng"} // Thay thế bằng email thực tế nếu có
+                />
             </Toolbar>
         </StyledAppBar>
     );
