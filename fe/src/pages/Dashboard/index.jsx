@@ -116,7 +116,7 @@ const Dashboard = () => {
     };
 
     return (
-        <Box sx={{ p: 3, zIndex: 10 }}>
+        <Box sx={{ p: 1, zIndex: 10 }}>
             {/* Quick Stats */}
             <QuickStats stats={stats} />
 
@@ -137,8 +137,6 @@ const Dashboard = () => {
                     onItemMove={handleItemMove}
                     onAddNew={handleAddNew}
                 />
-                {/* Recent Conflicts */}
-                {/* <RecentConflicts stats={stats} recentConflicts={recentConflicts} /> */}
             </Box>
         </Box>
     );

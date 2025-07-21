@@ -27,7 +27,7 @@ import EditCourseModal from './EditCourseModal';
 import DeleteCourseModal from './DeleteCourseModal';
 import useResponsive from '../../hooks/useResponsive';
 import CourseTable from './CourseTable';
-import { getCourses, getCourseById, addCourse, updateCourse, deleteCourse, listCourses, importCourses } from '../../api/courseAPI';
+import { getCourses, getCourseById, addCourse, updateCourse, deleteCourse} from '../../api/courseAPI';
 
 // Hàm định dạng timestamp thành YYYY-MM-DD HH:MM:SS.sss+07
 const formatTimestamp = (timestamp) => {

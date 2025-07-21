@@ -24,7 +24,8 @@ import {
     Chip,
     Avatar,
     Divider,
-    IconButton
+    IconButton,
+    Collapse
 } from '@mui/material';
 import {
     School as SchoolIcon,
@@ -38,7 +39,9 @@ import {
     Class,
     Chair,
     Construction,
-    Computer
+    Computer,
+    KeyboardArrowUp,
+    KeyboardArrowDown
 } from '@mui/icons-material';
 
 const StatCard = ({ icon, title, value, maxValue, isAlert, tooltip, onClick }) => {
@@ -51,15 +54,13 @@ const StatCard = ({ icon, title, value, maxValue, isAlert, tooltip, onClick }) =
                 elevation={0}
                 onClick={onClick}
                 sx={{
-                    border: `1px solid ${alpha(theme.palette.divider, 0.2)}`,
+                    border: `1px solid ${alpha(theme.palette.primary.main, 0.3)}`,
                     borderRadius: '12px',
-                    position: 'relative',
-                    overflow: 'visible',
                     cursor: 'pointer',
                     transition: 'all 0.2s ease',
                     '&:hover': {
-                        transform: 'translateY(-4px)',
-                        boxShadow: theme.shadows[4],
+                        transform: 'scale(1.02)',
+                        boxShadow: theme.shadows[2],
                         borderColor: alpha(theme.palette.primary.main, 0.5)
                     }
                 }}
@@ -67,39 +68,40 @@ const StatCard = ({ icon, title, value, maxValue, isAlert, tooltip, onClick }) =
                 <CardContent sx={{
                     display: 'flex',
                     alignItems: 'center',
-                    p: 2.5,
-                    '&:last-child': { pb: 2.5 }
+                    p: 1.5,
+                    '&:last-child': { pb: 1.5 }
                 }}>
                     <Box sx={{
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        width: 56,
-                        height: 56,
-                        borderRadius: '12px',
+                        width: 48,
+                        height: 48,
+                        borderRadius: '10px',
                         backgroundColor: alpha(
                             isAlert ? theme.palette.error.main : theme.palette.primary.main,
                             0.1
                         ),
-                        mr: 2,
+                        mr: 1.5,
                         color: isAlert ? theme.palette.error.main : theme.palette.primary.main
                     }}>
                         {React.cloneElement(icon, {
-                            sx: { fontSize: 28 }
+                            sx: { fontSize: 24 }
                         })}
                     </Box>
 
                     <Box sx={{ flex: 1 }}>
                         <Typography
-                            variant="subtitle2"
+                            variant="caption"
                             color="text.secondary"
-                            sx={{ mb: 0.5 }}
+                            display="block"
+                            sx={{ mb: 0.25 }}
                         >
                             {title}
                         </Typography>
                         <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
                             <Typography
-                                variant="h5"
+                                variant="h6"
                                 fontWeight="600"
                                 color={isAlert ? 'error' : 'text.primary'}
                                 sx={{ lineHeight: 1 }}
@@ -109,9 +111,9 @@ const StatCard = ({ icon, title, value, maxValue, isAlert, tooltip, onClick }) =
                             {maxValue && (
                                 <Typography
                                     component="span"
-                                    variant="body2"
+                                    variant="caption"
                                     color="text.secondary"
-                                    sx={{ ml: 0.5, mb: 0.25 }}
+                                    sx={{ ml: 0.5, mb: 0.1 }}
                                 >
                                     /{maxValue}
                                 </Typography>
@@ -124,9 +126,9 @@ const StatCard = ({ icon, title, value, maxValue, isAlert, tooltip, onClick }) =
                                 value={percentage}
                                 color={isAlert ? 'error' : 'primary'}
                                 sx={{
-                                    height: 6,
-                                    borderRadius: 3,
-                                    mt: 2,
+                                    height: 4,
+                                    borderRadius: 2,
+                                    mt: 1.5,
                                     backgroundColor: theme.palette.grey[200]
                                 }}
                             />
@@ -182,6 +184,7 @@ const DetailModal = ({ open, onClose, title, children }) => {
 
 const QuickStats = ({ stats }) => {
     const theme = useTheme();
+    const [showStats, setShowStats] = useState(false);
     const [openModal, setOpenModal] = useState(null);
 
     // Sample data
@@ -629,64 +632,88 @@ const QuickStats = ({ stats }) => {
 
     return (
         <>
-            <Grid container spacing={3} mb={2}>
-                <Grid item xs={12} sm={6} lg={3}>
-                    <StatCard
-                        icon={<SchoolIcon />}
-                        title="Lớp học"
-                        value={stats.classes}
-                        maxValue={50}
-                        tooltip={`${stats.classes} lớp học đang hoạt động`}
-                        onClick={() => setOpenModal('classes')}
-                    />
-                </Grid>
+            <Box sx={{ mb: 1 }}>
+                <Button
+                    variant="text"
+                    onClick={() => setShowStats(!showStats)}
+                    endIcon={showStats ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+                    sx={{
+                        borderRadius: '8px',
+                        textTransform: 'none',
+                        px: 2,
+                    }}
+                >
+                    {showStats ? 'Ẩn thống kê' : 'Xem thống kê nhanh'}
+                </Button>
 
-                <Grid item xs={12} sm={6} lg={3}>
-                    <StatCard
-                        icon={<PeopleIcon />}
-                        title="Giảng viên"
-                        value={stats.teachers}
-                        maxValue={30}
-                        tooltip={`${stats.teachers} giảng viên đang giảng dạy`}
-                        onClick={() => setOpenModal('teachers')}
-                    />
-                </Grid>
+                <Collapse in={showStats}>
+                    <Grid container spacing={3} >
+                        <Grid item xs={12} sm={6} lg={3}>
+                            <StatCard
+                                icon={<SchoolIcon />}
+                                title="Lớp học"
+                                value={stats.classes}
+                                maxValue={50}
+                                tooltip={`${stats.classes} lớp học đang hoạt động`}
+                                onClick={() => setOpenModal('classes')}
+                            />
+                        </Grid>
 
-                <Grid item xs={12} sm={6} lg={3}>
-                    <StatCard
-                        icon={<RoomIcon />}
-                        title="Phòng học"
-                        value={stats.rooms}
-                        maxValue={20}
-                        tooltip={`${stats.rooms} phòng học đang sử dụng`}
-                        onClick={() => setOpenModal('rooms')}
-                    />
-                </Grid>
+                        <Grid item xs={12} sm={6} lg={3}>
+                            <StatCard
+                                icon={<PeopleIcon />}
+                                title="Giảng viên"
+                                value={stats.teachers}
+                                maxValue={30}
+                                tooltip={`${stats.teachers} giảng viên đang giảng dạy`}
+                                onClick={() => setOpenModal('teachers')}
+                            />
+                        </Grid>
 
-                <Grid item xs={12} sm={6} lg={3}>
-                    <StatCard
-                        icon={<CourseIcon />}
-                        title="Học phần"
-                        value={stats.course}
-                        maxValue={40}
-                        tooltip={`${stats.course} học phần đang mở`}
-                        onClick={() => setOpenModal('classes')}
-                    />
-                </Grid>
+                        <Grid item xs={12} sm={6} lg={3}>
+                            <StatCard
+                                icon={<RoomIcon />}
+                                title="Phòng học"
+                                value={stats.rooms}
+                                maxValue={20}
+                                tooltip={`${stats.rooms} phòng học đang sử dụng`}
+                                onClick={() => setOpenModal('rooms')}
+                            />
+                        </Grid>
 
-                {stats.conflicts > 0 && (
-                    <Grid item xs={12} sm={6} lg={3}>
-                        <StatCard
-                            icon={<WarningIcon />}
-                            title="Xung đột"
-                            value={stats.conflicts}
-                            isAlert={true}
-                            tooltip={`${stats.conflicts} xung đột lịch chưa giải quyết`}
-                            onClick={() => setOpenModal('conflicts')}
-                        />
+                        <Grid item xs={12} sm={6} lg={3}>
+                            <StatCard
+                                icon={<CourseIcon />}
+                                title="Học phần"
+                                value={stats.course}
+                                maxValue={40}
+                                tooltip={`${stats.course} học phần đang mở`}
+                                onClick={() => setOpenModal('classes')}
+                            />
+                        </Grid>
+
+                        {stats.conflicts > 0 && (
+                            <Grid item xs={12} sm={6} lg={3}>
+                                <StatCard
+                                    icon={<WarningIcon color="warning" />}
+                                    title="Xung đột"
+                                    value={stats.conflicts}
+                                    maxValue={10}
+                                    tooltip={`${stats.conflicts} xung đột lịch chưa giải quyết`}
+                                    onClick={() => setOpenModal('conflicts')}
+                                    sx={{
+                                        backgroundColor: theme => theme.palette.warning.light,
+                                        '&:hover': {
+                                            backgroundColor: theme => theme.palette.warning.lighter,
+                                            transform: 'translateY(-2px)'
+                                        }
+                                    }}
+                                />
+                            </Grid>
+                        )}
                     </Grid>
-                )}
-            </Grid>
+                </Collapse>
+            </Box>
 
             <DetailModal
                 open={openModal !== null}
