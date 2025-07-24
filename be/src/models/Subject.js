@@ -77,16 +77,6 @@ const Subject = (sequelize) => {
       as: 'lecturerAssignments'
     });
 
-    // Gợi ý thêm: Một môn học có thể do nhiều giảng viên dạy hoặc sinh viên đăng ký
-    // SubjectModel.belongsToMany(models.Lecturer, {
-    //   through: 'LecturerSubjects',
-    //   foreignKey: 'subject_id',
-    // });
-
-    // SubjectModel.belongsToMany(models.Student, {
-    //   through: 'StudentSubjects',
-    //   foreignKey: 'subject_id',
-    // });
   };
 
   return SubjectModel;

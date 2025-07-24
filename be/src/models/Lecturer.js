@@ -7,17 +7,19 @@ const Lecturer = (sequelize) => {
     "Lecturer", // Tên model
     {
       // Khóa ngoại account_id liên kết với bảng Accounts
-      account_id: {
-        type: DataTypes.UUID, // Phải khớp với kiểu của 'id' trong bảng 'accounts'
-        allowNull: false,
-        unique: true, // Đảm bảo mối quan hệ 1-1: Một Account chỉ có thể là một Lecturer
-        references: {
-          model: "accounts", // Tên bảng đích (Accounts)
-          key: "id", // Tên cột khóa chính của bảng đích
-        },
-        onUpdate: "CASCADE", // Hành động khi ID trong Accounts thay đổi
-        onDelete: "CASCADE", // Hành động khi Account bị xóa
-      },
+
+      //không nên khai báo mối quan hệ ở đây, chỉ cần ràng buộc khóa ngoại
+      // account_id: {
+      //   type: DataTypes.UUID, // Phải khớp với kiểu của 'id' trong bảng 'accounts'
+      //   allowNull: false,
+      //   unique: true, // Đảm bảo mối quan hệ 1-1: Một Account chỉ có thể là một Lecturer
+      //   references: {
+      //     model: "accounts", // Tên bảng đích (Accounts)
+      //     key: "id", // Tên cột khóa chính của bảng đích
+      //   },
+      //   onUpdate: "CASCADE", // Hành động khi ID trong Accounts thay đổi
+      //   onDelete: "CASCADE", // Hành động khi Account bị xóa
+      // },
       // Mã giảng viên (khóa chính riêng, nếu có ý nghĩa nghiệp vụ)
       lecturer_id: {
         type: DataTypes.STRING(50),

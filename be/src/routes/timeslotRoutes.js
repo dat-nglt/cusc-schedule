@@ -7,9 +7,8 @@ import {
     updateTimeslotController,
     deleteTimeslotController,
     importTimeslotFromJSONController,
-    downloadTemplateController,
-    listTimeslotController, // Thêm controller cho chức năng liệt kê có bộ lọc
-    importTimeslotFromExcelController, // Thêm controller nếu có nhập từ Excel
+    downloadTemplateController
+
 } from "../controllers/timeslotController.js"; // Đảm bảo import .js extension
 
 
@@ -90,11 +89,11 @@ timeslotRoutes.delete(
  * Yêu cầu quyền admin hoặc training_officer.
  * @access Private
  */
-// timeslotRoutes.post(
-//     "/importJson",
-//     authenticateAndAuthorize(["admin", "training_officer"]),
-//     importTimeslotFromJSONController
-// );
+timeslotRoutes.post(
+    "/importJson",
+    authenticateAndAuthorize(["admin", "training_officer"]),
+    importTimeslotFromJSONController
+);
 
 /**
  * @route POST /api/timeslot/importExcel
@@ -117,10 +116,10 @@ timeslotRoutes.delete(
  * Hiện tại, tuyến đường này không yêu cầu xác thực, hãy cân nhắc có nên bảo vệ nó không.
  * @access Public (hoặc Private nếu bạn muốn hạn chế truy cập template)
  */
-// timeslotRoutes.get(
-//     "/template/download",
-//     // authenticateAndAuthorize(["admin", "training_officer"]), // Có thể uncomment nếu muốn bảo vệ template
-//     downloadTemplateController
-// );
+timeslotRoutes.get(
+    "/template/download",
+    // authenticateAndAuthorize(["admin", "training_officer"]), // Có thể uncomment nếu muốn bảo vệ template
+    downloadTemplateController
+);
 
 export default timeslotRoutes;

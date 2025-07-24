@@ -31,7 +31,7 @@ import { BarChart, PieChart } from '@mui/x-charts';
 import WeeklyCalendar from './WeeklyCalendar';
 import QuickStats from './QuickStats';
 import RecentConflicts from './RecentConflicts';
-import { getAllLecturers } from '../../api/lecturerAPI';
+import { getAllLecturersAPI } from '../../api/lecturerAPI';
 import { getAllSubjects } from '../../api/subjectAPI';
 
 
@@ -103,12 +103,12 @@ const Dashboard = () => {
     const fetchLecturers = async () => {
         try {
             setLoading(true);
-            const response = await getAllLecturers();
+            const response = await getAllLecturersAPI();
             if (!response) {
                 console.error("Không có dữ liệu giảng viên");
                 return;
             }
-            setLecturers(response.data.data);
+            setLecturers(response.data);
         } catch (error) {
             console.error("Lỗi khi tải danh sách giảng viên:", error);
         } finally {

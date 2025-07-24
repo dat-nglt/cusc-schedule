@@ -17,6 +17,10 @@ module.exports = {
         type: Sequelize.TIME,
         allowNull: true
       },
+      type: {
+        type: Sequelize.STRING(30),
+        allowNull: true
+      },
       end_time: {
         type: Sequelize.TIME,
         allowNull: true

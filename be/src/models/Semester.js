@@ -57,6 +57,12 @@ const Semester = (sequelize) => {
       onUpdate: 'CASCADE',       // Khi cập nhật khóa ngoại ở bảng chương trình
       onDelete: "CASCADE", // Xóa học kỳ nếu chương trình bị xóa
     });
+    // Một học kỳ có nhiều học phần
+    SemesterModel.hasMany(models.Subject, {
+      foreignKey: "semester_id",
+      onUpdate: "CASCADE",
+      onDelete: "CASCADE",
+    })
   };
 
   return SemesterModel;

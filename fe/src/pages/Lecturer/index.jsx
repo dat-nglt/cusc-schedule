@@ -25,7 +25,7 @@ import DeleteLecturerModal from './DeleteLecturerModal';
 import useResponsive from '../../hooks/useResponsive';
 import LecturerTable from './LecturerTable';
 import { toast } from 'react-toastify';
-import { getAllLecturers, getLecturerById, createLecturer, updateLecturer, deleteLecturer } from '../../api/lecturerAPI';
+import { getAllLecturersAPI, getLecturerByIdAPI, createLecturerAPI, updateLecturer, deleteLecturer } from '../../api/lecturerAPI';
 import { getAllSubjects } from '../../api/subjectAPI';
 const Lecturer = () => {
     const { isSmallScreen, isMediumScreen } = useResponsive();
