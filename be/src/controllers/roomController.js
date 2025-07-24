@@ -1,18 +1,18 @@
 import { error } from "winston";
 import {
-    getAllRooms,
-    getRoomById,
-    createRoom,
-    updateRoom,
-    deleteRoom,
-    importRoomsFromJSON
+    getAllRoomService,
+    getRoomByIdService,
+    createRoomService,
+    updateRoomService,
+    deleteRoomService,
+    importRoomsFromJsonService
 } from "../services/roomService";
 import { APIResponse } from "../utils/APIResponse";
 import ExcelUtils from "../utils/ExcelUtils";
 
 export const getAllRoomsController = async (req, res) => {
     try {
-        const rooms = await getAllRooms();
+        const rooms = await getAllRoomService();
         return APIResponse(res, 200, rooms, "Rooms fetched successfully");
     } catch (error) {
         console.error("Error fetching rooms:", error);
@@ -23,7 +23,7 @@ export const getAllRoomsController = async (req, res) => {
 export const getRoomByIdController = async (req, res) => {
     const { id } = req.params;
     try {
-        const room = await getRoomById(id);
+        const room = await getRoomByIdService(id);
         if (!room) {
             return APIResponse(res, 404, null, "Room not found");
         }
@@ -37,7 +37,7 @@ export const getRoomByIdController = async (req, res) => {
 export const createRoomController = async (req, res) => {
     const roomData = req.body;
     try {
-        const room = await createRoom(roomData);
+        const room = await createRoomService(roomData);
         return APIResponse(res, 201, room, "Room created successfully");
     } catch (error) {
         console.error("Error creating room:", error);
@@ -49,7 +49,7 @@ export const updateRoomController = async (req, res) => {
     const { id } = req.params;
     const roomData = req.body;
     try {
-        const room = await updateRoom(id, roomData);
+        const room = await updateRoomService(id, roomData);
         if (!room) {
             return APIResponse(res, 404, null, "Room not found");
         }
@@ -63,7 +63,7 @@ export const updateRoomController = async (req, res) => {
 export const deleteRoomController = async (req, res) => {
     const { id } = req.params;
     try {
-        const response = await deleteRoom(id);
+        const response = await deleteRoomService(id);
         return APIResponse(res, 200, response, "Room deleted successfully");
     } catch (error) {
         console.error(`Error deleting room with id ${id}:`, error);
@@ -81,7 +81,7 @@ export const importRoomsFromJSONController = async (req, res) => {
             return APIResponse(res, 400, null, "No rooms to import");
         }
 
-        const results = await importRoomsFromJSON(rooms);
+        const results = await importRoomsFromJsonService(rooms);
 
         const response = {
             success: true,

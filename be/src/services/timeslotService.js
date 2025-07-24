@@ -6,7 +6,7 @@ const { TimeSlot } = models;
  * @returns {Promise<Array>} Danh sách tất cả các khung thời gianh.
  * @throws {Error} Nếu có lỗi khi lấy dữ liệu.
  */
-export const getAllTimeslot = async () => {
+export const getAllTimeslotService = async () => {
   try {
     const timeslots = await TimeSlot.findAll();
     return timeslots;
@@ -22,7 +22,7 @@ export const getAllTimeslot = async () => {
  * @returns {Promise<Object|null>} khung thời gian tìm thấy hoặc null nếu không tìm thấy.
  * @throws {Error} Nếu có lỗi khi lấy dữ liệu.
  */
-export const getTimeslotById = async (id) => {
+export const getTimeslotByIdService = async (id) => {
   try {
     const timeslots = await TimeSlot.findByPk(id);
     return timeslots;
@@ -38,7 +38,7 @@ export const getTimeslotById = async (id) => {
  * @returns {Promise<Object>} khung thời gian đã được tạo.
  * @throws {Error} Nếu có lỗi khi tạo khung thời gian.
  */
-export const createTimeslot = async (timeslotData) => {
+export const createTimeslotService = async (timeslotData) => {
   try {
     const timeslots = await TimeSlot.create(timeslotData);
     return timeslots;
@@ -55,7 +55,7 @@ export const createTimeslot = async (timeslotData) => {
  * @returns {Promise<Object>} khung thời gian đã được cập nhật.
  * @throws {Error} Nếu không tìm thấy khung thời gian hoặc có lỗi.
  */
-export const updateTimeslot = async (id, timeslotData) => {
+export const updateTimeslotService = async (id, timeslotData) => {
   try {
     const timeslot = await TimeSlot.findByPk(id);
     if (!timeslot) throw new Error("Không tìm thấy khung thời gian");
@@ -72,7 +72,7 @@ export const updateTimeslot = async (id, timeslotData) => {
  * @returns {Promise<Object>} Thông báo xóa thành công.
  * @throws {Error} Nếu không tìm thấy khung thời gian hoặc có lỗi.
  */
-export const deleteTimeslot = async (id) => {
+export const deleteTimeslotService = async (id) => {
   try {
     const timeslot = await TimeSlot.findByPk(id);
     if (!timeslot) throw new Error("Không tìm thấy khung thời gian");
@@ -90,7 +90,7 @@ export const deleteTimeslot = async (id) => {
  * @returns {Promise<Object>} Kết quả nhập khẩu bao gồm danh sách thành công và lỗi.
  * @throws {Error} Nếu dữ liệu JSON không hợp lệ hoặc lỗi trong quá trình nhập.
  */
-export const importTimeslotsFromJSON = async (timeslotsData) => {
+export const importTimeslotsFromJsonService = async (timeslotsData) => {
   try {
     if (!timeslotsData || !Array.isArray(timeslotsData)) {
       throw new Error("Dữ liệu khung thời gian không hợp lệ");

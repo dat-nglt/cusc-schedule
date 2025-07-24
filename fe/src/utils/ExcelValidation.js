@@ -504,3 +504,91 @@ export const processExcelDataSubject = (rawData, existingSubjects) => {
 
     return processedData;
 };
+
+//validate timeslot data
+const requiredTimeslotFields = [
+    'slot_id',
+    'slot_name',
+    'start_time',
+    'end_time',
+    'type',
+    'status',
+];
+
+const validateTimeslotData = (timeslot, existingTimeslots, allImportData = []) => {
+    const errors = [];
+
+    // Kiểm tra trùng lặp mã timeslot với dữ liệu hiện có
+    const isDuplicateExisting = existingTimeslots.some(
+        existing => existing.slot_id === timeslot.slot_id
+    );
+
+    // Kiểm tra trùng lặp trong dữ liệu import
+    const isDuplicateImport = allImportData.filter(
+        item => item.slot_id === timeslot.slot_id
+    ).length > 1;
+
+    if (isDuplicateExisting || isDuplicateImport) {
+        errors.push('duplicate_id');
+    }
+
+    // Kiểm tra các trường bắt buộc
+    const missingFields = requiredTimeslotFields.filter(field => {
+        const value = timeslot[field];
+        return !value || (typeof value === 'string' && value.trim() === '');
+    });
+
+    if (missingFields.length > 0) {
+        errors.push('missing_required');
+    }
+
+    // Kiểm tra định dạng thời gian (HH:MM:SS)
+    const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$/;
+
+    if (timeslot.start_time && !timeRegex.test(timeslot.start_time)) {
+        errors.push('invalid_start_time');
+    }
+
+    if (timeslot.end_time && !timeRegex.test(timeslot.end_time)) {
+        errors.push('invalid_end_time');
+    }
+
+    // Kiểm tra start_time phải nhỏ hơn end_time
+    if (timeslot.start_time && timeslot.end_time && timeRegex.test(timeslot.start_time) && timeRegex.test(timeslot.end_time)) {
+        const startTime = new Date(`1970-01-01T${timeslot.start_time}`);
+        const endTime = new Date(`1970-01-01T${timeslot.end_time}`);
+
+        if (startTime >= endTime) {
+            errors.push('invalid_time_range');
+        }
+    }
+
+    return errors;
+};
+
+export const processExcelDataTimeslot = (rawData, existingTimeslots) => {
+    // Xử lý dữ liệu thô từ Excel
+    const processedData = rawData.map((row, index) => {
+        // Chuẩn hóa dữ liệu
+        const timeslot = {
+            slot_id: row['Mã khung giờ'] || row['slot_id'] || '',
+            slot_name: row['Tên khung giờ'] || row['slot_name'] || '',
+            start_time: row['Giờ bắt đầu'] || row['start_time'] || '',
+            end_time: row['Giờ kết thúc'] || row['end_time'] || '',
+            type: row['Loại'] || row['type'] || '',
+            description: row['Mô tả'] || row['description'] || '',
+            status: row['Trạng thái'] || row['status'] || 'active',
+            rowIndex: index + 2 // +2 vì Excel bắt đầu từ row 1 và có header
+        };
+
+        // Validate dữ liệu
+        const errors = validateTimeslotData(timeslot, existingTimeslots, rawData);
+
+        return {
+            ...timeslot,
+            errors
+        };
+    });
+
+    return processedData;
+};

@@ -3,7 +3,7 @@ import model from "../models/index";
 
 const { Room } = model;
 
-export const getAllRooms = async () => {
+export const getAllRoomService = async () => {
     try {
         const rooms = await Room.findAll();
         return rooms;
@@ -13,7 +13,7 @@ export const getAllRooms = async () => {
     }
 };
 
-export const getRoomById = async (id) => {
+export const getRoomByIdService = async (id) => {
     try {
         const room = await Room.findByPk(id);
         return room;
@@ -23,7 +23,7 @@ export const getRoomById = async (id) => {
     }
 };
 
-export const createRoom = async (roomData) => {
+export const createRoomService = async (roomData) => {
     try {
         const room = await Room.create(roomData);
         return room;
@@ -33,30 +33,30 @@ export const createRoom = async (roomData) => {
     }
 };
 
-export const updateRoom = async (id, roomData) => {
+export const updateRoomService = async (id, roomData) => {
     try {
         const room = await Room.findByPk(id);
         if (!room) throw new Error("Room not found");
         return await room.update(roomData);
     } catch (error) {
-        console.error (`Error updating room with id ${id}:`, error);
+        console.error(`Error updating room with id ${id}:`, error);
         throw error;
     }
 };
 
-export const deleteRoom = async (id) => {
+export const deleteRoomService = async (id) => {
     try {
         const room = await Room.findByPk(id);
         if (!room) throw new Error("Room not found");
         await room.destroy();
-        return {message: "Room deleted successfully"};
+        return { message: "Room deleted successfully" };
     } catch (error) {
         console.error(`Error deleting room with id ${id}:`, error);
         throw error;
     }
 };
 
-export const importRoomsFromJSON = async (roomsData) => {
+export const importRoomsFromJsonService = async (roomsData) => {
     try {
         if (!roomsData || !Array.isArray(roomsData)) {
             throw new Error("DỮ liệu không hợp lệ");
@@ -81,18 +81,18 @@ export const importRoomsFromJSON = async (roomsData) => {
                         room_id: roomData.room_id || 'N/A',
                         error: 'Mã phòng là bắt buộc'
                     });
-                    continue; 
+                    continue;
                 }
 
                 // clean and format data
                 const cleanedData = {
                     room_id: roomData.room_id.toString().trim(),
                     room_name: roomData.room_name ? roomData.room_name.toString().trim() : null,
-                    location: roomData.location ? roomData.location.toString().trim(): null,
-                    capacity: roomData.capacity ? parseInt(roomData.capacity): null,
+                    location: roomData.location ? roomData.location.toString().trim() : null,
+                    capacity: roomData.capacity ? parseInt(roomData.capacity) : null,
                     status: roomData.status ? roomData.status.toString().trim() : 'Hoạt động',
-                    type: roomData.type ? roomData.type.toString().trim(): null,
-                    note: roomData.note ? roomData.note.toString().trim(): null, 
+                    type: roomData.type ? roomData.type.toString().trim() : null,
+                    note: roomData.note ? roomData.note.toString().trim() : null,
                 }
 
                 // Validate capacity if provided
@@ -131,7 +131,7 @@ export const importRoomsFromJSON = async (roomsData) => {
             }
         }
         return results;
-    } catch(error) {
+    } catch (error) {
         console.error("Error importing rooms from JSON:", error);
         throw error;
     }

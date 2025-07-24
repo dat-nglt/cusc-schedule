@@ -10,9 +10,17 @@ import {
 } from '@mui/material';
 
 const DeleteSlotTimeModal = ({ open, onClose, onDelete, slotTime }) => {
-  const handleDelete = () => {
-    onDelete(slotTime.id);
-    onClose();
+  const handleDelete = async () => {
+    try {
+      const response = await onDelete(slotTime.slot_id);
+      if (response) {
+        onClose();
+      }
+    } catch (error) {
+      console.error('Error deleting slot time:', error);
+    } finally {
+      onClose();
+    }
   };
 
   return (

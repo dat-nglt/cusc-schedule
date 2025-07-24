@@ -12,214 +12,289 @@ import {
   MenuItem,
   Box,
   Typography,
+  Alert,
+  CircularProgress,
 } from '@mui/material';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import * as XLSX from 'xlsx';
+import PreviewSlotTimeModal from './PreviewSlotTimeModal';
+import { processExcelDataTimeslot } from '../../utils/ExcelValidation';
 
-const AddSlotTimeModal = ({ open, onClose, onAddSlotTime, existingSlotTimes = [] }) => {
+const AddSlotTimeModal = ({ open, onClose, onAddSlotTime, existingSlotTimes = [], error, loading, message, fetchSlotTimes }) => {
   const [newSlotTime, setNewSlotTime] = useState({
-    maKhungGio: '',
-    tenKhungGio: '',
-    buoiHoc: '',
-    thoiGianBatDau: '',
-    thoiGianKetThuc: '',
+    slot_id: '',
+    slot_name: '',
+    start_time: '',
+    end_time: '',
+    type: '',
+    description: '',
+    status: 'Hoạt động',
   });
 
-  const [error, setError] = useState('');
+  const [localError, setLocalError] = useState('');
+  const [showPreview, setShowPreview] = useState(false);
+  const [previewData, setPreviewData] = useState([]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setNewSlotTime((prev) => ({ ...prev, [name]: value }));
-    setError('');
+    setLocalError('');
   };
 
-  const cleanText = (value) => {
-    if (typeof value === 'string') {
-      return value.trim().normalize('NFC');
+  const handleSubmit = async () => {
+    if (
+      !newSlotTime.slot_id ||
+      !newSlotTime.slot_name ||
+      !newSlotTime.start_time ||
+      !newSlotTime.end_time ||
+      !newSlotTime.type
+    ) {
+      setLocalError('Vui lòng điền đầy đủ thông tin!');
+      return;
     }
-    return '';
-  };
 
-  const normalizeBuoiHoc = (text) => {
-    const cleaned = cleanText(text).toLowerCase();
-    if (cleaned.includes('sáng')) return 'Sáng';
-    if (cleaned.includes('chiều')) return 'Chiều';
-    if (cleaned.includes('tối') || cleaned.includes('tối')) return 'Tối';
-    return '';
-  };
-
-  const parseTime = (value) => {
-    if (typeof value === 'number') {
-      const totalMinutes = Math.round(value * 24 * 60);
-      const hours = String(Math.floor(totalMinutes / 60)).padStart(2, '0');
-      const minutes = String(totalMinutes % 60).padStart(2, '0');
-      return `${hours}:${minutes}`;
-    } else if (typeof value === 'string') {
-      return value.trim();
-    }
-    return '';
-  };
-
-  const handleSubmit = () => {
+    // Kiểm tra mã khung giờ có hợp lệ hay không
     const isDuplicate = existingSlotTimes.some(
-      (slot) => slot.maKhungGio === newSlotTime.maKhungGio
+      (slot) => slot.slot_id === newSlotTime.slot_id
     );
 
-    if (!Object.values(newSlotTime).every((v) => v)) {
-      setError('Vui lòng nhập đầy đủ thông tin!');
-      return;
-    }
-
     if (isDuplicate) {
-      setError(`Mã khung giờ "${newSlotTime.maKhungGio}" đã tồn tại!`);
+      setLocalError(`Mã khung giờ "${newSlotTime.slot_id}" đã tồn tại!`);
       return;
     }
 
-    onAddSlotTime({
+    const slotTimeToAdd = {
       ...newSlotTime,
       id: Date.now(),
-      thoiGianTao: new Date().toISOString().slice(0, 19).replace('T', ' '),
-      thoiGianCapNhat: new Date().toISOString().slice(0, 19).replace('T', ' '),
-    });
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+
+    // Gọi hàm onAddSlotTime được truyền từ component cha
+    await onAddSlotTime(slotTimeToAdd);
 
     setNewSlotTime({
-      maKhungGio: '',
-      tenKhungGio: '',
-      buoiHoc: '',
-      thoiGianBatDau: '',
-      thoiGianKetThuc: '',
+      slot_id: '',
+      slot_name: '',
+      start_time: '',
+      end_time: '',
+      type: '',
+      description: '',
+      status: 'Hoạt động',
     });
+    setLocalError('');
     onClose();
   };
 
-  const handleImportExcel = (e) => {
+  // Hàm xử lý import file Excel
+  const handleImportExcel = async (e) => {
     const file = e.target.files[0];
-    if (!file) return;
+    if (!file) {
+      setLocalError('Vui lòng chọn một file Excel!');
+      return;
+    }
 
-    const reader = new FileReader();
-    reader.onload = (evt) => {
-      const data = evt.target.result;
-      const workbook = XLSX.read(data, { type: 'binary' });
-      const sheet = workbook.Sheets[workbook.SheetNames[0]];
-      const rows = XLSX.utils.sheet_to_json(sheet);
+    const validExtensions = ['.xlsx', '.xls'];
+    const fileExtension = file.name.slice(file.name.lastIndexOf('.')).toLowerCase();
+    if (!validExtensions.includes(fileExtension)) {
+      setLocalError('Chỉ hỗ trợ file Excel (.xlsx, .xls)!');
+      return;
+    }
 
-      const imported = [];
-      const duplicated = [];
+    try {
+      setLocalError(''); // Clear previous errors
+      // Đọc file Excel
+      const arrayBuffer = await file.arrayBuffer();
+      const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+      const sheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[sheetName];
 
-      rows.forEach((row) => {
-        const maKhungGio = cleanText(row['Mã khung giờ']);
-        if (existingSlotTimes.some((s) => s.maKhungGio === maKhungGio)) {
-          duplicated.push(maKhungGio);
-        } else {
-          imported.push({
-            id: Date.now() + Math.random(),
-            maKhungGio,
-            tenKhungGio: cleanText(row['Tên khung giờ']),
-            buoiHoc: normalizeBuoiHoc(row['Buổi học']),
-            thoiGianBatDau: parseTime(row['Thời gian bắt đầu']),
-            thoiGianKetThuc: parseTime(row['Thời gian kết thúc']),
-            thoiGianTao: new Date().toISOString().slice(0, 19).replace('T', ' '),
-            thoiGianCapNhat: new Date().toISOString().slice(0, 19).replace('T', ' '),
-          });
-        }
-      });
+      // Chuyển đổi sang JSON
+      const rawData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
-      if (duplicated.length > 0) {
-        alert(`Bỏ qua các mã khung giờ đã tồn tại:\n${duplicated.join(', ')}`);
+      if (rawData.length < 2) {
+        setLocalError('File Excel phải có ít nhất 2 dòng (header + dữ liệu)!');
+        return;
       }
 
-      imported.forEach(onAddSlotTime);
-      onClose();
-    };
+      // Lấy header và data
+      const headers = rawData[0];
+      const dataRows = rawData.slice(1);
 
-    reader.readAsBinaryString(file);
+      // Chuyển đổi thành object với header làm key
+      const jsonData = dataRows.map(row => {
+        const obj = {};
+        headers.forEach((header, index) => {
+          obj[header] = row[index] || '';
+        });
+        return obj;
+      });
+
+      // Xử lý và validate dữ liệu
+      const processedData = processExcelDataTimeslot(jsonData, existingSlotTimes);
+
+      if (processedData.length === 0) {
+        setLocalError('Không có dữ liệu hợp lệ trong file Excel!');
+        return;
+      }
+
+      // Hiển thị preview
+      setPreviewData(processedData);
+      setShowPreview(true);
+      onClose();
+
+    } catch (error) {
+      console.error('Error reading Excel file:', error);
+      setLocalError('Lỗi khi đọc file Excel! Vui lòng kiểm tra format file.');
+    }
+
+    // Reset file input
+    e.target.value = '';
+  };
+
+  const handleClosePreview = () => {
+    setShowPreview(false);
+    setPreviewData([]);
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle>
-        <Box display="flex" justifyContent="space-between" alignItems="center">
-          Thêm khung giờ mới
-          <label htmlFor="upload-slot-time">
-            <input
-              id="upload-slot-time"
-              type="file"
-              hidden
-              accept=".xlsx, .xls"
-              onChange={handleImportExcel}
-            />
-            <Button
+    <>
+      <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+        <DialogTitle>
+          <Box display="flex" justifyContent="space-between" alignItems="center">
+            <Typography variant="h6">Thêm khung giờ mới</Typography>
+            <label htmlFor="excel-upload-slot">
+              <input
+                id="excel-upload-slot"
+                type="file"
+                accept=".xlsx, .xls"
+                hidden
+                onChange={handleImportExcel}
+              />
+              <Button
+                variant="outlined"
+                component="span"
+                startIcon={<UploadFileIcon />}
+                size="small"
+              >
+                Thêm tự động
+              </Button>
+            </label>
+          </Box>
+        </DialogTitle>
+        <DialogContent>
+          {(error || localError) && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {error || localError}
+            </Alert>
+          )}
+          {message && (
+            <Alert severity="success" sx={{ mb: 2 }}>
+              {message}
+            </Alert>
+          )}
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
+            <TextField
+              label="Mã khung giờ"
+              name="slot_id"
+              value={newSlotTime.slot_id}
+              onChange={handleChange}
+              fullWidth
               variant="outlined"
-              component="span"
-              size="small"
-              startIcon={<UploadFileIcon />}
-            >
-              Thêm tự động
-            </Button>
-          </label>
-        </Box>
-      </DialogTitle>
-      <DialogContent>
-        {error && (
-          <Typography color="error" sx={{ mb: 1 }}>
-            {error}
-          </Typography>
-        )}
-        <TextField
-          fullWidth
-          label="Mã khung giờ"
-          name="maKhungGio"
-          value={newSlotTime.maKhungGio}
-          onChange={handleChange}
-          margin="normal"
-        />
-        <TextField
-          fullWidth
-          label="Tên khung giờ"
-          name="tenKhungGio"
-          value={newSlotTime.tenKhungGio}
-          onChange={handleChange}
-          margin="normal"
-        />
-        <FormControl fullWidth margin="normal">
-          <InputLabel>Buổi học</InputLabel>
-          <Select
-            name="buoiHoc"
-            value={newSlotTime.buoiHoc}
-            onChange={handleChange}
-            label="Buổi học"
+              required
+            />
+            <TextField
+              label="Tên khung giờ"
+              name="slot_name"
+              value={newSlotTime.slot_name}
+              onChange={handleChange}
+              fullWidth
+              variant="outlined"
+              required
+            />
+            <FormControl fullWidth required>
+              <InputLabel>Buổi học</InputLabel>
+              <Select
+                name="type"
+                value={newSlotTime.type}
+                onChange={handleChange}
+                label="Buổi học"
+              >
+                <MenuItem value="Sáng">Sáng</MenuItem>
+                <MenuItem value="Chiều">Chiều</MenuItem>
+                <MenuItem value="Tối">Tối</MenuItem>
+              </Select>
+            </FormControl>
+            <TextField
+              label="Thời gian bắt đầu (HH:mm)"
+              name="start_time"
+              value={newSlotTime.start_time}
+              onChange={handleChange}
+              fullWidth
+              variant="outlined"
+              required
+              placeholder="07:00"
+            />
+            <TextField
+              label="Thời gian kết thúc (HH:mm)"
+              name="end_time"
+              value={newSlotTime.end_time}
+              onChange={handleChange}
+              fullWidth
+              variant="outlined"
+              required
+              placeholder="09:00"
+            />
+            <TextField
+              label="Mô tả"
+              name="description"
+              value={newSlotTime.description}
+              onChange={handleChange}
+              fullWidth
+              variant="outlined"
+              multiline
+              rows={2}
+            />
+            <FormControl fullWidth required>
+              <InputLabel>Trạng thái</InputLabel>
+              <Select
+                name="status"
+                value={newSlotTime.status}
+                onChange={handleChange}
+                label="Trạng thái"
+              >
+                <MenuItem value="Hoạt động">Hoạt động</MenuItem>
+                <MenuItem value="active">Active</MenuItem>
+                <MenuItem value="Tạm dừng">Tạm dừng</MenuItem>
+                <MenuItem value="Đã kết thúc">Đã kết thúc</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={onClose} variant="outlined" sx={{ color: '#1976d2' }} disabled={loading}>
+            Hủy
+          </Button>
+          <Button
+            onClick={handleSubmit}
+            variant="contained"
+            sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
+            disabled={loading}
+            startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
           >
-            <MenuItem value="Sáng">Sáng</MenuItem>
-            <MenuItem value="Chiều">Chiều</MenuItem>
-            <MenuItem value="Tối">Tối</MenuItem>
-          </Select>
-        </FormControl>
-        <TextField
-          fullWidth
-          label="Thời gian bắt đầu (HH:mm)"
-          name="thoiGianBatDau"
-          value={newSlotTime.thoiGianBatDau}
-          onChange={handleChange}
-          margin="normal"
-        />
-        <TextField
-          fullWidth
-          label="Thời gian kết thúc (HH:mm)"
-          name="thoiGianKetThuc"
-          value={newSlotTime.thoiGianKetThuc}
-          onChange={handleChange}
-          margin="normal"
-        />
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose} color="primary">
-          Hủy
-        </Button>
-        <Button onClick={handleSubmit} color="primary" variant="contained">
-          Thêm
-        </Button>
-      </DialogActions>
-    </Dialog>
+            {loading ? 'Đang thêm...' : 'Thêm'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Preview Modal */}
+      <PreviewSlotTimeModal
+        open={showPreview}
+        onClose={handleClosePreview}
+        previewData={previewData}
+        fetchSlotTimes={fetchSlotTimes}
+      />
+    </>
   );
 };
 

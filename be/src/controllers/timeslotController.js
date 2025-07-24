@@ -1,10 +1,10 @@
 import {
-    getAllTimeslot,
-    getTimeslotById,
-    createTimeslot,
-    updateTimeslot,
-    deleteTimeslot,
-    importTimeslotsFromJSON
+    getAllTimeslotService,
+    getTimeslotByIdService,
+    createTimeslotService,
+    updateTimeslotService,
+    deleteTimeslotService,
+    importTimeslotsFromJsonService
 
 } from "../services/timeslotService";
 import { APIResponse } from "../utils/APIResponse"; // Sử dụng APIResponse nhất quán
@@ -19,7 +19,7 @@ import ExcelUtils from "../utils/ExcelUtils";
  */
 export const getAllTimeslotController = async (req, res) => {
     try {
-        const timeslot = await getAllTimeslot();
+        const timeslot = await getAllTimeslotService();
         return APIResponse(res, 200, timeslot, "Lấy danh sách khung thời gian thành công.");
     } catch (error) {
         console.error("Lỗi khi lấy danh sách khung thời gian:", error);
@@ -37,7 +37,7 @@ export const getAllTimeslotController = async (req, res) => {
 export const getTimeslotByIdController = async (req, res) => {
     const { id } = req.params;
     try {
-        const timeslot = await getTimeslotById(id);
+        const timeslot = await getTimeslotByIdService(id);
         if (!timeslot) {
             return APIResponse(res, 404, null, "Không tìm thấy khung thời gian.");
         }
@@ -58,7 +58,7 @@ export const getTimeslotByIdController = async (req, res) => {
 export const createTimeslotController = async (req, res) => {
     const timeslotData = req.body;
     try {
-        const timeslot = await createTimeslot(timeslotData);
+        const timeslot = await createTimeslotService(timeslotData);
         return APIResponse(res, 201, timeslot, "Tạo khung thời gian thành công.");
     } catch (error) {
         console.error("Lỗi khi tạo khung thời gian:", error);
@@ -78,7 +78,7 @@ export const updateTimeslotController = async (req, res) => {
     const { id } = req.params;
     const timeslotData = req.body;
     try {
-        const timeslot = await updateTimeslot(id, timeslotData);
+        const timeslot = await updateTimeslotService(id, timeslotData);
         if (!timeslot) {
             return APIResponse(res, 404, null, "Không tìm thấy khung thời gian để cập nhật.");
         }
@@ -99,7 +99,7 @@ export const updateTimeslotController = async (req, res) => {
 export const deleteTimeslotController = async (req, res) => {
     const { id } = req.params;
     try {
-        const deletedCount = await deleteTimeslot(id); // Giả định service trả về số lượng bản ghi bị xóa
+        const deletedCount = await deleteTimeslotService(id); // Giả định service trả về số lượng bản ghi bị xóa
         if (deletedCount === 0) {
             return APIResponse(res, 404, null, "Không tìm thấy khung thời gian để xóa.");
         }
@@ -130,7 +130,7 @@ export const importTimeslotFromJSONController = async (req, res) => {
         }
 
         // Tiến hành import dữ liệu từ JSON
-        const results = await importTimeslotsFromJSON(timeslots);
+        const results = await importTimeslotsFromJsonService(timeslots);
 
         const responseData = {
             success: true, // Chỉ ra rằng request được xử lý
