@@ -10,6 +10,8 @@ import subjectRoutes from './subjectRoutes';
 import breakscheduleRoutes from './breakscheduleRoutes';
 import classRoutes from './classRoutes';
 import timeslotRoutes from './timeslotRoutes';
+import roomRoutes from './roomRoutes';
+
 
 const router = express.Router();
 
@@ -26,6 +28,7 @@ const setupRoutes = (app) => {
     app.use('/api/breakschedules', breakscheduleRoutes);
     app.use('/api/timeslots', timeslotRoutes);
     app.use('/api/classes', classRoutes);
+    app.use('/api/rooms', roomRoutes);
 };
 
 export default setupRoutes;
