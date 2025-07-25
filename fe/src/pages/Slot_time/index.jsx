@@ -53,6 +53,7 @@ const SlotTime = () => {
   const [slotTimeToDelete, setSlotTimeToDelete] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  console.log('SlotTime slotTimes:', slotTimes);
 
   // Hàm lấy danh sách khung giờ từ API
   const fetchSlotTimes = async () => {
@@ -337,6 +338,7 @@ const SlotTime = () => {
         onClose={handleCloseAddModal}
         onAddSlotTime={handleAddNewSlotTime}
         existingSlotTimes={slotTimes}
+        fetchSlotTimes={fetchSlotTimes}
       />
       <EditSlotTimeModal
         open={openEditModal}

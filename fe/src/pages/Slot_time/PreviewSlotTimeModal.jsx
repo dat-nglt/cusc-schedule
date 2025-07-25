@@ -17,75 +17,72 @@ import {
     Alert,
     CircularProgress,
     Chip,
+    Accordion,
+    AccordionSummary,
+    AccordionDetails,
+    Tooltip,
+    IconButton,
 } from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ErrorIcon from '@mui/icons-material/Error';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { importTimeslotsFromJsonAPI } from '../../api/timeslotAPI';
+import { getErrorChip, getRowStatus } from '../../components/ui/ErrorChip';
 
 export default function PreviewSlotTimeModal({ open, onClose, previewData, fetchSlotTimes }) {
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState('');
-    const [success, setSuccess] = useState('');
+    const [isImporting, setIsImporting] = useState(false);
+    const [importError, setImportError] = useState('');
+    const [importMessage, setImportMessage] = useState('');
+
+    const validRows = previewData.filter(row => getRowStatus(row) === 'valid');
+    const errorRows = previewData.filter(row => getRowStatus(row) === 'error');
 
     const handleConfirmImport = async () => {
-        if (previewData.length === 0) {
-            setError('Không có dữ liệu để import!');
+        if (validRows.length === 0) {
+            setImportError('Không có dữ liệu hợp lệ!');
             return;
         }
 
-        setLoading(true);
-        setError('');
-        setSuccess('');
+        setIsImporting(true);
+        setImportError('');
+        setImportMessage('');
 
         try {
-            // Gọi API để thêm nhiều slot time
-            const response = await fetch('/api/slot-times/bulk', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ slotTimes: previewData }),
+            // Tạo dữ liệu hợp lệ để import
+            const validData = validRows.map(row => {
+                const { errors: _errors, rowIndex: _rowIndex, ...slotData } = row;
+                return slotData;
             });
+            console.log('Valid data to import:', validData);
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+            // Gọi API import với dữ liệu đã được validate
+            const response = await importTimeslotsFromJsonAPI(validData);
+
+            if (response.data && response.data) {
+                setImportMessage(`Thêm thành công ${validRows.length} khung giờ!`);
+                setImportError('');
+                fetchSlotTimes(); // Gọi lại hàm fetch để cập nhật danh sách khung giờ
+
+                // Delay để người dùng thấy thông báo thành công trước khi đóng modal
+                setTimeout(() => {
+                    onClose(); // Đóng modal sau khi cập nhật
+                    setImportMessage('');
+                }, 1500);
+            } else {
+                setImportError(response.data?.message || 'Có lỗi xảy ra khi thêm dữ liệu!');
             }
-
-            const result = await response.json();
-            setSuccess(`Đã import thành công ${result.addedCount || previewData.length} khung giờ!`);
-
-            // Refresh data
-            if (fetchSlotTimes) {
-                await fetchSlotTimes();
-            }
-
-            // Close modal after 2 seconds
-            setTimeout(() => {
-                onClose();
-                setSuccess('');
-            }, 2000);
-
         } catch (error) {
-            console.error('Error importing slot times:', error);
-            setError('Có lỗi xảy ra khi import dữ liệu. Vui lòng thử lại!');
+            console.error('Error importing data:', error);
+            setImportError(error.message || 'Lỗi khi thêm dữ liệu! Vui lòng thử lại.');
         } finally {
-            setLoading(false);
-        }
-    };
-
-    const getStatusColor = (status) => {
-        switch (status?.toLowerCase()) {
-            case 'hoạt động':
-            case 'active':
-                return 'success';
-            case 'tạm dừng':
-                return 'warning';
-            case 'đã kết thúc':
-                return 'error';
-            default:
-                return 'default';
+            setIsImporting(false);
         }
     };
 
     const getTypeColor = (type) => {
-        switch (type?.toLowerCase()) {
+        if (!type || typeof type !== 'string') return 'default';
+
+        switch (type.toLowerCase()) {
             case 'sáng':
                 return 'primary';
             case 'chiều':
@@ -100,69 +97,178 @@ export default function PreviewSlotTimeModal({ open, onClose, previewData, fetch
     return (
         <Dialog open={open} onClose={onClose} maxWidth="lg" fullWidth>
             <DialogTitle>
-                <Typography variant="h6">
-                    Xem trước dữ liệu khung giờ ({previewData.length} bản ghi)
-                </Typography>
+                <Typography>Xem trước dữ liệu đã nhập</Typography>
             </DialogTitle>
             <DialogContent>
-                {error && (
-                    <Alert severity="error" sx={{ mb: 2 }}>
-                        {error}
-                    </Alert>
+                {importError && (
+                    <Typography color="error" sx={{ mb: 2 }}>
+                        {importError}
+                    </Typography>
                 )}
-                {success && (
-                    <Alert severity="success" sx={{ mb: 2 }}>
-                        {success}
-                    </Alert>
+                {importMessage && (
+                    <div style={{
+                        marginBottom: '16px',
+                        fontWeight: 'bold',
+                        color: 'success.main',
+                        fontSize: '16px',
+                        padding: '8px',
+                        backgroundColor: '#f1f8e9',
+                        border: '1px solid #4caf50',
+                        borderRadius: '4px'
+                    }}>
+                        {importMessage}
+                    </div>
                 )}
 
-                <Box sx={{ mt: 2 }}>
-                    <TableContainer component={Paper} sx={{ maxHeight: 400 }}>
-                        <Table stickyHeader>
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell>Mã khung giờ</TableCell>
-                                    <TableCell>Tên khung giờ</TableCell>
-                                    <TableCell>Buổi học</TableCell>
-                                    <TableCell>Thời gian bắt đầu</TableCell>
-                                    <TableCell>Thời gian kết thúc</TableCell>
-                                    <TableCell>Mô tả</TableCell>
-                                    <TableCell>Trạng thái</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {previewData.map((slot, index) => (
-                                    <TableRow key={index}>
-                                        <TableCell>{slot.slot_id}</TableCell>
-                                        <TableCell>{slot.slot_name}</TableCell>
-                                        <TableCell>
-                                            <Chip
-                                                label={slot.type}
-                                                color={getTypeColor(slot.type)}
-                                                size="small"
-                                            />
-                                        </TableCell>
-                                        <TableCell>{slot.start_time}</TableCell>
-                                        <TableCell>{slot.end_time}</TableCell>
-                                        <TableCell>
-                                            {slot.description && slot.description.length > 30
-                                                ? `${slot.description.substring(0, 30)}...`
-                                                : slot.description || 'Không có mô tả'
-                                            }
-                                        </TableCell>
-                                        <TableCell>
-                                            <Chip
-                                                label={slot.status}
-                                                color={getStatusColor(slot.status)}
-                                                size="small"
-                                            />
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
+                <Box sx={{ mb: 3 }}>
+                    <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
+                        <Chip
+                            icon={<CheckCircleIcon />}
+                            label={`Hợp lệ: ${validRows.length}`}
+                            color="success"
+                            variant="outlined"
+                        />
+                        <Chip
+                            icon={<ErrorIcon />}
+                            label={`Không hợp lệ: ${errorRows.length}`}
+                            color="error"
+                            variant="outlined"
+                        />
+                        <Chip
+                            label={`Tổng cộng: ${previewData.length}`}
+                            variant="outlined"
+                        />
+                    </Box>
                 </Box>
+
+                {/* Hiển thị dữ liệu hợp lệ */}
+                {validRows.length > 0 && (
+                    <Accordion defaultExpanded>
+                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                            <Typography variant="h6" color="success.main">
+                                Dữ liệu hợp lệ ({validRows.length} dòng)
+                            </Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <TableContainer component={Paper} sx={{ maxHeight: 300 }}>
+                                <Table stickyHeader size="small">
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell>Mã khung giờ</TableCell>
+                                            <TableCell>Tên khung giờ</TableCell>
+                                            <TableCell>Buổi học</TableCell>
+                                            <TableCell>Thời gian bắt đầu</TableCell>
+                                            <TableCell>Thời gian kết thúc</TableCell>
+                                            <TableCell>Mô tả</TableCell>
+                                            <TableCell>Trạng thái</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {validRows.map((slot, index) => (
+                                            <TableRow key={index}>
+                                                <TableCell>{slot.slot_id}</TableCell>
+                                                <TableCell>{slot.slot_name}</TableCell>
+                                                <TableCell>
+                                                    <Chip
+                                                        label={slot.type}
+                                                        color={getTypeColor(slot.type)}
+                                                        size="small"
+                                                    />
+                                                </TableCell>
+                                                <TableCell>{slot.start_time}</TableCell>
+                                                <TableCell>{slot.end_time}</TableCell>
+                                                <TableCell>
+                                                    {slot.description && slot.description.length > 30
+                                                        ? `${slot.description.substring(0, 30)}...`
+                                                        : slot.description || 'Không có mô tả'
+                                                    }
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Chip
+                                                        label={slot.status}
+                                                        size="small"
+                                                    />
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                        </AccordionDetails>
+                    </Accordion>
+                )}
+
+                {/* Hiển thị dữ liệu có lỗi */}
+                {errorRows.length > 0 && (
+                    <Accordion defaultExpanded sx={{ mt: 2 }}>
+                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                            <Typography variant="h6" color="error.main">
+                                Dữ liệu không hợp lệ ({errorRows.length} dòng)
+                            </Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <TableContainer component={Paper} sx={{ maxHeight: 300 }}>
+                                <Table stickyHeader size="small">
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell>Mã khung giờ</TableCell>
+                                            <TableCell>Tên khung giờ</TableCell>
+                                            <TableCell>Buổi học</TableCell>
+                                            <TableCell>Thời gian bắt đầu</TableCell>
+                                            <TableCell>Thời gian kết thúc</TableCell>
+                                            <TableCell>Mô tả</TableCell>
+                                            <TableCell>Trạng thái</TableCell>
+                                            <TableCell>Lỗi</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {errorRows.map((slot, index) => (
+                                            <TableRow
+                                                key={index}
+                                                sx={{ bgcolor: 'error.lighter' }}
+                                            >
+                                                <TableCell>{slot.slot_id || '-'}</TableCell>
+                                                <TableCell>{slot.slot_name || '-'}</TableCell>
+                                                <TableCell>
+                                                    {slot.type && (
+                                                        <Chip
+                                                            label={slot.type}
+                                                            color={getTypeColor(slot.type)}
+                                                            size="small"
+                                                        />
+                                                    )}
+                                                </TableCell>
+                                                <TableCell>{slot.start_time || '-'}</TableCell>
+                                                <TableCell>{slot.end_time || '-'}</TableCell>
+                                                <TableCell>
+                                                    {slot.description && slot.description.length > 30
+                                                        ? `${slot.description.substring(0, 30)}...`
+                                                        : slot.description || '-'
+                                                    }
+                                                </TableCell>
+                                                <TableCell>
+                                                    {slot.status && (
+                                                        <Chip
+                                                            label={slot.status}
+                                                            size="small"
+                                                        />
+                                                    )}
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
+                                                        {slot.errors?.map((error) =>
+                                                            getErrorChip(error, 'khung giờ')
+                                                        )}
+                                                    </Box>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                        </AccordionDetails>
+                    </Accordion>
+                )}
 
                 {previewData.length === 0 && (
                     <Box sx={{ textAlign: 'center', py: 4 }}>
@@ -176,7 +282,7 @@ export default function PreviewSlotTimeModal({ open, onClose, previewData, fetch
                 <Button
                     onClick={onClose}
                     variant="outlined"
-                    disabled={loading}
+                    disabled={isImporting}
                     sx={{ color: '#1976d2' }}
                 >
                     Hủy
@@ -184,11 +290,12 @@ export default function PreviewSlotTimeModal({ open, onClose, previewData, fetch
                 <Button
                     onClick={handleConfirmImport}
                     variant="contained"
-                    disabled={loading || previewData.length === 0}
+                    disabled={validRows.length === 0 || isImporting || importMessage}
                     sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
-                    startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
                 >
-                    {loading ? 'Đang import...' : `Import ${previewData.length} khung giờ`}
+                    {isImporting ? 'Đang thêm...' :
+                        importMessage ? 'Đã thêm thành công' :
+                            `Thêm ${validRows.length} khung giờ`}
                 </Button>
             </DialogActions>
         </Dialog>

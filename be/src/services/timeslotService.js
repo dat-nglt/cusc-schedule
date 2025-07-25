@@ -146,19 +146,22 @@ export const importTimeslotsFromJsonService = async (timeslotsData) => {
 
         // Validate định dạng thời gian (HH:MM)
         const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
-        if (!timeRegex.test(cleanedData.start_time)) {
+        // Validate định dạng thời gian (HH:MM:SS)
+        const timeRegexWithSeconds = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$/;
+
+        if (!timeRegex.test(cleanedData.start_time) && !timeRegexWithSeconds.test(cleanedData.start_time)) {
           results.errors.push({
             index: index,
             slot_id: cleanedData.slot_id,
-            error: 'Thời gian bắt đầu phải có định dạng HH:MM'
+            error: 'Thời gian bắt đầu phải có định dạng HH:MM hoặc HH:MM:SS'
           });
           continue;
         }
-        if (!timeRegex.test(cleanedData.end_time)) {
+        if (!timeRegex.test(cleanedData.end_time) && !timeRegexWithSeconds.test(cleanedData.end_time)) {
           results.errors.push({
             index: index,
             slot_id: cleanedData.slot_id,
-            error: 'Thời gian kết thúc phải có định dạng HH:MM'
+            error: 'Thời gian kết thúc phải có định dạng HH:MM hoặc HH:MM:SS'
           });
           continue;
         }
