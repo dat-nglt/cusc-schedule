@@ -231,9 +231,9 @@ const Student = () => {
     // Lọc danh sách học viên dựa trên từ khóa tìm kiếm và trạng thái
     const filteredStudents = students.filter((student) => {
         const matchesSearchTerm =
-            student.student_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            student.class.toLowerCase().includes(searchTerm.toLowerCase());
+            (student.student_id && student.student_id.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (student.name && student.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (student.class && student.class.toLowerCase().includes(searchTerm.toLowerCase()));
 
         const matchesStatus = selectedStatus
             ? student.status === selectedStatus
