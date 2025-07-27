@@ -1,26 +1,26 @@
-import axiosInstance from "./axiosConfig"; 
+import axiosInstance from "./axiosConfig";
 
-export const getAllRooms = async () => {
+export const getAllRoomAPI = async () => {
     try {
         const response = await axiosInstance.get('/api/rooms/getAll');
-        return response;
-    }catch (error) {
+        return response.data;
+    } catch (error) {
         console.error("Error fetching rooms:", error);
         throw error;
     }
 }
 
-export const getRoomById = async(id) => {
+export const getRoomByIdAPI = async (id) => {
     try {
         const response = await axiosInstance.get(`/api/rooms/${id}`);
-        return response;
+        return response.data;
     } catch (error) {
         console.error(`Error fetching room with id ${id}:`, error);
         throw error;
     }
 }
 
-export const createRoom = async (roomData) => {
+export const createRoomAPI = async (roomData) => {
     try {
         const response = await axiosInstance.post('/api/rooms/create', roomData);
         return response;
@@ -30,17 +30,17 @@ export const createRoom = async (roomData) => {
     }
 }
 
-export const updateRoom = async (id, roomData) => {
+export const updateRoomAPI = async (id, roomData) => {
     try {
         const response = await axiosInstance.put(`/api/rooms/update/${id}`, roomData);
         return response;
-    }catch (error) {
+    } catch (error) {
         console.error(`Error updating room with id ${id}:`, error);
         throw error;
     }
 }
 
-export const deleteRoom = async (id) => {
+export const deleteRoomAPI = async (id) => {
     try {
         const response = await axiosInstance.delete(`/api/rooms/delete/${id}`);
         return response;
@@ -50,7 +50,7 @@ export const deleteRoom = async (id) => {
     }
 }
 
-export const importRoom = async (jsonData) => {
+export const importRoomAPI = async (jsonData) => {
     try {
         const response = await axiosInstance.post('/api/rooms/importJson', {
             rooms: jsonData

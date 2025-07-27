@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {
   Dialog,
@@ -16,43 +15,33 @@ import {
   Code as CodeIcon,
   Label as LabelIcon,
   Home as HomeIcon,
-  Stairs as StairsIcon,
   Group as GroupIcon,
   Category as CategoryIcon,
   ToggleOn as ToggleOnIcon,
   Event as EventIcon,
   Update as UpdateIcon,
 } from '@mui/icons-material';
-
-// Hàm định dạng thời gian từ YYYY-MM-DD HH:mm thành DD/MM/YYYY HH:mm
-const formatDateTime = (dateTime) => {
-  if (!dateTime) return 'Không có dữ liệu';
-  try {
-    const [date, time] = dateTime.split(' ');
-    const [year, month, day] = date.split('-');
-    return `${day}/${month}/${year} ${time}`;
-  } catch {
-    return 'Không hợp lệ';
-  }
-};
+import { getStatusChip } from '../../components/ui/StatusChip';
+import { formatDateTime } from '../../utils/formatDateTime';
+import { toast } from 'react-toastify';
 
 // Hàm kiểm tra giá trị và trả về giá trị hoặc thông báo mặc định
 const getValueOrDefault = (value) => value || 'Không có dữ liệu';
 
-const RoomDetailModal = ({ open, onClose, room }) => {
+export default function RoomDetailModal({ open, onClose, room }) {
   if (!room) return null;
 
   // Hàm sao chép mã phòng học
   const handleCopyMaPhongHoc = () => {
-    navigator.clipboard.writeText(room.maPhongHoc);
-    alert('Đã sao chép mã phòng học!');
+    navigator.clipboard.writeText(room.room_id);
+    toast.success('Đã sao chép mã phòng học: ' + room.room_id);
   };
 
   return (
     <Dialog
       open={open}
       onClose={onClose}
-      maxWidth="sm"
+      maxWidth="md"
       fullWidth
       sx={{
         '& .MuiDialog-paper': {
@@ -72,7 +61,7 @@ const RoomDetailModal = ({ open, onClose, room }) => {
         }}
       >
         <Typography variant="h6">
-          Chi tiết phòng học {room.maPhongHoc}
+          Chi tiết phòng học {room.room_id}
         </Typography>
         <Tooltip title="Sao chép mã phòng học">
           <IconButton
@@ -86,7 +75,7 @@ const RoomDetailModal = ({ open, onClose, room }) => {
       <DialogContent sx={{ mt: 2, px: 3 }}>
         <Grid container spacing={2}>
           {/* Mã phòng học */}
-          <Grid item xs={12}>
+          <Grid item xs={12} md={6}>
             <Box
               sx={{
                 display: 'flex',
@@ -103,14 +92,14 @@ const RoomDetailModal = ({ open, onClose, room }) => {
                   Mã phòng học
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#666' }}>
-                  {getValueOrDefault(room.maPhongHoc)}
+                  {getValueOrDefault(room.room_id)}
                 </Typography>
               </Box>
             </Box>
           </Grid>
 
           {/* Tên phòng học */}
-          <Grid item xs={12}>
+          <Grid item xs={12} md={6}>
             <Box
               sx={{
                 display: 'flex',
@@ -127,14 +116,14 @@ const RoomDetailModal = ({ open, onClose, room }) => {
                   Tên phòng học
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#666' }}>
-                  {getValueOrDefault(room.tenPhongHoc)}
+                  {getValueOrDefault(room.room_name)}
                 </Typography>
               </Box>
             </Box>
           </Grid>
 
-          {/* Tòa nhà */}
-          <Grid item xs={6}>
+          {/* Vị trí */}
+          <Grid item xs={12} md={6}>
             <Box
               sx={{
                 display: 'flex',
@@ -148,41 +137,17 @@ const RoomDetailModal = ({ open, onClose, room }) => {
               <HomeIcon sx={{ mr: 1, color: '#1976d2' }} />
               <Box>
                 <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#333' }}>
-                  Tòa nhà
+                  Vị trí
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#666' }}>
-                  {getValueOrDefault(room.toaNha)}
-                </Typography>
-              </Box>
-            </Box>
-          </Grid>
-
-          {/* Tầng */}
-          <Grid item xs={6}>
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                bgcolor: '#f9f9f9',
-                p: 2,
-                borderRadius: 1,
-                border: '1px solid #e0e0e0',
-              }}
-            >
-              <StairsIcon sx={{ mr: 1, color: '#1976d2' }} />
-              <Box>
-                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#333' }}>
-                  Tầng
-                </Typography>
-                <Typography variant="body1" sx={{ color: '#666' }}>
-                  {getValueOrDefault(room.tang)}
+                  {getValueOrDefault(room.location)}
                 </Typography>
               </Box>
             </Box>
           </Grid>
 
           {/* Sức chứa */}
-          <Grid item xs={6}>
+          <Grid item xs={12} md={6}>
             <Box
               sx={{
                 display: 'flex',
@@ -199,14 +164,14 @@ const RoomDetailModal = ({ open, onClose, room }) => {
                   Sức chứa
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#666' }}>
-                  {getValueOrDefault(room.sucChua)}
+                  {getValueOrDefault(room.capacity)}
                 </Typography>
               </Box>
             </Box>
           </Grid>
 
           {/* Loại phòng học */}
-          <Grid item xs={6}>
+          <Grid item xs={12} md={6}>
             <Box
               sx={{
                 display: 'flex',
@@ -223,14 +188,14 @@ const RoomDetailModal = ({ open, onClose, room }) => {
                   Loại phòng học
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#666' }}>
-                  {getValueOrDefault(room.loaiPhongHoc)}
+                  {getValueOrDefault(room.type)}
                 </Typography>
               </Box>
             </Box>
           </Grid>
 
           {/* Trạng thái */}
-          <Grid item xs={6}>
+          <Grid item xs={12} md={6}>
             <Box
               sx={{
                 display: 'flex',
@@ -246,15 +211,41 @@ const RoomDetailModal = ({ open, onClose, room }) => {
                 <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#333' }}>
                   Trạng thái
                 </Typography>
-                <Typography variant="body1" sx={{ color: '#666' }}>
-                  {getValueOrDefault(room.trangThai)}
-                </Typography>
+                <Box sx={{ mt: 0.5 }}>
+                  {getStatusChip(room.status)}
+                </Box>
               </Box>
             </Box>
           </Grid>
 
+          {/* Ghi chú */}
+          {room.note && (
+            <Grid item xs={12}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  bgcolor: '#f9f9f9',
+                  p: 2,
+                  borderRadius: 1,
+                  border: '1px solid #e0e0e0',
+                }}
+              >
+                <CategoryIcon sx={{ mr: 1, color: '#1976d2', mt: 0.5 }} />
+                <Box>
+                  <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#333' }}>
+                    Ghi chú
+                  </Typography>
+                  <Typography variant="body1" sx={{ color: '#666' }}>
+                    {getValueOrDefault(room.note)}
+                  </Typography>
+                </Box>
+              </Box>
+            </Grid>
+          )}
+
           {/* Thời gian tạo */}
-          <Grid item xs={6}>
+          <Grid item xs={12} md={6}>
             <Box
               sx={{
                 display: 'flex',
@@ -271,14 +262,14 @@ const RoomDetailModal = ({ open, onClose, room }) => {
                   Thời gian tạo
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#666' }}>
-                  {formatDateTime(room.thoiGianTao)}
+                  {formatDateTime(room.created_at)}
                 </Typography>
               </Box>
             </Box>
           </Grid>
 
           {/* Thời gian cập nhật */}
-          <Grid item xs={6}>
+          <Grid item xs={12} md={6}>
             <Box
               sx={{
                 display: 'flex',
@@ -295,7 +286,7 @@ const RoomDetailModal = ({ open, onClose, room }) => {
                   Thời gian cập nhật
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#666' }}>
-                  {formatDateTime(room.thoiGianCapNhat)}
+                  {formatDateTime(room.updated_at)}
                 </Typography>
               </Box>
             </Box>
@@ -319,6 +310,4 @@ const RoomDetailModal = ({ open, onClose, room }) => {
       </DialogActions>
     </Dialog>
   );
-};
-
-export default RoomDetailModal;
+}

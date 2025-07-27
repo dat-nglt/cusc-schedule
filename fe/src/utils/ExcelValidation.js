@@ -650,3 +650,78 @@ const normalizeTime = (timeString) => {
     // Nếu đã là HH:MM, giữ nguyên
     return timeString;
 };
+
+//validate room data
+const requiredRoomFields = [
+    'room_id',
+    'room_name',
+    'location',
+    'capacity',
+    'status',
+    'type',
+];
+
+const validateRoomData = (room, existingRooms, allImportData = []) => {
+    const errors = [];
+
+    // Kiểm tra trùng lặp mã phòng với dữ liệu hiện có
+    const isDuplicateExisting = existingRooms.some(
+        existing => existing.room_id === room.room_id
+    );
+
+    // Kiểm tra trùng lặp trong dữ liệu import
+    const isDuplicateImport = allImportData.filter(
+        item => item.room_id === room.room_id
+    ).length > 1;
+
+    if (isDuplicateExisting || isDuplicateImport) {
+        errors.push('duplicate_id');
+    }
+
+    // Kiểm tra các trường bắt buộc
+    const missingFields = requiredRoomFields.filter(field => {
+        const value = room[field];
+        return !value || (typeof value === 'string' && value.trim() === '');
+    });
+
+    if (missingFields.length > 0) {
+        errors.push('missing_required');
+    }
+
+    // Kiểm tra capacity format (phải là số dương)
+    if (room.capacity) {
+        const capacity = parseFloat(room.capacity);
+        if (isNaN(capacity) || capacity <= 0) {
+            errors.push('invalid_capacity');
+        }
+    }
+
+    return errors;
+};
+
+export const processExcelDataRoom = (rawData, existingRooms) => {
+    // Xử lý dữ liệu thô từ Excel
+    const processedData = rawData.map((row, index) => {
+        // Chuẩn hóa dữ liệu
+        const room = {
+            room_id: row['Mã phòng'] || row['room_id'] || '',
+            room_name: row['Tên phòng'] || row['room_name'] || '',
+            location: row['Vị trí'] || row['location'] || '',
+            capacity: row['Sức chứa'] || row['capacity'] || '',
+            status: row['Trạng thái'] || row['status'] || 'available',
+            type: row['Loại phòng'] || row['type'] || '',
+            note: row['Ghi chú'] || row['note'] || '',
+            rowIndex: index + 2 // +2 vì Excel bắt đầu từ row 1 và có header
+        };
+
+        // Validate dữ liệu
+        const errors = validateRoomData(room, existingRooms, rawData);
+
+        return {
+            ...room,
+            errors
+        };
+    });
+
+    return processedData;
+};
