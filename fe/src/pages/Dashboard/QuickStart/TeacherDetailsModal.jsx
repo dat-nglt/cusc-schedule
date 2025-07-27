@@ -64,7 +64,7 @@ function a11yProps(index) {
     };
 }
 
-function TeacherDetailsModal({ open, onClose, lecturerData }) {
+function TeacherDetailsModal({ open, onClose, teachers }) {
     const [tabValue, setTabValue] = useState(0);
 
     const handleChangeTab = (event, newValue) => {
@@ -88,78 +88,70 @@ function TeacherDetailsModal({ open, onClose, lecturerData }) {
                     <Tab label="Lịch giảng dạy" {...a11yProps(1)} />
                 </Tabs>
                 <TabPanel value={tabValue} index={0}>
-                    {!lecturerData || lecturerData.length === 0 ? (
-                        <Box sx={{ textAlign: 'center', py: 4 }}>
-                            <Typography variant="body1" color="text.secondary">
-                                Chưa có dữ liệu
-                            </Typography>
-                        </Box>
-                    ) : (
-                        <TableContainer component={Paper}>
-                            <Table>
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>Mã GV</TableCell>
-                                        <TableCell>Họ và tên</TableCell>
-                                        <TableCell>Bộ môn/Khoa</TableCell>
-                                        <TableCell>Môn giảng dạy</TableCell>
-                                        <TableCell>Liên hệ</TableCell>
-                                        <TableCell>Trạng thái</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {lecturerData.map((lecturer) => (
-                                        <TableRow key={lecturer.lecturer_id}>
-                                            <TableCell>{lecturer.lecturer_id}</TableCell>
-                                            <TableCell>
+                    <TableContainer component={Paper}>
+                        <Table>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>Mã GV</TableCell>
+                                    <TableCell>Họ và tên</TableCell>
+                                    <TableCell>Bộ môn/Khoa</TableCell>
+                                    <TableCell>Môn giảng dạy</TableCell>
+                                    <TableCell>Liên hệ</TableCell>
+                                    <TableCell>Trạng thái</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {teachers.map((teacher) => (
+                                    <TableRow key={teacher.id}>
+                                        <TableCell>{teacher.code}</TableCell>
+                                        <TableCell>
+                                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                                <Avatar sx={{ width: 32, height: 32, mr: 1 }}>
+                                                    {teacher.name.charAt(0)}
+                                                </Avatar>
+                                                {teacher.name}
+                                            </Box>
+                                        </TableCell>
+                                        <TableCell>{teacher.department}</TableCell>
+                                        <TableCell>
+                                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                                {teacher.subjects.slice(0, 3).map(subject => (
+                                                    <Chip key={subject} label={subject} size="small" />
+                                                ))}
+                                                {teacher.subjects.length > 3 && (
+                                                    <Chip
+                                                        label={`+${teacher.subjects.length - 3}`}
+                                                        size="small"
+                                                        variant="outlined"
+                                                    />
+                                                )}
+                                            </Box>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                                                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                                    <Avatar sx={{ width: 32, height: 32, mr: 1 }}>
-                                                        {lecturer.name.charAt(0)}
-                                                    </Avatar>
-                                                    {lecturer.name}
+                                                    <EmailIcon fontSize="small" sx={{ mr: 0.5 }} />
+                                                    <Typography variant="body2">{teacher.email}</Typography>
                                                 </Box>
-                                            </TableCell>
-                                            <TableCell>{lecturer.department}</TableCell>
-                                            <TableCell>
-                                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                                    {lecturer.subjects.slice(0, 3).map(subject => (
-                                                        <Chip key={subject.subject_id} label={subject.subject_name} size="small" />
-                                                    ))}
-                                                    {lecturer.subjects.length > 3 && (
-                                                        <Chip
-                                                            label={`+${lecturer.subjects.length - 3}`}
-                                                            size="small"
-                                                            variant="outlined"
-                                                        />
-                                                    )}
+                                                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                                    <PhoneIcon fontSize="small" sx={{ mr: 0.5 }} />
+                                                    <Typography variant="body2">{teacher.phone}</Typography>
                                                 </Box>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                                                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                                        <EmailIcon fontSize="small" sx={{ mr: 0.5 }} />
-                                                        <Typography variant="body2">{lecturer.account?.email || 'N/A'}</Typography>
-                                                    </Box>
-                                                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                                        <PhoneIcon fontSize="small" sx={{ mr: 0.5 }} />
-                                                        <Typography variant="body2">{lecturer.phone_number || 'N/A'}</Typography>
-                                                    </Box>
-                                                </Box>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Chip
-                                                    icon={lecturer.status === 'Đang công tác' ? <CheckCircleIcon /> : <BlockIcon />}
-                                                    label={lecturer.status}
-                                                    color={lecturer.status === 'Đang công tác' ? 'success' : 'error'}
-                                                    size="small"
-                                                />
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
-                    )}
+                                            </Box>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Chip
+                                                icon={teacher.status === 'Đang dạy' ? <CheckCircleIcon /> : <BlockIcon />}
+                                                label={teacher.status}
+                                                color={teacher.status === 'Đang dạy' ? 'success' : 'error'}
+                                                size="small"
+                                            />
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
                 </TabPanel>
                 <TabPanel value={tabValue} index={1}>
                     <Typography variant="body1" paragraph>

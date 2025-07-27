@@ -147,13 +147,7 @@ const BreakSchedule = () => {
       setBreakSchedules((prev) => [
         ...prev,
         {
-          stt: prev.length + 1,
-          break_id: newSchedule.break_id,
-          break_type: newSchedule.break_type,
-          break_start_date: newSchedule.break_start_date,
-          break_end_date: newSchedule.break_end_date,
-          created_at: formatTimestamp(newSchedule.created_at),
-          updated_at: formatTimestamp(newSchedule.updated_at),
+          additionalHooks: "(useRecoilCallback|useSetState)",
         },
       ]);
     } catch (err) {

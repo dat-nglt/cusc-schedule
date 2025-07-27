@@ -13,12 +13,27 @@ import {
   InputAdornment,
   IconButton,
   Button,
+<<<<<<< HEAD
+  useTheme,
+} from '@mui/material';
+=======
 } from "@mui/material";
+>>>>>>> 00516c43662a0500b27da7602cd05ff7928e64c3
 import {
   Add as AddIcon,
   Search as SearchIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
+<<<<<<< HEAD
+} from '@mui/icons-material';
+import CourseDetailModal from './CourseDetailModal';
+import AddCourseModal from './AddCourseModal'; // Đã chỉnh sửa để hỗ trợ preview
+import EditCourseModal from './EditCourseModal';
+import DeleteCourseModal from './DeleteCourseModal';
+import useResponsive from '../../hooks/useResponsive';
+import CourseTable from './CourseTable';
+import { getCourses, getCourseById, addCourse, updateCourse, deleteCourse} from '../../api/courseAPI';
+=======
 } from "@mui/icons-material";
 import CourseDetailModal from "./CourseDetailModal";
 import AddCourseModal from "./AddCourseModal"; // Đã chỉnh sửa để hỗ trợ preview
@@ -36,6 +51,7 @@ import {
   listCourses,
   importCourses,
 } from "../../api/courseAPI";
+>>>>>>> 00516c43662a0500b27da7602cd05ff7928e64c3
 
 // Hàm định dạng timestamp thành YYYY-MM-DD HH:MM:SS.sss+07
 const formatTimestamp = (timestamp) => {
@@ -53,7 +69,7 @@ const formatTimestamp = (timestamp) => {
 
 const Course = () => {
   const { isSmallScreen, isMediumScreen } = useResponsive();
-
+  const theme = useTheme();
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -244,6 +260,50 @@ const Course = () => {
   );
 
   return (
+<<<<<<< HEAD
+    <Box sx={{ p: 1, zIndex: 10, height: 'calc(100vh - 64px)', overflowY: 'auto' }}>
+      <Box sx={{ width: '100%', mb: 3 }}>
+        <Card sx={{ flexGrow: 1 }}>
+          <CardContent>
+            <Box sx={{
+              display: 'flex',
+              flexDirection: isSmallScreen ? 'column' : 'row',
+              justifyContent: 'space-between',
+              alignItems: isSmallScreen ? 'stretch' : 'center',
+              mb: 3,
+              gap: 2
+            }}>
+              <Typography variant="h5" fontWeight="600">
+                Danh sách khóa học
+              </Typography>
+
+              <Box sx={{
+                display: 'flex',
+                gap: 2,
+                flexDirection: isSmallScreen ? 'column' : 'row',
+                width: isSmallScreen ? '100%' : 'auto'
+              }}>
+                <TextField
+                  size="small"
+                  placeholder="Tìm kiếm theo mã hoặc tên khóa học..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SearchIcon />
+                      </InputAdornment>
+                    ),
+                  }}
+                  sx={{
+                    minWidth: 200,
+                    backgroundColor: theme.palette.background.paper
+                  }}
+                />
+
+                <FormControl size="small" sx={{ minWidth: 120 }}>
+                  <InputLabel>Năm</InputLabel>
+=======
     <Box
       sx={{ p: 3, zIndex: 10, height: "calc(100vh - 64px)", overflowY: "auto" }}
     >
@@ -295,11 +355,15 @@ const Course = () => {
                   <InputLabel id="year-filter-label">
                     {isSmallScreen ? "Lọc" : "Lọc theo năm"}
                   </InputLabel>
+>>>>>>> 00516c43662a0500b27da7602cd05ff7928e64c3
                   <Select
-                    labelId="year-filter-label"
                     value={selectedYear}
                     onChange={(e) => setSelectedYear(e.target.value)}
+<<<<<<< HEAD
+                    label="Năm"
+=======
                     label={isSmallScreen ? "Lọc" : "Lọc theo năm"}
+>>>>>>> 00516c43662a0500b27da7602cd05ff7928e64c3
                   >
                     <MenuItem value="">Tất cả</MenuItem>
                     {years.map((year) => (
@@ -309,8 +373,19 @@ const Course = () => {
                     ))}
                   </Select>
                 </FormControl>
+
+                <Button
+                  variant="contained"
+                  startIcon={<AddIcon />}
+                  onClick={() => setOpenAdd(true)}
+                  sx={{ ml: isSmallScreen ? 0 : 'auto' }}
+                >
+                  Thêm khóa học
+                </Button>
               </Box>
             </Box>
+<<<<<<< HEAD
+=======
             <Box sx={{ mb: 2 }}>
               <TextField
                 fullWidth
@@ -328,6 +403,7 @@ const Course = () => {
                 }}
               />
             </Box>
+>>>>>>> 00516c43662a0500b27da7602cd05ff7928e64c3
             {loading && <Typography>Loading...</Typography>}
             {error && <Typography color="error">{error}</Typography>}
             {filteredCourses.length === 0 && !loading && !error && (

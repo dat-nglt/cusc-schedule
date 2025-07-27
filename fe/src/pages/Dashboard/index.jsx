@@ -157,7 +157,6 @@ const Dashboard = () => {
         console.log('Thêm lịch học mới');
     };
 
-
     const stats = {
         classes: 42,
         teachers: lecturers.length,
@@ -167,7 +166,7 @@ const Dashboard = () => {
     };
 
     return (
-        <Box sx={{ p: 3, zIndex: 10 }}>
+        <Box sx={{ p: 1, zIndex: 10 }}>
             {/* Quick Stats */}
             <QuickStats stats={stats} lecturer={lecturers} subject={subjects} />
 
@@ -188,8 +187,6 @@ const Dashboard = () => {
                     onItemMove={handleItemMove}
                     onAddNew={handleAddNew}
                 />
-                {/* Recent Conflicts */}
-                {/* <RecentConflicts stats={stats} recentConflicts={recentConflicts} /> */}
             </Box>
         </Box>
     );

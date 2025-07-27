@@ -40,8 +40,9 @@ import {
   LibraryBooks as LibraryBooksIcon,
   Room as RoomIcon,
   AccountBalance as AccountBalanceIcon,
+  Close,
 } from '@mui/icons-material';
-import { styled } from '@mui/material/styles';
+import { alpha, styled, useTheme } from '@mui/material/styles';
 import CalendarWithWeekHighlight from './CalendarWithWeekHighlight';
 import NavigationDrawer from '../NavigationDrawer';
 
@@ -62,6 +63,7 @@ const StyledDrawer = styled(Drawer)(({ theme }) => ({
 
 const ScheduleSidebar = () => {
   const location = useLocation();
+  const theme = useTheme();
   const isDashboard = location.pathname === '/dashboard';
 
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -124,41 +126,209 @@ const ScheduleSidebar = () => {
 
             {/* Search component */}
             <TextField
-              placeholder="Tìm kiếm lớp, giảng viên..."
+              placeholder="Tìm kiếm lớp học, giảng viên..."
               variant="outlined"
               size="small"
               fullWidth
               value={searchQuery}
               onChange={handleSearchChange}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: '8px',
+                  backgroundColor: theme.palette.background.paper,
+                  transition: 'all 0.3s ease',
+                  '&:hover': {
+                    backgroundColor: alpha(theme.palette.primary.light, 0.05),
+                    '& .MuiOutlinedInput-notchedOutline': {
+                      borderColor: alpha(theme.palette.primary.main, 0.5),
+                    }
+                  },
+                  '&.Mui-focused': {
+                    backgroundColor: theme.palette.background.paper,
+                    '& .MuiOutlinedInput-notchedOutline': {
+                      borderColor: theme.palette.primary.main,
+                      borderWidth: '1px',
+                      boxShadow: `0 0 0 3px ${alpha(theme.palette.primary.main, 0.2)}`
+                    }
+                  }
+                },
+                '& .MuiOutlinedInput-input': {
+                  py: '10px',
+                  px: '12px',
+                  fontSize: '0.875rem'
+                }
+              }}
               InputProps={{
                 startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon />
+                  <InputAdornment position="start" sx={{ ml: 1, color: 'text.secondary' }}>
+                    <SearchIcon fontSize="small" />
                   </InputAdornment>
                 ),
+                endAdornment: searchQuery && (
+                  <IconButton
+                    size="small"
+                    onClick={() => handleSearchChange({ target: { value: '' } })}
+                    sx={{
+                      mr: 0.5,
+                      color: 'text.disabled',
+                      '&:hover': {
+                        color: 'text.secondary'
+                      }
+                    }}
+                  >
+                    <Close fontSize="small" />
+                  </IconButton>
+                )
               }}
             />
 
             {/* Filter component */}
-            <Paper elevation={0} sx={{ p: 1.5, borderRadius: '8px', bgcolor: 'background.default' }}>
-              <Typography variant="subtitle2" fontWeight="bold" gutterBottom>
-                Bộ lọc
-              </Typography>
-              <FormControl fullWidth size="small">
+            <Paper
+              elevation={0}
+              sx={{
+                p: 2,
+                borderRadius: '12px',
+                bgcolor: 'background.paper',
+                border: `1px solid ${theme.palette.divider}`,
+                boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.05)'
+              }}
+            >
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5 }}>
+                <FilterIcon
+                  fontSize="small"
+                  sx={{
+                    color: theme.palette.primary.main,
+                    mr: 1
+                  }}
+                />
+                <Typography
+                  variant="subtitle1"
+                  fontWeight="600"
+                  color="text.primary"
+                >
+                  Bộ lọc dữ liệu
+                </Typography>
+              </Box>
+
+              <FormControl fullWidth>
                 <Select
                   value={filterValue}
                   onChange={handleFilterChange}
-                  startAdornment={
-                    <InputAdornment position="start" sx={{ mr: 1 }}>
-                      <FilterIcon fontSize="small" />
-                    </InputAdornment>
-                  }
-                  sx={{ bgcolor: 'background.paper' }}
+                  size="small"
+                  sx={{
+                    bgcolor: 'background.paper',
+                    borderRadius: '8px',
+                    '& .MuiOutlinedInput-notchedOutline': {
+                      borderColor: theme.palette.divider,
+                    },
+                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                      borderColor: theme.palette.primary.light,
+                    },
+                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                      borderColor: theme.palette.primary.main,
+                      borderWidth: '1px',
+                    },
+                    '& .MuiSelect-select': {
+                      py: 1.25,
+                      pl: 1.5,
+                    }
+                  }}
+                  MenuProps={{
+                    PaperProps: {
+                      sx: {
+                        mt: 1,
+                        borderRadius: '8px',
+                        boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
+                        '& .MuiMenuItem-root': {
+                          px: 2,
+                          py: 1,
+                          fontSize: '0.875rem',
+                          '&:hover': {
+                            backgroundColor: alpha(theme.palette.primary.main, 0.08),
+                          },
+                          '&.Mui-selected': {
+                            backgroundColor: alpha(theme.palette.primary.main, 0.16),
+                            '&:hover': {
+                              backgroundColor: alpha(theme.palette.primary.main, 0.24),
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }}
                 >
-                  <MenuItem value="all">Tất cả</MenuItem>
-                  <MenuItem value="classes">Theo lớp học</MenuItem>
-                  <MenuItem value="teachers">Theo giảng viên</MenuItem>
-                  <MenuItem value="rooms">Theo phòng học</MenuItem>
+                  <MenuItem
+                    value="all"
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      '&:before': {
+                        content: '""',
+                        display: 'inline-block',
+                        width: 12,
+                        height: 12,
+                        borderRadius: '2px',
+                        backgroundColor: theme.palette.primary.main,
+                        mr: 1.5
+                      }
+                    }}
+                  >
+                    Tất cả
+                  </MenuItem>
+                  <MenuItem
+                    value="classes"
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      '&:before': {
+                        content: '""',
+                        display: 'inline-block',
+                        width: 12,
+                        height: 12,
+                        borderRadius: '2px',
+                        backgroundColor: theme.palette.secondary.main,
+                        mr: 1.5
+                      }
+                    }}
+                  >
+                    Theo lớp học
+                  </MenuItem>
+                  <MenuItem
+                    value="teachers"
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      '&:before': {
+                        content: '""',
+                        display: 'inline-block',
+                        width: 12,
+                        height: 12,
+                        borderRadius: '2px',
+                        backgroundColor: theme.palette.info.main,
+                        mr: 1.5
+                      }
+                    }}
+                  >
+                    Theo giảng viên
+                  </MenuItem>
+                  <MenuItem
+                    value="rooms"
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      '&:before': {
+                        content: '""',
+                        display: 'inline-block',
+                        width: 12,
+                        height: 12,
+                        borderRadius: '2px',
+                        backgroundColor: theme.palette.warning.main,
+                        mr: 1.5
+                      }
+                    }}
+                  >
+                    Theo phòng học
+                  </MenuItem>
                 </Select>
               </FormControl>
             </Paper>
