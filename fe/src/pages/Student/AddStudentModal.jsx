@@ -24,7 +24,7 @@ import * as XLSX from 'xlsx';
 import PreviewStudentModal from './PreviewStudentModal';
 import { processExcelDataStudent } from '../../utils/ExcelValidation';
 
-export default function AddStudentModal({ open, onClose, onAddStudent, existingStudents, error, loading, message, fetchStudents }) {
+export default function AddStudentModal({ open, onClose, onAddStudent, existingStudents, error, loading, message, fetchStudents, classes }) {
     const [newStudent, setNewStudent] = useState({
         student_id: '',
         name: '',
@@ -33,7 +33,7 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
         gender: '',
         address: '',
         phone_number: '',
-        class: '',
+        class_id: '',
         admission_year: '',
         status: 'Đang học',
     });
@@ -51,9 +51,15 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
     const handleSubmit = async () => {
         // --- Client-side validation ---
         if (
-            !newStudent.student_id || !newStudent.name || !newStudent.email ||
-            !newStudent.day_of_birth || !newStudent.gender || !newStudent.address ||
-            !newStudent.phone_number || !newStudent.class || !newStudent.admission_year
+            !newStudent.student_id ||
+            !newStudent.name ||
+            !newStudent.email ||
+            !newStudent.day_of_birth ||
+            !newStudent.gender ||
+            !newStudent.address ||
+            !newStudent.phone_number ||
+            !newStudent.class_id ||
+            !newStudent.admission_year
         ) {
             setLocalError('Vui lòng điền đầy đủ thông tin!');
             return;
@@ -136,24 +142,20 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
         // Call the parent component's add function
         await onAddStudent(studentToAdd);
 
-        // Reset form and close modal only if no API error occurred
-        // The `error` prop from parent component should reflect API errors
-        if (!error && !loading) {
-            setNewStudent({
-                student_id: '',
-                name: '',
-                email: '',
-                day_of_birth: '',
-                gender: '',
-                address: '',
-                phone_number: '',
-                class: '',
-                admission_year: '',
-                status: 'Đang học',
-            });
-            setLocalError('');
-            onClose();
-        }
+        setNewStudent({
+            student_id: '',
+            name: '',
+            email: '',
+            day_of_birth: '',
+            gender: '',
+            address: '',
+            phone_number: '',
+            class_id: '',
+            admission_year: '',
+            status: 'Đang học',
+        });
+        setLocalError('');
+        onClose();
     };
 
     const handleImportExcel = async (e) => {
@@ -354,16 +356,27 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
                             sx={{ gridColumn: { sm: 'span 2' } }} // Span 2 columns on small screens and up
                             size="small"
                         />
-                        <TextField
-                            label="Mã lớp"
-                            name="class"
-                            value={newStudent.class}
-                            onChange={handleChange}
-                            fullWidth
-                            variant="outlined"
-                            required
-                            size="small"
-                        />
+                        <FormControl fullWidth required>
+                            <InputLabel>Mã lớp</InputLabel>
+                            <Select
+                                name="class_id"
+                                value={newStudent.class_id}
+                                onChange={handleChange}
+                                label="Mã lớp"
+                            >
+                                {classes && classes.length > 0 ? (
+                                    classes.map((c) => (
+                                        <MenuItem key={c.class_id} value={c.class_id}>
+                                            {c.class_id} - {c.class_name}
+                                        </MenuItem>
+                                    ))
+                                ) : (
+                                    <MenuItem disabled>
+                                        <em>Không có lớp nào</em>
+                                    </MenuItem>
+                                )}
+                            </Select>
+                        </FormControl>
                         <TextField
                             label="Ngày nhập học"
                             name="admission_year"
@@ -439,7 +452,7 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
                 onClose={handleClosePreview}
                 previewData={previewData}
                 fetchStudents={fetchStudents}
-                onAddStudent={onAddStudent} // Pass onAddStudent if PreviewStudentModal also triggers adding
+                classes={classes}
             />
         </>
     );

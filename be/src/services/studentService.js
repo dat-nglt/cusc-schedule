@@ -2,108 +2,246 @@ import models from "../models/index.js";
 import ExcelUtils from "../utils/ExcelUtils.js";
 import { Op } from 'sequelize';
 
-const { Student } = models;
+const { Student, Account, Classes, sequelize } = models;
 /**
- * Lấy tất cả sinh viên.
- * @returns {Promise<Array>} Danh sách tất cả sinh viên.
+ * Lấy tất cả Học viên.
+ * @returns {Promise<Array>} Danh sách tất cả Học viên.
  * @throws {Error} Nếu có lỗi khi lấy dữ liệu.
  */
 export const getAllStudents = async () => {
   try {
-    const students = await Student.findAll();
+    const students = await Student.findAll({
+      include: [
+        {
+          model: Account,
+          as: 'account', // Giả sử có quan hệ với Account
+          attributes: ['id', 'email', 'role', 'status'] // Chỉ lấy các trường cần thiết từ Account
+        },
+        {
+          model: Classes,
+          as: 'class', // Giả sử có quan hệ với Class
+          attributes: ['class_id', 'class_name'] // Chỉ lấy các trường cần thiết từ Class
+        }
+      ]
+    });
     return students;
   } catch (error) {
-    console.error("Lỗi khi lấy danh sách sinh viên:", error);
+    console.error("Lỗi khi lấy danh sách Học viên:", error);
     throw error;
   }
 };
 
 /**
- * Lấy thông tin chi tiết một sinh viên theo ID.
- * @param {string} id - ID của sinh viên.
- * @returns {Promise<Object>} Thông tin sinh viên.
- * @throws {Error} Nếu không tìm thấy sinh viên hoặc có lỗi.
+ * Lấy thông tin chi tiết một Học viên theo ID.
+ * @param {string} id - ID của Học viên.
+ * @returns {Promise<Object>} Thông tin Học viên.
+ * @throws {Error} Nếu không tìm thấy Học viên hoặc có lỗi.
  */
 export const getStudentById = async (id) => {
   try {
-    const student = await Student.findByPk(id);
+    const student = await Student.findByPk(id, {
+      include: [{
+        model: Account,
+        as: 'account', // Giả sử có quan hệ với Account
+        attributes: ['id', 'email', 'role', 'status'] // Chỉ lấy các trường cần thiết từ Account
+      }, {
+        model: Classes,
+        as: 'class', // Giả sử có quan hệ với Class
+        attributes: ['class_id', 'class_name'] // Chỉ lấy các trường cần thiết từ Class
+      }]
+    });
     if (!student) {
-      throw new Error(`Không tìm thấy sinh viên với ID ${id}`);
+      throw new Error(`Không tìm thấy Học viên với ID ${id}`);
     }
     return student;
   } catch (error) {
-    console.error(`Lỗi khi lấy sinh viên với ID ${id}:`, error);
+    console.error(`Lỗi khi lấy Học viên với ID ${id}:`, error);
     throw error;
   }
 };
 
 /**
- * Tạo một sinh viên mới.
- * @param {Object} studentData - Dữ liệu của sinh viên mới.
- * @returns {Promise<Object>} Sinh viên đã được tạo.
- * @throws {Error} Nếu có lỗi khi tạo sinh viên.
+ * Tạo một Học viên mới.
+ * @param {Object} studentData - Dữ liệu của Học viên mới.
+ * @returns {Promise<Object>} Học viên đã được tạo.
+ * @throws {Error} Nếu có lỗi khi tạo Học viên.
  */
 export const createStudent = async (studentData) => {
+  const transaction = await sequelize.transaction();
   try {
-    const student = await Student.create(studentData);
-    return student;
+    // Kiểm tra xem student_id đã tồn tại chưa
+    const existingStudent = await Student.findByPk(studentData.student_id);
+    if (existingStudent) {
+      throw new Error(`Mã học viên ${studentData.student_id} đã tồn tại`);
+    }
+
+    // Kiểm tra xem email đã tồn tại chưa
+    const existingAccount = await Account.findOne({
+      where: { email: studentData.email }
+    });
+    if (existingAccount) {
+      throw new Error('Email đã tồn tại');
+    }
+    // Tạo tài khoản trước
+    const account = await Account.create({
+      email: studentData.email,
+      role: 'student',
+      status: 'active'
+    }, { transaction });
+
+    // Tạo Học viên với account_id
+    const student = await Student.create({
+      student_id: studentData.student_id,
+      account_id: account.id, // Giả sử có trường account_id trong Student
+      name: studentData.name,
+      gender: studentData.gender || null,
+      address: studentData.address || null,
+      day_of_birth: studentData.day_of_birth || null,
+      phone_number: studentData.phone_number || null,
+      class_id: studentData.class_id || studentData.class || null, // Use class_id instead of class
+      admission_year: studentData.admission_year || null,
+      gpa: studentData.gpa || null,
+      status: studentData.status || 'Đang học', // Default status
+    }, { transaction });
+    await transaction.commit();
+
+    // trả về Học viên kèm theo thông tin tài khoản
+    const result = await Student.findByPk(student.student_id, {
+      include: [
+        {
+          model: Account,
+          as: 'account',
+          attributes: ['email', 'role', 'status']
+        }
+      ]
+    });
+    return result;
+
   } catch (error) {
-    console.error("Lỗi khi tạo sinh viên:", error);
+    if (!transaction.finished) {
+      await transaction.rollback();
+    }
+    console.error("Lỗi khi tạo Học viên:", error);
     throw error;
   }
 };
 
 /**
- * Cập nhật thông tin một sinh viên theo ID.
- * @param {string} id - ID của sinh viên cần cập nhật.
+ * Cập nhật thông tin một Học viên theo ID.
+ * @param {string} id - ID của Học viên cần cập nhật.
  * @param {Object} studentData - Dữ liệu cập nhật.
- * @returns {Promise<Object>} Sinh viên đã được cập nhật.
- * @throws {Error} Nếu không tìm thấy sinh viên hoặc có lỗi.
+ * @returns {Promise<Object>} Học viên đã được cập nhật.
+ * @throws {Error} Nếu không tìm thấy Học viên hoặc có lỗi.
  */
 export const updateStudent = async (id, studentData) => {
+  const transaction = await sequelize.transaction();
   try {
-    const student = await Student.findByPk(id);
-    if (!student) {
-      throw new Error(`Không tìm thấy sinh viên với ID ${id}`);
+    const student = await Student.findByPk(id, {
+      include: [{
+        model: Account,
+        as: 'account', // Giả sử có quan hệ với Account
+      }]
     }
-    await student.update(studentData);
-    return student;
+    );
+    if (!student) {
+      throw new Error(`Không tìm thấy Học viên với ID ${id}`);
+    }
+    // Kiểm tra xem email đã tồn tại chưa (nếu có)
+    if (studentData.email && studentData.email !== student.account.email) {
+      const existingAccount = await Account.findOne({
+        where: {
+          email: studentData.email,
+          id: { [Op.ne]: student.account.id } // Tránh trùng với tài khoản hiện tại
+        }
+      });
+      if (existingAccount) {
+        throw new Error('Email đã tồn tại');
+      }
+    }
+    await student.account.update({
+      email: studentData.email
+    }, { transaction });
+
+    // Cập nhật thông tin Học viên
+    const updateData = {};
+    if (studentData.name) updateData.name = studentData.name;
+    if (studentData.day_of_birth !== undefined) updateData.day_of_birth = studentData.day_of_birth;
+    if (studentData.gender !== undefined) updateData.gender = studentData.gender; // Fixed: use studentData.gender instead of student.gender
+    if (studentData.address !== undefined) updateData.address = studentData.address;
+    if (studentData.phone_number !== undefined) updateData.phone_number = studentData.phone_number;
+    if (studentData.class_id !== undefined || studentData.class !== undefined) updateData.class_id = studentData.class_id || studentData.class; // Use class_id
+    if (studentData.admission_year !== undefined) updateData.admission_year = studentData.admission_year;
+    if (studentData.gpa !== undefined) updateData.gpa = studentData.gpa;
+    if (studentData.status !== undefined) updateData.status = studentData.status;
+
+    await student.update(updateData, { transaction });
+    await transaction.commit();
+
+    return await Student.findByPk(id, {
+      include: [{
+        model: Account,
+        as: 'account',
+        attributes: ['email', 'role', 'status']
+      }]
+    });
+
   } catch (error) {
-    console.error(`Lỗi khi cập nhật sinh viên với ID ${id}:`, error);
+    if (!transaction.finished) { // Kiểm tra xem transaction đã hoàn thành chưa
+      await transaction.rollback(); // Rollback transaction nếu có lỗi
+    }
+    console.error(`Lỗi khi cập nhật Học viên với ID ${id}:`, error);
     throw error;
   }
 };
 
 /**
- * Xóa một sinh viên theo ID.
- * @param {string} id - ID của sinh viên cần xóa.
+ * Xóa một Học viên theo ID.
+ * @param {string} id - ID của Học viên cần xóa.
  * @returns {Promise<Object>} Thông báo xóa thành công.
- * @throws {Error} Nếu không tìm thấy sinh viên hoặc có lỗi.
+ * @throws {Error} Nếu không tìm thấy Học viên hoặc có lỗi.
  */
 export const deleteStudent = async (id) => {
+  const transaction = await models.sequelize.transaction();
   try {
-    const student = await Student.findByPk(id);
-    if (!student) { // Changed from `!Student` to `!student`
-      throw new Error(`Không tìm thấy sinh viên với ID ${id}`);
+    const student = await Student.findByPk(id, {
+      include: [{
+        model: Account,
+        as: 'account'
+      }]
+    });
+    if (!student) {
+      throw new Error(`Không tìm thấy Học viên với ID ${id}`);
     }
-    await student.destroy();
-    return { message: "Sinh viên đã được xóa thành công" };
+    // Xóa tài khoản liên kết với Học viên
+    const accountId = student.account.id;
+
+    //xóa account liên kết với Học viên
+    await Account.destroy({
+      where: { id: accountId },
+      transaction
+    });
+    await transaction.commit();
+
+    return { message: "Học viên đã được xóa thành công" };
   } catch (error) {
-    console.error(`Lỗi khi xóa sinh viên với ID ${id}:`, error);
+    if (!transaction.finished) { // Kiểm tra xem transaction đã hoàn thành chưa
+      await transaction.rollback(); // Rollback transaction nếu có lỗi
+    }
+    console.error(`Lỗi khi xóa Học viên với ID ${id}:`, error);
     throw error;
   }
 };
 
 /**
- * Nhập dữ liệu sinh viên từ JSON (dùng cho tính năng xem trước).
- * @param {Array<Object>} studentsData - Mảng các đối tượng sinh viên.
+ * Nhập dữ liệu Học viên từ JSON (dùng cho tính năng xem trước).
+ * @param {Array<Object>} studentsData - Mảng các đối tượng Học viên.
  * @returns {Promise<Object>} Kết quả nhập khẩu bao gồm danh sách thành công và lỗi.
  * @throws {Error} Nếu dữ liệu JSON không hợp lệ hoặc lỗi trong quá trình nhập.
  */
 export const importStudentsFromJSON = async (studentsData) => {
   try {
     if (!studentsData || !Array.isArray(studentsData)) {
-      throw new Error("Dữ liệu sinh viên không hợp lệ"); // Changed "giảng viên" to "sinh viên"
+      throw new Error("Dữ liệu Học viên không hợp lệ"); // Changed "giảng viên" to "Học viên"
     }
 
     const results = {
@@ -112,7 +250,7 @@ export const importStudentsFromJSON = async (studentsData) => {
       total: studentsData.length
     };
 
-    // Validate và tạo sinh viên cho từng item
+    // Validate và tạo Học viên cho từng item
     for (let i = 0; i < studentsData.length; i++) {
       const studentData = studentsData[i];
       const index = i + 1;
@@ -154,7 +292,7 @@ export const importStudentsFromJSON = async (studentsData) => {
           gender: studentData.gender ? studentData.gender.toString().trim() : null,
           address: studentData.address ? studentData.address.toString().trim() : null,
           phone_number: studentData.phone_number ? studentData.phone_number.toString().trim() : null,
-          class: studentData.class ? studentData.class.toString().trim() : null,
+          class_id: studentData.class_id || studentData.class ? (studentData.class_id || studentData.class).toString().trim() : null, // Map class to class_id
           admission_year: studentData.admission_year || null,
           gpa: studentData.gpa ? parseFloat(studentData.gpa) : null,
           status: studentData.status || 'Đang học'
@@ -196,7 +334,7 @@ export const importStudentsFromJSON = async (studentsData) => {
 
         // Kiểm tra email đã tồn tại chưa (nếu có)
         if (cleanedData.email) {
-          const existingEmail = await Student.findOne({
+          const existingEmail = await Account.findOne({
             where: { email: cleanedData.email }
           });
           if (existingEmail) {
@@ -210,7 +348,7 @@ export const importStudentsFromJSON = async (studentsData) => {
         }
 
         // Tạo Student mới
-        const newStudent = await Student.create(cleanedData);
+        const newStudent = await createStudent(cleanedData);
         results.success.push(newStudent);
 
       } catch (error) {
@@ -223,23 +361,23 @@ export const importStudentsFromJSON = async (studentsData) => {
     }
     return results;
   } catch (error) {
-    console.error("Lỗi khi nhập sinh viên từ JSON:", error);
+    console.error("Lỗi khi nhập Học viên từ JSON:", error);
     throw error;
   }
 };
 
 
 /**
- * Liệt kê các sinh viên với các bộ lọc tùy chọn.
+ * Liệt kê các Học viên với các bộ lọc tùy chọn.
  * @param {Object} filters - Các tiêu chí lọc.
- * @param {string} [filters.student_id] - Lọc theo ID sinh viên (tìm kiếm gần đúng).
- * @param {string} [filters.name] - Lọc theo tên sinh viên (tìm kiếm gần đúng).
+ * @param {string} [filters.student_id] - Lọc theo ID Học viên (tìm kiếm gần đúng).
+ * @param {string} [filters.name] - Lọc theo tên Học viên (tìm kiếm gần đúng).
  * @param {string} [filters.email] - Lọc theo email (tìm kiếm gần đúng).
  * @param {string} [filters.gender] - Lọc theo giới tính.
  * @param {string} [filters.class] - Lọc theo lớp.
  * @param {number} [filters.admission_year] - Lọc theo năm nhập học.
  * @param {string} [filters.status] - Lọc theo trạng thái.
- * @returns {Promise<Array>} Danh sách các sinh viên phù hợp với bộ lọc.
+ * @returns {Promise<Array>} Danh sách các Học viên phù hợp với bộ lọc.
  * @throws {Error} Nếu có lỗi khi liệt kê dữ liệu.
  */
 export const listStudents = async (filters) => {
@@ -256,44 +394,58 @@ export const listStudents = async (filters) => {
         [Op.iLike]: `%${filters.name}%`
       };
     }
-    if (filters.email) {
-      whereClause.email = {
-        [Op.iLike]: `%${filters.email}%`
-      };
-    }
     if (filters.gender) {
       whereClause.gender = {
         [Op.iLike]: `%${filters.gender}%`
       };
     }
-    if (filters.class) {
-      whereClause.class = {
-        [Op.iLike]: `%${filters.class}%`
+    if (filters.class_id || filters.class) {
+      whereClause.class_id = {
+        [Op.iLike]: `%${filters.class_id || filters.class}%`
       };
     }
     if (filters.admission_year) {
       whereClause.admission_year = filters.admission_year;
     }
-    if (filters.status) {
-      whereClause.status = {
-        [Op.iLike]: `%${filters.status}%`
-      };
+
+    // Handle email filter through Account association
+    let includeClause = [
+      {
+        model: Account,
+        as: 'account',
+        attributes: ['email', 'role', 'status']
+      }
+    ];
+
+    if (filters.email || filters.status) {
+      const accountWhere = {};
+      if (filters.email) {
+        accountWhere.email = {
+          [Op.iLike]: `%${filters.email}%`
+        };
+      }
+      if (filters.status) {
+        accountWhere.status = {
+          [Op.iLike]: `%${filters.status}%`
+        };
+      }
+      includeClause[0].where = accountWhere;
     }
 
     const students = await Student.findAll({
       where: whereClause,
-      attributes: ['student_id', 'name', 'email', 'day_of_birth', 'gender', 'address', 'phone_number', 'class', 'admission_year', 'gpa', 'status', 'created_at', 'updated_at'],
+      include: includeClause,
       order: [['created_at', 'DESC']]
     });
 
     return students;
   } catch (error) {
-    throw new Error('Lỗi khi liệt kê sinh viên: ' + error.message);
+    throw new Error('Lỗi khi liệt kê Học viên: ' + error.message);
   }
 };
 
 /**
- * Nhập dữ liệu sinh viên từ file Excel.
+ * Nhập dữ liệu Học viên từ file Excel.
  * @param {Buffer} fileBuffer - Buffer của file Excel.
  * @returns {Promise<Object>} Kết quả nhập khẩu bao gồm danh sách thành công và lỗi.
  * @throws {Error} Nếu file Excel không có dữ liệu hoặc định dạng không đúng, hoặc lỗi trong quá trình nhập.
@@ -316,7 +468,7 @@ export const importStudentsFromExcel = async (fileBuffer) => {
       total: studentsData.length
     };
 
-    // Validate và tạo sinh viên cho từng hàng
+    // Validate và tạo Học viên cho từng hàng
     for (let i = 0; i < studentsData.length; i++) {
       const row = studentsData[i];
       const rowIndex = i + 2; // Bắt đầu từ hàng 2 (sau tiêu đề)
@@ -341,10 +493,9 @@ export const importStudentsFromExcel = async (fileBuffer) => {
           gender: ExcelUtils.cleanString(row.gender) || null,
           address: ExcelUtils.cleanString(row.address) || null,
           phone_number: ExcelUtils.cleanString(row.phone_number) || null,
-          class: ExcelUtils.cleanString(row.class) || null,
+          class_id: ExcelUtils.cleanString(row.class_id || row.class) || null, // Map class to class_id
           admission_year: row.admission_year || null,
           gpa: row.gpa ? parseFloat(row.gpa) : null,
-          status: ExcelUtils.cleanString(row.status) || 'Đang học',
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         };
@@ -398,7 +549,6 @@ export const importStudentsFromExcel = async (fileBuffer) => {
           row: rowIndex,
           student_id: newStudent.student_id,
           name: newStudent.name,
-          email: newStudent.email
         });
 
       } catch (error) {
@@ -412,13 +562,13 @@ export const importStudentsFromExcel = async (fileBuffer) => {
 
     return results;
   } catch (error) {
-    console.error("Lỗi khi nhập sinh viên từ Excel:", error);
+    console.error("Lỗi khi nhập Học viên từ Excel:", error);
     throw error;
   }
 };
 
 /**
- * Validate cấu trúc template Excel cho sinh viên.
+ * Validate cấu trúc template Excel cho Học viên.
  * @param {Buffer} fileBuffer - Buffer của file Excel.
  * @returns {Object} Kết quả validation bao gồm valid (boolean) và error (string, nếu có).
  * @throws {Error} Nếu template không hợp lệ.

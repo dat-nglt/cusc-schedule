@@ -60,6 +60,13 @@ const Classes = (sequelize) => {
       onUpdate: 'CASCADE',       // Nếu thay đổi ID khóa học, cập nhật theo
       onDelete: 'SET NULL',      // Nếu xóa khóa học, để null trường course_id
     });
+    // Một lớp học có nhiều sinh viên
+    ClassesModel.hasMany(models.Student, {
+      foreignKey: 'class_id',    // Khóa ngoại trong bảng Student trỏ về class_id
+      as: 'students', // Add consistent alias for the reverse relationship
+      onUpdate: 'CASCADE',       // Nếu thay đổi ID lớp học, cập nhật theo
+      onDelete: 'SET NULL',
+    });
   };
 
   return ClassesModel;

@@ -120,6 +120,8 @@ export const processExcelDataLecturer = (rawData, existingLecturers) => {
             gender: row['Giới tính'] || row['gender'] || '',
             address: row['Địa chỉ'] || row['address'] || '',
             phone_number: row['Số điện thoại'] || row['phone_number'] || '',
+            academic_rank: row['Học hàm'] || row['academic_rank'] || '',
+            subjectIds: row['Mã học phần'] ? row['Mã học phần'].split(',').map(id => id.trim()) : [],
             department: row['Khoa/Bộ môn'] || row['department'] || '',
             hire_date: formatDate(row['Ngày tuyển dụng'] || row['hire_date']),
             degree: row['Học vị'] || row['degree'] || '',

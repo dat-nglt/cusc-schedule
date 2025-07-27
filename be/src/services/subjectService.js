@@ -83,13 +83,10 @@ export const updateSubject = async (subjectId, subjectData) => {
  */
 export const deleteSubject = async (subjectId) => {
   try {
-    const deleted = await Subject.destroy({
-      where: { subject_id: subjectId }
-    });
-    if (deleted) {
-      return { message: "Môn học đã được xóa thành công" };
-    }
-    throw new Error("Không tìm thấy môn học");
+    const subject = await Subject.findByPk(subjectId);
+    if (!subject) throw new Error("Không tìm thấy môn học");
+    await subject.destroy();
+    return { message: "Môn học đã được xóa thành công" };
   } catch (error) {
     console.error("Lỗi khi xóa môn học:", error);
     throw error;

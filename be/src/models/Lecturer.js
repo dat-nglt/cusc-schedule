@@ -1,4 +1,5 @@
 import { DataTypes } from "sequelize";
+import { add } from "winston";
 
 // Định nghĩa model Lecturer - Đại diện cho giảng viên
 const Lecturer = (sequelize) => {
@@ -48,6 +49,26 @@ const Lecturer = (sequelize) => {
         type: DataTypes.STRING(50),
         allowNull: true,
       },
+      phone_number: {
+        type: DataTypes.STRING(15), // Số điện thoại giảng viên
+        allowNull: true,
+      },
+      gender: {
+        type: DataTypes.STRING(10), // Giới tính giảng viên (Nam,
+        allowNull: true
+      },
+      address: {
+        type: DataTypes.STRING(255), // Địa chỉ giảng viên
+        allowNull: true,
+      },
+      day_of_birth: {
+        type: DataTypes.DATEONLY, // Ngày sinh giảng viên
+        allowNull: true,
+      },
+      status: {
+        type: DataTypes.STRING(30), // Trạng thái giảng viên
+        allowNull: true,
+      }
       // BỎ CÁC TRƯỜNG DƯ THỪA ĐÃ CHUYỂN SANG BẢNG ACCOUNTS:
       // email: đã có trong Account
       // day_of_birth: có thể giữ ở đây hoặc chuyển sang Account nếu muốn chung hơn
@@ -62,7 +83,7 @@ const Lecturer = (sequelize) => {
       timestamps: true, // Tự động thêm created_at và updated_at
       createdAt: "created_at", // Đặt tên cột createdAt
       updatedAt: "updated_at", // Đặt tên cột updatedAt
-      underscored: true, // Tên cột dạng snake_case
+      deletedAt: 'deleted_at', // Đặt tên cột deletedAt nếu cần
     }
   );
 
@@ -74,9 +95,19 @@ const Lecturer = (sequelize) => {
       as: "account", // Alias để truy cập bản ghi Account từ Lecturer (e.g., lecturer.getAccount())
     });
 
-    // Các mối quan hệ khác của Giảng viên (ví dụ: Giảng viên dạy nhiều lớp hoặc môn học)
-    // LecturerModel.hasMany(models.Class, { foreignKey: 'lecturer_id' });
-    // LecturerModel.hasMany(models.Subject, { foreignKey: 'lecturer_id' });
+    // Mối quan hệ nhiều-nhiều: Một Lecturer có thể dạy nhiều Subject
+    LecturerModel.belongsToMany(models.Subject, {
+      through: models.LecturerAssignment,
+      foreignKey: 'lecturer_id',
+      otherKey: 'subject_id',
+      as: 'subjects'
+    });
+
+    // Mối quan hệ một-nhiều với bảng junction LecturerAssignment
+    LecturerModel.hasMany(models.LecturerAssignment, {
+      foreignKey: 'lecturer_id',
+      as: 'lecturerAssignments'
+    });
   };
 
   return LecturerModel;

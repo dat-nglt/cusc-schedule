@@ -17,7 +17,7 @@ export default function AddSubjectModal({ open, onClose, onAddSubject, existingS
         theory_hours: 0,
         practice_hours: 0,
         status: 'Hoạt động',
-        semester_id: ''
+        semester_id: null
     });
 
     const [localError, setLocalError] = useState('');
@@ -250,11 +250,17 @@ export default function AddSubjectModal({ open, onClose, onAddSubject, existingS
                                 onChange={handleChange}
                                 label="Học kỳ"
                             >
-                                {semesters.map((semester) => (
-                                    <MenuItem key={semester.semester_id} value={semester.semester_id}>
-                                        {semester.semester_id} - {semester.semester_name}
+                                {semesters.length > 0 ? (
+                                    semesters.map((semester) => (
+                                        <MenuItem key={semester.semester_id} value={semester.semester_id}>
+                                            {semester.semester_id} - {semester.semester_name}
+                                        </MenuItem>
+                                    ))
+                                ) : (
+                                    <MenuItem disabled>
+                                        Chưa có mã học kỳ nào
                                     </MenuItem>
-                                ))}
+                                )}
                             </Select>
                         </FormControl>
                         <FormControl fullWidth required>
@@ -295,6 +301,7 @@ export default function AddSubjectModal({ open, onClose, onAddSubject, existingS
                 onClose={handleClosePreview}
                 previewData={previewData}
                 fetchSubjects={fetchSubjects} // Gọi lại hàm fetch để cập nhật danh sách học kỳ
+                semesters={semesters}
             />
         </>
     );

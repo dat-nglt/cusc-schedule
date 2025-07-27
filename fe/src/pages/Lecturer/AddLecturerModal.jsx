@@ -42,7 +42,7 @@ const availableDegrees = [
     'Phó Giáo sư'
 ];
 
-const AddLecturerModal = ({ open, onClose, onAddLecturer, existingLecturers, error, loading, message, fetchLecturers }) => {
+const AddLecturerModal = ({ open, onClose, onAddLecturer, existingLecturers, error, loading, message, fetchLecturers, subjects }) => {
     const [newLecturer, setNewLecturer] = useState({
         lecturer_id: '',
         name: '',
@@ -54,7 +54,9 @@ const AddLecturerModal = ({ open, onClose, onAddLecturer, existingLecturers, err
         department: '',
         hire_date: '',
         degree: '',
+        academic_rank: '',
         status: 'Đang giảng dạy',
+        subjects: [],
     });
 
     const [localError, setLocalError] = useState('');
@@ -70,10 +72,17 @@ const AddLecturerModal = ({ open, onClose, onAddLecturer, existingLecturers, err
     const handleSubmit = async () => {
         // Validation logic
         if (
-            !newLecturer.lecturer_id || !newLecturer.name || !newLecturer.email ||
-            !newLecturer.day_of_birth || !newLecturer.gender || !newLecturer.address ||
-            !newLecturer.phone_number || !newLecturer.department || !newLecturer.hire_date ||
-            !newLecturer.degree
+            !newLecturer.lecturer_id ||
+            !newLecturer.name ||
+            !newLecturer.email ||
+            !newLecturer.day_of_birth ||
+            !newLecturer.gender ||
+            !newLecturer.address ||
+            !newLecturer.phone_number ||
+            !newLecturer.department ||
+            !newLecturer.hire_date ||
+            !newLecturer.degree ||
+            !newLecturer.subjects.length
         ) {
             setLocalError('Vui lòng điền đầy đủ thông tin!');
             return;
@@ -151,24 +160,22 @@ const AddLecturerModal = ({ open, onClose, onAddLecturer, existingLecturers, err
         };
 
         await onAddLecturer(lecturerToAdd);
-        // Reset form và đóng modal chỉ khi không có lỗi API
-        if (!error && !loading) { // Check error and loading props after onAddLecturer
-            setNewLecturer({
-                lecturer_id: '',
-                name: '',
-                email: '',
-                day_of_birth: '',
-                gender: '',
-                address: '',
-                phone_number: '',
-                department: '',
-                hire_date: '',
-                degree: '',
-                status: 'Đang giảng dạy',
-            });
-            setLocalError('');
-            onClose();
-        }
+        setNewLecturer({
+            lecturer_id: '',
+            name: '',
+            email: '',
+            day_of_birth: '',
+            gender: '',
+            address: '',
+            phone_number: '',
+            department: '',
+            hire_date: '',
+            degree: '',
+            status: 'Đang giảng dạy',
+            subjects: [],
+        });
+        setLocalError('');
+        onClose();
     };
 
     const handleImportExcel = async (e) => {
@@ -427,6 +434,34 @@ const AddLecturerModal = ({ open, onClose, onAddLecturer, existingLecturers, err
                                 <MenuItem value="Nghỉ hưu">Nghỉ hưu</MenuItem>
                             </Select>
                         </FormControl>
+                        <FormControl fullWidth required>
+                            <InputLabel>Môn giảng dạy</InputLabel>
+                            <Select
+                                name="subjects"
+                                value={newLecturer.subjects}
+                                onChange={handleChange}
+                                label="Môn giảng dạy"
+                                multiple
+                                renderValue={(selected) =>
+                                    selected.map(id =>
+                                        subjects?.find(subject => subject.subject_id === id)?.subject_name
+                                    ).join(', ')
+                                }
+                            >
+                                {subjects && subjects.length > 0 ? (
+                                    subjects.map((subject) => (
+                                        <MenuItem key={subject.subject_id} value={subject.subject_id}>
+                                            {subject.subject_id} - {subject.subject_name}
+                                        </MenuItem>
+                                    ))
+                                ) : (
+                                    <MenuItem disabled>
+                                        <em>Không có môn học nào</em>
+                                    </MenuItem>
+                                )} 
+
+                            </Select>
+                        </FormControl>
                     </Box>
 
                 </DialogContent>
@@ -481,7 +516,7 @@ const AddLecturerModal = ({ open, onClose, onAddLecturer, existingLecturers, err
                 onClose={handleClosePreview}
                 previewData={previewData}
                 fetchLecturers={fetchLecturers}
-                onAddLecturer={onAddLecturer} // Pass onAddLecturer to PreviewLecturerModal
+                subjects={subjects}
             />
         </>
     );
