@@ -37,7 +37,7 @@ module.exports = {
       },
       program_id: {
         type: Sequelize.STRING(30),
-        allowNull: true,
+        allowNull: false,
         references: {
           model: 'programs',
           key: 'program_id'

@@ -20,17 +20,19 @@ export const getLecturerByIdAPI = async (id) => {
   }
 };
 
-export const createLecturer = async (lecturerData) => {
-  try {
-    const response = await axiosInstance.post(
-      "/api/lecturers/create",
-      lecturerData
-    );
-    return response;
-  } catch (error) {
-    console.error("Error creating lecturer:", error);
-    throw error;
-  }
+export const createLecturerAPI = async (lecturerData, subjectIds = []) => {
+    try {
+        const requestData = {
+            ...lecturerData,
+            subjectIds
+        };
+        const response = await axiosInstance.post('/api/lecturers/create', requestData);
+        return response;
+    }
+    catch (error) {
+        console.error('Error creating lecturer:', error);
+        throw error;
+    }
 };
 
 export const updateLecturer = async (id, lecturerData) => {

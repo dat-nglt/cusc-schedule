@@ -14,8 +14,12 @@ import {
     MenuItem,
     Alert,
     CircularProgress,
+    Avatar,
+    Divider, // Thêm Divider để phân cách
+    IconButton, // Thêm IconButton cho các icon
 } from '@mui/material';
-import UploadFileIcon from '@mui/icons-material/UploadFile';
+import CloseIcon from '@mui/icons-material/Close'; // Icon đóng modal
+import CloudUploadIcon from '@mui/icons-material/CloudUpload'; // Icon tải file lên
 import * as XLSX from 'xlsx';
 import PreviewLecturerModal from './PreviewLecturerModal';
 import { processExcelDataLecturer } from '../../utils/ExcelValidation';
@@ -38,7 +42,7 @@ const availableDegrees = [
     'Phó Giáo sư'
 ];
 
-export default function AddLecturerModal({ open, onClose, onAddLecturer, existingLecturers, error, loading, message, fetchLecturers }) {
+const AddLecturerModal = ({ open, onClose, onAddLecturer, existingLecturers, error, loading, message, fetchLecturers, subjects }) => {
     const [newLecturer, setNewLecturer] = useState({
         lecturer_id: '',
         name: '',
@@ -50,7 +54,9 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
         department: '',
         hire_date: '',
         degree: '',
+        academic_rank: '',
         status: 'Đang giảng dạy',
+        subjects: [],
     });
 
     const [localError, setLocalError] = useState('');
@@ -60,10 +66,11 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
     const handleChange = (e) => {
         const { name, value } = e.target;
         setNewLecturer((prev) => ({ ...prev, [name]: value }));
-        setLocalError('');
+        setLocalError(''); // Xóa lỗi cục bộ khi người dùng bắt đầu nhập
     };
 
     const handleSubmit = async () => {
+        // Validation logic
         if (
             !newLecturer.lecturer_id ||
             !newLecturer.name ||
@@ -74,35 +81,33 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
             !newLecturer.phone_number ||
             !newLecturer.department ||
             !newLecturer.hire_date ||
-            !newLecturer.degree
+            !newLecturer.degree ||
+            !newLecturer.subjects.length
         ) {
             setLocalError('Vui lòng điền đầy đủ thông tin!');
             return;
         }
 
-        // Kiểm tra email format
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(newLecturer.email)) {
             setLocalError('Email không hợp lệ!');
             return;
         }
 
-        // Kiểm tra số điện thoại format
         const phoneRegex = /^[0-9]{10,11}$/;
         if (!phoneRegex.test(newLecturer.phone_number)) {
-            setLocalError('Số điện thoại không hợp lệ!');
+            setLocalError('Số điện thoại không hợp lệ (10-11 chữ số)!');
             return;
         }
 
-        // Kiểm tra trùng mã giảng viên
-        const isDuplicate = existingLecturers.some(
+        const isDuplicateId = existingLecturers.some(
             (lecturer) => lecturer.lecturer_id === newLecturer.lecturer_id
         );
-        if (isDuplicate) {
+        if (isDuplicateId) {
             setLocalError(`Mã giảng viên "${newLecturer.lecturer_id}" đã tồn tại!`);
             return;
         }
-        // kiểm tra trùng email
+
         const isEmailDuplicate = existingLecturers.some(
             (lecturer) => lecturer.email === newLecturer.email
         );
@@ -110,7 +115,7 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
             setLocalError(`Email "${newLecturer.email}" đã tồn tại!`);
             return;
         }
-        // kiểm tra trùng số điện thoại
+
         const isPhoneDuplicate = existingLecturers.some(
             (lecturer) => lecturer.phone_number === newLecturer.phone_number
         );
@@ -119,30 +124,41 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
             return;
         }
 
-        // Kiểm tra ngày hợp lệ
         const birthDate = new Date(newLecturer.day_of_birth);
         const hireDate = new Date(newLecturer.hire_date);
         const today = new Date();
 
         if (birthDate >= today) {
-            setLocalError('Ngày sinh không hợp lệ!');
+            setLocalError('Ngày sinh không hợp lệ (không được là ngày tương lai hoặc hôm nay)!');
             return;
         }
+        // Validate age (e.g., must be at least 18 years old)
+        const minBirthDate = new Date();
+        minBirthDate.setFullYear(minBirthDate.getFullYear() - 18);
+        if (birthDate > minBirthDate) {
+            setLocalError('Giảng viên phải đủ 18 tuổi!');
+            return;
+        }
+
 
         if (hireDate > today) {
             setLocalError('Ngày tuyển dụng không được là ngày tương lai!');
             return;
         }
+        // Hire date must not be before birth date
+        if (hireDate < birthDate) {
+            setLocalError('Ngày tuyển dụng không thể trước ngày sinh!');
+            return;
+        }
 
         const lecturerToAdd = {
             ...newLecturer,
-            id: Date.now(),
+            // id: Date.now(), // ID nên được tạo từ phía backend hoặc là một UUID chuẩn
             google_id: null,
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
         };
 
-        // Gọi hàm onAddLecturer được truyền từ component cha
         await onAddLecturer(lecturerToAdd);
         setNewLecturer({
             lecturer_id: '',
@@ -156,6 +172,7 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
             hire_date: '',
             degree: '',
             status: 'Đang giảng dạy',
+            subjects: [],
         });
         setLocalError('');
         onClose();
@@ -172,31 +189,29 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
         const fileExtension = file.name.slice(file.name.lastIndexOf('.')).toLowerCase();
         if (!validExtensions.includes(fileExtension)) {
             setLocalError('Chỉ hỗ trợ file Excel (.xlsx, .xls)!');
+            e.target.value = ''; // Clear file input
             return;
         }
 
         try {
-            setLocalError(''); // Clear previous errors
+            setLocalError('');
 
-            // Đọc file Excel
             const arrayBuffer = await file.arrayBuffer();
             const workbook = XLSX.read(arrayBuffer, { type: 'array' });
             const sheetName = workbook.SheetNames[0];
             const worksheet = workbook.Sheets[sheetName];
 
-            // Chuyển đổi sang JSON
             const rawData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
             if (rawData.length < 2) {
                 setLocalError('File Excel phải có ít nhất 2 dòng (header + dữ liệu)!');
+                e.target.value = '';
                 return;
             }
 
-            // Lấy header và data
             const headers = rawData[0];
             const dataRows = rawData.slice(1);
 
-            // Chuyển đổi thành object với header làm key
             const jsonData = dataRows.map(row => {
                 const obj = {};
                 headers.forEach((header, index) => {
@@ -205,28 +220,26 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
                 return obj;
             });
 
-            // Xử lý và validate dữ liệu
+            // Pass existingLecturers to validate for duplicates in Excel data
             const processedData = processExcelDataLecturer(jsonData, existingLecturers);
 
             if (processedData.length === 0) {
-                setLocalError('Không có dữ liệu hợp lệ trong file Excel!');
+                setLocalError('Không có dữ liệu hợp lệ nào được tìm thấy trong file Excel!');
+                e.target.value = '';
                 return;
             }
 
-            // Hiển thị preview
             setPreviewData(processedData);
             setShowPreview(true);
-            onClose();
+            // onClose(); // Không đóng modal chính nếu muốn người dùng thấy lỗi và tùy chọn lại
 
         } catch (error) {
             console.error('Error reading Excel file:', error);
-            setLocalError('Lỗi khi đọc file Excel! Vui lòng kiểm tra format file.');
+            setLocalError('Lỗi khi đọc file Excel! Vui lòng kiểm tra định dạng hoặc nội dung file.');
+        } finally {
+            e.target.value = ''; // Luôn xóa giá trị của input file sau khi xử lý
         }
-
-        // Reset file input
-        e.target.value = '';
     };
-
 
     const handleClosePreview = () => {
         setShowPreview(false);
@@ -236,29 +249,41 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
     return (
         <>
             <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-                <DialogTitle>
-                    <Box display="flex" justifyContent="space-between" alignItems="center">
-                        <Typography variant="h6">Thêm giảng viên mới</Typography>
-                        <label htmlFor="excel-upload">
-                            <input
-                                id="excel-upload"
-                                type="file"
-                                accept=".xlsx, .xls"
-                                hidden
-                                onChange={handleImportExcel}
-                            />
-                            <Button
-                                variant="outlined"
-                                component="span"
-                                startIcon={<UploadFileIcon />}
-                                size="small"
-                            >
-                                Thêm tự động
-                            </Button>
-                        </label>
+                {/* Header của Dialog */}
+                <DialogTitle sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    backgroundColor: 'primary.main',
+                    color: 'white',
+                    p: 2,
+                }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <Avatar
+                            src="https://sanvieclamcantho.com/upload/imagelogo/trung-tam-cong-nghe-phan-mem-dai-hoc-can-tho1573111986.png"
+                            alt="Logo"
+                            sx={{
+                                width: 40, // Kích thước nhỏ hơn một chút
+                                height: 40,
+                                mr: 1.5, // Khoảng cách với tiêu đề
+                                border: '2px solid white',
+                                boxShadow: 1
+                            }}
+                        />
+                        <Typography variant="h6" fontWeight="bold">
+                            THÊM GIẢNG VIÊN MỚI
+                        </Typography>
                     </Box>
+                    <IconButton
+                        aria-label="close"
+                        onClick={onClose}
+                        sx={{ color: 'white' }}
+                    >
+                        <CloseIcon />
+                    </IconButton>
                 </DialogTitle>
-                <DialogContent>
+
+                <DialogContent sx={{ p: 3, mt: 1 }}>
                     {(error || localError) && (
                         <Alert severity="error" sx={{ mb: 2 }}>
                             {error || localError}
@@ -269,7 +294,14 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
                             {message}
                         </Alert>
                     )}
-                    <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2, mt: 2 }}>
+
+                    {/* Form nhập liệu thủ công */}
+                    <Box sx={{
+                        display: 'grid',
+                        gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, // Dùng sm thay cho md để responsive tốt hơn trên màn hình nhỏ
+                        gap: 2,
+                        mt: 2,
+                        }}>
                         <TextField
                             label="Mã giảng viên"
                             name="lecturer_id"
@@ -278,6 +310,7 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
                             fullWidth
                             variant="outlined"
                             required
+                            size="small"
                         />
                         <TextField
                             label="Họ tên"
@@ -287,6 +320,7 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
                             fullWidth
                             variant="outlined"
                             required
+                            size="small"
                         />
                         <TextField
                             label="Email"
@@ -297,6 +331,7 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
                             fullWidth
                             variant="outlined"
                             required
+                            size="small"
                         />
                         <TextField
                             label="Ngày sinh"
@@ -308,8 +343,9 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
                             variant="outlined"
                             required
                             InputLabelProps={{ shrink: true }}
+                            size="small"
                         />
-                        <FormControl fullWidth required>
+                        <FormControl fullWidth required size="small">
                             <InputLabel>Giới tính</InputLabel>
                             <Select
                                 name="gender"
@@ -329,6 +365,7 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
                             fullWidth
                             variant="outlined"
                             required
+                            size="small"
                         />
                         <TextField
                             label="Địa chỉ"
@@ -338,9 +375,10 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
                             fullWidth
                             variant="outlined"
                             required
-                            sx={{ gridColumn: { md: 'span 2' } }}
+                            sx={{ gridColumn: { sm: 'span 2' } }} // Chiếm 2 cột trên màn hình sm trở lên
+                            size="small"
                         />
-                        <FormControl fullWidth required>
+                        <FormControl fullWidth required size="small">
                             <InputLabel>Khoa</InputLabel>
                             <Select
                                 name="department"
@@ -365,8 +403,9 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
                             variant="outlined"
                             required
                             InputLabelProps={{ shrink: true }}
+                            size="small"
                         />
-                        <FormControl fullWidth required>
+                        <FormControl fullWidth required size="small">
                             <InputLabel>Bằng cấp</InputLabel>
                             <Select
                                 name="degree"
@@ -381,7 +420,7 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
                                 ))}
                             </Select>
                         </FormControl>
-                        <FormControl fullWidth required>
+                        <FormControl fullWidth required size="small">
                             <InputLabel>Trạng thái</InputLabel>
                             <Select
                                 name="status"
@@ -395,31 +434,92 @@ export default function AddLecturerModal({ open, onClose, onAddLecturer, existin
                                 <MenuItem value="Nghỉ hưu">Nghỉ hưu</MenuItem>
                             </Select>
                         </FormControl>
-                    </Box>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={onClose} variant="outlined" sx={{ color: '#1976d2' }} disabled={loading}>
-                        Hủy
-                    </Button>
-                    <Button
-                        onClick={handleSubmit}
-                        variant="contained"
-                        sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
-                        disabled={loading}
-                        startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
-                    >
-                        {loading ? 'Đang thêm...' : 'Thêm'}
-                    </Button>
-                </DialogActions>
-            </Dialog>
+                        <FormControl fullWidth required>
+                            <InputLabel>Môn giảng dạy</InputLabel>
+                            <Select
+                                name="subjects"
+                                value={newLecturer.subjects}
+                                onChange={handleChange}
+                                label="Môn giảng dạy"
+                                multiple
+                                renderValue={(selected) =>
+                                    selected.map(id =>
+                                        subjects?.find(subject => subject.subject_id === id)?.subject_name
+                                    ).join(', ')
+                                }
+                            >
+                                {subjects && subjects.length > 0 ? (
+                                    subjects.map((subject) => (
+                                        <MenuItem key={subject.subject_id} value={subject.subject_id}>
+                                            {subject.subject_id} - {subject.subject_name}
+                                        </MenuItem>
+                                    ))
+                                ) : (
+                                    <MenuItem disabled>
+                                        <em>Không có môn học nào</em>
+                                    </MenuItem>
+                                )} 
 
-            {/* Preview Modal */}
+                            </Select>
+                        </FormControl>
+                    </Box>
+
+                </DialogContent>
+
+                <DialogActions sx={{ p: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    {/* Nút Nhập từ Excel nằm riêng biệt và rõ ràng hơn */}
+                    <Box>
+                        <label htmlFor="excel-upload-button">
+                            <input
+                                id="excel-upload-button"
+                                type="file"
+                                accept=".xlsx, .xls"
+                                hidden
+                                onChange={handleImportExcel}
+                            />
+                            <Button
+                                variant="contained"
+                                component="span"
+                                startIcon={<CloudUploadIcon />}
+                                sx={{ backgroundColor: '#28a745', '&:hover': { backgroundColor: '#218838' } }} // Màu xanh lá cây
+                            >
+                                Nhập từ Excel
+                            </Button>
+                        </label>
+                    </Box>
+
+                    {/* Các nút hành động chính */}
+                    <Box sx={{ display: 'flex', gap: 1 }}>
+                        <Button
+                            onClick={onClose}
+                            variant="outlined"
+                            color="inherit"
+                            disabled={loading}
+                        >
+                            Hủy bỏ
+                        </Button>
+                        <Button
+                            onClick={handleSubmit}
+                            variant="contained"
+                            color="primary"
+                            disabled={loading}
+                            startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
+                        >
+                            {loading ? 'Đang thêm...' : 'Thêm giảng viên'}
+                        </Button>
+                    </Box>
+                </DialogActions>
+            </Dialog >
+
             <PreviewLecturerModal
                 open={showPreview}
                 onClose={handleClosePreview}
                 previewData={previewData}
                 fetchLecturers={fetchLecturers}
+                subjects={subjects}
             />
         </>
     );
 }
+
+export default AddLecturerModal;

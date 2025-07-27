@@ -78,20 +78,15 @@ export const getLecturerByIdController = async (req, res) => {
  * @access Private (admin, training_officer)
  */
 export const createLecturerController = async (req, res) => {
-  const lecturerData = req.body;
-  try {
-    const lecturer = await createLecturer(lecturerData);
-    return APIResponse(res, 201, lecturer, "Tạo giảng viên thành công.");
-  } catch (error) {
-    console.error("Lỗi khi tạo giảng viên:", error);
-    // Có thể thêm logic kiểm tra lỗi cụ thể hơn từ service (ví dụ: duplicate entry)
-    return APIResponse(
-      res,
-      500,
-      null,
-      error.message || "Đã xảy ra lỗi khi tạo giảng viên."
-    );
-  }
+    const { subjectIds, ...lecturerData } = req.body;
+    try {
+        const lecturer = await createLecturer(lecturerData, subjectIds);
+        return APIResponse(res, 201, lecturer, "Tạo giảng viên thành công.");
+    } catch (error) {
+        console.error("Lỗi khi tạo giảng viên:", error);
+        // Có thể thêm logic kiểm tra lỗi cụ thể hơn từ service (ví dụ: duplicate entry)
+        return APIResponse(res, 500, null, error.message || "Đã xảy ra lỗi khi tạo giảng viên.");
+    }
 };
 
 /**

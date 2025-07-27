@@ -25,12 +25,15 @@ import DeleteLecturerModal from './DeleteLecturerModal';
 import useResponsive from '../../hooks/useResponsive';
 import LecturerTable from './LecturerTable';
 import { toast } from 'react-toastify';
-import { getAllLecturersAPI, getLecturerByIdAPI, createLecturer, updateLecturer, deleteLecturer } from '../../api/lecturerAPI';
+import { getAllLecturers, getLecturerById, createLecturer, updateLecturer, deleteLecturer } from '../../api/lecturerAPI';
+import { getAllSubjects } from '../../api/subjectAPI';
 const Lecturer = () => {
     const { isSmallScreen, isMediumScreen } = useResponsive();
 
     // Dữ liệu mẫu cho danh sách giảng viên
     const [lecturers, setLecturers] = useState([]);
+    // Dữ liệu mẫu cho danh sách môn học
+    const [subjects, setSubjects] = useState([]);
     // State cho phân trang, tìm kiếm, lọc theo trạng thái và modal
     const [page, setPage] = useState(0);
     const [rowsPerPage] = useState(8);
@@ -67,8 +70,26 @@ const Lecturer = () => {
         }
     };
 
+    // Hàm lấy danh sách môn học để hiển thị trong modal thêm giảng viên
+    const fetchSubjects = async () => {
+        try {
+            setLoading(true);
+            const response = await getAllSubjects();
+            if (!response) {
+                console.error("Không có dữ liệu học phần");
+                return;
+            }
+            setSubjects(response.data.data);
+        } catch (error) {
+            console.error("Lỗi khi tải danh sách học phần:", error);
+        } finally {
+            setLoading(false);
+            setError('');
+        }
+    };
     useEffect(() => {
         fetchLecturers();
+        fetchSubjects();
     }, []);
 
     // Hàm xử lý khi nhấn nút Thêm giảng viên
@@ -80,7 +101,8 @@ const Lecturer = () => {
     const handleAddNewLecturer = async (newLecturer) => {
         try {
             setLoading(true);
-            const response = await createLecturer(newLecturer);
+            const { subjectIds, ...lecturerData } = newLecturer;
+            const response = await createLecturerAPI(lecturerData, subjectIds);
             if (response && response.data) {
                 fetchLecturers(); // Tải lại danh sách giảng viên sau khi thêm thành công
                 toast.success('Thêm giảng viên thành công!');
@@ -340,6 +362,7 @@ const Lecturer = () => {
                 error={error}
                 loading={loading}
                 fetchLecturers={fetchLecturers}
+                subjects={subjects}  // Truyền danh sách môn học vào modal
             />
             <EditLecturerModal
                 open={openEditModal}

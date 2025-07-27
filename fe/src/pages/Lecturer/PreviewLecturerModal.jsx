@@ -27,14 +27,43 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { importLecturers } from '../../api/lecturerAPI';
 import { getRowStatus, getErrorChip } from '../../components/ui/ErrorChip';
 
-export default function PreviewLecturerModal({ open, onClose, previewData, fetchLecturers }) {
+export default function PreviewLecturerModal({ open, onClose, previewData, fetchLecturers, subjects }) {
   const [isImporting, setIsImporting] = useState(false);
   const [importError, setImportError] = useState('');
   const [importMessage, setImportMessage] = useState('');
 
+  // Validate preview data with subject checking
+  const validatePreviewData = (data) => {
+    return data.map(row => {
+      let errors = row.errors || [];
 
-  const validRows = previewData.filter((row) => getRowStatus(row) === "valid");
-  const errorRows = previewData.filter((row) => getRowStatus(row) === "error");
+      // Nếu đã có lỗi từ trước, chỉ giữ lại lỗi đầu tiên để tránh spam lỗi
+      if (errors.length > 0) {
+        errors = [errors[0]];
+      } else {
+        // Kiểm tra nếu dòng có danh sách mã học phần
+        if (row.subjectIds && row.subjectIds.length > 0) {
+          const invalidSubjects = row.subjectIds.filter(subjectId => {
+            return subjects && !subjects.some(subject => subject.subject_id === subjectId.trim());
+          });
+          // Nếu có mã học phần không hợp lệ, tạo thông báo lỗi
+          if (invalidSubjects.length > 0) {
+            errors = [`Mã học phần "${invalidSubjects.join(', ')}" không tồn tại trong hệ thống`];
+          }
+        }
+      }
+
+      return {
+        ...row, // Giữ nguyên tất cả thuộc tính của dòng
+        errors // Cập nhật mảng lỗi mới
+      };
+    });
+  };
+
+  // Validate data with subject checking
+  const validatedData = validatePreviewData(previewData);
+  const validRows = validatedData.filter((row) => getRowStatus(row) === "valid");
+  const errorRows = validatedData.filter((row) => getRowStatus(row) === "error");
 
   const handleConfirmImport = async () => {
     if (validRows.length === 0) {
@@ -144,8 +173,7 @@ export default function PreviewLecturerModal({ open, onClose, previewData, fetch
                       <TableCell>Họ tên</TableCell>
                       <TableCell>Email</TableCell>
                       <TableCell>SĐT</TableCell>
-                      <TableCell>Khoa</TableCell>
-                      <TableCell>Bằng cấp</TableCell>
+                      <TableCell>Học phần</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -155,8 +183,21 @@ export default function PreviewLecturerModal({ open, onClose, previewData, fetch
                         <TableCell>{lecturer.name}</TableCell>
                         <TableCell>{lecturer.email}</TableCell>
                         <TableCell>{lecturer.phone_number}</TableCell>
-                        <TableCell>{lecturer.department}</TableCell>
-                        <TableCell>{lecturer.degree}</TableCell>
+                        <TableCell>
+                          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                            {lecturer.subjectIds && lecturer.subjectIds.length > 0
+                              ? lecturer.subjectIds.map((subjectId, idx) => (
+                                <Chip
+                                  key={idx}
+                                  label={subjectId}
+                                  size="small"
+                                  variant="outlined"
+                                  sx={{ fontSize: '0.75rem' }}
+                                />
+                              ))
+                              : <Typography variant="body2" color="text.secondary">-</Typography>}
+                          </Box>
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -183,7 +224,7 @@ export default function PreviewLecturerModal({ open, onClose, previewData, fetch
                       <TableCell>Họ tên</TableCell>
                       <TableCell>Email</TableCell>
                       <TableCell>SĐT</TableCell>
-                      <TableCell>Khoa</TableCell>
+                      <TableCell>Học phần</TableCell>
                       <TableCell>Lỗi</TableCell>
                     </TableRow>
                   </TableHead>
@@ -197,7 +238,21 @@ export default function PreviewLecturerModal({ open, onClose, previewData, fetch
                         <TableCell>{lecturer.name || '-'}</TableCell>
                         <TableCell>{lecturer.email || '-'}</TableCell>
                         <TableCell>{lecturer.phone_number || '-'}</TableCell>
-                        <TableCell>{lecturer.department || '-'}</TableCell>
+                        <TableCell>
+                          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                            {lecturer.subjectIds && lecturer.subjectIds.length > 0
+                              ? lecturer.subjectIds.map((subjectId, idx) => (
+                                <Chip
+                                  key={idx}
+                                  label={subjectId}
+                                  size="small"
+                                  variant="outlined"
+                                  sx={{ fontSize: '0.75rem' }}
+                                />
+                              ))
+                              : <Typography variant="body2" color="text.secondary">-</Typography>}
+                          </Box>
+                        </TableCell>
                         <TableCell>
                           <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
                             {lecturer.errors.map((error) => getErrorChip(error, 'giảng viên'))}

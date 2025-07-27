@@ -15,6 +15,7 @@ import SubjectModel from "./Subject.js";
 import TrainingOfficerModel from "./TrainingOfficer.js";
 import AccountModel from "./Accounts.js";
 import BlacklistedTokenModel from "./BlacklistedToken.js";
+import LecturerAssignmentModel from "./LecturerAssignment.js";
 
 // Khởi tạo từng model với instance của Sequelize
 const Account = AccountModel(sequelize, DataTypes);
@@ -29,6 +30,7 @@ const Semester = SemesterModel(sequelize, DataTypes);
 const Student = StudentModel(sequelize, DataTypes);
 const Subject = SubjectModel(sequelize, DataTypes);
 const TrainingOfficer = TrainingOfficerModel(sequelize, DataTypes);
+const LecturerAssignment = LecturerAssignmentModel(sequelize, DataTypes);
 
 // Gom tất cả model vào object `models`
 const models = {
@@ -44,6 +46,7 @@ const models = {
   Student,
   Subject,
   TrainingOfficer,
+  LecturerAssignment,
   sequelize, // export luôn cả instance Sequelize
 };
 

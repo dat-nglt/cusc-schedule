@@ -69,6 +69,16 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL'
       },
+      class_id: {
+        type: Sequelize.STRING(30),
+        allowNull: true,
+        references: {
+          model: 'classes',
+          key: 'class_id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL'
+      },
       subject_id: {
         type: Sequelize.STRING(30),
         allowNull: true,

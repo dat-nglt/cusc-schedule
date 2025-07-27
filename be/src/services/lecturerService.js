@@ -1,8 +1,9 @@
+import { add } from "winston";
 import models from "../models/index.js";
 import ExcelUtils from "../utils/ExcelUtils.js";
 import { Op } from "sequelize";
 
-const { Lecturer } = models;
+const { Lecturer, Account, sequelize, Subject, LecturerAssignment } = models;
 /**
  * Lấy tất cả giảng viên.
  * @returns {Promise<Array>} Danh sách tất cả giảng viên.
@@ -10,7 +11,20 @@ const { Lecturer } = models;
  */
 export const getAllLecturersService = async () => {
   try {
-    const alllecturersData = await Lecturer.findAll();
+    const alllecturersData = await Lecturer.findAll({
+      include: [{
+        model: Account,
+        as: 'account',
+        attributes: ['id', 'email', 'role', 'status']
+      },
+      {
+        model: Subject,
+        as: 'subjects',
+        through: { attributes: [] }, // Loại bỏ attributes của bảng trung gian
+        attributes: ['subject_id', 'subject_name']
+      }
+      ]
+    });
     return alllecturersData;
   } catch (error) {
     console.error("Lỗi khi lấy danh sách giảng viên:", error);
@@ -26,7 +40,24 @@ export const getAllLecturersService = async () => {
  */
 export const getLecturerByIdService = async (lecturerID) => {
   try {
-    const lecturerByIdData = await Lecturer.findByPk(lecturerID);
+    const lecturerByIdData = await Lecturer.findByPk(id, {
+      include: [
+        {
+          model: Account,
+          as: 'account',
+          attributes: ['id', 'email', 'role', 'status']
+        },
+        {
+          model: Subject,
+          as: 'subjects',
+          through: { attributes: [] }, // Loại bỏ attributes của bảng trung gian
+          attributes: ['subject_id', 'subject_name']
+        }
+      ]
+    });
+    if (!lecturerByIdData) {
+      throw new Error(`Không tìm thấy giảng viên với ID ${id}`);
+    }
     return lecturerByIdData;
   } catch (error) {
     console.error(`Lỗi khi lấy giảng viên với ID ${id}:`, error);
@@ -40,11 +71,102 @@ export const getLecturerByIdService = async (lecturerID) => {
  * @returns {Promise<Object>} Giảng viên đã được tạo.
  * @throws {Error} Nếu có lỗi khi tạo giảng viên.
  */
-export const createLecturer = async (lecturerData) => {
+export const createLecturer = async (lecturerData, subjectIds = []) => {
+  const transaction = await sequelize.transaction();
+
   try {
-    const lecturer = await Lecturer.create(lecturerData);
-    return lecturer;
+    // Kiểm tra lecturer_id đã tồn tại chưa
+    const existingLecturer = await Lecturer.findByPk(lecturerData.lecturer_id);
+    if (existingLecturer) {
+      throw new Error('Mã giảng viên đã tồn tại');
+    }
+
+    // Kiểm tra email đã tồn tại chưa
+    const existingAccount = await Account.findOne({
+      where: { email: lecturerData.email }
+    });
+    if (existingAccount) {
+      throw new Error('Email đã tồn tại');
+    }
+
+    // Tạo tài khoản trước
+    const account = await Account.create({
+      email: lecturerData.email,
+      role: 'lecturer',
+      status: 'active'
+    }, { transaction });
+
+    // Nếu có subjectIds, kiểm tra các môn học có tồn tại không
+    if (subjectIds && subjectIds.length > 0) {
+      const { Subject } = models;
+      const existingSubjects = await Subject.findAll({
+        where: {
+          subject_id: {
+            [Op.in]: subjectIds
+          }
+        },
+        attributes: ['subject_id']
+      });
+
+      const existingSubjectIds = existingSubjects.map(s => s.subject_id);
+      const invalidSubjectIds = subjectIds.filter(id => !existingSubjectIds.includes(id));
+
+      if (invalidSubjectIds.length > 0) {
+        throw new Error(`Các môn học không tồn tại: ${invalidSubjectIds.join(', ')}`);
+      }
+    }
+
+    // Tạo giảng viên với account_id
+    const lecturer = await Lecturer.create({
+      lecturer_id: lecturerData.lecturer_id,
+      account_id: account.id,
+      name: lecturerData.name,
+      day_of_birth: lecturerData.day_of_birth || null,
+      gender: lecturerData.gender || null,
+      address: lecturerData.address || null,
+      phone_number: lecturerData.phone_number || null,
+      department: lecturerData.department || null,
+      hire_date: lecturerData.hire_date || null,
+      degree: lecturerData.degree || null,
+      academic_rank: lecturerData.academic_rank || null,
+      status: lecturerData.status || 'Đang dạy'
+    }, { transaction });
+
+
+    // Gán môn học cho giảng viên nếu có
+    if (subjectIds && subjectIds.length > 0) {
+      const { LecturerAssignment } = models;
+      const assignments = subjectIds.map(subjectId => ({
+        lecturer_id: lecturer.lecturer_id,
+        subject_id: subjectId
+      }));
+
+      await LecturerAssignment.bulkCreate(assignments, { transaction });
+    }
+
+    await transaction.commit();
+
+    // Trả về giảng viên kèm thông tin account
+    const result = await Lecturer.findByPk(lecturer.lecturer_id, {
+      include: [
+        {
+          model: Account,
+          as: 'account',
+          attributes: ['email', 'role', 'status']
+        },
+        {
+          model: models.Subject,
+          as: 'subjects',
+          through: { attributes: [] },
+          attributes: ['subject_id', 'subject_name']
+        }
+      ]
+    });
+    return result;
   } catch (error) {
+    if (!transaction.finished) {
+      await transaction.rollback();
+    }
     console.error("Lỗi khi tạo giảng viên:", error);
     throw error;
   }
@@ -58,14 +180,66 @@ export const createLecturer = async (lecturerData) => {
  * @throws {Error} Nếu không tìm thấy giảng viên hoặc có lỗi.
  */
 export const updateLecturer = async (id, lecturerData) => {
+  const transaction = await models.sequelize.transaction();
+
   try {
-    const lecturer = await Lecturer.findByPk(id);
+    const lecturer = await Lecturer.findByPk(id, {
+      include: [{
+        model: Account,
+        as: 'account'
+      }]
+    });
+
     if (!lecturer) {
       throw new Error(`Không tìm thấy giảng viên với ID ${id}`);
     }
-    await lecturer.update(lecturerData);
-    return lecturer;
+
+    // Nếu có cập nhật email, kiểm tra email đã tồn tại chưa
+    if (lecturerData.email && lecturerData.email !== lecturer.account.email) {
+      const existingAccount = await Account.findOne({
+        where: {
+          email: lecturerData.email,
+          id: { [Op.ne]: lecturer.account.id }
+        }
+      });
+      if (existingAccount) {
+        throw new Error('Email đã tồn tại');
+      }
+
+      // Cập nhật email trong Account
+      await lecturer.account.update({
+        email: lecturerData.email
+      }, { transaction });
+    }
+
+    // Cập nhật thông tin giảng viên
+    const updateData = {};
+    if (lecturerData.name) updateData.name = lecturerData.name;
+    if (lecturerData.day_of_birth !== undefined) updateData.day_of_birth = lecturerData.day_of_birth;
+    if (lecturerData.gender !== undefined) updateData.gender = lecturer.gender;
+    if (lecturerData.address !== undefined) updateData.address = lecturerData.address;
+    if (lecturerData.phone_number !== undefined) updateData.phone_number = lecturerData.phone_number;
+    if (lecturerData.department !== undefined) updateData.department = lecturerData.department;
+    if (lecturerData.hire_date !== undefined) updateData.hire_date = lecturerData.hire_date;
+    if (lecturerData.degree !== undefined) updateData.degree = lecturerData.degree;
+    if (lecturerData.academic_rank !== undefined) updateData.academic_rank = lecturerData.academic_rank;
+    if (lecturerData.status !== undefined) updateData.status = lecturerData.status;
+
+    await lecturer.update(updateData, { transaction });
+    await transaction.commit();
+
+    // Trả về giảng viên đã cập nhật kèm thông tin account
+    return await Lecturer.findByPk(id, {
+      include: [{
+        model: Account,
+        as: 'account',
+        attributes: ['email', 'role', 'status']
+      }]
+    });
   } catch (error) {
+    if (!transaction.finished) { // Kiểm tra nếu transaction chưa hoàn thành
+      await transaction.rollback(); // Rollback transaction nếu có lỗi
+    }
     console.error(`Lỗi khi cập nhật giảng viên với ID ${id}:`, error);
     throw error;
   }
@@ -78,14 +252,34 @@ export const updateLecturer = async (id, lecturerData) => {
  * @throws {Error} Nếu không tìm thấy giảng viên hoặc có lỗi.
  */
 export const deleteLecturer = async (id) => {
+  const transaction = await models.sequelize.transaction();
+
   try {
-    const lecturer = await Lecturer.findByPk(id);
+    const lecturer = await Lecturer.findByPk(id, {
+      include: [{
+        model: Account,
+        as: 'account'
+      }]
+    });
+
     if (!lecturer) {
       throw new Error(`Không tìm thấy giảng viên với ID ${id}`);
     }
-    await lecturer.destroy();
-    return { message: "Giảng viên đã được xóa thành công" };
+    // lấy account_id từ giảng viên
+    const accountId = lecturer.account.id;
+    // Xóa account liên kết với giảng viên
+    await Account.destroy({
+      where: { id: accountId },
+      transaction
+    });
+
+    await transaction.commit();
+
+    return { message: "Giảng viên và tài khoản đã được xóa thành công" };
   } catch (error) {
+    if (!transaction.finished) {
+      await transaction.rollback();
+    }
     console.error(`Lỗi khi xóa giảng viên với ID ${id}:`, error);
     throw error;
   }
@@ -271,11 +465,45 @@ export const importLecturersFromJson = async (lecturersData) => {
             ? lecturerData.department.toString().trim()
             : null,
           hire_date: lecturerData.hire_date || null,
-          degree: lecturerData.degree
-            ? lecturerData.degree.toString().trim()
-            : null,
-          status: lecturerData.status || "Hoạt động",
+          degree: lecturerData.degree ? lecturerData.degree.toString().trim() : null,
+          academic_rank: lecturerData.academic_rank ? lecturerData.academic_rank.toString().trim() : null,
+          status: lecturerData.status || 'Đang công tác'
         };
+
+        // Xử lý subjectIds (môn học)
+        let subjectIds = [];
+        if (lecturerData.subjectIds) {
+          if (Array.isArray(lecturerData.subjectIds)) {
+            subjectIds = lecturerData.subjectIds.map(id => id.toString().trim()).filter(id => id);
+          } else if (typeof lecturerData.subjectIds === 'string') {
+            // Nếu là chuỗi, tách bằng dấu phẩy
+            subjectIds = lecturerData.subjectIds.split(',').map(id => id.trim()).filter(id => id);
+          }
+        }
+
+        // Validate các môn học nếu có
+        if (subjectIds.length > 0) {
+          const existingSubjects = await Subject.findAll({
+            where: {
+              subject_id: {
+                [Op.in]: subjectIds
+              }
+            },
+            attributes: ['subject_id']
+          });
+
+          const existingSubjectIds = existingSubjects.map(s => s.subject_id);
+          const invalidSubjectIds = subjectIds.filter(id => !existingSubjectIds.includes(id));
+
+          if (invalidSubjectIds.length > 0) {
+            results.errors.push({
+              index: index,
+              lecturer_id: cleanedData.lecturer_id,
+              error: `Các môn học không tồn tại: ${invalidSubjectIds.join(', ')}`
+            });
+            continue;
+          }
+        }
 
         // Validate email format nếu có
         if (cleanedData.email && !ExcelUtils.isValidEmail(cleanedData.email)) {
@@ -302,8 +530,8 @@ export const importLecturersFromJson = async (lecturersData) => {
 
         // Kiểm tra email đã tồn tại chưa (nếu có)
         if (cleanedData.email) {
-          const existingLecturerByEmail = await Lecturer.findOne({
-            where: { email: cleanedData.email },
+          const existingLecturerByEmail = await Account.findOne({
+            where: { email: cleanedData.email }
           });
           if (existingLecturerByEmail) {
             results.errors.push({
@@ -315,8 +543,8 @@ export const importLecturersFromJson = async (lecturersData) => {
           }
         }
 
-        // Tạo lecturer mới
-        const newLecturer = await Lecturer.create(cleanedData);
+        // Tạo lecturer mới với subjects
+        const newLecturer = await createLecturer(cleanedData, subjectIds);
         results.success.push(newLecturer);
       } catch (error) {
         results.errors.push({

@@ -77,7 +77,7 @@ const SidebarForJustAdmin = () => {
             <Divider sx={{ borderColor: alpha(theme.palette.common.white, 0.3) }} />
 
             <List disablePadding sx={{ mt: 1, ml: 1 }}>
-                {navItems.map((item, index) => (
+                {navItems.map((item) => (
                     <ListItem
                         key={item.path}
                         disablePadding

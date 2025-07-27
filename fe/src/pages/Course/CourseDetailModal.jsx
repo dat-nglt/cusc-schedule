@@ -20,6 +20,7 @@ import {
   Event as EventIcon,
   Update as UpdateIcon,
 } from '@mui/icons-material';
+import {toast} from 'react-toastify';
 
 // Hàm định dạng thời gian từ YYYY-MM-DD HH:mm thành DD/MM/YYYY HH:mm
 const formatDateTime = (dateTime) => {
@@ -42,7 +43,7 @@ const CourseDetailModal = ({ open, onClose, course }) => {
   // Hàm sao chép mã khóa học
   const handleCopyMaKhoaHoc = () => {
     navigator.clipboard.writeText(course.course_id);
-    alert('Đã sao chép mã khóa học!');
+    toast.success('Đã sao chép mã khóa học: '+ course.course_id);
   };
 
   return (

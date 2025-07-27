@@ -2,7 +2,7 @@ import models from '../models/index';
 import { Op } from 'sequelize'; // Import Op nếu cần cho các hàm list tương lai
 import ExcelUtils from "../utils/ExcelUtils"; // Giả định bạn có ExcelUtils cho các hàm import từ Excel
 
-const { Program } = models;
+const { sequelize, Program } = models;
 /**
  * Lấy tất cả các chương trình đào tạo.
  * @returns {Promise<Array>} Danh sách tất cả các chương trình.
@@ -78,7 +78,7 @@ export const deleteProgram = async (id) => {
   try {
     const program = await Program.findByPk(id);
     if (!program) throw new Error("Không tìm thấy chương trình đào tạo");
-    await program.destroy();
+    await program.destroy(); 
     return { message: "Chương trình đã được xóa thành công" };
   } catch (error) {
     console.error(`Lỗi khi xóa chương trình với ID ${id}:`, error);

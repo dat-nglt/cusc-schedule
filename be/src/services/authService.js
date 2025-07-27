@@ -10,6 +10,10 @@ import logger from "../utils/logger.js";
  * @returns {string} - Mã JWT
  */
 export const generateAccessTokenService = (userId, role) => {
+  if (!process.env.JWT_SECRET) {
+    throw new Error("JWT_SECRET is not defined in environment variables");
+  }
+
   return jwt.sign({ id: userId, role }, process.env.JWT_SECRET, {
     expiresIn: "15m", // Token có hiệu lực trong 30 giây
   });
@@ -26,9 +30,10 @@ export const generateRefreshTokenService = (userId) => {
 /**
  * Xác minh token JWT
  * @param {string} token - Chuỗi token cần xác thực
+ * @param {string} secret - Chuỗi bí mật dùng để xác thực
  * @returns {Object} - Dữ liệu giải mã từ token
  */
-export const verifyTokenService = (typeToken, secret) => {
+export const verifyTokenService = (token, secret) => {
   try {
     const decode = jwt.verify(typeToken, secret);
     return {

@@ -24,7 +24,7 @@ const courseRoutes = express.Router();
  * @access Private
  */
 courseRoutes.get(
-    '/',
+    '/getAll',
     authenticateAndAuthorize(['admin', 'training_officer']),
     getAllCoursesController
 );
@@ -84,11 +84,11 @@ courseRoutes.delete(
  * Yêu cầu quyền admin hoặc training_officer.
  * @access Private
  */
-courseRoutes.get(
-    '/list', // Đổi thành '/list' để tường minh hơn cho các truy vấn có bộ lọc
-    authenticateAndAuthorize(['admin', 'training_officer']),
-    listCoursesController
-);
+// courseRoutes.get(
+//     '/list', // Đổi thành '/list' để tường minh hơn cho các truy vấn có bộ lọc
+//     authenticateAndAuthorize(['admin', 'training_officer']),
+//     listCoursesController
+// );
 
 /**
  * @route POST /api/courses/import
