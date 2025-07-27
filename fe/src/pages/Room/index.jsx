@@ -298,8 +298,8 @@ const RoomManagement = () => {
                   label="Loại phòng"
                 >
                   <MenuItem value="">Tất cả</MenuItem>
-                  <MenuItem value="Lý thuyết">Phòng học lý thuyết</MenuItem>
-                  <MenuItem value="Thực hành">Phòng thực hành</MenuItem>
+                  <MenuItem value="Lý thuyết">Lý thuyết</MenuItem>
+                  <MenuItem value="Thực hành">Thực hành</MenuItem>
                   {/* <MenuItem value="Phòng hội thảo">Phòng hội thảo</MenuItem> */}
                 </Select>
               </FormControl>
