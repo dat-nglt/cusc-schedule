@@ -8,8 +8,8 @@ import {
     deleteSemesterController,
     importSemestersFromJSONController,
     downloadTemplateController,
-    listSemestersController, // Thêm controller cho chức năng liệt kê có bộ lọc
-    importSemestersFromExcelController, // Thêm controller nếu có nhập từ Excel
+    // listSemestersController, // Thêm controller cho chức năng liệt kê có bộ lọc
+    // importSemestersFromExcelController, // Thêm controller nếu có nhập từ Excel
 } from "../controllers/semesterController.js"; // Đảm bảo import .js extension
 
 // Nếu có tính năng import từ Excel, hãy thêm dòng này:

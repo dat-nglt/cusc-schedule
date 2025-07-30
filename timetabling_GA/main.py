@@ -1,4 +1,5 @@
 # timetable_ga/main.py
+import sys
 import time
 import random
 from collections import defaultdict
@@ -261,11 +262,15 @@ def genetic_algorithm():
         fitness_calculator.calculate_fitness(chrom)
     
     print(f"Starting GA for {MAX_GENERATIONS} generations...")
+    sys.stdout.flush()
+    
     start_time = time.time()
-
     best_overall_chromosome = None
 
     for generation in range(MAX_GENERATIONS):
+        print(f"GA_PROGRESS_GENERATION:{generation + 1}/{MAX_GENERATIONS}") # Dấu hiệu mới cho Node.js
+        sys.stdout.flush()
+        
         # Sắp xếp quần thể theo fitness (cao hơn là tốt hơn)
         population.sort(key=lambda c: c.fitness, reverse=True)
 
@@ -275,6 +280,7 @@ def genetic_algorithm():
         print(f"Generation {generation + 1}/{MAX_GENERATIONS} - "
               f"Best Fitness: {population[0].fitness:.2f} "
               f"(Best Overall: {best_overall_chromosome.fitness:.2f})")
+        sys.stdout.flush()
 
         if population[0].fitness == 0: # Đã tìm thấy giải pháp hoàn hảo (không vi phạm ràng buộc cứng)
             print("Perfect solution found (zero penalty)!")
@@ -384,6 +390,9 @@ def genetic_algorithm():
         f.write("\n\nLỊCH SỬ DỤNG PHÒNG:\n")
         f.write(formatted_room_schedule)
     print("\nLecturer and Room schedules saved to results/semester_schedule_views.txt")
+    
+    print("\nGA_PROGRESS_DONE") # Thông báo khi thuật toán GA hoàn tất
+    sys.stdout.flush()
 
 
 if __name__ == "__main__":

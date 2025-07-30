@@ -5,7 +5,7 @@ import {
   updateLecturer,
   deleteLecturer,
   importLecturersFromJson, // Giả định có thể có thêm importLecturersFromExcel nếu bạn muốn import từ Excel
-} from "../services/lecturerService";
+} from "../services/lecturerService.js";
 import { APIResponse } from "../utils/APIResponse.js";
 import ExcelUtils from "../utils/ExcelUtils.js"; // Được sử dụng để tạo template Excel
 

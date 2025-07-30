@@ -7,7 +7,6 @@ import {
   refreshTokenController,
 } from "../controllers/authController.js";
 import authMiddleware from "../middleware/authMiddleware.js";
-import { error, log } from "winston";
 
 const router = express.Router();
 

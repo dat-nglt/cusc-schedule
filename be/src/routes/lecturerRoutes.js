@@ -8,8 +8,8 @@ import {
   deleteLecturerController,
   importLecturersFromJsonController,
   downloadTemplateController,
-  listLecturersController, // Thêm controller cho chức năng liệt kê có bộ lọc
-  importLecturersController, // Thêm controller nếu có nhập từ Excel
+  // listLecturersController, // Thêm controller cho chức năng liệt kê có bộ lọc
+  // importLecturersController, // Thêm controller nếu có nhập từ Excel
 } from "../controllers/lecturerController.js";
 // Nếu có tính năng import từ Excel, hãy thêm dòng này:
 // import { uploadExcel } from '../middleware/excelMiddleware.js';

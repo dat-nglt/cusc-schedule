@@ -4,7 +4,7 @@ import axios from "axios";
 // Tạo instance của axios
 const axiosInstance = axios.create({
   baseURL: import.meta.API_URL || "http://localhost:3000", // Sử dụng biến môi trường hoặc default
-  timeout: 10000, // Thời gian timeout (10 giây)
+  timeout: 30000, // Thời gian timeout (10 giây)
   headers: {
     "Content-Type": "application/json",
   },

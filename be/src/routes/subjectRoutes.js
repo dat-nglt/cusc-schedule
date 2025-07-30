@@ -9,8 +9,8 @@ import {
     getSubjectsBySemesterController,
     importSubjectsFromJSONController,
     downloadTemplateController,
-    listSubjectsController, // Thêm controller cho chức năng liệt kê có bộ lọc
-    importSubjectsFromExcelController, // Thêm controller nếu có nhập từ Excel
+    // listSubjectsController, // Thêm controller cho chức năng liệt kê có bộ lọc
+    // importSubjectsFromExcelController, // Thêm controller nếu có nhập từ Excel
 } from "../controllers/subjectController.js"; // Đảm bảo import .js extension
 
 // Nếu có tính năng import từ Excel, hãy thêm dòng này:
