@@ -1,13 +1,56 @@
 import React, { useState } from 'react';
 import {
-    Dialog, DialogTitle, DialogContent, DialogActions,
-    Typography, TextField, Button, Box, FormControl,
-    InputLabel, Select, MenuItem, Alert, CircularProgress
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    Typography,
+    TextField,
+    Button,
+    Box,
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem,
+    Alert,
+    CircularProgress,
+    IconButton,
+    Divider,
+    Stepper,
+    Step,
+    StepLabel,
+    Chip,
+    InputAdornment,
+    Fade,
+    Paper
 } from '@mui/material';
-import UploadFileIcon from '@mui/icons-material/UploadFile';
+import {
+    Close,
+    CloudUpload,
+    BookmarkAdded, // Icon for subject_id
+    MenuBook, // Icon for subject_name
+    FormatListNumbered, // Icon for credit
+    School, // Icon for theory_hours/practice_hours (general academic)
+    HourglassEmpty, // Another option for hours, or use School for both
+    CheckCircle,
+    Error as ErrorIcon,
+    AccessTime, // For semester_id
+    HelpOutline, // For status
+    PauseCircleFilled,
+    StopCircle
+} from '@mui/icons-material';
 import * as XLSX from 'xlsx';
 import PreviewSubjectModal from './PreviewSubjectModal';
 import { processExcelDataSubject } from '../../utils/ExcelValidation';
+
+// Define status options with colors and icons, similar to semester modal
+const subjectStatusOptions = [
+    { value: 'Hoạt động', color: 'success', icon: <CheckCircle /> },
+    { value: 'Tạm dừng', color: 'warning', icon: <PauseCircleFilled /> }, // Assuming PauseCircleFilled is imported from your AddSemesterModal context
+    { value: 'Ngừng hoạt động', color: 'error', icon: <StopCircle /> } // Assuming StopCircle is imported from your AddSemesterModal context
+];
+
+const steps = ['Thông tin học phần', 'Chi tiết & Trạng thái'];
 
 export default function AddSubjectModal({ open, onClose, onAddSubject, existingSubjects = [], error, loading, message, semesters, fetchSubjects }) {
     const [newSubject, setNewSubject] = useState({
@@ -20,9 +63,43 @@ export default function AddSubjectModal({ open, onClose, onAddSubject, existingS
         semester_id: ''
     });
 
+    const [activeStep, setActiveStep] = useState(0);
     const [localError, setLocalError] = useState('');
     const [showPreview, setShowPreview] = useState(false);
     const [previewData, setPreviewData] = useState([]);
+    const [fileUploaded, setFileUploaded] = useState(false); // To track if a file was selected for import
+
+    const handleNext = () => {
+        if (activeStep === 0) {
+            if (!newSubject.subject_id || !newSubject.subject_name) {
+                setLocalError('Vui lòng điền đầy đủ Mã học phần và Tên học phần.');
+                return;
+            }
+            const isDuplicate = existingSubjects.some(subject => subject.subject_id === newSubject.subject_id);
+            if (isDuplicate) {
+                setLocalError(`Mã học phần "${newSubject.subject_id}" đã tồn tại!`);
+                return;
+            }
+        }
+        if (activeStep === 1) {
+            if (newSubject.credit <= 0 || newSubject.theory_hours < 0 || newSubject.practice_hours < 0 || !newSubject.semester_id) {
+                setLocalError('Vui lòng điền đầy đủ thông tin chi tiết hợp lệ.');
+                return;
+            }
+            const totalHours = parseInt(newSubject.theory_hours) + parseInt(newSubject.practice_hours);
+            if (totalHours === 0) {
+                setLocalError('Tổng số tiết lý thuyết và thực hành phải lớn hơn 0!');
+                return;
+            }
+        }
+        setLocalError('');
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    };
+
+    const handleBack = () => {
+        setLocalError('');
+        setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -31,25 +108,11 @@ export default function AddSubjectModal({ open, onClose, onAddSubject, existingS
     };
 
     const handleSubmit = async () => {
-        if (
-            !newSubject.subject_id ||
-            !newSubject.subject_name ||
-            newSubject.theory_hours < 0 ||
-            newSubject.practice_hours < 0 ||
-            newSubject.credit <= 0
-        ) {
-            setLocalError('Vui lòng điền đầy đủ thông tin hợp lệ!');
+        // Final validation before submission
+        if (newSubject.credit <= 0 || newSubject.theory_hours < 0 || newSubject.practice_hours < 0 || !newSubject.semester_id) {
+            setLocalError('Vui lòng điền đầy đủ thông tin chi tiết hợp lệ trước khi thêm.');
             return;
         }
-
-        // Kiểm tra trùng mã học phần
-        const isDuplicate = existingSubjects.some(subject => subject.subject_id === newSubject.subject_id);
-        if (isDuplicate) {
-            setLocalError(`Mã học phần "${newSubject.subject_id}" đã tồn tại!`);
-            return;
-        }
-
-        // Kiểm tra logic số tín chỉ
         const totalHours = parseInt(newSubject.theory_hours) + parseInt(newSubject.practice_hours);
         if (totalHours === 0) {
             setLocalError('Tổng số tiết lý thuyết và thực hành phải lớn hơn 0!');
@@ -58,7 +121,6 @@ export default function AddSubjectModal({ open, onClose, onAddSubject, existingS
 
         const subjectToAdd = {
             ...newSubject,
-            id: Date.now(),
             credit: parseInt(newSubject.credit),
             theory_hours: parseInt(newSubject.theory_hours),
             practice_hours: parseInt(newSubject.practice_hours),
@@ -66,9 +128,16 @@ export default function AddSubjectModal({ open, onClose, onAddSubject, existingS
             updated_at: new Date().toISOString(),
         };
 
-        // Gọi hàm onAddSubject được truyền từ component cha
         await onAddSubject(subjectToAdd);
 
+        // Only reset and close if there's no error after submission
+        if (!error && !loading) {
+            resetForm();
+            onClose();
+        }
+    };
+
+    const resetForm = () => {
         setNewSubject({
             subject_id: '',
             subject_name: '',
@@ -78,8 +147,9 @@ export default function AddSubjectModal({ open, onClose, onAddSubject, existingS
             status: 'Hoạt động',
             semester_id: ''
         });
+        setActiveStep(0);
         setLocalError('');
-        onClose();
+        setFileUploaded(false);
     };
 
     const handleImportExcel = async (e) => {
@@ -93,199 +163,397 @@ export default function AddSubjectModal({ open, onClose, onAddSubject, existingS
         const fileExtension = file.name.slice(file.name.lastIndexOf('.')).toLowerCase();
         if (!validExtensions.includes(fileExtension)) {
             setLocalError('Chỉ hỗ trợ file Excel (.xlsx, .xls)!');
+            e.target.value = '';
             return;
         }
 
         try {
-            setLocalError(''); // Clear previous errors
+            setLocalError('');
+            setFileUploaded(true);
 
-            // Đọc file Excel
             const arrayBuffer = await file.arrayBuffer();
             const workbook = XLSX.read(arrayBuffer, { type: 'array' });
             const sheetName = workbook.SheetNames[0];
             const worksheet = workbook.Sheets[sheetName];
 
-            // Chuyển đổi sang JSON
             const rawData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
             if (rawData.length < 2) {
                 setLocalError('File Excel phải có ít nhất 2 dòng (header + dữ liệu)!');
+                e.target.value = '';
+                setFileUploaded(false);
                 return;
             }
 
-            // Lấy header và data
             const headers = rawData[0];
-            const dataRows = rawData.slice(1);
+            // Define expected headers for subjects
+            const expectedHeader = ['Mã học phần', 'Tên học phần', 'Số tín chỉ', 'Số tiết lý thuyết', 'Số tiết thực hành', 'Mã học kỳ', 'Trạng thái'];
 
-            // Chuyển đổi thành object với header làm key
+            const lowerCaseHeaders = headers.map(h => String(h).toLowerCase().trim());
+            const lowerCaseExpectedHeader = expectedHeader.map(h => String(h).toLowerCase().trim());
+
+            if (!lowerCaseExpectedHeader.every(expectedH => lowerCaseHeaders.includes(expectedH))) {
+                setLocalError(`Định dạng cột không đúng! Cần các cột: ${expectedHeader.join(', ')}`);
+                e.target.value = '';
+                setFileUploaded(false);
+                return;
+            }
+
+            const dataRows = rawData.slice(1);
             const jsonData = dataRows.map(row => {
                 const obj = {};
                 headers.forEach((header, index) => {
-                    obj[header] = row[index] || '';
+                    obj[String(header).trim()] = row[index] || '';
                 });
                 return obj;
             });
 
-            // Xử lý và validate dữ liệu
-            const processedData = processExcelDataSubject(jsonData, existingSubjects);
+            const processedData = processExcelDataSubject(jsonData, existingSubjects, semesters); // Pass semesters for validation
 
-            if (processedData.length === 0) {
+            const validPreviewData = processedData.filter(item => item.errors.length === 0);
+
+            if (validPreviewData.length === 0) {
                 setLocalError('Không có dữ liệu hợp lệ trong file Excel!');
+                e.target.value = '';
+                setFileUploaded(false);
                 return;
             }
 
-            // Hiển thị preview
             setPreviewData(processedData);
             setShowPreview(true);
-            onClose();
+            onClose(); // Close the AddSubjectModal to show PreviewSubjectModal
 
         } catch (error) {
             console.error('Error reading Excel file:', error);
             setLocalError('Lỗi khi đọc file Excel! Vui lòng kiểm tra format file.');
+            setFileUploaded(false);
+        } finally {
+            e.target.value = '';
         }
-
-        // Reset file input
-        e.target.value = '';
     };
-
 
     const handleClosePreview = () => {
         setShowPreview(false);
         setPreviewData([]);
+        setFileUploaded(false);
     };
 
     return (
         <>
-            <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-                <DialogTitle>
-                    <Box display="flex" justifyContent="space-between" alignItems="center">
-                        <Typography variant="h6">Thêm học phần mới</Typography>
-                        <label htmlFor="upload-subject-excel">
-                            <input
-                                id="upload-subject-excel"
-                                type="file"
-                                hidden
-                                accept=".xlsx, .xls"
-                                onChange={handleImportExcel}
-                            />
-                            <Button
-                                variant="outlined"
-                                component="span"
-                                size="small"
-                                startIcon={<UploadFileIcon />}
-                            >
-                                Thêm tự động
-                            </Button>
-                        </label>
+            <Dialog
+                open={open}
+                onClose={() => {
+                    resetForm();
+                    onClose();
+                }}
+                maxWidth="md"
+                fullWidth
+                PaperProps={{
+                    sx: {
+                        borderRadius: '12px',
+                        boxShadow: '0px 8px 24px rgba(0, 0, 0, 0.1)',
+                        overflow: 'hidden'
+                    }
+                }}
+            >
+                <DialogTitle sx={{
+                    background: 'linear-gradient(135deg, #007bff 0%, #0056b3 100%)', // Different gradient for subjects
+                    color: 'white',
+                    py: 2,
+                    px: 3,
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                }}>
+                    <Box display="flex" alignItems="center">
+                        <MenuBook sx={{ fontSize: 28, mr: 2 }} /> {/* Icon for subject */}
+                        <Typography variant="h6" fontWeight="600">
+                            Thêm Học Phần Mới
+                        </Typography>
                     </Box>
+                    <IconButton
+                        edge="end"
+                        color="inherit"
+                        onClick={() => {
+                            resetForm();
+                            onClose();
+                        }}
+                        aria-label="close"
+                        disabled={loading}
+                    >
+                        <Close />
+                    </IconButton>
                 </DialogTitle>
-                <DialogContent>
-                    {(error || localError) && (
-                        <Alert severity="error" sx={{ mb: 2 }}>
-                            {error || localError}
-                        </Alert>
-                    )}
-                    {message && (
-                        <Alert severity="success" sx={{ mb: 2 }}>
-                            {message}
-                        </Alert>
-                    )}
-                    <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2, mt: 2 }}>
-                        <TextField
-                            label="Mã học phần"
-                            name="subject_id"
-                            value={newSubject.subject_id}
-                            onChange={handleChange}
-                            fullWidth
-                            variant="outlined"
-                            required
-                        />
-                        <TextField
-                            label="Tên học phần"
-                            name="subject_name"
-                            value={newSubject.subject_name}
-                            onChange={handleChange}
-                            fullWidth
-                            variant="outlined"
-                            required
-                        />
-                        <TextField
-                            label="Số tín chỉ"
-                            name="credit"
-                            type="number"
-                            value={newSubject.credit}
-                            onChange={handleChange}
-                            fullWidth
-                            variant="outlined"
-                            required
-                            inputProps={{ min: 1 }}
-                        />
-                        <TextField
-                            label="Số tiết lý thuyết"
-                            name="theory_hours"
-                            type="number"
-                            value={newSubject.theory_hours}
-                            onChange={handleChange}
-                            fullWidth
-                            variant="outlined"
-                            required
-                            inputProps={{ min: 0 }}
-                        />
-                        <TextField
-                            label="Số tiết thực hành"
-                            name="practice_hours"
-                            type="number"
-                            value={newSubject.practice_hours}
-                            onChange={handleChange}
-                            fullWidth
-                            variant="outlined"
-                            required
-                            inputProps={{ min: 0 }}
-                        />
-                        <FormControl fullWidth required>
-                            <InputLabel>Học kỳ</InputLabel>
-                            <Select
-                                name="semester_id"
-                                value={newSubject.semester_id}
-                                onChange={handleChange}
-                                label="Học kỳ"
-                            >
-                                {semesters.map((semester) => (
-                                    <MenuItem key={semester.semester_id} value={semester.semester_id}>
-                                        {semester.semester_id} - {semester.semester_name}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                        <FormControl fullWidth required>
-                            <InputLabel>Trạng thái</InputLabel>
-                            <Select
-                                name="status"
-                                value={newSubject.status}
-                                onChange={handleChange}
-                                label="Trạng thái"
-                            >
-                                <MenuItem value="Hoạt động">Hoạt động</MenuItem>
-                                <MenuItem value="Tạm dừng">Tạm dừng</MenuItem>
-                                <MenuItem value="Ngừng hoạt động">Ngừng hoạt động</MenuItem>
-                            </Select>
-                        </FormControl>
 
+                <DialogContent sx={{ p: 0 }}>
+                    <Box sx={{ px: 3, pt: 3, pb: 2 }}>
+                        <Stepper activeStep={activeStep} alternativeLabel>
+                            {steps.map((label) => (
+                                <Step key={label}>
+                                    <StepLabel>{label}</StepLabel>
+                                </Step>
+                            ))}
+                        </Stepper>
+                    </Box>
+
+                    <Divider />
+
+                    <Box sx={{ px: 3, pt: 2 }}>
+                        {(error || localError) && (
+                            <Fade in={!!(error || localError)}>
+                                <Alert
+                                    severity="error"
+                                    icon={<ErrorIcon />}
+                                    sx={{ mb: 2 }}
+                                >
+                                    {error || localError}
+                                </Alert>
+                            </Fade>
+                        )}
+                        {message && (
+                            <Fade in={!!message}>
+                                <Alert
+                                    severity="success"
+                                    icon={<CheckCircle />}
+                                    sx={{ mb: 2 }}
+                                >
+                                    {message}
+                                </Alert>
+                            </Fade>
+                        )}
+                    </Box>
+
+                    <Box sx={{ p: 3 }}>
+                        {activeStep === 0 && (
+                            <Box sx={{
+                                display: 'grid',
+                                gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+                                gap: 3
+                            }}>
+                                <TextField
+                                    label="Mã học phần"
+                                    name="subject_id"
+                                    value={newSubject.subject_id}
+                                    onChange={handleChange}
+                                    fullWidth
+                                    variant="outlined"
+                                    required
+                                    disabled={loading}
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <BookmarkAdded color="action" />
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                    sx={{ mb: 2 }}
+                                />
+                                <TextField
+                                    label="Tên học phần"
+                                    name="subject_name"
+                                    value={newSubject.subject_name}
+                                    onChange={handleChange}
+                                    fullWidth
+                                    variant="outlined"
+                                    required
+                                    disabled={loading}
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <MenuBook color="action" />
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                    sx={{ mb: 2 }}
+                                />
+                            </Box>
+                        )}
+
+                        {activeStep === 1 && (
+                            <Box sx={{
+                                display: 'grid',
+                                gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+                                gap: 3
+                            }}>
+                                <TextField
+                                    label="Số tín chỉ"
+                                    name="credit"
+                                    type="number"
+                                    value={newSubject.credit}
+                                    onChange={handleChange}
+                                    fullWidth
+                                    variant="outlined"
+                                    required
+                                    inputProps={{ min: 1 }}
+                                    disabled={loading}
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <FormatListNumbered color="action" />
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                    sx={{ mb: 2 }}
+                                />
+                                <TextField
+                                    label="Số tiết lý thuyết"
+                                    name="theory_hours"
+                                    type="number"
+                                    value={newSubject.theory_hours}
+                                    onChange={handleChange}
+                                    fullWidth
+                                    variant="outlined"
+                                    required
+                                    inputProps={{ min: 0 }}
+                                    disabled={loading}
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <School color="action" />
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                    sx={{ mb: 2 }}
+                                />
+                                <TextField
+                                    label="Số tiết thực hành"
+                                    name="practice_hours"
+                                    type="number"
+                                    value={newSubject.practice_hours}
+                                    onChange={handleChange}
+                                    fullWidth
+                                    variant="outlined"
+                                    required
+                                    inputProps={{ min: 0 }}
+                                    disabled={loading}
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <HourglassEmpty color="action" /> {/* Changed icon here */}
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                    sx={{ mb: 2 }}
+                                />
+                                <FormControl fullWidth required>
+                                    <InputLabel>Học kỳ</InputLabel>
+                                    <Select
+                                        name="semester_id"
+                                        value={newSubject.semester_id}
+                                        onChange={handleChange}
+                                        label="Học kỳ"
+                                        disabled={loading}
+                                        InputProps={{
+                                            startAdornment: (
+                                                <InputAdornment position="start">
+                                                    <AccessTime color="action" />
+                                                </InputAdornment>
+                                            ),
+                                        }}
+                                    >
+                                        {semesters.map((semester) => (
+                                            <MenuItem key={semester.semester_id} value={semester.semester_id}>
+                                                {semester.semester_id} - {semester.semester_name}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                                <FormControl fullWidth required>
+                                    <InputLabel>Trạng thái</InputLabel>
+                                    <Select
+                                        name="status"
+                                        value={newSubject.status}
+                                        onChange={handleChange}
+                                        label="Trạng thái"
+                                        disabled={loading}
+                                        InputProps={{
+                                            startAdornment: (
+                                                <InputAdornment position="start">
+                                                    <HelpOutline color="action" />
+                                                </InputAdornment>
+                                            ),
+                                        }}
+                                    >
+                                        {subjectStatusOptions.map((option) => (
+                                            <MenuItem key={option.value} value={option.value}>
+                                                <Box display="flex" alignItems="center">
+                                                    {option.icon}
+                                                    <Chip
+                                                        label={option.value}
+                                                        size="small"
+                                                        color={option.color}
+                                                        sx={{ ml: 1 }}
+                                                    />
+                                                </Box>
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            </Box>
+                        )}
                     </Box>
                 </DialogContent>
-                <DialogActions>
-                    <Button onClick={onClose} variant="outlined" sx={{ color: '#1976d2' }} disabled={loading}>
-                        Hủy
-                    </Button>
-                    <Button
-                        onClick={handleSubmit}
-                        variant="contained"
-                        sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
-                        disabled={loading}
-                        startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
-                    >
-                        {loading ? 'Đang thêm...' : 'Thêm'}
-                    </Button>
+
+                <DialogActions sx={{
+                    p: 3,
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    borderTop: '1px solid #eee'
+                }}>
+                    <Box>
+                        {activeStep === 0 && (
+                            <Button
+                                variant="outlined"
+                                color="primary"
+                                startIcon={<CloudUpload />}
+                                component="label"
+                                disabled={loading}
+                            >
+                                Nhập từ Excel
+                                <input
+                                    type="file"
+                                    hidden
+                                    accept=".xlsx, .xls"
+                                    onChange={handleImportExcel}
+                                    disabled={loading}
+                                />
+                            </Button>
+                        )}
+                    </Box>
+
+                    <Box sx={{ display: 'flex', gap: 2 }}>
+                        {activeStep > 0 && (
+                            <Button
+                                onClick={handleBack}
+                                variant="outlined"
+                                disabled={loading}
+                            >
+                                Quay lại
+                            </Button>
+                        )}
+
+                        {activeStep < steps.length - 1 ? (
+                            <Button
+                                onClick={handleNext}
+                                variant="contained"
+                                color="primary"
+                                disabled={loading}
+                            >
+                                Tiếp theo
+                            </Button>
+                        ) : (
+                            <Button
+                                onClick={handleSubmit}
+                                variant="contained"
+                                color="primary"
+                                disabled={loading}
+                                startIcon={loading ? <CircularProgress size={20} /> : null}
+                            >
+                                {loading ? 'Đang xử lý...' : 'Thêm học phần'}
+                            </Button>
+                        )}
+                    </Box>
                 </DialogActions>
             </Dialog>
 
@@ -294,8 +562,8 @@ export default function AddSubjectModal({ open, onClose, onAddSubject, existingS
                 open={showPreview}
                 onClose={handleClosePreview}
                 previewData={previewData}
-                fetchSubjects={fetchSubjects} // Gọi lại hàm fetch để cập nhật danh sách học 
-                semesters={semesters}
+                fetchSubjects={fetchSubjects}
+                semesters={semesters} // Pass semesters to PreviewSubjectModal if it needs to display semester names
             />
         </>
     );

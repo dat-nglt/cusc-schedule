@@ -13,13 +13,12 @@ import {
   InputAdornment,
   IconButton,
   Button,
+  useTheme, // Import useTheme for consistency
 } from "@mui/material";
 import {
   Add as AddIcon,
   Search as SearchIcon,
-  Edit as EditIcon,
-  Delete as DeleteIcon,
-} from "@mui/icons-material";
+} from "@mui/icons-material"; // Only need Add and Search as others are for table
 import BreakScheduleDetailModal from "./BreakScheduleDetailModal";
 import AddBreakScheduleModal from "./AddBreakScheduleModal";
 import EditBreakScheduleModal from "./EditBreakScheduleModal";
@@ -33,7 +32,6 @@ import {
   addBreakScheduleAPI,
   updateBreakScheduleAPI,
   deleteBreakScheduleAPI,
-  listBreakSchedulesAPI,
 } from "../../api/breakScheduleAPI";
 
 // Hàm định dạng timestamp thành YYYY-MM-DD HH:MM:SS.sss+07
@@ -52,33 +50,39 @@ const formatTimestamp = (timestamp) => {
 
 const BreakSchedule = () => {
   const { isSmallScreen, isMediumScreen } = useResponsive();
+  const theme = useTheme(); // Use theme for consistency with Subject component
 
   const [breakSchedules, setBreakSchedules] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false); // Default to false
+  const [error, setError] = useState(''); // Default to empty string
   const [page, setPage] = useState(0);
   const [rowsPerPage] = useState(8);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedYear, setSelectedYear] = useState("");
   const [openDetail, setOpenDetail] = useState(false);
-  const [openAdd, setOpenAdd] = useState(false);
-  const [openEdit, setOpenEdit] = useState(false);
-  const [openDelete, setOpenDelete] = useState(false);
   const [selectedBreakSchedule, setSelectedBreakSchedule] = useState(null);
+  const [openAddModal, setOpenAddModal] = useState(false); // Renamed for consistency
+  const [openEditModal, setOpenEditModal] = useState(false); // Renamed for consistency
+  const [openDeleteModal, setOpenDeleteModal] = useState(false); // Renamed for consistency
 
-  const years = ["2021", "2022", "2023", "2024", "2025"];
+  const years = ["2021", "2022", "2023", "2024", "2025"]; // Example years
 
+  // Function to fetch break schedules from API
   const fetchBreakSchedules = async () => {
     try {
+      setError(''); // Clear previous errors
       setLoading(true);
       const response = await getBreakSchedulesAPI();
-      if (!response) {
-        console.error("Không có dữ liệu lịch nghỉ");
-        return;
+      if (response && response.data) {
+        // Assuming response.data is an array or has a 'data' property that is an array
+        setBreakSchedules(response.data.data || response.data);
+      } else {
+        setError('Không có dữ liệu lịch nghỉ');
       }
-      setSelectedBreakSchedule(response.data.data);
-    } catch (error) {
-      console.error("Lỗi khi tải danh sách lịch nghỉ:", error);
+    } catch (err) {
+      console.error("Lỗi khi tải danh sách lịch nghỉ:", err);
+      setError('Không thể tải danh sách lịch nghỉ. Vui lòng thử lại sau.');
+      toast.error('Không thể tải danh sách lịch nghỉ. Vui lòng thử lại sau.');
     } finally {
       setLoading(false);
     }
@@ -88,228 +92,211 @@ const BreakSchedule = () => {
     fetchBreakSchedules();
   }, []);
 
-  const handleViewBreakSchedule = async (break_id) => {
+  // Handler for adding a new break schedule
+  const handleAddBreakSchedule = () => {
+    setOpenAddModal(true);
+  };
+
+  // Handler for closing the Add Break Schedule modal
+  const handleCloseAddModal = () => {
+    setOpenAddModal(false);
+  };
+
+  // Handler for confirming and adding a new break schedule via API
+  const handleAddNewBreakSchedule = async (newSchedule) => {
     try {
       setLoading(true);
-      const response = await getBreakScheduleByIdAPI(break_id);
-      console.log("Phản hồi từ API (chi tiết lịch nghỉ):", response);
-
-      let scheduleData = {};
-      if (response && typeof response === "object") {
-        if (Array.isArray(response.data)) {
-          scheduleData = response.data[0] || {};
-        } else if (response.data) {
-          scheduleData = response.data;
-        } else {
-          scheduleData = response;
-        }
-      } else {
-        throw new Error("Dữ liệu từ API không phải là object hợp lệ");
+      const response = await addBreakScheduleAPI(newSchedule);
+      if (response && response.data) {
+        toast.success('Lịch nghỉ đã được thêm thành công!');
+        fetchBreakSchedules(); // Reload the list
       }
-
-      setSelectedBreakSchedule({
-        break_id: scheduleData.break_id,
-        break_type: scheduleData.break_type,
-        break_start_date: scheduleData.break_start_date,
-        break_end_date: scheduleData.break_end_date,
-        description: scheduleData.description || "Không có dữ liệu",
-        number_of_days: scheduleData.number_of_days,
-        status: scheduleData.status || "Không có dữ liệu",
-        created_at: formatTimestamp(scheduleData.created_at),
-        updated_at: formatTimestamp(scheduleData.updated_at),
-      });
-      setOpenDetail(true);
     } catch (err) {
-      console.error("Lỗi khi lấy chi tiết:", err.message);
-      setError(`Lỗi khi lấy chi tiết lịch nghỉ: ${err.message}`);
-      setOpenDetail(false);
+      console.error("Lỗi khi thêm lịch nghỉ:", err);
+      setError("Không thể thêm lịch nghỉ. Vui lòng kiểm tra lại thông tin.");
+      toast.error("Không thể thêm lịch nghỉ. Vui lòng kiểm tra lại thông tin.");
     } finally {
       setLoading(false);
+      handleCloseAddModal(); // Close modal after attempt
     }
   };
 
-  const handleAddBreakSchedule = async (scheduleData) => {
+  // Handler for viewing a break schedule
+  const handleViewBreakSchedule = async (id) => {
     try {
       setLoading(true);
-      console.log("Gửi dữ liệu thêm lịch nghỉ:", scheduleData);
-      const response = await addBreakScheduleAPI({
-        break_id: scheduleData.break_id,
-        break_type: scheduleData.break_type,
-        break_start_date: scheduleData.break_start_date,
-        break_end_date: scheduleData.break_end_date,
-        description: scheduleData.description || "",
-        number_of_days: scheduleData.number_of_days,
-        status: scheduleData.status || "inactive",
-      });
-      console.log("Phản hồi từ API (thêm):", response);
-
-      const newSchedule = response.data || response;
-      setBreakSchedules((prev) => [
-        ...prev,
-        {
-          stt: prev.length + 1,
-          break_id: newSchedule.break_id,
-          break_type: newSchedule.break_type,
-          break_start_date: newSchedule.break_start_date,
-          break_end_date: newSchedule.break_end_date,
-          created_at: formatTimestamp(newSchedule.created_at),
-          updated_at: formatTimestamp(newSchedule.updated_at),
-        },
-      ]);
-    } catch (err) {
-      console.error("Lỗi khi thêm lịch nghỉ:", err.message, err.response?.data);
-      setError(
-        `Lỗi khi thêm lịch nghỉ: ${err.message} - ${err.response?.data?.message || "Kiểm tra định dạng dữ liệu"
-        }`
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleEditBreakSchedule = (schedule) => {
-    setSelectedBreakSchedule(schedule);
-    setOpenEdit(true);
-  };
-
-  const handleSaveEditedBreakSchedule = async (scheduleData) => {
-    try {
-      setLoading(true);
-      console.log("Gửi dữ liệu chỉnh sửa lịch nghỉ:", scheduleData);
-      const response = await updateBreakScheduleAPI(scheduleData.break_id, {
-        break_id: scheduleData.break_id,
-        break_type: scheduleData.break_type,
-        break_start_date: scheduleData.break_start_date,
-        break_end_date: scheduleData.break_end_date,
-        description: scheduleData.description,
-        number_of_days: scheduleData.number_of_days,
-        status: scheduleData.status,
-        updated_at: new Date().toISOString(),
-      });
-      console.log("Phản hồi từ API (chỉnh sửa):", response);
-
-      await fetchBreakSchedules();
-    } catch (err) {
-      console.error("Lỗi khi chỉnh sửa lịch nghỉ:", err.message);
-      setError(`Lỗi khi chỉnh sửa lịch nghỉ: ${err.message}`);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleOpenDeleteModal = (schedule) => {
-    if (!schedule || !schedule.break_id) {
-      console.error(
-        "Invalid schedule data in handleOpenDeleteModal:",
-        schedule
-      );
-      setError("Dữ liệu lịch nghỉ không hợp lệ");
-      return;
-    }
-    setSelectedBreakSchedule(schedule);
-    setOpenDelete(true);
-  };
-
-  const handleDeleteBreakSchedule = async (break_id) => {
-    try {
-      setLoading(true);
-      if (!break_id) {
-        console.error("Invalid breakId for deletion:", break_id);
-        setError("Dữ liệu lịch nghỉ không hợp lệ");
-        return;
+      const response = await getBreakScheduleByIdAPI(id);
+      if (response && response.data) {
+        setSelectedBreakSchedule(response.data.data || response.data);
+        setOpenDetail(true);
       }
-      console.log(
-        "Attempting to delete break schedule with break_id:",
-        break_id
-      );
-      const response = await deleteBreakScheduleAPI(break_id);
-      console.log("Response from API (delete):", response);
-
-      await fetchBreakSchedules();
     } catch (err) {
-      console.error("Lỗi khi xóa lịch nghỉ:", err.message);
-      setError(`Lỗi khi xóa lịch nghỉ: ${err.message}`);
+      console.error("Lỗi khi lấy thông tin chi tiết lịch nghỉ:", err);
+      setError("Không thể lấy thông tin chi tiết lịch nghỉ. Vui lòng thử lại.");
+      toast.error("Không thể lấy thông tin chi tiết lịch nghỉ. Vui lòng thử lại.");
     } finally {
       setLoading(false);
     }
   };
 
+  // Handler for closing the Detail modal
+  const handleCloseDetail = () => {
+    setOpenDetail(false);
+    setSelectedBreakSchedule(null);
+  };
+
+  // Handler for opening the Edit modal
+  const handleEditBreakSchedule = async (id) => {
+    try {
+      setLoading(true);
+      const response = await getBreakScheduleByIdAPI(id);
+      if (response && response.data) {
+        setSelectedBreakSchedule(response.data.data || response.data);
+        setOpenEditModal(true);
+      }
+    } catch (err) {
+      console.error("Lỗi khi lấy thông tin lịch nghỉ để chỉnh sửa:", err);
+      setError("Không thể lấy thông tin lịch nghỉ để chỉnh sửa. Vui lòng thử lại.");
+      toast.error("Không thể lấy thông tin lịch nghỉ để chỉnh sửa. Vui lòng thử lại.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Handler for closing the Edit modal
+  const handleCloseEditModal = () => {
+    setOpenEditModal(false);
+    setSelectedBreakSchedule(null);
+  };
+
+  // Handler for saving edited break schedule
+  const handleSaveEditedBreakSchedule = async (updatedSchedule) => {
+    try {
+      setLoading(true);
+      const response = await updateBreakScheduleAPI(updatedSchedule.break_id, updatedSchedule);
+      if (response && response.data) {
+        toast.success('Lịch nghỉ đã được cập nhật thành công!');
+        fetchBreakSchedules(); // Reload the list
+      }
+    } catch (err) {
+      console.error("Lỗi khi cập nhật lịch nghỉ:", err);
+      setError("Không thể cập nhật lịch nghỉ. Vui lòng kiểm tra lại thông tin.");
+      toast.error("Không thể cập nhật lịch nghỉ. Vui lòng kiểm tra lại thông tin.");
+    } finally {
+      setLoading(false);
+      handleCloseEditModal(); // Close modal after attempt
+    }
+  };
+
+  // Handler for opening the Delete confirmation modal
+  const handleDeleteBreakSchedule = (id) => {
+    const schedule = breakSchedules.find((s) => s.break_id === id);
+    setSelectedBreakSchedule(schedule);
+    setOpenDeleteModal(true);
+  };
+
+  // Handler for closing the Delete modal
+  const handleCloseDeleteModal = () => {
+    setOpenDeleteModal(false);
+    setSelectedBreakSchedule(null);
+  };
+
+  // Handler for confirming and deleting a break schedule
+  const confirmDeleteBreakSchedule = async (id) => {
+    try {
+      setLoading(true);
+      const response = await deleteBreakScheduleAPI(id);
+      if (response) {
+        toast.success('Lịch nghỉ đã được xóa thành công!');
+        fetchBreakSchedules(); // Reload the list
+      }
+    } catch (err) {
+      console.error("Lỗi khi xóa lịch nghỉ:", err);
+      setError("Không thể xóa lịch nghỉ. Vui lòng thử lại.");
+      toast.error("Không thể xóa lịch nghỉ. Vui lòng thử lại.");
+    } finally {
+      setLoading(false);
+      handleCloseDeleteModal(); // Close modal after attempt
+    }
+  };
+
+  // Handler for page change in pagination
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
 
+  // Filter break schedules based on search term and selected year
   const filteredBreakSchedules = breakSchedules.filter((schedule) => {
     const matchesSearchTerm =
-      schedule.break_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      schedule.break_type.toLowerCase().includes(searchTerm.toLowerCase());
+      schedule.break_id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      schedule.break_type?.toLowerCase().includes(searchTerm.toLowerCase());
+
     const matchesYear = selectedYear
-      ? schedule.break_start_date?.startsWith(selectedYear)
+      ? new Date(schedule.break_start_date).getFullYear().toString() === selectedYear
       : true;
+
     return matchesSearchTerm && matchesYear;
   });
 
+  // Calculate displayed break schedules for current page
   const displayedBreakSchedules = filteredBreakSchedules.slice(
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
   );
 
   return (
-    <Box
-      sx={{ p: 3, zIndex: 10, height: "calc(100vh - 64px)", overflowY: "auto" }}
-    >
+    <Box sx={{ p: 1, zIndex: 10, height: "calc(100vh - 64px)", overflowY: "auto" }}>
+      {/* Main Content */}
       <Box sx={{ width: "100%", mb: 3 }}>
+        {/* Break Schedule List Card */}
         <Card sx={{ flexGrow: 1 }}>
           <CardContent>
             <Box
               sx={{
                 display: "flex",
+                flexDirection: isSmallScreen ? "column" : "row",
                 justifyContent: "space-between",
-                alignItems: "center",
-                mb: 2,
+                alignItems: isSmallScreen ? "stretch" : "center",
+                mb: 3,
                 gap: 2,
               }}
             >
-              <Typography variant="h6">Danh sách lịch nghỉ</Typography>
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                {isSmallScreen ? (
-                  <IconButton
-                    color="primary"
-                    onClick={() => setOpenAdd(true)}
-                    sx={{
-                      bgcolor: "#1976d2",
-                      "&:hover": { bgcolor: "#115293" },
-                    }}
-                  >
-                    <AddIcon sx={{ color: "#fff" }} />
-                  </IconButton>
-                ) : (
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    startIcon={<AddIcon />}
-                    onClick={() => setOpenAdd(true)}
-                    sx={{
-                      bgcolor: "#1976d2",
-                      "&:hover": { bgcolor: "#115293" },
-                      minWidth: isSmallScreen ? 100 : 150,
-                      height: "56px",
-                    }}
-                  >
-                    Thêm lịch nghỉ
-                  </Button>
-                )}
-                <FormControl
-                  sx={{ minWidth: isSmallScreen ? 100 : 150 }}
-                  variant="outlined"
-                >
-                  <InputLabel id="year-filter-label">
-                    {isSmallScreen ? "Lọc" : "Lọc theo năm"}
-                  </InputLabel>
+              <Typography variant="h5" fontWeight="600">
+                Danh sách lịch nghỉ
+              </Typography>
+
+              <Box
+                sx={{
+                  display: "flex",
+                  gap: 2,
+                  flexDirection: isSmallScreen ? "column" : "row",
+                  width: isSmallScreen ? "100%" : "auto",
+                }}
+              >
+                <TextField
+                  size="small"
+                  placeholder="Tìm kiếm theo mã hoặc loại lịch nghỉ..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SearchIcon />
+                      </InputAdornment>
+                    ),
+                  }}
+                  sx={{
+                    minWidth: 200,
+                    backgroundColor: theme.palette.background.paper, // Consistent theme usage
+                  }}
+                />
+
+                <FormControl size="small" sx={{ minWidth: 120 }}>
+                  <InputLabel>Năm</InputLabel>
                   <Select
-                    labelId="year-filter-label"
                     value={selectedYear}
                     onChange={(e) => setSelectedYear(e.target.value)}
-                    label={isSmallScreen ? "Lọc" : "Lọc theo năm"}
+                    label="Năm"
                   >
                     <MenuItem value="">Tất cả</MenuItem>
                     {years.map((year) => (
@@ -319,31 +306,24 @@ const BreakSchedule = () => {
                     ))}
                   </Select>
                 </FormControl>
+
+                <Button
+                  variant="contained"
+                  startIcon={<AddIcon />}
+                  onClick={handleAddBreakSchedule}
+                  sx={{ ml: isSmallScreen ? 0 : "auto" }}
+                >
+                  Thêm lịch nghỉ
+                </Button>
               </Box>
             </Box>
-            <Box sx={{ mb: 2 }}>
-              <TextField
-                fullWidth
-                variant="outlined"
-                placeholder="Tìm kiếm theo mã hoặc loại lịch nghỉ..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                sx={{ bgcolor: "#fff" }}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon color="action" />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </Box>
-            {loading && <Typography>Loading...</Typography>}
-            {error && <Typography color="error">{error}</Typography>}
-            {filteredBreakSchedules.length === 0 && !loading && !error && (
+            {loading ? (
+              <Typography>Đang tải dữ liệu...</Typography>
+            ) : error ? (
+              <Typography color="error">{error}</Typography>
+            ) : filteredBreakSchedules.length === 0 ? (
               <Typography>Không có lịch nghỉ nào để hiển thị.</Typography>
-            )}
-            {!loading && !error && filteredBreakSchedules.length > 0 && (
+            ) : (
               <>
                 <BreakScheduleTable
                   displayedBreakSchedules={displayedBreakSchedules}
@@ -351,7 +331,8 @@ const BreakSchedule = () => {
                   isMediumScreen={isMediumScreen}
                   handleViewBreakSchedule={handleViewBreakSchedule}
                   handleEditBreakSchedule={handleEditBreakSchedule}
-                  handleDeleteBreakSchedule={handleOpenDeleteModal}
+                  handleDeleteBreakSchedule={handleDeleteBreakSchedule}
+                  formatTimestamp={formatTimestamp} // Pass formatTimestamp to table
                 />
                 <TablePagination
                   component="div"
@@ -359,7 +340,7 @@ const BreakSchedule = () => {
                   page={page}
                   onPageChange={handleChangePage}
                   rowsPerPage={rowsPerPage}
-                  rowsPerPageOptions={[]}
+                  rowsPerPageOptions={[]} // Keep consistent
                   labelDisplayedRows={({ from, to, count }) =>
                     `${from}-${to} trên ${count}`
                   }
@@ -369,36 +350,33 @@ const BreakSchedule = () => {
           </CardContent>
         </Card>
       </Box>
+
+      {/* Modals */}
       <BreakScheduleDetailModal
         open={openDetail}
-        onClose={() => {
-          setOpenDetail(false);
-          setSelectedBreakSchedule(null);
-        }}
+        onClose={handleCloseDetail}
         breakSchedule={selectedBreakSchedule}
       />
       <AddBreakScheduleModal
-        open={openAdd}
-        onClose={() => setOpenAdd(false)}
-        onAddBreakSchedule={handleAddBreakSchedule}
+        open={openAddModal}
+        onClose={handleCloseAddModal}
+        onAddBreakSchedule={handleAddNewBreakSchedule}
         existingBreakSchedules={breakSchedules}
+        error={error} // Pass error and loading for consistent feedback in modals
+        loading={loading}
       />
       <EditBreakScheduleModal
-        open={openEdit}
-        onClose={() => {
-          setOpenEdit(false);
-          setSelectedBreakSchedule(null);
-        }}
+        open={openEditModal}
+        onClose={handleCloseEditModal}
         breakSchedule={selectedBreakSchedule}
         onSave={handleSaveEditedBreakSchedule}
+        error={error}
+        loading={loading}
       />
       <DeleteBreakScheduleModal
-        open={openDelete}
-        onClose={() => {
-          setOpenDelete(false);
-          setSelectedBreakSchedule(null);
-        }}
-        onDelete={handleDeleteBreakSchedule}
+        open={openDeleteModal}
+        onClose={handleCloseDeleteModal}
+        onDelete={confirmDeleteBreakSchedule}
         breakSchedule={selectedBreakSchedule}
       />
     </Box>

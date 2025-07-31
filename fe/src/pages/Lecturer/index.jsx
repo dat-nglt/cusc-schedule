@@ -30,12 +30,9 @@ import { getAllLecturersAPI, getLecturerByIdAPI, createLecturerAPI, updateLectur
 const Lecturer = () => {
     const { isSmallScreen, isMediumScreen } = useResponsive();
     const theme = useTheme()
-
-    // Dữ liệu mẫu cho danh sách giảng viên
     const [lecturers, setLecturers] = useState([]);
-    // State cho phân trang, tìm kiếm, lọc theo trạng thái và modal
     const [page, setPage] = useState(0);
-    const [rowsPerPage] = useState(8);
+    const [rowsPerPage] = useState(10);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedStatus, setSelectedStatus] = useState('');
     const [openDetail, setOpenDetail] = useState(false);
@@ -73,12 +70,10 @@ const Lecturer = () => {
         fetchLecturers();
     }, []);
 
-    // Hàm xử lý khi nhấn nút Thêm giảng viên
     const handleAddLecturer = () => {
         setOpenAddModal(true);
     };
 
-    // Hàm thêm giảng viên mới
     const handleAddNewLecturer = async (newLecturer) => {
         try {
             setLoading(true);
@@ -97,7 +92,6 @@ const Lecturer = () => {
         }
     };
 
-    // Hàm đóng modal thêm giảng viên
     const handleCloseAddModal = () => {
         setOpenAddModal(false);
     };
