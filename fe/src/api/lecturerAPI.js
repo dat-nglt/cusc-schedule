@@ -46,7 +46,7 @@ export const updateLecturerAPI = async (id, lecturerData) => {
   }
 };
 
-export const importLecturers = async (jsonData) => {
+export const importLecturersAPI = async (jsonData) => {
   try {
     // Import từ dữ liệu JSON đã được validate
     const response = await axiosInstance.post("/api/lecturers/importJson", {

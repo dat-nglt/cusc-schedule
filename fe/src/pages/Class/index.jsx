@@ -27,7 +27,7 @@ import EditClassModal from './EditClassModal';
 import DeleteClassModal from './DeleteClassModal';
 import useResponsive from '../../hooks/useResponsive';
 import ClassTable from './ClassTable';
-import { getClassesAPI, getClassByIdAPI, addClassAPI, updateClassAPI, deleteClass } from '../../api/classAPI';
+import { getClassesAPI, getClassByIdAPI, addClassAPI, updateClassAPI, deleteClassAPI } from '../../api/classAPI';
 import { getCoursesAPI } from '../../api/courseAPI';
 
 // Hàm định dạng timestamp thành YYYY-MM-DD HH:MM:SS.sss+07
@@ -262,7 +262,7 @@ const Class = () => {
         return;
       }
       console.log('Attempting to delete class with class_id:', class_id);
-      const response = await deleteClass(class_id);
+      const response = await deleteClassAPI(class_id);
       console.log('Response from API (delete):', response);
 
       await fetchClasses();

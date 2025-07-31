@@ -24,18 +24,43 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ErrorIcon from '@mui/icons-material/Error';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import { importStudents } from '../../api/studentAPI';
+import { importStudentsAPI } from '../../api/studentAPI';
 import { getRowStatus, getErrorChip } from '../../components/ui/ErrorChip';
 
-export default function PreviewStudentModal({ open, onClose, previewData, fetchStudents }) {
+export default function PreviewStudentModal({ open, onClose, previewData, fetchStudents, classes }) {
     const [isImporting, setIsImporting] = useState(false);
     const [importError, setImportError] = useState('');
     const [importMessage, setImportMessage] = useState('');
 
+    // Validate preview data with class checking
+    const validatePreviewData = (data) => {
+        return data.map(row => {
+            let errors = row.errors || [];
 
+            // If there are already errors, keep only the first one
+            if (errors.length > 0) {
+                errors = [errors[0]];
+            } else {
+                // Check if class_id exists in classes array (if class is provided)
+                if (row.class && row.class.trim() !== '') {
+                    const classExists = classes && classes.some(cls => cls.class_id === row.class.trim());
+                    if (!classExists) {
+                        errors = [`Mã lớp "${row.class}" không tồn tại trong hệ thống`];
+                    }
+                }
+            }
 
-    const validRows = previewData.filter(row => getRowStatus(row) === 'valid');
-    const errorRows = previewData.filter(row => getRowStatus(row) === 'error');
+            return {
+                ...row,
+                errors
+            };
+        });
+    };
+
+    // Validate data with class checking
+    const validatedData = validatePreviewData(previewData);
+    const validRows = validatedData.filter(row => getRowStatus(row) === 'valid');
+    const errorRows = validatedData.filter(row => getRowStatus(row) === 'error');
 
 
     const handleConfirmImport = async () => {
@@ -52,11 +77,15 @@ export default function PreviewStudentModal({ open, onClose, previewData, fetchS
             // Tạo file Excel tạm thời chỉ với dữ liệu hợp lệ
             const validData = validRows.map(row => {
                 const { errors: _errors, rowIndex: _rowIndex, ...studentData } = row;
+                // Map class to class_id for API
+                if (studentData.class) {
+                    studentData.class_id = studentData.class;
+                }
                 return studentData;
             });
             console.log('Valid data to import:', validData);
             // Gọi API import với dữ liệu đã được validate
-            const response = await importStudents(validData);
+            const response = await importStudentsAPI(validData);
 
             if (response.data) {
                 setImportMessage(`Thêm thành công ${validRows.length} học viên`);
@@ -156,9 +185,19 @@ export default function PreviewStudentModal({ open, onClose, previewData, fetchS
                                                 <TableCell>{student.email}</TableCell>
                                                 <TableCell>{student.phone_number}</TableCell>
                                                 <TableCell>{student.gender}</TableCell>
-
                                                 <TableCell>{student.address}</TableCell>
-                                                <TableCell>{student.class}</TableCell>
+                                                <TableCell>
+                                                    {student.class ? (
+                                                        <Chip
+                                                            label={student.class}
+                                                            size="small"
+                                                            color="primary"
+                                                            variant="outlined"
+                                                        />
+                                                    ) : (
+                                                        <Typography variant="body2" color="text.secondary">-</Typography>
+                                                    )}
+                                                </TableCell>
                                                 <TableCell>{student.admission_year}</TableCell>
                                             </TableRow>
                                         ))}
@@ -187,7 +226,6 @@ export default function PreviewStudentModal({ open, onClose, previewData, fetchS
                                             <TableCell>Email</TableCell>
                                             <TableCell>SĐT</TableCell>
                                             <TableCell>Giới tính</TableCell>
-
                                             <TableCell>Địa chỉ</TableCell>
                                             <TableCell>Lớp</TableCell>
                                             <TableCell>Năm nhập học</TableCell>
@@ -205,9 +243,19 @@ export default function PreviewStudentModal({ open, onClose, previewData, fetchS
                                                 <TableCell>{student.email || '-'}</TableCell>
                                                 <TableCell>{student.phone_number || '-'}</TableCell>
                                                 <TableCell>{student.gender || '-'}</TableCell>
-
                                                 <TableCell>{student.address || '-'}</TableCell>
-                                                <TableCell>{student.class || '-'}</TableCell>
+                                                <TableCell>
+                                                    {student.class ? (
+                                                        <Chip
+                                                            label={student.class}
+                                                            size="small"
+                                                            color={student.errors.some(err => err.includes('Mã lớp')) ? 'error' : 'default'}
+                                                            variant="outlined"
+                                                        />
+                                                    ) : (
+                                                        <Typography variant="body2" color="text.secondary">-</Typography>
+                                                    )}
+                                                </TableCell>
                                                 <TableCell>{student.admission_year || '-'}</TableCell>
                                                 <TableCell>
                                                     <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
@@ -235,7 +283,7 @@ export default function PreviewStudentModal({ open, onClose, previewData, fetchS
                 >
                     {isImporting ? 'Đang thêm...' :
                         importMessage ? 'Đã thêm thành công' :
-                            `Thêm ${validRows.length} học viên viên`}
+                            `Thêm ${validRows.length} học viên`}
                 </Button>
             </DialogActions>
         </Dialog>

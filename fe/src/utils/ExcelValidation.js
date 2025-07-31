@@ -26,6 +26,39 @@ const formatDate = (dateValue) => {
     return '';
 };
 
+// Helper function để format time
+const formatTime = (timeValue) => {
+    if (!timeValue) return '';
+
+    // Nếu là số thập phân (Excel time)
+    if (typeof timeValue === 'number' && timeValue >= 0 && timeValue < 1) {
+        // Chuyển số thập phân sang phút
+        const totalMinutes = Math.round(timeValue * 24 * 60);
+        const hours = Math.floor(totalMinutes / 60);
+        const minutes = totalMinutes % 60;
+        // Đảm bảo 2 chữ số
+        return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+    }
+
+    // Nếu là string và có format HH:MM
+    if (typeof timeValue === 'string') {
+        // Loại bỏ khoảng trắng
+        const cleanTime = timeValue.trim();
+
+        // Nếu format HH:MM, giữ nguyên
+        if (/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/.test(cleanTime)) {
+            return cleanTime;
+        }
+
+        // Nếu có format HH:MM:SS, chỉ lấy HH:MM
+        if (/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$/.test(cleanTime)) {
+            return cleanTime.substring(0, 5);
+        }
+    }
+
+    return timeValue;
+};
+
 //validate lecturer data
 const requiredLecturerFields = [
     'lecturer_id',
@@ -57,10 +90,10 @@ const validateLecturerData = (lecturer, existingLecturers, allImportData = []) =
         errors.push('duplicate_id');
     }
 
-    // Kiểm tra các trường bắt buộc
+    // Kiểm tra các trường bắt buộc (không coi số 0 là thiếu)
     const missingFields = requiredLecturerFields.filter(field => {
         const value = lecturer[field];
-        return !value || (typeof value === 'string' && value.trim() === '');
+        return value === null || value === undefined || (typeof value === 'string' && value.trim() === '');
     });
 
     if (missingFields.length > 0) {
@@ -113,17 +146,19 @@ export const processExcelDataLecturer = (rawData, existingLecturers) => {
     const processedData = rawData.map((row, index) => {
         // Chuẩn hóa dữ liệu
         const lecturer = {
-            lecturer_id: row['Mã giảng viên'] || row['lecturer_id'] || '',
-            name: row['Họ tên'] || row['name'] || '',
-            email: row['Email'] || row['email'] || '',
+            lecturer_id: row['Mã giảng viên']?.trim() || row['lecturer_id']?.trim() || '',
+            name: row['Họ tên']?.trim() || row['name']?.trim() || '',
+            email: row['Email']?.trim() || row['email']?.trim() || '',
             day_of_birth: formatDate(row['Ngày sinh'] || row['day_of_birth']),
-            gender: row['Giới tính'] || row['gender'] || '',
-            address: row['Địa chỉ'] || row['address'] || '',
+            gender: row['Giới tính']?.trim() || row['gender']?.trim() || '',
+            address: row['Địa chỉ']?.trim() || row['address']?.trim() || '',
             phone_number: row['Số điện thoại'] || row['phone_number'] || '',
-            department: row['Khoa/Bộ môn'] || row['department'] || '',
+            academic_rank: row['Học hàm']?.trim() || row['academic_rank']?.trim() || '',
+            subjectIds: row['Mã học phần'] ? row['Mã học phần'].split(',').map(id => id.trim()) : [],
+            department: row['Khoa/Bộ môn']?.trim() || row['department']?.trim() || '',
             hire_date: formatDate(row['Ngày tuyển dụng'] || row['hire_date']),
-            degree: row['Học vị'] || row['degree'] || '',
-            status: row['Trạng thái'] || row['status'] || 'Hoạt động',
+            degree: row['Học vị']?.trim() || row['degree']?.trim() || '',
+            status: row['Trạng thái']?.trim() || row['status']?.trim() || 'Hoạt động',
             rowIndex: index + 2 // +2 vì Excel bắt đầu từ row 1 và có header
         };
 
@@ -170,10 +205,10 @@ const validateStudentData = (student, existingStudents, allImportData = []) => {
         errors.push('duplicate_id');
     }
 
-    // Kiểm tra các trường bắt buộc
+    // Kiểm tra các trường bắt buộc (không coi số 0 là thiếu)
     const missingFields = requiredStudentFields.filter(field => {
         const value = student[field];
-        return !value || (typeof value === 'string' && value.trim() === '');
+        return value === null || value === undefined || (typeof value === 'string' && value.trim() === '');
     });
 
     if (missingFields.length > 0) {
@@ -218,17 +253,17 @@ export const processExcelDataStudent = (rawData, existingStudents) => {
     const processedData = rawData.map((row, index) => {
         // Chuẩn hóa dữ liệu
         const student = {
-            student_id: row['Mã học viên'] || row['student_id'] || '',
-            name: row['Họ tên'] || row['name'] || '',
-            email: row['Email'] || row['email'] || '',
+            student_id: row['Mã học viên']?.trim() || row['student_id']?.trim() || '',
+            name: row['Họ tên']?.trim() || row['name']?.trim() || '',
+            email: row['Email']?.trim() || row['email']?.trim() || '',
             day_of_birth: formatDate(row['Ngày sinh'] || row['day_of_birth']),
-            gender: row['Giới tính'] || row['gender'] || '',
-            address: row['Địa chỉ'] || row['address'] || '',
+            gender: row['Giới tính']?.trim() || row['gender']?.trim() || '',
+            address: row['Địa chỉ']?.trim() || row['address']?.trim() || '',
             phone_number: row['Số điện thoại'] || row['phone_number'] || '',
             class: row['Lớp'] || row['class'] || '',
             admission_year: formatDate(row['Năm nhập học'] || row['admission_year']),
             gpa: row['Điểm trung bình'] || row['gpa'] || '',
-            status: row['Trạng thái'] || row['status'] || 'Đang học',
+            status: row['Trạng thái']?.trim() || row['status']?.trim() || 'Đang học',
             rowIndex: index + 2 // +2 vì Excel bắt đầu từ row 1 và có header
         };
 
@@ -270,10 +305,10 @@ const validateProgramData = (program, existingPrograms, allImportData = []) => {
         errors.push('duplicate_id');
     }
 
-    // Kiểm tra các trường bắt buộc
+    // Kiểm tra các trường bắt buộc (không coi số 0 là thiếu)
     const missingFields = requiredProgramFields.filter(field => {
         const value = program[field];
-        return !value || (typeof value === 'string' && value.trim() === '');
+        return value === null || value === undefined || (typeof value === 'string' && value.trim() === '');
     });
 
     if (missingFields.length > 0) {
@@ -296,11 +331,11 @@ export const processExcelDataProgram = (rawData, existingPrograms) => {
     const processedData = rawData.map((row, index) => {
         // Chuẩn hóa dữ liệu
         const program = {
-            program_id: row['Mã chương trình'] || row['program_id'] || '',
-            program_name: row['Tên chương trình'] || row['program_name'] || '',
+            program_id: row['Mã chương trình']?.trim() || row['program_id']?.trim() || '',
+            program_name: row['Tên chương trình']?.trim() || row['program_name']?.trim() || '',
             training_duration: row['Thời gian đào tạo'] || row['training_duration'] || '',
-            description: row['Mô tả'] || row['description'] || '',
-            status: row['Trạng thái'] || row['status'] || 'Hoạt động',
+            description: row['Mô tả']?.trim() || row['description']?.trim() || '',
+            status: row['Trạng thái']?.trim() || row['status']?.trim() || 'Hoạt động',
             rowIndex: index + 2 // +2 vì Excel bắt đầu từ row 1 và có header
         };
 
@@ -345,10 +380,10 @@ const validateSemesterData = (semester, existingSemesters, allImportData = []) =
         errors.push('duplicate_id');
     }
 
-    // Kiểm tra các trường bắt buộc
+    // Kiểm tra các trường bắt buộc (không coi số 0 là thiếu)
     const missingFields = requiredSemesterFields.filter(field => {
         const value = semester[field];
-        return !value || (typeof value === 'string' && value.trim() === '');
+        return value === null || value === undefined || (typeof value === 'string' && value.trim() === '');
     });
 
     if (missingFields.length > 0) {
@@ -389,12 +424,12 @@ export const processExcelDataSemester = (rawData, existingSemesters) => {
     const processedData = rawData.map((row, index) => {
         // Chuẩn hóa dữ liệu
         const semester = {
-            semester_id: row['Mã học kỳ'] || row['semester_id'] || '',
-            semester_name: row['Tên học kỳ'] || row['semester_name'] || '',
+            semester_id: row['Mã học kỳ']?.trim() || row['semester_id']?.trim() || '',
+            semester_name: row['Tên học kỳ']?.trim() || row['semester_name']?.trim() || '',
             start_date: formatDate(row['Ngày bắt đầu'] || row['start_date']),
             end_date: formatDate(row['Ngày kết thúc'] || row['end_date']),
-            status: row['Trạng thái'] || row['status'] || 'Hoạt động',
-            program_id: row['Mã chương trình đào tạo'] || row['Mã chương trình'] || row['program_id'] || '',
+            status: row['Trạng thái']?.trim() || row['status']?.trim() || 'Hoạt động',
+            program_id: row['Mã chương trình đào tạo']?.trim() || row['Mã chương trình']?.trim() || row['program_id'] || '',
             rowIndex: index + 2 // +2 vì Excel bắt đầu từ row 1 và có header
         };
 
@@ -439,10 +474,12 @@ const validateSubjectData = (subject, existingSubjects, allImportData = []) => {
         errors.push('duplicate_id');
     }
 
-    // Kiểm tra các trường bắt buộc
+
+    // Sửa lại: Dùng `value === null || value === undefined || (typeof value === 'string' && value.trim() === '')`
+    // Điều kiện này sẽ không coi số 0 là giá trị thiếu
     const missingFields = requiredSubjectFields.filter(field => {
         const value = subject[field];
-        return !value || (typeof value === 'string' && value.trim() === '');
+        return value === null || value === undefined || (typeof value === 'string' && value.trim() === '');
     });
 
     if (missingFields.length > 0) {
@@ -481,13 +518,13 @@ export const processExcelDataSubject = (rawData, existingSubjects) => {
     const processedData = rawData.map((row, index) => {
         // Chuẩn hóa dữ liệu
         const subject = {
-            subject_id: row['Mã học phần'] || row['subject_id'] || '',
-            subject_name: row['Tên học phần'] || row['subject_name'] || '',
-            credit: row['Số tín chỉ'] || row['credit'] || '',
-            theory_hours: row['Số giờ lý thuyết'] || row['theory_hours'] || '',
-            practice_hours: row['Số giờ thực hành'] || row['practice_hours'] || '',
-            status: row['Trạng thái'] || row['status'] || 'Hoạt động',
-            semester_id: row['Mã học kỳ'] || row['semester_id'] || '',
+            subject_id: row['Mã học phần']?.trim() || row['Mã môn học']?.trim() || row['subject_id']?.trim() || '',
+            subject_name: row['Tên học phần']?.trim() || row['Tên học phần']?.trim() || row['subject_name']?.trim() || '',
+            credit: row['Số tín chỉ'] ?? row['credit'] ?? '',
+            theory_hours: row['Số giờ lý thuyết'] ?? row['theory_hours'] ?? '',
+            practice_hours: row['Số giờ thực hành'] ?? row['practice_hours'] ?? '',
+            status: row['Trạng thái']?.trim() || row['status']?.trim() || 'Hoạt động',
+            semester_id: row['Mã học kỳ']?.trim() || row['semester_id']?.trim() || '',
             rowIndex: index + 2 // +2 vì Excel bắt đầu từ row 1 và có header
         };
 
@@ -496,6 +533,210 @@ export const processExcelDataSubject = (rawData, existingSubjects) => {
 
         return {
             ...subject,
+            errors
+        };
+    });
+
+    return processedData;
+};
+
+//validate timeslot data
+const requiredTimeslotFields = [
+    'slot_id',
+    'slot_name',
+    'start_time',
+    'end_time',
+    'type',
+    'status',
+];
+
+const validateTimeslotData = (timeslot, existingTimeslots, allImportData = []) => {
+    const errors = [];
+
+    // Kiểm tra trùng lặp mã timeslot với dữ liệu hiện có
+    const isDuplicateExisting = existingTimeslots.some(
+        existing => existing.slot_id === timeslot.slot_id
+    );
+
+    // Kiểm tra trùng lặp trong dữ liệu import
+    const isDuplicateImport = allImportData.filter(
+        item => item.slot_id === timeslot.slot_id
+    ).length > 1;
+
+    if (isDuplicateExisting || isDuplicateImport) {
+        errors.push('duplicate_id');
+    }
+
+    // Kiểm tra trùng lặp khung thời gian với dữ liệu hiện có
+    const normalizedStartTime = normalizeTime(timeslot.start_time);
+    const normalizedEndTime = normalizeTime(timeslot.end_time);
+
+    const isDuplicateTimeExisting = existingTimeslots.some(
+        existing => normalizeTime(existing.start_time) === normalizedStartTime &&
+            normalizeTime(existing.end_time) === normalizedEndTime
+    );
+
+    // Kiểm tra trùng lặp khung thời gian trong dữ liệu import
+    const isDuplicateTimeImport = allImportData.filter(
+        item => normalizeTime(item.start_time) === normalizedStartTime &&
+            normalizeTime(item.end_time) === normalizedEndTime &&
+            item.slot_id !== timeslot.slot_id
+    ).length > 0;
+
+    if (isDuplicateTimeExisting || isDuplicateTimeImport) {
+        errors.push('duplicate_time_range');
+    }
+
+    // Kiểm tra các trường bắt buộc (không coi số 0 là thiếu)
+    const missingFields = requiredTimeslotFields.filter(field => {
+        const value = timeslot[field];
+        return value === null || value === undefined || (typeof value === 'string' && value.trim() === '');
+    });
+
+    if (missingFields.length > 0) {
+        errors.push('missing_required');
+    }
+
+    // Kiểm tra định dạng thời gian (chỉ HH:MM)
+    const timeRegexHHMM = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
+    // Validate định dạng thời gian (HH:MM:SS)
+    const timeRegexHHMMSS = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$/;
+
+    if (timeslot.start_time && !timeRegexHHMM.test(timeslot.start_time) && !timeRegexHHMMSS.test(timeslot.start_time)) {
+        errors.push('Định dạng giờ không hợp lệ (HH:MM hoặc HH:MM:SS)');
+    }
+
+    if (timeslot.end_time && !timeRegexHHMM.test(timeslot.end_time) && !timeRegexHHMMSS.test(timeslot.end_time)) {
+        errors.push('Định dạng giờ không hợp lệ (HH:MM hoặc HH:MM:SS)');
+    }
+
+    // Kiểm tra start_time phải nhỏ hơn end_time
+    if (timeslot.start_time && timeslot.end_time) {
+        const startTime = new Date(`1970-01-01T${timeslot.start_time}:00`);
+        const endTime = new Date(`1970-01-01T${timeslot.end_time}:00`);
+
+        if (startTime >= endTime) {
+            errors.push('invalid_time_range');
+        }
+    }
+
+    return errors;
+};
+
+export const processExcelDataTimeslot = (rawData, existingTimeslots) => {
+    // Xử lý dữ liệu thô từ Excel
+    const processedData = rawData.map((row, index) => {
+        // Chuẩn hóa dữ liệu
+        const timeslot = {
+            slot_id: row['Mã khung giờ']?.trim() || row['Mã khung thời gian']?.trim() || row['slot_id']?.trim() || '',
+            slot_name: row['Tên khung giờ']?.trim() || row['Tên khung thời gian']?.trim() || row['slot_name']?.trim() || '',
+            start_time: formatTime(row['Giờ bắt đầu'] || row['Thời gian bắt đầu'] || row['start_time'] || ''),
+            end_time: formatTime(row['Giờ kết thúc'] || row['Thời gian kết thúc'] || row['end_time'] || ''),
+            type: row['Loại']?.trim() || row['Buổi']?.trim() || row['type'] || '',
+            description: row['Mô tả']?.trim() || row['description']?.trim() || '',
+            status: row['Trạng thái']?.trim() || row['status']?.trim() || 'active',
+            rowIndex: index + 2 // +2 vì Excel bắt đầu từ row 1 và có header
+        };
+
+        // Validate dữ liệu
+        const errors = validateTimeslotData(timeslot, existingTimeslots, rawData);
+
+        return {
+            ...timeslot,
+            errors
+        };
+    });
+
+    return processedData;
+};
+
+// Helper function để normalize time format cho việc so sánh
+const normalizeTime = (timeString) => {
+    if (!timeString) return '';
+
+    // Nếu có format HH:MM:SS, chỉ lấy HH:MM
+    if (/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$/.test(timeString)) {
+        return timeString.substring(0, 5);
+    }
+
+    // Nếu đã là HH:MM, giữ nguyên
+    return timeString;
+};
+
+//validate room data
+const requiredRoomFields = [
+    'room_id',
+    'room_name',
+    'location',
+    'capacity',
+    'status',
+    'type',
+];
+
+const validateRoomData = (room, existingRooms, allImportData = []) => {
+    const errors = [];
+
+    // Kiểm tra trùng lặp mã phòng với dữ liệu hiện có
+    const isDuplicateExisting = existingRooms.some(
+        existing => existing.room_id === room.room_id
+    );
+
+    // Kiểm tra trùng lặp trong dữ liệu import
+    const isDuplicateImport = allImportData.filter(
+        item => item.room_id === room.room_id
+    ).length > 1;
+
+    if (isDuplicateExisting || isDuplicateImport) {
+        errors.push('duplicate_id');
+    }
+
+    // Kiểm tra các trường bắt buộc (không coi số 0 là thiếu)
+    const missingFields = requiredRoomFields.filter(field => {
+        const value = room[field];
+        return value === null || value === undefined || (typeof value === 'string' && value.trim() === '');
+    });
+
+    if (missingFields.length > 0) {
+        errors.push('missing_required');
+    }
+
+    // Kiểm tra capacity format (phải là số dương)
+    if (room.capacity) {
+        const capacity = parseFloat(room.capacity);
+        if (isNaN(capacity) || capacity <= 0) {
+            errors.push('invalid_capacity');
+        }
+    }
+
+    return errors;
+};
+
+export const processExcelDataRoom = (rawData, existingRooms) => {
+    // Xử lý dữ liệu thô từ Excel
+    const processedData = rawData.map((row, index) => {
+        // Chuẩn hóa dữ liệu
+        const room = {
+            // Sử dụng `?.trim()` để loại bỏ khoảng trắng một cách an toàn
+            room_id: row['Mã phòng']?.trim() || row['room_id']?.trim() || '',
+            room_name: row['Tên phòng']?.trim() || row['room_name']?.trim() || '',
+            location: row['Vị trí']?.trim() || row['location']?.trim() || '',
+
+            // Giữ nguyên với các giá trị không phải chuỗi hoặc có logic mặc định
+            capacity: row['Sức chứa'] || row['capacity'] || '',
+            status: row['Trạng thái'] || row['status'] || 'available',
+
+            // Áp dụng trim cho các trường chuỗi còn lại
+            type: row['Loại phòng']?.trim() || row['type']?.trim() || '',
+            note: row['Ghi chú']?.trim() || row['note']?.trim() || '',
+
+            rowIndex: index + 2
+        };
+
+        // Validate dữ liệu
+        const errors = validateRoomData(room, existingRooms, rawData);
+
+        return {
+            ...room,
             errors
         };
     });

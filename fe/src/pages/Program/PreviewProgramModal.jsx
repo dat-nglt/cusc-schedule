@@ -24,7 +24,7 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ErrorIcon from '@mui/icons-material/Error';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import { importPrograms } from '../../api/programAPI';
+import { importProgramsAPI } from '../../api/programAPI';
 import { getErrorChip, getRowStatus } from '../../components/ui/ErrorChip';
 
 
@@ -55,7 +55,7 @@ export default function PreviewProgramModal({ open, onClose, previewData, fetchP
             });
             console.log('Valid data to import:', validData);
             // Gọi API import với dữ liệu đã được validate
-            const response = await importPrograms(validData);
+            const response = await importProgramsAPI(validData);
 
             if (response.data && response.data) {
                 setImportMessage(`Thêm thành công ${validRows.length} chuơng trình đào tạo!`);

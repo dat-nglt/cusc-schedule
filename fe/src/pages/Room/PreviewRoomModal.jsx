@@ -1,12 +1,10 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
     Dialog,
     DialogTitle,
     DialogContent,
     DialogActions,
-    Typography,
     Button,
-    Box,
     Table,
     TableBody,
     TableCell,
@@ -14,6 +12,8 @@ import {
     TableHead,
     TableRow,
     Paper,
+    Typography,
+    Box,
     Chip,
     Tooltip,
     IconButton,
@@ -24,92 +24,63 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ErrorIcon from '@mui/icons-material/Error';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import { getRowStatus, getErrorChip } from '../../components/ui/ErrorChip';
-import { importSubjectAPI } from "../../api/subjectAPI";
+import { importRoomAPI } from '../../api/roomAPI';
+import { getErrorChip, getRowStatus } from '../../components/ui/ErrorChip';
 
-export default function PreviewSubjectModal({ open, onClose, previewData, fetchSubjects, semesters }) {
+export default function PreviewRoomModal({ open, onClose, previewData, fetchRooms }) {
     const [isImporting, setIsImporting] = useState(false);
     const [importError, setImportError] = useState('');
     const [importMessage, setImportMessage] = useState('');
 
-    // Validate preview data with semester checking
-    const validatePreviewData = (data) => {
-        return data.map(row => {
-            let errors = row.errors || [];
-
-            // If there are already errors, keep only the first one
-            if (errors.length > 0) {
-                errors = [errors[0]];
-            } else {
-                // Check if semester_id exists in semesters array
-                const semesterValue = row.semester_id || row.semester; // Check both possible field names
-                if (semesterValue && semesterValue.trim() !== '') {
-                    const semesterExists = semesters && semesters.some(p => p.semester_id === semesterValue.trim());
-                    if (!semesterExists) {
-                        errors = [`Mã học kỳ "${semesterValue}" không tồn tại trong hệ thống`];
-                    }
-                }
-            }
-
-            return {
-                ...row,
-                errors
-            };
-        });
-    };
-
-    const validatedData = validatePreviewData(previewData);
-    const validRows = validatedData.filter((row) => getRowStatus(row) === "valid");
-    const errorRows = validatedData.filter((row) => getRowStatus(row) === "error");
+    const validRows = previewData.filter(row => getRowStatus(row) === 'valid');
+    const errorRows = previewData.filter(row => getRowStatus(row) === 'error');
 
     const handleConfirmImport = async () => {
         if (validRows.length === 0) {
-            setImportError("Không có dữ liệu hợp lệ!");
+            setImportError('Không có dữ liệu hợp lệ!');
             return;
         }
 
         setIsImporting(true);
-        setImportError("");
-        setImportMessage("");
+        setImportError('');
+        setImportMessage('');
 
         try {
-            // Tạo file Excel tạm thời chỉ với dữ liệu hợp lệ
+            // Tạo dữ liệu hợp lệ để import
             const validData = validRows.map(row => {
-                const { errors: _errors, rowIndex: _rowIndex, ...subjectData } = row;
-                return subjectData;
+                const { errors: _errors, rowIndex: _rowIndex, ...roomData } = row;
+                return roomData;
             });
             console.log('Valid data to import:', validData);
+
             // Gọi API import với dữ liệu đã được validate
-            const response = await importSubjectAPI(validData);
+            const response = await importRoomAPI(validData);
 
             if (response.data && response.data) {
-                setImportMessage(`Thêm thành công ${validRows.length} học phần`);
-                setImportError("");
-                fetchSubjects(); // Gọi lại hàm fetch để cập nhật danh sách học kỳ
+                setImportMessage(`Thêm thành công ${validRows.length} phòng học!`);
+                setImportError('');
+                fetchRooms(); // Gọi lại hàm fetch để cập nhật danh sách phòng học
 
                 // Delay để người dùng thấy thông báo thành công trước khi đóng modal
                 setTimeout(() => {
-                    onClose();
+                    onClose(); // Đóng modal sau khi cập nhật
                     setImportMessage('');
                 }, 1500);
             } else {
-                setImportError(
-                    response.data?.message || "Có lỗi xảy ra khi thêm dữ liệu!"
-                );
+                setImportError(response.data?.message || 'Có lỗi xảy ra khi thêm dữ liệu!');
             }
         } catch (error) {
-            console.error("Error importing data:", error);
-            setImportError(
-                error.message || "Lỗi khi thêm dữ liệu! Vui lòng thử lại."
-            );
+            console.error('Error importing data:', error);
+            setImportError(error.message || 'Lỗi khi thêm dữ liệu! Vui lòng thử lại.');
         } finally {
             setIsImporting(false);
         }
     };
+
     return (
         <Dialog open={open} onClose={onClose} maxWidth="lg" fullWidth>
             <DialogTitle>
-                <Typography >Xem trước dữ liệu đã nhập</Typography>
+                <Typography>Xem trước dữ liệu đã nhập</Typography>
             </DialogTitle>
             <DialogContent>
                 {importError && (
@@ -133,7 +104,7 @@ export default function PreviewSubjectModal({ open, onClose, previewData, fetchS
                 )}
 
                 <Box sx={{ mb: 3 }}>
-                    <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+                    <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
                         <Chip
                             icon={<CheckCircleIcon />}
                             label={`Hợp lệ: ${validRows.length}`}
@@ -166,23 +137,25 @@ export default function PreviewSubjectModal({ open, onClose, previewData, fetchS
                                 <Table stickyHeader size="small">
                                     <TableHead>
                                         <TableRow>
-                                            <TableCell>Mã Học phần</TableCell>
-                                            <TableCell>Tên học phần</TableCell>
-                                            <TableCell>Số tín chỉ</TableCell>
-                                            <TableCell>Số giờ lý thuyết</TableCell>
-                                            <TableCell>Số giờ thực hành</TableCell>
-                                            <TableCell>Mã học kỳ</TableCell>
+                                            <TableCell>Mã phòng học</TableCell>
+                                            <TableCell>Tên phòng học</TableCell>
+                                            <TableCell>Vị trí</TableCell>
+                                            <TableCell>Sức chứa</TableCell>
+                                            <TableCell>Loại phòng học</TableCell>
+                                            <TableCell>Trạng thái</TableCell>
+                                            <TableCell>Ghi chú</TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {validRows.map((subject, index) => (
+                                        {validRows.map((room, index) => (
                                             <TableRow key={index}>
-                                                <TableCell>{subject.subject_id}</TableCell>
-                                                <TableCell>{subject.subject_name}</TableCell>
-                                                <TableCell>{subject.credit}</TableCell>
-                                                <TableCell>{subject.theory_hours}</TableCell>
-                                                <TableCell>{subject.practice_hours}</TableCell>
-                                                <TableCell>{subject.semester_id}</TableCell>
+                                                <TableCell>{room.room_id}</TableCell>
+                                                <TableCell>{room.room_name}</TableCell>
+                                                <TableCell>{room.location}</TableCell>
+                                                <TableCell>{room.capacity}</TableCell>
+                                                <TableCell>{room.type}</TableCell>
+                                                <TableCell>{room.status}</TableCell>
+                                                <TableCell>{room.note}</TableCell>
                                             </TableRow>
                                         ))}
                                     </TableBody>
@@ -205,30 +178,32 @@ export default function PreviewSubjectModal({ open, onClose, previewData, fetchS
                                 <Table stickyHeader size="small">
                                     <TableHead>
                                         <TableRow>
-                                            <TableCell>Mã Học phần</TableCell>
-                                            <TableCell>Tên học phần</TableCell>
-                                            <TableCell>Số tín chỉ</TableCell>
-                                            <TableCell>Số giờ lý thuyết</TableCell>
-                                            <TableCell>Số giờ thực hành</TableCell>
-                                            <TableCell>Mã học kỳ</TableCell>
+                                            <TableCell>Mã phòng học</TableCell>
+                                            <TableCell>Tên phòng học</TableCell>
+                                            <TableCell>Vị trí</TableCell>
+                                            <TableCell>Sức chứa</TableCell>
+                                            <TableCell>Loại phòng học</TableCell>
+                                            <TableCell>Trạng thái</TableCell>
+                                            <TableCell>Ghi chú</TableCell>
                                             <TableCell>Lỗi</TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {errorRows.map((subject, index) => (
+                                        {errorRows.map((room, index) => (
                                             <TableRow
                                                 key={index}
                                                 sx={{ bgcolor: 'error.lighter' }}
                                             >
-                                                <TableCell>{subject.subject_id || '-'}</TableCell>
-                                                <TableCell>{subject.subject_name || '-'}</TableCell>
-                                                <TableCell>{subject.credit || '-'}</TableCell>
-                                                <TableCell>{subject.theory_hours || '-'}</TableCell>
-                                                <TableCell>{subject.practice_hours || '-'}</TableCell>
-                                                <TableCell>{subject.semester_id || '-'}</TableCell>
+                                                <TableCell>{room.room_id || '-'}</TableCell>
+                                                <TableCell>{room.room_name || '-'}</TableCell>
+                                                <TableCell>{room.location || '-'}</TableCell>
+                                                <TableCell>{room.capacity || '-'}</TableCell>
+                                                <TableCell>{room.type || '-'}</TableCell>
+                                                <TableCell>{room.status || '-'}</TableCell>
+                                                <TableCell>{room.note || '-'}</TableCell>
                                                 <TableCell>
                                                     <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-                                                        {subject.errors.map((error) => getErrorChip(error, 'học phần'))}
+                                                        {room.errors.map((error) => getErrorChip(error, 'phòng học'))}
                                                     </Box>
                                                 </TableCell>
                                             </TableRow>
@@ -252,9 +227,9 @@ export default function PreviewSubjectModal({ open, onClose, previewData, fetchS
                 >
                     {isImporting ? 'Đang thêm...' :
                         importMessage ? 'Đã thêm thành công' :
-                            `Thêm ${validRows.length} học phần`}
+                            `Thêm ${validRows.length} phòng học`}
                 </Button>
             </DialogActions>
         </Dialog>
-    )
+    );
 }
