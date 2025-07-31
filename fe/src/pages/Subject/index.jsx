@@ -25,8 +25,8 @@ import EditSubjectModal from './EditSubjectModal';
 import DeleteSubjectModal from './DeleteSubjectModal';
 import useResponsive from '../../hooks/useResponsive';
 import SubjectTable from './SubjectTable';
-import { getAllSubjects, getSubjectById, createSubject, updateSubject, deleteSubject } from '../../api/subjectAPI';
-import { getAllSemesters } from '../../api/semesterAPI';
+import { getAllSubjectsAPI, getSubjectByIdAPI, createSubjectAPI, updateSubjectAPI, deleteSubjectAPI } from '../../api/subjectAPI';
+import { getAllSemestersAPI } from '../../api/semesterAPI';
 import { toast } from 'react-toastify'; // Thêm import cho toast thông báo
 
 
@@ -58,7 +58,7 @@ const Subject = () => {
     // Hàm lấy danh sách học kỳ từ API
     const fetchSemesters = async () => {
         try {
-            const response = await getAllSemesters();
+            const response = await getAllSemestersAPI();
             if (response && response.data) {
                 setSemesters(response.data.data);
             } else {
@@ -75,7 +75,7 @@ const Subject = () => {
         try {
             setError('');
             setLoading(true);
-            const response = await getAllSubjects();
+            const response = await getAllSubjectsAPI();
             if (!response) {
                 setError('Không có dữ liệu học phần');
                 return;
@@ -110,7 +110,7 @@ const Subject = () => {
     const handleAddNewSubject = async (newSubject) => {
         try {
             setLoading(true);
-            const response = await createSubject(newSubject);
+            const response = await createSubjectAPI(newSubject);
             if (response && response.data) {
                 toast.success('Học phần đã được thêm thành công!')
                 fetchSubjects(); // Tải lại danh sách học phần sau khi thêm thành công
@@ -128,7 +128,7 @@ const Subject = () => {
     const handleEditSubject = async (id) => {
         try {
             setLoading(true);
-            const response = await getSubjectById(id);
+            const response = await getSubjectByIdAPI(id);
             if (response && response.data) {
                 setEditedSubject(response.data.data);
                 setOpenEditModal(true);
@@ -152,7 +152,7 @@ const Subject = () => {
     const handleSaveEditedSubject = async (updatedSubject) => {
         try {
             setLoading(true);
-            const response = await updateSubject(updatedSubject.subject_id, updatedSubject);
+            const response = await updateSubjectAPI(updatedSubject.subject_id, updatedSubject);
             if (response && response.data) {
                 toast.success('Học phần đã được cập nhật thành công!');
                 fetchSubjects(); // Tải lại danh sách học phần sau khi cập nhật thành công
@@ -175,7 +175,7 @@ const Subject = () => {
     const handleViewSubject = async (id) => {
         try {
             setLoading(true);
-            const response = await getSubjectById(id);
+            const response = await getSubjectByIdAPI(id);
             if (response && response.data) {
                 setSelectedSubject(response.data.data);
                 setOpenDetail(true);
@@ -200,7 +200,7 @@ const Subject = () => {
     const confirmDeleteSubject = async (id) => {
         try {
             setLoading(true);
-            const response = await deleteSubject(id);
+            const response = await deleteSubjectAPI(id);
             if (response) {
                 toast.success('Học phần đã được xóa thành công!');
                 fetchSubjects(); // Tải lại danh sách học phần sau khi xóa thành công

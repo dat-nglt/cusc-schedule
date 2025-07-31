@@ -25,9 +25,9 @@ import EditSemesterModal from './EditSemesterModal';
 import DeleteSemesterModal from './DeleteSemesterModal';
 import useResponsive from '../../hooks/useResponsive';
 import SemesterTable from './SemesterTable';
-import { getAllSemesters, getSemesterById, createSemester, updateSemester, deleteSemester } from '../../api/semesterAPI';
+import { getAllSemestersAPI, getSemesterByIdAPI, createSemesterAPI, updateSemesterAPI, deleteSemesterAPI } from '../../api/semesterAPI';
 import { toast } from 'react-toastify';
-import { getAllPrograms } from '../../api/programAPI';
+import { getAllProgramsAPI } from '../../api/programAPI';
 
 const Semester = () => {
     const { isSmallScreen, isMediumScreen } = useResponsive();
@@ -56,7 +56,7 @@ const Semester = () => {
     //hàm lấy danh sách chương trình từ API
     const fetchPrograms = async () => {
         try {
-            const response = await getAllPrograms();
+            const response = await getAllProgramsAPI();
             if (!response) {
                 console.error("Không có dữ liệu chương trình");
                 return;
@@ -71,7 +71,7 @@ const Semester = () => {
     const fetchSemesters = async () => {
         try {
             setLoading(true);
-            const response = await getAllSemesters();
+            const response = await getAllSemestersAPI();
             if (!response) {
                 console.error("Không có dữ liệu học kỳ");
                 return;
@@ -103,7 +103,7 @@ const Semester = () => {
     const handleAddNewSemester = async (newSemester) => {
         try {
             setLoading(true);
-            const response = await createSemester(newSemester);
+            const response = await createSemesterAPI(newSemester);
             if (response && response.data) {
                 toast.success('Thêm học kỳ thành công!')
                 fetchSemesters(); // Tải lại danh sách học kỳ sau khi thêm thành công
@@ -121,7 +121,7 @@ const Semester = () => {
     const handleEditSemester = async (id) => {
         try {
             setLoading(true);
-            const response = await getSemesterById(id);
+            const response = await getSemesterByIdAPI(id);
             if (response && response.data) {
                 setEditedSemester(response.data.data);
                 setOpenEditModal(true);
@@ -145,7 +145,7 @@ const Semester = () => {
     const handleSaveEditedSemester = async (updatedSemester) => {
         try {
             setLoading(true);
-            const response = await updateSemester(updatedSemester.semester_id, updatedSemester);
+            const response = await updateSemesterAPI(updatedSemester.semester_id, updatedSemester);
             if (response && response.data) {
                 toast.success('Cập nhật học kỳ thành công!');
                 fetchSemesters(); // Tải lại danh sách học kỳ sau khi cập nhật thành công
@@ -168,7 +168,7 @@ const Semester = () => {
     const handleViewSemester = async (id) => {
         try {
             setLoading(true);
-            const response = await getSemesterById(id);
+            const response = await getSemesterByIdAPI(id);
             if (response && response.data) {
                 setSelectedSemester(response.data.data);
                 setOpenDetail(true);
@@ -193,7 +193,7 @@ const Semester = () => {
     const confirmDeleteSemester = async (id) => {
         try {
             setLoading(true);
-            const response = await deleteSemester(id);
+            const response = await deleteSemesterAPI(id);
             if (response) {
                 toast.success('Xóa học kỳ thành công!');
                 fetchSemesters(); // Tải lại danh sách học kỳ sau khi xóa thành công

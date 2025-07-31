@@ -24,7 +24,7 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ErrorIcon from '@mui/icons-material/Error';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import { importSemesters } from '../../api/semesterAPI';
+import { importSemestersAPI } from '../../api/semesterAPI';
 import { getErrorChip, getRowStatus } from '../../components/ui/ErrorChip';
 import { formatDateTime } from '../../utils/formatDateTime';
 
@@ -55,7 +55,7 @@ export default function PreviewSemesterModal({ open, onClose, previewData, fetch
             });
             console.log('Valid data to import:', validData);
             // Gọi API import với dữ liệu đã được validate
-            const response = await importSemesters(validData);
+            const response = await importSemestersAPI(validData);
 
             if (response.data && response.data) {
                 setImportMessage(`Thêm thành công ${validRows.length} học kỳ`);

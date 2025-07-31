@@ -24,7 +24,7 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ErrorIcon from '@mui/icons-material/Error';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import { importCourses } from '../../api/courseAPI';
+import { importCoursesAPI } from '../../api/courseAPI';
 
 export default function PreviewCourseModal({
   open,

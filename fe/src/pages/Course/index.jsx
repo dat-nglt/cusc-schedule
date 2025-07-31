@@ -27,7 +27,7 @@ import EditCourseModal from './EditCourseModal';
 import DeleteCourseModal from './DeleteCourseModal';
 import useResponsive from '../../hooks/useResponsive';
 import CourseTable from './CourseTable';
-import { getCourses, getCourseById, addCourse, updateCourse, deleteCourse} from '../../api/courseAPI';
+import { getCoursesAPI, getCourseByIdAPI, addCourseAPI, updateCourseAPI, deleteCourseAPI } from '../../api/courseAPI';
 
 // Hàm định dạng timestamp thành YYYY-MM-DD HH:MM:SS.sss+07
 const formatTimestamp = (timestamp) => {
@@ -64,7 +64,7 @@ const Course = () => {
   const fetchCourses = async () => {
     try {
       setLoading(true);
-      const response = await getCourses();
+      const response = await getCoursesAPI();
       console.log('Phản hồi từ API (danh sách):', response);
 
       let coursesData = [];
@@ -108,7 +108,7 @@ const Course = () => {
   const handleViewCourse = async (course_id) => {
     try {
       setLoading(true);
-      const response = await getCourseById(course_id);
+      const response = await getCourseByIdAPI(course_id);
       console.log('Phản hồi từ API (chi tiết):', response);
 
       let courseData = {};
@@ -147,7 +147,7 @@ const Course = () => {
     try {
       setLoading(true);
       console.log('Gửi dữ liệu thêm khóa học:', courseData);
-      const response = await addCourse({
+      const response = await addCourseAPI({
         course_id: courseData.course_id,
         course_name: courseData.course_name,
         start_date: courseData.start_date,
@@ -186,7 +186,7 @@ const Course = () => {
     try {
       setLoading(true);
       console.log('Gửi dữ liệu chỉnh sửa khóa học:', courseData);
-      const response = await updateCourse(courseData.course_id, {
+      const response = await updateCourseAPI(courseData.course_id, {
         course_id: courseData.course_id,
         course_name: courseData.course_name,
         start_date: courseData.start_date,
@@ -224,7 +224,7 @@ const Course = () => {
         return;
       }
       console.log('Attempting to delete course with course_id:', course_id);
-      const response = await deleteCourse(course_id);
+      const response = await deleteCourseAPI(course_id);
       console.log('Response from API (delete):', response);
 
       await fetchCourses();
