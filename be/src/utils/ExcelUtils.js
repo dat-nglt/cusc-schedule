@@ -194,31 +194,31 @@ export function cleanString(value) {
  */
 export function createLecturerTemplate() {
     const templateData = [{
-            "Mã giảng viên": "GV001",
-            "Họ tên": "Nguyễn Văn A",
-            Email: "nguyenvana@example.com",
-            "Ngày sinh": "1980-01-15",
-            "Giới tính": "Nam",
-            "Địa chỉ": "123 Đường ABC, Quận 1, TP.HCM",
-            "Số điện thoại": "0123456789",
-            "Khoa/Bộ môn": "Khoa Công Nghệ Thông Tin",
-            "Ngày tuyển dụng": "2020-09-01",
-            "Học vị": "Tiến sỹ",
-            "Trạng thái": "Hoạt động",
-        },
-        {
-            "Mã giảng viên": "GV002",
-            "Họ tên": "Trần Thị B",
-            Email: "tranthib@example.com",
-            "Ngày sinh": "1985-05-20",
-            "Giới tính": "Nữ",
-            "Địa chỉ": "456 Đường XYZ, Quận 3, TP.HCM",
-            "Số điện thoại": "0987654321",
-            "Khoa/Bộ môn": "Khoa Kinh Tế",
-            "Ngày tuyển dụng": "2021-02-15",
-            "Học vị": "Thạc sỹ",
-            "Trạng thái": "Hoạt động",
-        },
+        "Mã giảng viên": "GV001",
+        "Họ tên": "Nguyễn Văn A",
+        Email: "nguyenvana@example.com",
+        "Ngày sinh": "1980-01-15",
+        "Giới tính": "Nam",
+        "Địa chỉ": "123 Đường ABC, Quận 1, TP.HCM",
+        "Số điện thoại": "0123456789",
+        "Khoa/Bộ môn": "Khoa Công Nghệ Thông Tin",
+        "Ngày tuyển dụng": "2020-09-01",
+        "Học vị": "Tiến sỹ",
+        "Trạng thái": "Hoạt động",
+    },
+    {
+        "Mã giảng viên": "GV002",
+        "Họ tên": "Trần Thị B",
+        Email: "tranthib@example.com",
+        "Ngày sinh": "1985-05-20",
+        "Giới tính": "Nữ",
+        "Địa chỉ": "456 Đường XYZ, Quận 3, TP.HCM",
+        "Số điện thoại": "0987654321",
+        "Khoa/Bộ môn": "Khoa Kinh Tế",
+        "Ngày tuyển dụng": "2021-02-15",
+        "Học vị": "Thạc sỹ",
+        "Trạng thái": "Hoạt động",
+    },
     ];
 
     return createExcelFromJSON(templateData, "Lecturers");
@@ -231,19 +231,19 @@ export function createLecturerTemplate() {
  */
 export function createCourseTemplate() {
     const templateData = [{
-            "Mã khóa học": "KH001",
-            "Tên khóa học": "Khóa học lập trình",
-            "Thời gian bắt đầu": "2025-06-28",
-            "Thời gian kết thúc": "2025-06-30",
-            "Trạng thái": "Hoạt động",
-        },
-        {
-            "Mã khóa học": "KH002",
-            "Tên khóa học": "Khóa học cơ sở dữ liệu",
-            "Thời gian bắt đầu": "2025-07-01",
-            "Thời gian kết thúc": "2025-07-31",
-            "Trạng thái": "Ngừng hoạt động",
-        },
+        "Mã khóa học": "KH001",
+        "Tên khóa học": "Khóa học lập trình",
+        "Thời gian bắt đầu": "2025-06-28",
+        "Thời gian kết thúc": "2025-06-30",
+        "Trạng thái": "Hoạt động",
+    },
+    {
+        "Mã khóa học": "KH002",
+        "Tên khóa học": "Khóa học cơ sở dữ liệu",
+        "Thời gian bắt đầu": "2025-07-01",
+        "Thời gian kết thúc": "2025-07-31",
+        "Trạng thái": "Ngừng hoạt động",
+    },
     ];
 
     return createExcelFromJSON(templateData, "Courses");
@@ -256,31 +256,31 @@ export function createCourseTemplate() {
  */
 export function createStudentTemplate() {
     const templateData = [{
-            "Mã học viên": "SV001",
-            "Họ tên": "Lê Văn C",
-            Email: "levanc@example.com",
-            "Ngày sinh": "2000-05-15",
-            "Giới tính": "Nam",
-            "Địa chỉ": "123 Đường DEF, Quận 2, TP.HCM",
-            "Số điện thoại": "0123456789",
-            Lớp: "CNTT2020",
-            "Năm nhập học": "2020",
-            "Điểm trung bình": "3.5",
-            "Trạng thái": "active",
-        },
-        {
-            "Mã học viên": "SV002",
-            "Họ tên": "Phạm Thị D",
-            Email: "phamthid@example.com",
-            "Ngày sinh": "2001-12-20",
-            "Giới tính": "Nữ",
-            "Địa chỉ": "456 Đường GHI, Quận 7, TP.HCM",
-            "Số điện thoại": "0987654321",
-            Lớp: "QTKD2021",
-            "Năm nhập học": "2021",
-            "Điểm trung bình": "3.7",
-            "Trạng thái": "active",
-        },
+        "Mã học viên": "SV001",
+        "Họ tên": "Lê Văn C",
+        Email: "levanc@example.com",
+        "Ngày sinh": "2000-05-15",
+        "Giới tính": "Nam",
+        "Địa chỉ": "123 Đường DEF, Quận 2, TP.HCM",
+        "Số điện thoại": "0123456789",
+        Lớp: "CNTT2020",
+        "Năm nhập học": "2020",
+        "Điểm trung bình": "3.5",
+        "Trạng thái": "active",
+    },
+    {
+        "Mã học viên": "SV002",
+        "Họ tên": "Phạm Thị D",
+        Email: "phamthid@example.com",
+        "Ngày sinh": "2001-12-20",
+        "Giới tính": "Nữ",
+        "Địa chỉ": "456 Đường GHI, Quận 7, TP.HCM",
+        "Số điện thoại": "0987654321",
+        Lớp: "QTKD2021",
+        "Năm nhập học": "2021",
+        "Điểm trung bình": "3.7",
+        "Trạng thái": "active",
+    },
     ];
 
     return createExcelFromJSON(templateData, "Students");
@@ -293,19 +293,19 @@ export function createStudentTemplate() {
  */
 export function createProgramTemplate() {
     const templateData = [{
-            "Mã chương trình": "CT001",
-            "Tên chương trình": "Chương trình Đào tạo CNTT",
-            "Thời gian đào tạo": "4 năm",
-            "Mô tả": "Chương trình đào tạo về công nghệ thông tin",
-            "Trạng thái": "Hoạt động",
-        },
-        {
-            "Mã chương trình": "CT002",
-            "Tên chương trình": "Chương trình Đào tạo Kinh tế",
-            "Thời gian đào tạo": "3 năm",
-            "Mô tả": "Chương trình đào tạo về kinh tế và quản trị",
-            "Trạng thái": "Ngừng hoạt động",
-        },
+        "Mã chương trình": "CT001",
+        "Tên chương trình": "Chương trình Đào tạo CNTT",
+        "Thời gian đào tạo": "4 năm",
+        "Mô tả": "Chương trình đào tạo về công nghệ thông tin",
+        "Trạng thái": "Hoạt động",
+    },
+    {
+        "Mã chương trình": "CT002",
+        "Tên chương trình": "Chương trình Đào tạo Kinh tế",
+        "Thời gian đào tạo": "3 năm",
+        "Mô tả": "Chương trình đào tạo về kinh tế và quản trị",
+        "Trạng thái": "Ngừng hoạt động",
+    },
     ];
 
     return createExcelFromJSON(templateData, "Programs");
@@ -318,21 +318,21 @@ export function createProgramTemplate() {
  */
 export function createSemesterTemplate() {
     const templateData = [{
-            "Mã học kỳ": "HK2024_1",
-            "Tên học kỳ": "Học kỳ 1 năm học 2024-2025",
-            "Ngày bắt đầu": "2024-09-01",
-            "Ngày kết thúc": "2025-01-15",
-            "Trạng thái": "Hoạt động",
-            "Mã chương trình đào tạo": "CT001",
-        },
-        {
-            "Mã học kỳ": "HK2024_2",
-            "Tên học kỳ": "Học kỳ 2 năm học 2024-2025",
-            "Ngày bắt đầu": "2025-02-01",
-            "Ngày kết thúc": "2025-06-30",
-            "Trạng thái": "Sắp diễn ra",
-            "Mã chương trình đào tạo": "CT001",
-        },
+        "Mã học kỳ": "HK2024_1",
+        "Tên học kỳ": "Học kỳ 1 năm học 2024-2025",
+        "Ngày bắt đầu": "2024-09-01",
+        "Ngày kết thúc": "2025-01-15",
+        "Trạng thái": "Hoạt động",
+        "Mã chương trình đào tạo": "CT001",
+    },
+    {
+        "Mã học kỳ": "HK2024_2",
+        "Tên học kỳ": "Học kỳ 2 năm học 2024-2025",
+        "Ngày bắt đầu": "2025-02-01",
+        "Ngày kết thúc": "2025-06-30",
+        "Trạng thái": "Sắp diễn ra",
+        "Mã chương trình đào tạo": "CT001",
+    },
     ];
 
     return createExcelFromJSON(templateData, "Semesters");
@@ -344,28 +344,88 @@ export function createSemesterTemplate() {
  * @returns {Buffer} Buffer chứa nội dung của file Excel template môn học.
  */
 export function createSubjectTemplate() {
-  const templateData = [
-    {
-      "Mã học phần": "MH001",
-      "Tên học phần": "Lập trình cơ bản",
-      "Số tín chỉ": 3,
-      "Số giờ lý thuyết": 30,
-      "Số giờ thực hành": 15,
-      "Trạng thái": "Hoạt động",
-      "Mã học kỳ": "HK2024_1",
-    },
-    {
-      "Mã học phần": "MH002",
-      "Tên học phần": "Cơ sở dữ liệu",
-      "Số tín chỉ": 4,
-      "Số giờ lý thuyết": 45,
-      "Số giờ thực hành": 15,
-      "Trạng thái": "Hoạt động",
-      "Mã học kỳ": "HK2024_1",
-    },
-  ];
+    const templateData = [
+        {
+            "Mã học phần": "MH001",
+            "Tên học phần": "Lập trình cơ bản",
+            "Số tín chỉ": 3,
+            "Số giờ lý thuyết": 30,
+            "Số giờ thực hành": 15,
+            "Trạng thái": "Hoạt động",
+            "Mã học kỳ": "HK2024_1",
+        },
+        {
+            "Mã học phần": "MH002",
+            "Tên học phần": "Cơ sở dữ liệu",
+            "Số tín chỉ": 4,
+            "Số giờ lý thuyết": 45,
+            "Số giờ thực hành": 15,
+            "Trạng thái": "Hoạt động",
+            "Mã học kỳ": "HK2024_1",
+        },
+    ];
 
     return createExcelFromJSON(templateData, "Subjects");
+}
+
+/**
+ * Tạo một template Excel mẫu cho dữ liệu khung thời gian với các cột tiếng Việt.
+ *
+ * @returns {Buffer} Buffer chứa nội dung của file Excel template khung thời gian.
+ */
+export function createTimeslotTemplate() {
+    const templateData = [
+        {
+            "Mã khung thời gian": "TS001",
+            "Tên khung thời gian": "Ca sáng 1",
+            "Thời gian bắt đầu": "07:00",
+            "Thời gian kết thúc": "08:30",
+            "Buổi": "Sáng",
+            "Mô tả": "Ca học đầu tiên trong ngày",
+            "Trạng thái": "Hoạt động",
+        },
+        {
+            "Mã khung thời gian": "TS002",
+            "Tên khung thời gian": "Ca sáng 2",
+            "Thời gian bắt đầu": "08:45",
+            "Thời gian kết thúc": "10:15",
+            "Buổi": "Sáng",
+            "Mô tả": "Ca học thứ hai trong buổi sáng",
+            "Trạng thái": "Hoạt động",
+        },
+    ];
+
+    return createExcelFromJSON(templateData, "TimeSlots");
+}
+
+/**
+ * Tạo một template Excel mẫu cho dữ liệu phòng học với các cột tiếng Việt.
+ *
+ * @returns {Buffer} Buffer chứa nội dung của file Excel template phòng học.
+ */
+export function createRoomTemplate() {
+    const templateData = [
+        {
+            "Mã phòng": "P001",
+            "Tên phòng": "Phòng A101",
+            "Vị trí": "Tòa A - Tầng 1",
+            "Sức chứa": 50,
+            "Trạng thái": "Có sẵn",
+            "Loại phòng": "Lý thuyết",
+            "Ghi chú": "Phòng học lý thuyết tiêu chuẩn",
+        },
+        {
+            "Mã phòng": "P002",
+            "Tên phòng": "Lab B201",
+            "Vị trí": "Tòa B - Tầng 2",
+            "Sức chứa": 30,
+            "Trạng thái": "Bảo trì",
+            "Loại phòng": "Thực hành",
+            "Ghi chú": "Phòng thực hành máy tính",
+        },
+    ];
+
+    return createExcelFromJSON(templateData, "Rooms");
 }
 
 /**
@@ -416,13 +476,21 @@ export function getVietnameseColumnMapping() {
         // "Ngày kết thúc": "end_date", // Đã có ở cột chung
         "Mã chương trình đào tạo": "training_program_id",
 
-    // Subject specific columns
-    "Mã học phần": "subject_id",
-    "Tên học phần": "subject_name",
-    "Số tín chỉ": "credit",
-    "Số giờ lý thuyết": "theory_hours",
-    "Số giờ thực hành": "practice_hours",
-  };
+        // Cột dành riêng cho Khung thời gian
+        "Mã khung thời gian": "slot_id",
+        "Tên khung thời gian": "slot_name",
+        "Thời gian bắt đầu": "start_time",
+        "Thời gian kết thúc": "end_time",
+        "Buổi": "type",
+
+        // Cột dành riêng cho Phòng học
+        "Mã phòng": "room_id",
+        "Tên phòng": "room_name",
+        "Vị trí": "location",
+        "Sức chứa": "capacity",
+        "Loại phòng": "type",
+        "Ghi chú": "note",
+    };
 }
 
 /**
@@ -457,6 +525,8 @@ export default {
     createProgramTemplate,
     createSemesterTemplate,
     createSubjectTemplate,
+    createTimeslotTemplate,
+    createRoomTemplate,
     cleanString,
     isValidEmail,
     formatExcelDate,

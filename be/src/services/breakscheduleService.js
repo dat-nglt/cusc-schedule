@@ -1,5 +1,5 @@
-import BreakSchedule from "../models/BreakSchedule.js";
-import { Op } from 'sequelize'; // Đảm bảo import Op nếu chưa có
+import models from '../models/index.js';
+import { Op } from 'sequelize';
 import ExcelUtils from "../utils/ExcelUtils.js";
 
 /**
@@ -9,7 +9,7 @@ import ExcelUtils from "../utils/ExcelUtils.js";
  */
 export const getAllBreakSchedules = async () => {
   try {
-    const breakSchedules = await BreakSchedule.findAll();
+    const breakSchedules = await models.BreakSchedule.findAll();
     return breakSchedules;
   } catch (error) {
     throw new Error('Lỗi khi lấy danh sách lịch nghỉ: ' + error.message);
@@ -22,7 +22,7 @@ export const getAllBreakSchedules = async () => {
  * @returns {Promise<Object|null>} Lịch nghỉ tìm thấy hoặc null nếu không tìm thấy.
  */
 export const getBreakScheduleById = async (break_id) => {
-  return await BreakSchedule.findByPk(break_id);
+  return await models.BreakSchedule.findByPk(break_id);
 };
 
 /**
@@ -31,7 +31,7 @@ export const getBreakScheduleById = async (break_id) => {
  * @returns {Promise<Object>} Lịch nghỉ đã được tạo.
  */
 export const createBreakSchedule = async (data) => {
-  return await BreakSchedule.create(data);
+  return await models.BreakSchedule.create(data);
 };
 
 /**
@@ -42,7 +42,7 @@ export const createBreakSchedule = async (data) => {
  * @throws {Error} Nếu không tìm thấy lịch nghỉ.
  */
 export const updateBreakSchedule = async (break_id, data) => {
-  const breakSchedule = await BreakSchedule.findByPk(break_id);
+  const breakSchedule = await models.BreakSchedule.findByPk(break_id);
   if (!breakSchedule) throw new Error("Không tìm thấy lịch nghỉ");
   return await breakSchedule.update(data);
 };
@@ -54,7 +54,7 @@ export const updateBreakSchedule = async (break_id, data) => {
  * @throws {Error} Nếu không tìm thấy lịch nghỉ.
  */
 export const deleteBreakSchedule = async (break_id) => {
-  const breakSchedule = await BreakSchedule.findOne({ where: { break_id } });
+  const breakSchedule = await models.BreakSchedule.findOne({ where: { break_id } });
   if (!breakSchedule) throw new Error("Không tìm thấy lịch nghỉ");
   return await breakSchedule.destroy();
 };
@@ -91,7 +91,7 @@ export const listBreakSchedules = async (filters) => {
       whereClause.break_start_date = filters.break_start_date; // YYYY-MM-DD
     }
 
-    const breakSchedules = await BreakSchedule.findAll({
+    const breakSchedules = await models.BreakSchedule.findAll({
       where: whereClause,
       attributes: ['break_id', 'break_type', 'break_start_date', 'break_end_date', 'number_of_days', 'description', 'status', 'created_at', 'updated_at'],
       order: [['created_at', 'DESC']]
@@ -191,7 +191,7 @@ export const importBreakSchedulesFromExcel = async (fileBuffer) => {
         }
 
         // Kiểm tra break_id đã tồn tại chưa
-        const existingBreakSchedule = await BreakSchedule.findByPk(breakScheduleData.break_id);
+        const existingBreakSchedule = await models.BreakSchedule.findByPk(breakScheduleData.break_id);
         if (existingBreakSchedule) {
           results.errors.push({
             row: rowIndex,
@@ -202,7 +202,7 @@ export const importBreakSchedulesFromExcel = async (fileBuffer) => {
         }
 
         // Tạo lịch nghỉ mới
-        const newBreakSchedule = await BreakSchedule.create(breakScheduleData);
+        const newBreakSchedule = await models.BreakSchedule.create(breakScheduleData);
         results.success.push({
           row: rowIndex,
           break_id: newBreakSchedule.break_id,
@@ -305,7 +305,7 @@ export const importBreakSchedulesFromJson = async (breakSchedulesData) => {
         }
 
         // Kiểm tra break_id đã tồn tại chưa
-        const existingBreakSchedule = await BreakSchedule.findOne({
+        const existingBreakSchedule = await models.BreakSchedule.findOne({
           where: { break_id: cleanedData.break_id }
         });
         if (existingBreakSchedule) {
@@ -318,7 +318,7 @@ export const importBreakSchedulesFromJson = async (breakSchedulesData) => {
         }
 
         // Tạo lịch nghỉ mới
-        const newBreakSchedule = await BreakSchedule.create(cleanedData);
+        const newBreakSchedule = await models.BreakSchedule.create(cleanedData);
         results.success.push(newBreakSchedule);
       } catch (error) {
         results.errors.push({

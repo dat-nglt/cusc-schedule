@@ -439,6 +439,48 @@ const Dashboard = () => {
             checkOutTime: '2025-06-13T16:05:00'
         }
     ]);
+    //fetch data
+    const fetchLecturers = async () => {
+        try {
+            setLoading(true);
+            const response = await getAllLecturersAPI();
+            if (!response) {
+                console.error("Không có dữ liệu giảng viên");
+                return;
+            }
+            setLecturers(response.data);
+        } catch (error) {
+            console.error("Lỗi khi tải danh sách giảng viên:", error);
+        } finally {
+            setLoading(false);
+            setError('');
+        }
+    };
+
+
+    const fetchSubjects = async () => {
+        try {
+            setLoading(true);
+            const response = await getAllSubjects();
+            if (!response) {
+                console.error("Không có dữ liệu học phần");
+                return;
+            }
+            setSubjects(response.data.data);
+        } catch (error) {
+            console.error("Lỗi khi tải danh sách học phần:", error);
+        } finally {
+            setLoading(false);
+            setError('');
+        }
+    };
+
+    //useEffect
+    useEffect(() => {
+        fetchLecturers();
+        fetchSubjects();
+    }, []);
+
 
     const handleItemMove = (itemId, newStartTime) => {
         setScheduleItems(prevItems =>
@@ -453,9 +495,9 @@ const Dashboard = () => {
 
     const stats = {
         classes: 42,
-        teachers: 28,
+        teachers: lecturers.length,
         rooms: 15,
-        course: 15,
+        course: subjects.length,
         conflicts: 3
     };
 

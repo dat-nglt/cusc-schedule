@@ -1,10 +1,10 @@
 import {
   getAllLecturersService,
   getLecturerByIdService,
-  createLecturer,
-  updateLecturer,
-  deleteLecturer,
-  importLecturersFromJson, // Giả định có thể có thêm importLecturersFromExcel nếu bạn muốn import từ Excel
+  createLecturerService,
+  updateLecturerService,
+  deleteLecturerService,
+  importLecturersFromJsonService,
 } from "../services/lecturerService.js";
 import { APIResponse } from "../utils/APIResponse.js";
 import ExcelUtils from "../utils/ExcelUtils.js"; // Được sử dụng để tạo template Excel
@@ -78,18 +78,14 @@ export const getLecturerByIdController = async (req, res) => {
  * @access Private (admin, training_officer)
  */
 export const createLecturerController = async (req, res) => {
-  const lecturerData = req.body;
+  const { subjectIds, ...lecturerData } = req.body;
   try {
-    const lecturer = await createLecturer(lecturerData);
+    const lecturer = await createLecturerService(lecturerData, subjectIds);
     return APIResponse(res, 201, lecturer, "Tạo giảng viên thành công.");
   } catch (error) {
     console.error("Lỗi khi tạo giảng viên:", error);
-    return APIResponse(
-      res,
-      500,
-      null,
-      error.message || "Đã xảy ra lỗi khi tạo giảng viên."
-    );
+    // Có thể thêm logic kiểm tra lỗi cụ thể hơn từ service (ví dụ: duplicate entry)
+    return APIResponse(res, 500, null, error.message || "Đã xảy ra lỗi khi tạo giảng viên.");
   }
 };
 
@@ -104,7 +100,7 @@ export const updateLecturerController = async (req, res) => {
   const { id } = req.params;
   const lecturerData = req.body;
   try {
-    const lecturer = await updateLecturer(id, lecturerData);
+    const lecturer = await updateLecturerService(id, lecturerData);
     if (!lecturer) {
       return APIResponse(
         res,
@@ -140,7 +136,7 @@ export const updateLecturerController = async (req, res) => {
 export const deleteLecturerController = async (req, res) => {
   const { id } = req.params;
   try {
-    const deletedCount = await deleteLecturer(id); // Giả định service trả về số lượng bản ghi bị xóa
+    const deletedCount = await deleteLecturerService(id); // Giả định service trả về số lượng bản ghi bị xóa
     if (deletedCount === 0) {
       return APIResponse(res, 404, null, "Không tìm thấy giảng viên để xóa.");
     }
@@ -218,7 +214,7 @@ export const importLecturersFromJsonController = async (req, res) => {
     }
 
     // Tiến hành import dữ liệu từ JSON
-    const results = await importLecturersFromJson(lecturers);
+    const results = await importLecturersFromJsonService(lecturers);
 
     const responseData = {
       success: true, // Chỉ ra rằng request được xử lý

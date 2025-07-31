@@ -27,6 +27,7 @@ import useResponsive from '../../hooks/useResponsive';
 import StudentTable from './StudentTable';
 import { getAllStudentsAPI, getStudentByIdAPI, createStudentAPI, updateStudentAPI, deleteStudentAPI } from '../../api/studentAPI';
 import { toast } from 'react-toastify';
+import { getClasses } from '../../api/classAPI';
 
 const Student = () => {
     const { isSmallScreen, isMediumScreen } = useResponsive();
@@ -34,6 +35,8 @@ const Student = () => {
 
     // Dữ liệu mẫu cho danh sách học viên
     const [students, setStudents] = useState([]);
+    // Lấy danh sách lớp học để hiển thị trong modal thêm học viên
+    const [classes, setClasses] = useState([]);
     // State cho phân trang, tìm kiếm, lọc theo trạng thái và modal
     const [page, setPage] = useState(0);
     const [rowsPerPage] = useState(8);
@@ -69,8 +72,26 @@ const Student = () => {
         }
     };
 
+    // Hàm lấy danh sách lớp học
+    const fetchClasses = async () => {
+        try {
+            setLoading(true);
+            const response = await getClasses();
+            if (!response) {
+                console.error("Không có dữ liệu học viên");
+                return;
+            }
+            setClasses(response.data)
+        } catch (error) {
+            console.error("Lỗi khi tải danh sách học viên:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
         fetchStudents();
+        fetchClasses();
     }, [])
 
     // Hàm mở modal Thêm 
@@ -210,9 +231,9 @@ const Student = () => {
     // Lọc danh sách học viên dựa trên từ khóa tìm kiếm và trạng thái
     const filteredStudents = students.filter((student) => {
         const matchesSearchTerm =
-            student.student_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            student.class.toLowerCase().includes(searchTerm.toLowerCase());
+            (student.student_id && student.student_id.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (student.name && student.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (student.class && student.class.toLowerCase().includes(searchTerm.toLowerCase()));
 
         const matchesStatus = selectedStatus
             ? student.status === selectedStatus
@@ -336,6 +357,7 @@ const Student = () => {
                 error={error}
                 loading={loading}
                 fetchStudents={fetchStudents}
+                classes={classes} // Truyền danh sách lớp học vào modal
             />
             <EditStudentModal
                 open={openEditModal}

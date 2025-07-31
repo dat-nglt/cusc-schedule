@@ -1,10 +1,10 @@
 import {
-  getAllSemesters,
-  getSemesterById,
-  createSemester,
-  updateSemester,
-  deleteSemester,
-  importSemestersFromJSON, // Giả định có thể có thêm importSemestersFromExcel nếu bạn muốn nhập từ Excel
+  getAllSemesterService,
+  getSemesterByIdService,
+  createSemesterService,
+  updateSemesterService,
+  deleteSemesterService,
+  importSemestersFromJSONService, // Giả định có thể có thêm importSemestersFromExcel nếu bạn muốn nhập từ Excel
 } from "../services/semesterService.js";
 import { APIResponse } from "../utils/APIResponse.js"; // Sử dụng APIResponse nhất quán
 import ExcelUtils from "../utils/ExcelUtils.js"; // Được sử dụng để tạo template Excel
@@ -18,7 +18,7 @@ import ExcelUtils from "../utils/ExcelUtils.js"; // Được sử dụng để t
  */
 export const getAllSemestersController = async (req, res) => {
   try {
-    const semesters = await getAllSemesters();
+    const semesters = await getAllSemesterService();
     return APIResponse(res, 200, semesters, "Lấy danh sách học kỳ thành công.");
   } catch (error) {
     console.error("Lỗi khi lấy danh sách học kỳ:", error);
@@ -41,7 +41,7 @@ export const getAllSemestersController = async (req, res) => {
 export const getSemesterByIdController = async (req, res) => {
   const { id } = req.params;
   try {
-    const semester = await getSemesterById(id);
+    const semester = await getSemesterByIdService(id);
     if (!semester) {
       return APIResponse(res, 404, null, "Không tìm thấy học kỳ.");
     }
@@ -67,7 +67,7 @@ export const getSemesterByIdController = async (req, res) => {
 export const createSemesterController = async (req, res) => {
   const semesterData = req.body;
   try {
-    const semester = await createSemester(semesterData);
+    const semester = await createSemesterService(semesterData);
     return APIResponse(res, 201, semester, "Tạo học kỳ thành công.");
   } catch (error) {
     console.error("Lỗi khi tạo học kỳ:", error);
@@ -92,7 +92,7 @@ export const updateSemesterController = async (req, res) => {
   const { id } = req.params;
   const semesterData = req.body;
   try {
-    const semester = await updateSemester(id, semesterData);
+    const semester = await updateSemesterService(id, semesterData);
     if (!semester) {
       return APIResponse(res, 404, null, "Không tìm thấy học kỳ để cập nhật.");
     }
@@ -123,7 +123,7 @@ export const updateSemesterController = async (req, res) => {
 export const deleteSemesterController = async (req, res) => {
   const { id } = req.params;
   try {
-    const deletedCount = await deleteSemester(id); // Giả định service trả về số lượng bản ghi bị xóa
+    const deletedCount = await deleteSemesterService(id); // Giả định service trả về số lượng bản ghi bị xóa
     if (deletedCount === 0) {
       return APIResponse(res, 404, null, "Không tìm thấy học kỳ để xóa.");
     }
@@ -169,7 +169,7 @@ export const importSemestersFromJSONController = async (req, res) => {
     }
 
     // Tiến hành import dữ liệu từ JSON
-    const results = await importSemestersFromJSON(semesters);
+    const results = await importSemestersFromJSONService(semesters);
 
     const responseData = {
       success: true, // Chỉ ra rằng request được xử lý

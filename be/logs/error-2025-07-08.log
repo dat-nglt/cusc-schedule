@@ -1,0 +1,13 @@
+2025-07-08 15:36:00 error: ❌ Database connection or synchronization error:
+2025-07-08 15:36:41 error: ❌ Database connection or synchronization error:
+2025-07-08 15:37:16 error: ❌ Database connection or synchronization error:
+2025-07-08 15:37:38 error: ❌ Database connection or synchronization error:
+2025-07-08 15:37:52 error: ❌ Database connection or synchronization error:
+2025-07-08 15:39:35 error: ❌ Database connection or synchronization error:
+2025-07-08 15:39:56 error: column "admission_year" cannot be cast automatically to type integer
+2025-07-08 15:40:12 error: column "admission_year" cannot be cast automatically to type integer
+2025-07-08 15:40:20 error: column "admission_year" cannot be cast automatically to type integer
+2025-07-08 15:41:13 error: column "admission_year" cannot be cast automatically to type integer
+2025-07-08 15:41:50 error: column "admission_year" cannot be cast automatically to type integer
+2025-07-08 15:43:26 error: column "admission_year" cannot be cast automatically to type integer
+2025-07-08 15:43:41 error: column "admission_year" cannot be cast automatically to type integer

@@ -18,7 +18,8 @@ export const getErrorChip = (error, name) => {
         'invalid_phone': 'SĐT không hợp lệ',
         'invalid_date': 'Ngày không hợp lệ',
         'invalid_degree': 'Bằng cấp không hợp lệ',
-        'invalid_gender': 'Giới tính không hợp lệ'
+        'invalid_gender': 'Giới tính không hợp lệ',
+        'duplicate_time_range': 'Khung thời gian đã tồn tại',
     };
 
     return (

@@ -28,13 +28,40 @@ import { importSemestersAPI } from '../../api/semesterAPI';
 import { getErrorChip, getRowStatus } from '../../components/ui/ErrorChip';
 import { formatDateTime } from '../../utils/formatDateTime';
 
-export default function PreviewSemesterModal({ open, onClose, previewData, fetchSemesters }) {
+export default function PreviewSemesterModal({ open, onClose, previewData, fetchSemesters, programs }) {
     const [isImporting, setIsImporting] = useState(false);
     const [importError, setImportError] = useState('');
     const [importMessage, setImportMessage] = useState('');
 
-    const validRows = previewData.filter(row => getRowStatus(row) === 'valid');
-    const errorRows = previewData.filter(row => getRowStatus(row) === 'error');
+    // Validate preview data with program checking
+    const validatePreviewData = (data) => {
+        return data.map(row => {
+            let errors = row.errors || [];
+
+            // If there are already errors, keep only the first one
+            if (errors.length > 0) {
+                errors = [errors[0]];
+            } else {
+                // Check if program_id exists in programs array
+                const programValue = row.program_id || row.program; // Check both possible field names
+                if (programValue && programValue.trim() !== '') {
+                    const programExists = programs && programs.some(p => p.program_id === programValue.trim());
+                    if (!programExists) {
+                        errors = [`Mã chương trình "${programValue}" không tồn tại trong hệ thống`];
+                    }
+                }
+            }
+
+            return {
+                ...row,
+                errors
+            };
+        });
+    };
+
+    const validatedData = validatePreviewData(previewData);
+    const validRows = validatedData.filter(row => getRowStatus(row) === 'valid');
+    const errorRows = validatedData.filter(row => getRowStatus(row) === 'error');
 
 
     const handleConfirmImport = async () => {

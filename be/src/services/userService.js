@@ -1,5 +1,4 @@
 import models from "../models/index.js";
-import logger from "../utils/logger.js";
 const { Student, Lecturer, Admin, TrainingOfficer, Account } = models;
 
 /**

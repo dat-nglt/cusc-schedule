@@ -12,7 +12,7 @@ export const getCoursesAPI = async (params = {}) => {
     );
     throw new Error(
       "Error fetching courses: " +
-        (error.response?.data?.message || error.message)
+      (error.response?.data?.message || error.message)
     );
   }
 };
@@ -30,7 +30,7 @@ export const getCourseByIdAPI = async (course_id) => {
     );
     throw new Error(
       "Error fetching course detail: " +
-        (error.response?.data?.message || error.message)
+      (error.response?.data?.message || error.message)
     );
   }
 };
@@ -67,7 +67,7 @@ export const updateCourseAPI = async (course_id, courseData) => {
     );
     throw new Error(
       "Error updating course: " +
-        (error.response?.data?.message || error.message)
+      (error.response?.data?.message || error.message)
     );
   }
 };
@@ -87,7 +87,7 @@ export const deleteCourseAPI = async (course_id) => {
     );
     throw new Error(
       "Error deleting course: " +
-        (error.response?.data?.message || error.message)
+      (error.response?.data?.message || error.message)
     );
   }
 };
@@ -106,7 +106,7 @@ export const listCoursesAPI = async (filters = {}) => {
     );
     throw new Error(
       "Error listing courses: " +
-        (error.response?.data?.message || error.message)
+      (error.response?.data?.message || error.message)
     );
   }
 };

@@ -1,0 +1,11 @@
+2025-07-10 09:47:06 error: ❌ Failed to start server: (0 , _passport2.default) is not a function
+2025-07-10 09:47:41 error: ❌ Failed to start server: (0 , _passport2.default) is not a function
+2025-07-10 09:57:32 error: ❌ Failed to start server: (0 , _passport2.default) is not a function
+2025-07-10 09:57:44 error: ❌ Failed to start server: (0 , _passport2.default) is not a function
+2025-07-10 09:58:09 error: ❌ Failed to start server: (0 , _passport2.default) is not a function
+2025-07-10 23:02:40 error: Lỗi trong quá trình Google OAuth: Account is not defined Account is not defined
+2025-07-10 23:03:55 error: Lỗi trong quá trình Google OAuth: Accounts is not defined Accounts is not defined
+2025-07-10 23:10:30 error: Lỗi trong quá trình Google OAuth: Account is not defined Account is not defined
+2025-07-10 23:11:14 error: Lỗi trong quá trình Google OAuth: column "status" does not exist column "status" does not exist
+2025-07-10 23:17:05 error: Lỗi trong quá trình Google OAuth: column "status" does not exist column "status" does not exist
+2025-07-10 23:33:01 error: Lỗi trong quá trình Google OAuth: column "status" does not exist column "status" does not exist

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {
   Dialog,
@@ -11,6 +10,7 @@ import {
   Box,
   IconButton,
   Tooltip,
+  Chip,
 } from '@mui/material';
 import {
   Code as CodeIcon,
@@ -18,19 +18,13 @@ import {
   Schedule as ScheduleIcon,
   Event as EventIcon,
   Update as UpdateIcon,
+  AccessTime as TimeIcon,
+  Description as DescriptionIcon,
+  CheckCircle as StatusIcon,
 } from '@mui/icons-material';
-
-// Hàm định dạng thời gian từ YYYY-MM-DD HH:mm thành DD/MM/YYYY HH:mm
-const formatDateTime = (dateTime) => {
-  if (!dateTime) return 'Không có dữ liệu';
-  try {
-    const [date, time] = dateTime.split(' ');
-    const [year, month, day] = date.split('-');
-    return `${day}/${month}/${year} ${time}`;
-  } catch {
-    return 'Không hợp lệ';
-  }
-};
+import { getStatusChip } from '../../components/ui/StatusChip';
+import { formatDateTime } from '../../utils/formatDateTime';
+import { toast } from 'react-toastify';
 
 // Hàm kiểm tra giá trị và trả về giá trị hoặc thông báo mặc định
 const getValueOrDefault = (value) => value || 'Không có dữ liệu';
@@ -39,16 +33,16 @@ const SlotTimeDetailModal = ({ open, onClose, slotTime }) => {
   if (!slotTime) return null;
 
   // Hàm sao chép mã khung giờ
-  const handleCopyMaKhungGio = () => {
-    navigator.clipboard.writeText(slotTime.maKhungGio);
-    alert('Đã sao chép mã khung giờ!');
+  const handleCopySlotId = () => {
+    navigator.clipboard.writeText(slotTime.slot_id);
+    toast.success('Đã sao chép mã khung giờ: ' + slotTime.slot_id);
   };
 
   return (
     <Dialog
       open={open}
       onClose={onClose}
-      maxWidth="sm"
+      maxWidth="md"
       fullWidth
       sx={{
         '& .MuiDialog-paper': {
@@ -68,11 +62,11 @@ const SlotTimeDetailModal = ({ open, onClose, slotTime }) => {
         }}
       >
         <Typography variant="h6">
-          Chi tiết khung giờ {slotTime.maKhungGio}
+          Chi tiết khung giờ {slotTime.slot_id}
         </Typography>
         <Tooltip title="Sao chép mã khung giờ">
           <IconButton
-            onClick={handleCopyMaKhungGio}
+            onClick={handleCopySlotId}
             sx={{ color: '#fff' }}
           >
             <CodeIcon />
@@ -82,7 +76,7 @@ const SlotTimeDetailModal = ({ open, onClose, slotTime }) => {
       <DialogContent sx={{ mt: 2, px: 3 }}>
         <Grid container spacing={2}>
           {/* Mã khung giờ */}
-          <Grid item xs={12}>
+          <Grid item xs={12} md={6}>
             <Box
               sx={{
                 display: 'flex',
@@ -102,14 +96,14 @@ const SlotTimeDetailModal = ({ open, onClose, slotTime }) => {
                   Mã khung giờ
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#666' }}>
-                  {getValueOrDefault(slotTime.maKhungGio)}
+                  {getValueOrDefault(slotTime.slot_id)}
                 </Typography>
               </Box>
             </Box>
           </Grid>
 
           {/* Tên khung giờ */}
-          <Grid item xs={12}>
+          <Grid item xs={12} md={6}>
             <Box
               sx={{
                 display: 'flex',
@@ -129,14 +123,14 @@ const SlotTimeDetailModal = ({ open, onClose, slotTime }) => {
                   Tên khung giờ
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#666' }}>
-                  {getValueOrDefault(slotTime.tenKhungGio)}
+                  {getValueOrDefault(slotTime.slot_name)}
                 </Typography>
               </Box>
             </Box>
           </Grid>
 
-          {/* Buổi học */}
-          <Grid item xs={12}>
+          {/* Loại buổi học */}
+          <Grid item xs={12} md={6}>
             <Box
               sx={{
                 display: 'flex',
@@ -153,17 +147,17 @@ const SlotTimeDetailModal = ({ open, onClose, slotTime }) => {
                   variant="body2"
                   sx={{ fontWeight: 'bold', color: '#333' }}
                 >
-                  Buổi học
+                  Loại buổi học
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#666' }}>
-                  {getValueOrDefault(slotTime.buoiHoc)}
+                  {getValueOrDefault(slotTime.type)}
                 </Typography>
               </Box>
             </Box>
           </Grid>
 
-          {/* Thời gian bắt đầu */}
-          <Grid item xs={6}>
+          {/* Trạng thái */}
+          <Grid item xs={12} md={6}>
             <Box
               sx={{
                 display: 'flex',
@@ -174,7 +168,34 @@ const SlotTimeDetailModal = ({ open, onClose, slotTime }) => {
                 border: '1px solid #e0e0e0',
               }}
             >
-              <ScheduleIcon sx={{ mr: 1, color: '#1976d2' }} />
+              <StatusIcon sx={{ mr: 1, color: '#1976d2' }} />
+              <Box>
+                <Typography
+                  variant="body2"
+                  sx={{ fontWeight: 'bold', color: '#333' }}
+                >
+                  Trạng thái
+                </Typography>
+                <Box sx={{ mt: 0.5 }}>
+                  {getStatusChip(slotTime.status)}
+                </Box>
+              </Box>
+            </Box>
+          </Grid>
+
+          {/* Thời gian bắt đầu */}
+          <Grid item xs={12} md={6}>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                bgcolor: '#f9f9f9',
+                p: 2,
+                borderRadius: 1,
+                border: '1px solid #e0e0e0',
+              }}
+            >
+              <TimeIcon sx={{ mr: 1, color: '#1976d2' }} />
               <Box>
                 <Typography
                   variant="body2"
@@ -183,14 +204,14 @@ const SlotTimeDetailModal = ({ open, onClose, slotTime }) => {
                   Thời gian bắt đầu
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#666' }}>
-                  {getValueOrDefault(slotTime.thoiGianBatDau)}
+                  {getValueOrDefault(slotTime.start_time)}
                 </Typography>
               </Box>
             </Box>
           </Grid>
 
           {/* Thời gian kết thúc */}
-          <Grid item xs={6}>
+          <Grid item xs={12} md={6}>
             <Box
               sx={{
                 display: 'flex',
@@ -201,7 +222,7 @@ const SlotTimeDetailModal = ({ open, onClose, slotTime }) => {
                 border: '1px solid #e0e0e0',
               }}
             >
-              <ScheduleIcon sx={{ mr: 1, color: '#1976d2' }} />
+              <TimeIcon sx={{ mr: 1, color: '#1976d2' }} />
               <Box>
                 <Typography
                   variant="body2"
@@ -210,14 +231,41 @@ const SlotTimeDetailModal = ({ open, onClose, slotTime }) => {
                   Thời gian kết thúc
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#666' }}>
-                  {getValueOrDefault(slotTime.thoiGianKetThuc)}
+                  {getValueOrDefault(slotTime.end_time)}
+                </Typography>
+              </Box>
+            </Box>
+          </Grid>
+
+          {/* Mô tả */}
+          <Grid item xs={12}>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                bgcolor: '#f9f9f9',
+                p: 2,
+                borderRadius: 1,
+                border: '1px solid #e0e0e0',
+              }}
+            >
+              <DescriptionIcon sx={{ mr: 1, color: '#1976d2', mt: 0.5 }} />
+              <Box>
+                <Typography
+                  variant="body2"
+                  sx={{ fontWeight: 'bold', color: '#333' }}
+                >
+                  Mô tả
+                </Typography>
+                <Typography variant="body1" sx={{ color: '#666' }}>
+                  {getValueOrDefault(slotTime.description)}
                 </Typography>
               </Box>
             </Box>
           </Grid>
 
           {/* Thời gian tạo */}
-          <Grid item xs={6}>
+          <Grid item xs={12} md={6}>
             <Box
               sx={{
                 display: 'flex',
@@ -237,14 +285,14 @@ const SlotTimeDetailModal = ({ open, onClose, slotTime }) => {
                   Thời gian tạo
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#666' }}>
-                  {formatDateTime(slotTime.thoiGianTao)}
+                  {formatDateTime(slotTime.created_at)}
                 </Typography>
               </Box>
             </Box>
           </Grid>
 
           {/* Thời gian cập nhật */}
-          <Grid item xs={6}>
+          <Grid item xs={12} md={6}>
             <Box
               sx={{
                 display: 'flex',
@@ -264,7 +312,7 @@ const SlotTimeDetailModal = ({ open, onClose, slotTime }) => {
                   Thời gian cập nhật
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#666' }}>
-                  {formatDateTime(slotTime.thoiGianCapNhat)}
+                  {formatDateTime(slotTime.updated_at)}
                 </Typography>
               </Box>
             </Box>
