@@ -294,7 +294,8 @@ export default function AddSubjectModal({ open, onClose, onAddSubject, existingS
                 open={showPreview}
                 onClose={handleClosePreview}
                 previewData={previewData}
-                fetchSubjects={fetchSubjects} // Gọi lại hàm fetch để cập nhật danh sách học kỳ
+                fetchSubjects={fetchSubjects} // Gọi lại hàm fetch để cập nhật danh sách học 
+                semesters={semesters}
             />
         </>
     );

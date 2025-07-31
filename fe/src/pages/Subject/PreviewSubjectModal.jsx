@@ -27,14 +27,40 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { getRowStatus, getErrorChip } from '../../components/ui/ErrorChip';
 import { importSubjectAPI } from "../../api/subjectAPI";
 
-export default function PreviewSubjectModal({ open, onClose, previewData, fetchSubjects }) {
+export default function PreviewSubjectModal({ open, onClose, previewData, fetchSubjects, semesters }) {
     const [isImporting, setIsImporting] = useState(false);
     const [importError, setImportError] = useState('');
     const [importMessage, setImportMessage] = useState('');
 
+    // Validate preview data with semester checking
+    const validatePreviewData = (data) => {
+        return data.map(row => {
+            let errors = row.errors || [];
 
-    const validRows = previewData.filter((row) => getRowStatus(row) === "valid");
-    const errorRows = previewData.filter((row) => getRowStatus(row) === "error");
+            // If there are already errors, keep only the first one
+            if (errors.length > 0) {
+                errors = [errors[0]];
+            } else {
+                // Check if semester_id exists in semesters array
+                const semesterValue = row.semester_id || row.semester; // Check both possible field names
+                if (semesterValue && semesterValue.trim() !== '') {
+                    const semesterExists = semesters && semesters.some(p => p.semester_id === semesterValue.trim());
+                    if (!semesterExists) {
+                        errors = [`Mã học kỳ "${semesterValue}" không tồn tại trong hệ thống`];
+                    }
+                }
+            }
+
+            return {
+                ...row,
+                errors
+            };
+        });
+    };
+
+    const validatedData = validatePreviewData(previewData);
+    const validRows = validatedData.filter((row) => getRowStatus(row) === "valid");
+    const errorRows = validatedData.filter((row) => getRowStatus(row) === "error");
 
     const handleConfirmImport = async () => {
         if (validRows.length === 0) {
@@ -114,12 +140,15 @@ export default function PreviewSubjectModal({ open, onClose, previewData, fetchS
                             color="success"
                             variant="outlined"
                         />
-                        <Chip
-                            icon={<ErrorIcon />}
-                            label={`Không hợp lệ: ${errorRows.length}`}
-                            color="error"
-                            variant="outlined"
-                        />
+                        {errorRows.length > 0 &&
+
+                            <Chip
+                                icon={<ErrorIcon />}
+                                label={`Không hợp lệ: ${errorRows.length}`}
+                                color="error"
+                                variant="outlined"
+                            />
+                        }
                         <Chip
                             label={`Tổng cộng: ${previewData.length}`}
                             variant="outlined"
@@ -145,6 +174,7 @@ export default function PreviewSubjectModal({ open, onClose, previewData, fetchS
                                             <TableCell>Số tín chỉ</TableCell>
                                             <TableCell>Số giờ lý thuyết</TableCell>
                                             <TableCell>Số giờ thực hành</TableCell>
+                                            <TableCell>Mã học kỳ</TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
@@ -155,6 +185,7 @@ export default function PreviewSubjectModal({ open, onClose, previewData, fetchS
                                                 <TableCell>{subject.credit}</TableCell>
                                                 <TableCell>{subject.theory_hours}</TableCell>
                                                 <TableCell>{subject.practice_hours}</TableCell>
+                                                <TableCell>{subject.semester_id}</TableCell>
                                             </TableRow>
                                         ))}
                                     </TableBody>
@@ -182,6 +213,7 @@ export default function PreviewSubjectModal({ open, onClose, previewData, fetchS
                                             <TableCell>Số tín chỉ</TableCell>
                                             <TableCell>Số giờ lý thuyết</TableCell>
                                             <TableCell>Số giờ thực hành</TableCell>
+                                            <TableCell>Mã học kỳ</TableCell>
                                             <TableCell>Lỗi</TableCell>
                                         </TableRow>
                                     </TableHead>
@@ -196,6 +228,7 @@ export default function PreviewSubjectModal({ open, onClose, previewData, fetchS
                                                 <TableCell>{subject.credit || '-'}</TableCell>
                                                 <TableCell>{subject.theory_hours || '-'}</TableCell>
                                                 <TableCell>{subject.practice_hours || '-'}</TableCell>
+                                                <TableCell>{subject.semester_id || '-'}</TableCell>
                                                 <TableCell>
                                                     <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
                                                         {subject.errors.map((error) => getErrorChip(error, 'học phần'))}

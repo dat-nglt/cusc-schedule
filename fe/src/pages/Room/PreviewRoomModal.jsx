@@ -4,9 +4,7 @@ import {
     DialogTitle,
     DialogContent,
     DialogActions,
-    Typography,
     Button,
-    Box,
     Table,
     TableBody,
     TableCell,
@@ -14,6 +12,8 @@ import {
     TableHead,
     TableRow,
     Paper,
+    Typography,
+    Box,
     Chip,
     Tooltip,
     IconButton,
@@ -24,18 +24,16 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ErrorIcon from '@mui/icons-material/Error';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import { importProgramsAPI } from '../../api/programAPI';
+import { importRoomAPI } from '../../api/roomAPI';
 import { getErrorChip, getRowStatus } from '../../components/ui/ErrorChip';
 
-
-export default function PreviewProgramModal({ open, onClose, previewData, fetchPrograms }) {
+export default function PreviewRoomModal({ open, onClose, previewData, fetchRooms }) {
     const [isImporting, setIsImporting] = useState(false);
     const [importError, setImportError] = useState('');
     const [importMessage, setImportMessage] = useState('');
 
     const validRows = previewData.filter(row => getRowStatus(row) === 'valid');
     const errorRows = previewData.filter(row => getRowStatus(row) === 'error');
-
 
     const handleConfirmImport = async () => {
         if (validRows.length === 0) {
@@ -48,19 +46,20 @@ export default function PreviewProgramModal({ open, onClose, previewData, fetchP
         setImportMessage('');
 
         try {
-            // Tạo file Excel tạm thời chỉ với dữ liệu hợp lệ
+            // Tạo dữ liệu hợp lệ để import
             const validData = validRows.map(row => {
-                const { errors: _errors, rowIndex: _rowIndex, ...programData } = row;
-                return programData;
+                const { errors: _errors, rowIndex: _rowIndex, ...roomData } = row;
+                return roomData;
             });
             console.log('Valid data to import:', validData);
+
             // Gọi API import với dữ liệu đã được validate
-            const response = await importProgramsAPI(validData);
+            const response = await importRoomAPI(validData);
 
             if (response.data && response.data) {
-                setImportMessage(`Thêm thành công ${validRows.length} chuơng trình đào tạo!`);
+                setImportMessage(`Thêm thành công ${validRows.length} phòng học!`);
                 setImportError('');
-                fetchPrograms(); // Gọi lại hàm fetch để cập nhật danh sách chương trình đào tạo
+                fetchRooms(); // Gọi lại hàm fetch để cập nhật danh sách phòng học
 
                 // Delay để người dùng thấy thông báo thành công trước khi đóng modal
                 setTimeout(() => {
@@ -81,7 +80,7 @@ export default function PreviewProgramModal({ open, onClose, previewData, fetchP
     return (
         <Dialog open={open} onClose={onClose} maxWidth="lg" fullWidth>
             <DialogTitle>
-                <Typography >Xem trước dữ liệu đã nhập</Typography>
+                <Typography>Xem trước dữ liệu đã nhập</Typography>
             </DialogTitle>
             <DialogContent>
                 {importError && (
@@ -112,12 +111,14 @@ export default function PreviewProgramModal({ open, onClose, previewData, fetchP
                             color="success"
                             variant="outlined"
                         />
-                        <Chip
-                            icon={<ErrorIcon />}
-                            label={`Không hợp lệ: ${errorRows.length}`}
-                            color="error"
-                            variant="outlined"
-                        />
+                        {errorRows.length > 0 &&
+                            <Chip
+                                icon={<ErrorIcon />}
+                                label={`Không hợp lệ: ${errorRows.length}`}
+                                color="error"
+                                variant="outlined"
+                            />
+                        }
                         <Chip
                             label={`Tổng cộng: ${previewData.length}`}
                             variant="outlined"
@@ -138,19 +139,25 @@ export default function PreviewProgramModal({ open, onClose, previewData, fetchP
                                 <Table stickyHeader size="small">
                                     <TableHead>
                                         <TableRow>
-                                            <TableCell>Mã chương trình đào tạo</TableCell>
-                                            <TableCell>Tên chương trình đào tạo</TableCell>
-                                            <TableCell>Thời gian đào tạo</TableCell>
-                                            <TableCell>Mô tả</TableCell>
+                                            <TableCell>Mã phòng học</TableCell>
+                                            <TableCell>Tên phòng học</TableCell>
+                                            <TableCell>Vị trí</TableCell>
+                                            <TableCell>Sức chứa</TableCell>
+                                            <TableCell>Loại phòng học</TableCell>
+                                            <TableCell>Trạng thái</TableCell>
+                                            <TableCell>Ghi chú</TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {validRows.map((program, index) => (
+                                        {validRows.map((room, index) => (
                                             <TableRow key={index}>
-                                                <TableCell>{program.program_id}</TableCell>
-                                                <TableCell>{program.program_name}</TableCell>
-                                                <TableCell>{program.training_duration}</TableCell>
-                                                <TableCell>{program.description}</TableCell>
+                                                <TableCell>{room.room_id}</TableCell>
+                                                <TableCell>{room.room_name}</TableCell>
+                                                <TableCell>{room.location}</TableCell>
+                                                <TableCell>{room.capacity}</TableCell>
+                                                <TableCell>{room.type}</TableCell>
+                                                <TableCell>{room.status}</TableCell>
+                                                <TableCell>{room.note}</TableCell>
                                             </TableRow>
                                         ))}
                                     </TableBody>
@@ -173,26 +180,32 @@ export default function PreviewProgramModal({ open, onClose, previewData, fetchP
                                 <Table stickyHeader size="small">
                                     <TableHead>
                                         <TableRow>
-                                            <TableCell>Mã chương trình đào tạo</TableCell>
-                                            <TableCell>Tên chương trình đào tạo</TableCell>
-                                            <TableCell>Thời gian đào tạo</TableCell>
-                                            <TableCell>Mô tả</TableCell>
+                                            <TableCell>Mã phòng học</TableCell>
+                                            <TableCell>Tên phòng học</TableCell>
+                                            <TableCell>Vị trí</TableCell>
+                                            <TableCell>Sức chứa</TableCell>
+                                            <TableCell>Loại phòng học</TableCell>
+                                            <TableCell>Trạng thái</TableCell>
+                                            <TableCell>Ghi chú</TableCell>
                                             <TableCell>Lỗi</TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {errorRows.map((program, index) => (
+                                        {errorRows.map((room, index) => (
                                             <TableRow
                                                 key={index}
                                                 sx={{ bgcolor: 'error.lighter' }}
                                             >
-                                                <TableCell>{program.program_id || '-'}</TableCell>
-                                                <TableCell>{program.program_name || '-'}</TableCell>
-                                                <TableCell>{program.training_duration || '-'}</TableCell>
-                                                <TableCell>{program.description || '-'}</TableCell>
+                                                <TableCell>{room.room_id || '-'}</TableCell>
+                                                <TableCell>{room.room_name || '-'}</TableCell>
+                                                <TableCell>{room.location || '-'}</TableCell>
+                                                <TableCell>{room.capacity || '-'}</TableCell>
+                                                <TableCell>{room.type || '-'}</TableCell>
+                                                <TableCell>{room.status || '-'}</TableCell>
+                                                <TableCell>{room.note || '-'}</TableCell>
                                                 <TableCell>
                                                     <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-                                                        {program.errors.map((error) => getErrorChip(error, 'chương trình'))}
+                                                        {room.errors.map((error) => getErrorChip(error, 'phòng học'))}
                                                     </Box>
                                                 </TableCell>
                                             </TableRow>
@@ -216,9 +229,9 @@ export default function PreviewProgramModal({ open, onClose, previewData, fetchP
                 >
                     {isImporting ? 'Đang thêm...' :
                         importMessage ? 'Đã thêm thành công' :
-                            `Thêm ${validRows.length} chương trình`}
+                            `Thêm ${validRows.length} phòng học`}
                 </Button>
             </DialogActions>
         </Dialog>
-    )
+    );
 }
