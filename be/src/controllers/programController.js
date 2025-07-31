@@ -1,10 +1,10 @@
 import {
-    getAllPrograms,
-    getProgramById,
-    createProgram,
-    updateProgram,
-    deleteProgram,
-    importProgramsFromJSON // Giả định có thể có thêm importProgramsFromExcel nếu bạn muốn nhập từ Excel
+  getAllProgramsService,
+  getProgramByIdService,
+  createProgramService,
+  updateProgramService,
+  deleteProgramService,
+  importProgramsFromJSONService, // Giả định có thể có thêm importProgramsFromExcel nếu bạn muốn nhập từ Excel
 } from "../services/programService.js";
 import { APIResponse } from "../utils/APIResponse.js"; // Sử dụng APIResponse nhất quán
 import ExcelUtils from "../utils/ExcelUtils.js"; // Được sử dụng để tạo template Excel
@@ -17,13 +17,23 @@ import ExcelUtils from "../utils/ExcelUtils.js"; // Được sử dụng để t
  * @access Private (admin, training_officer)
  */
 export const getAllProgramsController = async (req, res) => {
-    try {
-        const programs = await getAllPrograms();
-        return APIResponse(res, 200, programs, "Lấy danh sách chương trình đào tạo thành công.");
-    } catch (error) {
-        console.error("Lỗi khi lấy danh sách chương trình đào tạo:", error);
-        return APIResponse(res, 500, null, error.message || "Đã xảy ra lỗi khi lấy danh sách chương trình đào tạo.");
-    }
+  try {
+    const programs = await getAllProgramsService();
+    return APIResponse(
+      res,
+      200,
+      programs,
+      "Lấy danh sách chương trình đào tạo thành công."
+    );
+  } catch (error) {
+    console.error("Lỗi khi lấy danh sách chương trình đào tạo:", error);
+    return APIResponse(
+      res,
+      500,
+      null,
+      error.message || "Đã xảy ra lỗi khi lấy danh sách chương trình đào tạo."
+    );
+  }
 };
 
 /**
@@ -34,17 +44,35 @@ export const getAllProgramsController = async (req, res) => {
  * @access Private (admin, training_officer)
  */
 export const getProgramByIdController = async (req, res) => {
-    const { id } = req.params;
-    try {
-        const program = await getProgramById(id);
-        if (!program) {
-            return APIResponse(res, 404, null, "Không tìm thấy chương trình đào tạo.");
-        }
-        return APIResponse(res, 200, program, "Lấy thông tin chương trình đào tạo thành công.");
-    } catch (error) {
-        console.error(`Lỗi khi lấy thông tin chương trình đào tạo với ID ${id}:`, error);
-        return APIResponse(res, 500, null, error.message || "Đã xảy ra lỗi khi lấy thông tin chương trình đào tạo.");
+  const { id } = req.params;
+  try {
+    const program = await getProgramByIdService(id);
+    if (!program) {
+      return APIResponse(
+        res,
+        404,
+        null,
+        "Không tìm thấy chương trình đào tạo."
+      );
     }
+    return APIResponse(
+      res,
+      200,
+      program,
+      "Lấy thông tin chương trình đào tạo thành công."
+    );
+  } catch (error) {
+    console.error(
+      `Lỗi khi lấy thông tin chương trình đào tạo với ID ${id}:`,
+      error
+    );
+    return APIResponse(
+      res,
+      500,
+      null,
+      error.message || "Đã xảy ra lỗi khi lấy thông tin chương trình đào tạo."
+    );
+  }
 };
 
 /**
@@ -55,15 +83,25 @@ export const getProgramByIdController = async (req, res) => {
  * @access Private (admin, training_officer)
  */
 export const createProgramController = async (req, res) => {
-    const programData = req.body;
-    try {
-        const program = await createProgram(programData);
-        return APIResponse(res, 201, program, "Tạo chương trình đào tạo thành công.");
-    } catch (error) {
-        console.error("Lỗi khi tạo chương trình đào tạo:", error);
-        // Có thể thêm logic kiểm tra lỗi cụ thể hơn từ service (ví dụ: duplicate entry)
-        return APIResponse(res, 500, null, error.message || "Đã xảy ra lỗi khi tạo chương trình đào tạo.");
-    }
+  const programData = req.body;
+  try {
+    const program = await createProgramService(programData);
+    return APIResponse(
+      res,
+      201,
+      program,
+      "Tạo chương trình đào tạo thành công."
+    );
+  } catch (error) {
+    console.error("Lỗi khi tạo chương trình đào tạo:", error);
+    // Có thể thêm logic kiểm tra lỗi cụ thể hơn từ service (ví dụ: duplicate entry)
+    return APIResponse(
+      res,
+      500,
+      null,
+      error.message || "Đã xảy ra lỗi khi tạo chương trình đào tạo."
+    );
+  }
 };
 
 /**
@@ -74,18 +112,34 @@ export const createProgramController = async (req, res) => {
  * @access Private (admin, training_officer)
  */
 export const updateProgramController = async (req, res) => {
-    const { id } = req.params;
-    const programData = req.body;
-    try {
-        const program = await updateProgram(id, programData);
-        if (!program) {
-            return APIResponse(res, 404, null, "Không tìm thấy chương trình đào tạo để cập nhật.");
-        }
-        return APIResponse(res, 200, program, "Cập nhật thông tin chương trình đào tạo thành công.");
-    } catch (error) {
-        console.error(`Lỗi khi cập nhật chương trình đào tạo với ID ${id}:`, error);
-        return APIResponse(res, 500, null, error.message || "Đã xảy ra lỗi khi cập nhật thông tin chương trình đào tạo.");
+  const { id } = req.params;
+  const programData = req.body;
+  try {
+    const program = await updateProgramService(id, programData);
+    if (!program) {
+      return APIResponse(
+        res,
+        404,
+        null,
+        "Không tìm thấy chương trình đào tạo để cập nhật."
+      );
     }
+    return APIResponse(
+      res,
+      200,
+      program,
+      "Cập nhật thông tin chương trình đào tạo thành công."
+    );
+  } catch (error) {
+    console.error(`Lỗi khi cập nhật chương trình đào tạo với ID ${id}:`, error);
+    return APIResponse(
+      res,
+      500,
+      null,
+      error.message ||
+        "Đã xảy ra lỗi khi cập nhật thông tin chương trình đào tạo."
+    );
+  }
 };
 
 /**
@@ -96,17 +150,27 @@ export const updateProgramController = async (req, res) => {
  * @access Private (admin, training_officer)
  */
 export const deleteProgramController = async (req, res) => {
-    const { id } = req.params;
-    try {
-        const deletedCount = await deleteProgram(id); // Giả định service trả về số lượng bản ghi bị xóa
-        if (deletedCount === 0) {
-            return APIResponse(res, 404, null, "Không tìm thấy chương trình đào tạo để xóa.");
-        }
-        return APIResponse(res, 200, null, "Xóa chương trình đào tạo thành công.");
-    } catch (error) {
-        console.error(`Lỗi khi xóa chương trình đào tạo với ID ${id}:`, error);
-        return APIResponse(res, 500, null, error.message || "Đã xảy ra lỗi khi xóa chương trình đào tạo.");
+  const { id } = req.params;
+  try {
+    const deletedCount = await deleteProgramService(id); // Giả định service trả về số lượng bản ghi bị xóa
+    if (deletedCount === 0) {
+      return APIResponse(
+        res,
+        404,
+        null,
+        "Không tìm thấy chương trình đào tạo để xóa."
+      );
     }
+    return APIResponse(res, 200, null, "Xóa chương trình đào tạo thành công.");
+  } catch (error) {
+    console.error(`Lỗi khi xóa chương trình đào tạo với ID ${id}:`, error);
+    return APIResponse(
+      res,
+      500,
+      null,
+      error.message || "Đã xảy ra lỗi khi xóa chương trình đào tạo."
+    );
+  }
 };
 
 /**
@@ -117,39 +181,57 @@ export const deleteProgramController = async (req, res) => {
  * @access Private (admin, training_officer)
  */
 export const importProgramsFromJSONController = async (req, res) => {
-    const { programs } = req.body;
-    try {
-        // Kiểm tra dữ liệu đầu vào
-        if (!programs || !Array.isArray(programs)) {
-            return APIResponse(res, 400, null, "Dữ liệu chương trình đào tạo không hợp lệ. Yêu cầu một mảng JSON.");
-        }
-
-        if (programs.length === 0) {
-            return APIResponse(res, 400, null, "Không có dữ liệu chương trình đào tạo nào được cung cấp để import.");
-        }
-
-        // Tiến hành import dữ liệu từ JSON
-        const results = await importProgramsFromJSON(programs);
-
-        const responseData = {
-            success: true, // Chỉ ra rằng request được xử lý
-            imported: results.success, // Các bản ghi đã được import thành công (đối tượng)
-            errors: results.errors, // Các bản ghi lỗi cùng với lý do (đối tượng)
-            message: `Đã thêm thành công ${results.success.length} chương trình đào tạo.`
-        };
-
-        if (results.errors.length > 0) {
-            // Nếu có lỗi, cập nhật thông báo và trả về 207 Multi-Status (để báo hiệu một phần thành công)
-            responseData.message = `Thêm hoàn tất với ${results.success.length}/${programs.length} bản ghi thành công.`;
-            return APIResponse(res, 207, responseData, responseData.message);
-        } else {
-            // Nếu không có lỗi, trả về 200 OK
-            return APIResponse(res, 200, responseData, responseData.message);
-        }
-    } catch (error) {
-        console.error("Lỗi khi import chương trình đào tạo từ dữ liệu JSON:", error);
-        return APIResponse(res, 500, null, error.message || "Đã xảy ra lỗi khi thêm dữ liệu.");
+  const { programs } = req.body;
+  try {
+    // Kiểm tra dữ liệu đầu vào
+    if (!programs || !Array.isArray(programs)) {
+      return APIResponse(
+        res,
+        400,
+        null,
+        "Dữ liệu chương trình đào tạo không hợp lệ. Yêu cầu một mảng JSON."
+      );
     }
+
+    if (programs.length === 0) {
+      return APIResponse(
+        res,
+        400,
+        null,
+        "Không có dữ liệu chương trình đào tạo nào được cung cấp để import."
+      );
+    }
+
+    // Tiến hành import dữ liệu từ JSON
+    const results = await importProgramsFromJSONService(programs);
+
+    const responseData = {
+      success: true, // Chỉ ra rằng request được xử lý
+      imported: results.success, // Các bản ghi đã được import thành công (đối tượng)
+      errors: results.errors, // Các bản ghi lỗi cùng với lý do (đối tượng)
+      message: `Đã thêm thành công ${results.success.length} chương trình đào tạo.`,
+    };
+
+    if (results.errors.length > 0) {
+      // Nếu có lỗi, cập nhật thông báo và trả về 207 Multi-Status (để báo hiệu một phần thành công)
+      responseData.message = `Thêm hoàn tất với ${results.success.length}/${programs.length} bản ghi thành công.`;
+      return APIResponse(res, 207, responseData, responseData.message);
+    } else {
+      // Nếu không có lỗi, trả về 200 OK
+      return APIResponse(res, 200, responseData, responseData.message);
+    }
+  } catch (error) {
+    console.error(
+      "Lỗi khi import chương trình đào tạo từ dữ liệu JSON:",
+      error
+    );
+    return APIResponse(
+      res,
+      500,
+      null,
+      error.message || "Đã xảy ra lỗi khi thêm dữ liệu."
+    );
+  }
 };
 
 /**
@@ -160,20 +242,28 @@ export const importProgramsFromJSONController = async (req, res) => {
  * @access Private (admin, training_officer) - Hoặc Public tùy theo yêu cầu
  */
 export const downloadTemplateController = async (req, res) => {
-    try {
-        // Tạo buffer chứa template Excel. Đảm bảo ExcelUtils có hàm createProgramTemplate.
-        const buffer = ExcelUtils.createProgramTemplate();
+  try {
+    // Tạo buffer chứa template Excel. Đảm bảo ExcelUtils có hàm createProgramTemplate.
+    const buffer = ExcelUtils.createProgramTemplate();
 
-        // Thiết lập các headers để trình duyệt tải xuống file
-        res.setHeader('Content-Disposition', 'attachment; filename=chuong_trinh_dao_tao_mau.xlsx');
-        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        res.setHeader('Content-Length', buffer.length); // Đặt Content-Length
+    // Thiết lập các headers để trình duyệt tải xuống file
+    res.setHeader(
+      "Content-Disposition",
+      "attachment; filename=chuong_trinh_dao_tao_mau.xlsx"
+    );
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+    res.setHeader("Content-Length", buffer.length); // Đặt Content-Length
 
-        // Gửi buffer làm phản hồi
-        return res.send(buffer);
-
-    } catch (error) {
-        console.error("Lỗi khi tạo và tải xuống template chương trình đào tạo:", error);
-        return APIResponse(res, 500, null, "Đã xảy ra lỗi khi tạo template.");
-    }
+    // Gửi buffer làm phản hồi
+    return res.send(buffer);
+  } catch (error) {
+    console.error(
+      "Lỗi khi tạo và tải xuống template chương trình đào tạo:",
+      error
+    );
+    return APIResponse(res, 500, null, "Đã xảy ra lỗi khi tạo template.");
+  }
 };

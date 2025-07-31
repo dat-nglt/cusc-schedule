@@ -1,44 +1,48 @@
-"use strict";
+import { v4 as uuidv4 } from "uuid";
 
-const { v4: uuidv4 } = require("uuid"); // Để tạo UUID cho Account ID
-
-module.exports = {
-  async up(queryInterface, Sequelize) {
+export default {
+  /**
+   * Runs the seeding for the 'up' migration.
+   * Inserts initial data into 'accounts', 'admins', 'lecturers', 'students', and 'training_officers' tables.
+   * @param {import('sequelize').QueryInterface} queryInterface
+   * @param {import('sequelize').Sequelize} Sequelize
+   */
+  up: async (queryInterface, Sequelize) => {
+    // Start a transaction to ensure all inserts are atomic
     const transaction = await queryInterface.sequelize.transaction();
     try {
-      // --- 1. Tạo Account và dữ liệu chi tiết cho Admin ---
+      // --- 1. Create Account and detailed data for Admin ---
       const adminAccountId = uuidv4();
       await queryInterface.bulkInsert(
         "accounts",
         [
           {
             id: adminAccountId,
-            email: "admin@example.com",
+            email: "nguyenletandat.contact@gmail.com",
             role: "admin",
             google_id: null,
             created_at: new Date(),
             updated_at: new Date(),
           },
         ],
-        { transaction }
+        { transaction } // Ensure this insert is part of the transaction
       );
       await queryInterface.bulkInsert(
         "admins",
         [
           {
-            account_id: adminAccountId, // Sử dụng account_id để khớp với định nghĩa model
+            account_id: adminAccountId,
             admin_id: "AD001",
-            name: "Nguyễn Văn A (Admin)",
-            // Thêm các trường đặc thù của Admin nếu có, ví dụ:
+            name: "Nguyễn Lê Tấn Đạt",
             admin_type: "Super Admin",
             created_at: new Date(),
             updated_at: new Date(),
           },
         ],
-        { transaction }
+        { transaction } // Ensure this insert is part of the transaction
       );
 
-      // --- 2. Tạo Account và dữ liệu chi tiết cho Lecturer ---
+      // --- 2. Create Account and detailed data for Lecturer ---
       const lecturerAccountId = uuidv4();
       await queryInterface.bulkInsert(
         "accounts",
@@ -58,13 +62,13 @@ module.exports = {
         "lecturers",
         [
           {
-            account_id: lecturerAccountId, // Sử dụng account_id để khớp với định nghĩa model
+            account_id: lecturerAccountId,
             lecturer_id: "GV001",
             name: "Trần Thị B (Giảng viên)",
             department: "Khoa Công nghệ thông tin",
             hire_date: "2010-09-01",
             degree: "Tiến sĩ",
-            academic_rank: "Phó Giáo sư", // Ví dụ thêm trường đã đề xuất
+            academic_rank: "Phó Giáo sư",
             created_at: new Date(),
             updated_at: new Date(),
           },
@@ -72,7 +76,7 @@ module.exports = {
         { transaction }
       );
 
-      // --- 3. Tạo Account và dữ liệu chi tiết cho Student ---
+      // --- 3. Create Account and detailed data for Student ---
       const studentAccountId = uuidv4();
       await queryInterface.bulkInsert(
         "accounts",
@@ -92,10 +96,10 @@ module.exports = {
         "students",
         [
           {
-            account_id: studentAccountId, // Sử dụng account_id để khớp với định nghĩa model
+            account_id: studentAccountId,
             student_id: "SV001",
             name: "Lê Văn C (Sinh viên)",
-            class_id: "L001", // Giả sử có lớp L001
+            class_id: null, // Ensure this column is nullable in your 'students' table definition
             admission_year: "2023-09-01",
             gpa: 3.5,
             created_at: new Date(),
@@ -105,14 +109,14 @@ module.exports = {
         { transaction }
       );
 
-      // --- 4. Tạo Account và dữ liệu chi tiết cho Training Officer ---
+      // --- 4. Create Account and detailed data for Training Officer ---
       const trainingOfficerAccountId = uuidv4();
       await queryInterface.bulkInsert(
         "accounts",
         [
           {
             id: trainingOfficerAccountId,
-            email: "training_officer@example.com",
+            email: "dhchuong@student.ctuet.edu.vn",
             role: "training_officer",
             google_id: null,
             created_at: new Date(),
@@ -122,10 +126,10 @@ module.exports = {
         { transaction }
       );
       await queryInterface.bulkInsert(
-        "training_officers", // Đảm bảo tên bảng là 'training_officers'
+        "training_officers",
         [
           {
-            account_id: trainingOfficerAccountId, // Sử dụng account_id để khớp với định nghĩa model
+            account_id: trainingOfficerAccountId,
             staff_id: "CB001",
             name: "Phạm Thị D (Cán bộ ĐT)",
             department: "Phòng Đào tạo",
@@ -137,65 +141,44 @@ module.exports = {
         { transaction }
       );
 
-      // --- 5. Thêm một email test vào db: nguyenletandat.contact@gmail.com (chỉ Account) ---
-      const testUserAccountId = uuidv4();
-      await queryInterface.bulkInsert(
-        "accounts",
-        [
-          {
-            id: testUserAccountId,
-            email: "nguyenletandat.contact@gmail.com",
-            role: "admin", // Vai trò mặc định cho tài khoản này
-            google_id: null,
-            created_at: new Date(),
-            updated_at: new Date(),
-          },
-        ],
-        { transaction }
-      );
-
-      // Nếu bạn muốn tạo bản ghi chi tiết cho 'nguyenletandat.contact@gmail.com', bạn sẽ làm như sau:
-      // (Bỏ comment nếu cần, và đảm bảo student_id là duy nhất)
-      // await queryInterface.bulkInsert('students', [{
-      //   account_id: testUserAccountId,
-      //   student_id: 'SV002', // ID sinh viên duy nhất
-      //   name: 'Nguyễn Lê Tấn Đạt',
-      //   class_id: 'L001',
-      //   admission_year: '2023-09-01',
-      //   gpa: 3.8,
-      //   created_at: new Date(),
-      //   updated_at: new Date()
-      // }], { transaction });
-
+      // Commit the transaction if all operations succeed
       await transaction.commit();
-      console.log("Seeders đã được thêm thành công!");
+      console.log("Seeders have been successfully added!");
     } catch (error) {
+      // Rollback the transaction if any operation fails
       await transaction.rollback();
-      console.error("Lỗi khi chạy seeders:", error);
-      throw error;
+      console.error("Error running seeders:", error);
+      throw error; // Re-throw the error to indicate failure
     }
   },
 
-  async down(queryInterface, Sequelize) {
+  /**
+   * Reverts the seeding for the 'down' migration.
+   * Deletes the seeded data from 'admins', 'lecturers', 'students', 'training_officers', and 'accounts' tables.
+   * @param {import('sequelize').QueryInterface} queryInterface
+   * @param {import('sequelize').Sequelize} Sequelize
+   */
+  down: async (queryInterface, Sequelize) => {
     const transaction = await queryInterface.sequelize.transaction();
     try {
-      // Đảm bảo xóa các bản ghi chi tiết trước, sau đó mới xóa bản ghi Accounts
+      // Ensure to delete detailed records first due to foreign key constraints,
+      // then delete the Account records.
       await queryInterface.bulkDelete("admins", null, { transaction });
       await queryInterface.bulkDelete("lecturers", null, { transaction });
       await queryInterface.bulkDelete("students", null, { transaction });
       await queryInterface.bulkDelete("training_officers", null, {
         transaction,
-      }); // Xóa training_officers
+      });
 
-      // Cuối cùng xóa các bản ghi Account
+      // Finally, delete the Account records
       await queryInterface.bulkDelete("accounts", null, { transaction });
 
       await transaction.commit();
-      console.log("Seeders đã được xóa thành công!");
+      console.log("Seeders have been successfully reverted!");
     } catch (error) {
       await transaction.rollback();
-      console.error("Lỗi khi hoàn tác seeders:", error);
-      throw error;
+      console.error("Error reverting seeders:", error);
+      throw error; // Re-throw the error to indicate failure
     }
   },
 };

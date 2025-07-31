@@ -1,7 +1,7 @@
 'use strict';
 
 /** @type {import('sequelize-cli').Migration} */
-module.exports = {
+export default {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('class_schedules', {
       class_schedule_id: {
@@ -14,8 +14,13 @@ module.exports = {
         allowNull: true
       },
       weekday: {
-        type: Sequelize.STRING(50),
-        allowNull: true
+        type: Sequelize.ENUM('Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'),
+        allowNull: false
+      },
+      week_number: {
+        type: Sequelize.SMALLINT,
+        allowNull: false,
+        comment: 'Week number in the semester (1-16)'
       },
       start_date: {
         type: Sequelize.DATEONLY,
@@ -53,7 +58,7 @@ module.exports = {
       },
       room_id: {
         type: Sequelize.STRING(30),
-        allowNull: true,
+        allowNull: false,
         references: {
           model: 'rooms',
           key: 'room_id'
@@ -71,9 +76,19 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL'
       },
-      time_slot_id: {
+      subject_id: {
         type: Sequelize.STRING(30),
-        allowNull: true,
+        allowNull: false,
+        references: {
+          model: 'subjects',
+          key: 'subject_id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL'
+      },
+      slot_id: {
+        type: Sequelize.STRING(30),
+        allowNull: false,
         references: {
           model: 'time_slots',
           key: 'slot_id'
@@ -81,19 +96,19 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL'
       },
-      class_section_id: {
+      class_id: {
         type: Sequelize.STRING(30),
-        allowNull: true,
+        allowNull: false,
         references: {
-          model: 'class_sections',
-          key: 'class_section_id'
+          model: 'classes',
+          key: 'class_id'
         },
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL'
       },
       lecturer_id: {
         type: Sequelize.STRING(50),
-        allowNull: true,
+        allowNull: false,
         references: {
           model: 'lecturers',
           key: 'lecturer_id'
@@ -101,6 +116,23 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL'
       }
+    });
+
+    // Add indexes for better query performance
+    await queryInterface.addIndex('class_schedules', ['weekday', 'slot_id'], {
+      name: 'idx_class_schedules_weekday_timeslot'
+    });
+
+    await queryInterface.addIndex('class_schedules', ['lecturer_id', 'week_number'], {
+      name: 'idx_class_schedules_lecturer_week'
+    });
+
+    await queryInterface.addIndex('class_schedules', ['room_id', 'weekday', 'slot_id'], {
+      name: 'idx_class_schedules_room_schedule'
+    });
+
+    await queryInterface.addIndex('class_schedules', ['class_id', 'week_number'], {
+      name: 'idx_class_schedules_class_week'
     });
   },
 

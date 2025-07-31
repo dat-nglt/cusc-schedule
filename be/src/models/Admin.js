@@ -48,7 +48,8 @@ const Admin = (sequelize) => {
       timestamps: true,              // Tự động tạo trường createdAt và updatedAt
       createdAt: 'created_at',       // Đổi tên trường createdAt
       updatedAt: 'updated_at',       // Đổi tên trường updatedAt
-      underscored: true,             // Dùng định dạng snake_case cho tên cột
+      deletedAt: 'deleted_at',       // Tên cột thời gian xóa mềm (nếu sử dụng soft delete)
+      paranoid: true,                // Bật chế độ xóa mềm (soft delete)
     }
   );
 
