@@ -1,5 +1,5 @@
-import BreakSchedule from "../models/BreakSchedule.js";
-import { Op } from 'sequelize'; // Đảm bảo import Op nếu chưa có
+import models from '../models/index.js';
+import { Op } from 'sequelize';
 import ExcelUtils from "../utils/ExcelUtils.js";
 
 /**
@@ -7,9 +7,9 @@ import ExcelUtils from "../utils/ExcelUtils.js";
  * @returns {Promise<Array>} Danh sách các lịch nghỉ.
  * @throws {Error} Nếu có lỗi khi lấy dữ liệu.
  */
-export const getAllBreakSchedules = async () => {
+export const getAllBreakSchedulesService = async () => {
   try {
-    const breakSchedules = await BreakSchedule.findAll();
+    const breakSchedules = await models.BreakSchedule.findAll();
     return breakSchedules;
   } catch (error) {
     throw new Error('Lỗi khi lấy danh sách lịch nghỉ: ' + error.message);
@@ -21,8 +21,8 @@ export const getAllBreakSchedules = async () => {
  * @param {string} break_id - ID của lịch nghỉ.
  * @returns {Promise<Object|null>} Lịch nghỉ tìm thấy hoặc null nếu không tìm thấy.
  */
-export const getBreakScheduleById = async (break_id) => {
-  return await BreakSchedule.findByPk(break_id);
+export const getBreakScheduleByIdService = async (break_id) => {
+  return await models.BreakSchedule.findByPk(break_id);
 };
 
 /**
@@ -30,8 +30,8 @@ export const getBreakScheduleById = async (break_id) => {
  * @param {Object} data - Dữ liệu của lịch nghỉ mới.
  * @returns {Promise<Object>} Lịch nghỉ đã được tạo.
  */
-export const createBreakSchedule = async (data) => {
-  return await BreakSchedule.create(data);
+export const createBreakScheduleService = async (data) => {
+  return await models.BreakSchedule.create(data);
 };
 
 /**
@@ -41,8 +41,8 @@ export const createBreakSchedule = async (data) => {
  * @returns {Promise<Object>} Lịch nghỉ đã được cập nhật.
  * @throws {Error} Nếu không tìm thấy lịch nghỉ.
  */
-export const updateBreakSchedule = async (break_id, data) => {
-  const breakSchedule = await BreakSchedule.findByPk(break_id);
+export const updateBreakScheduleService = async (break_id, data) => {
+  const breakSchedule = await models.BreakSchedule.findByPk(break_id);
   if (!breakSchedule) throw new Error("Không tìm thấy lịch nghỉ");
   return await breakSchedule.update(data);
 };
@@ -53,8 +53,8 @@ export const updateBreakSchedule = async (break_id, data) => {
  * @returns {Promise<number>} Số hàng đã bị xóa.
  * @throws {Error} Nếu không tìm thấy lịch nghỉ.
  */
-export const deleteBreakSchedule = async (break_id) => {
-  const breakSchedule = await BreakSchedule.findOne({ where: { break_id } });
+export const deleteBreakScheduleService = async (break_id) => {
+  const breakSchedule = await models.BreakSchedule.findOne({ where: { break_id } });
   if (!breakSchedule) throw new Error("Không tìm thấy lịch nghỉ");
   return await breakSchedule.destroy();
 };
@@ -68,7 +68,7 @@ export const deleteBreakSchedule = async (break_id) => {
  * @returns {Promise<Array>} Danh sách các lịch nghỉ phù hợp với bộ lọc.
  * @throws {Error} Nếu có lỗi khi liệt kê dữ liệu.
  */
-export const listBreakSchedules = async (filters) => {
+export const listBreakSchedulesService = async (filters) => {
   try {
     const whereClause = {};
 
@@ -91,7 +91,7 @@ export const listBreakSchedules = async (filters) => {
       whereClause.break_start_date = filters.break_start_date; // YYYY-MM-DD
     }
 
-    const breakSchedules = await BreakSchedule.findAll({
+    const breakSchedules = await models.BreakSchedule.findAll({
       where: whereClause,
       attributes: ['break_id', 'break_type', 'break_start_date', 'break_end_date', 'number_of_days', 'description', 'status', 'created_at', 'updated_at'],
       order: [['created_at', 'DESC']]
@@ -109,7 +109,7 @@ export const listBreakSchedules = async (filters) => {
  * @returns {Promise<Object>} Kết quả nhập khẩu bao gồm danh sách thành công và lỗi.
  * @throws {Error} Nếu file Excel không có dữ liệu hoặc định dạng không đúng, hoặc lỗi trong quá trình nhập.
  */
-export const importBreakSchedulesFromExcel = async (fileBuffer) => {
+export const importBreakSchedulesFromExcelService = async (fileBuffer) => {
   try {
     // Đọc file Excel từ buffer
     const rawData = ExcelUtils.readExcelToJSON(fileBuffer);
@@ -191,7 +191,7 @@ export const importBreakSchedulesFromExcel = async (fileBuffer) => {
         }
 
         // Kiểm tra break_id đã tồn tại chưa
-        const existingBreakSchedule = await BreakSchedule.findByPk(breakScheduleData.break_id);
+        const existingBreakSchedule = await models.BreakSchedule.findByPk(breakScheduleData.break_id);
         if (existingBreakSchedule) {
           results.errors.push({
             row: rowIndex,
@@ -202,7 +202,7 @@ export const importBreakSchedulesFromExcel = async (fileBuffer) => {
         }
 
         // Tạo lịch nghỉ mới
-        const newBreakSchedule = await BreakSchedule.create(breakScheduleData);
+        const newBreakSchedule = await models.BreakSchedule.create(breakScheduleData);
         results.success.push({
           row: rowIndex,
           break_id: newBreakSchedule.break_id,
@@ -231,7 +231,7 @@ export const importBreakSchedulesFromExcel = async (fileBuffer) => {
  * @returns {Promise<Object>} Kết quả nhập khẩu bao gồm danh sách thành công và lỗi.
  * @throws {Error} Nếu dữ liệu JSON không hợp lệ hoặc lỗi trong quá trình nhập.
  */
-export const importBreakSchedulesFromJson = async (breakSchedulesData) => {
+export const importBreakSchedulesFromJsonService = async (breakSchedulesData) => {
   try {
     if (!breakSchedulesData || !Array.isArray(breakSchedulesData)) {
       throw new Error("Dữ liệu lịch nghỉ không hợp lệ");
@@ -305,7 +305,7 @@ export const importBreakSchedulesFromJson = async (breakSchedulesData) => {
         }
 
         // Kiểm tra break_id đã tồn tại chưa
-        const existingBreakSchedule = await BreakSchedule.findOne({
+        const existingBreakSchedule = await models.BreakSchedule.findOne({
           where: { break_id: cleanedData.break_id }
         });
         if (existingBreakSchedule) {
@@ -318,7 +318,7 @@ export const importBreakSchedulesFromJson = async (breakSchedulesData) => {
         }
 
         // Tạo lịch nghỉ mới
-        const newBreakSchedule = await BreakSchedule.create(cleanedData);
+        const newBreakSchedule = await models.BreakSchedule.create(cleanedData);
         results.success.push(newBreakSchedule);
       } catch (error) {
         results.errors.push({
@@ -342,7 +342,7 @@ export const importBreakSchedulesFromJson = async (breakSchedulesData) => {
  * @returns {Object} Kết quả validation bao gồm valid (boolean) và error (string, nếu có).
  * @throws {Error} Nếu template không hợp lệ.
  */
-export const validateBreakScheduleExcelTemplate = (fileBuffer) => {
+export const validateBreakScheduleExcelTemplateService = (fileBuffer) => {
   const requiredColumns = ['Mã lịch nghỉ', 'Loại lịch nghỉ', 'Thời gian bắt đầu', 'Thời gian kết thúc'];
   const optionalColumns = ['Số ngày', 'Mô tả', 'Trạng thái'];
   const validation = ExcelUtils.validateTemplate(fileBuffer, requiredColumns, optionalColumns);

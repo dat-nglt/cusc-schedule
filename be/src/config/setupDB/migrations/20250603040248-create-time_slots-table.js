@@ -1,7 +1,7 @@
 'use strict';
 
 /** @type {import('sequelize-cli').Migration} */
-module.exports = {
+export default {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('time_slots', {
       slot_id: {
@@ -15,6 +15,10 @@ module.exports = {
       },
       start_time: {
         type: Sequelize.TIME,
+        allowNull: true
+      },
+      type: {
+        type: Sequelize.STRING(30),
         allowNull: true
       },
       end_time: {

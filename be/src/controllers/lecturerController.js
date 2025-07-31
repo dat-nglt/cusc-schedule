@@ -1,10 +1,10 @@
 import {
   getAllLecturersService,
   getLecturerByIdService,
-  createLecturer,
-  updateLecturer,
-  deleteLecturer,
-  importLecturersFromJson, // Giả định có thể có thêm importLecturersFromExcel nếu bạn muốn import từ Excel
+  createLecturerService,
+  updateLecturerService,
+  deleteLecturerService,
+  importLecturersFromJsonService, // Giả định có thể có thêm importLecturersFromExcel nếu bạn muốn import từ Excel
 } from "../services/lecturerService.js";
 import { APIResponse } from "../utils/APIResponse.js";
 import ExcelUtils from "../utils/ExcelUtils.js"; // Được sử dụng để tạo template Excel
@@ -80,7 +80,7 @@ export const getLecturerByIdController = async (req, res) => {
 export const createLecturerController = async (req, res) => {
   const lecturerData = req.body;
   try {
-    const lecturer = await createLecturer(lecturerData);
+    const lecturer = await createLecturerService(lecturerData);
     return APIResponse(res, 201, lecturer, "Tạo giảng viên thành công.");
   } catch (error) {
     console.error("Lỗi khi tạo giảng viên:", error);
@@ -104,7 +104,7 @@ export const updateLecturerController = async (req, res) => {
   const { id } = req.params;
   const lecturerData = req.body;
   try {
-    const lecturer = await updateLecturer(id, lecturerData);
+    const lecturer = await updateLecturerService(id, lecturerData);
     if (!lecturer) {
       return APIResponse(
         res,
@@ -140,7 +140,7 @@ export const updateLecturerController = async (req, res) => {
 export const deleteLecturerController = async (req, res) => {
   const { id } = req.params;
   try {
-    const deletedCount = await deleteLecturer(id); // Giả định service trả về số lượng bản ghi bị xóa
+    const deletedCount = await deleteLecturerService(id); // Giả định service trả về số lượng bản ghi bị xóa
     if (deletedCount === 0) {
       return APIResponse(res, 404, null, "Không tìm thấy giảng viên để xóa.");
     }
@@ -218,7 +218,7 @@ export const importLecturersFromJsonController = async (req, res) => {
     }
 
     // Tiến hành import dữ liệu từ JSON
-    const results = await importLecturersFromJson(lecturers);
+    const results = await importLecturersFromJsonService(lecturers);
 
     const responseData = {
       success: true, // Chỉ ra rằng request được xử lý

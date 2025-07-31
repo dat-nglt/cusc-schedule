@@ -1,0 +1,244 @@
+Best Weekly Timetable Fitness: -5.83
+=========================================
+OPTIMIZED WEEKLY SCHEDULE (TEMPLATE):
+=========================================
+Class: C01, Subject: M02 (practice), Day: Mon, Slot: T1, Room: TH2, Lecturer: GV03
+Class: C01, Subject: M01 (practice), Day: Thu, Slot: C2, Room: TH1, Lecturer: GV03
+Class: C01, Subject: M02 (theory), Day: Fri, Slot: T1, Room: LT2, Lecturer: GV03
+Class: C01, Subject: M01 (theory), Day: Sat, Slot: S2, Room: LT4, Lecturer: GV03
+Class: C02, Subject: M03 (practice), Day: Mon, Slot: C2, Room: TH2, Lecturer: GV02
+Class: C02, Subject: M04 (practice), Day: Wed, Slot: C1, Room: TH3, Lecturer: GV04
+Class: C02, Subject: M03 (theory), Day: Thu, Slot: S1, Room: LT2, Lecturer: GV02
+Class: C02, Subject: M04 (theory), Day: Fri, Slot: S1, Room: LT2, Lecturer: GV04
+Class: C02, Subject: M03 (theory), Day: Sat, Slot: T2, Room: LT1, Lecturer: GV04
+Class: C03, Subject: M06 (practice), Day: Mon, Slot: T1, Room: TH1, Lecturer: GV02
+Class: C03, Subject: M06 (theory), Day: Tue, Slot: S2, Room: LT3, Lecturer: GV03
+Class: C03, Subject: M05 (theory), Day: Wed, Slot: S1, Room: LT1, Lecturer: GV01
+Class: C03, Subject: M05 (theory), Day: Sat, Slot: T1, Room: LT1, Lecturer: GV01
+
+=========================================
+FULL SEMESTER SCHEDULE BY CLASS:
+=========================================
+
+===== SEMESTER SCHEDULE FOR CLASS: C01 =====
+
+  --- Week 1 ---
+    Day: Mon, Slot: T1, Subject: M02 (practice), Room: TH2, Lecturer: GV03
+    Day: Thu, Slot: C2, Subject: M01 (practice), Room: TH1, Lecturer: GV03
+    Day: Fri, Slot: T1, Subject: M02 (theory), Room: LT2, Lecturer: GV03
+    Day: Sat, Slot: S2, Subject: M01 (theory), Room: LT4, Lecturer: GV03
+
+  --- Week 2 ---
+    Day: Mon, Slot: T1, Subject: M02 (practice), Room: TH2, Lecturer: GV03
+    Day: Thu, Slot: C2, Subject: M01 (practice), Room: TH1, Lecturer: GV03
+    Day: Fri, Slot: T1, Subject: M02 (theory), Room: LT2, Lecturer: GV03
+    Day: Sat, Slot: S2, Subject: M01 (theory), Room: LT4, Lecturer: GV03
+
+  --- Week 3 ---
+    Day: Mon, Slot: T1, Subject: M02 (practice), Room: TH2, Lecturer: GV03
+    Day: Thu, Slot: C2, Subject: M01 (practice), Room: TH1, Lecturer: GV03
+    Day: Fri, Slot: T1, Subject: M02 (theory), Room: LT2, Lecturer: GV03
+    Day: Sat, Slot: S2, Subject: M01 (theory), Room: LT4, Lecturer: GV03
+
+  --- Week 4 ---
+    Day: Mon, Slot: T1, Subject: M02 (practice), Room: TH2, Lecturer: GV03
+    Day: Thu, Slot: C2, Subject: M01 (practice), Room: TH1, Lecturer: GV03
+    Day: Fri, Slot: T1, Subject: M02 (theory), Room: LT2, Lecturer: GV03
+    Day: Sat, Slot: S2, Subject: M01 (theory), Room: LT4, Lecturer: GV03
+
+  --- Week 5 ---
+    Day: Mon, Slot: T1, Subject: M02 (practice), Room: TH2, Lecturer: GV03
+    Day: Thu, Slot: C2, Subject: M01 (practice), Room: TH1, Lecturer: GV03
+    Day: Fri, Slot: T1, Subject: M02 (theory), Room: LT2, Lecturer: GV03
+    Day: Sat, Slot: S2, Subject: M01 (theory), Room: LT4, Lecturer: GV03
+
+  --- Week 6 ---
+    Day: Mon, Slot: T1, Subject: M02 (practice), Room: TH2, Lecturer: GV03
+    Day: Thu, Slot: C2, Subject: M01 (practice), Room: TH1, Lecturer: GV03
+    Day: Fri, Slot: T1, Subject: M02 (theory), Room: LT2, Lecturer: GV03
+    Day: Sat, Slot: S2, Subject: M01 (theory), Room: LT4, Lecturer: GV03
+
+  --- Week 7 ---
+    Day: Mon, Slot: T1, Subject: M02 (practice), Room: TH2, Lecturer: GV03
+    Day: Thu, Slot: C2, Subject: M01 (practice), Room: TH1, Lecturer: GV03
+    Day: Fri, Slot: T1, Subject: M02 (theory), Room: LT2, Lecturer: GV03
+    Day: Sat, Slot: S2, Subject: M01 (theory), Room: LT4, Lecturer: GV03
+
+  --- Week 8 ---
+    Day: Mon, Slot: T1, Subject: M02 (practice), Room: TH2, Lecturer: GV03
+    Day: Thu, Slot: C2, Subject: M01 (practice), Room: TH1, Lecturer: GV03
+    Day: Fri, Slot: T1, Subject: M02 (theory), Room: LT2, Lecturer: GV03
+    Day: Sat, Slot: S2, Subject: M01 (theory), Room: LT4, Lecturer: GV03
+
+  --- Week 9 ---
+    Day: Fri, Slot: T1, Subject: M02 (theory), Room: LT2, Lecturer: GV03
+    Day: Sat, Slot: S2, Subject: M01 (theory), Room: LT4, Lecturer: GV03
+
+  --- Week 10 ---
+    Day: Fri, Slot: T1, Subject: M02 (theory), Room: LT2, Lecturer: GV03
+    Day: Sat, Slot: S2, Subject: M01 (theory), Room: LT4, Lecturer: GV03
+
+  --- Week 11 ---
+    Day: Fri, Slot: T1, Subject: M02 (theory), Room: LT2, Lecturer: GV03
+    Day: Sat, Slot: S2, Subject: M01 (theory), Room: LT4, Lecturer: GV03
+
+  --- Week 12 ---
+    Day: Fri, Slot: T1, Subject: M02 (theory), Room: LT2, Lecturer: GV03
+    Day: Sat, Slot: S2, Subject: M01 (theory), Room: LT4, Lecturer: GV03
+
+  --- Week 13 ---
+    Day: Fri, Slot: T1, Subject: M02 (theory), Room: LT2, Lecturer: GV03
+    Day: Sat, Slot: S2, Subject: M01 (theory), Room: LT4, Lecturer: GV03
+
+  --- Week 14 ---
+    Day: Fri, Slot: T1, Subject: M02 (theory), Room: LT2, Lecturer: GV03
+    Day: Sat, Slot: S2, Subject: M01 (theory), Room: LT4, Lecturer: GV03
+
+  --- Week 15 ---
+    Day: Fri, Slot: T1, Subject: M02 (theory), Room: LT2, Lecturer: GV03
+    Day: Sat, Slot: S2, Subject: M01 (theory), Room: LT4, Lecturer: GV03
+
+===== SEMESTER SCHEDULE FOR CLASS: C02 =====
+
+  --- Week 1 ---
+    Day: Mon, Slot: C2, Subject: M03 (practice), Room: TH2, Lecturer: GV02
+    Day: Wed, Slot: C1, Subject: M04 (practice), Room: TH3, Lecturer: GV04
+    Day: Thu, Slot: S1, Subject: M03 (theory), Room: LT2, Lecturer: GV02
+    Day: Fri, Slot: S1, Subject: M04 (theory), Room: LT2, Lecturer: GV04
+    Day: Sat, Slot: T2, Subject: M03 (theory), Room: LT1, Lecturer: GV04
+
+  --- Week 2 ---
+    Day: Mon, Slot: C2, Subject: M03 (practice), Room: TH2, Lecturer: GV02
+    Day: Wed, Slot: C1, Subject: M04 (practice), Room: TH3, Lecturer: GV04
+    Day: Thu, Slot: S1, Subject: M03 (theory), Room: LT2, Lecturer: GV02
+    Day: Fri, Slot: S1, Subject: M04 (theory), Room: LT2, Lecturer: GV04
+    Day: Sat, Slot: T2, Subject: M03 (theory), Room: LT1, Lecturer: GV04
+
+  --- Week 3 ---
+    Day: Mon, Slot: C2, Subject: M03 (practice), Room: TH2, Lecturer: GV02
+    Day: Wed, Slot: C1, Subject: M04 (practice), Room: TH3, Lecturer: GV04
+    Day: Thu, Slot: S1, Subject: M03 (theory), Room: LT2, Lecturer: GV02
+    Day: Fri, Slot: S1, Subject: M04 (theory), Room: LT2, Lecturer: GV04
+    Day: Sat, Slot: T2, Subject: M03 (theory), Room: LT1, Lecturer: GV04
+
+  --- Week 4 ---
+    Day: Mon, Slot: C2, Subject: M03 (practice), Room: TH2, Lecturer: GV02
+    Day: Wed, Slot: C1, Subject: M04 (practice), Room: TH3, Lecturer: GV04
+    Day: Thu, Slot: S1, Subject: M03 (theory), Room: LT2, Lecturer: GV02
+    Day: Fri, Slot: S1, Subject: M04 (theory), Room: LT2, Lecturer: GV04
+    Day: Sat, Slot: T2, Subject: M03 (theory), Room: LT1, Lecturer: GV04
+
+  --- Week 5 ---
+    Day: Mon, Slot: C2, Subject: M03 (practice), Room: TH2, Lecturer: GV02
+    Day: Wed, Slot: C1, Subject: M04 (practice), Room: TH3, Lecturer: GV04
+    Day: Thu, Slot: S1, Subject: M03 (theory), Room: LT2, Lecturer: GV02
+    Day: Fri, Slot: S1, Subject: M04 (theory), Room: LT2, Lecturer: GV04
+    Day: Sat, Slot: T2, Subject: M03 (theory), Room: LT1, Lecturer: GV04
+
+  --- Week 6 ---
+    Day: Mon, Slot: C2, Subject: M03 (practice), Room: TH2, Lecturer: GV02
+    Day: Wed, Slot: C1, Subject: M04 (practice), Room: TH3, Lecturer: GV04
+    Day: Thu, Slot: S1, Subject: M03 (theory), Room: LT2, Lecturer: GV02
+    Day: Fri, Slot: S1, Subject: M04 (theory), Room: LT2, Lecturer: GV04
+    Day: Sat, Slot: T2, Subject: M03 (theory), Room: LT1, Lecturer: GV04
+
+  --- Week 7 ---
+    Day: Thu, Slot: S1, Subject: M03 (theory), Room: LT2, Lecturer: GV02
+    Day: Fri, Slot: S1, Subject: M04 (theory), Room: LT2, Lecturer: GV04
+    Day: Sat, Slot: T2, Subject: M03 (theory), Room: LT1, Lecturer: GV04
+
+  --- Week 8 ---
+    Day: Thu, Slot: S1, Subject: M03 (theory), Room: LT2, Lecturer: GV02
+    Day: Fri, Slot: S1, Subject: M04 (theory), Room: LT2, Lecturer: GV04
+    Day: Sat, Slot: T2, Subject: M03 (theory), Room: LT1, Lecturer: GV04
+
+  --- Week 9 ---
+    Day: Thu, Slot: S1, Subject: M03 (theory), Room: LT2, Lecturer: GV02
+    Day: Fri, Slot: S1, Subject: M04 (theory), Room: LT2, Lecturer: GV04
+    Day: Sat, Slot: T2, Subject: M03 (theory), Room: LT1, Lecturer: GV04
+
+  --- Week 10 ---
+    Day: Fri, Slot: S1, Subject: M04 (theory), Room: LT2, Lecturer: GV04
+
+  --- Week 11 ---
+    Day: Fri, Slot: S1, Subject: M04 (theory), Room: LT2, Lecturer: GV04
+
+  --- Week 12 ---
+    Day: Fri, Slot: S1, Subject: M04 (theory), Room: LT2, Lecturer: GV04
+
+===== SEMESTER SCHEDULE FOR CLASS: C03 =====
+
+  --- Week 1 ---
+    Day: Mon, Slot: T1, Subject: M06 (practice), Room: TH1, Lecturer: GV02
+    Day: Tue, Slot: S2, Subject: M06 (theory), Room: LT3, Lecturer: GV03
+    Day: Wed, Slot: S1, Subject: M05 (theory), Room: LT1, Lecturer: GV01
+    Day: Sat, Slot: T1, Subject: M05 (theory), Room: LT1, Lecturer: GV01
+
+  --- Week 2 ---
+    Day: Mon, Slot: T1, Subject: M06 (practice), Room: TH1, Lecturer: GV02
+    Day: Tue, Slot: S2, Subject: M06 (theory), Room: LT3, Lecturer: GV03
+    Day: Wed, Slot: S1, Subject: M05 (theory), Room: LT1, Lecturer: GV01
+    Day: Sat, Slot: T1, Subject: M05 (theory), Room: LT1, Lecturer: GV01
+
+  --- Week 3 ---
+    Day: Mon, Slot: T1, Subject: M06 (practice), Room: TH1, Lecturer: GV02
+    Day: Tue, Slot: S2, Subject: M06 (theory), Room: LT3, Lecturer: GV03
+    Day: Wed, Slot: S1, Subject: M05 (theory), Room: LT1, Lecturer: GV01
+    Day: Sat, Slot: T1, Subject: M05 (theory), Room: LT1, Lecturer: GV01
+
+  --- Week 4 ---
+    Day: Mon, Slot: T1, Subject: M06 (practice), Room: TH1, Lecturer: GV02
+    Day: Tue, Slot: S2, Subject: M06 (theory), Room: LT3, Lecturer: GV03
+    Day: Wed, Slot: S1, Subject: M05 (theory), Room: LT1, Lecturer: GV01
+    Day: Sat, Slot: T1, Subject: M05 (theory), Room: LT1, Lecturer: GV01
+
+  --- Week 5 ---
+    Day: Mon, Slot: T1, Subject: M06 (practice), Room: TH1, Lecturer: GV02
+    Day: Tue, Slot: S2, Subject: M06 (theory), Room: LT3, Lecturer: GV03
+    Day: Wed, Slot: S1, Subject: M05 (theory), Room: LT1, Lecturer: GV01
+    Day: Sat, Slot: T1, Subject: M05 (theory), Room: LT1, Lecturer: GV01
+
+  --- Week 6 ---
+    Day: Mon, Slot: T1, Subject: M06 (practice), Room: TH1, Lecturer: GV02
+    Day: Tue, Slot: S2, Subject: M06 (theory), Room: LT3, Lecturer: GV03
+    Day: Wed, Slot: S1, Subject: M05 (theory), Room: LT1, Lecturer: GV01
+    Day: Sat, Slot: T1, Subject: M05 (theory), Room: LT1, Lecturer: GV01
+
+  --- Week 7 ---
+    Day: Mon, Slot: T1, Subject: M06 (practice), Room: TH1, Lecturer: GV02
+    Day: Tue, Slot: S2, Subject: M06 (theory), Room: LT3, Lecturer: GV03
+    Day: Wed, Slot: S1, Subject: M05 (theory), Room: LT1, Lecturer: GV01
+    Day: Sat, Slot: T1, Subject: M05 (theory), Room: LT1, Lecturer: GV01
+
+  --- Week 8 ---
+    Day: Mon, Slot: T1, Subject: M06 (practice), Room: TH1, Lecturer: GV02
+    Day: Tue, Slot: S2, Subject: M06 (theory), Room: LT3, Lecturer: GV03
+    Day: Wed, Slot: S1, Subject: M05 (theory), Room: LT1, Lecturer: GV01
+    Day: Sat, Slot: T1, Subject: M05 (theory), Room: LT1, Lecturer: GV01
+
+  --- Week 9 ---
+    Day: Mon, Slot: T1, Subject: M06 (practice), Room: TH1, Lecturer: GV02
+    Day: Tue, Slot: S2, Subject: M06 (theory), Room: LT3, Lecturer: GV03
+    Day: Wed, Slot: S1, Subject: M05 (theory), Room: LT1, Lecturer: GV01
+    Day: Sat, Slot: T1, Subject: M05 (theory), Room: LT1, Lecturer: GV01
+
+  --- Week 10 ---
+    Day: Mon, Slot: T1, Subject: M06 (practice), Room: TH1, Lecturer: GV02
+    Day: Tue, Slot: S2, Subject: M06 (theory), Room: LT3, Lecturer: GV03
+    Day: Wed, Slot: S1, Subject: M05 (theory), Room: LT1, Lecturer: GV01
+    Day: Sat, Slot: T1, Subject: M05 (theory), Room: LT1, Lecturer: GV01
+
+  --- Week 11 ---
+    Day: Tue, Slot: S2, Subject: M06 (theory), Room: LT3, Lecturer: GV03
+
+  --- Week 12 ---
+    Day: Tue, Slot: S2, Subject: M06 (theory), Room: LT3, Lecturer: GV03
+
+  --- Week 13 ---
+    Day: Tue, Slot: S2, Subject: M06 (theory), Room: LT3, Lecturer: GV03
+
+  --- Week 14 ---
+    Day: Tue, Slot: S2, Subject: M06 (theory), Room: LT3, Lecturer: GV03
+
+  --- Week 15 ---
+    Day: Tue, Slot: S2, Subject: M06 (theory), Room: LT3, Lecturer: GV03
