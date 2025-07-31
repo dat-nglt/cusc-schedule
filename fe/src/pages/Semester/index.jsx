@@ -40,6 +40,7 @@ const Semester = () => {
     const [rowsPerPage] = useState(8);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedStatus, setSelectedStatus] = useState('');
+    const [selectedProgramId, setSelectedProgramId] = useState('');
     const [openDetail, setOpenDetail] = useState(false);
     const [selectedSemester, setSelectedSemester] = useState(null);
     const [openAddModal, setOpenAddModal] = useState(false);
@@ -49,7 +50,6 @@ const Semester = () => {
     const [semesterToDelete, setSemesterToDelete] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-
     // Danh sách trạng thái để lọc
     const statuses = ['Đang triển khai', 'Đang mở đăng ký', 'Đang diễn ra', 'Tạm dừng', 'Đã kết thúc'];
 
@@ -221,17 +221,22 @@ const Semester = () => {
         setSemesterToDelete(null);
     };
 
-    // Lọc danh sách học kỳ dựa trên từ khóa tìm kiếm và trạng thái
+    // Lọc danh sách học kỳ dựa trên từ khóa tìm kiếm, trạng thái và program_id
     const filteredSemesters = semesters.filter((semester) => {
         const matchesSearchTerm =
             semester.semester_id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            semester.program_id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
             semester.semester_name?.toLowerCase().includes(searchTerm.toLowerCase());
 
         const matchesStatus = selectedStatus
             ? semester.status === selectedStatus
             : true;
 
-        return matchesSearchTerm && matchesStatus;
+        const matchesProgram = selectedProgramId
+            ? semester.program_id === selectedProgramId
+            : true;
+
+        return matchesSearchTerm && matchesStatus && matchesProgram;
     });
 
     // Tính toán dữ liệu hiển thị trên trang hiện tại
@@ -291,6 +296,22 @@ const Semester = () => {
                                         {statuses.map((status) => (
                                             <MenuItem key={status} value={status}>
                                                 {status}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+
+                                <FormControl size="small" sx={{ minWidth: 150 }}>
+                                    <InputLabel>Chương trình</InputLabel>
+                                    <Select
+                                        value={selectedProgramId}
+                                        onChange={(e) => setSelectedProgramId(e.target.value)}
+                                        label="Chương trình"
+                                    >
+                                        <MenuItem value="">Tất cả</MenuItem>
+                                        {programs.map((program) => (
+                                            <MenuItem key={program.program_id} value={program.program_id}>
+                                                {program.program_id}
                                             </MenuItem>
                                         ))}
                                     </Select>

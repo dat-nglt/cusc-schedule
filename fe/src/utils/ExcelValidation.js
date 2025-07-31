@@ -80,10 +80,10 @@ const validateLecturerData = (lecturer, existingLecturers, allImportData = []) =
         errors.push('duplicate_id');
     }
 
-    // Kiểm tra các trường bắt buộc
+    // Kiểm tra các trường bắt buộc (không coi số 0 là thiếu)
     const missingFields = requiredLecturerFields.filter(field => {
         const value = lecturer[field];
-        return !value || (typeof value === 'string' && value.trim() === '');
+        return value === null || value === undefined || (typeof value === 'string' && value.trim() === '');
     });
 
     if (missingFields.length > 0) {
@@ -136,19 +136,19 @@ export const processExcelDataLecturer = (rawData, existingLecturers) => {
     const processedData = rawData.map((row, index) => {
         // Chuẩn hóa dữ liệu
         const lecturer = {
-            lecturer_id: row['Mã giảng viên'] || row['lecturer_id'] || '',
-            name: row['Họ tên'] || row['name'] || '',
-            email: row['Email'] || row['email'] || '',
+            lecturer_id: row['Mã giảng viên']?.trim() || row['lecturer_id']?.trim() || '',
+            name: row['Họ tên']?.trim() || row['name']?.trim() || '',
+            email: row['Email']?.trim() || row['email']?.trim() || '',
             day_of_birth: formatDate(row['Ngày sinh'] || row['day_of_birth']),
-            gender: row['Giới tính'] || row['gender'] || '',
-            address: row['Địa chỉ'] || row['address'] || '',
+            gender: row['Giới tính']?.trim() || row['gender']?.trim() || '',
+            address: row['Địa chỉ']?.trim() || row['address']?.trim() || '',
             phone_number: row['Số điện thoại'] || row['phone_number'] || '',
-            academic_rank: row['Học hàm'] || row['academic_rank'] || '',
+            academic_rank: row['Học hàm']?.trim() || row['academic_rank']?.trim() || '',
             subjectIds: row['Mã học phần'] ? row['Mã học phần'].split(',').map(id => id.trim()) : [],
-            department: row['Khoa/Bộ môn'] || row['department'] || '',
+            department: row['Khoa/Bộ môn']?.trim() || row['department']?.trim() || '',
             hire_date: formatDate(row['Ngày tuyển dụng'] || row['hire_date']),
-            degree: row['Học vị'] || row['degree'] || '',
-            status: row['Trạng thái'] || row['status'] || 'Hoạt động',
+            degree: row['Học vị']?.trim() || row['degree']?.trim() || '',
+            status: row['Trạng thái']?.trim() || row['status']?.trim() || 'Hoạt động',
             rowIndex: index + 2 // +2 vì Excel bắt đầu từ row 1 và có header
         };
 
@@ -195,10 +195,10 @@ const validateStudentData = (student, existingStudents, allImportData = []) => {
         errors.push('duplicate_id');
     }
 
-    // Kiểm tra các trường bắt buộc
+    // Kiểm tra các trường bắt buộc (không coi số 0 là thiếu)
     const missingFields = requiredStudentFields.filter(field => {
         const value = student[field];
-        return !value || (typeof value === 'string' && value.trim() === '');
+        return value === null || value === undefined || (typeof value === 'string' && value.trim() === '');
     });
 
     if (missingFields.length > 0) {
@@ -243,17 +243,17 @@ export const processExcelDataStudent = (rawData, existingStudents) => {
     const processedData = rawData.map((row, index) => {
         // Chuẩn hóa dữ liệu
         const student = {
-            student_id: row['Mã học viên'] || row['student_id'] || '',
-            name: row['Họ tên'] || row['name'] || '',
-            email: row['Email'] || row['email'] || '',
+            student_id: row['Mã học viên']?.trim() || row['student_id']?.trim() || '',
+            name: row['Họ tên']?.trim() || row['name']?.trim() || '',
+            email: row['Email']?.trim() || row['email']?.trim() || '',
             day_of_birth: formatDate(row['Ngày sinh'] || row['day_of_birth']),
-            gender: row['Giới tính'] || row['gender'] || '',
-            address: row['Địa chỉ'] || row['address'] || '',
+            gender: row['Giới tính']?.trim() || row['gender']?.trim() || '',
+            address: row['Địa chỉ']?.trim() || row['address']?.trim() || '',
             phone_number: row['Số điện thoại'] || row['phone_number'] || '',
             class: row['Lớp'] || row['class'] || '',
             admission_year: formatDate(row['Năm nhập học'] || row['admission_year']),
             gpa: row['Điểm trung bình'] || row['gpa'] || '',
-            status: row['Trạng thái'] || row['status'] || 'Đang học',
+            status: row['Trạng thái']?.trim() || row['status']?.trim() || 'Đang học',
             rowIndex: index + 2 // +2 vì Excel bắt đầu từ row 1 và có header
         };
 
@@ -295,10 +295,10 @@ const validateProgramData = (program, existingPrograms, allImportData = []) => {
         errors.push('duplicate_id');
     }
 
-    // Kiểm tra các trường bắt buộc
+    // Kiểm tra các trường bắt buộc (không coi số 0 là thiếu)
     const missingFields = requiredProgramFields.filter(field => {
         const value = program[field];
-        return !value || (typeof value === 'string' && value.trim() === '');
+        return value === null || value === undefined || (typeof value === 'string' && value.trim() === '');
     });
 
     if (missingFields.length > 0) {
@@ -321,11 +321,11 @@ export const processExcelDataProgram = (rawData, existingPrograms) => {
     const processedData = rawData.map((row, index) => {
         // Chuẩn hóa dữ liệu
         const program = {
-            program_id: row['Mã chương trình'] || row['program_id'] || '',
-            program_name: row['Tên chương trình'] || row['program_name'] || '',
+            program_id: row['Mã chương trình']?.trim() || row['program_id']?.trim() || '',
+            program_name: row['Tên chương trình']?.trim() || row['program_name']?.trim() || '',
             training_duration: row['Thời gian đào tạo'] || row['training_duration'] || '',
-            description: row['Mô tả'] || row['description'] || '',
-            status: row['Trạng thái'] || row['status'] || 'Hoạt động',
+            description: row['Mô tả']?.trim() || row['description']?.trim() || '',
+            status: row['Trạng thái']?.trim() || row['status']?.trim() || 'Hoạt động',
             rowIndex: index + 2 // +2 vì Excel bắt đầu từ row 1 và có header
         };
 
@@ -370,10 +370,10 @@ const validateSemesterData = (semester, existingSemesters, allImportData = []) =
         errors.push('duplicate_id');
     }
 
-    // Kiểm tra các trường bắt buộc
+    // Kiểm tra các trường bắt buộc (không coi số 0 là thiếu)
     const missingFields = requiredSemesterFields.filter(field => {
         const value = semester[field];
-        return !value || (typeof value === 'string' && value.trim() === '');
+        return value === null || value === undefined || (typeof value === 'string' && value.trim() === '');
     });
 
     if (missingFields.length > 0) {
@@ -414,12 +414,12 @@ export const processExcelDataSemester = (rawData, existingSemesters) => {
     const processedData = rawData.map((row, index) => {
         // Chuẩn hóa dữ liệu
         const semester = {
-            semester_id: row['Mã học kỳ'] || row['semester_id'] || '',
-            semester_name: row['Tên học kỳ'] || row['semester_name'] || '',
+            semester_id: row['Mã học kỳ']?.trim() || row['semester_id']?.trim() || '',
+            semester_name: row['Tên học kỳ']?.trim() || row['semester_name']?.trim() || '',
             start_date: formatDate(row['Ngày bắt đầu'] || row['start_date']),
             end_date: formatDate(row['Ngày kết thúc'] || row['end_date']),
-            status: row['Trạng thái'] || row['status'] || 'Hoạt động',
-            program_id: row['Mã chương trình đào tạo'] || row['Mã chương trình'] || row['program_id'] || '',
+            status: row['Trạng thái']?.trim() || row['status']?.trim() || 'Hoạt động',
+            program_id: row['Mã chương trình đào tạo']?.trim() || row['Mã chương trình']?.trim() || row['program_id'] || '',
             rowIndex: index + 2 // +2 vì Excel bắt đầu từ row 1 và có header
         };
 
@@ -464,10 +464,12 @@ const validateSubjectData = (subject, existingSubjects, allImportData = []) => {
         errors.push('duplicate_id');
     }
 
-    // Kiểm tra các trường bắt buộc
+
+    // Sửa lại: Dùng `value === null || value === undefined || (typeof value === 'string' && value.trim() === '')`
+    // Điều kiện này sẽ không coi số 0 là giá trị thiếu
     const missingFields = requiredSubjectFields.filter(field => {
         const value = subject[field];
-        return !value || (typeof value === 'string' && value.trim() === '');
+        return value === null || value === undefined || (typeof value === 'string' && value.trim() === '');
     });
 
     if (missingFields.length > 0) {
@@ -506,13 +508,13 @@ export const processExcelDataSubject = (rawData, existingSubjects) => {
     const processedData = rawData.map((row, index) => {
         // Chuẩn hóa dữ liệu
         const subject = {
-            subject_id: row['Mã học phần'] || row['subject_id'] || '',
-            subject_name: row['Tên học phần'] || row['subject_name'] || '',
-            credit: row['Số tín chỉ'] || row['credit'] || '',
-            theory_hours: row['Số giờ lý thuyết'] || row['theory_hours'] || '',
-            practice_hours: row['Số giờ thực hành'] || row['practice_hours'] || '',
-            status: row['Trạng thái'] || row['status'] || 'Hoạt động',
-            semester_id: row['Mã học kỳ'] || row['semester_id'] || '',
+            subject_id: row['Mã học phần']?.trim() || row['Mã môn học']?.trim() || row['subject_id']?.trim() || '',
+            subject_name: row['Tên học phần']?.trim() || row['Tên học phần']?.trim() || row['subject_name']?.trim() || '',
+            credit: row['Số tín chỉ'] ?? row['credit'] ?? '',
+            theory_hours: row['Số giờ lý thuyết'] ?? row['theory_hours'] ?? '',
+            practice_hours: row['Số giờ thực hành'] ?? row['practice_hours'] ?? '',
+            status: row['Trạng thái']?.trim() || row['status']?.trim() || 'Hoạt động',
+            semester_id: row['Mã học kỳ']?.trim() || row['semester_id']?.trim() || '',
             rowIndex: index + 2 // +2 vì Excel bắt đầu từ row 1 và có header
         };
 
@@ -575,10 +577,10 @@ const validateTimeslotData = (timeslot, existingTimeslots, allImportData = []) =
         errors.push('duplicate_time_range');
     }
 
-    // Kiểm tra các trường bắt buộc
+    // Kiểm tra các trường bắt buộc (không coi số 0 là thiếu)
     const missingFields = requiredTimeslotFields.filter(field => {
         const value = timeslot[field];
-        return !value || (typeof value === 'string' && value.trim() === '');
+        return value === null || value === undefined || (typeof value === 'string' && value.trim() === '');
     });
 
     if (missingFields.length > 0) {
@@ -616,13 +618,13 @@ export const processExcelDataTimeslot = (rawData, existingTimeslots) => {
     const processedData = rawData.map((row, index) => {
         // Chuẩn hóa dữ liệu
         const timeslot = {
-            slot_id: row['Mã khung giờ'] || row['Mã khung thời gian'] || row['slot_id'] || '',
-            slot_name: row['Tên khung giờ'] || row['Tên khung thời gian'] || row['slot_name'] || '',
+            slot_id: row['Mã khung giờ']?.trim() || row['Mã khung thời gian']?.trim() || row['slot_id']?.trim() || '',
+            slot_name: row['Tên khung giờ']?.trim() || row['Tên khung thời gian']?.trim() || row['slot_name']?.trim() || '',
             start_time: formatTime(row['Giờ bắt đầu'] || row['Thời gian bắt đầu'] || row['start_time'] || ''),
             end_time: formatTime(row['Giờ kết thúc'] || row['Thời gian kết thúc'] || row['end_time'] || ''),
-            type: row['Loại'] || row['Buổi'] || row['type'] || '',
-            description: row['Mô tả'] || row['description'] || '',
-            status: row['Trạng thái'] || row['status'] || 'active',
+            type: row['Loại']?.trim() || row['Buổi']?.trim() || row['type'] || '',
+            description: row['Mô tả']?.trim() || row['description']?.trim() || '',
+            status: row['Trạng thái']?.trim() || row['status']?.trim() || 'active',
             rowIndex: index + 2 // +2 vì Excel bắt đầu từ row 1 và có header
         };
 
@@ -678,10 +680,10 @@ const validateRoomData = (room, existingRooms, allImportData = []) => {
         errors.push('duplicate_id');
     }
 
-    // Kiểm tra các trường bắt buộc
+    // Kiểm tra các trường bắt buộc (không coi số 0 là thiếu)
     const missingFields = requiredRoomFields.filter(field => {
         const value = room[field];
-        return !value || (typeof value === 'string' && value.trim() === '');
+        return value === null || value === undefined || (typeof value === 'string' && value.trim() === '');
     });
 
     if (missingFields.length > 0) {
@@ -704,14 +706,20 @@ export const processExcelDataRoom = (rawData, existingRooms) => {
     const processedData = rawData.map((row, index) => {
         // Chuẩn hóa dữ liệu
         const room = {
-            room_id: row['Mã phòng'] || row['room_id'] || '',
-            room_name: row['Tên phòng'] || row['room_name'] || '',
-            location: row['Vị trí'] || row['location'] || '',
+            // Sử dụng `?.trim()` để loại bỏ khoảng trắng một cách an toàn
+            room_id: row['Mã phòng']?.trim() || row['room_id']?.trim() || '',
+            room_name: row['Tên phòng']?.trim() || row['room_name']?.trim() || '',
+            location: row['Vị trí']?.trim() || row['location']?.trim() || '',
+
+            // Giữ nguyên với các giá trị không phải chuỗi hoặc có logic mặc định
             capacity: row['Sức chứa'] || row['capacity'] || '',
             status: row['Trạng thái'] || row['status'] || 'available',
-            type: row['Loại phòng'] || row['type'] || '',
-            note: row['Ghi chú'] || row['note'] || '',
-            rowIndex: index + 2 // +2 vì Excel bắt đầu từ row 1 và có header
+
+            // Áp dụng trim cho các trường chuỗi còn lại
+            type: row['Loại phòng']?.trim() || row['type']?.trim() || '',
+            note: row['Ghi chú']?.trim() || row['note']?.trim() || '',
+
+            rowIndex: index + 2
         };
 
         // Validate dữ liệu

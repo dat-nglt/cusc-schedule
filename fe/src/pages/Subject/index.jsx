@@ -41,6 +41,7 @@ const Subject = () => {
     const [rowsPerPage] = useState(8);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedStatus, setSelectedStatus] = useState('');
+    const [selectedSemesterId, setSelectedSemesterId] = useState('');
     const [openDetail, setOpenDetail] = useState(false);
     const [selectedSubject, setSelectedSubject] = useState(null);
     const [openAddModal, setOpenAddModal] = useState(false);
@@ -228,17 +229,22 @@ const Subject = () => {
         setSubjectToDelete(null);
     };
 
-    // Lọc danh sách học phần dựa trên từ khóa tìm kiếm và trạng thái
+    // Lọc danh sách học phần dựa trên từ khóa tìm kiếm, trạng thái và semester_id
     const filteredSubjects = subjects.filter((subject) => {
         const matchesSearchTerm =
             subject.subject_id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            subject.semester_id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
             subject.subject_name?.toLowerCase().includes(searchTerm.toLowerCase());
 
         const matchesStatus = selectedStatus
             ? subject.status === selectedStatus
             : true;
 
-        return matchesSearchTerm && matchesStatus;
+        const matchesSemester = selectedSemesterId
+            ? subject.semester_id === selectedSemesterId
+            : true;
+
+        return matchesSearchTerm && matchesStatus && matchesSemester;
     });
 
     // Tính toán dữ liệu hiển thị trên trang hiện tại
@@ -298,6 +304,22 @@ const Subject = () => {
                                         {statuses.map((status) => (
                                             <MenuItem key={status} value={status}>
                                                 {status}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+
+                                <FormControl size="small" sx={{ minWidth: 150 }}>
+                                    <InputLabel>Học kỳ</InputLabel>
+                                    <Select
+                                        value={selectedSemesterId}
+                                        onChange={(e) => setSelectedSemesterId(e.target.value)}
+                                        label="Học kỳ"
+                                    >
+                                        <MenuItem value="">Tất cả</MenuItem>
+                                        {semesters.map((semester) => (
+                                            <MenuItem key={semester.semester_id} value={semester.semester_id}>
+                                                {semester.semester_id}
                                             </MenuItem>
                                         ))}
                                     </Select>

@@ -27,7 +27,7 @@ import useResponsive from '../../hooks/useResponsive';
 import LecturerTable from './LecturerTable';
 import { toast } from 'react-toastify';
 import { getAllLecturersAPI, getLecturerByIdAPI, createLecturerAPI, updateLecturerAPI, deleteLecturerAPI } from '../../api/lecturerAPI';
-import { getAllSubjects } from '../../api/subjectAPI';
+import { getAllSubjectsAPI } from '../../api/subjectAPI';
 const Lecturer = () => {
     const { isSmallScreen, isMediumScreen } = useResponsive();
     const theme = useTheme()
@@ -76,7 +76,7 @@ const Lecturer = () => {
     const fetchSubjects = async () => {
         try {
             setLoading(true);
-            const response = await getAllSubjects();
+            const response = await getAllSubjectsAPI();
             if (!response) {
                 console.error("Không có dữ liệu học phần");
                 return;

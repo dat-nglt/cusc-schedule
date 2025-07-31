@@ -10,7 +10,8 @@ import { useEffect } from 'react';
 import { generateSchedule, getDownloadUrl, stopScheduleGeneration } from '../../api/scheduleAPI';
 import ProgressModal from './ProgressModal';
 import { toast } from 'react-toastify';
-
+import { getAllLecturersAPI } from '../../api/lecturerAPI';
+import { getAllSubjectsAPI } from '../../api/subjectAPI';
 
 const socket = io(import.meta.env.VITE_API_URL || 'http://localhost:3000', { // Sử dụng biến môi trường cho Socket.IO
     withCredentials: true
@@ -18,11 +19,14 @@ const socket = io(import.meta.env.VITE_API_URL || 'http://localhost:3000', { // 
 
 const Dashboard = () => {
     const [open, setOpen] = useState(false);
+    const [lecturers, setLecturers] = useState([]);
+    const [subjects, setSubjects] = useState([]);
     const [statusMessage, setStatusMessage] = useState('');
     const [downloadableFiles, setDownloadableFiles] = useState([]);
     const [error, setError] = useState('');
     const [gaLogs, setGaLogs] = useState([]);
     const [progress, setProgress] = useState(0);
+    const [loading, setLoading] = useState(false);
 
     const actualInputData = {
         "classes": [
@@ -461,7 +465,7 @@ const Dashboard = () => {
     const fetchSubjects = async () => {
         try {
             setLoading(true);
-            const response = await getAllSubjects();
+            const response = await getAllSubjectsAPI();
             if (!response) {
                 console.error("Không có dữ liệu học phần");
                 return;

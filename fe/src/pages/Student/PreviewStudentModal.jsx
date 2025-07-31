@@ -24,7 +24,7 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ErrorIcon from '@mui/icons-material/Error';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import { importStudents } from '../../api/studentAPI';
+import { importStudentsAPI } from '../../api/studentAPI';
 import { getRowStatus, getErrorChip } from '../../components/ui/ErrorChip';
 
 export default function PreviewStudentModal({ open, onClose, previewData, fetchStudents, classes }) {
@@ -85,7 +85,7 @@ export default function PreviewStudentModal({ open, onClose, previewData, fetchS
             });
             console.log('Valid data to import:', validData);
             // Gọi API import với dữ liệu đã được validate
-            const response = await importStudents(validData);
+            const response = await importStudentsAPI(validData);
 
             if (response.data) {
                 setImportMessage(`Thêm thành công ${validRows.length} học viên`);
