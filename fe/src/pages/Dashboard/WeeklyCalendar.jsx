@@ -118,7 +118,7 @@ const WeeklyCalendar = ({
 
 
                         <Box sx={{ display: 'flex', gap: 1 }}>
-                            <Tooltip title="Thêm lịch học">
+                            {/* <Tooltip title="Thêm lịch học">
                                 <Button
                                     variant="contained"
                                     startIcon={<Add />}
@@ -131,7 +131,7 @@ const WeeklyCalendar = ({
                                 >
                                     {isMobile ? 'Thêm' : 'Thêm lịch'}
                                 </Button>
-                            </Tooltip>
+                            </Tooltip> */}
 
                             {!isMobile && (
                                 <>

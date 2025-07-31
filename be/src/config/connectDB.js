@@ -1,7 +1,7 @@
 // config/database.js
 import { Sequelize } from "sequelize";
 import dotenv from "dotenv";
-import logger from "../utils/logger"; // Đảm bảo đường dẫn đến logger đúng
+import logger from "../utils/logger.js"; // Đảm bảo đường dẫn đến logger đúng
 
 dotenv.config(); // Tải các biến môi trường từ file .env
 

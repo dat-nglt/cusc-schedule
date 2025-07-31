@@ -5,8 +5,8 @@ import {
     updateProgram,
     deleteProgram,
     importProgramsFromJSON // Giả định có thể có thêm importProgramsFromExcel nếu bạn muốn nhập từ Excel
-} from "../services/programService";
-import { APIResponse } from "../utils/APIResponse"; // Sử dụng APIResponse nhất quán
+} from "../services/programService.js";
+import { APIResponse } from "../utils/APIResponse.js"; // Sử dụng APIResponse nhất quán
 import ExcelUtils from "../utils/ExcelUtils.js"; // Được sử dụng để tạo template Excel
 
 /**

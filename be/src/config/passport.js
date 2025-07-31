@@ -5,7 +5,7 @@ import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import {
   findUserByEmail,
   findUserByGoogleId,
-  findExistsUserByID,
+  findExistsUserByIdService,
   updateUserGoogleId,
 } from "../services/userService.js";
 import dotenv from "dotenv";
@@ -133,7 +133,7 @@ const configurePassport = () => {
   passport.deserializeUser(async (sessionData, done) => {
     try {
       // sessionData ở đây là { id: ..., role: ... } từ serializeUser
-      const existsUser = await findExistsUserByID(sessionData.id); // Gọi hàm đã được cập nhật
+      const existsUser = await findExistsUserByIdService(sessionData.id); // Gọi hàm đã được cập nhật
 
       if (existsUser) {
         // Kiểm tra existsUser và existsUser.user có tồn tại không

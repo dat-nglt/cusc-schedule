@@ -11,7 +11,7 @@ import {
     importBreakSchedulesFromJsonController,
     downloadBreakScheduleTemplateController,
 } from '../controllers/breakscheduleController.js';
-import { uploadExcel } from '../middleware/excelMiddleware'; // Make sure this path is correct
+import { uploadExcel } from '../middleware/excelMiddleware.js'; // Make sure this path is correct
 
 const breakscheduleRoutes = express.Router();
 

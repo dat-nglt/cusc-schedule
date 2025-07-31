@@ -1,0 +1,44 @@
+// web-app/frontend/src/api/apiService.js
+
+import axiosInstance from "./axiosConfig";
+
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+
+export const generateSchedule = async (scheduleData) => {
+  try {
+    const response = await axiosInstance.post(
+      "/api/schedule/generate",
+      scheduleData,
+      {
+        timeout: 30000, // Tăng timeout cho request này nếu cần (mặc định là 30s từ axiosConfig)
+      }
+    );
+    return response.data; // Trả về data từ response
+  } catch (error) {
+    console.error("Error in scheduleApiService.generateSchedule:", error);
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw (
+      error.response?.data ||
+      new Error("An unknown error occurred during schedule generation.")
+    );
+  }
+};
+
+export const stopScheduleGeneration = async () => {
+  try {
+    const response = await axiosInstance.post(`/api/schedule/stop-ga`);
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Error in stopScheduleGeneration API call:",
+      error.response ? error.response.data : error.message
+    );
+    throw error.response ? error.response.data : new Error(error.message);
+  }
+};
+
+export const getDownloadUrl = (filename) => {
+  return `${API_BASE_URL}/api/schedule/download/${filename}`;
+};

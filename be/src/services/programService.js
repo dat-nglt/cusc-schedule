@@ -1,6 +1,6 @@
-import models from '../models/index';
+import models from '../models/index.js';
 import { Op } from 'sequelize'; // Import Op nếu cần cho các hàm list tương lai
-import ExcelUtils from "../utils/ExcelUtils"; // Giả định bạn có ExcelUtils cho các hàm import từ Excel
+import ExcelUtils from "../utils/ExcelUtils.js"; // Giả định bạn có ExcelUtils cho các hàm import từ Excel
 
 const { sequelize, Program } = models;
 /**
