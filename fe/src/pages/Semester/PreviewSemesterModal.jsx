@@ -138,13 +138,15 @@ export default function PreviewSemesterModal({ open, onClose, previewData, fetch
                             label={`Hợp lệ: ${validRows.length}`}
                             color="success"
                             variant="outlined"
-                        />
-                        <Chip
-                            icon={<ErrorIcon />}
-                            label={`Không hợp lệ: ${errorRows.length}`}
-                            color="error"
-                            variant="outlined"
-                        />
+                        />{
+                            errorRows.length > 0 &&
+                            <Chip
+                                icon={<ErrorIcon />}
+                                label={`Không hợp lệ: ${errorRows.length}`}
+                                color="error"
+                                variant="outlined"
+                            />
+                        }
                         <Chip
                             label={`Tổng cộng: ${previewData.length}`}
                             variant="outlined"

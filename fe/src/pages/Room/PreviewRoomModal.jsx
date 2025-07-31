@@ -111,12 +111,14 @@ export default function PreviewRoomModal({ open, onClose, previewData, fetchRoom
                             color="success"
                             variant="outlined"
                         />
-                        <Chip
-                            icon={<ErrorIcon />}
-                            label={`Không hợp lệ: ${errorRows.length}`}
-                            color="error"
-                            variant="outlined"
-                        />
+                        {errorRows.length > 0 &&
+                            <Chip
+                                icon={<ErrorIcon />}
+                                label={`Không hợp lệ: ${errorRows.length}`}
+                                color="error"
+                                variant="outlined"
+                            />
+                        }
                         <Chip
                             label={`Tổng cộng: ${previewData.length}`}
                             variant="outlined"
