@@ -12,19 +12,49 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Alert, // Thêm Alert cho thông báo lỗi/thành công
-  CircularProgress, // Thêm CircularProgress cho trạng thái loading
-  IconButton, // Thêm IconButton cho nút đóng
-  Divider, // Thêm Divider để phân cách
+  Alert,
+  CircularProgress,
+  IconButton,
+  Divider,
+  Stepper,
+  Step,
+  StepLabel,
+  Chip,
+  InputAdornment,
+  Fade,
+  Paper
 } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close'; // Icon đóng modal
-import CloudUploadIcon from '@mui/icons-material/CloudUpload'; // Icon tải file lên
+import {
+  Close,
+  CloudUpload,
+  Event,
+  EventAvailable,
+  EventBusy,
+  CalendarToday,
+  CheckCircle,
+  Error as ErrorIcon,
+  Warning
+} from '@mui/icons-material';
 import * as XLSX from 'xlsx';
 import PreviewBreakScheduleModal from './PreviewBreakScheduleModal';
 
-const validStatuses = ['Hoạt động', 'Ngừng hoạt động'];
+const statusOptions = [
+  { value: 'Hoạt động', color: 'success', icon: <EventAvailable /> },
+  { value: 'Ngừng hoạt động', color: 'error', icon: <EventBusy /> }
+];
 
-export default function AddBreakScheduleModal({ open, onClose, onAddBreakSchedule, onImportSuccess, existingBreakSchedules, loading, error: apiError, message: apiMessage }) {
+const steps = ['Thông tin cơ bản', 'Thời gian hoạt động'];
+
+export default function AddBreakScheduleModal({ 
+  open, 
+  onClose, 
+  onAddBreakSchedule, 
+  onImportSuccess, 
+  existingBreakSchedules, 
+  loading, 
+  error: apiError, 
+  message: apiMessage 
+}) {
   const [newBreakSchedule, setNewBreakSchedule] = useState({
     break_id: '',
     break_type: '',
@@ -33,100 +63,122 @@ export default function AddBreakScheduleModal({ open, onClose, onAddBreakSchedul
     status: 'Hoạt động',
   });
 
-  const [localError, setLocalError] = useState(''); // Sử dụng localError cho validation client-side
+  const [activeStep, setActiveStep] = useState(0);
+  const [localError, setLocalError] = useState('');
   const [showPreview, setShowPreview] = useState(false);
   const [previewData, setPreviewData] = useState([]);
+  const [fileUploaded, setFileUploaded] = useState(false);
+
+  const handleNext = () => {
+    if (activeStep === 0) {
+      if (!newBreakSchedule.break_id || !newBreakSchedule.break_type) {
+        setLocalError('Vui lòng điền đầy đủ thông tin cơ bản');
+        return;
+      }
+    }
+    setLocalError('');
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+  };
+
+  const handleBack = () => {
+    setLocalError('');
+    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setNewBreakSchedule((prev) => ({ ...prev, [name]: value }));
-    setLocalError(''); // Clear local errors when user starts typing
+    setLocalError('');
   };
 
   const handleSubmit = async () => {
-    // --- Client-side validation ---
-    if (!newBreakSchedule.break_id || !newBreakSchedule.break_type || !newBreakSchedule.break_start_date || !newBreakSchedule.break_end_date) {
-      setLocalError('Vui lòng điền đầy đủ thông tin!');
+    if (!newBreakSchedule.break_start_date || !newBreakSchedule.break_end_date) {
+      setLocalError('Vui lòng điền đầy đủ thông tin thời gian');
       return;
     }
 
     const startDate = new Date(newBreakSchedule.break_start_date);
     const endDate = new Date(newBreakSchedule.break_end_date);
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Reset time for accurate date comparison
+    today.setHours(0, 0, 0, 0);
 
     const maxFutureDate = new Date(today);
     maxFutureDate.setFullYear(today.getFullYear() + 5);
 
-    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) { // Use .getTime() for robust NaN check
-      setLocalError('Định dạng ngày không hợp lệ!');
+    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+      setLocalError('Định dạng ngày không hợp lệ');
       return;
     }
 
     if (startDate > endDate) {
-      setLocalError('Thời gian bắt đầu không được lớn hơn thời gian kết thúc!');
+      setLocalError('Thời gian bắt đầu không được sau thời gian kết thúc');
       return;
     }
 
     if (startDate < today) {
-      setLocalError('Thời gian bắt đầu không được ở quá khứ!');
+      setLocalError('Thời gian bắt đầu không được ở quá khứ');
       return;
     }
 
     if (endDate > maxFutureDate) {
-      setLocalError('Thời gian kết thúc không được quá 5 năm trong tương lai!');
+      setLocalError('Thời gian kết thúc không được quá 5 năm trong tương lai');
       return;
     }
 
-    const isDuplicate = existingBreakSchedules.some((schedule) => schedule.break_id === newBreakSchedule.break_id);
+    const isDuplicate = existingBreakSchedules.some(
+      (schedule) => schedule.break_id === newBreakSchedule.break_id
+    );
     if (isDuplicate) {
-      setLocalError(`Mã lịch nghỉ "${newBreakSchedule.break_id}" đã tồn tại!`);
+      setLocalError(`Mã lịch nghỉ "${newBreakSchedule.break_id}" đã tồn tại`);
       return;
     }
 
     const scheduleToAdd = {
       ...newBreakSchedule,
-      // id: Date.now(), // ID should ideally be generated by the backend
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
 
-    // Call the parent component's add function
-    // Assume onAddBreakSchedule is an async function that handles API call
     await onAddBreakSchedule(scheduleToAdd);
-
-    // Reset form and close modal only if no API error occurred
-    // The `apiError` prop from parent component should reflect API errors
-    if (!apiError && !loading) { // Check both local and API error state
-      setNewBreakSchedule({
-        break_id: '',
-        break_type: '',
-        break_start_date: '',
-        break_end_date: '',
-        status: 'Hoạt động',
-      });
-      setLocalError('');
+    
+    if (!apiError && !loading) {
+      resetForm();
       onClose();
     }
+  };
+
+  const resetForm = () => {
+    setNewBreakSchedule({
+      break_id: '',
+      break_type: '',
+      break_start_date: '',
+      break_end_date: '',
+      status: 'Hoạt động',
+    });
+    setActiveStep(0);
+    setLocalError('');
+    setFileUploaded(false);
   };
 
   const handleImportExcel = async (e) => {
     const file = e.target.files[0];
     if (!file) {
-      setLocalError('Vui lòng chọn một file Excel!');
+      setLocalError('Vui lòng chọn một file Excel');
       return;
     }
 
     const validExtensions = ['.xlsx', '.xls'];
     const fileExtension = file.name.slice(file.name.lastIndexOf('.')).toLowerCase();
     if (!validExtensions.includes(fileExtension)) {
-      setLocalError('Chỉ hỗ trợ file Excel (.xlsx, .xls)!');
-      e.target.value = ''; // Clear file input
+      setLocalError('Chỉ hỗ trợ file Excel (.xlsx, .xls)');
+      e.target.value = '';
       return;
     }
 
     try {
-      setLocalError(''); // Clear previous errors
+      setLocalError('');
+      setFileUploaded(true);
+
       const arrayBuffer = await file.arrayBuffer();
       const workbook = XLSX.read(arrayBuffer, { type: 'array' });
       const sheetName = workbook.SheetNames[0];
@@ -134,21 +186,22 @@ export default function AddBreakScheduleModal({ open, onClose, onAddBreakSchedul
       const rawData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
       if (rawData.length < 2) {
-        setLocalError('File Excel phải có ít nhất 2 dòng (header + dữ liệu)!');
+        setLocalError('File Excel phải có ít nhất 2 dòng (header + dữ liệu)');
         e.target.value = '';
+        setFileUploaded(false);
         return;
       }
 
       const headers = rawData[0];
       const expectedHeader = ['Mã lịch nghỉ', 'Loại lịch nghỉ', 'Thời gian bắt đầu', 'Thời gian kết thúc', 'Trạng thái'];
 
-      // Case-insensitive header check
       const lowerCaseHeaders = headers.map(h => String(h).toLowerCase().trim());
       const lowerCaseExpectedHeader = expectedHeader.map(h => String(h).toLowerCase().trim());
 
       if (!lowerCaseExpectedHeader.every(expectedH => lowerCaseHeaders.includes(expectedH))) {
         setLocalError(`Định dạng cột không đúng! Cần các cột: ${expectedHeader.join(', ')}`);
         e.target.value = '';
+        setFileUploaded(false);
         return;
       }
 
@@ -156,7 +209,7 @@ export default function AddBreakScheduleModal({ open, onClose, onAddBreakSchedul
       const jsonData = dataRows.map(row => {
         const obj = {};
         headers.forEach((header, index) => {
-          obj[String(header).trim()] = row[index] || ''; // Use trimmed header as key
+          obj[String(header).trim()] = row[index] || '';
         });
         return obj;
       });
@@ -165,14 +218,13 @@ export default function AddBreakScheduleModal({ open, onClose, onAddBreakSchedul
         const schedule = {
           break_id: row['Mã lịch nghỉ'] || '',
           break_type: row['Loại lịch nghỉ'] || '',
-          break_start_date: row['Thời gian bắt đầu'] ? new Date(row['Thời gian bắt đầu']).toISOString().split('T')[0] : '', // Convert Excel date to YYYY-MM-DD
-          break_end_date: row['Thời gian kết thúc'] ? new Date(row['Thời gian kết thúc']).toISOString().split('T')[0] : '', // Convert Excel date to YYYY-MM-DD
+          break_start_date: row['Thời gian bắt đầu'] ? new Date(row['Thời gian bắt đầu']).toISOString().split('T')[0] : '',
+          break_end_date: row['Thời gian kết thúc'] ? new Date(row['Thời gian kết thúc']).toISOString().split('T')[0] : '',
           status: row['Trạng thái'] || 'Hoạt động',
           rowIndex: index + 2,
           errors: [],
         };
 
-        // --- Validation for imported data ---
         if (!schedule.break_id || !schedule.break_type || !schedule.break_start_date || !schedule.break_end_date) {
           schedule.errors.push('missing_required');
         }
@@ -199,7 +251,7 @@ export default function AddBreakScheduleModal({ open, onClose, onAddBreakSchedul
           }
         }
 
-        if (!validStatuses.includes(schedule.status)) {
+        if (!statusOptions.some(opt => opt.value === schedule.status)) {
           schedule.errors.push('invalid_status');
         }
 
@@ -208,7 +260,6 @@ export default function AddBreakScheduleModal({ open, onClose, onAddBreakSchedul
           schedule.errors.push('duplicate_id_existing');
         }
 
-        // Check for duplicates within the imported data itself
         const isDuplicateInPreview = processedData.slice(0, index).some(s => s.break_id === schedule.break_id);
         if (isDuplicateInPreview) {
           schedule.errors.push('duplicate_id_in_file');
@@ -217,204 +268,316 @@ export default function AddBreakScheduleModal({ open, onClose, onAddBreakSchedul
         return schedule;
       });
 
-      // Filter out rows with critical errors to present a cleaner preview
       const validPreviewData = processedData.filter(item => item.errors.length === 0);
 
       if (validPreviewData.length === 0) {
-        setLocalError('Không có dữ liệu hợp lệ nào được tìm thấy trong file Excel sau khi kiểm tra!');
+        setLocalError('Không có dữ liệu hợp lệ nào trong file Excel');
         e.target.value = '';
+        setFileUploaded(false);
         return;
       }
 
-      setPreviewData(processedData); // Send all data including errors to PreviewModal for detailed display
+      setPreviewData(processedData);
       setShowPreview(true);
-      // Optionally close the current modal if you want to immediately show the preview
-      // onClose();
 
     } catch (error) {
       console.error('Error reading Excel file:', error);
-      setLocalError('Lỗi khi đọc file Excel! Vui lòng kiểm tra định dạng hoặc nội dung file.');
+      setLocalError('Lỗi khi đọc file Excel. Vui lòng kiểm tra lại');
+      setFileUploaded(false);
     } finally {
-      e.target.value = ''; // Always clear file input
+      e.target.value = '';
     }
   };
 
   const handleImportSuccessCallback = (result) => {
-    // This callback is from PreviewBreakScheduleModal after it attempts to import
-    if (result && result.message) {
-      // If PreviewBreakScheduleModal returns a message, display it
-      // Assuming result.message covers both success and failure summary
-      // You might want to pass a success message to the parent for global alert
-    }
-    onImportSuccess(); // Call the parent's function to re-fetch data
+    onImportSuccess();
     setShowPreview(false);
     setPreviewData([]);
+    setFileUploaded(false);
   };
 
   const handleClosePreview = () => {
     setShowPreview(false);
     setPreviewData([]);
+    setFileUploaded(false);
   };
 
   return (
     <>
-      <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-        {/* Header của Dialog */}
+      <Dialog 
+        open={open} 
+        onClose={() => {
+          resetForm();
+          onClose();
+        }} 
+        maxWidth="md" 
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: '12px',
+            boxShadow: '0px 8px 24px rgba(0, 0, 0, 0.1)',
+            overflow: 'hidden'
+          }
+        }}
+      >
         <DialogTitle sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          backgroundColor: 'primary.main', // Sử dụng màu chủ đạo từ theme
+          background: 'linear-gradient(135deg, #1976d2 0%, #115293 100%)',
           color: 'white',
-          p: 2,
+          py: 2,
+          px: 3,
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
         }}>
-          <Typography variant="h6" fontWeight="bold">
-            THÊM LỊCH NGHỈ MỚI
-          </Typography>
+          <Box display="flex" alignItems="center">
+            <Event sx={{ fontSize: 28, mr: 2 }} />
+            <Typography variant="h6" fontWeight="600">
+              Thêm Lịch Nghỉ Mới
+            </Typography>
+          </Box>
           <IconButton
+            edge="end"
+            color="inherit"
+            onClick={() => {
+              resetForm();
+              onClose();
+            }}
             aria-label="close"
-            onClick={onClose}
-            sx={{ color: 'white' }}
-            disabled={loading} // Disable close button during loading
+            disabled={loading}
           >
-            <CloseIcon />
+            <Close />
           </IconButton>
         </DialogTitle>
 
-        <DialogContent sx={{ p: 3, mt: 1 }}>
-          {(apiError || localError) && (
-            <Alert severity="error" sx={{ mb: 2 }}>
-              {apiError || localError}
-            </Alert>
-          )}
-          {apiMessage && ( // Display API success message if available
-            <Alert severity="success" sx={{ mb: 2 }}>
-              {apiMessage}
-            </Alert>
-          )}
+        <DialogContent sx={{ p: 0 }}>
+          <Box sx={{ px: 3, pt: 3, pb: 2 }}>
+            <Stepper activeStep={activeStep} alternativeLabel>
+              {steps.map((label) => (
+                <Step key={label}>
+                  <StepLabel>{label}</StepLabel>
+                </Step>
+              ))}
+            </Stepper>
+          </Box>
 
+          <Divider />
 
-          {/* Form nhập liệu thủ công */}
-          <Box sx={{
-            display: 'grid',
-            gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, // Responsive grid
-            gap: 2,
-            mt: 2,
-            }}>
-            <TextField
-              label="Mã lịch nghỉ"
-              name="break_id"
-              value={newBreakSchedule.break_id}
-              onChange={handleChange}
-              fullWidth
-              variant="outlined"
-              required
-              size="small"
-              disabled={loading}
-            />
-            <TextField
-              label="Loại lịch nghỉ"
-              name="break_type"
-              value={newBreakSchedule.break_type}
-              onChange={handleChange}
-              fullWidth
-              variant="outlined"
-              required
-              size="small"
-              disabled={loading}
-            />
-            <TextField
-              label="Thời gian bắt đầu"
-              name="break_start_date"
-              type="date"
-              value={newBreakSchedule.break_start_date}
-              onChange={handleChange}
-              fullWidth
-              variant="outlined"
-              required
-              InputLabelProps={{ shrink: true }}
-              size="small"
-              disabled={loading}
-            />
-            <TextField
-              label="Thời gian kết thúc"
-              name="break_end_date"
-              type="date"
-              value={newBreakSchedule.break_end_date}
-              onChange={handleChange}
-              fullWidth
-              variant="outlined"
-              required
-              InputLabelProps={{ shrink: true }}
-              size="small"
-              disabled={loading}
-            />
-            <FormControl fullWidth required size="small" sx={{ gridColumn: { sm: 'span 2' } }}>
-              <InputLabel>Trạng thái</InputLabel>
-              <Select
-                name="status"
-                value={newBreakSchedule.status}
-                onChange={handleChange}
-                label="Trạng thái"
-                disabled={loading}
-              >
-                <MenuItem value="Hoạt động">Hoạt động</MenuItem>
-                <MenuItem value="Ngừng hoạt động">Ngừng hoạt động</MenuItem>
-              </Select>
-            </FormControl>
+          <Box sx={{ px: 3, pt: 2 }}>
+            {(apiError || localError) && (
+              <Fade in={!!(apiError || localError)}>
+                <Alert 
+                  severity="error" 
+                  icon={<ErrorIcon />}
+                  sx={{ mb: 2 }}
+                >
+                  {apiError || localError}
+                </Alert>
+              </Fade>
+            )}
+            {apiMessage && (
+              <Fade in={!!apiMessage}>
+                <Alert 
+                  severity="success" 
+                  icon={<CheckCircle />}
+                  sx={{ mb: 2 }}
+                >
+                  {apiMessage}
+                </Alert>
+              </Fade>
+            )}
+          </Box>
+
+          <Box sx={{ p: 3 }}>
+            {activeStep === 0 && (
+              <Box sx={{ 
+                display: 'grid', 
+                gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+                gap: 3 
+              }}>
+                <TextField
+                  label="Mã lịch nghỉ"
+                  name="break_id"
+                  value={newBreakSchedule.break_id}
+                  onChange={handleChange}
+                  fullWidth
+                  variant="outlined"
+                  required
+                  disabled={loading}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Event color="action" />
+                      </InputAdornment>
+                    ),
+                  }}
+                  sx={{ mb: 2 }}
+                />
+                <TextField
+                  label="Loại lịch nghỉ"
+                  name="break_type"
+                  value={newBreakSchedule.break_type}
+                  onChange={handleChange}
+                  fullWidth
+                  variant="outlined"
+                  required
+                  disabled={loading}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <CalendarToday color="action" />
+                      </InputAdornment>
+                    ),
+                  }}
+                  sx={{ mb: 2 }}
+                />
+              </Box>
+            )}
+
+            {activeStep === 1 && (
+              <Box sx={{ 
+                display: 'grid', 
+                gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+                gap: 3 
+              }}>
+                <TextField
+                  label="Thời gian bắt đầu"
+                  name="break_start_date"
+                  type="date"
+                  value={newBreakSchedule.break_start_date}
+                  onChange={handleChange}
+                  fullWidth
+                  variant="outlined"
+                  required
+                  InputLabelProps={{ shrink: true }}
+                  disabled={loading}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Event color="action" />
+                      </InputAdornment>
+                    ),
+                  }}
+                  sx={{ mb: 2 }}
+                />
+                <TextField
+                  label="Thời gian kết thúc"
+                  name="break_end_date"
+                  type="date"
+                  value={newBreakSchedule.break_end_date}
+                  onChange={handleChange}
+                  fullWidth
+                  variant="outlined"
+                  required
+                  InputLabelProps={{ shrink: true }}
+                  disabled={loading}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Event color="action" />
+                      </InputAdornment>
+                    ),
+                  }}
+                  sx={{ mb: 2 }}
+                />
+                <FormControl fullWidth required sx={{ gridColumn: { xs: 'span 1', md: 'span 2' } }}>
+                  <InputLabel>Trạng thái</InputLabel>
+                  <Select
+                    name="status"
+                    value={newBreakSchedule.status}
+                    onChange={handleChange}
+                    label="Trạng thái"
+                    disabled={loading}
+                  >
+                    {statusOptions.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        <Box display="flex" alignItems="center">
+                          {option.icon}
+                          <Chip 
+                            label={option.value} 
+                            size="small" 
+                            color={option.color}
+                            sx={{ ml: 1 }}
+                          />
+                        </Box>
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Box>
+            )}
           </Box>
         </DialogContent>
 
-        <DialogActions sx={{ p: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          {/* Nút Nhập từ Excel nằm riêng biệt và nổi bật */}
+        <DialogActions sx={{ 
+          p: 3, 
+          display: 'flex', 
+          justifyContent: 'space-between',
+          borderTop: '1px solid #eee'
+        }}>
           <Box>
-            <label htmlFor="excel-upload-button">
-              <input
-                id="excel-upload-button"
-                type="file"
-                accept=".xlsx, .xls"
-                hidden
-                onChange={handleImportExcel}
-                disabled={loading}
-              />
+            {activeStep === 0 && (
               <Button
-                variant="contained"
-                component="span"
-                startIcon={<CloudUploadIcon />}
-                sx={{ backgroundColor: '#28a745', '&:hover': { backgroundColor: '#218838' } }} // Green color for import
+                variant="outlined"
+                color="primary"
+                startIcon={<CloudUpload />}
+                component="label"
                 disabled={loading}
               >
                 Nhập từ Excel
+                <input
+                  type="file"
+                  hidden
+                  accept=".xlsx, .xls"
+                  onChange={handleImportExcel}
+                  disabled={loading}
+                />
               </Button>
-            </label>
+            )}
           </Box>
 
-          {/* Các nút hành động chính */}
-          <Box sx={{ display: 'flex', gap: 1 }}>
-            <Button onClick={onClose} variant="outlined" color="inherit" disabled={loading}>
-              Hủy bỏ
-            </Button>
-            <Button
-              onClick={handleSubmit}
-              variant="contained"
-              color="primary" // Using primary color from theme
-              disabled={loading}
-              startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
-            >
-              {loading ? 'Đang thêm...' : 'Thêm lịch nghỉ'}
-            </Button>
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            {activeStep > 0 && (
+              <Button
+                onClick={handleBack}
+                variant="outlined"
+                disabled={loading}
+              >
+                Quay lại
+              </Button>
+            )}
+            
+            {activeStep < steps.length - 1 ? (
+              <Button
+                onClick={handleNext}
+                variant="contained"
+                color="primary"
+                disabled={loading}
+              >
+                Tiếp theo
+              </Button>
+            ) : (
+              <Button
+                onClick={handleSubmit}
+                variant="contained"
+                color="primary"
+                disabled={loading}
+                startIcon={loading ? <CircularProgress size={20} /> : null}
+              >
+                {loading ? 'Đang xử lý...' : 'Thêm lịch nghỉ'}
+              </Button>
+            )}
           </Box>
         </DialogActions>
       </Dialog>
 
-      {/* Preview Modal */}
       <PreviewBreakScheduleModal
         open={showPreview}
         onClose={handleClosePreview}
         previewData={previewData}
-        onImportSuccess={handleImportSuccessCallback} // Pass the callback to PreviewModal
-        existingBreakSchedules={existingBreakSchedules} // Pass existing schedules for validation in preview
-        onAddBreakSchedule={onAddBreakSchedule} // Pass this if PreviewModal directly adds items
+        onImportSuccess={handleImportSuccessCallback}
+        existingBreakSchedules={existingBreakSchedules}
+        onAddBreakSchedule={onAddBreakSchedule}
       />
     </>
   );

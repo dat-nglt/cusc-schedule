@@ -14,15 +14,43 @@ import {
     MenuItem,
     Alert,
     CircularProgress,
-    IconButton, // Thêm IconButton cho nút đóng
+    Avatar,
     Divider,
-    Avatar, // Thêm Divider để phân cách
+    IconButton,
+    Stepper,
+    Step,
+    StepLabel,
+    Chip,
+    InputAdornment,
+    Fade
 } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close'; // Icon đóng modal
-import CloudUploadIcon from '@mui/icons-material/CloudUpload'; // Icon tải file lên
+import {
+    Close,
+    CloudUpload,
+    PersonAdd,
+    School,
+    ContactMail,
+    Cake,
+    Transgender,
+    Phone,
+    Home,
+    Class,
+    Event,
+    CheckCircle,
+    Error as ErrorIcon
+} from '@mui/icons-material';
 import * as XLSX from 'xlsx';
 import PreviewStudentModal from './PreviewStudentModal';
 import { processExcelDataStudent } from '../../utils/ExcelValidation';
+
+const statusOptions = [
+    { value: 'Đang học', color: 'success' },
+    { value: 'Đã nghỉ học', color: 'error' },
+    { value: 'Đã tốt nghiệp', color: 'info' },
+    { value: 'Bảo lưu', color: 'warning' }
+];
+
+const steps = ['Thông tin cá nhân', 'Thông tin liên hệ', 'Thông tin học tập'];
 
 export default function AddStudentModal({ open, onClose, onAddStudent, existingStudents, error, loading, message, fetchStudents }) {
     const [newStudent, setNewStudent] = useState({
@@ -38,36 +66,83 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
         status: 'Đang học',
     });
 
+    const [activeStep, setActiveStep] = useState(0);
     const [localError, setLocalError] = useState('');
     const [showPreview, setShowPreview] = useState(false);
     const [previewData, setPreviewData] = useState([]);
+    const [fileUploaded, setFileUploaded] = useState(false);
+
+    const handleNext = () => {
+        // Validate current step before proceeding
+        if (activeStep === 0) {
+            if (!newStudent.student_id || !newStudent.name || !newStudent.day_of_birth || !newStudent.gender) {
+                setLocalError('Vui lòng điền đầy đủ thông tin cá nhân');
+                return;
+            }
+        } else if (activeStep === 1) {
+            if (!newStudent.email || !newStudent.phone_number || !newStudent.address) {
+                setLocalError('Vui lòng điền đầy đủ thông tin liên hệ');
+                return;
+            }
+            
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(newStudent.email)) {
+                setLocalError('Email không hợp lệ');
+                return;
+            }
+
+            const phoneRegex = /^[0-9]{10,11}$/;
+            if (!phoneRegex.test(newStudent.phone_number)) {
+                setLocalError('Số điện thoại phải có 10-11 chữ số');
+                return;
+            }
+        }
+        
+        setLocalError('');
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    };
+
+    const handleBack = () => {
+        setLocalError('');
+        setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setNewStudent((prev) => ({ ...prev, [name]: value }));
-        setLocalError(''); // Clear local errors when user starts typing
+        setLocalError('');
     };
 
     const handleSubmit = async () => {
-        // --- Client-side validation ---
-        if (
-            !newStudent.student_id || !newStudent.name || !newStudent.email ||
-            !newStudent.day_of_birth || !newStudent.gender || !newStudent.address ||
-            !newStudent.phone_number || !newStudent.class || !newStudent.admission_year
-        ) {
-            setLocalError('Vui lòng điền đầy đủ thông tin!');
+        // Final validation
+        if (!newStudent.class || !newStudent.admission_year) {
+            setLocalError('Vui lòng điền đầy đủ thông tin học tập');
             return;
         }
 
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(newStudent.email)) {
-            setLocalError('Email không hợp lệ!');
+        const birthDate = new Date(newStudent.day_of_birth);
+        const admissionDate = new Date(newStudent.admission_year);
+        const today = new Date();
+
+        if (birthDate >= today) {
+            setLocalError('Ngày sinh không hợp lệ');
             return;
         }
 
-        const phoneRegex = /^[0-9]{10,11}$/;
-        if (!phoneRegex.test(newStudent.phone_number)) {
-            setLocalError('Số điện thoại không hợp lệ (10-11 chữ số)!');
+        const minBirthDate = new Date();
+        minBirthDate.setFullYear(minBirthDate.getFullYear() - 6);
+        if (birthDate > minBirthDate) {
+            setLocalError('Học viên phải đủ 6 tuổi');
+            return;
+        }
+
+        if (admissionDate > today) {
+            setLocalError('Ngày nhập học không hợp lệ');
+            return;
+        }
+
+        if (admissionDate < birthDate) {
+            setLocalError('Ngày nhập học không thể trước ngày sinh');
             return;
         }
 
@@ -75,7 +150,7 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
             (student) => student.student_id === newStudent.student_id
         );
         if (isDuplicateId) {
-            setLocalError(`Mã học viên "${newStudent.student_id}" đã tồn tại!`);
+            setLocalError(`Mã học viên "${newStudent.student_id}" đã tồn tại`);
             return;
         }
 
@@ -83,7 +158,7 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
             (student) => student.email === newStudent.email
         );
         if (isEmailDuplicate) {
-            setLocalError(`Email "${newStudent.email}" đã tồn tại!`);
+            setLocalError(`Email "${newStudent.email}" đã tồn tại`);
             return;
         }
 
@@ -91,88 +166,61 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
             (student) => student.phone_number === newStudent.phone_number
         );
         if (isPhoneDuplicate) {
-            setLocalError(`Số điện thoại "${newStudent.phone_number}" đã tồn tại!`);
-            return;
-        }
-
-        const birthDate = new Date(newStudent.day_of_birth);
-        const admissionDate = new Date(newStudent.admission_year); // Use admission_year as a date
-
-        const today = new Date();
-        today.setHours(0, 0, 0, 0); // Reset time for accurate date comparison
-
-        if (birthDate >= today) {
-            setLocalError('Ngày sinh không hợp lệ (không được là ngày tương lai hoặc hôm nay)!');
-            return;
-        }
-        // Validate age (e.g., student must be at least 6 years old)
-        const minBirthDateForStudent = new Date();
-        minBirthDateForStudent.setFullYear(minBirthDateForStudent.getFullYear() - 6);
-        if (birthDate > minBirthDateForStudent) {
-            setLocalError('Học viên phải đủ 6 tuổi!');
-            return;
-        }
-
-
-        if (admissionDate > today) {
-            setLocalError('Ngày nhập học không được là ngày tương lai!');
-            return;
-        }
-
-        // Admission date must not be before birth date
-        if (admissionDate < birthDate) {
-            setLocalError('Ngày nhập học không thể trước ngày sinh!');
+            setLocalError(`Số điện thoại "${newStudent.phone_number}" đã tồn tại`);
             return;
         }
 
         const studentToAdd = {
             ...newStudent,
-            // id: Date.now(), // ID should ideally be generated by the backend
-            google_id: null, // Assuming this is handled by backend or not used for manual entry
+            google_id: null,
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
         };
 
-        // Call the parent component's add function
         await onAddStudent(studentToAdd);
-
-        // Reset form and close modal only if no API error occurred
-        // The `error` prop from parent component should reflect API errors
+        
         if (!error && !loading) {
-            setNewStudent({
-                student_id: '',
-                name: '',
-                email: '',
-                day_of_birth: '',
-                gender: '',
-                address: '',
-                phone_number: '',
-                class: '',
-                admission_year: '',
-                status: 'Đang học',
-            });
-            setLocalError('');
+            resetForm();
             onClose();
         }
+    };
+
+    const resetForm = () => {
+        setNewStudent({
+            student_id: '',
+            name: '',
+            email: '',
+            day_of_birth: '',
+            gender: '',
+            address: '',
+            phone_number: '',
+            class: '',
+            admission_year: '',
+            status: 'Đang học',
+        });
+        setActiveStep(0);
+        setLocalError('');
+        setFileUploaded(false);
     };
 
     const handleImportExcel = async (e) => {
         const file = e.target.files[0];
         if (!file) {
-            setLocalError('Vui lòng chọn một file Excel!');
+            setLocalError('Vui lòng chọn một file Excel');
             return;
         }
 
         const validExtensions = ['.xlsx', '.xls'];
         const fileExtension = file.name.slice(file.name.lastIndexOf('.')).toLowerCase();
         if (!validExtensions.includes(fileExtension)) {
-            setLocalError('Chỉ hỗ trợ file Excel (.xlsx, .xls)!');
-            e.target.value = ''; // Clear file input
+            setLocalError('Chỉ hỗ trợ file Excel (.xlsx, .xls)');
+            e.target.value = '';
             return;
         }
 
         try {
-            setLocalError(''); // Clear previous errors
+            setLocalError('');
+            setFileUploaded(true);
 
             const arrayBuffer = await file.arrayBuffer();
             const workbook = XLSX.read(arrayBuffer, { type: 'array' });
@@ -182,8 +230,9 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
             const rawData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
             if (rawData.length < 2) {
-                setLocalError('File Excel phải có ít nhất 2 dòng (header + dữ liệu)!');
+                setLocalError('File Excel phải có ít nhất 2 dòng (header + dữ liệu)');
                 e.target.value = '';
+                setFileUploaded(false);
                 return;
             }
 
@@ -201,245 +250,396 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
             const processedData = processExcelDataStudent(jsonData, existingStudents);
 
             if (processedData.length === 0) {
-                setLocalError('Không có dữ liệu hợp lệ nào được tìm thấy trong file Excel!');
+                setLocalError('Không có dữ liệu hợp lệ nào trong file Excel');
                 e.target.value = '';
+                setFileUploaded(false);
                 return;
             }
 
             setPreviewData(processedData);
             setShowPreview(true);
-            // onClose(); // Consider if you want to close the main modal when opening preview
+
         } catch (error) {
             console.error('Error reading Excel file:', error);
-            setLocalError('Lỗi khi đọc file Excel! Vui lòng kiểm tra định dạng hoặc nội dung file.');
+            setLocalError('Lỗi khi đọc file Excel. Vui lòng kiểm tra lại');
+            setFileUploaded(false);
         } finally {
-            e.target.value = ''; // Always clear file input
+            e.target.value = '';
         }
     };
 
     const handleClosePreview = () => {
         setShowPreview(false);
         setPreviewData([]);
+        setFileUploaded(false);
     };
 
     return (
         <>
-            <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-                {/* Header của Dialog */}
+            <Dialog 
+                open={open} 
+                onClose={() => {
+                    resetForm();
+                    onClose();
+                }} 
+                maxWidth="md" 
+                fullWidth
+                PaperProps={{
+                    sx: {
+                        borderRadius: '12px',
+                        boxShadow: '0px 8px 24px rgba(0, 0, 0, 0.1)',
+                        overflow: 'hidden'
+                    }
+                }}
+            >
+                {/* Header với gradient */}
                 <DialogTitle sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    backgroundColor: 'primary.main',
+                    background: 'linear-gradient(135deg, #1976d2 0%, #115293 100%)',
                     color: 'white',
-                    p: 2,
+                    py: 2,
+                    px: 3,
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
                 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <Avatar
-                            src="https://sanvieclamcantho.com/upload/imagelogo/trung-tam-cong-nghe-phan-mem-dai-hoc-can-tho1573111986.png"
-                            alt="Logo"
-                            sx={{
-                                width: 40, // Kích thước nhỏ hơn một chút
-                                height: 40,
-                                mr: 1.5, // Khoảng cách với tiêu đề
-                                border: '2px solid white',
-                                boxShadow: 1
-                            }}
-                        />
-                        <Typography variant="h6" fontWeight="bold">
-                            THÊM HỌC VIÊN MỚI
+                    <Box display="flex" alignItems="center">
+                        <School sx={{ fontSize: 28, mr: 2 }} />
+                        <Typography variant="h6" fontWeight="600">
+                            Thêm Học Viên Mới
                         </Typography>
                     </Box>
                     <IconButton
+                        edge="end"
+                        color="inherit"
+                        onClick={() => {
+                            resetForm();
+                            onClose();
+                        }}
                         aria-label="close"
-                        onClick={onClose}
-                        sx={{ color: 'white' }}
                     >
-                        <CloseIcon />
+                        <Close />
                     </IconButton>
                 </DialogTitle>
 
-                <DialogContent sx={{ p: 3 }}>
-                    {(error || localError) && (
-                        <Alert severity="error" sx={{ mb: 2 }}>
-                            {error || localError}
-                        </Alert>
-                    )}
-                    {message && (
-                        <Alert severity="success" sx={{ mb: 2 }}>
-                            {message}
-                        </Alert>
-                    )}
+                <DialogContent sx={{ p: 0 }}>
+                    {/* Stepper */}
+                    <Box sx={{ px: 3, pt: 3, pb: 2 }}>
+                        <Stepper activeStep={activeStep} alternativeLabel>
+                            {steps.map((label) => (
+                                <Step key={label}>
+                                    <StepLabel>{label}</StepLabel>
+                                </Step>
+                            ))}
+                        </Stepper>
+                    </Box>
 
-                    {/* Form nhập liệu thủ công */}
-                    <Box sx={{
-                        display: 'grid',
-                        gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, // Responsive grid
-                        gap: 2,
-                        mt: 2,
-                    }}>
-                        <TextField
-                            label="Mã học viên"
-                            name="student_id"
-                            value={newStudent.student_id}
-                            onChange={handleChange}
-                            fullWidth
-                            variant="outlined"
-                            required
-                            size="small"
-                        />
-                        <TextField
-                            label="Họ tên"
-                            name="name"
-                            value={newStudent.name}
-                            onChange={handleChange}
-                            fullWidth
-                            variant="outlined"
-                            required
-                            size="small"
-                        />
-                        <TextField
-                            label="Email"
-                            name="email"
-                            type="email"
-                            value={newStudent.email}
-                            onChange={handleChange}
-                            fullWidth
-                            variant="outlined"
-                            required
-                            size="small"
-                        />
-                        <TextField
-                            label="Ngày sinh"
-                            name="day_of_birth"
-                            type="date"
-                            value={newStudent.day_of_birth}
-                            onChange={handleChange}
-                            fullWidth
-                            variant="outlined"
-                            required
-                            InputLabelProps={{ shrink: true }}
-                            size="small"
-                        />
-                        <FormControl fullWidth required size="small">
-                            <InputLabel>Giới tính</InputLabel>
-                            <Select
-                                name="gender"
-                                value={newStudent.gender}
-                                onChange={handleChange}
-                                label="Giới tính"
-                            >
-                                <MenuItem value="Nam">Nam</MenuItem>
-                                <MenuItem value="Nữ">Nữ</MenuItem>
-                            </Select>
-                        </FormControl>
-                        <TextField
-                            label="Số điện thoại"
-                            name="phone_number"
-                            value={newStudent.phone_number}
-                            onChange={handleChange}
-                            fullWidth
-                            variant="outlined"
-                            required
-                            size="small"
-                        />
-                        <TextField
-                            label="Địa chỉ"
-                            name="address"
-                            value={newStudent.address}
-                            onChange={handleChange}
-                            fullWidth
-                            variant="outlined"
-                            required
-                            sx={{ gridColumn: { sm: 'span 2' } }} // Span 2 columns on small screens and up
-                            size="small"
-                        />
-                        <TextField
-                            label="Mã lớp"
-                            name="class"
-                            value={newStudent.class}
-                            onChange={handleChange}
-                            fullWidth
-                            variant="outlined"
-                            required
-                            size="small"
-                        />
-                        <TextField
-                            label="Ngày nhập học"
-                            name="admission_year"
-                            type="date"
-                            value={newStudent.admission_year}
-                            onChange={handleChange}
-                            fullWidth
-                            variant="outlined"
-                            required
-                            InputLabelProps={{ shrink: true }}
-                            size="small"
-                        />
-                        <FormControl fullWidth required size="small">
-                            <InputLabel>Trạng thái</InputLabel>
-                            <Select
-                                name="status"
-                                value={newStudent.status}
-                                onChange={handleChange}
-                                label="Trạng thái"
-                            >
-                                <MenuItem value="Đang học">Đang học</MenuItem>
-                                <MenuItem value="Đã nghỉ học">Đã nghỉ học</MenuItem>
-                                <MenuItem value="Đã tốt nghiệp">Đã tốt nghiệp</MenuItem>
-                                <MenuItem value="Bảo lưu">Bảo lưu</MenuItem>
-                            </Select>
-                        </FormControl>
+                    <Divider />
+
+                    {/* Error/Success messages */}
+                    <Box sx={{ px: 3, pt: 2 }}>
+                        {(error || localError) && (
+                            <Fade in={!!(error || localError)}>
+                                <Alert 
+                                    severity="error" 
+                                    icon={<ErrorIcon />}
+                                    sx={{ mb: 2 }}
+                                >
+                                    {error || localError}
+                                </Alert>
+                            </Fade>
+                        )}
+                        {message && (
+                            <Fade in={!!message}>
+                                <Alert 
+                                    severity="success" 
+                                    icon={<CheckCircle />}
+                                    sx={{ mb: 2 }}
+                                >
+                                    {message}
+                                </Alert>
+                            </Fade>
+                        )}
+                    </Box>
+
+                    {/* Form content - changes based on activeStep */}
+                    <Box sx={{ p: 3 }}>
+                        {activeStep === 0 && (
+                            <Box sx={{ 
+                                display: 'grid', 
+                                gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+                                gap: 3 
+                            }}>
+                                <TextField
+                                    label="Mã học viên"
+                                    name="student_id"
+                                    value={newStudent.student_id}
+                                    onChange={handleChange}
+                                    fullWidth
+                                    variant="outlined"
+                                    required
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <PersonAdd color="action" />
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                    sx={{ mb: 2 }}
+                                />
+                                <TextField
+                                    label="Họ và tên"
+                                    name="name"
+                                    value={newStudent.name}
+                                    onChange={handleChange}
+                                    fullWidth
+                                    variant="outlined"
+                                    required
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <PersonAdd color="action" />
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                    sx={{ mb: 2 }}
+                                />
+                                <TextField
+                                    label="Ngày sinh"
+                                    name="day_of_birth"
+                                    type="date"
+                                    value={newStudent.day_of_birth}
+                                    onChange={handleChange}
+                                    fullWidth
+                                    variant="outlined"
+                                    required
+                                    InputLabelProps={{ shrink: true }}
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <Cake color="action" />
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                    sx={{ mb: 2 }}
+                                />
+                                <FormControl fullWidth required>
+                                    <InputLabel>Giới tính</InputLabel>
+                                    <Select
+                                        name="gender"
+                                        value={newStudent.gender}
+                                        onChange={handleChange}
+                                        label="Giới tính"
+                                        startAdornment={
+                                            <InputAdornment position="start">
+                                                <Transgender color="action" />
+                                            </InputAdornment>
+                                        }
+                                    >
+                                        <MenuItem value="Nam">Nam</MenuItem>
+                                        <MenuItem value="Nữ">Nữ</MenuItem>
+                                        <MenuItem value="Khác">Khác</MenuItem>
+                                    </Select>
+                                </FormControl>
+                            </Box>
+                        )}
+
+                        {activeStep === 1 && (
+                            <Box sx={{ 
+                                display: 'grid', 
+                                gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+                                gap: 3 
+                            }}>
+                                <TextField
+                                    label="Email"
+                                    name="email"
+                                    type="email"
+                                    value={newStudent.email}
+                                    onChange={handleChange}
+                                    fullWidth
+                                    variant="outlined"
+                                    required
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <ContactMail color="action" />
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                    sx={{ mb: 2 }}
+                                />
+                                <TextField
+                                    label="Số điện thoại"
+                                    name="phone_number"
+                                    value={newStudent.phone_number}
+                                    onChange={handleChange}
+                                    fullWidth
+                                    variant="outlined"
+                                    required
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <Phone color="action" />
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                    sx={{ mb: 2 }}
+                                />
+                                <TextField
+                                    label="Địa chỉ"
+                                    name="address"
+                                    value={newStudent.address}
+                                    onChange={handleChange}
+                                    fullWidth
+                                    variant="outlined"
+                                    required
+                                    multiline
+                                    rows={3}
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <Home color="action" />
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                    sx={{ gridColumn: { xs: 'span 1', md: 'span 2' } }}
+                                />
+                            </Box>
+                        )}
+
+                        {activeStep === 2 && (
+                            <Box sx={{ 
+                                display: 'grid', 
+                                gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+                                gap: 3 
+                            }}>
+                                <TextField
+                                    label="Mã lớp"
+                                    name="class"
+                                    value={newStudent.class}
+                                    onChange={handleChange}
+                                    fullWidth
+                                    variant="outlined"
+                                    required
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <Class color="action" />
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                    sx={{ mb: 2 }}
+                                />
+                                <TextField
+                                    label="Ngày nhập học"
+                                    name="admission_year"
+                                    type="date"
+                                    value={newStudent.admission_year}
+                                    onChange={handleChange}
+                                    fullWidth
+                                    variant="outlined"
+                                    required
+                                    InputLabelProps={{ shrink: true }}
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <Event color="action" />
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                    sx={{ mb: 2 }}
+                                />
+                                <FormControl fullWidth required>
+                                    <InputLabel>Trạng thái</InputLabel>
+                                    <Select
+                                        name="status"
+                                        value={newStudent.status}
+                                        onChange={handleChange}
+                                        label="Trạng thái"
+                                    >
+                                        {statusOptions.map((option) => (
+                                            <MenuItem key={option.value} value={option.value}>
+                                                <Chip 
+                                                    label={option.value} 
+                                                    size="small" 
+                                                    color={option.color}
+                                                    sx={{ mr: 1 }}
+                                                />
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            </Box>
+                        )}
                     </Box>
                 </DialogContent>
 
-                <DialogActions sx={{ p: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    {/* Nút Nhập từ Excel nằm riêng biệt và nổi bật */}
+                <DialogActions sx={{ 
+                    p: 3, 
+                    display: 'flex', 
+                    justifyContent: 'space-between',
+                    borderTop: '1px solid #eee'
+                }}>
                     <Box>
-                        <label htmlFor="excel-upload-button">
-                            <input
-                                id="excel-upload-button"
-                                type="file"
-                                accept=".xlsx, .xls"
-                                hidden
-                                onChange={handleImportExcel}
-                            />
+                        {activeStep === 0 && (
                             <Button
-                                variant="contained"
-                                component="span"
-                                startIcon={<CloudUploadIcon />}
-                                sx={{ backgroundColor: '#28a745', '&:hover': { backgroundColor: '#218838' } }} // Green color for import
+                                variant="outlined"
+                                color="primary"
+                                startIcon={<CloudUpload />}
+                                component="label"
                             >
                                 Nhập từ Excel
+                                <input
+                                    type="file"
+                                    hidden
+                                    accept=".xlsx, .xls"
+                                    onChange={handleImportExcel}
+                                />
                             </Button>
-                        </label>
+                        )}
                     </Box>
 
-                    {/* Các nút hành động chính */}
-                    <Box sx={{ display: 'flex', gap: 1 }}>
-                        <Button onClick={onClose} variant="outlined" color="inherit" disabled={loading}>
-                            Hủy bỏ
-                        </Button>
-                        <Button
-                            onClick={handleSubmit}
-                            variant="contained"
-                            color="primary" // Using primary color from theme
-                            disabled={loading}
-                            startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
-                        >
-                            {loading ? 'Đang thêm...' : 'Thêm học viên'}
-                        </Button>
+                    <Box sx={{ display: 'flex', gap: 2 }}>
+                        {activeStep > 0 && (
+                            <Button
+                                onClick={handleBack}
+                                variant="outlined"
+                                disabled={loading}
+                            >
+                                Quay lại
+                            </Button>
+                        )}
+                        
+                        {activeStep < steps.length - 1 ? (
+                            <Button
+                                onClick={handleNext}
+                                variant="contained"
+                                color="primary"
+                                disabled={loading}
+                            >
+                                Tiếp theo
+                            </Button>
+                        ) : (
+                            <Button
+                                onClick={handleSubmit}
+                                variant="contained"
+                                color="primary"
+                                disabled={loading}
+                                startIcon={loading ? <CircularProgress size={20} /> : null}
+                            >
+                                {loading ? 'Đang xử lý...' : 'Thêm học viên'}
+                            </Button>
+                        )}
                     </Box>
                 </DialogActions>
             </Dialog>
 
-            {/* Preview Modal */}
             <PreviewStudentModal
                 open={showPreview}
                 onClose={handleClosePreview}
                 previewData={previewData}
                 fetchStudents={fetchStudents}
-                onAddStudent={onAddStudent} // Pass onAddStudent if PreviewStudentModal also triggers adding
+                onAddStudent={onAddStudent}
             />
         </>
     );

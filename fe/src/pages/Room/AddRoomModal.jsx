@@ -1,82 +1,172 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
-  Button,
+  Typography,
   TextField,
-  MenuItem,
-  Select,
+  Button,
+  Box,
   FormControl,
   InputLabel,
-  IconButton,
-  Box,
-  Typography,
+  Select,
+  MenuItem,
   Alert,
   CircularProgress,
+  IconButton,
+  Divider,
+  Stepper,
+  Step,
+  StepLabel,
+  Chip,
+  InputAdornment,
+  Fade,
+  Paper,
 } from '@mui/material';
-import UploadFileIcon from '@mui/icons-material/UploadFile';
+import {
+  Close,
+  CloudUpload,
+  MeetingRoom, // Icon for room
+  LocationOn,  // Icon for location
+  AirlineSeatReclineExtra, // Icon for capacity
+  Category,    // Icon for type
+  Info,        // Icon for note
+  CheckCircle,
+  Error as ErrorIcon,
+  PlayCircleFilled,
+  PauseCircleFilled,
+  Add, // For the Add button
+} from '@mui/icons-material';
 import * as XLSX from 'xlsx';
-import { processExcelDataRoom } from '../../utils/ExcelValidation';
+import { processExcelDataRoom } from '../../utils/ExcelValidation'; // Assuming this utility is robust
 import PreviewRoomModal from './PreviewRoomModal';
 
-const AddRoomModal = ({ open, onClose, onAddRoom, existingRooms, error, loading, message, fetchRooms }) => {
+// Define options for room types and statuses
+const roomTypeOptions = [
+  { value: 'Lý thuyết', label: 'Lý thuyết' },
+  { value: 'Thực hành', label: 'Thực hành' },
+  { value: 'Phòng hội thảo', label: 'Phòng hội thảo' }, // Added as a potential option
+];
+
+const roomStatusOptions = [
+  { value: 'Sẵn sàng', color: 'success', icon: <PlayCircleFilled /> },
+  { value: 'Bảo trì', color: 'error', icon: <PauseCircleFilled /> },
+];
+
+const steps = ['Thông tin cơ bản', 'Thông tin bổ sung'];
+
+const AddRoomModal = ({ open, onClose, onAddRoom, existingRooms, apiError, loading, message, fetchRooms }) => {
   const [formData, setFormData] = useState({
     room_id: '',
     room_name: '',
     location: '',
     capacity: '',
     type: '',
-    status: '',
+    status: 'Sẵn sàng', // Default status
     note: '',
   });
 
+  const [activeStep, setActiveStep] = useState(0);
   const [localError, setLocalError] = useState('');
+  const [fileUploaded, setFileUploaded] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [previewData, setPreviewData] = useState([]);
+  // Effect to reset form/errors when modal opens/closes
+  useEffect(() => {
+    if (open) {
+      setLocalError('');
+      // apiError and message are handled by parent, so don't clear here.
+    } else {
+      resetForm();
+    }
+  }, [open]);
+
+  const handleNext = () => {
+    if (activeStep === 0) {
+      if (!formData.room_id || !formData.room_name || !formData.location) {
+        setLocalError('Vui lòng điền đầy đủ thông tin cơ bản!');
+        return;
+      }
+      const isDuplicate = existingRooms.some(
+        (room) => room.room_id === formData.room_id
+      );
+      if (isDuplicate) {
+        setLocalError(`Mã phòng học "${formData.room_id}" đã tồn tại!`);
+        return;
+      }
+    }
+    setLocalError('');
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+  };
+
+  const handleBack = () => {
+    setLocalError('');
+    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    setLocalError('');
+    setLocalError(''); // Clear local error on input change
+  };
+
+  const validateRoom = () => {
+    if (!formData.capacity || !formData.type || !formData.status) {
+      setLocalError('Vui lòng điền đầy đủ thông tin bổ sung!');
+      return false;
+    }
+
+    const capacity = parseInt(formData.capacity, 10);
+    if (isNaN(capacity) || capacity <= 0) {
+      setLocalError('Sức chứa phải là số nguyên dương!');
+      return false;
+    }
+    return true;
   };
 
   const handleSubmit = async () => {
-    if (!Object.values(formData).every((value) => value)) {
-      setLocalError('Vui lòng điền đầy đủ thông tin!');
-      return;
-    }
-
-    const isDuplicate = existingRooms.some(
-      (room) => room.room_id === formData.room_id
-    );
-    if (isDuplicate) {
-      setLocalError(`Mã phòng học "${formData.room_id}" đã tồn tại!`);
+    if (!validateRoom()) {
       return;
     }
 
     const roomToAdd = {
       ...formData,
-      capacity: parseInt(formData.capacity) || 0,
-      id: Date.now(),
+      capacity: parseInt(formData.capacity, 10),
+      id: Date.now(), // Ensure a unique ID for new entries
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
 
+    // The onAddRoom function from parent should handle setting loading and message/error
     await onAddRoom(roomToAdd);
 
+    // If onAddRoom is successful and `loading` becomes false (after API call completes),
+    // and there is no `apiError`, then reset the form and close.
+    // This assumes `onAddRoom` updates `loading` and `apiError` props.
+    // We might need to check the outcome directly if `onAddRoom` doesn't provide it
+    // or rely on `useEffect` to react to `message` or `apiError` changes.
+    // For now, let's assume parent handles closing on success.
+    // If not, you might need a local success state.
+    if (!apiError && !loading) { // This check might be tricky if `onAddRoom` is async and doesn't update props immediately
+      resetForm();
+      onClose();
+    }
+  };
+
+  const resetForm = () => {
     setFormData({
       room_id: '',
       room_name: '',
       location: '',
       capacity: '',
       type: '',
-      status: '',
+      status: 'Sẵn sàng',
       note: '',
     });
+    setActiveStep(0);
     setLocalError('');
-    onClose();
+    setFileUploaded(false);
   };
 
   const handleImportExcel = async (e) => {
@@ -90,11 +180,14 @@ const AddRoomModal = ({ open, onClose, onAddRoom, existingRooms, error, loading,
     const fileExtension = file.name.slice(file.name.lastIndexOf('.')).toLowerCase();
     if (!validExtensions.includes(fileExtension)) {
       setLocalError('Chỉ hỗ trợ file Excel (.xlsx, .xls)!');
+      e.target.value = ''; // Clear the file input
       return;
     }
 
     try {
       setLocalError('');
+      setFileUploaded(true); // Indicate that a file has been chosen
+
       const arrayBuffer = await file.arrayBuffer();
       const workbook = XLSX.read(arrayBuffer, { type: 'array' });
       const sheetName = workbook.SheetNames[0];
@@ -104,180 +197,401 @@ const AddRoomModal = ({ open, onClose, onAddRoom, existingRooms, error, loading,
 
       if (rawData.length < 2) {
         setLocalError('File Excel phải có ít nhất 2 dòng (header + dữ liệu)!');
+        e.target.value = '';
+        setFileUploaded(false);
         return;
       }
 
       const headers = rawData[0];
-      const dataRows = rawData.slice(1);
+      // Updated expected headers based on the Room object properties
+      const expectedHeaderMapping = {
+        'Mã phòng học': 'room_id',
+        'Tên phòng học': 'room_name',
+        'Vị trí': 'location',
+        'Sức chứa': 'capacity',
+        'Loại phòng học': 'type',
+        'Trạng thái': 'status',
+        'Ghi chú': 'note',
+      };
+      const expectedHeaders = Object.keys(expectedHeaderMapping);
 
+      const lowerCaseHeaders = headers.map(h => String(h).toLowerCase().trim());
+      const lowerCaseExpectedHeaders = expectedHeaders.map(h => String(h).toLowerCase().trim());
+
+      // Check if all expected headers are present (case-insensitive)
+      if (!lowerCaseExpectedHeaders.every(expectedH => lowerCaseHeaders.includes(expectedH))) {
+        setLocalError(`Định dạng cột không đúng! Cần các cột: ${expectedHeaders.join(', ')}`);
+        e.target.value = '';
+        setFileUploaded(false);
+        return;
+      }
+
+      const dataRows = rawData.slice(1);
       const jsonData = dataRows.map(row => {
         const obj = {};
         headers.forEach((header, index) => {
-          obj[header] = row[index] || '';
+          // Map original header to correct formData key
+          const mappedKey = expectedHeaderMapping[String(header).trim()];
+          if (mappedKey) {
+            obj[mappedKey] = row[index] || '';
+          }
         });
         return obj;
       });
 
-      const processedData = processExcelDataRoom(jsonData, existingRooms);
+      // Assuming processExcelDataRoom handles validation and returns an array of valid/invalid/duplicate items
+      const { validRooms, duplicatedRooms, invalidRows } = processExcelDataRoom(jsonData, existingRooms);
 
-      if (processedData.length === 0) {
-        setLocalError('Không có dữ liệu hợp lệ trong file Excel!');
-        return;
+      // Set preview data for the PreviewRoomModal
+      if (validRooms.length > 0) {
+        setPreviewData(validRooms);
+        setShowPreview(true);
+        onClose(); // Close the current modal to open the preview
+      } else if (duplicatedRooms.length > 0 || invalidRows.length > 0) {
+        let errorMessage = '';
+        if (duplicatedRooms.length > 0) {
+          errorMessage += `Các mã phòng học đã tồn tại và bị bỏ qua: ${duplicatedRooms.join(', ')}. `;
+        }
+        if (invalidRows.length > 0) {
+          errorMessage += `Các hàng không hợp lệ (thiếu dữ liệu, giá trị không đúng, hoặc sức chứa/trạng thái không hợp lệ) ở dòng: ${invalidRows.join(', ')}.`;
+        }
+        setLocalError(errorMessage);
+        setFileUploaded(false);
+      } else {
+        setLocalError('Không có phòng học hợp lệ nào để thêm từ file Excel!');
+        setFileUploaded(false);
       }
-
-      setPreviewData(processedData);
-      setShowPreview(true);
-      onClose();
 
     } catch (error) {
       console.error('Error reading Excel file:', error);
-      setLocalError('Lỗi khi đọc file Excel! Vui lòng kiểm tra format file.');
+      setLocalError(`Lỗi khi đọc file Excel: ${error.message}. Vui lòng kiểm tra định dạng file!`);
+      setFileUploaded(false);
+    } finally {
+      e.target.value = ''; // Always clear file input
     }
-
-    e.target.value = '';
   };
 
   const handleClosePreview = () => {
     setShowPreview(false);
     setPreviewData([]);
+    // After preview, if no rooms were added, you might want to re-open AddRoomModal
+    // or handle success/error messages at a higher level.
+    // For now, we just close the preview.
+    fetchRooms(); // Re-fetch rooms to update the list after potential additions from preview
   };
 
   return (
     <>
-      <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-        <DialogTitle>
-          <Box display="flex" justifyContent="space-between" alignItems="center">
-            <Typography variant="h6">Thêm phòng học</Typography>
-            <label htmlFor="excel-upload">
-              <input
-                id="excel-upload"
-                type="file"
-                accept=".xlsx, .xls"
-                hidden
-                onChange={handleImportExcel}
-              />
-              <Button
-                variant="outlined"
-                component="span"
-                startIcon={<UploadFileIcon />}
-                size="small"
-              >
-                Thêm tự động
-              </Button>
-            </label>
+      <Dialog
+        open={open}
+        onClose={() => {
+          resetForm();
+          onClose();
+        }}
+        maxWidth="md"
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: '12px',
+            boxShadow: '0px 8px 24px rgba(0, 0, 0, 0.1)',
+            overflow: 'hidden',
+          },
+        }}
+      >
+        <DialogTitle
+          sx={{
+            background: 'linear-gradient(135deg, #1976d2 0%, #115293 100%)',
+            color: 'white',
+            py: 2,
+            px: 3,
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+          }}
+        >
+          <Box display="flex" alignItems="center">
+            <MeetingRoom sx={{ fontSize: 28, mr: 2 }} />
+            <Typography variant="h6" fontWeight="600">
+              Thêm Phòng Học
+            </Typography>
           </Box>
+          <IconButton
+            edge="end"
+            color="inherit"
+            onClick={() => {
+              resetForm();
+              onClose();
+            }}
+            aria-label="close"
+            disabled={loading}
+          >
+            <Close />
+          </IconButton>
         </DialogTitle>
-        <DialogContent>
-          {(error || localError) && (
-            <Alert severity="error" sx={{ mb: 2 }}>
-              {error || localError}
-            </Alert>
-          )}
-          {message && (
-            <Alert severity="success" sx={{ mb: 2 }}>
-              {message}
-            </Alert>
-          )}
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
-            <TextField
-              fullWidth
-              label="Mã phòng học"
-              name="room_id"
-              value={formData.room_id}
-              onChange={handleChange}
-              variant="outlined"
-              required
-            />
-            <TextField
-              fullWidth
-              label="Tên phòng học"
-              name="room_name"
-              value={formData.room_name}
-              onChange={handleChange}
-              variant="outlined"
-              required
-            />
-            <TextField
-              fullWidth
-              label="Vị trí"
-              name="location"
-              placeholder="Ví dụ: Tầng 2, Tòa A"
-              value={formData.location}
-              onChange={handleChange}
-              variant="outlined"
-              required
-            />
-            <TextField
-              fullWidth
-              label="Sức chứa"
-              name="capacity"
-              type="number"
-              value={formData.capacity}
-              onChange={handleChange}
-              variant="outlined"
-              required
-            />
-            <FormControl fullWidth required>
-              <InputLabel id="loai-phong-hoc-label">Loại phòng học</InputLabel>
-              <Select
-                labelId="loai-phong-hoc-label"
-                name="type"
-                value={formData.type}
-                onChange={handleChange}
-                label="Loại phòng học"
+
+        <DialogContent sx={{ p: 0 }}>
+          <Box sx={{ px: 3, pt: 3, pb: 2 }}>
+            <Stepper activeStep={activeStep} alternativeLabel>
+              {steps.map((label) => (
+                <Step key={label}>
+                  <StepLabel>{label}</StepLabel>
+                </Step>
+              ))}
+            </Stepper>
+          </Box>
+
+          <Divider />
+
+          <Box sx={{ px: 3, pt: 2 }}>
+            {(apiError || localError) && (
+              <Fade in={!!(apiError || localError)}>
+                <Alert severity="error" icon={<ErrorIcon />} sx={{ mb: 2 }}>
+                  {apiError || localError}
+                </Alert>
+              </Fade>
+            )}
+            {message && (
+              <Fade in={!!message}>
+                <Alert severity="success" icon={<CheckCircle />} sx={{ mb: 2 }}>
+                  {message}
+                </Alert>
+              </Fade>
+            )}
+          </Box>
+
+          <Box sx={{ p: 3 }}>
+            {activeStep === 0 && (
+              <Box
+                sx={{
+                  display: 'grid',
+                  gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+                  gap: 3,
+                }}
               >
-                <MenuItem value="Lý thuyết">Lý thuyết</MenuItem>
-                <MenuItem value="Thực hành">Thực hành</MenuItem>
-                {/* <MenuItem value="Phòng hội thảo">Phòng hội thảo</MenuItem> */}
-              </Select>
-            </FormControl>
-            <FormControl fullWidth required>
-              <InputLabel id="trang-thai-label">Trạng thái</InputLabel>
-              <Select
-                labelId="trang-thai-label"
-                name="status"
-                value={formData.status}
-                onChange={handleChange}
-                label="Trạng thái"
+                <TextField
+                  label="Mã phòng học"
+                  name="room_id"
+                  value={formData.room_id}
+                  onChange={handleChange}
+                  fullWidth
+                  variant="outlined"
+                  required
+                  disabled={loading}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <MeetingRoom color="action" />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+                <TextField
+                  label="Tên phòng học"
+                  name="room_name"
+                  value={formData.room_name}
+                  onChange={handleChange}
+                  fullWidth
+                  variant="outlined"
+                  required
+                  disabled={loading}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <MeetingRoom color="action" />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+                <TextField
+                  label="Vị trí"
+                  name="location"
+                  placeholder="Ví dụ: Tầng 2, Tòa A"
+                  value={formData.location}
+                  onChange={handleChange}
+                  fullWidth
+                  variant="outlined"
+                  required
+                  disabled={loading}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <LocationOn color="action" />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Box>
+            )}
+
+            {activeStep === 1 && (
+              <Box
+                sx={{
+                  display: 'grid',
+                  gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+                  gap: 3,
+                }}
               >
-                <MenuItem value="Sẵn sàng">Sẵn sàng</MenuItem>
-                <MenuItem value="Bảo trì">Bảo trì</MenuItem>
-              </Select>
-            </FormControl>
-            <TextField
-              fullWidth
-              label="Ghi chú"
-              name="note"
-              multiline
-              rows={2}
-              value={formData.note}
-              onChange={handleChange}
-              variant="outlined"
-            />
+                <TextField
+                  label="Sức chứa"
+                  name="capacity"
+                  type="number"
+                  value={formData.capacity}
+                  onChange={handleChange}
+                  fullWidth
+                  variant="outlined"
+                  required
+                  disabled={loading}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <AirlineSeatReclineExtra color="action" />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+                <FormControl fullWidth required>
+                  <InputLabel>Loại phòng học</InputLabel>
+                  <Select
+                    name="type"
+                    value={formData.type}
+                    onChange={handleChange}
+                    label="Loại phòng học"
+                    disabled={loading}
+                    startAdornment={
+                      <InputAdornment position="start">
+                        <Category color="action" />
+                      </InputAdornment>
+                    }
+                  >
+                    {roomTypeOptions.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <FormControl fullWidth required sx={{ gridColumn: { xs: 'span 1', md: 'span 2' } }}>
+                  <InputLabel>Trạng thái</InputLabel>
+                  <Select
+                    name="status"
+                    value={formData.status}
+                    onChange={handleChange}
+                    label="Trạng thái"
+                    disabled={loading}
+                    startAdornment={
+                      <InputAdornment position="start">
+                        <Info color="action" />
+                      </InputAdornment>
+                    }
+                  >
+                    {roomStatusOptions.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        <Box display="flex" alignItems="center">
+                          {option.icon}
+                          <Chip
+                            label={option.value}
+                            size="small"
+                            color={option.color}
+                            sx={{ ml: 1 }}
+                          />
+                        </Box>
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <TextField
+                  fullWidth
+                  label="Ghi chú"
+                  name="note"
+                  multiline
+                  rows={2}
+                  value={formData.note}
+                  onChange={handleChange}
+                  variant="outlined"
+                  disabled={loading}
+                  sx={{ gridColumn: { xs: 'span 1', md: 'span 2' } }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Info color="action" />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Box>
+            )}
           </Box>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={onClose} variant="outlined" sx={{ color: '#1976d2' }} disabled={loading}>
-            Hủy
-          </Button>
-          <Button
-            onClick={handleSubmit}
-            variant="contained"
-            sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
-            disabled={loading}
-            startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
-          >
-            {loading ? 'Đang thêm...' : 'Thêm'}
-          </Button>
+
+        <DialogActions
+          sx={{
+            p: 3,
+            display: 'flex',
+            justifyContent: 'space-between',
+            borderTop: '1px solid #eee',
+          }}
+        >
+          <Box>
+            {activeStep === 0 && (
+              <Button
+                variant="outlined"
+                color="primary"
+                startIcon={<CloudUpload />}
+                component="label"
+                disabled={loading}
+              >
+                Nhập từ Excel
+                <input
+                  type="file"
+                  hidden
+                  accept=".xlsx, .xls"
+                  onChange={handleImportExcel}
+                  disabled={loading}
+                />
+              </Button>
+            )}
+          </Box>
+
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            {activeStep > 0 && (
+              <Button onClick={handleBack} variant="outlined" disabled={loading}>
+                Quay lại
+              </Button>
+            )}
+
+            {activeStep < steps.length - 1 ? (
+              <Button
+                onClick={handleNext}
+                variant="contained"
+                color="primary"
+                disabled={loading}
+              >
+                Tiếp theo
+              </Button>
+            ) : (
+              <Button
+                onClick={handleSubmit}
+                variant="contained"
+                color="primary"
+                disabled={loading}
+                startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <Add />}
+              >
+                {loading ? 'Đang thêm...' : 'Thêm phòng học'}
+              </Button>
+            )}
+          </Box>
         </DialogActions>
       </Dialog>
 
-      {/* Preview Modal */}
+      {/* Preview Modal for Excel Import */}
       <PreviewRoomModal
         open={showPreview}
         onClose={handleClosePreview}
         previewData={previewData}
-        fetchRooms={fetchRooms}
+        fetchRooms={fetchRooms} // Pass fetchRooms to refresh list after import
+      // You might need to pass onAddRoom or a specific import function here
+      // depending on how PreviewRoomModal is designed to confirm adding.
       />
     </>
   );

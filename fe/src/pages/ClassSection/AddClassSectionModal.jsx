@@ -4,299 +4,561 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  Button,
+  Typography,
   TextField,
-  MenuItem,
-  Select,
+  Button,
+  Box,
   FormControl,
   InputLabel,
-  Typography,
-  Box,
+  Select,
+  MenuItem,
+  Alert,
+  CircularProgress,
+  IconButton,
+  Divider,
+  Stepper,
+  Step,
+  StepLabel,
+  Chip,
+  InputAdornment,
+  Fade,
+  Paper
 } from '@mui/material';
-import UploadFileIcon from '@mui/icons-material/UploadFile';
+import {
+  Close,
+  CloudUpload,
+  Class,
+  School,
+  Assignment,
+  People,
+  CheckCircle,
+  Error as ErrorIcon,
+  PlayCircleFilled,
+  PauseCircleFilled
+} from '@mui/icons-material';
 import * as XLSX from 'xlsx';
 
-const validStatuses = ['Hoạt động', 'Không hoạt động'];
+const statusOptions = [
+  { value: 'Hoạt động', color: 'success', icon: <PlayCircleFilled /> },
+  { value: 'Không hoạt động', color: 'error', icon: <PauseCircleFilled /> }
+];
 
-const AddClassSectionModal = ({ open, onClose, onAddClassSection, existingClassSections }) => {
-  const [formData, setFormData] = useState({
+const steps = ['Thông tin lớp học phần', 'Thông tin bổ sung'];
+
+export default function AddClassSectionModal({
+  open,
+  onClose,
+  onAddClassSection,
+  existingClassSections,
+  error: apiError,
+  loading,
+  message
+}) {
+  const [newClassSection, setNewClassSection] = useState({
     maLopHocPhan: '',
     maLopHoc: '',
     maHocPhan: '',
     tenLopHocPhan: '',
     siSoToiDa: '',
-    trangThai: '',
+    trangThai: 'Hoạt động',
   });
 
-  const [error, setError] = useState('');
+  const [activeStep, setActiveStep] = useState(0);
+  const [localError, setLocalError] = useState('');
+  const [fileUploaded, setFileUploaded] = useState(false);
+
+  const handleNext = () => {
+    if (activeStep === 0) {
+      if (!newClassSection.maLopHocPhan || !newClassSection.maLopHoc || !newClassSection.maHocPhan) {
+        setLocalError('Vui lòng điền đầy đủ thông tin cơ bản');
+        return;
+      }
+    }
+    setLocalError('');
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+  };
+
+  const handleBack = () => {
+    setLocalError('');
+    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    setError('');
+    setNewClassSection((prev) => ({ ...prev, [name]: value }));
+    setLocalError('');
   };
 
-  const handleSubmit = () => {
-    if (!Object.values(formData).every((value) => value)) {
-      setError('Vui lòng điền đầy đủ thông tin!');
+  const validateClassSection = () => {
+    if (!newClassSection.tenLopHocPhan || !newClassSection.siSoToiDa) {
+      setLocalError('Vui lòng điền đầy đủ thông tin bổ sung');
+      return false;
+    }
+
+    const siSoToiDa = parseInt(newClassSection.siSoToiDa, 10);
+    if (isNaN(siSoToiDa)) {
+      setLocalError('Sĩ số tối đa phải là số');
+      return false;
+    }
+
+    if (siSoToiDa <= 0) {
+      setLocalError('Sĩ số tối đa phải lớn hơn 0');
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async () => {
+    if (!validateClassSection()) {
       return;
     }
 
     const isDuplicate = existingClassSections.some(
-      (classSection) => classSection.maLopHocPhan === formData.maLopHocPhan
+      (classSection) => classSection.maLopHocPhan === newClassSection.maLopHocPhan
     );
     if (isDuplicate) {
-      setError(`Mã lớp học phần "${formData.maLopHocPhan}" đã tồn tại!`);
+      setLocalError(`Mã lớp học phần "${newClassSection.maLopHocPhan}" đã tồn tại`);
       return;
     }
 
-    const siSoToiDa = parseInt(formData.siSoToiDa, 10);
-    if (isNaN(siSoToiDa) || siSoToiDa <= 0) {
-      setError('Sĩ số tối đa phải là số dương!');
-      return;
-    }
-
-    onAddClassSection({
+    const classSectionToAdd = {
+      ...newClassSection,
+      siSoToiDa: parseInt(newClassSection.siSoToiDa, 10),
       id: Date.now(),
-      ...formData,
-      siSoToiDa,
       thoiGianTao: new Date().toISOString().slice(0, 16).replace('T', ' '),
       thoiGianCapNhat: new Date().toISOString().slice(0, 16).replace('T', ' '),
-    });
-    setFormData({
+    };
+
+    await onAddClassSection(classSectionToAdd);
+
+    if (!apiError && !loading) {
+      resetForm();
+      onClose();
+    }
+  };
+
+  const resetForm = () => {
+    setNewClassSection({
       maLopHocPhan: '',
       maLopHoc: '',
       maHocPhan: '',
       tenLopHocPhan: '',
       siSoToiDa: '',
-      trangThai: '',
+      trangThai: 'Hoạt động',
     });
-    setError('');
-    onClose();
+    setActiveStep(0);
+    setLocalError('');
+    setFileUploaded(false);
   };
 
-  const handleImportExcel = (e) => {
+  const handleImportExcel = async (e) => {
     const file = e.target.files[0];
     if (!file) {
-      setError('Vui lòng chọn một file Excel!');
+      setLocalError('Vui lòng chọn một file Excel');
       return;
     }
 
     const validExtensions = ['.xlsx', '.xls'];
     const fileExtension = file.name.slice(file.name.lastIndexOf('.')).toLowerCase();
     if (!validExtensions.includes(fileExtension)) {
-      setError('Chỉ hỗ trợ file Excel (.xlsx, .xls)!');
+      setLocalError('Chỉ hỗ trợ file Excel (.xlsx, .xls)');
+      e.target.value = '';
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = (evt) => {
-      try {
-        const data = new Uint8Array(evt.target.result);
-        const workbook = XLSX.read(data, { type: 'array' });
-        const sheet = workbook.Sheets[workbook.SheetNames[0]];
-        const json = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+    try {
+      setLocalError('');
+      setFileUploaded(true);
 
-        if (!json || json.length <= 1) {
-          setError('File Excel không chứa dữ liệu hoặc thiếu hàng dữ liệu!');
-          return;
-        }
+      const arrayBuffer = await file.arrayBuffer();
+      const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+      const sheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[sheetName];
+      const rawData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
-        const header = json[0].map(h => h?.toString().trim());
-        const expectedHeader = ['Mã lớp học phần', 'Mã lớp học', 'Mã học phần', 'Tên lớp học phần', 'Sĩ số tối đa', 'Trạng thái'];
-        if (!expectedHeader.every((h, i) => h === header[i])) {
-          setError('Định dạng cột không đúng! Cần: Mã lớp học phần, Mã lớp học, Mã học phần, Tên lớp học phần, Sĩ số tối đa, Trạng thái');
-          return;
-        }
-
-        const imported = [];
-        const duplicated = [];
-        const invalidRows = [];
-
-        json.slice(1).forEach((row, index) => {
-          const maLopHocPhan = row[0]?.toString().trim();
-          const maLopHoc = row[1]?.toString().trim();
-          const maHocPhan = row[2]?.toString().trim();
-          const tenLopHocPhan = row[3]?.toString().trim();
-          const siSoToiDa = parseInt(row[4], 10);
-          const trangThai = row[5]?.toString().trim() || 'Hoạt động';
-
-          // Kiểm tra dữ liệu hợp lệ
-          if (!maLopHocPhan || !maLopHoc || !maHocPhan || !tenLopHocPhan || isNaN(siSoToiDa)) {
-            invalidRows.push(index + 2);
-            return;
-          }
-
-          if (siSoToiDa <= 0) {
-            invalidRows.push(index + 2);
-            return;
-          }
-
-          if (!validStatuses.includes(trangThai)) {
-            invalidRows.push(index + 2);
-            return;
-          }
-
-          const isDuplicate = existingClassSections.some(
-            (classSection) => classSection.maLopHocPhan === maLopHocPhan
-          );
-
-          if (isDuplicate) {
-            duplicated.push(maLopHocPhan);
-          } else {
-            imported.push({
-              id: Date.now() + Math.random(),
-              maLopHocPhan,
-              maLopHoc,
-              maHocPhan,
-              tenLopHocPhan,
-              siSoToiDa,
-              trangThai,
-              thoiGianTao: new Date().toISOString().slice(0, 16).replace('T', ' '),
-              thoiGianCapNhat: new Date().toISOString().slice(0, 16).replace('T', ' '),
-            });
-          }
-        });
-
-        let errorMessage = '';
-        if (duplicated.length > 0) {
-          errorMessage += `Các mã lớp học phần đã tồn tại và bị bỏ qua: ${duplicated.join(', ')}. `;
-        }
-        if (invalidRows.length > 0) {
-          errorMessage += `Các hàng không hợp lệ (thiếu dữ liệu hoặc giá trị không đúng): ${invalidRows.join(', ')}.`;
-        }
-
-        if (errorMessage) {
-          setError(errorMessage);
-        }
-
-        if (imported.length > 0) {
-          imported.forEach(onAddClassSection);
-          if (!errorMessage) {
-            onClose();
-          }
-        } else if (!errorMessage) {
-          setError('Không có lớp học phần hợp lệ nào để thêm!');
-        }
-
-        console.log('Imported class sections:', imported);
-        console.log('Duplicated class sections:', duplicated);
-        console.log('Invalid rows:', invalidRows);
-        console.log('Excel header:', header);
-        console.log('Raw JSON data:', json);
-      } catch (err) {
-        console.error('Error reading Excel file:', err);
-        setError(`Lỗi khi đọc file Excel: ${err.message}. Vui lòng kiểm tra định dạng file!`);
+      if (rawData.length < 2) {
+        setLocalError('File Excel phải có ít nhất 2 dòng (header + dữ liệu)');
+        e.target.value = '';
+        setFileUploaded(false);
+        return;
       }
-    };
 
-    reader.onerror = () => {
-      setError('Lỗi khi đọc file Excel! Vui lòng thử lại.');
-    };
+      const headers = rawData[0];
+      const expectedHeader = ['Mã lớp học phần', 'Mã lớp học', 'Mã học phần', 'Tên lớp học phần', 'Sĩ số tối đa', 'Trạng thái'];
 
-    reader.readAsArrayBuffer(file);
+      const lowerCaseHeaders = headers.map(h => String(h).toLowerCase().trim());
+      const lowerCaseExpectedHeader = expectedHeader.map(h => String(h).toLowerCase().trim());
+
+      if (!lowerCaseExpectedHeader.every(expectedH => lowerCaseHeaders.includes(expectedH))) {
+        setLocalError(`Định dạng cột không đúng! Cần các cột: ${expectedHeader.join(', ')}`);
+        e.target.value = '';
+        setFileUploaded(false);
+        return;
+      }
+
+      const dataRows = rawData.slice(1);
+      const jsonData = dataRows.map(row => {
+        const obj = {};
+        headers.forEach((header, index) => {
+          obj[String(header).trim()] = row[index] || '';
+        });
+        return obj;
+      });
+
+      const imported = [];
+      const duplicated = [];
+      const invalidRows = [];
+
+      jsonData.forEach((row, index) => {
+        const maLopHocPhan = row['Mã lớp học phần']?.toString().trim() || '';
+        const maLopHoc = row['Mã lớp học']?.toString().trim() || '';
+        const maHocPhan = row['Mã học phần']?.toString().trim() || '';
+        const tenLopHocPhan = row['Tên lớp học phần']?.toString().trim() || '';
+        const siSoToiDa = parseInt(row['Sĩ số tối đa'], 10);
+        const trangThai = row['Trạng thái']?.toString().trim() || 'Hoạt động';
+
+        if (!maLopHocPhan || !maLopHoc || !maHocPhan || !tenLopHocPhan || isNaN(siSoToiDa)) {
+          invalidRows.push(index + 2);
+          return;
+        }
+
+        if (siSoToiDa <= 0) {
+          invalidRows.push(index + 2);
+          return;
+        }
+
+        if (!statusOptions.some(opt => opt.value === trangThai)) {
+          invalidRows.push(index + 2);
+          return;
+        }
+
+        const isDuplicate = existingClassSections.some(
+          (classSection) => classSection.maLopHocPhan === maLopHocPhan
+        );
+
+        if (isDuplicate) {
+          duplicated.push(maLopHocPhan);
+        } else {
+          imported.push({
+            id: Date.now() + Math.random(),
+            maLopHocPhan,
+            maLopHoc,
+            maHocPhan,
+            tenLopHocPhan,
+            siSoToiDa,
+            trangThai,
+            thoiGianTao: new Date().toISOString().slice(0, 16).replace('T', ' '),
+            thoiGianCapNhat: new Date().toISOString().slice(0, 16).replace('T', ' '),
+          });
+        }
+      });
+
+      let errorMessage = '';
+      if (duplicated.length > 0) {
+        errorMessage += `Các mã lớp học phần đã tồn tại: ${duplicated.join(', ')}. `;
+      }
+      if (invalidRows.length > 0) {
+        errorMessage += `Các hàng không hợp lệ: ${invalidRows.join(', ')}.`;
+      }
+
+      if (errorMessage) {
+        setLocalError(errorMessage);
+      }
+
+      if (imported.length > 0) {
+        imported.forEach(onAddClassSection);
+        if (!errorMessage) {
+          resetForm();
+          onClose();
+        }
+      } else if (!errorMessage) {
+        setLocalError('Không có dữ liệu hợp lệ nào trong file Excel');
+      }
+
+    } catch (error) {
+      console.error('Error reading Excel file:', error);
+      setLocalError('Lỗi khi đọc file Excel. Vui lòng kiểm tra lại');
+      setFileUploaded(false);
+    } finally {
+      e.target.value = '';
+    }
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle>
-        <Box display="flex" justifyContent="space-between" alignItems="center">
-          <Typography variant="h6">Thêm lớp học phần</Typography>
-          <label htmlFor="excel-upload">
-            <input
-              id="excel-upload"
-              type="file"
-              accept=".xlsx, .xls"
-              hidden
-              onChange={handleImportExcel}
-            />
+    <Dialog
+      open={open}
+      onClose={() => {
+        resetForm();
+        onClose();
+      }}
+      maxWidth="md"
+      fullWidth
+      PaperProps={{
+        sx: {
+          borderRadius: '12px',
+          boxShadow: '0px 8px 24px rgba(0, 0, 0, 0.1)',
+          overflow: 'hidden'
+        }
+      }}
+    >
+      <DialogTitle sx={{
+        background: 'linear-gradient(135deg, #1976d2 0%, #115293 100%)',
+        color: 'white',
+        py: 2,
+        px: 3,
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+      }}>
+        <Box display="flex" alignItems="center">
+          <Class sx={{ fontSize: 28, mr: 2 }} />
+          <Typography variant="h6" fontWeight="600">
+            Thêm Lớp Học Phần
+          </Typography>
+        </Box>
+        <IconButton
+          edge="end"
+          color="inherit"
+          onClick={() => {
+            resetForm();
+            onClose();
+          }}
+          aria-label="close"
+          disabled={loading}
+        >
+          <Close />
+        </IconButton>
+      </DialogTitle>
+
+      <DialogContent sx={{ p: 0 }}>
+        <Box sx={{ px: 3, pt: 3, pb: 2 }}>
+          <Stepper activeStep={activeStep} alternativeLabel>
+            {steps.map((label) => (
+              <Step key={label}>
+                <StepLabel>{label}</StepLabel>
+              </Step>
+            ))}
+          </Stepper>
+        </Box>
+
+        <Divider />
+
+        <Box sx={{ px: 3, pt: 2 }}>
+          {(apiError || localError) && (
+            <Fade in={!!(apiError || localError)}>
+              <Alert
+                severity="error"
+                icon={<ErrorIcon />}
+                sx={{ mb: 2 }}
+              >
+                {apiError || localError}
+              </Alert>
+            </Fade>
+          )}
+          {message && (
+            <Fade in={!!message}>
+              <Alert
+                severity="success"
+                icon={<CheckCircle />}
+                sx={{ mb: 2 }}
+              >
+                {message}
+              </Alert>
+            </Fade>
+          )}
+        </Box>
+
+        <Box sx={{ p: 3 }}>
+          {activeStep === 0 && (
+            <Box sx={{
+              display: 'grid',
+              gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+              gap: 3
+            }}>
+              <TextField
+                label="Mã lớp học phần"
+                name="maLopHocPhan"
+                value={newClassSection.maLopHocPhan}
+                onChange={handleChange}
+                fullWidth
+                variant="outlined"
+                required
+                disabled={loading}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Class color="action" />
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{ mb: 2 }}
+              />
+              <TextField
+                label="Mã lớp học"
+                name="maLopHoc"
+                value={newClassSection.maLopHoc}
+                onChange={handleChange}
+                fullWidth
+                variant="outlined"
+                required
+                disabled={loading}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <School color="action" />
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{ mb: 2 }}
+              />
+              <TextField
+                label="Mã học phần"
+                name="maHocPhan"
+                value={newClassSection.maHocPhan}
+                onChange={handleChange}
+                fullWidth
+                variant="outlined"
+                required
+                disabled={loading}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Assignment color="action" />
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{ mb: 2 }}
+              />
+            </Box>
+          )}
+
+          {activeStep === 1 && (
+            <Box sx={{
+              display: 'grid',
+              gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+              gap: 3
+            }}>
+              <TextField
+                label="Tên lớp học phần"
+                name="tenLopHocPhan"
+                value={newClassSection.tenLopHocPhan}
+                onChange={handleChange}
+                fullWidth
+                variant="outlined"
+                required
+                disabled={loading}
+                sx={{ mb: 2 }}
+              />
+              <TextField
+                label="Sĩ số tối đa"
+                name="siSoToiDa"
+                type="number"
+                value={newClassSection.siSoToiDa}
+                onChange={handleChange}
+                fullWidth
+                variant="outlined"
+                required
+                disabled={loading}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <People color="action" />
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{ mb: 2 }}
+              />
+              <FormControl fullWidth required sx={{ gridColumn: { xs: 'span 1', md: 'span 2' } }}>
+                <InputLabel>Trạng thái</InputLabel>
+                <Select
+                  name="trangThai"
+                  value={newClassSection.trangThai}
+                  onChange={handleChange}
+                  label="Trạng thái"
+                  disabled={loading}
+                >
+                  {statusOptions.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      <Box display="flex" alignItems="center">
+                        {option.icon}
+                        <Chip
+                          label={option.value}
+                          size="small"
+                          color={option.color}
+                          sx={{ ml: 1 }}
+                        />
+                      </Box>
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Box>
+          )}
+        </Box>
+      </DialogContent>
+
+      <DialogActions sx={{
+        p: 3,
+        display: 'flex',
+        justifyContent: 'space-between',
+        borderTop: '1px solid #eee'
+      }}>
+        <Box>
+          {activeStep === 0 && (
             <Button
               variant="outlined"
-              component="span"
-              startIcon={<UploadFileIcon />}
-              size="small"
+              color="primary"
+              startIcon={<CloudUpload />}
+              component="label"
+              disabled={loading}
             >
-              Thêm tự động
+              Nhập từ Excel
+              <input
+                type="file"
+                hidden
+                accept=".xlsx, .xls"
+                onChange={handleImportExcel}
+                disabled={loading}
+              />
             </Button>
-          </label>
+          )}
         </Box>
-      </DialogTitle>
-      <DialogContent>
-        {error && (
-          <Typography color="error" sx={{ mb: 2 }}>
-            {error}
-          </Typography>
-        )}
-        <TextField
-          fullWidth
-          margin="dense"
-          label="Mã lớp học phần"
-          name="maLopHocPhan"
-          value={formData.maLopHocPhan}
-          onChange={handleChange}
-          required
-        />
-        <TextField
-          fullWidth
-          margin="dense"
-          label="Mã lớp học"
-          name="maLopHoc"
-          value={formData.maLopHoc}
-          onChange={handleChange}
-          required
-        />
-        <TextField
-          fullWidth
-          margin="dense"
-          label="Mã học phần"
-          name="maHocPhan"
-          value={formData.maHocPhan}
-          onChange={handleChange}
-          required
-        />
-        <TextField
-          fullWidth
-          margin="dense"
-          label="Tên lớp học phần"
-          name="tenLopHocPhan"
-          value={formData.tenLopHocPhan}
-          onChange={handleChange}
-          required
-        />
-        <TextField
-          fullWidth
-          margin="dense"
-          label="Sĩ số tối đa"
-          name="siSoToiDa"
-          type="number"
-          value={formData.siSoToiDa}
-          onChange={handleChange}
-          required
-        />
-        <FormControl fullWidth margin="dense" required>
-          <InputLabel id="trang-thai-label">Trạng thái</InputLabel>
-          <Select
-            labelId="trang-thai-label"
-            name="trangThai"
-            value={formData.trangThai}
-            onChange={handleChange}
-            label="Trạng thái"
-          >
-            <MenuItem value="Hoạt động">Hoạt động</MenuItem>
-            <MenuItem value="Không hoạt động">Không hoạt động</MenuItem>
-          </Select>
-        </FormControl>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose} variant="outlined" sx={{ color: '#1976d2' }}>
-          Hủy
-        </Button>
-        <Button onClick={handleSubmit} variant="contained" sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}>
-          Thêm
-        </Button>
+
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          {activeStep > 0 && (
+            <Button
+              onClick={handleBack}
+              variant="outlined"
+              disabled={loading}
+            >
+              Quay lại
+            </Button>
+          )}
+
+          {activeStep < steps.length - 1 ? (
+            <Button
+              onClick={handleNext}
+              variant="contained"
+              color="primary"
+              disabled={loading}
+            >
+              Tiếp theo
+            </Button>
+          ) : (
+            <Button
+              onClick={handleSubmit}
+              variant="contained"
+              color="primary"
+              disabled={loading}
+              startIcon={loading ? <CircularProgress size={20} /> : <Add />}
+            >
+              {loading ? 'Đang xử lý...' : 'Thêm lớp học phần'}
+            </Button>
+          )}
+        </Box>
       </DialogActions>
     </Dialog>
   );
 };
-
-export default AddClassSectionModal;
