@@ -1,5 +1,5 @@
 import { DataTypes } from 'sequelize';
-import { Hooks } from 'sequelize/lib/hooks';
+// import { Hooks } from 'sequelize/lib/hooks';
 
 // Định nghĩa model Semester - Đại diện cho một học kỳ
 const Semester = (sequelize) => {

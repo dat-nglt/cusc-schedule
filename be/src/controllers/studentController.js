@@ -1,10 +1,10 @@
 import {
-    getAllStudents,
-    getStudentById,
-    createStudent,
-    updateStudent,
-    importStudentsFromJSON, // Đảm bảo tên hàm này đúng trong service
-    deleteStudent,
+    getAllStudentService,
+    getStudentByIdService,
+    createStudentService,
+    updateStudentService,
+    importStudentsFromJSONService, // Đảm bảo tên hàm này đúng trong service
+    deleteStudentService,
 } from "../services/studentService.js";
 import { APIResponse } from "../utils/APIResponse.js";
 import ExcelUtils from "../utils/ExcelUtils.js"; // Được sử dụng để tạo template Excel
@@ -18,7 +18,7 @@ import ExcelUtils from "../utils/ExcelUtils.js"; // Được sử dụng để t
  */
 export const getAllStudentsController = async (req, res) => {
     try {
-        const students = await getAllStudents(); // Đổi tên biến từ 'Students' thành 'students' để nhất quán
+        const students = await getAllStudentService(); // Đổi tên biến từ 'Students' thành 'students' để nhất quán
         return APIResponse(res, 200, students, "Lấy danh sách học viên thành công.");
     } catch (error) {
         console.error("Lỗi khi lấy danh sách học viên:", error);
@@ -36,7 +36,7 @@ export const getAllStudentsController = async (req, res) => {
 export const getStudentByIdController = async (req, res) => {
     const { id } = req.params;
     try {
-        const student = await getStudentById(id); // Đổi tên biến từ 'Student' thành 'student' để nhất quán
+        const student = await getStudentByIdService(id); // Đổi tên biến từ 'Student' thành 'student' để nhất quán
         if (!student) {
             return APIResponse(res, 404, null, "Không tìm thấy học viên.");
         }
@@ -57,7 +57,7 @@ export const getStudentByIdController = async (req, res) => {
 export const createStudentController = async (req, res) => {
     const studentData = req.body; // Đổi tên biến từ 'StudentData' thành 'studentData' để nhất quán
     try {
-        const student = await createStudent(studentData); // Đổi tên biến từ 'Student' thành 'student' để nhất quán
+        const student = await createStudentService(studentData); // Đổi tên biến từ 'Student' thành 'student' để nhất quán
         return APIResponse(res, 201, student, "Tạo học viên thành công.");
     } catch (error) {
         console.error("Lỗi khi tạo học viên:", error);
@@ -77,7 +77,7 @@ export const updateStudentController = async (req, res) => {
     const { id } = req.params;
     const studentData = req.body; // Đổi tên biến từ 'StudentData' thành 'studentData' để nhất quán
     try {
-        const student = await updateStudent(id, studentData); // Đổi tên biến từ 'Student' thành 'student' để nhất quán
+        const student = await updateStudentService(id, studentData); // Đổi tên biến từ 'Student' thành 'student' để nhất quán
         if (!student) {
             return APIResponse(res, 404, null, "Không tìm thấy học viên để cập nhật.");
         }
@@ -98,7 +98,7 @@ export const updateStudentController = async (req, res) => {
 export const deleteStudentController = async (req, res) => {
     const { id } = req.params;
     try {
-        const deletedCount = await deleteStudent(id); // Giả định service trả về số lượng bản ghi bị xóa
+        const deletedCount = await deleteStudentService(id); // Giả định service trả về số lượng bản ghi bị xóa
         if (deletedCount === 0) {
             return APIResponse(res, 404, null, "Không tìm thấy học viên để xóa.");
         }
@@ -130,7 +130,7 @@ export const importStudentsFromJSONController = async (req, res) => {
         }
 
         // Tiến hành import dữ liệu từ JSON
-        const results = await importStudentsFromJSON(students); // Đảm bảo tên hàm đúng: importStudentsFromJSON
+        const results = await importStudentsFromJSONService(students); // Đảm bảo tên hàm đúng: importStudentsFromJSON
 
         const responseData = {
             success: true, // Chỉ ra rằng request được xử lý

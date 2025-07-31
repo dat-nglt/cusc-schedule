@@ -1,10 +1,10 @@
 import {
-    getAllPrograms,
-    getProgramById,
-    createProgram,
-    updateProgram,
-    deleteProgram,
-    importProgramsFromJSON // Giả định có thể có thêm importProgramsFromExcel nếu bạn muốn nhập từ Excel
+    getAllProgramService,
+    getProgramByIdService,
+    createProgramService,
+    updateProgramService,
+    deleteProgramService,
+    importProgramsFromJSONService // Giả định có thể có thêm importProgramsFromExcel nếu bạn muốn nhập từ Excel
 } from "../services/programService.js";
 import { APIResponse } from "../utils/APIResponse.js"; // Sử dụng APIResponse nhất quán
 import ExcelUtils from "../utils/ExcelUtils.js"; // Được sử dụng để tạo template Excel
@@ -18,7 +18,7 @@ import ExcelUtils from "../utils/ExcelUtils.js"; // Được sử dụng để t
  */
 export const getAllProgramsController = async (req, res) => {
     try {
-        const programs = await getAllPrograms();
+        const programs = await getAllProgramService();
         return APIResponse(res, 200, programs, "Lấy danh sách chương trình đào tạo thành công.");
     } catch (error) {
         console.error("Lỗi khi lấy danh sách chương trình đào tạo:", error);
@@ -36,7 +36,7 @@ export const getAllProgramsController = async (req, res) => {
 export const getProgramByIdController = async (req, res) => {
     const { id } = req.params;
     try {
-        const program = await getProgramById(id);
+        const program = await getProgramByIdService(id);
         if (!program) {
             return APIResponse(res, 404, null, "Không tìm thấy chương trình đào tạo.");
         }
@@ -57,7 +57,7 @@ export const getProgramByIdController = async (req, res) => {
 export const createProgramController = async (req, res) => {
     const programData = req.body;
     try {
-        const program = await createProgram(programData);
+        const program = await createProgramService(programData);
         return APIResponse(res, 201, program, "Tạo chương trình đào tạo thành công.");
     } catch (error) {
         console.error("Lỗi khi tạo chương trình đào tạo:", error);
@@ -77,7 +77,7 @@ export const updateProgramController = async (req, res) => {
     const { id } = req.params;
     const programData = req.body;
     try {
-        const program = await updateProgram(id, programData);
+        const program = await updateProgramService(id, programData);
         if (!program) {
             return APIResponse(res, 404, null, "Không tìm thấy chương trình đào tạo để cập nhật.");
         }
@@ -98,7 +98,7 @@ export const updateProgramController = async (req, res) => {
 export const deleteProgramController = async (req, res) => {
     const { id } = req.params;
     try {
-        const deletedCount = await deleteProgram(id); // Giả định service trả về số lượng bản ghi bị xóa
+        const deletedCount = await deleteProgramService(id); // Giả định service trả về số lượng bản ghi bị xóa
         if (deletedCount === 0) {
             return APIResponse(res, 404, null, "Không tìm thấy chương trình đào tạo để xóa.");
         }
@@ -129,7 +129,7 @@ export const importProgramsFromJSONController = async (req, res) => {
         }
 
         // Tiến hành import dữ liệu từ JSON
-        const results = await importProgramsFromJSON(programs);
+        const results = await importProgramsFromJSONService(programs);
 
         const responseData = {
             success: true, // Chỉ ra rằng request được xử lý

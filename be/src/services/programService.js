@@ -1,6 +1,4 @@
 import models from '../models/index.js';
-import { Op } from 'sequelize'; // Import Op nếu cần cho các hàm list tương lai
-import ExcelUtils from "../utils/ExcelUtils.js"; // Giả định bạn có ExcelUtils cho các hàm import từ Excel
 
 const { sequelize, Program } = models;
 /**
@@ -8,7 +6,7 @@ const { sequelize, Program } = models;
  * @returns {Promise<Array>} Danh sách tất cả các chương trình.
  * @throws {Error} Nếu có lỗi khi lấy dữ liệu.
  */
-export const getAllPrograms = async () => {
+export const getAllProgramService = async () => {
   try {
     const programs = await Program.findAll();
     return programs;
@@ -24,7 +22,7 @@ export const getAllPrograms = async () => {
  * @returns {Promise<Object|null>} Chương trình tìm thấy hoặc null nếu không tìm thấy.
  * @throws {Error} Nếu có lỗi khi lấy dữ liệu.
  */
-export const getProgramById = async (id) => {
+export const getProgramByIdService = async (id) => {
   try {
     const program = await Program.findByPk(id);
     return program;
@@ -40,7 +38,7 @@ export const getProgramById = async (id) => {
  * @returns {Promise<Object>} Chương trình đã được tạo.
  * @throws {Error} Nếu có lỗi khi tạo chương trình.
  */
-export const createProgram = async (programData) => {
+export const createProgramService = async (programData) => {
   try {
     const program = await Program.create(programData);
     return program;
@@ -57,7 +55,7 @@ export const createProgram = async (programData) => {
  * @returns {Promise<Object>} Chương trình đã được cập nhật.
  * @throws {Error} Nếu không tìm thấy chương trình hoặc có lỗi.
  */
-export const updateProgram = async (id, programData) => {
+export const updateProgramService = async (id, programData) => {
   try {
     const program = await Program.findByPk(id);
     if (!program) throw new Error("Không tìm thấy chương trình đào tạo");
@@ -74,11 +72,11 @@ export const updateProgram = async (id, programData) => {
  * @returns {Promise<Object>} Thông báo xóa thành công.
  * @throws {Error} Nếu không tìm thấy chương trình hoặc có lỗi.
  */
-export const deleteProgram = async (id) => {
+export const deleteProgramService = async (id) => {
   try {
     const program = await Program.findByPk(id);
     if (!program) throw new Error("Không tìm thấy chương trình đào tạo");
-    await program.destroy(); 
+    await program.destroy();
     return { message: "Chương trình đã được xóa thành công" };
   } catch (error) {
     console.error(`Lỗi khi xóa chương trình với ID ${id}:`, error);
@@ -92,7 +90,7 @@ export const deleteProgram = async (id) => {
  * @returns {Promise<Object>} Kết quả nhập khẩu bao gồm danh sách thành công và lỗi.
  * @throws {Error} Nếu dữ liệu JSON không hợp lệ hoặc lỗi trong quá trình nhập.
  */
-export const importProgramsFromJSON = async (programsData) => {
+export const importProgramsFromJSONService = async (programsData) => {
   try {
     if (!programsData || !Array.isArray(programsData)) {
       throw new Error("Dữ liệu chương trình đào tạo không hợp lệ");
@@ -169,159 +167,4 @@ export const importProgramsFromJSON = async (programsData) => {
     console.error("Lỗi khi nhập chương trình đào tạo từ JSON:", error);
     throw error;
   }
-};
-
-/**
- * Liệt kê các chương trình đào tạo với các bộ lọc tùy chọn.
- * @param {Object} filters - Các tiêu chí lọc.
- * @param {string} [filters.program_id] - Lọc theo ID chương trình (tìm kiếm gần đúng).
- * @param {string} [filters.program_name] - Lọc theo tên chương trình (tìm kiếm gần đúng).
- * @param {string} [filters.status] - Lọc theo trạng thái.
- * @returns {Promise<Array>} Danh sách các chương trình đào tạo phù hợp với bộ lọc.
- * @throws {Error} Nếu có lỗi khi liệt kê dữ liệu.
- */
-export const listPrograms = async (filters) => {
-  try {
-    const whereClause = {};
-
-    if (filters.program_id) {
-      whereClause.program_id = {
-        [Op.iLike]: `%${filters.program_id}%`
-      };
-    }
-    if (filters.program_name) {
-      whereClause.program_name = {
-        [Op.iLike]: `%${filters.program_name}%`
-      };
-    }
-    if (filters.status) {
-      whereClause.status = {
-        [Op.iLike]: `%${filters.status}%`
-      };
-    }
-
-    const programs = await Program.findAll({
-      where: whereClause,
-      attributes: ['program_id', 'program_name', 'training_duration', 'description', 'status', 'created_at', 'updated_at'],
-      order: [['created_at', 'DESC']]
-    });
-
-    return programs;
-  } catch (error) {
-    throw new Error('Lỗi khi liệt kê chương trình đào tạo: ' + error.message);
-  }
-};
-
-/**
- * Nhập dữ liệu chương trình đào tạo từ file Excel.
- * @param {Buffer} fileBuffer - Buffer của file Excel.
- * @returns {Promise<Object>} Kết quả nhập khẩu bao gồm danh sách thành công và lỗi.
- * @throws {Error} Nếu file Excel không có dữ liệu hoặc định dạng không đúng, hoặc lỗi trong quá trình nhập.
- */
-export const importProgramsFromExcel = async (fileBuffer) => {
-  try {
-    // Đọc file Excel từ buffer
-    const rawData = ExcelUtils.readExcelToJSON(fileBuffer);
-
-    if (!rawData || rawData.length === 0) {
-      throw new Error("File Excel không có dữ liệu hoặc định dạng không đúng");
-    }
-
-    // Chuyển đổi tên cột tiếng Việt sang tiếng Anh (nếu cần, giả định ExcelUtils có hàm này)
-    const programsData = ExcelUtils.convertVietnameseColumnsToEnglish(rawData);
-
-    const results = {
-      success: [],
-      errors: [],
-      total: programsData.length
-    };
-
-    // Validate và tạo chương trình cho từng hàng
-    for (let i = 0; i < programsData.length; i++) {
-      const row = programsData[i];
-      const rowIndex = i + 2; // Bắt đầu từ hàng 2 (sau tiêu đề)
-
-      try {
-        // Validate các trường bắt buộc
-        if (!row.program_id) {
-          results.errors.push({
-            row: rowIndex,
-            program_id: row.program_id || 'N/A',
-            error: 'Mã chương trình là bắt buộc'
-          });
-          continue;
-        }
-
-        // Định dạng dữ liệu theo cấu trúc database
-        const programData = {
-          program_id: ExcelUtils.cleanString(row.program_id),
-          program_name: ExcelUtils.cleanString(row.program_name) || null,
-          training_duration: row.training_duration ? parseFloat(row.training_duration) : null,
-          description: ExcelUtils.cleanString(row.description) || null,
-          status: ExcelUtils.cleanString(row.status) || 'Hoạt động',
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        };
-
-        // Validate training_duration
-        if (programData.training_duration !== null && (isNaN(programData.training_duration) || programData.training_duration < 0)) {
-          results.errors.push({
-            row: rowIndex,
-            program_id: programData.program_id,
-            error: 'Thời gian đào tạo phải là số dương'
-          });
-          continue;
-        }
-
-        // Kiểm tra program_id đã tồn tại chưa
-        const existingProgram = await Program.findByPk(programData.program_id);
-        if (existingProgram) {
-          results.errors.push({
-            row: rowIndex,
-            program_id: programData.program_id,
-            error: 'Mã chương trình đã tồn tại'
-          });
-          continue;
-        }
-
-        // Tạo Program mới
-        const newProgram = await Program.create(programData);
-        results.success.push({
-          row: rowIndex,
-          program_id: newProgram.program_id,
-          program_name: newProgram.program_name
-        });
-
-      } catch (error) {
-        results.errors.push({
-          row: rowIndex,
-          program_id: row.program_id || 'N/A',
-          error: error.message || 'Lỗi không xác định'
-        });
-      }
-    }
-
-    return results;
-  } catch (error) {
-    console.error("Lỗi khi nhập chương trình đào tạo từ Excel:", error);
-    throw error;
-  }
-};
-
-/**
- * Validate cấu trúc template Excel cho chương trình đào tạo.
- * @param {Buffer} fileBuffer - Buffer của file Excel.
- * @returns {Object} Kết quả validation bao gồm valid (boolean) và error (string, nếu có).
- * @throws {Error} Nếu template không hợp lệ.
- */
-export const validateExcelTemplate = (fileBuffer) => {
-  const requiredColumns = ['Mã chương trình', 'Tên chương trình'];
-  const optionalColumns = ['Thời gian đào tạo', 'Mô tả', 'Trạng thái'];
-  const validation = ExcelUtils.validateTemplate(fileBuffer, requiredColumns, optionalColumns);
-
-  if (!validation.valid) {
-    throw new Error(validation.error);
-  }
-
-  return validation;
 };

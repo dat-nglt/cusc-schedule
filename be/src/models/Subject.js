@@ -1,5 +1,5 @@
 import { DataTypes } from 'sequelize';
-import { on } from 'winston-daily-rotate-file';
+// import { on } from 'winston-daily-rotate-file';
 
 // Định nghĩa model Subject - Đại diện cho môn học
 const Subject = (sequelize) => {

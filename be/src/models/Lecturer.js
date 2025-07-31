@@ -1,5 +1,5 @@
 import { DataTypes } from "sequelize";
-import { add } from "winston";
+// import { add } from "winston";
 
 // Định nghĩa model Lecturer - Đại diện cho giảng viên
 const Lecturer = (sequelize) => {

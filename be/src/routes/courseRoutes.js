@@ -6,7 +6,7 @@ import {
     createCourseController,
     updateCourseController,
     deleteCourseController,
-    listCoursesController,
+    // listCoursesController,
     importCoursesController,
     importCoursesFromJsonController,
     downloadTemplateController,

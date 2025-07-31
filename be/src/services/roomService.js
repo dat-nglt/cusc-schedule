@@ -1,4 +1,3 @@
-
 import model from "../models/index";
 
 const { Room } = model;

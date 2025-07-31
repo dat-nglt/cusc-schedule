@@ -1,11 +1,11 @@
 import {
-  getAllSubjects,
-  getSubjectById,
-  createSubject,
-  updateSubject,
-  deleteSubject,
-  getSubjectsBySemester,
-  importSubjectsFromJSON,
+  getAllSubjectService,
+  getSubjectByIdService,
+  createSubjectService,
+  updateSubjectService,
+  deleteSubjectService,
+  getSubjectsBySemesterService,
+  importSubjectsFromJSONService,
 } from "../services/subjectService.js";
 import { APIResponse } from "../utils/APIResponse.js"; // Đảm bảo APIResponse được import chính xác và hoạt động như mong đợi
 import ExcelUtils from "../utils/ExcelUtils.js"; // Được sử dụng để tạo template Excel
@@ -19,7 +19,7 @@ import ExcelUtils from "../utils/ExcelUtils.js"; // Được sử dụng để t
  */
 export const getAllSubjectsController = async (req, res) => {
   try {
-    const subjects = await getAllSubjects();
+    const subjects = await getAllSubjectService();
     return APIResponse(res, 200, subjects, "Lấy danh sách môn học thành công.");
   } catch (error) {
     console.error("Lỗi khi lấy danh sách môn học:", error);
@@ -42,7 +42,7 @@ export const getAllSubjectsController = async (req, res) => {
 export const getSubjectByIdController = async (req, res) => {
   const { id } = req.params;
   try {
-    const subject = await getSubjectById(id);
+    const subject = await getSubjectByIdService(id);
     if (!subject) {
       return APIResponse(res, 404, null, "Không tìm thấy môn học.");
     }
@@ -68,7 +68,7 @@ export const getSubjectByIdController = async (req, res) => {
 export const createSubjectController = async (req, res) => {
   const subjectData = req.body;
   try {
-    const subject = await createSubject(subjectData);
+    const subject = await createSubjectService(subjectData);
     return APIResponse(res, 201, subject, "Tạo môn học thành công.");
   } catch (error) {
     console.error("Lỗi khi tạo môn học:", error);
@@ -93,7 +93,7 @@ export const updateSubjectController = async (req, res) => {
   const { id } = req.params;
   const subjectData = req.body;
   try {
-    const subject = await updateSubject(id, subjectData);
+    const subject = await updateSubjectService(id, subjectData);
     if (!subject) {
       return APIResponse(res, 404, null, "Không tìm thấy môn học để cập nhật.");
     }
@@ -124,7 +124,7 @@ export const updateSubjectController = async (req, res) => {
 export const deleteSubjectController = async (req, res) => {
   const { id } = req.params;
   try {
-    const deletedCount = await deleteSubject(id); // Giả định service trả về số lượng bản ghi bị xóa
+    const deletedCount = await deleteSubjectService(id); // Giả định service trả về số lượng bản ghi bị xóa
     if (deletedCount === 0) {
       return APIResponse(res, 404, null, "Không tìm thấy môn học để xóa.");
     }
@@ -150,7 +150,7 @@ export const deleteSubjectController = async (req, res) => {
 export const getSubjectsBySemesterController = async (req, res) => {
   const { semesterId } = req.params;
   try {
-    const subjects = await getSubjectsBySemester(semesterId);
+    const subjects = await getSubjectsBySemesterService(semesterId);
     if (!subjects || subjects.length === 0) {
       return APIResponse(
         res,
@@ -206,7 +206,7 @@ export const importSubjectsFromJSONController = async (req, res) => {
     }
 
     // Tiến hành import dữ liệu từ JSON
-    const results = await importSubjectsFromJSON(subjects);
+    const results = await importSubjectsFromJSONService(subjects);
 
     const responseData = {
       success: true, // Chỉ ra rằng request được xử lý
