@@ -35,7 +35,7 @@ export const createLecturerAPI = async (lecturerData, subjectIds = []) => {
     }
 };
 
-export const updateLecturer = async (id, lecturerData) => {
+export const updateLecturerAPI = async (id, lecturerData) => {
   try {
     const response = await axiosInstance.put(
       `/api/lecturers/update/${id}`,
@@ -61,7 +61,7 @@ export const importLecturers = async (jsonData) => {
   }
 };
 
-export const deleteLecturer = async (id) => {
+export const deleteLecturerAPI = async (id) => {
   try {
     const response = await axiosInstance.delete(`/api/lecturers/delete/${id}`);
     return response;

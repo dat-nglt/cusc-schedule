@@ -25,7 +25,7 @@ import EditProgramModal from './EditProgramModal';
 import DeleteProgramModal from './DeleteProgramModal';
 import useResponsive from '../../hooks/useResponsive';
 import ProgramTable from './ProgramTable';
-import { getAllPrograms, getProgramById, createProgram, updateProgram, deleteProgram } from '../../api/programAPI';
+import { getAllProgramsAPI, getProgramByIdAPI, createProgramAPI, updateProgramAPI, deleteProgramAPI } from '../../api/programAPI';
 import { toast } from 'react-toastify';
 
 const Program = () => {
@@ -55,7 +55,7 @@ const Program = () => {
     const fetchPrograms = async () => {
         try {
             setLoading(true);
-            const response = await getAllPrograms();
+            const response = await getAllProgramsAPI();
             if (!response) {
                 console.error("Không có dữ liệu chương trình đào tạo");
                 return;
@@ -81,7 +81,7 @@ const Program = () => {
     const handleAddNewProgram = async (newProgram) => {
         try {
             setLoading(true);
-            const response = await createProgram(newProgram);
+            const response = await createProgramAPI(newProgram);
             if (response && response.data) {
                 toast.success('Thêm chương trình đào tạo thành công!')
                 fetchPrograms(); // Tải lại danh sách chương trình sau khi thêm thành công
@@ -104,7 +104,7 @@ const Program = () => {
     const handleEditProgram = async (id) => {
         try {
             setLoading(true);
-            const response = await getProgramById(id);
+            const response = await getProgramByIdAPI(id);
             if (response && response.data) {
                 setEditedProgram(response.data.data);
                 setOpenEditModal(true);
@@ -128,7 +128,7 @@ const Program = () => {
     const handleSaveEditedProgram = async (updatedProgram) => {
         try {
             setLoading(true);
-            const response = await updateProgram(updatedProgram.program_id, updatedProgram);
+            const response = await updateProgramAPI(updatedProgram.program_id, updatedProgram);
             if (response && response.data) {
                 toast.success('Cập nhật chương trình đào tạo thành công!');
                 fetchPrograms(); // Tải lại danh sách chương trình sau khi cập nhật thành công
@@ -151,7 +151,7 @@ const Program = () => {
     const handleViewProgram = async (id) => {
         try {
             setLoading(true);
-            const response = await getProgramById(id);
+            const response = await getProgramByIdAPI(id);
             if (response && response.data) {
                 setSelectedProgram(response.data.data);
                 setOpenDetail(true);
@@ -176,7 +176,7 @@ const Program = () => {
     const confirmDeleteProgram = async (id) => {
         try {
             setLoading(true);
-            const response = await deleteProgram(id);
+            const response = await deleteProgramAPI(id);
             if (response) {
                 toast.success('Xóa chương trình đào tạo thành công!');
                 fetchPrograms(); // Tải lại danh sách chương trình sau khi xóa thành công

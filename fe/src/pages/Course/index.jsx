@@ -32,26 +32,7 @@ import EditCourseModal from './EditCourseModal';
 import DeleteCourseModal from './DeleteCourseModal';
 import useResponsive from '../../hooks/useResponsive';
 import CourseTable from './CourseTable';
-import { getCourses, getCourseById, addCourse, updateCourse, deleteCourse} from '../../api/courseAPI';
-=======
-} from "@mui/icons-material";
-import CourseDetailModal from "./CourseDetailModal";
-import AddCourseModal from "./AddCourseModal"; // Đã chỉnh sửa để hỗ trợ preview
-import EditCourseModal from "./EditCourseModal";
-import DeleteCourseModal from "./DeleteCourseModal";
-import useResponsive from "../../hooks/useResponsive";
-import CourseTable from "./CourseTable";
-import { toast } from "react-toastify";
-import {
-  getCourses,
-  getCourseById,
-  addCourse,
-  updateCourse,
-  deleteCourse,
-  listCourses,
-  importCourses,
-} from "../../api/courseAPI";
->>>>>>> 00516c43662a0500b27da7602cd05ff7928e64c3
+import { getCoursesAPI, getCourseByIdAPI, addCourseAPI, updateCourseAPI, deleteCourseAPI } from '../../api/courseAPI';
 
 // Hàm định dạng timestamp thành YYYY-MM-DD HH:MM:SS.sss+07
 const formatTimestamp = (timestamp) => {
@@ -88,15 +69,39 @@ const Course = () => {
   const fetchCourses = async () => {
     try {
       setLoading(true);
-      const response = await getCourses();
-      if (!response) {
-        console.error("Không có dữ liệu khóa học");
-        return;
+      const response = await getCoursesAPI();
+      console.log('Phản hồi từ API (danh sách):', response);
+
+      let coursesData = [];
+      if (Array.isArray(response)) {
+        coursesData = response.map((course, index) => ({
+          stt: index + 1,
+          course_id: course.course_id,
+          course_name: course.course_name,
+          start_date: course.start_date,
+          end_date: course.end_date,
+          created_at: formatTimestamp(course.created_at),
+          updated_at: formatTimestamp(course.updated_at),
+        }));
+      } else if (response && typeof response === 'object' && Array.isArray(response.data)) {
+        coursesData = response.data.map((course, index) => ({
+          stt: index + 1,
+          course_id: course.course_id,
+          course_name: course.course_name,
+          start_date: course.start_date,
+          end_date: course.end_date,
+          created_at: formatTimestamp(course.created_at),
+          updated_at: formatTimestamp(course.updated_at),
+        }));
+      } else {
+        throw new Error('Dữ liệu từ API không phải là mảng hợp lệ');
       }
-      setCourses(response.data.data);
-    } catch (error) {
-      console.error("Lỗi khi tải danh sách khóa học:", error);
-    } finally {
+
+      setCourses(coursesData);
+      setLoading(false);
+    } catch (err) {
+      console.error('Lỗi chi tiết (danh sách):', err.message);
+      setError(`Lỗi khi tải danh sách khóa học: ${err.message}`);
       setLoading(false);
     }
   };
@@ -109,8 +114,8 @@ const Course = () => {
   const handleViewCourse = async (course_id) => {
     try {
       setLoading(true);
-      const response = await getCourseById(course_id);
-      console.log("Phản hồi từ API (chi tiết):", response);
+      const response = await getCourseByIdAPI(course_id);
+      console.log('Phản hồi từ API (chi tiết):', response);
 
       let courseData = {};
       if (response && typeof response === "object") {
@@ -148,10 +153,8 @@ const Course = () => {
   const handleAddCourse = async (courseData) => {
     try {
       setLoading(true);
-      console.log("Gửi dữ liệu thêm khóa học:", courseData);
-
-      // Chỉ gửi các trường cần thiết
-      const response = await addCourse({
+      console.log('Gửi dữ liệu thêm khóa học:', courseData);
+      const response = await addCourseAPI({
         course_id: courseData.course_id,
         course_name: courseData.course_name,
         start_date: courseData.start_date,
@@ -184,8 +187,8 @@ const Course = () => {
   const handleSaveEditedCourse = async (courseData) => {
     try {
       setLoading(true);
-      console.log("Gửi dữ liệu chỉnh sửa khóa học:", courseData);
-      const response = await updateCourse(courseData.course_id, {
+      console.log('Gửi dữ liệu chỉnh sửa khóa học:', courseData);
+      const response = await updateCourseAPI(courseData.course_id, {
         course_id: courseData.course_id,
         course_name: courseData.course_name,
         start_date: courseData.start_date,
@@ -225,12 +228,9 @@ const Course = () => {
         setError("Dữ liệu khóa học không hợp lệ");
         return;
       }
-      console.log("Attempting to delete course with course_id:", course_id);
-      const response = await deleteCourse(course_id);
-      if (response && response.data) {
-        toast.success("Xóa khóa học thành công!");
-        fetchCourses();
-      }
+      console.log('Attempting to delete course with course_id:', course_id);
+      const response = await deleteCourseAPI(course_id);
+      console.log('Response from API (delete):', response);
 
       await fetchCourses();
     } catch (err) {

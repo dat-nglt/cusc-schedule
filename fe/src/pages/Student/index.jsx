@@ -25,7 +25,7 @@ import EditStudentModal from './EditStudentModal';
 import DeleteStudentModal from './DeleteStudentModal';
 import useResponsive from '../../hooks/useResponsive';
 import StudentTable from './StudentTable';
-import { getAllStudents, getStudentById, createStudent, updateStudent, deleteStudent } from '../../api/studentAPI';
+import { getAllStudentsAPI, getStudentByIdAPI, createStudentAPI, updateStudentAPI, deleteStudentAPI } from '../../api/studentAPI';
 import { toast } from 'react-toastify';
 import { getClasses } from '../../api/classAPI';
 
@@ -59,7 +59,7 @@ const Student = () => {
     const fetchStudents = async () => {
         try {
             setLoading(true);
-            const response = await getAllStudents();
+            const response = await getAllStudentsAPI();
             if (!response) {
                 console.error("Không có dữ liệu học viên");
                 return;
@@ -103,7 +103,7 @@ const Student = () => {
     const handleAddNewStudent = async (newStudent) => {
         try {
             setLoading(true);
-            const response = await createStudent(newStudent);
+            const response = await createStudentAPI(newStudent);
             if (response && response.data) {
                 toast.success('Thêm học viên thành công!');
                 fetchStudents(); // Tải lại danh sách học viên sau khi thêm thành công
@@ -126,7 +126,7 @@ const Student = () => {
     const handleEditStudentModal = async (id) => {
         try {
             setLoading(true);
-            const response = await getStudentById(id);
+            const response = await getStudentByIdAPI(id);
             if (response && response.data) {
                 setEditedStudent(response.data.data);
                 setOpenEditModal(true);
@@ -144,7 +144,7 @@ const Student = () => {
     const handleSaveEditedStudent = async (updatedStudent) => {
         try {
             setLoading(true);
-            const response = await updateStudent(updatedStudent.student_id, updatedStudent);
+            const response = await updateStudentAPI(updatedStudent.student_id, updatedStudent);
             if (response && response.data) {
                 toast.success('Cập nhật học viên thành công!');
                 fetchStudents(); // Tải lại danh sách học viên sau khi cập nhật thành công
@@ -168,7 +168,7 @@ const Student = () => {
     const handleViewStudent = async (id) => {
         try {
             setLoading(true);
-            const response = await getStudentById(id);
+            const response = await getStudentByIdAPI(id);
             if (response && response.data) {
                 setSelectedStudent(response.data.data);
                 setOpenDetail(true);
@@ -200,7 +200,7 @@ const Student = () => {
     const confirmDeleteStudent = async (id) => {
         try {
             setLoading(true);
-            const response = await deleteStudent(id);
+            const response = await deleteStudentAPI(id);
             if (response) {
                 toast.success('Xóa học viên thành công!');
                 fetchStudents(); // Tải lại danh sách học viên sau khi xóa thành công

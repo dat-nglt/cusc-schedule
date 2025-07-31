@@ -27,8 +27,8 @@ import EditClassModal from './EditClassModal';
 import DeleteClassModal from './DeleteClassModal';
 import useResponsive from '../../hooks/useResponsive';
 import ClassTable from './ClassTable';
-import { getClasses, getClassById, addClass, updateClass, deleteClass } from '../../api/classAPI';
-import { getCourses } from '../../api/courseAPI';
+import { getClassesAPI, getClassByIdAPI, addClassAPI, updateClassAPI, deleteClass } from '../../api/classAPI';
+import { getCoursesAPI } from '../../api/courseAPI';
 
 // Hàm định dạng timestamp thành YYYY-MM-DD HH:MM:SS.sss+07
 const formatTimestamp = (timestamp) => {
@@ -66,7 +66,7 @@ const Class = () => {
   const fetchClasses = async () => {
     try {
       setLoading(true);
-      const response = await getClasses();
+      const response = await getClassesAPI();
       console.log('Phản hồi từ API (danh sách):', response);
 
       let classesData = [];
@@ -110,7 +110,7 @@ const Class = () => {
   const fetchCourses = async () => {
     try {
       setLoading(true);
-      const response = await getCourses();
+      const response = await getCoursesAPI();
       console.log('Phản hồi từ API (khóa học):', response);
       let coursesData = [];
       if (Array.isArray(response)) {
@@ -143,7 +143,7 @@ const Class = () => {
   const handleViewClass = async (class_id) => {
     try {
       setLoading(true);
-      const response = await getClassById(class_id);
+      const response = await getClassByIdAPI(class_id);
       console.log('Phản hồi từ API (chi tiết):', response);
 
       let classData = {};
@@ -183,7 +183,7 @@ const Class = () => {
     try {
       setLoading(true);
       console.log('Gửi dữ liệu thêm lớp học:', classData);
-      const response = await addClass({
+      const response = await addClassAPI({
         class_id: classData.class_id,
         class_name: classData.class_name,
         class_size: classData.class_size,
@@ -224,7 +224,7 @@ const Class = () => {
     try {
       setLoading(true);
       console.log('Gửi dữ liệu chỉnh sửa lớp học:', classData);
-      const response = await updateClass(classData.class_id, {
+      const response = await updateClassAPI(classData.class_id, {
         class_id: classData.class_id,
         class_name: classData.class_name,
         class_size: classData.class_size,
