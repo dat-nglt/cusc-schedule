@@ -1,4 +1,4 @@
-import model from "../models/index";
+import model from "../models/index.js";
 
 const { Room } = model;
 

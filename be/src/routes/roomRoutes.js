@@ -1,5 +1,5 @@
 import express from "express";
-import { authenticateAndAuthorize } from "../middleware/authMiddleware";
+import { authenticateAndAuthorize } from "../middleware/authMiddleware.js";
 import {
     getAllRoomsController,
     getRoomByIdController,
@@ -8,7 +8,7 @@ import {
     deleteRoomController,
     importRoomsFromJSONController,
     downloadTemplateController
-} from "../controllers/roomController";
+} from "../controllers/roomController.js";
 
 const roomRoutes = express.Router();
 

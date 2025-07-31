@@ -6,9 +6,9 @@ import {
     deleteTimeslotService,
     importTimeslotsFromJsonService
 
-} from "../services/timeslotService";
-import { APIResponse } from "../utils/APIResponse"; // Sử dụng APIResponse nhất quán
-import ExcelUtils from "../utils/ExcelUtils";
+} from "../services/timeslotService.js";
+import { APIResponse } from "../utils/APIResponse.js"; // Sử dụng APIResponse nhất quán
+import ExcelUtils from "../utils/ExcelUtils.js";
 
 /**
  * @route GET /api/timeslot/

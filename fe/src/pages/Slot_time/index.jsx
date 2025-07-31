@@ -70,7 +70,6 @@ const SlotTime = () => {
     } catch (error) {
       console.error("Lỗi khi tải danh sách khung giờ:", error);
       setError("Không thể tải danh sách khung giờ. Vui lòng thử lại.");
-      toast.error('Lỗi khi tải danh sách khung giờ. Vui lòng thử lại.');
     } finally {
       setLoading(false);
     }

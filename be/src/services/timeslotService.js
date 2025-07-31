@@ -1,4 +1,4 @@
-import models from '../models/index';
+import models from '../models/index.js';
 
 const { TimeSlot } = models;
 /**
@@ -90,6 +90,7 @@ export const deleteTimeslotService = async (id) => {
  * @returns {Promise<Object>} Kết quả nhập khẩu bao gồm danh sách thành công và lỗi.
  * @throws {Error} Nếu dữ liệu JSON không hợp lệ hoặc lỗi trong quá trình nhập.
  */
+
 export const importTimeslotsFromJsonService = async (timeslotsData) => {
   try {
     if (!timeslotsData || !Array.isArray(timeslotsData)) {

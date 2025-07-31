@@ -1,4 +1,3 @@
-import { error } from "winston";
 import {
     getAllRoomService,
     getRoomByIdService,
@@ -6,9 +5,9 @@ import {
     updateRoomService,
     deleteRoomService,
     importRoomsFromJsonService
-} from "../services/roomService";
-import { APIResponse } from "../utils/APIResponse";
-import ExcelUtils from "../utils/ExcelUtils";
+} from "../services/roomService.js";
+import { APIResponse } from "../utils/APIResponse.js";
+import ExcelUtils from "../utils/ExcelUtils.js";
 
 export const getAllRoomsController = async (req, res) => {
     try {

@@ -30,6 +30,16 @@ const formatDate = (dateValue) => {
 const formatTime = (timeValue) => {
     if (!timeValue) return '';
 
+    // Nếu là số thập phân (Excel time)
+    if (typeof timeValue === 'number' && timeValue >= 0 && timeValue < 1) {
+        // Chuyển số thập phân sang phút
+        const totalMinutes = Math.round(timeValue * 24 * 60);
+        const hours = Math.floor(totalMinutes / 60);
+        const minutes = totalMinutes % 60;
+        // Đảm bảo 2 chữ số
+        return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+    }
+
     // Nếu là string và có format HH:MM
     if (typeof timeValue === 'string') {
         // Loại bỏ khoảng trắng

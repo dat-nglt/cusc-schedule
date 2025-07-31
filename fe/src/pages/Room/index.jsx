@@ -164,7 +164,6 @@ const RoomManagement = () => {
     } catch (error) {
       console.error("Lỗi khi cập nhật phòng học:", error);
       setError("Không thể cập nhật phòng học. Vui lòng kiểm tra lại thông tin.");
-      toast.error('Cập nhật phòng học thất bại! Vui lòng thử lại.');
     } finally {
       setLoading(false);
     }
