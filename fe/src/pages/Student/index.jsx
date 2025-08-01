@@ -62,7 +62,7 @@ const Student = () => {
                 console.error("Không có dữ liệu học viên");
                 return;
             }
-            setStudents(response.data.data)
+            setStudents(response.data)
         } catch (error) {
             console.error("Lỗi khi tải danh sách học viên:", error);
         } finally {
@@ -125,7 +125,7 @@ const Student = () => {
             setLoading(true);
             const response = await getStudentByIdAPI(id);
             if (response && response.data) {
-                setEditedStudent(response.data.data);
+                setEditedStudent(response.data);
                 setOpenEditModal(true);
             }
         } catch (error) {
@@ -167,7 +167,7 @@ const Student = () => {
             setLoading(true);
             const response = await getStudentByIdAPI(id);
             if (response && response.data) {
-                setSelectedStudent(response.data.data);
+                setSelectedStudent(response.data);
                 setOpenDetail(true);
             }
         } catch (error) {

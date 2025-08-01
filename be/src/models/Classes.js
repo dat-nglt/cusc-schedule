@@ -67,6 +67,11 @@ const Classes = (sequelize) => {
       onUpdate: 'CASCADE',       // Nếu thay đổi ID lớp học, cập nhật theo
       onDelete: 'SET NULL',
     });
+    ClassesModel.belongsTo(models.Semester, {
+      foreignKey: 'semester_id',
+      onUpdate: 'CASCADE',       // Nếu thay đổi ID học kỳ, cập nhật theo
+      onDelete: 'SET NULL',      // Nếu xóa học kỳ, để null trường semester_id
+    });
   };
 
   return ClassesModel;

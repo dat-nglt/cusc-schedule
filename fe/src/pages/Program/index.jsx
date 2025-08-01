@@ -60,7 +60,7 @@ const Program = () => {
                 console.error("Không có dữ liệu chương trình đào tạo");
                 return;
             }
-            setPrograms(response.data.data);
+            setPrograms(response.data);
         } catch (error) {
             console.error("Lỗi khi tải danh sách chương trình đào tạo:", error);
         } finally {
@@ -106,7 +106,7 @@ const Program = () => {
             setLoading(true);
             const response = await getProgramByIdAPI(id);
             if (response && response.data) {
-                setEditedProgram(response.data.data);
+                setEditedProgram(response.data);
                 setOpenEditModal(true);
             }
         } catch (error) {
@@ -153,7 +153,7 @@ const Program = () => {
             setLoading(true);
             const response = await getProgramByIdAPI(id);
             if (response && response.data) {
-                setSelectedProgram(response.data.data);
+                setSelectedProgram(response.data);
                 setOpenDetail(true);
             }
         } catch (error) {

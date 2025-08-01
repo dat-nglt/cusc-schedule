@@ -3,7 +3,7 @@ import axiosInstance from "./axiosConfig";
 export const getAllProgramsAPI = async () => {
   try {
     const response = await axiosInstance.get("/api/programs/getAll");
-    return response;
+    return response.data;
   } catch (error) {
     console.error("Error fetching programs:", error);
     throw error;
@@ -13,7 +13,7 @@ export const getAllProgramsAPI = async () => {
 export const getProgramByIdAPI = async (id) => {
   try {
     const response = await axiosInstance.get(`/api/programs/${id}`);
-    return response;
+    return response.data;
   } catch (error) {
     console.error(`Error fetching program with id ${id}:`, error);
     throw error;

@@ -11,6 +11,9 @@ import { generateSchedule, getDownloadUrl, stopScheduleGeneration } from '../../
 import ProgressModal from './ProgressModal';
 import { toast } from 'react-toastify';
 
+import { getAllRoomAPI } from '../../api/roomAPI';
+
+
 
 const socket = io(import.meta.env.VITE_API_URL || 'http://localhost:3000', { // Sử dụng biến môi trường cho Socket.IO
     withCredentials: true

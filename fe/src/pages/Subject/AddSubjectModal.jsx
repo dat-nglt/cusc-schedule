@@ -53,6 +53,10 @@ const subjectStatusOptions = [
 const steps = ['Thông tin học phần', 'Chi tiết & Trạng thái'];
 
 export default function AddSubjectModal({ open, onClose, onAddSubject, existingSubjects = [], error, loading, message, semesters, fetchSubjects }) {
+    
+    console.log(semesters);
+    
+    
     const [newSubject, setNewSubject] = useState({
         subject_id: '',
         subject_name: '',
@@ -452,7 +456,7 @@ export default function AddSubjectModal({ open, onClose, onAddSubject, existingS
                                             ),
                                         }}
                                     >
-                                        {semesters.map((semester) => (
+                                        {semesters && semesters.map((semester) => (
                                             <MenuItem key={semester.semester_id} value={semester.semester_id}>
                                                 {semester.semester_id} - {semester.semester_name}
                                             </MenuItem>

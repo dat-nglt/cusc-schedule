@@ -75,7 +75,7 @@ const BreakSchedule = () => {
       const response = await getBreakSchedulesAPI();
       if (response && response.data) {
         // Assuming response.data is an array or has a 'data' property that is an array
-        setBreakSchedules(response.data.data || response.data);
+        setBreakSchedules(response.data || response.data);
       } else {
         setError('Không có dữ liệu lịch nghỉ');
       }
@@ -127,7 +127,7 @@ const BreakSchedule = () => {
       setLoading(true);
       const response = await getBreakScheduleByIdAPI(id);
       if (response && response.data) {
-        setSelectedBreakSchedule(response.data.data || response.data);
+        setSelectedBreakSchedule(response.data || response.data);
         setOpenDetail(true);
       }
     } catch (err) {
@@ -151,7 +151,7 @@ const BreakSchedule = () => {
       setLoading(true);
       const response = await getBreakScheduleByIdAPI(id);
       if (response && response.data) {
-        setSelectedBreakSchedule(response.data.data || response.data);
+        setSelectedBreakSchedule(response.data || response.data);
         setOpenEditModal(true);
       }
     } catch (err) {

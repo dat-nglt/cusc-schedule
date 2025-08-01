@@ -3,7 +3,7 @@ import axiosInstance from "./axiosConfig";
 export const getAllSemestersAPI = async () => {
   try {
     const response = await axiosInstance.get("/api/semesters/getAll");
-    return response;
+    return response.data;
   } catch (error) {
     console.error("Error fetching semesters:", error);
     throw error;
@@ -13,7 +13,7 @@ export const getAllSemestersAPI = async () => {
 export const getSemesterByIdAPI = async (id) => {
   try {
     const response = await axiosInstance.get(`/api/semesters/${id}`);
-    return response;
+    return response.data;
   } catch (error) {
     console.error(`Error fetching semester with ID ${id}:`, error);
     throw error;

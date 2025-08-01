@@ -80,7 +80,7 @@ const Subject = () => {
                 setError('Không có dữ liệu học phần');
                 return;
             }
-            setSubjects(response.data.data);
+            setSubjects(response.data);
         } catch (error) {
             console.error('Lỗi khi lấy danh sách học phần:', error);
             setError('Không thể lấy danh sách học phần. Vui lòng thử lại sau.');
@@ -130,7 +130,7 @@ const Subject = () => {
             setLoading(true);
             const response = await getSubjectByIdAPI(id);
             if (response && response.data) {
-                setEditedSubject(response.data.data);
+                setEditedSubject(response.data);
                 setOpenEditModal(true);
             }
         } catch (error) {
@@ -177,7 +177,7 @@ const Subject = () => {
             setLoading(true);
             const response = await getSubjectByIdAPI(id);
             if (response && response.data) {
-                setSelectedSubject(response.data.data);
+                setSelectedSubject(response.data);
                 setOpenDetail(true);
             }
         } catch (error) {
