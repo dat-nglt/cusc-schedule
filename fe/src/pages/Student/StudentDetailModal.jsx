@@ -3,14 +3,15 @@ import {
     Dialog,
     DialogTitle,
     DialogContent,
-    DialogActions,
     Button,
     Typography,
-    Grid,
     Box,
     IconButton,
-    Tooltip,
     Chip,
+    Divider,
+    Stack,
+    Paper,
+    Tooltip
 } from '@mui/material';
 import {
     Person as PersonIcon,
@@ -20,265 +21,199 @@ import {
     Event as EventIcon,
     Update as UpdateIcon,
     CheckCircle as StatusIcon,
+    ContentCopy as CopyIcon,
+    Close as CloseIcon
 } from '@mui/icons-material';
-import { getStatusChip } from '../../components/ui/StatusChip';
-import { toast } from 'react-toastify';
 import { formatDateTime } from '../../utils/formatDateTime';
+import { toast } from 'react-toastify';
 
-// Hàm kiểm tra giá trị và trả về giá trị hoặc thông báo mặc định
-const getValueOrDefault = (value) => value || 'Không có dữ liệu';
+const CompactDetailItem = ({ icon, label, value, color = 'primary' }) => (
+    <Paper
+        elevation={0}
+        sx={{
+            p: 1.5,
+            borderRadius: 1,
+            border: '1px solid',
+            borderColor: 'divider',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1.5,
+            flex: 1,
+            minWidth: 'fit-content'
+        }}
+    >
+        <Box sx={{ color: `${color}.main` }}>{icon}</Box>
+        <Box>
+            <Typography variant="caption" color="text.secondary" display="block">
+                {label}
+            </Typography>
+            <Typography variant="body2" fontWeight="medium">
+                {value || 'Không có dữ liệu'}
+            </Typography>
+        </Box>
+    </Paper>
+);
 
 export default function StudentDetailModal({ open, onClose, student }) {
     if (!student) return null;
 
-    // Hàm sao chép mã học viên
     const handleCopyStudentId = () => {
         navigator.clipboard.writeText(student.student_id);
-        toast.success('Đã sao chép mã học viên: ' + student.student_id);
+        toast.success(`Đã sao chép mã học viên: ${student.student_id}`);
     };
 
     return (
         <Dialog
             open={open}
             onClose={onClose}
-            maxWidth="md"
+            maxWidth="sm"
             fullWidth
             sx={{
                 '& .MuiDialog-paper': {
                     borderRadius: 2,
-                    boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-                },
+                    maxWidth: 500
+                }
             }}
         >
             <DialogTitle
                 sx={{
-                    bgcolor: '#1976d2',
-                    color: '#fff',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
+                    bgcolor: 'primary.main',
+                    color: 'white',
                     py: 1.5,
+                    px: 2,
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center'
                 }}
             >
-                <Typography variant="h6">
-                    Chi tiết sinh viên {student.student_id}
-                </Typography>
-                <Tooltip title="Sao chép mã học viên">
-                    <IconButton
-                        onClick={handleCopyStudentId}
-                        sx={{ color: '#fff' }}
-                    >
-                        <BadgeIcon />
+                <Box>
+                    <Typography variant="subtitle1" fontWeight="bold">
+                        {student.name || 'Chi tiết sinh viên'}
+                    </Typography>
+                    <Typography variant="caption" sx={{ opacity: 0.9 }}>
+                        {student.student_id}
+                    </Typography>
+                </Box>
+                <Box>
+                    <Tooltip title="Sao chép mã">
+                        <IconButton onClick={handleCopyStudentId} size="small" sx={{ color: 'white', p: 0.5 }}>
+                            <CopyIcon fontSize="small" />
+                        </IconButton>
+                    </Tooltip>
+                    <IconButton onClick={onClose} size="small" sx={{ color: 'white', ml: 0.5, p: 0.5 }}>
+                        <CloseIcon fontSize="small" />
                     </IconButton>
-                </Tooltip>
+                </Box>
             </DialogTitle>
-            <DialogContent sx={{ mt: 2, px: 3 }}>
-                <Grid container spacing={2}>
-                    {/* Mã học viên */}
-                    <Grid item xs={12} md={6}>
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                bgcolor: '#f9f9f9',
-                                p: 2,
-                                borderRadius: 1,
-                                border: '1px solid #e0e0e0',
-                            }}
-                        >
-                            <BadgeIcon sx={{ mr: 1, color: '#1976d2' }} />
-                            <Box>
-                                <Typography
-                                    variant="body2"
-                                    sx={{ fontWeight: 'bold', color: '#333' }}
-                                >
-                                    Mã học viên
-                                </Typography>
-                                <Typography variant="body1" sx={{ color: '#666' }}>
-                                    {getValueOrDefault(student.student_id)}
-                                </Typography>
-                            </Box>
-                        </Box>
-                    </Grid>
 
-                    {/* Họ tên */}
-                    <Grid item xs={12} md={6}>
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                bgcolor: '#f9f9f9',
-                                p: 2,
-                                borderRadius: 1,
-                                border: '1px solid #e0e0e0',
-                            }}
-                        >
-                            <PersonIcon sx={{ mr: 1, color: '#1976d2' }} />
-                            <Box>
-                                <Typography
-                                    variant="body2"
-                                    sx={{ fontWeight: 'bold', color: '#333' }}
-                                >
-                                    Họ tên
-                                </Typography>
-                                <Typography variant="body1" sx={{ color: '#666' }}>
-                                    {getValueOrDefault(student.name)}
-                                </Typography>
-                            </Box>
-                        </Box>
-                    </Grid>
+            <DialogContent sx={{ p: 2 }}>
+                <Stack spacing={1.5}>
+                    {/* Basic Info Row */}
+                    <Box
+                        sx={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                            gap: 1.5,
+                            py: 2
+                        }}
+                    >
+                        <CompactDetailItem
+                            icon={<BadgeIcon fontSize="small" />}
+                            label="Mã học viên"
+                            value={student.student_id}
+                            color="primary"
+                        />
+                        <CompactDetailItem
+                            icon={<PersonIcon fontSize="small" />}
+                            label="Họ tên"
+                            value={student.name}
+                            color="secondary"
+                        />
+                    </Box>
 
-                    {/* Mã lớp */}
-                    <Grid item xs={12} md={6}>
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                bgcolor: '#f9f9f9',
-                                p: 2,
-                                borderRadius: 1,
-                                border: '1px solid #e0e0e0',
-                            }}
-                        >
-                            <ClassIcon sx={{ mr: 1, color: '#1976d2' }} />
-                            <Box>
-                                <Typography
-                                    variant="body2"
-                                    sx={{ fontWeight: 'bold', color: '#333' }}
-                                >
-                                    Mã lớp
-                                </Typography>
-                                <Typography variant="body1" sx={{ color: '#666' }}>
-                                    {getValueOrDefault(student.class)}
-                                </Typography>
-                            </Box>
-                        </Box>
-                    </Grid>
+                    {/* Class Info Row */}
+                    <Box
+                        sx={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                            gap: 1.5
+                        }}
+                    >
+                        <CompactDetailItem
+                            icon={<ClassIcon fontSize="small" />}
+                            label="Mã lớp"
+                            value={student.class}
+                            color="warning"
+                        />
+                        <CompactDetailItem
+                            icon={<SchoolIcon fontSize="small" />}
+                            label="Năm nhập học"
+                            value={student.admission_year}
+                            color="info"
+                        />
+                    </Box>
 
-                    {/* Năm nhập học */}
-                    <Grid item xs={12} md={6}>
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                bgcolor: '#f9f9f9',
-                                p: 2,
-                                borderRadius: 1,
-                                border: '1px solid #e0e0e0',
-                            }}
-                        >
-                            <SchoolIcon sx={{ mr: 1, color: '#1976d2' }} />
-                            <Box>
-                                <Typography
-                                    variant="body2"
-                                    sx={{ fontWeight: 'bold', color: '#333' }}
-                                >
-                                    Năm nhập học
-                                </Typography>
-                                <Typography variant="body1" sx={{ color: '#666' }}>
-                                    {getValueOrDefault(student.admission_year)}
-                                </Typography>
-                            </Box>
-                        </Box>
-                    </Grid>
+                    {/* Status Section */}
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mt: 1 }}>
+                        <StatusIcon color="action" fontSize="small" />
+                        <Typography variant="caption" color="text.secondary">
+                            Trạng thái:
+                        </Typography>
+                        <Chip
+                            label={student.status === 'active' ? 'Hoạt động' : 'Không hoạt động'}
+                            color={student.status === 'active' ? 'success' : 'error'}
+                            size="small"
+                            sx={{ fontWeight: 'medium' }}
+                        />
+                    </Box>
 
-                    {/* Trạng thái */}
-                    <Grid item xs={12} md={6}>
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                bgcolor: '#f9f9f9',
-                                p: 2,
-                                borderRadius: 1,
-                                border: '1px solid #e0e0e0',
-                            }}
-                        >
-                            <StatusIcon sx={{ mr: 1, color: '#1976d2' }} />
-                            <Box>
-                                <Typography
-                                    variant="body2"
-                                    sx={{ fontWeight: 'bold', color: '#333' }}
-                                >
-                                    Trạng thái
-                                </Typography>
-                                <Box sx={{ mt: 0.5 }}>
-                                    {getStatusChip(student.status)}
+                    {/* Timeline Section */}
+                    <Box sx={{ mt: 1.5 }}>
+                        <Stack spacing={1}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                                <EventIcon color="action" fontSize="small" />
+                                <Box>
+                                    <Typography variant="caption" color="text.secondary">
+                                        Tạo lúc:
+                                    </Typography>
+                                    <Typography variant="body2" display="block">
+                                        {formatDateTime(student.created_at)}
+                                    </Typography>
                                 </Box>
                             </Box>
-                        </Box>
-                    </Grid>
-
-                    {/* Thời gian tạo */}
-                    <Grid item xs={12} md={6}>
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                bgcolor: '#f9f9f9',
-                                p: 2,
-                                borderRadius: 1,
-                                border: '1px solid #e0e0e0',
-                            }}
-                        >
-                            <EventIcon sx={{ mr: 1, color: '#1976d2' }} />
-                            <Box>
-                                <Typography
-                                    variant="body2"
-                                    sx={{ fontWeight: 'bold', color: '#333' }}
-                                >
-                                    Thời gian tạo
-                                </Typography>
-                                <Typography variant="body1" sx={{ color: '#666' }}>
-                                    {formatDateTime(student.created_at)}
-                                </Typography>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                                <UpdateIcon color="action" fontSize="small" />
+                                <Box>
+                                    <Typography variant="caption" color="text.secondary">
+                                        Cập nhật:
+                                    </Typography>
+                                    <Typography variant="body2" display="block">
+                                        {formatDateTime(student.updated_at)}
+                                    </Typography>
+                                </Box>
                             </Box>
-                        </Box>
-                    </Grid>
-
-                    {/* Thời gian cập nhật */}
-                    <Grid item xs={12} md={6}>
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                bgcolor: '#f9f9f9',
-                                p: 2,
-                                borderRadius: 1,
-                                border: '1px solid #e0e0e0',
-                            }}
-                        >
-                            <UpdateIcon sx={{ mr: 1, color: '#1976d2' }} />
-                            <Box>
-                                <Typography
-                                    variant="body2"
-                                    sx={{ fontWeight: 'bold', color: '#333' }}
-                                >
-                                    Thời gian cập nhật
-                                </Typography>
-                                <Typography variant="body1" sx={{ color: '#666' }}>
-                                    {formatDateTime(student.updated_at)}
-                                </Typography>
-                            </Box>
-                        </Box>
-                    </Grid>
-                </Grid>
+                        </Stack>
+                    </Box>
+                </Stack>
             </DialogContent>
-            <DialogActions sx={{ px: 3, pb: 2 }}>
+
+            <Divider />
+            <Box sx={{ p: 1.5, display: 'flex', justifyContent: 'flex-end' }}>
                 <Button
                     onClick={onClose}
                     variant="contained"
                     color="primary"
+                    size="small"
                     sx={{
-                        bgcolor: '#1976d2',
-                        '&:hover': { bgcolor: '#115293' },
                         borderRadius: 1,
-                        px: 3,
+                        px: 2,
+                        fontSize: '0.8rem',
+                        textTransform: 'none'
                     }}
                 >
                     Đóng
                 </Button>
-            </DialogActions>
+            </Box>
         </Dialog>
     );
 }

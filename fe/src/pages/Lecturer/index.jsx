@@ -4,7 +4,6 @@ import {
     Typography,
     Card,
     CardContent,
-    TablePagination,
     TextField,
     Select,
     MenuItem,
@@ -27,12 +26,13 @@ import useResponsive from '../../hooks/useResponsive';
 import LecturerTable from './LecturerTable';
 import { toast } from 'react-toastify';
 import { getAllLecturersAPI, getLecturerByIdAPI, createLecturerAPI, updateLecturerAPI, deleteLecturerAPI } from '../../api/lecturerAPI';
+import TablePaginationLayout from '../../components/layout/TablePaginationLayout';
 const Lecturer = () => {
     const { isSmallScreen, isMediumScreen } = useResponsive();
     const theme = useTheme()
     const [lecturers, setLecturers] = useState([]);
     const [page, setPage] = useState(0);
-    const [rowsPerPage] = useState(10);
+    const [rowsPerPage] = useState(7);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedStatus, setSelectedStatus] = useState('');
     const [openDetail, setOpenDetail] = useState(false);
@@ -307,14 +307,12 @@ const Lecturer = () => {
                                     loading={loading}
                                     error={error}
                                 />
-                                <TablePagination
-                                    component="div"
+
+                                <TablePaginationLayout
                                     count={filteredLecturers.length}
                                     page={page}
                                     onPageChange={handleChangePage}
                                     rowsPerPage={rowsPerPage}
-                                    rowsPerPageOptions={[]}
-                                    labelDisplayedRows={({ from, to, count }) => `${from}-${to} trên ${count}`}
                                 />
                             </>
                         )}

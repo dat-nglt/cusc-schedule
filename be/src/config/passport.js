@@ -160,9 +160,7 @@ const configurePassport = () => {
     }
   });
 
-  console.log("___________________________________________");
   logger.info("✅ Cấu hình Passport đã được tải.");
-  console.log("___________________________________________");
 };
 
 export default configurePassport;

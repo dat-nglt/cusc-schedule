@@ -3,14 +3,15 @@ import {
     Dialog,
     DialogTitle,
     DialogContent,
-    DialogActions,
     Button,
     Typography,
-    Grid,
     Box,
     IconButton,
-    Tooltip,
     Chip,
+    Divider,
+    Stack,
+    Paper,
+    Tooltip
 } from '@mui/material';
 import {
     School as SchoolIcon,
@@ -19,238 +20,193 @@ import {
     Event as EventIcon,
     Update as UpdateIcon,
     CheckCircle as StatusIcon,
+    ContentCopy as CopyIcon, // Added CopyIcon for consistency
+    Close as CloseIcon
 } from '@mui/icons-material';
-import { getStatusChip } from '../../components/ui/StatusChip';
 import { formatDateTime } from '../../utils/formatDateTime';
 import { toast } from 'react-toastify';
-// Hàm kiểm tra giá trị và trả về giá trị hoặc thông báo mặc định
-const getValueOrDefault = (value) => value || 'Không có dữ liệu';
+
+// Reusing CompactDetailItem from StudentDetailModal's design
+const CompactDetailItem = ({ icon, label, value, color = 'primary' }) => (
+    <Paper
+        elevation={0}
+        sx={{
+            p: 1.5,
+            borderRadius: 1,
+            border: '1px solid',
+            borderColor: 'divider',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1.5,
+            flex: 1,
+            minWidth: 'fit-content'
+        }}
+    >
+        <Box sx={{ color: `${color}.main` }}>{icon}</Box>
+        <Box>
+            <Typography variant="caption" color="text.secondary" display="block">
+                {label}
+            </Typography>
+            <Typography variant="body2" fontWeight="medium">
+                {value || 'Không có dữ liệu'}
+            </Typography>
+        </Box>
+    </Paper>
+);
 
 export default function ProgramDetailModal({ open, onClose, program }) {
     if (!program) return null;
 
-    // Hàm sao chép mã chương trình
-    const handleCopyprogram_id = () => {
+    const handleCopyProgramId = () => {
         navigator.clipboard.writeText(program.program_id);
-        toast.success('Đã sao chép mã chương trình: ' + program.program_id);
+        toast.success(`Đã sao chép mã chương trình: ${program.program_id}`);
     };
-
 
     return (
         <Dialog
             open={open}
             onClose={onClose}
-            maxWidth="md"
+            maxWidth="sm" // Changed to 'sm' for consistency with StudentDetailModal
             fullWidth
             sx={{
                 '& .MuiDialog-paper': {
                     borderRadius: 2,
-                    boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-                },
+                    maxWidth: 500 // Consistent max-width
+                }
             }}
         >
             <DialogTitle
                 sx={{
-                    bgcolor: '#1976d2',
-                    color: '#fff',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
+                    bgcolor: 'primary.main', // Consistent primary color
+                    color: 'white',
                     py: 1.5,
+                    px: 2,
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center'
                 }}
             >
-                <Typography variant="h6">
-                    Chi tiết chương trình {program.program_id}
-                </Typography>
-                <Tooltip title="Sao chép mã chương trình">
-                    <IconButton
-                        onClick={handleCopyprogram_id}
-                        sx={{ color: '#fff' }}
-                    >
-                        <CodeIcon />
+                <Box>
+                    <Typography variant="subtitle1" fontWeight="bold">
+                        {program.program_name || 'Chi tiết chương trình'}
+                    </Typography>
+                    <Typography variant="caption" sx={{ opacity: 0.9 }}>
+                        {program.program_id}
+                    </Typography>
+                </Box>
+                <Box>
+                    <Tooltip title="Sao chép mã">
+                        <IconButton onClick={handleCopyProgramId} size="small" sx={{ color: 'white', p: 0.5 }}>
+                            <CopyIcon fontSize="small" />
+                        </IconButton>
+                    </Tooltip>
+                    <IconButton onClick={onClose} size="small" sx={{ color: 'white', ml: 0.5, p: 0.5 }}>
+                        <CloseIcon fontSize="small" />
                     </IconButton>
-                </Tooltip>
+                </Box>
             </DialogTitle>
-            <DialogContent sx={{ mt: 2, px: 3 }}>
-                <Grid container spacing={2}>
-                    {/* Mã chương trình */}
-                    <Grid item xs={12} md={6}>
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                bgcolor: '#f9f9f9',
-                                p: 2,
-                                borderRadius: 1,
-                                border: '1px solid #e0e0e0',
-                            }}
-                        >
-                            <CodeIcon sx={{ mr: 1, color: '#1976d2' }} />
-                            <Box>
-                                <Typography
-                                    variant="body2"
-                                    sx={{ fontWeight: 'bold', color: '#333' }}
-                                >
-                                    Mã chương trình
-                                </Typography>
-                                <Typography variant="body1" sx={{ color: '#666' }}>
-                                    {getValueOrDefault(program.program_id)}
-                                </Typography>
-                            </Box>
-                        </Box>
-                    </Grid>
 
-                    {/* Tên chương trình */}
-                    <Grid item xs={12} md={6}>
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                bgcolor: '#f9f9f9',
-                                p: 2,
-                                borderRadius: 1,
-                                border: '1px solid #e0e0e0',
-                            }}
-                        >
-                            <SchoolIcon sx={{ mr: 1, color: '#1976d2' }} />
-                            <Box>
-                                <Typography
-                                    variant="body2"
-                                    sx={{ fontWeight: 'bold', color: '#333' }}
-                                >
-                                    Tên chương trình
-                                </Typography>
-                                <Typography variant="body1" sx={{ color: '#666' }}>
-                                    {getValueOrDefault(program.program_name)}
-                                </Typography>
-                            </Box>
-                        </Box>
-                    </Grid>
+            <DialogContent sx={{ p: 2 }}>
+                <Stack spacing={1.5}>
+                    {/* Program Info Row */}
+                    <Box
+                        sx={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                            gap: 1.5,
+                            py: 2
+                        }}
+                    >
+                        <CompactDetailItem
+                            icon={<CodeIcon fontSize="small" />}
+                            label="Mã chương trình"
+                            value={program.program_id}
+                            color="primary"
+                        />
+                        <CompactDetailItem
+                            icon={<SchoolIcon fontSize="small" />}
+                            label="Tên chương trình"
+                            value={program.program_name}
+                            color="secondary"
+                        />
+                    </Box>
 
-                    {/* Thời gian đào tạo */}
-                    <Grid item xs={12} md={6}>
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                bgcolor: '#f9f9f9',
-                                p: 2,
-                                borderRadius: 1,
-                                border: '1px solid #e0e0e0',
-                            }}
-                        >
-                            <ScheduleIcon sx={{ mr: 1, color: '#1976d2' }} />
-                            <Box>
-                                <Typography
-                                    variant="body2"
-                                    sx={{ fontWeight: 'bold', color: '#333' }}
-                                >
-                                    Thời gian đào tạo
-                                </Typography>
-                                <Typography variant="body1" sx={{ color: '#666' }}>
-                                    {getValueOrDefault(program.training_duration)} năm
-                                </Typography>
-                            </Box>
-                        </Box>
-                    </Grid>
+                    {/* Training Duration Info Row */}
+                    <Box
+                        sx={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                            gap: 1.5
+                        }}
+                    >
+                        <CompactDetailItem
+                            icon={<ScheduleIcon fontSize="small" />}
+                            label="Thời gian đào tạo"
+                            value={`${program.training_duration} năm`}
+                            color="warning"
+                        />
+                        {/* Status Section (similar to StudentDetailModal) */}
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mt: 1 }}>
+                        <StatusIcon color="action" fontSize="small" />
+                        <Typography variant="caption" color="text.secondary">
+                            Trạng thái:
+                        </Typography>
+                        <Chip
+                            label={program.status === 'active' ? 'Hoạt động' : 'Không hoạt động'}
+                            color={program.status === 'active' ? 'success' : 'error'}
+                            size="small"
+                            sx={{ fontWeight: 'medium' }}
+                        />
+                    </Box>
 
-                    {/* Trạng thái */}
-                    <Grid item xs={12} md={6}>
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                bgcolor: '#f9f9f9',
-                                p: 2,
-                                borderRadius: 1,
-                                border: '1px solid #e0e0e0',
-                            }}
-                        >
-                            <StatusIcon sx={{ mr: 1, color: '#1976d2' }} />
-                            <Box>
-                                <Typography
-                                    variant="body2"
-                                    sx={{ fontWeight: 'bold', color: '#333' }}
-                                >
-                                    Trạng thái
-                                </Typography>
-                                <Box sx={{ mt: 0.5 }}>
-                                    {getStatusChip(program.status)}
+                    {/* Timeline Section */}
+                    <Box sx={{ mt: 1.5 }}>
+                        <Stack spacing={1}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                                <EventIcon color="action" fontSize="small" />
+                                <Box>
+                                    <Typography variant="caption" color="text.secondary">
+                                        Tạo lúc:
+                                    </Typography>
+                                    <Typography variant="body2" display="block">
+                                        {formatDateTime(program.created_at)}
+                                    </Typography>
                                 </Box>
                             </Box>
-                        </Box>
-                    </Grid>
-
-                    {/* Thời gian tạo */}
-                    <Grid item xs={12} md={6}>
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                bgcolor: '#f9f9f9',
-                                p: 2,
-                                borderRadius: 1,
-                                border: '1px solid #e0e0e0',
-                            }}
-                        >
-                            <EventIcon sx={{ mr: 1, color: '#1976d2' }} />
-                            <Box>
-                                <Typography
-                                    variant="body2"
-                                    sx={{ fontWeight: 'bold', color: '#333' }}
-                                >
-                                    Thời gian tạo
-                                </Typography>
-                                <Typography variant="body1" sx={{ color: '#666' }}>
-                                    {formatDateTime(program.created_at)}
-                                </Typography>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                                <UpdateIcon color="action" fontSize="small" />
+                                <Box>
+                                    <Typography variant="caption" color="text.secondary">
+                                        Cập nhật:
+                                    </Typography>
+                                    <Typography variant="body2" display="block">
+                                        {formatDateTime(program.updated_at)}
+                                    </Typography>
+                                </Box>
                             </Box>
-                        </Box>
-                    </Grid>
-
-                    {/* Thời gian cập nhật */}
-                    <Grid item xs={12} md={6}>
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                bgcolor: '#f9f9f9',
-                                p: 2,
-                                borderRadius: 1,
-                                border: '1px solid #e0e0e0',
-                            }}
-                        >
-                            <UpdateIcon sx={{ mr: 1, color: '#1976d2' }} />
-                            <Box>
-                                <Typography
-                                    variant="body2"
-                                    sx={{ fontWeight: 'bold', color: '#333' }}
-                                >
-                                    Thời gian cập nhật
-                                </Typography>
-                                <Typography variant="body1" sx={{ color: '#666' }}>
-                                    {formatDateTime(program.updated_at)}
-                                </Typography>
-                            </Box>
-                        </Box>
-                    </Grid>
-                </Grid>
+                        </Stack>
+                    </Box>
+                </Stack>
             </DialogContent>
-            <DialogActions sx={{ px: 3, pb: 2 }}>
+
+            <Divider />
+            <Box sx={{ p: 1.5, display: 'flex', justifyContent: 'flex-end' }}>
                 <Button
                     onClick={onClose}
                     variant="contained"
                     color="primary"
+                    size="small"
                     sx={{
-                        bgcolor: '#1976d2',
-                        '&:hover': { bgcolor: '#115293' },
                         borderRadius: 1,
-                        px: 3,
+                        px: 2,
+                        fontSize: '0.8rem',
+                        textTransform: 'none'
                     }}
                 >
                     Đóng
                 </Button>
-            </DialogActions>
+            </Box>
         </Dialog>
-    )
+    );
 }
