@@ -62,7 +62,13 @@ const Semester = (sequelize) => {
       foreignKey: "semester_id",
       onUpdate: "CASCADE",
       onDelete: "CASCADE",
-    })
+    });
+    // Một học kỳ có nhiều lớp học
+    SemesterModel.hasMany(models.Classes, {
+      foreignKey: 'semester_id', // Khóa ngoại trong bảng Classes trỏ về semester_id
+      onUpdate: 'CASCADE',       // Nếu thay đổi ID học kỳ, cập nhật theo
+      onDelete: 'SET NULL',      // Nếu xóa học kỳ, để null trường semester_id
+    });
   };
 
   return SemesterModel;

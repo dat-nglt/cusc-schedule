@@ -3,7 +3,7 @@ import axiosInstance from "./axiosConfig";
 export const getAllStudentsAPI = async () => {
   try {
     const response = await axiosInstance.get("/api/students/getAll");
-    return response;
+    return response.data;
   } catch (error) {
     console.error("Error getting students:", error);
     throw error;
@@ -13,7 +13,7 @@ export const getAllStudentsAPI = async () => {
 export const getStudentByIdAPI = async (id) => {
   try {
     const response = await axiosInstance.get(`/api/students/${id}`);
-    return response;
+    return response.data;
   } catch (error) {
     console.error(`Error getting student with id ${id}:`, error);
     throw error;

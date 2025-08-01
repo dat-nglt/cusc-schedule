@@ -3,7 +3,7 @@ import axiosInstance from "./axiosConfig";
 export const getAllSubjectsAPI = async () => {
   try {
     const response = await axiosInstance.get("/api/subjects/getAll");
-    return response;
+    return response.data;
   } catch (error) {
     console.error("Error fetching subjects:", error);
     throw error;
@@ -13,7 +13,7 @@ export const getAllSubjectsAPI = async () => {
 export const getSubjectByIdAPI = async (id) => {
   try {
     const response = await axiosInstance.get(`/api/subjects/${id}`);
-    return response;
+    return response.data;
   } catch (error) {
     console.error(`Error fetching subject with ID ${id}:`, error);
     throw error;

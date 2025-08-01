@@ -61,7 +61,7 @@ const Semester = () => {
                 console.error("Không có dữ liệu chương trình");
                 return;
             }
-            setPrograms(response.data.data);
+            setPrograms(response.data);
         } catch (error) {
             console.error("Lỗi khi tải danh sách chương trình:", error);
             throw error; // Ném lỗi để xử lý ở nơi gọi hàm
@@ -76,7 +76,7 @@ const Semester = () => {
                 console.error("Không có dữ liệu học kỳ");
                 return;
             }
-            setSemesters(response.data.data);
+            setSemesters(response.data);
         } catch (error) {
             console.error("Lỗi khi tải danh sách học kỳ:", error);
         } finally {
@@ -123,7 +123,7 @@ const Semester = () => {
             setLoading(true);
             const response = await getSemesterByIdAPI(id);
             if (response && response.data) {
-                setEditedSemester(response.data.data);
+                setEditedSemester(response.data);
                 setOpenEditModal(true);
             }
         } catch (error) {
@@ -170,7 +170,7 @@ const Semester = () => {
             setLoading(true);
             const response = await getSemesterByIdAPI(id);
             if (response && response.data) {
-                setSelectedSemester(response.data.data);
+                setSelectedSemester(response.data);
                 setOpenDetail(true);
             }
         } catch (error) {

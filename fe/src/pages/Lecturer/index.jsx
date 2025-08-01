@@ -76,7 +76,7 @@ const Lecturer = () => {
                 console.error("Không có dữ liệu môn học");
                 return;
             }
-            setSubjects(response.data.data);
+            setSubjects(response.data);
         } catch (error) {
             console.error("Lỗi khi tải danh sách môn học:", error);
         }
