@@ -18,7 +18,6 @@ import BlacklistedTokenModel from "./BlacklistedToken.js";
 import LecturerAssignmentModel from "./LecturerAssignment.js";
 import TimeSlotModel from "./TimeSlot.js";
 import RoomModel from "./Room.js";
-import ScheduleChangeRequestModel from "./ScheduleChangeRequest.js";
 
 // Khởi tạo từng model với instance của Sequelize
 const Account = AccountModel(sequelize, DataTypes);

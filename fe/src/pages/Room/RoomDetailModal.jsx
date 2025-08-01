@@ -3,311 +3,237 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions,
   Button,
   Typography,
-  Grid,
   Box,
   IconButton,
-  Tooltip,
+  Avatar,
+  Chip,
+  Divider,
+  Stack,
+  Paper,
+  Tooltip
 } from '@mui/material';
 import {
-  Code as CodeIcon,
-  Label as LabelIcon,
-  Home as HomeIcon,
-  Group as GroupIcon,
-  Category as CategoryIcon,
-  ToggleOn as ToggleOnIcon,
-  Event as EventIcon,
-  Update as UpdateIcon,
+  MeetingRoom as RoomIcon,
+  Groups as CapacityIcon,
+  Place as LocationIcon,
+  Category as TypeIcon,
+  Power as StatusIcon,
+  Notes as NoteIcon,
+  Schedule as TimeIcon,
+  ContentCopy as CopyIcon,
+  Close as CloseIcon
 } from '@mui/icons-material';
-import { getStatusChip } from '../../components/ui/StatusChip';
 import { formatDateTime } from '../../utils/formatDateTime';
 import { toast } from 'react-toastify';
 
-// Hàm kiểm tra giá trị và trả về giá trị hoặc thông báo mặc định
-const getValueOrDefault = (value) => value || 'Không có dữ liệu';
+const CompactInfoCard = ({ icon, title, value, color = 'primary' }) => (
+  <Paper
+    elevation={0}
+    sx={{
+      p: 1.5,
+      borderRadius: 1.5,
+      border: '1px solid',
+      borderColor: 'divider',
+      flex: 1,
+      minWidth: 100
+    }}
+  >
+    <Box sx={{ display: 'flex', alignItems: 'center', mb: 0.5 }}>
+      <Avatar
+        sx={{
+          bgcolor: `${color}.light`,
+          color: `${color}.dark`,
+          width: 28,
+          height: 28,
+          mr: 1,
+          fontSize: '0.8rem'
+        }}
+      >
+        {icon}
+      </Avatar>
+      <Typography variant="caption" color="text.secondary">
+        {title}
+      </Typography>
+    </Box>
+    <Typography variant="subtitle1" fontWeight="medium" sx={{ fontSize: '0.9rem' }}>
+      {value || '-'}
+    </Typography>
+  </Paper>
+);
 
 export default function RoomDetailModal({ open, onClose, room }) {
   if (!room) return null;
 
-  // Hàm sao chép mã phòng học
-  const handleCopyMaPhongHoc = () => {
+  const handleCopy = () => {
     navigator.clipboard.writeText(room.room_id);
-    toast.success('Đã sao chép mã phòng học: ' + room.room_id);
+    toast.success(`Đã sao chép mã phòng: ${room.room_id}`);
   };
 
   return (
     <Dialog
       open={open}
       onClose={onClose}
-      maxWidth="md"
+      maxWidth="sm"
       fullWidth
       sx={{
         '& .MuiDialog-paper': {
           borderRadius: 2,
-          boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-        },
+          maxWidth: 600
+        }
       }}
     >
       <DialogTitle
         sx={{
-          bgcolor: '#1976d2',
-          color: '#fff',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
+          bgcolor: 'primary.main',
+          color: 'white',
           py: 1.5,
+          px: 2,
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
         }}
       >
-        <Typography variant="h6">
-          Chi tiết phòng học {room.room_id}
-        </Typography>
-        <Tooltip title="Sao chép mã phòng học">
-          <IconButton
-            onClick={handleCopyMaPhongHoc}
-            sx={{ color: '#fff' }}
-          >
-            <CodeIcon />
+        <Box>
+          <Typography variant="subtitle1" fontWeight="bold">
+            {room.room_name || 'Chi tiết phòng'}
+          </Typography>
+          <Typography variant="caption" sx={{ opacity: 0.9 }}>
+            {room.room_id}
+          </Typography>
+        </Box>
+        <Box>
+          <Tooltip title="Sao chép mã">
+            <IconButton onClick={handleCopy} size="small" sx={{ color: 'white', p: 0.5 }}>
+              <CopyIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+          <IconButton onClick={onClose} size="small" sx={{ color: 'white', ml: 0.5, p: 0.5 }}>
+            <CloseIcon fontSize="small" />
           </IconButton>
-        </Tooltip>
+        </Box>
       </DialogTitle>
-      <DialogContent sx={{ mt: 2, px: 3 }}>
-        <Grid container spacing={2}>
-          {/* Mã phòng học */}
-          <Grid item xs={12} md={6}>
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                bgcolor: '#f9f9f9',
-                p: 2,
-                borderRadius: 1,
-                border: '1px solid #e0e0e0',
-              }}
-            >
-              <CodeIcon sx={{ mr: 1, color: '#1976d2' }} />
-              <Box>
-                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#333' }}>
-                  Mã phòng học
-                </Typography>
-                <Typography variant="body1" sx={{ color: '#666' }}>
-                  {getValueOrDefault(room.room_id)}
-                </Typography>
-              </Box>
-            </Box>
-          </Grid>
 
-          {/* Tên phòng học */}
-          <Grid item xs={12} md={6}>
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                bgcolor: '#f9f9f9',
-                p: 2,
-                borderRadius: 1,
-                border: '1px solid #e0e0e0',
-              }}
-            >
-              <LabelIcon sx={{ mr: 1, color: '#1976d2' }} />
-              <Box>
-                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#333' }}>
-                  Tên phòng học
-                </Typography>
-                <Typography variant="body1" sx={{ color: '#666' }}>
-                  {getValueOrDefault(room.room_name)}
-                </Typography>
-              </Box>
-            </Box>
-          </Grid>
+      <DialogContent sx={{ p: 2 }}>
+        <Stack spacing={2}>
+          {/* Compact Info Cards */}
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
+              gap: 1.5,
+              py: 1
+            }}
+          >
+            <CompactInfoCard
+              icon={<RoomIcon fontSize="small" />}
+              title="Tên phòng"
+              value={room.room_name}
+              color="primary"
+            />
+            <CompactInfoCard
+              icon={<LocationIcon fontSize="small" />}
+              title="Vị trí"
+              value={room.location}
+              color="secondary"
+            />
+            <CompactInfoCard
+              icon={<CapacityIcon fontSize="small" />}
+              title="Sức chứa"
+              value={room.capacity}
+              color="success"
+            />
+            <CompactInfoCard
+              icon={<TypeIcon fontSize="small" />}
+              title="Loại phòng"
+              value={room.type}
+              color="warning"
+            />
+          </Box>
 
-          {/* Vị trí */}
-          <Grid item xs={12} md={6}>
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                bgcolor: '#f9f9f9',
-                p: 2,
-                borderRadius: 1,
-                border: '1px solid #e0e0e0',
-              }}
-            >
-              <HomeIcon sx={{ mr: 1, color: '#1976d2' }} />
-              <Box>
-                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#333' }}>
-                  Vị trí
-                </Typography>
-                <Typography variant="body1" sx={{ color: '#666' }}>
-                  {getValueOrDefault(room.location)}
-                </Typography>
-              </Box>
-            </Box>
-          </Grid>
+          {/* Status Section */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+            <Typography variant="caption" color="text.secondary">
+              Trạng thái:
+            </Typography>
+            <Chip
+              label={room.status === 'active' ? 'Hoạt động' : 'Không hoạt động'}
+              color={room.status === 'active' ? 'success' : 'error'}
+              size="small"
+              icon={<StatusIcon sx={{ fontSize: '0.8rem' }} />}
+              sx={{ fontWeight: 'medium' }}
+            />
+          </Box>
 
-          {/* Sức chứa */}
-          <Grid item xs={12} md={6}>
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                bgcolor: '#f9f9f9',
-                p: 2,
-                borderRadius: 1,
-                border: '1px solid #e0e0e0',
-              }}
-            >
-              <GroupIcon sx={{ mr: 1, color: '#1976d2' }} />
-              <Box>
-                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#333' }}>
-                  Sức chứa
-                </Typography>
-                <Typography variant="body1" sx={{ color: '#666' }}>
-                  {getValueOrDefault(room.capacity)}
-                </Typography>
-              </Box>
-            </Box>
-          </Grid>
-
-          {/* Loại phòng học */}
-          <Grid item xs={12} md={6}>
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                bgcolor: '#f9f9f9',
-                p: 2,
-                borderRadius: 1,
-                border: '1px solid #e0e0e0',
-              }}
-            >
-              <CategoryIcon sx={{ mr: 1, color: '#1976d2' }} />
-              <Box>
-                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#333' }}>
-                  Loại phòng học
-                </Typography>
-                <Typography variant="body1" sx={{ color: '#666' }}>
-                  {getValueOrDefault(room.type)}
-                </Typography>
-              </Box>
-            </Box>
-          </Grid>
-
-          {/* Trạng thái */}
-          <Grid item xs={12} md={6}>
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                bgcolor: '#f9f9f9',
-                p: 2,
-                borderRadius: 1,
-                border: '1px solid #e0e0e0',
-              }}
-            >
-              <ToggleOnIcon sx={{ mr: 1, color: '#1976d2' }} />
-              <Box>
-                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#333' }}>
-                  Trạng thái
-                </Typography>
-                <Box sx={{ mt: 0.5 }}>
-                  {getStatusChip(room.status)}
-                </Box>
-              </Box>
-            </Box>
-          </Grid>
-
-          {/* Ghi chú */}
+          {/* Note Section */}
           {room.note && (
-            <Grid item xs={12}>
-              <Box
+            <Box>
+              <Typography variant="caption" color="text.secondary" display="block" sx={{ mb: 0.5 }}>
+                Ghi chú:
+              </Typography>
+              <Paper
+                elevation={0}
                 sx={{
-                  display: 'flex',
-                  alignItems: 'flex-start',
-                  bgcolor: '#f9f9f9',
-                  p: 2,
+                  p: 1.5,
+                  bgcolor: 'grey.50',
                   borderRadius: 1,
-                  border: '1px solid #e0e0e0',
+                  borderLeft: '2px solid',
+                  borderColor: 'primary.main'
                 }}
               >
-                <CategoryIcon sx={{ mr: 1, color: '#1976d2', mt: 0.5 }} />
+                <Typography variant="body2">{room.note}</Typography>
+              </Paper>
+            </Box>
+          )}
+
+          {/* Timeline Section */}
+          <Box sx={{ mt: 1 }}>
+            <Stack spacing={1}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                <TimeIcon color="action" fontSize="small" />
                 <Box>
-                  <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#333' }}>
-                    Ghi chú
+                  <Typography variant="caption" color="text.secondary">
+                    Tạo lúc:
                   </Typography>
-                  <Typography variant="body1" sx={{ color: '#666' }}>
-                    {getValueOrDefault(room.note)}
+                  <Typography variant="body2" display="block">
+                    {formatDateTime(room.created_at)}
                   </Typography>
                 </Box>
               </Box>
-            </Grid>
-          )}
-
-          {/* Thời gian tạo */}
-          <Grid item xs={12} md={6}>
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                bgcolor: '#f9f9f9',
-                p: 2,
-                borderRadius: 1,
-                border: '1px solid #e0e0e0',
-              }}
-            >
-              <EventIcon sx={{ mr: 1, color: '#1976d2' }} />
-              <Box>
-                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#333' }}>
-                  Thời gian tạo
-                </Typography>
-                <Typography variant="body1" sx={{ color: '#666' }}>
-                  {formatDateTime(room.created_at)}
-                </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                <TimeIcon color="action" fontSize="small" />
+                <Box>
+                  <Typography variant="caption" color="text.secondary">
+                    Cập nhật:
+                  </Typography>
+                  <Typography variant="body2" display="block">
+                    {formatDateTime(room.updated_at)}
+                  </Typography>
+                </Box>
               </Box>
-            </Box>
-          </Grid>
-
-          {/* Thời gian cập nhật */}
-          <Grid item xs={12} md={6}>
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                bgcolor: '#f9f9f9',
-                p: 2,
-                borderRadius: 1,
-                border: '1px solid #e0e0e0',
-              }}
-            >
-              <UpdateIcon sx={{ mr: 1, color: '#1976d2' }} />
-              <Box>
-                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#333' }}>
-                  Thời gian cập nhật
-                </Typography>
-                <Typography variant="body1" sx={{ color: '#666' }}>
-                  {formatDateTime(room.updated_at)}
-                </Typography>
-              </Box>
-            </Box>
-          </Grid>
-        </Grid>
+            </Stack>
+          </Box>
+        </Stack>
       </DialogContent>
-      <DialogActions sx={{ px: 3, pb: 2 }}>
+
+      <Divider />
+      <Box sx={{ p: 1.5, display: 'flex', justifyContent: 'flex-end' }}>
         <Button
           onClick={onClose}
           variant="contained"
           color="primary"
+          size="small"
           sx={{
-            bgcolor: '#1976d2',
-            '&:hover': { bgcolor: '#115293' },
             borderRadius: 1,
-            px: 3,
+            px: 2,
+            fontSize: '0.8rem',
+            textTransform: 'none'
           }}
         >
           Đóng
         </Button>
-      </DialogActions>
+      </Box>
     </Dialog>
   );
 }
