@@ -348,7 +348,7 @@ export const importStudentsFromJSONService = async (studentsData) => {
         }
 
         // Tạo Student mới
-        const newStudent = await createStudent(cleanedData);
+        const newStudent = await createStudentService(cleanedData);
         results.success.push(newStudent);
 
       } catch (error) {

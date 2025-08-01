@@ -19,7 +19,6 @@ import { formatDateTime } from '../../utils/formatDateTime';
 export default function StudentTable({ displayedStudents, isSmallScreen, isMediumScreen, handleViewStudent, handleEditStudent, handleDeleteStudent }) {
     const [anchorEl, setAnchorEl] = useState(null);
     const [selectedRowId, setSelectedRowId] = useState(null);
-
     // Hàm mở menu
     const handleOpenMenu = (event, id) => {
         setAnchorEl(event.currentTarget);
@@ -94,14 +93,25 @@ export default function StudentTable({ displayedStudents, isSmallScreen, isMediu
                         <TableCell sx={{ textAlign: 'left', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
                             {student.name}
                         </TableCell>
+
                         {!isMediumScreen && (
-                            <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                                <Chip
-                                    label={student.class}
-                                    size="small"
-                                    sx={{ bgcolor: '#e3f2fd', color: '#1976d2', fontWeight: 'bold' }}
-                                />
-                            </TableCell>
+                            student.class_id ? (
+                                <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
+                                    <Chip
+                                        label={`${student.class.class_id} - ${student.class.class_name}`}
+                                        size="small"
+                                        sx={{ bgcolor: '#e3f2fd', color: '#1976d2', fontWeight: 'bold' }}
+                                    />
+                                </TableCell>
+                            ) : (
+                                <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
+                                    <Chip
+                                        label="Chưa có lớp"
+                                        size="small"
+                                        sx={{ bgcolor: '#e3f2fd', color: '#1976d2', fontWeight: 'bold' }}
+                                    />
+                                </TableCell>
+                            )
                         )}
                         {!isSmallScreen && (
                             <TableCell sx={{ textAlign: 'left', borderRight: '1px solid #e0e0e0', py: 1.5 }}>

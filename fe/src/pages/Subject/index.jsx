@@ -60,7 +60,7 @@ const Subject = () => {
         try {
             const response = await getAllSemestersAPI();
             if (response && response.data) {
-                setSemesters(response.data.data);
+                setSemesters(response.data);
             } else {
                 setError('Không có dữ liệu học kỳ');
             }

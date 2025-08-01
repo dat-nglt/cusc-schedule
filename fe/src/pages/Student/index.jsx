@@ -27,13 +27,15 @@ import useResponsive from '../../hooks/useResponsive';
 import StudentTable from './StudentTable';
 import { getAllStudentsAPI, getStudentByIdAPI, createStudentAPI, updateStudentAPI, deleteStudentAPI } from '../../api/studentAPI';
 import { toast } from 'react-toastify';
-
+import { getClassesAPI } from '../../api/classAPI';
 const Student = () => {
     const { isSmallScreen, isMediumScreen } = useResponsive();
     const theme = useTheme();
 
     // Dữ liệu mẫu cho danh sách học viên
     const [students, setStudents] = useState([]);
+    // Lấy danh sách lớp học để hiển thị trong modal thêm học viên
+    const [classes, setClasses] = useState([]);
     // State cho phân trang, tìm kiếm, lọc theo trạng thái và modal
     const [page, setPage] = useState(0);
     const [rowsPerPage] = useState(8);
@@ -52,7 +54,6 @@ const Student = () => {
     // Danh sách trạng thái để lọc
     const statuses = ['Đang học', 'Đã nghỉ học', 'Đã tốt nghiệp', 'Bảo lưu'];
 
-
     const fetchStudents = async () => {
         try {
             setLoading(true);
@@ -69,8 +70,25 @@ const Student = () => {
         }
     };
 
+    const fetchClasses = async () => {
+        try {
+            const response = await getClassesAPI();
+            if (!response) {
+                console.error("Không có dữ liệu lớp học");
+                return;
+            }
+            setClasses(response.data);
+        } catch (error) {
+            console.error("Lỗi khi tải danh sách lớp học:", error);
+        }
+        finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
         fetchStudents();
+        fetchClasses();
     }, [])
 
     // Hàm mở modal Thêm 
@@ -336,6 +354,7 @@ const Student = () => {
                 error={error}
                 loading={loading}
                 fetchStudents={fetchStudents}
+                classes={classes}
             />
             <EditStudentModal
                 open={openEditModal}
