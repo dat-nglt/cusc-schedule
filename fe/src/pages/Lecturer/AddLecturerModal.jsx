@@ -71,7 +71,7 @@ const statusOptions = [
 
 const steps = ['Thông tin cá nhân', 'Thông tin liên hệ', 'Thông tin công tác'];
 
-const AddLecturerModal = ({ open, onClose, onAddLecturer, existingLecturers, error, loading, message, fetchLecturers }) => {
+const AddLecturerModal = ({ open, onClose, onAddLecturer, existingLecturers, error, loading, message, fetchLecturers, subjects }) => {
     const [newLecturer, setNewLecturer] = useState({
         lecturer_id: '',
         name: '',
@@ -83,6 +83,7 @@ const AddLecturerModal = ({ open, onClose, onAddLecturer, existingLecturers, err
         department: '',
         hire_date: '',
         degree: '',
+        subjects: [],
         status: 'Đang giảng dạy',
     });
 
@@ -217,6 +218,7 @@ const AddLecturerModal = ({ open, onClose, onAddLecturer, existingLecturers, err
             department: '',
             hire_date: '',
             degree: '',
+            subjects: [],
             status: 'Đang giảng dạy',
         });
         setActiveStep(0);
@@ -589,6 +591,43 @@ const AddLecturerModal = ({ open, onClose, onAddLecturer, existingLecturers, err
                                         {availableDegrees.map((degree) => (
                                             <MenuItem key={degree} value={degree}>
                                                 {degree}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                                <FormControl fullWidth required>
+                                    <InputLabel>Môn học giảng dạy</InputLabel>
+                                    <Select
+                                        name="subjects"
+                                        multiple
+                                        value={newLecturer.subjects}
+                                        onChange={(e) => {
+                                            const value = e.target.value;
+                                            setNewLecturer(prev => ({
+                                                ...prev,
+                                                subjects: typeof value === 'string' ? value.split(',') : value
+                                            }));
+                                            setLocalError('');
+                                        }}
+                                        label="Môn học giảng dạy"
+                                        renderValue={(selected) => (
+                                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                                {selected.map((value) => {
+                                                    const subject = subjects?.find(s => s.subject_id === value);
+                                                    return (
+                                                        <Chip
+                                                            key={value}
+                                                            label={subject ? `${subject.subject_id} - ${subject.subject_name}` : value}
+                                                            size="small"
+                                                        />
+                                                    );
+                                                })}
+                                            </Box>
+                                        )}
+                                    >
+                                        {subjects && subjects.map((subject) => (
+                                            <MenuItem key={subject.subject_id} value={subject.subject_id}>
+                                                {subject.subject_id} - {subject.subject_name}
                                             </MenuItem>
                                         ))}
                                     </Select>

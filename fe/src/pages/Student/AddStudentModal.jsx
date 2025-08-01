@@ -52,7 +52,7 @@ const statusOptions = [
 
 const steps = ['Thông tin cá nhân', 'Thông tin liên hệ', 'Thông tin học tập'];
 
-export default function AddStudentModal({ open, onClose, onAddStudent, existingStudents, error, loading, message, fetchStudents }) {
+export default function AddStudentModal({ open, onClose, onAddStudent, existingStudents, error, loading, message, fetchStudents, classes }) {
     const [newStudent, setNewStudent] = useState({
         student_id: '',
         name: '',
@@ -84,7 +84,7 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
                 setLocalError('Vui lòng điền đầy đủ thông tin liên hệ');
                 return;
             }
-            
+
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(newStudent.email)) {
                 setLocalError('Email không hợp lệ');
@@ -97,7 +97,7 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
                 return;
             }
         }
-        
+
         setLocalError('');
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
     };
@@ -178,7 +178,7 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
         };
 
         await onAddStudent(studentToAdd);
-        
+
         if (!error && !loading) {
             resetForm();
             onClose();
@@ -276,13 +276,13 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
 
     return (
         <>
-            <Dialog 
-                open={open} 
+            <Dialog
+                open={open}
                 onClose={() => {
                     resetForm();
                     onClose();
-                }} 
-                maxWidth="md" 
+                }}
+                maxWidth="md"
                 fullWidth
                 PaperProps={{
                     sx: {
@@ -340,8 +340,8 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
                     <Box sx={{ px: 3, pt: 2 }}>
                         {(error || localError) && (
                             <Fade in={!!(error || localError)}>
-                                <Alert 
-                                    severity="error" 
+                                <Alert
+                                    severity="error"
                                     icon={<ErrorIcon />}
                                     sx={{ mb: 2 }}
                                 >
@@ -351,8 +351,8 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
                         )}
                         {message && (
                             <Fade in={!!message}>
-                                <Alert 
-                                    severity="success" 
+                                <Alert
+                                    severity="success"
                                     icon={<CheckCircle />}
                                     sx={{ mb: 2 }}
                                 >
@@ -365,10 +365,10 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
                     {/* Form content - changes based on activeStep */}
                     <Box sx={{ p: 3 }}>
                         {activeStep === 0 && (
-                            <Box sx={{ 
-                                display: 'grid', 
+                            <Box sx={{
+                                display: 'grid',
                                 gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
-                                gap: 3 
+                                gap: 3
                             }}>
                                 <TextField
                                     label="Mã học viên"
@@ -445,10 +445,10 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
                         )}
 
                         {activeStep === 1 && (
-                            <Box sx={{ 
-                                display: 'grid', 
+                            <Box sx={{
+                                display: 'grid',
                                 gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
-                                gap: 3 
+                                gap: 3
                             }}>
                                 <TextField
                                     label="Email"
@@ -508,28 +508,31 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
                         )}
 
                         {activeStep === 2 && (
-                            <Box sx={{ 
-                                display: 'grid', 
+                            <Box sx={{
+                                display: 'grid',
                                 gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
-                                gap: 3 
+                                gap: 3
                             }}>
-                                <TextField
-                                    label="Mã lớp"
-                                    name="class"
-                                    value={newStudent.class}
-                                    onChange={handleChange}
-                                    fullWidth
-                                    variant="outlined"
-                                    required
-                                    InputProps={{
-                                        startAdornment: (
+                                <FormControl fullWidth required>
+                                    <InputLabel>Lớp</InputLabel>
+                                    <Select
+                                        name="class"
+                                        value={newStudent.class}
+                                        onChange={handleChange}
+                                        label="Lớp"
+                                        startAdornment={
                                             <InputAdornment position="start">
                                                 <Class color="action" />
                                             </InputAdornment>
-                                        ),
-                                    }}
-                                    sx={{ mb: 2 }}
-                                />
+                                        }
+                                    >
+                                        {classes?.map((classItem) => (
+                                            <MenuItem key={classItem.class_id} value={classItem.class_id}>
+                                                {classItem.class_id} - {classItem.class_name}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
                                 <TextField
                                     label="Ngày nhập học"
                                     name="admission_year"
@@ -559,9 +562,9 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
                                     >
                                         {statusOptions.map((option) => (
                                             <MenuItem key={option.value} value={option.value}>
-                                                <Chip 
-                                                    label={option.value} 
-                                                    size="small" 
+                                                <Chip
+                                                    label={option.value}
+                                                    size="small"
                                                     color={option.color}
                                                     sx={{ mr: 1 }}
                                                 />
@@ -574,9 +577,9 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
                     </Box>
                 </DialogContent>
 
-                <DialogActions sx={{ 
-                    p: 3, 
-                    display: 'flex', 
+                <DialogActions sx={{
+                    p: 3,
+                    display: 'flex',
                     justifyContent: 'space-between',
                     borderTop: '1px solid #eee'
                 }}>
@@ -609,7 +612,7 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
                                 Quay lại
                             </Button>
                         )}
-                        
+
                         {activeStep < steps.length - 1 ? (
                             <Button
                                 onClick={handleNext}
@@ -639,7 +642,7 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
                 onClose={handleClosePreview}
                 previewData={previewData}
                 fetchStudents={fetchStudents}
-                onAddStudent={onAddStudent}
+                classes={classes}
             />
         </>
     );

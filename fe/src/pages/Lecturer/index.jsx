@@ -26,11 +26,14 @@ import useResponsive from '../../hooks/useResponsive';
 import LecturerTable from './LecturerTable';
 import { toast } from 'react-toastify';
 import { getAllLecturersAPI, getLecturerByIdAPI, createLecturerAPI, updateLecturerAPI, deleteLecturerAPI } from '../../api/lecturerAPI';
+import { getAllSubjectsAPI } from '../../api/subjectAPI';
 import TablePaginationLayout from '../../components/layout/TablePaginationLayout';
+
 const Lecturer = () => {
     const { isSmallScreen, isMediumScreen } = useResponsive();
     const theme = useTheme()
     const [lecturers, setLecturers] = useState([]);
+    const [subjects, setSubjects] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage] = useState(7);
     const [searchTerm, setSearchTerm] = useState('');
@@ -53,7 +56,7 @@ const Lecturer = () => {
         try {
             setLoading(true);
             const response = await getAllLecturersAPI();
-            if (!response && !response.data) {
+            if (!response) {
                 console.error("Không có dữ liệu giảng viên");
                 return;
             }
@@ -66,8 +69,22 @@ const Lecturer = () => {
         }
     };
 
+    const fetchSubjects = async () => {
+        try {
+            const response = await getAllSubjectsAPI();
+            if (!response) {
+                console.error("Không có dữ liệu môn học");
+                return;
+            }
+            setSubjects(response.data.data);
+        } catch (error) {
+            console.error("Lỗi khi tải danh sách môn học:", error);
+        }
+    };
+
     useEffect(() => {
         fetchLecturers();
+        fetchSubjects();
     }, []);
 
     const handleAddLecturer = () => {
@@ -332,6 +349,7 @@ const Lecturer = () => {
                 error={error}
                 loading={loading}
                 fetchLecturers={fetchLecturers}
+                subjects={subjects}
             />
             <EditLecturerModal
                 open={openEditModal}

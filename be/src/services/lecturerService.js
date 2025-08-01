@@ -423,7 +423,7 @@ export const importLecturersFromJsonService = async (lecturersData) => {
         }
 
         // Tạo lecturer mới với subjects
-        const newLecturer = await createLecturer(cleanedData, subjectIds);
+        const newLecturer = await createLecturerService(cleanedData, subjectIds);
         results.success.push(newLecturer);
       } catch (error) {
         results.errors.push({
