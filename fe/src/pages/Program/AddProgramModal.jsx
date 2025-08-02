@@ -39,6 +39,7 @@ import {
 } from '@mui/icons-material';
 import * as XLSX from 'xlsx';
 import PreviewProgramModal from './PreviewProgramModal';
+import { processExcelDataProgram } from '../../utils/ExcelValidation';
 
 const statusOptions = [
     { value: 'Đang triển khai', color: 'info', icon: <PlayCircleFilled /> },
@@ -162,6 +163,7 @@ export default function AddProgramModal({
             const workbook = XLSX.read(arrayBuffer, { type: 'array' });
             const sheetName = workbook.SheetNames[0];
             const worksheet = workbook.Sheets[sheetName];
+
             const rawData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
             if (rawData.length < 2) {
@@ -172,65 +174,19 @@ export default function AddProgramModal({
             }
 
             const headers = rawData[0];
-            const expectedHeader = ['Mã chương trình', 'Tên chương trình', 'Thời gian đào tạo', 'Trạng thái'];
-
-            const lowerCaseHeaders = headers.map(h => String(h).toLowerCase().trim());
-            const lowerCaseExpectedHeader = expectedHeader.map(h => String(h).toLowerCase().trim());
-
-            if (!lowerCaseExpectedHeader.every(expectedH => lowerCaseHeaders.includes(expectedH))) {
-                setLocalError(`Định dạng cột không đúng! Cần các cột: ${expectedHeader.join(', ')}`);
-                e.target.value = '';
-                setFileUploaded(false);
-                return;
-            }
-
             const dataRows = rawData.slice(1);
+
             const jsonData = dataRows.map(row => {
                 const obj = {};
                 headers.forEach((header, index) => {
-                    obj[String(header).trim()] = row[index] || '';
+                    obj[header] = row[index] || '';
                 });
                 return obj;
             });
 
-            const processedData = jsonData.map((row, index) => {
-                const program = {
-                    program_id: row['Mã chương trình'] || '',
-                    program_name: row['Tên chương trình'] || '',
-                    training_duration: row['Thời gian đào tạo'] || '',
-                    status: row['Trạng thái'] || 'Đang triển khai',
-                    rowIndex: index + 2,
-                    errors: [],
-                };
+            const processedData = processExcelDataProgram(jsonData, existingPrograms);
 
-                if (!program.program_id || !program.program_name || !program.training_duration) {
-                    program.errors.push('missing_required');
-                }
-
-                if (!trainingDurations.some(d => d.value == program.training_duration)) {
-                    program.errors.push('invalid_duration');
-                }
-
-                if (!statusOptions.some(opt => opt.value === program.status)) {
-                    program.errors.push('invalid_status');
-                }
-
-                const isDuplicateExisting = existingPrograms.some(p => p.program_id === program.program_id);
-                if (isDuplicateExisting) {
-                    program.errors.push('duplicate_id_existing');
-                }
-
-                const isDuplicateInPreview = processedData.slice(0, index).some(p => p.program_id === program.program_id);
-                if (isDuplicateInPreview) {
-                    program.errors.push('duplicate_id_in_file');
-                }
-
-                return program;
-            });
-
-            const validPreviewData = processedData.filter(item => item.errors.length === 0);
-
-            if (validPreviewData.length === 0) {
+            if (processedData.length === 0) {
                 setLocalError('Không có dữ liệu hợp lệ nào trong file Excel');
                 e.target.value = '';
                 setFileUploaded(false);
@@ -239,6 +195,7 @@ export default function AddProgramModal({
 
             setPreviewData(processedData);
             setShowPreview(true);
+            onClose();
 
         } catch (error) {
             console.error('Error reading Excel file:', error);

@@ -49,6 +49,11 @@ const Program = (sequelize) => {
       onUpdate: "CASCADE",
       onDelete: "CASCADE", // Xóa tất cả học kỳ liên quan nếu chương trình bị xóa
     });
+    ProgramModel.hasMany(models.Classes, {
+      foreignKey: "program_id",
+      onUpdate: "CASCADE",
+      onDelete: "SET NULL", // Nếu xóa chương trình, để null trường programs_id trong bảng Classes
+    });
   };
 
   return ProgramModel;

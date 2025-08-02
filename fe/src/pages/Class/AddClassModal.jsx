@@ -55,6 +55,7 @@ export default function AddClassModal({
   onImportSuccess,
   existingClasses,
   existingCourses,
+  existingPrograms,
   error: apiError, // Renamed 'error' prop to 'apiError' for clarity
   loading,
   message,
@@ -65,6 +66,7 @@ export default function AddClassModal({
     class_size: '',
     status: 'Hoạt động',
     course_id: '',
+    program_id: '',
   });
 
   const [activeStep, setActiveStep] = useState(0);
@@ -105,9 +107,15 @@ export default function AddClassModal({
     setLocalError('');
   };
 
+  const handleProgramChange = (e) => {
+    const { value } = e.target;
+    setNewClass((prev) => ({ ...prev, program_id: value }));
+    setLocalError('');
+  };
+
   const validateClassData = (classItem) => {
     const errors = [];
-    if (!classItem.class_id || !classItem.class_name || !classItem.class_size || !classItem.course_id) {
+    if (!classItem.class_id || !classItem.class_name || !classItem.class_size || !classItem.course_id || !classItem.program_id) {
       errors.push('missing_required');
     }
 
@@ -119,10 +127,15 @@ export default function AddClassModal({
     if (!statusOptions.some(opt => opt.value === classItem.status)) {
       errors.push('invalid_status');
     }
-    
+
     // Check if course_id exists in existingCourses (for import validation)
     if (classItem.course_id && !(existingCourses || []).some(course => course.course_id === classItem.course_id)) {
-        errors.push('invalid_course_id');
+      errors.push('invalid_course_id');
+    }
+
+    // Check if program_id exists in existingPrograms (for import validation)
+    if (classItem.program_id && !(existingPrograms || []).some(program => program.program_id === classItem.program_id)) {
+      errors.push('invalid_program_id');
     }
 
     return errors;
@@ -131,6 +144,11 @@ export default function AddClassModal({
   const handleSubmit = async () => {
     if (!newClass.course_id) {
       setLocalError('Vui lòng chọn khóa học');
+      return;
+    }
+
+    if (!newClass.program_id) {
+      setLocalError('Vui lòng chọn chương trình');
       return;
     }
 
@@ -144,6 +162,8 @@ export default function AddClassModal({
         setLocalError('Trạng thái không hợp lệ');
       } else if (validationErrors.includes('invalid_course_id')) {
         setLocalError('Mã khóa học không tồn tại!');
+      } else if (validationErrors.includes('invalid_program_id')) {
+        setLocalError('Mã chương trình không tồn tại!');
       }
       return;
     }
@@ -178,6 +198,7 @@ export default function AddClassModal({
       class_size: '',
       status: 'Hoạt động',
       course_id: '',
+      program_id: '',
     });
     setActiveStep(0);
     setLocalError('');
@@ -217,7 +238,7 @@ export default function AddClassModal({
       }
 
       const headers = rawData[0];
-      const expectedHeader = ['Mã lớp học', 'Tên lớp học', 'Sĩ số', 'Trạng thái', 'Mã khóa học'];
+      const expectedHeader = ['Mã lớp học', 'Tên lớp học', 'Sĩ số', 'Trạng thái', 'Mã khóa học', 'Mã chương trình'];
 
       const lowerCaseHeaders = headers.map(h => String(h).toLowerCase().trim());
       const lowerCaseExpectedHeader = expectedHeader.map(h => String(h).toLowerCase().trim());
@@ -245,6 +266,7 @@ export default function AddClassModal({
           class_size: row['Sĩ số'] || '',
           status: row['Trạng thái'] || 'Hoạt động',
           course_id: row['Mã khóa học'] || '',
+          program_id: row['Mã chương trình'] || '',
           rowIndex: index + 2,
           errors: [],
         };
@@ -253,17 +275,17 @@ export default function AddClassModal({
 
         const isDuplicateExisting = (existingClasses || []).some(c => c.class_id === classItem.class_id);
         if (isDuplicateExisting) {
-            validationErrors.push('duplicate_id_existing');
+          validationErrors.push('duplicate_id_existing');
         }
 
         const isDuplicateInPreview = processedData.slice(0, index).some(c => c.class_id === classItem.class_id);
         if (isDuplicateInPreview) {
-            validationErrors.push('duplicate_id_in_file');
+          validationErrors.push('duplicate_id_in_file');
         }
 
         return { ...classItem, errors: validationErrors };
       });
-      
+
       const validPreviewData = processedData.filter(item => item.errors.length === 0);
 
       if (validPreviewData.length === 0) {
@@ -455,30 +477,6 @@ export default function AddClassModal({
                   gap: 3,
                 }}
               >
-                <FormControl fullWidth required sx={{ gridColumn: { xs: 'span 1', md: 'span 2' } }}>
-                  <InputLabel>Trạng thái</InputLabel>
-                  <Select
-                    name="status"
-                    value={newClass.status}
-                    onChange={handleChange}
-                    label="Trạng thái"
-                    disabled={loading}
-                  >
-                    {statusOptions.map((option) => (
-                      <MenuItem key={option.value} value={option.value}>
-                        <Box display="flex" alignItems="center">
-                          {option.icon}
-                          <Chip
-                            label={option.value}
-                            size="small"
-                            color={option.color}
-                            sx={{ ml: 1 }}
-                          />
-                        </Box>
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
                 <Autocomplete
                   options={existingCourses || []}
                   getOptionLabel={(option) => option.course_id || ''}
@@ -503,14 +501,64 @@ export default function AddClassModal({
                       }}
                     />
                   )}
-                  freeSolo // Allows user to type if course_id isn't in the list
+                  freeSolo
                   renderOption={(props, option) => (
                     <li {...props}>
                       {option.course_id} - {option.course_name}
                     </li>
                   )}
-                  sx={{ gridColumn: { xs: 'span 1', md: 'span 2' } }}
                 />
+                <FormControl fullWidth required>
+                  <InputLabel>Mã chương trình</InputLabel>
+                  <Select
+                    name="program_id"
+                    value={newClass.program_id}
+                    onChange={handleProgramChange}
+                    label="Mã chương trình"
+                    disabled={loading}
+                    startAdornment={
+                      <InputAdornment position="start">
+                        <School color="action" />
+                      </InputAdornment>
+                    }
+                  >
+                    {existingPrograms && existingPrograms.map((program) => (
+                      <MenuItem key={program.program_id} value={program.program_id}>
+                        {program.program_id} - {program.program_name}
+                      </MenuItem>
+                    ))}
+                    {!existingPrograms || existingPrograms.length === 0 ? (
+                      <MenuItem disabled>
+                        <em>Không có chương trình</em>
+                      </MenuItem>
+                    ) : null
+                    }
+                  </Select>
+                </FormControl>
+                <FormControl fullWidth required sx={{ gridColumn: { xs: 'span 1', md: 'span 2' } }}>
+                  <InputLabel>Trạng thái</InputLabel>
+                  <Select
+                    name="status"
+                    value={newClass.status}
+                    onChange={handleChange}
+                    label="Trạng thái"
+                    disabled={loading}
+                  >
+                    {statusOptions.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        <Box display="flex" alignItems="center">
+                          {option.icon}
+                          <Chip
+                            label={option.value}
+                            size="small"
+                            color={option.color}
+                            sx={{ ml: 1 }}
+                          />
+                        </Box>
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               </Box>
             )}
           </Box>

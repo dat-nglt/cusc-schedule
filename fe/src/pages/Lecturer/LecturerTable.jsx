@@ -111,8 +111,8 @@ export default function LecturerTable({ displayedLecturers, isSmallScreen, isMed
                         {!isMediumScreen && (
                             <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
                                 <Box sx={{ fontSize: '0.85rem' }}>
-                                    <div>{lecturer.email}</div>
-                                    <div style={{ color: '#666', marginTop: '2px' }}>{lecturer.phone_number}</div>
+                                    <div>{lecturer.account.email}</div>
+                                    <div style={{ color: '#666', marginTop: '2px' }}>{lecturer.account.phone_number}</div>
                                 </Box>
                             </TableCell>
                         )}

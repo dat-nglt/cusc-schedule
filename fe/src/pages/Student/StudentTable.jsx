@@ -59,6 +59,11 @@ export default function StudentTable({ displayedStudents, isSmallScreen, isMediu
                             Mã lớp
                         </TableCell>
                     )}
+                    {!isMediumScreen && (
+                        <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '20%' }}>
+                            Liên hệ
+                        </TableCell>
+                    )}
                     {!isSmallScreen && (
                         <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'left', borderRight: '1px solid #e0e0e0', width: '20%' }}>
                             Năm nhập học
@@ -112,6 +117,14 @@ export default function StudentTable({ displayedStudents, isSmallScreen, isMediu
                                     />
                                 </TableCell>
                             )
+                        )}
+                        {!isMediumScreen && (
+                            <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
+                                <Box sx={{ fontSize: '0.85rem' }}>
+                                    <div>{student.account.email}</div>
+                                    <div style={{ color: '#666', marginTop: '2px' }}>{student.account.phone_number}</div>
+                                </Box>
+                            </TableCell>
                         )}
                         {!isSmallScreen && (
                             <TableCell sx={{ textAlign: 'left', borderRight: '1px solid #e0e0e0', py: 1.5 }}>

@@ -29,6 +29,7 @@ import useResponsive from '../../hooks/useResponsive';
 import ClassTable from './ClassTable';
 import { getClassesAPI, getClassByIdAPI, addClassAPI, updateClassAPI, deleteClassAPI } from '../../api/classAPI';
 import { getCoursesAPI } from '../../api/courseAPI';
+import { getAllProgramsAPI } from '../../api/programAPI';
 
 // Hàm định dạng timestamp thành YYYY-MM-DD HH:MM:SS.sss+07
 const formatTimestamp = (timestamp) => {
@@ -49,6 +50,7 @@ const Class = () => {
   const theme = useTheme();
   const [classes, setClasses] = useState([]);
   const [courses, setCourses] = useState([]);
+  const [programs, setPrograms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(0);
@@ -135,9 +137,23 @@ const Class = () => {
     }
   };
 
+  const fetchPrograms = async () => {
+    try {
+      const response = await getAllProgramsAPI();
+      if (!response) {
+        throw new Error('Không có dữ liệu chương trình đào tạo');
+      }
+      setPrograms(response.data);
+    } catch (err) {
+      console.error('Lỗi khi tải danh sách chương trình đào tạo:', err.message);
+      setError(`Lỗi khi tải danh sách chương trình đào tạo: ${err.message}`);
+    }
+  };
+
   useEffect(() => {
     fetchClasses();
     fetchCourses();
+    fetchPrograms();
   }, []);
 
   const handleViewClass = async (class_id) => {
@@ -401,6 +417,7 @@ const Class = () => {
         onImportSuccess={fetchClasses}
         existingClasses={classes}
         existingCourses={courses}
+        existingPrograms={programs}
       />
       <EditClassModal
         open={openEdit}

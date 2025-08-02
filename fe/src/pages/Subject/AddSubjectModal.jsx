@@ -53,10 +53,10 @@ const subjectStatusOptions = [
 const steps = ['Thông tin học phần', 'Chi tiết & Trạng thái'];
 
 export default function AddSubjectModal({ open, onClose, onAddSubject, existingSubjects = [], error, loading, message, semesters, fetchSubjects }) {
-    
+
     console.log(semesters);
-    
-    
+
+
     const [newSubject, setNewSubject] = useState({
         subject_id: '',
         subject_name: '',
@@ -159,14 +159,14 @@ export default function AddSubjectModal({ open, onClose, onAddSubject, existingS
     const handleImportExcel = async (e) => {
         const file = e.target.files[0];
         if (!file) {
-            setLocalError('Vui lòng chọn một file Excel!');
+            setLocalError('Vui lòng chọn một file Excel');
             return;
         }
 
         const validExtensions = ['.xlsx', '.xls'];
         const fileExtension = file.name.slice(file.name.lastIndexOf('.')).toLowerCase();
         if (!validExtensions.includes(fileExtension)) {
-            setLocalError('Chỉ hỗ trợ file Excel (.xlsx, .xls)!');
+            setLocalError('Chỉ hỗ trợ file Excel (.xlsx, .xls)');
             e.target.value = '';
             return;
         }
@@ -183,41 +183,27 @@ export default function AddSubjectModal({ open, onClose, onAddSubject, existingS
             const rawData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
             if (rawData.length < 2) {
-                setLocalError('File Excel phải có ít nhất 2 dòng (header + dữ liệu)!');
+                setLocalError('File Excel phải có ít nhất 2 dòng (header + dữ liệu)');
                 e.target.value = '';
                 setFileUploaded(false);
                 return;
             }
 
             const headers = rawData[0];
-            // Define expected headers for subjects
-            const expectedHeader = ['Mã học phần', 'Tên học phần', 'Số tín chỉ', 'Số tiết lý thuyết', 'Số tiết thực hành', 'Mã học kỳ', 'Trạng thái'];
-
-            const lowerCaseHeaders = headers.map(h => String(h).toLowerCase().trim());
-            const lowerCaseExpectedHeader = expectedHeader.map(h => String(h).toLowerCase().trim());
-
-            if (!lowerCaseExpectedHeader.every(expectedH => lowerCaseHeaders.includes(expectedH))) {
-                setLocalError(`Định dạng cột không đúng! Cần các cột: ${expectedHeader.join(', ')}`);
-                e.target.value = '';
-                setFileUploaded(false);
-                return;
-            }
-
             const dataRows = rawData.slice(1);
+
             const jsonData = dataRows.map(row => {
                 const obj = {};
                 headers.forEach((header, index) => {
-                    obj[String(header).trim()] = row[index] || '';
+                    obj[header] = row[index] || '';
                 });
                 return obj;
             });
 
-            const processedData = processExcelDataSubject(jsonData, existingSubjects, semesters); // Pass semesters for validation
+            const processedData = processExcelDataSubject(jsonData, existingSubjects, semesters);
 
-            const validPreviewData = processedData.filter(item => item.errors.length === 0);
-
-            if (validPreviewData.length === 0) {
-                setLocalError('Không có dữ liệu hợp lệ trong file Excel!');
+            if (processedData.length === 0) {
+                setLocalError('Không có dữ liệu hợp lệ nào trong file Excel');
                 e.target.value = '';
                 setFileUploaded(false);
                 return;
@@ -225,11 +211,11 @@ export default function AddSubjectModal({ open, onClose, onAddSubject, existingS
 
             setPreviewData(processedData);
             setShowPreview(true);
-            onClose(); // Close the AddSubjectModal to show PreviewSubjectModal
+            onClose();
 
         } catch (error) {
             console.error('Error reading Excel file:', error);
-            setLocalError('Lỗi khi đọc file Excel! Vui lòng kiểm tra format file.');
+            setLocalError('Lỗi khi đọc file Excel. Vui lòng kiểm tra lại');
             setFileUploaded(false);
         } finally {
             e.target.value = '';

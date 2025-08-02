@@ -9,9 +9,7 @@ import ExcelUtils from "../utils/ExcelUtils.js";
  */
 export const getAllClasses = async () => {
   try {
-    const classes = await models.Classes.findAll({
-      include: [{ model: models.Course, attributes: ['course_id', 'course_name'] }],
-    });
+    const classes = await models.Classes.findAll();
     return classes;
   } catch (error) {
     throw new Error('Lỗi khi lấy danh sách lớp học: ' + error.message);
@@ -25,7 +23,10 @@ export const getAllClasses = async () => {
  */
 export const getClassById = async (class_id) => {
   return await models.Classes.findByPk(class_id, {
-    include: [{ model: models.Course, attributes: ['course_id', 'course_name'] }],
+    include: [
+      { model: models.Course, attributes: ['course_id', 'course_name'] },
+      { model: models.Program, attributes: ['program_id', 'program_name'] }
+    ],
   });
 };
 
@@ -37,14 +38,19 @@ export const getClassById = async (class_id) => {
  * @param {number} [data.class_size] - Sĩ số lớp học.
  * @param {string} [data.status] - Trạng thái của lớp học.
  * @param {string} [data.course_id] - Mã khóa học liên kết.
+ * @param {string} [data.program_id] - Mã chương trình liên kết.
  * @returns {Promise<Object>} Lớp học đã được tạo.
- * @throws {Error} Nếu khóa học không tồn tại hoặc tên lớp học quá dài.
+ * @throws {Error} Nếu khóa học hoặc chương trình không tồn tại hoặc tên lớp học quá dài.
  */
 export const createClass = async (data) => {
-  const { course_id, class_name } = data;
+  const { course_id, class_name, program_id } = data;
   if (course_id) {
     const course = await models.Course.findByPk(course_id);
     if (!course) throw new Error('Không tìm thấy khóa học');
+  }
+  if (program_id) {
+    const program = await models.Program.findByPk(program_id);
+    if (!program) throw new Error('Không tìm thấy chương trình');
   }
   if (class_name && class_name.length > 50) {
     throw new Error('Tên lớp học không được vượt quá 50 ký tự');
@@ -60,8 +66,9 @@ export const createClass = async (data) => {
  * @param {number} [data.class_size] - Sĩ số lớp học mới.
  * @param {string} [data.status] - Trạng thái mới của lớp học.
  * @param {string} [data.course_id] - Mã khóa học mới liên kết.
+ * @param {string} [data.program_id] - Mã chương trình mới liên kết.
  * @returns {Promise<Object>} Lớp học đã được cập nhật.
- * @throws {Error} Nếu không tìm thấy lớp học, khóa học không tồn tại hoặc tên lớp học quá dài.
+ * @throws {Error} Nếu không tìm thấy lớp học, khóa học hoặc chương trình không tồn tại hoặc tên lớp học quá dài.
  */
 export const updateClass = async (class_id, data) => {
   const classInstance = await models.Classes.findByPk(class_id);
@@ -69,6 +76,10 @@ export const updateClass = async (class_id, data) => {
   if (data.course_id) {
     const course = await models.Course.findByPk(data.course_id);
     if (!course) throw new Error('Không tìm thấy khóa học');
+  }
+  if (data.program_id) {
+    const program = await models.Program.findByPk(data.program_id);
+    if (!program) throw new Error('Không tìm thấy chương trình');
   }
   if (data.class_name && data.class_name.length > 50) {
     throw new Error('Tên lớp học không được vượt quá 50 ký tự');
@@ -95,7 +106,8 @@ export const deleteClass = async (class_id) => {
  * @param {string} [filters.class_name] - Lọc theo tên lớp học (tìm kiếm gần đúng).
  * @param {string} [filters.status] - Lọc theo trạng thái.
  * @param {string} [filters.course_id] - Lọc theo ID khóa học (tìm kiếm gần đúng).
- * @returns {Promise<Array>} Danh sách các lớp học phù hợp với bộ lọc, kèm thông tin khóa học.
+ * @param {string} [filters.program_id] - Lọc theo ID chương trình (tìm kiếm gần đúng).
+ * @returns {Promise<Array>} Danh sách các lớp học phù hợp với bộ lọc, kèm thông tin khóa học và chương trình.
  * @throws {Error} Nếu có lỗi khi liệt kê dữ liệu.
  */
 export const listClasses = async (filters) => {
@@ -122,10 +134,18 @@ export const listClasses = async (filters) => {
       whereClause.course_id = { [Op.iLike]: `%${filters.course_id}%` };
     }
 
+    // Lọc theo program_id
+    if (filters.program_id) {
+      whereClause.program_id = { [Op.iLike]: `%${filters.program_id}%` };
+    }
+
     const classes = await models.Classes.findAll({
       where: whereClause,
-      attributes: ['class_id', 'class_name', 'class_size', 'status', 'course_id', 'created_at', 'updated_at'],
-      include: [{ model: models.Course, attributes: ['course_id', 'course_name'] }],
+      attributes: ['class_id', 'class_name', 'class_size', 'status', 'course_id', 'program_id', 'created_at', 'updated_at'],
+      include: [
+        { model: models.Course, attributes: ['course_id', 'course_name'] },
+        { model: models.Program, attributes: ['program_id', 'program_name'] }
+      ],
       order: [['created_at', 'DESC']],
     });
 
@@ -148,7 +168,6 @@ export const importClassesFromExcel = async (fileBuffer) => {
 
     if (!rawData || rawData.length === 0) {
       throw new Error("File Excel không có dữ liệu hoặc định dạng không đúng");
-sticky
     }
 
     // Chuyển đổi tên cột tiếng Việt sang tiếng Anh
@@ -175,6 +194,7 @@ sticky
           class_size: row.class_size ? parseInt(row.class_size) : null,
           status: ExcelUtils.cleanString(row.status) || 'Hoạt động',
           course_id: ExcelUtils.cleanString(row.course_id) || null,
+          program_id: ExcelUtils.cleanString(row.program_id) || null,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         };
@@ -189,6 +209,15 @@ sticky
           const course = await models.Course.findByPk(classData.course_id);
           if (!course) {
             results.errors.push({ row: rowIndex, class_id: classData.class_id, error: 'Mã khóa học không tồn tại' });
+            continue;
+          }
+        }
+
+        // Validate program_id nếu được cung cấp
+        if (classData.program_id) {
+          const program = await models.Program.findByPk(classData.program_id);
+          if (!program) {
+            results.errors.push({ row: rowIndex, class_id: classData.class_id, error: 'Mã chương trình không tồn tại' });
             continue;
           }
         }
@@ -212,6 +241,7 @@ sticky
           class_id: newClass.class_id,
           class_name: newClass.class_name,
           course_id: newClass.course_id,
+          program_id: newClass.program_id,
         });
 
       } catch (error) {
@@ -259,6 +289,7 @@ export const importClassesFromJson = async (classesData) => {
           class_size: classData.class_size ? parseInt(classData.class_size) : null,
           status: classData.status ? classData.status.toString().trim() : 'Hoạt động',
           course_id: classData.course_id ? classData.course_id.toString().trim() : null,
+          program_id: classData.program_id ? classData.program_id.toString().trim() : null,
         };
 
         if (cleanedData.class_name && cleanedData.class_name.length > 50) {
@@ -271,6 +302,15 @@ export const importClassesFromJson = async (classesData) => {
           const course = await models.Course.findByPk(cleanedData.course_id);
           if (!course) {
             results.errors.push({ index, class_id: cleanedData.class_id, error: 'Mã khóa học không tồn tại' });
+            continue;
+          }
+        }
+
+        // Validate program_id nếu được cung cấp
+        if (cleanedData.program_id) {
+          const program = await models.Program.findByPk(cleanedData.program_id);
+          if (!program) {
+            results.errors.push({ index, class_id: cleanedData.class_id, error: 'Mã chương trình không tồn tại' });
             continue;
           }
         }
@@ -312,7 +352,7 @@ export const importClassesFromJson = async (classesData) => {
  */
 export const validateExcelTemplate = (fileBuffer) => {
   const requiredColumns = ['Mã lớp học'];
-  const optionalColumns = ['Tên lớp học', 'Sĩ số', 'Trạng thái', 'Mã khóa học'];
+  const optionalColumns = ['Tên lớp học', 'Sĩ số', 'Trạng thái', 'Mã khóa học', 'Mã chương trình'];
   const validation = ExcelUtils.validateTemplate(fileBuffer, requiredColumns, optionalColumns);
 
   if (!validation.valid) {
