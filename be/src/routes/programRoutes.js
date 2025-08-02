@@ -8,6 +8,7 @@ import {
     deleteProgramController,
     importProgramsFromJSONController,
     downloadTemplateController,
+    getProgramCreateScheduleController
     // listProgramsController, // Thêm controller cho chức năng liệt kê có bộ lọc
     // importProgramsFromExcelController, // Thêm controller nếu có nhập từ Excel
 } from "../controllers/programController.js"; // Đảm bảo import .js extension
@@ -27,6 +28,18 @@ programRoutes.get(
     "/getAll",
     authenticateAndAuthorize(["admin", "training_officer"]),
     getAllProgramsController
+);
+
+/**
+ * @route GET /api/programs/getProgramCreateSchedule
+ * @desc Lấy danh sách chương trình đào tạo với cấu trúc để tạo thời khóa biểu.
+ * Yêu cầu quyền admin hoặc training_officer.
+ * @access Private
+ */
+programRoutes.get(
+    "/getProgramCreateSchedule",
+    authenticateAndAuthorize(["admin", "training_officer"]),
+    getProgramCreateScheduleController
 );
 
 /**

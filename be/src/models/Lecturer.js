@@ -110,6 +110,11 @@ const Lecturer = (sequelize) => {
       foreignKey: 'lecturer_id',
       as: 'lecturerAssignments'
     });
+    // Mối quan hệ một-nhiều với bảng BusySlot
+    LecturerModel.hasMany(models.BusySlot, {
+      foreignKey: 'lecturer_id',
+      as: 'busy_slots'
+    });
   };
 
   return LecturerModel;

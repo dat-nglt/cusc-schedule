@@ -11,7 +11,7 @@ import breakscheduleRoutes from "./breakscheduleRoutes.js";
 import classRoutes from "./classRoutes.js";
 import createScheduleRouter from "./scheduleRoute.js";
 import roomRoutes from "./roomRoutes.js";
-
+import busyslotRoutes from "./busyslotRoutes.js";
 
 const router = express.Router();
 
@@ -27,7 +27,9 @@ const setupRoutes = (app, io) => {
   app.use("/api/subjects", subjectRoutes);
   app.use("/api/breakschedules", breakscheduleRoutes);
   app.use("/api/classes", classRoutes);
+  app.use("/api/busyslots", busyslotRoutes);
   app.use("/api/rooms", roomRoutes);
+
   app.use("/api/schedule", createScheduleRouter(io));
 };
 

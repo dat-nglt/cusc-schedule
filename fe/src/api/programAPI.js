@@ -67,3 +67,13 @@ export const importProgramsAPI = async (jsonData) => {
     throw error;
   }
 };
+
+export const getProgramCreateScheduleAPI = async () => {
+  try {
+    const response = await axiosInstance.get("/api/programs/getProgramCreateSchedule");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching program for schedule creation:", error);
+    throw error;
+  }
+};

@@ -3,7 +3,7 @@ import models from "../models/index.js";
 import ExcelUtils from "../utils/ExcelUtils.js";
 import { Op } from "sequelize";
 
-const { Lecturer, Account, sequelize, Subject, LecturerAssignment } = models;
+const { Lecturer, Account, sequelize, Subject, LecturerAssignment, BusySlot } = models;
 /**
  * Lấy tất cả giảng viên.
  * @returns {Promise<Array>} Danh sách tất cả giảng viên.
@@ -22,6 +22,11 @@ export const getAllLecturersService = async () => {
         as: 'subjects',
         through: { attributes: [] }, // Loại bỏ attributes của bảng trung gian
         attributes: ['subject_id', 'subject_name']
+      },
+      {
+        model: BusySlot,
+        as: 'busy_slots',
+        attributes: ['day', 'slot_id']
       }
       ]
     });

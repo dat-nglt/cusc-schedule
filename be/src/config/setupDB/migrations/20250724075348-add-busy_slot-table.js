@@ -22,13 +22,7 @@ export default {
       },
       slot_id: {
         type: Sequelize.STRING(30),
-        allowNull: false,
-        references: {
-          model: 'time_slots',
-          key: 'slot_id'
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE'
+        allowNull: true,
       },
       day: {
         type: Sequelize.STRING(10),

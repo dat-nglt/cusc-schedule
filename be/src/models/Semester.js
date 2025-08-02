@@ -54,12 +54,14 @@ const Semester = (sequelize) => {
     // Một học kỳ thuộc về một chương trình đào tạo
     SemesterModel.belongsTo(models.Program, {
       foreignKey: 'program_id',
+      as: 'program', // Add alias for consistency
       onUpdate: 'CASCADE',       // Khi cập nhật khóa ngoại ở bảng chương trình
       onDelete: "CASCADE", // Xóa học kỳ nếu chương trình bị xóa
     });
     // Một học kỳ có nhiều học phần
     SemesterModel.hasMany(models.Subject, {
       foreignKey: "semester_id",
+      as: "subjects", // Add alias for consistency
       onUpdate: "CASCADE",
       onDelete: "CASCADE",
     });

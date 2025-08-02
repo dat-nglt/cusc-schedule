@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { use, useState } from 'react';
 import {
     Box,
 } from '@mui/material';
@@ -12,6 +12,10 @@ import ProgressModal from './ProgressModal';
 import { toast } from 'react-toastify';
 
 import { getAllRoomAPI } from '../../api/roomAPI';
+import { getProgramCreateScheduleAPI } from '../../api/programAPI';
+import { getAllLecturersAPI } from '../../api/lecturerAPI';
+import { getClassesAPI } from '../../api/classAPI';
+import { getAllSubjectsAPI } from '../../api/subjectAPI';
 
 
 
@@ -26,6 +30,65 @@ const Dashboard = () => {
     const [error, setError] = useState('');
     const [gaLogs, setGaLogs] = useState([]);
     const [progress, setProgress] = useState(0);
+
+    const [rooms, setRooms] = useState([]);
+    const [programs, setPrograms] = useState([]);
+    const [lecturers, setLecturers] = useState([]);
+    const [classes, setClasses] = useState([]);
+    const [formTest, setFormTest] = useState(null);
+    const days_of_week = useState({
+        "days_of_week": [
+            "Mon",
+            "Tue",
+            "Wed",
+            "Thu",
+            "Fri",
+            "Sat"
+        ]
+    });
+    const timeslot = useState({
+        "time_slots": [
+            {
+                "slot_id": "S1",
+                "start": "07:00",
+                "end": "09:00",
+                "type": "morning"
+            },
+            {
+                "slot_id": "S2",
+                "start": "09:00",
+                "end": "11:00",
+                "type": "morning"
+            },
+            {
+                "slot_id": "C1",
+                "start": "13:00",
+                "end": "15:00",
+                "type": "afternoon"
+            },
+            {
+                "slot_id": "C2",
+                "start": "15:00",
+                "end": "17:00",
+                "type": "afternoon"
+            },
+            {
+                "slot_id": "T1",
+                "start": "17:30",
+                "end": "19:30",
+                "type": "evening"
+            },
+            {
+                "slot_id": "T2",
+                "start": "19:30",
+                "end": "21:30",
+                "type": "evening"
+            }
+        ],
+    });
+
+    console.log("SCHEDULE:", formTest)
+
 
     const actualInputData = {
         "classes": [
@@ -268,6 +331,59 @@ const Dashboard = () => {
         ]
     }
 
+    const fetchRooms = async () => {
+        try {
+            const response = await getAllRoomAPI();
+            if (!response) {
+                throw new Error("Không có dữ liệu phòng học");
+            }
+            setRooms(response.data);
+        } catch (error) {
+            console.error("Error fetching rooms:", error);
+        }
+    };
+    const fetchPrograms = async () => {
+        try {
+            const response = await getProgramCreateScheduleAPI();
+            if (!response) {
+                throw new Error("Không có dữ liệu chương trình học");
+            }
+            setPrograms(response.data);
+        } catch (error) {
+            console.error("Error fetching programs:", error);
+        }
+    };
+    const fetchLecturers = async () => {
+        try {
+            const response = await getAllLecturersAPI();
+            if (!response) {
+                throw new Error("Không có dữ liệu giảng viên");
+            }
+            setLecturers(response.data);
+        } catch (error) {
+            console.error("Error fetching lecturers:", error);
+        }
+    };
+    const fetchClasses = async () => {
+        try {
+            const response = await getClassesAPI();
+            if (!response) {
+                throw new Error("Không có dữ liệu lớp học");
+            }
+            setClasses(response.data);
+        } catch (error) {
+            console.error("Error fetching classes:", error);
+        }
+    };
+
+    // Gọi các hàm fetch dữ liệu khi component mount
+    useEffect(() => {
+        fetchRooms();
+        fetchPrograms();
+        fetchLecturers();
+        fetchClasses();
+    }, []);
+
     useEffect(() => {
         // Lắng nghe các sự kiện trạng thái từ backend
         socket.on('ga_status', (data) => {
@@ -334,18 +450,79 @@ const Dashboard = () => {
         };
     }, []); // Dependency array: đảm bảo lắng nghe lại khi socket thay đổi (thường không thay đổi)
 
+    // Transform API data to required format
+    const transformDataToFormTest = () => {
+        if (!rooms.length || !programs.length || !lecturers.length || !classes.length) {
+            return null;
+        }
+
+        // Transform classes
+        const transformedClasses = classes.map(cls => ({
+            class_id: cls.class_id,
+            size: cls.class_size,
+            program_id: cls.program_id || "CT001" // Default program if null
+        }));
+
+        // Transform rooms
+        const transformedRooms = rooms.map(room => ({
+            room_id: room.room_id,
+            type: room.type === "Lý thuyết" ? "theory" : "practice",
+            capacity: room.capacity
+        }));
+
+        // Transform lecturers
+        const transformedLecturers = lecturers.map(lecturer => ({
+            lecturer_id: lecturer.lecturer_id,
+            lecturer_name: lecturer.name,
+            subjects: lecturer.subjects.map(subject => subject.subject_id),
+            busy_slots: lecturer.busy_slots || []
+        }));
+
+        // Transform programs
+        const transformedPrograms = programs.map(program => ({
+            program_id: program.program_id,
+            duration: parseInt(program.duration),
+            semesters: program.semesters.map(semester => ({
+                semester_id: semester.semester_id,
+                subjects: semester.subjects.map(subject => ({
+                    subject_id: subject.subject_id,
+                    name: subject.name,
+                    theory_hours: subject.theory_hours,
+                    practice_hours: subject.practice_hours
+                }))
+            }))
+        }));
+
+        return {
+            classes: transformedClasses,
+            rooms: transformedRooms,
+            lecturers: transformedLecturers,
+            programs: transformedPrograms,
+            time_slots: timeslot[0].time_slots,
+            days_of_week: days_of_week[0].days_of_week
+        };
+    };
+
+    // Update formTest when API data is loaded
+    useEffect(() => {
+        const transformed = transformDataToFormTest();
+        if (transformed) {
+            setFormTest(transformed);
+        }
+    }, [rooms, programs, lecturers, classes]);
+
     const handleGenerateTimetable = async () => {
         setStatusMessage('Đang gửi yêu cầu tạo thời khóa biểu...');
         setDownloadableFiles([]);
         setError('');
         setGaLogs([]);
         setProgress(0);
-        setOpen(true); // Mở thanh tiến độ ngay lập tức
+        setOpen(true);
 
         try {
-            // Gọi API để bắt đầu quá trình tạo lịch
-            // Backend của bạn sẽ gửi các cập nhật qua Socket.IO sau đó
-            const response = await generateSchedule(actualInputData);
+            // Use formTest data if available, otherwise use actualInputData as fallback
+            const inputData = formTest || actualInputData;
+            const response = await generateSchedule(inputData);
 
             if (response.aborted) { // Xử lý nếu promise được resolve với trạng thái hủy
                 toast.info("Yêu cầu tạo thời khóa biểu đã được hủy.");
