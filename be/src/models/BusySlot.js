@@ -46,7 +46,7 @@ const BusySlot = (sequelize) => {
             foreignKey: "lecturer_id",
             as: "lecturer",
             onUpdate: "CASCADE",
-            onDelete: "SET NULL", // Xóa khe thời gian bận nếu giảng viên bị xóa
+            onDelete: "SET NULL", // Xóa khe thời gian bận nếu giảng viên bị xó
         });
     };
 
@@ -54,3 +54,4 @@ const BusySlot = (sequelize) => {
 };
 
 export default BusySlot;
+

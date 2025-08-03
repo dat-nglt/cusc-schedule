@@ -48,37 +48,44 @@ const Lecturer = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
-
-    // Danh sách trạng thái để lọc
     const statuses = ['Đang giảng dạy', 'Tạm nghỉ', 'Đã nghỉ việc', 'Nghỉ hưu'];
 
     const fetchLecturers = async () => {
+        setLoading(true);
+        setError(null);
         try {
-            setLoading(true);
             const response = await getAllLecturersAPI();
-            if (!response) {
-                console.error("Không có dữ liệu giảng viên");
-                return;
+            if (response && response.data) {
+                setLecturers(response.data);
+            } else {
+                setLecturers([]);
             }
-            setLecturers(response.data);
         } catch (error) {
             console.error("Lỗi khi tải danh sách giảng viên:", error);
+            setError("Không thể tải danh sách giảng viên. Vui lòng thử lại.");
+            toast.error('Lỗi khi tải danh sách giảng viên. Vui lòng thử lại.');
         } finally {
             setLoading(false);
-            setError('');
         }
     };
 
     const fetchSubjects = async () => {
+        setLoading(true);
+        setError(null); // Đặt lại trạng thái lỗi
         try {
             const response = await getAllSubjectsAPI();
-            if (!response) {
-                console.error("Không có dữ liệu môn học");
-                return;
+            if (response && response.data) {
+                setSubjects(response.data);
+            } else {
+                setSubjects([]);
+                console.warn("API không trả về dữ liệu môn học.");
             }
-            setSubjects(response.data);
-        } catch (error) {
-            console.error("Lỗi khi tải danh sách môn học:", error);
+        } catch (err) {
+            console.error("Lỗi khi tải danh sách môn học:", err);
+            setError("Đã xảy ra lỗi khi tải dữ liệu. Vui lòng thử lại.");
+            setSubjects([]); // Xóa dữ liệu cũ khi có lỗi
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -114,21 +121,20 @@ const Lecturer = () => {
     };
 
     // Hàm mở modal chỉnh sửa
-    const handleEditLecturer = async (id) => {
+    const handleEditLecturer = (id) => {
         try {
-            setLoading(true);
-            const response = await getLecturerByIdAPI(id);
-            if (response && response.data) {
-                setEditedLecturer(response.data);
-                setOpenEditModal(true);
+            const lecturerToEdit = lecturers.find(lecturer => lecturer.lecturer_id === id);
+
+            if (lecturerToEdit) {
+                setEditedLecturer({ ...lecturerToEdit });
+                setOpenEditModal(true); // Mở modal chỉnh sửa
+            } else {
+                console.error("Không tìm thấy giảng viên để chỉnh sửa với ID:", id);
+                setError("Không tìm thấy thông tin giảng viên này.");
             }
-        } catch (error) {
-            console.error("Lỗi khi lấy thông tin giảng viên để chỉnh sửa:", error);
-            setError("Không thể lấy thông tin giảng viên để chỉnh sửa. Vui lòng thử lại.");
-            toast.error('Lỗi khi lấy thông tin giảng viên để chỉnh sửa. Vui lòng thử lại.');
-        } finally {
-            setLoading(false);
-            setError('');
+        } catch (err) {
+            console.error("Lỗi khi chuẩn bị chỉnh sửa giảng viên:", err);
+            setError("Đã xảy ra lỗi hệ thống. Vui lòng thử lại.");
         }
     };
 
@@ -140,46 +146,57 @@ const Lecturer = () => {
 
     // Hàm lưu thay đổi sau khi chỉnh sửa
     const handleSaveEditedLecturer = async (updatedLecturer) => {
+        setLoading(true);
+        setError(null); // Đặt lại trạng thái lỗi
         try {
-            setLoading(true);
             const response = await updateLecturerAPI(updatedLecturer.lecturer_id, updatedLecturer);
+
             if (response && response.data) {
+                setLecturers(prevLecturers =>
+                    prevLecturers.map(lecturer =>
+                        lecturer.lecturer_id === updatedLecturer.lecturer_id
+                            ? { ...lecturer, ...updatedLecturer } // Cập nhật đối tượng đã chỉnh sửa
+                            : lecturer // Giữ nguyên các đối tượng khác
+                    )
+                );
+                setOpenEditModal(false);
+                setEditedLecturer(null);
                 toast.success('Cập nhật giảng viên thành công!');
-                fetchLecturers(); // Tải lại danh sách giảng viên sau khi cập nhật thành công
+            } else {
+                throw new Error(response.message || 'Cập nhật thất bại');
             }
-        } catch (error) {
-            console.error("Lỗi khi cập nhật giảng viên:", error);
-            setError("Không thể cập nhật giảng viên. Vui lòng kiểm tra lại thông tin.");
-            toast.error('Cập nhật giảng viên thất bại! Vui lòng kiểm tra lại thông tin.');
+        } catch (err) {
+            console.error("Lỗi khi cập nhật giảng viên:", err.response.data.message);
+            setError(err.response.data.message);
+            toast.error(err.response.data.message);
         } finally {
             setLoading(false);
-            setError('');
         }
     };
+
 
     // Hàm xử lý thay đổi trang
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
 
-    // Hàm xử lý xem giảng viên
-    const handleViewLecturer = async (id) => {
+    const handleViewLecturer = (id) => {
         try {
-            setLoading(true);
-            const response = await getLecturerByIdAPI(id);
-            if (response && response.data) {
-                setSelectedLecturer(response.data);
-                setOpenDetail(true);
+            const lecturerFound = lecturers.find(lecturer => lecturer.lecturer_id === id);
+
+            if (lecturerFound) {
+                setSelectedLecturer(lecturerFound);
+                setOpenDetail(true); // Mở modal hoặc panel hiển thị chi tiết
+            } else {
+                console.error("Không tìm thấy giảng viên với ID:", id);
+                setError("Không tìm thấy thông tin giảng viên này.");
             }
-        } catch (error) {
-            console.error("Lỗi khi lấy thông tin chi tiết giảng viên:", error);
-            setError("Không thể lấy thông tin chi tiết giảng viên. Vui lòng thử lại.");
-            toast.error('Lỗi khi lấy thông tin chi tiết giảng viên. Vui lòng thử lại.');
-        } finally {
-            setLoading(false);
-            setError('');
+        } catch (err) {
+            console.error("Lỗi khi xem chi tiết giảng viên:", err);
+            setError("Đã xảy ra lỗi hệ thống.");
         }
     };
+
 
     // Hàm xử lý xóa giảng viên
     const handleDeleteLecturer = (id) => {

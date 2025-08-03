@@ -2,17 +2,13 @@ import express from "express";
 import { authenticateAndAuthorize } from "../middleware/authMiddleware.js";
 import {
   getAllLecturersController,
-  getLecturerByIdController,
+  // getLecturerByIdController,
   createLecturerController,
   updateLecturerController,
   deleteLecturerController,
   importLecturersFromJsonController,
   downloadTemplateController,
-  // listLecturersController, // Thêm controller cho chức năng liệt kê có bộ lọc
-  // importLecturersController, // Thêm controller nếu có nhập từ Excel
 } from "../controllers/lecturerController.js";
-// Nếu có tính năng import từ Excel, hãy thêm dòng này:
-// import { uploadExcel } from '../middleware/excelMiddleware.js';
 
 const lecturerRoutes = express.Router();
 
@@ -34,11 +30,11 @@ lecturerRoutes.get(
  * Yêu cầu quyền admin hoặc training_officer.
  * @access Private
  */
-lecturerRoutes.get(
-  "/:id",
-  authenticateAndAuthorize(["admin", "training_officer"]),
-  getLecturerByIdController
-);
+// lecturerRoutes.get(
+//   "/:id",
+//   authenticateAndAuthorize(["admin", "training_officer"]),
+//   getLecturerByIdController
+// );
 
 /**
  * @route POST /api/lecturers/create

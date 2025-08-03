@@ -1,4 +1,5 @@
-import models from '../models/index.js'; // Giả định bạn có models đã được export từ index.js
+import models from "../models/index.js"; // Giả định bạn có models đã được export từ index.js
+import logger from "../utils/logger.js";
 
 const { Subject } = models; // Lấy model Subject từ models
 /**
@@ -11,8 +12,8 @@ export const getAllSubjectsService = async () => {
     const subjects = await Subject.findAll();
     return subjects;
   } catch (error) {
-    console.error("Lỗi khi lấy danh sách môn học:", error);
-    throw error;
+    logger.error("Lỗi khi truy vấn danh sách môn học từ CSDL:", error);
+    throw new Error("Đã xảy ra lỗi hệ thống khi lấy danh sách môn học.");
   }
 };
 
@@ -25,7 +26,7 @@ export const getAllSubjectsService = async () => {
 export const getSubjectByIdService = async (subjectId) => {
   try {
     const subject = await Subject.findOne({
-      where: { subject_id: subjectId }
+      where: { subject_id: subjectId },
     });
     return subject;
   } catch (error) {
@@ -60,10 +61,12 @@ export const createSubjectService = async (subjectData) => {
 export const updateSubjectService = async (subjectId, subjectData) => {
   try {
     const [updated] = await Subject.update(subjectData, {
-      where: { subject_id: subjectId }
+      where: { subject_id: subjectId },
     });
     if (updated) {
-      const updatedSubject = await Subject.findOne({ where: { subject_id: subjectId } });
+      const updatedSubject = await Subject.findOne({
+        where: { subject_id: subjectId },
+      });
       return updatedSubject;
     }
     throw new Error("Không tìm thấy môn học");
@@ -100,14 +103,14 @@ export const deleteSubjectService = async (subjectId) => {
 export const getSubjectsBySemesterService = async (semesterId) => {
   try {
     const subjects = await Subject.findAll({
-      where: { semester_id: semesterId }
+      where: { semester_id: semesterId },
     });
     return subjects;
   } catch (error) {
     console.error("Lỗi khi lấy môn học theo học kỳ:", error);
     throw error;
   }
-}
+};
 
 /**
  * Nhập dữ liệu môn học từ JSON (dùng cho tính năng xem trước).
@@ -123,7 +126,7 @@ export const importSubjectsFromJSONService = async (subjectsData) => {
     const results = {
       success: [],
       errors: [],
-      total: subjectsData.length
+      total: subjectsData.length,
     };
 
     // Validate và tạo môn học cho từng item
@@ -136,76 +139,89 @@ export const importSubjectsFromJSONService = async (subjectsData) => {
         if (!subjectData.subject_id) {
           results.errors.push({
             index: index,
-            subject_id: subjectData.subject_id || 'N/A',
-            error: 'Mã môn học là bắt buộc'
+            subject_id: subjectData.subject_id || "N/A",
+            error: "Mã môn học là bắt buộc",
           });
           continue;
         }
         if (!subjectData.subject_name) {
           results.errors.push({
             index: index,
-            subject_id: subjectData.subject_id || 'N/A',
-            error: 'Tên môn học là bắt buộc'
+            subject_id: subjectData.subject_id || "N/A",
+            error: "Tên môn học là bắt buộc",
           });
           continue;
         }
         if (!subjectData.credit) {
           results.errors.push({
             index: index,
-            subject_id: subjectData.subject_id || 'N/A',
-            error: 'Số tín chỉ là bắt buộc'
+            subject_id: subjectData.subject_id || "N/A",
+            error: "Số tín chỉ là bắt buộc",
           });
           continue;
         }
-
 
         // Clean và format data (chuyển sang kiểu chuỗi và xóa khoảng cách thừa ở đầu chuỗi và cuối chuỗi)
         const cleanedData = {
           subject_id: subjectData.subject_id.toString().trim(),
           subject_name: subjectData.subject_name.toString().trim(),
           credit: subjectData.credit ? parseInt(subjectData.credit) : null, // Chuyển đổi sang số nguyên nếu có
-          theory_hours: subjectData.theory_hours ? parseInt(subjectData.theory_hours) : null,
-          practice_hours: subjectData.practice_hours ? parseInt(subjectData.practice_hours) : null,
-          semester_id: subjectData.semester_id ? subjectData.semester_id.toString().trim() : null,
-          status: subjectData.status || 'Hoạt động' // Mặc định là 'hoạt động' nếu không có giá trị,
+          theory_hours: subjectData.theory_hours
+            ? parseInt(subjectData.theory_hours)
+            : null,
+          practice_hours: subjectData.practice_hours
+            ? parseInt(subjectData.practice_hours)
+            : null,
+          semester_id: subjectData.semester_id
+            ? subjectData.semester_id.toString().trim()
+            : null,
+          status: subjectData.status || "Hoạt động", // Mặc định là 'hoạt động' nếu không có giá trị,
         };
 
         // Validate credit, theory_hours, practice_hours
-        if (cleanedData.credit !== null && (isNaN(cleanedData.credit) || cleanedData.credit < 0)) {
+        if (
+          cleanedData.credit !== null &&
+          (isNaN(cleanedData.credit) || cleanedData.credit < 0)
+        ) {
           results.errors.push({
             index: index,
             subject_id: cleanedData.subject_id,
-            error: 'Số tín chỉ phải là số nguyên dương'
+            error: "Số tín chỉ phải là số nguyên dương",
           });
           continue;
         }
-        if (cleanedData.theory_hours !== null && (isNaN(cleanedData.theory_hours) || cleanedData.theory_hours < 0)) {
+        if (
+          cleanedData.theory_hours !== null &&
+          (isNaN(cleanedData.theory_hours) || cleanedData.theory_hours < 0)
+        ) {
           results.errors.push({
             index: index,
             subject_id: cleanedData.subject_id,
-            error: 'Số giờ lý thuyết phải là số nguyên dương'
+            error: "Số giờ lý thuyết phải là số nguyên dương",
           });
           continue;
         }
-        if (cleanedData.practice_hours !== null && (isNaN(cleanedData.practice_hours) || cleanedData.practice_hours < 0)) {
+        if (
+          cleanedData.practice_hours !== null &&
+          (isNaN(cleanedData.practice_hours) || cleanedData.practice_hours < 0)
+        ) {
           results.errors.push({
             index: index,
             subject_id: cleanedData.subject_id,
-            error: 'Số giờ thực hành phải là số nguyên dương'
+            error: "Số giờ thực hành phải là số nguyên dương",
           });
           continue;
         }
-
 
         // Kiểm tra subject_id đã tồn tại chưa
         const existingSubject = await Subject.findOne({
-          where: { subject_id: cleanedData.subject_id }
+          where: { subject_id: cleanedData.subject_id },
         });
         if (existingSubject) {
           results.errors.push({
             index: index,
             subject_id: cleanedData.subject_id,
-            error: 'Mã môn học đã tồn tại'
+            error: "Mã môn học đã tồn tại",
           });
           continue;
         }
@@ -213,18 +229,17 @@ export const importSubjectsFromJSONService = async (subjectsData) => {
         // Tạo Subject mới
         const newSubject = await Subject.create(cleanedData);
         results.success.push(newSubject);
-
       } catch (error) {
         results.errors.push({
           index: index,
-          subject_id: subjectData.subject_id || 'N/A',
-          error: error.message || 'Lỗi không xác định'
+          subject_id: subjectData.subject_id || "N/A",
+          error: error.message || "Lỗi không xác định",
         });
       }
     }
     return results;
   } catch (error) {
-    console.error('Lỗi khi nhập môn học từ JSON:', error);
+    console.error("Lỗi khi nhập môn học từ JSON:", error);
     throw error;
   }
 };
