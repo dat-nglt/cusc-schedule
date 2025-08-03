@@ -172,21 +172,21 @@ const AddRoomModal = ({ open, onClose, onAddRoom, existingRooms, apiError, loadi
   const handleImportExcel = async (e) => {
     const file = e.target.files[0];
     if (!file) {
-      setLocalError('Vui lòng chọn một file Excel!');
+      setLocalError('Vui lòng chọn một file Excel');
       return;
     }
 
     const validExtensions = ['.xlsx', '.xls'];
     const fileExtension = file.name.slice(file.name.lastIndexOf('.')).toLowerCase();
     if (!validExtensions.includes(fileExtension)) {
-      setLocalError('Chỉ hỗ trợ file Excel (.xlsx, .xls)!');
-      e.target.value = ''; // Clear the file input
+      setLocalError('Chỉ hỗ trợ file Excel (.xlsx, .xls)');
+      e.target.value = '';
       return;
     }
 
     try {
       setLocalError('');
-      setFileUploaded(true); // Indicate that a file has been chosen
+      setFileUploaded(true);
 
       const arrayBuffer = await file.arrayBuffer();
       const workbook = XLSX.read(arrayBuffer, { type: 'array' });
@@ -196,78 +196,42 @@ const AddRoomModal = ({ open, onClose, onAddRoom, existingRooms, apiError, loadi
       const rawData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
       if (rawData.length < 2) {
-        setLocalError('File Excel phải có ít nhất 2 dòng (header + dữ liệu)!');
+        setLocalError('File Excel phải có ít nhất 2 dòng (header + dữ liệu)');
         e.target.value = '';
         setFileUploaded(false);
         return;
       }
 
       const headers = rawData[0];
-      // Updated expected headers based on the Room object properties
-      const expectedHeaderMapping = {
-        'Mã phòng học': 'room_id',
-        'Tên phòng học': 'room_name',
-        'Vị trí': 'location',
-        'Sức chứa': 'capacity',
-        'Loại phòng học': 'type',
-        'Trạng thái': 'status',
-        'Ghi chú': 'note',
-      };
-      const expectedHeaders = Object.keys(expectedHeaderMapping);
+      const dataRows = rawData.slice(1);
 
-      const lowerCaseHeaders = headers.map(h => String(h).toLowerCase().trim());
-      const lowerCaseExpectedHeaders = expectedHeaders.map(h => String(h).toLowerCase().trim());
+      const jsonData = dataRows.map(row => {
+        const obj = {};
+        headers.forEach((header, index) => {
+          obj[header] = row[index] || '';
+        });
+        return obj;
+      });
 
-      // Check if all expected headers are present (case-insensitive)
-      if (!lowerCaseExpectedHeaders.every(expectedH => lowerCaseHeaders.includes(expectedH))) {
-        setLocalError(`Định dạng cột không đúng! Cần các cột: ${expectedHeaders.join(', ')}`);
+      const processedData = processExcelDataRoom(jsonData, existingRooms);
+
+      if (processedData.length === 0) {
+        setLocalError('Không có dữ liệu hợp lệ nào trong file Excel');
         e.target.value = '';
         setFileUploaded(false);
         return;
       }
 
-      const dataRows = rawData.slice(1);
-      const jsonData = dataRows.map(row => {
-        const obj = {};
-        headers.forEach((header, index) => {
-          // Map original header to correct formData key
-          const mappedKey = expectedHeaderMapping[String(header).trim()];
-          if (mappedKey) {
-            obj[mappedKey] = row[index] || '';
-          }
-        });
-        return obj;
-      });
-
-      // Assuming processExcelDataRoom handles validation and returns an array of valid/invalid/duplicate items
-      const { validRooms, duplicatedRooms, invalidRows } = processExcelDataRoom(jsonData, existingRooms);
-
-      // Set preview data for the PreviewRoomModal
-      if (validRooms.length > 0) {
-        setPreviewData(validRooms);
-        setShowPreview(true);
-        onClose(); // Close the current modal to open the preview
-      } else if (duplicatedRooms.length > 0 || invalidRows.length > 0) {
-        let errorMessage = '';
-        if (duplicatedRooms.length > 0) {
-          errorMessage += `Các mã phòng học đã tồn tại và bị bỏ qua: ${duplicatedRooms.join(', ')}. `;
-        }
-        if (invalidRows.length > 0) {
-          errorMessage += `Các hàng không hợp lệ (thiếu dữ liệu, giá trị không đúng, hoặc sức chứa/trạng thái không hợp lệ) ở dòng: ${invalidRows.join(', ')}.`;
-        }
-        setLocalError(errorMessage);
-        setFileUploaded(false);
-      } else {
-        setLocalError('Không có phòng học hợp lệ nào để thêm từ file Excel!');
-        setFileUploaded(false);
-      }
+      setPreviewData(processedData);
+      setShowPreview(true);
+      onClose();
 
     } catch (error) {
       console.error('Error reading Excel file:', error);
-      setLocalError(`Lỗi khi đọc file Excel: ${error.message}. Vui lòng kiểm tra định dạng file!`);
+      setLocalError('Lỗi khi đọc file Excel. Vui lòng kiểm tra lại');
       setFileUploaded(false);
     } finally {
-      e.target.value = ''; // Always clear file input
+      e.target.value = '';
     }
   };
 

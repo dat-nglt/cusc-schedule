@@ -248,6 +248,7 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
             });
 
             const processedData = processExcelDataStudent(jsonData, existingStudents);
+            onClose();
 
             if (processedData.length === 0) {
                 setLocalError('Không có dữ liệu hợp lệ nào trong file Excel');

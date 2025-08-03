@@ -1,6 +1,6 @@
 import models from '../models/index.js';
 
-const { sequelize, Program } = models;
+const { sequelize, Program, Semester, Subject } = models;
 /**
  * Lấy tất cả các chương trình đào tạo.
  * @returns {Promise<Array>} Danh sách tất cả các chương trình.
@@ -165,6 +165,49 @@ export const importProgramsFromJSONService = async (programsData) => {
     return results;
   } catch (error) {
     console.error("Lỗi khi nhập chương trình đào tạo từ JSON:", error);
+    throw error;
+  }
+};
+
+/**
+ * Lấy danh sách chương trình đào tạo với cấu trúc để tạo thời khóa biểu.
+ * @returns {Promise<Object>} Danh sách chương trình với cấu trúc semesters và subjects.
+ * @throws {Error} Nếu có lỗi khi lấy dữ liệu.
+ */
+export const getProgramCreateScheduleService = async () => {
+  try {
+    const programs = await Program.findAll({
+      attributes: ['program_id', 'training_duration'],
+      include: [{
+        model: Semester,
+        as: 'semesters',
+        attributes: ['semester_id'],
+        include: [{
+          model: Subject,
+          as: 'subjects',
+          attributes: ['subject_id', 'subject_name', 'theory_hours', 'practice_hours']
+        }]
+      }]
+    });
+
+    // Chuyển đổi sang cấu trúc JSON yêu cầu
+    const formattedPrograms = programs.map(program => ({
+      program_id: program.program_id,
+      duration: program.training_duration,
+      semesters: program.semesters.map(semester => ({
+        semester_id: semester.semester_id,
+        subjects: semester.subjects.map(subject => ({
+          subject_id: subject.subject_id,
+          name: subject.subject_name,
+          theory_hours: subject.theory_hours,
+          practice_hours: subject.practice_hours
+        }))
+      }))
+    }));
+
+    return formattedPrograms;
+  } catch (error) {
+    console.error('Lỗi khi lấy danh sách chương trình để tạo thời khóa biểu:', error);
     throw error;
   }
 };

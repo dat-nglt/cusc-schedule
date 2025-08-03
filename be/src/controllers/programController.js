@@ -5,6 +5,7 @@ import {
   updateProgramService,
   deleteProgramService,
   importProgramsFromJSONService, // Giả định có thể có thêm importProgramsFromExcel nếu bạn muốn nhập từ Excel
+  getProgramCreateScheduleService
 } from "../services/programService.js";
 import { APIResponse } from "../utils/APIResponse.js"; // Sử dụng APIResponse nhất quán
 import ExcelUtils from "../utils/ExcelUtils.js"; // Được sử dụng để tạo template Excel
@@ -137,7 +138,7 @@ export const updateProgramController = async (req, res) => {
       500,
       null,
       error.message ||
-        "Đã xảy ra lỗi khi cập nhật thông tin chương trình đào tạo."
+      "Đã xảy ra lỗi khi cập nhật thông tin chương trình đào tạo."
     );
   }
 };
@@ -265,5 +266,26 @@ export const downloadTemplateController = async (req, res) => {
       error
     );
     return APIResponse(res, 500, null, "Đã xảy ra lỗi khi tạo template.");
+  }
+};
+
+
+export const getProgramCreateScheduleController = async (req, res) => {
+  try {
+    const programs = await getProgramCreateScheduleService();
+    return APIResponse(
+      res,
+      200,
+      programs,
+      "Lấy danh sách chương trình đào tạo thành công."
+    );
+  } catch (error) {
+    console.error("Lỗi khi lấy danh sách chương trình đào tạo:", error);
+    return APIResponse(
+      res,
+      500,
+      null,
+      error.message || "Đã xảy ra lỗi khi lấy danh sách chương trình đào tạo."
+    );
   }
 };

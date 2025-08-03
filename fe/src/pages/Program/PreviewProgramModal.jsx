@@ -66,6 +66,7 @@ export default function PreviewProgramModal({ open, onClose, previewData, fetchP
                 setTimeout(() => {
                     onClose(); // Đóng modal sau khi cập nhật
                     setImportMessage('');
+
                 }, 1500);
             } else {
                 setImportError(response.data?.message || 'Có lỗi xảy ra khi thêm dữ liệu!');

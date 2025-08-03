@@ -48,7 +48,7 @@ const Subject = (sequelize) => {
       timestamps: true,              // Tự động thêm created_at và updated_at
       createdAt: 'created_at',
       updatedAt: 'updated_at',
-      
+
 
     }
   );
@@ -58,6 +58,7 @@ const Subject = (sequelize) => {
     // Mỗi môn học thuộc về một học kỳ
     SubjectModel.belongsTo(models.Semester, {
       foreignKey: 'semester_id',
+      as: 'semester', // Changed from 'semesters' to 'semester' for singular naming
       onUpdate: 'CASCADE',
       onDelete: 'SET NULL', // Nếu học kỳ bị xóa, môn học sẽ không bị xóa mà chỉ đặt semester_id thành NULL
     });

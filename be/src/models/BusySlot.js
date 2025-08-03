@@ -1,54 +1,52 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes } from "sequelize";
 
+// Định nghĩa model BusySlot - Đại diện cho khe thời gian bận của giảng viên
 const BusySlot = (sequelize) => {
-    const BusySlotModel = sequelize.define('BusySlot', {
-        busy_slot_id: {
-            type: DataTypes.INTEGER,
-            autoIncrement: true,
-            primaryKey: true,
-            allowNull: false
+    const BusySlotModel = sequelize.define(
+        "BusySlot",
+        {
+            // ID khe thời gian bận (khóa chính)
+            busy_slot_id: {
+                type: DataTypes.INTEGER,
+                autoIncrement: true,
+                primaryKey: true,
+                allowNull: false,
+            },
+            // Mã giảng viên (khóa ngoại)
+            lecturer_id: {
+                type: DataTypes.STRING(30),
+                allowNull: false,
+                references: {
+                    model: "lecturers",
+                    key: "lecturer_id",
+                },
+            },
+            // Mã khe thời gian
+            slot_id: {
+                type: DataTypes.STRING(30),
+                allowNull: true,
+            },
+            // Ngày trong tuần (VD: "Tue", "Thu")
+            day: {
+                type: DataTypes.STRING(10),
+                allowNull: false,
+            },
         },
-        lecturer_id: {
-            type: DataTypes.STRING(30),
-            allowNull: false
-        },
-        slot_id: {
-            type: DataTypes.STRING(30),
-            allowNull: false
-        },
-        day: {
-            type: DataTypes.STRING(10),
-            allowNull: false,
-            comment: 'Day of week (e.g., "Tue", "Thu")'
+        {
+            tableName: "busy_slots", // Tên bảng trong CSDL
+            timestamps: true, // Tự động thêm created_at và updated_at
+            createdAt: "createdAt", // Đặt tên cột createdAt
+            updatedAt: "updatedAt", // Đặt tên cột updatedAt
         }
-    }, {
-        tableName: 'busy_slots',
-        timestamps: true,
-        createdAt: 'created_at',
-        updatedAt: 'updated_at',
-        indexes: [
-            {
-                unique: true,
-                fields: ['lecturer_id', 'slot_id', 'day']
-            }
-        ]
-    });
+    );
 
+    // Khai báo mối quan hệ (association)
     BusySlotModel.associate = (models) => {
-        // Quan hệ với Lecturer
         BusySlotModel.belongsTo(models.Lecturer, {
-            foreignKey: 'lecturer_id',
-            as: 'lecturer',
-            onUpdate: 'CASCADE',
-            onDelete: 'CASCADE'
-        });
-
-        // Quan hệ với timeslot
-        BusySlotModel.belongsTo(models.TimeSlot, {
-            foreignKey: 'slot_id',
-            as: 'timeslot',
-            onUpdate: 'CASCADE',
-            onDelete: 'CASCADE'
+            foreignKey: "lecturer_id",
+            as: "lecturer",
+            onUpdate: "CASCADE",
+            onDelete: "SET NULL", // Xóa khe thời gian bận nếu giảng viên bị xó
         });
     };
 

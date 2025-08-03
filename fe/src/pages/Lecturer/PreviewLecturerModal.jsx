@@ -41,14 +41,14 @@ export default function PreviewLecturerModal({ open, onClose, previewData, fetch
       if (errors.length > 0) {
         errors = [errors[0]];
       } else {
-        // Kiểm tra nếu dòng có danh sách mã học phần
+        // Kiểm tra nếu dòng có danh sách mã môn giảng dạy
         if (row.subjectIds && row.subjectIds.length > 0) {
           const invalidSubjects = row.subjectIds.filter(subjectId => {
             return subjects && !subjects.some(subject => subject.subject_id === subjectId.trim());
           });
-          // Nếu có mã học phần không hợp lệ, tạo thông báo lỗi
+          // Nếu có mã môn giảng dạy không hợp lệ, tạo thông báo lỗi
           if (invalidSubjects.length > 0) {
-            errors = [`Mã học phần "${invalidSubjects.join(', ')}" không tồn tại trong hệ thống`];
+            errors = [`Mã môn giảng dạy "${invalidSubjects.join(', ')}" không tồn tại trong hệ thống`];
           }
         }
       }
@@ -172,8 +172,9 @@ export default function PreviewLecturerModal({ open, onClose, previewData, fetch
                       <TableCell>Mã GV</TableCell>
                       <TableCell>Họ tên</TableCell>
                       <TableCell>Email</TableCell>
+                      <TableCell>Giới tính</TableCell>
                       <TableCell>SĐT</TableCell>
-                      <TableCell>Học phần</TableCell>
+                      <TableCell>Mã môn giảng dạy</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -182,6 +183,7 @@ export default function PreviewLecturerModal({ open, onClose, previewData, fetch
                         <TableCell>{lecturer.lecturer_id}</TableCell>
                         <TableCell>{lecturer.name}</TableCell>
                         <TableCell>{lecturer.email}</TableCell>
+                        <TableCell>{lecturer.gender}</TableCell>
                         <TableCell>{lecturer.phone_number}</TableCell>
                         <TableCell>
                           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
@@ -224,7 +226,7 @@ export default function PreviewLecturerModal({ open, onClose, previewData, fetch
                       <TableCell>Họ tên</TableCell>
                       <TableCell>Email</TableCell>
                       <TableCell>SĐT</TableCell>
-                      <TableCell>Học phần</TableCell>
+                      <TableCell>môn giảng dạy</TableCell>
                       <TableCell>Lỗi</TableCell>
                     </TableRow>
                   </TableHead>

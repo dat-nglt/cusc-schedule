@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import {
     Dialog,
@@ -143,14 +144,14 @@ export default function AddSemesterModal({ open, onClose, onAddSemester, existin
     const handleImportExcel = async (e) => {
         const file = e.target.files[0];
         if (!file) {
-            setLocalError('Vui lòng chọn một file Excel.');
+            setLocalError('Vui lòng chọn một file Excel');
             return;
         }
 
         const validExtensions = ['.xlsx', '.xls'];
         const fileExtension = file.name.slice(file.name.lastIndexOf('.')).toLowerCase();
         if (!validExtensions.includes(fileExtension)) {
-            setLocalError('Chỉ hỗ trợ file Excel (.xlsx, .xls).');
+            setLocalError('Chỉ hỗ trợ file Excel (.xlsx, .xls)');
             e.target.value = '';
             return;
         }
@@ -163,44 +164,31 @@ export default function AddSemesterModal({ open, onClose, onAddSemester, existin
             const workbook = XLSX.read(arrayBuffer, { type: 'array' });
             const sheetName = workbook.SheetNames[0];
             const worksheet = workbook.Sheets[sheetName];
+
             const rawData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
             if (rawData.length < 2) {
-                setLocalError('File Excel phải có ít nhất 2 dòng (header + dữ liệu).');
+                setLocalError('File Excel phải có ít nhất 2 dòng (header + dữ liệu)');
                 e.target.value = '';
                 setFileUploaded(false);
                 return;
             }
 
             const headers = rawData[0];
-            const expectedHeader = ['Mã học kỳ', 'Tên học kỳ', 'Mã chương trình', 'Ngày bắt đầu', 'Ngày kết thúc', 'Trạng thái'];
-
-            const lowerCaseHeaders = headers.map(h => String(h).toLowerCase().trim());
-            const lowerCaseExpectedHeader = expectedHeader.map(h => String(h).toLowerCase().trim());
-
-            if (!lowerCaseExpectedHeader.every(expectedH => lowerCaseHeaders.includes(expectedH))) {
-                setLocalError(`Định dạng cột không đúng! Cần các cột: ${expectedHeader.join(', ')}`);
-                e.target.value = '';
-                setFileUploaded(false);
-                return;
-            }
-
             const dataRows = rawData.slice(1);
+
             const jsonData = dataRows.map(row => {
                 const obj = {};
                 headers.forEach((header, index) => {
-                    obj[String(header).trim()] = row[index] || '';
+                    obj[header] = row[index] || '';
                 });
                 return obj;
             });
 
-            // Assuming processExcelDataSemester handles all validations and formatting
             const processedData = processExcelDataSemester(jsonData, existingSemesters, programs);
 
-            const validPreviewData = processedData.filter(item => item.errors.length === 0);
-
-            if (validPreviewData.length === 0) {
-                setLocalError('Không có dữ liệu hợp lệ nào trong file Excel.');
+            if (processedData.length === 0) {
+                setLocalError('Không có dữ liệu hợp lệ nào trong file Excel');
                 e.target.value = '';
                 setFileUploaded(false);
                 return;
@@ -208,10 +196,11 @@ export default function AddSemesterModal({ open, onClose, onAddSemester, existin
 
             setPreviewData(processedData);
             setShowPreview(true);
+            onClose();
 
         } catch (error) {
             console.error('Error reading Excel file:', error);
-            setLocalError('Lỗi khi đọc file Excel. Vui lòng kiểm tra lại.');
+            setLocalError('Lỗi khi đọc file Excel. Vui lòng kiểm tra lại');
             setFileUploaded(false);
         } finally {
             e.target.value = '';

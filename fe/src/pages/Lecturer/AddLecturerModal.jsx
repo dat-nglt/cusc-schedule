@@ -723,6 +723,7 @@ const AddLecturerModal = ({ open, onClose, onAddLecturer, existingLecturers, err
                 previewData={previewData}
                 fetchLecturers={fetchLecturers}
                 onAddLecturer={onAddLecturer}
+                subjects={subjects}
             />
         </>
     );

@@ -46,8 +46,14 @@ const Program = (sequelize) => {
   ProgramModel.associate = (models) => {
     ProgramModel.hasMany(models.Semester, {
       foreignKey: "program_id",
+      as: "semesters", // Add the alias to match expected naming
       onUpdate: "CASCADE",
       onDelete: "CASCADE", // Xóa tất cả học kỳ liên quan nếu chương trình bị xóa
+    });
+    ProgramModel.hasMany(models.Classes, {
+      foreignKey: "program_id",
+      onUpdate: "CASCADE",
+      onDelete: "SET NULL", // Nếu xóa chương trình, để null trường programs_id trong bảng Classes
     });
   };
 
