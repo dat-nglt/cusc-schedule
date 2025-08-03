@@ -20,6 +20,16 @@ import ExcelUtils from "../utils/ExcelUtils.js"; // Được sử dụng để t
 export const getAllSubjectsController = async (req, res) => {
   try {
     const subjects = await getAllSubjectsService();
+
+    if (!subjects || subjects.length === 0) {
+      return APIResponse(
+        res,
+        200,
+        [],
+        "Hiện không có môn học nào được tìm thấy."
+      );
+    }
+
     return APIResponse(res, 200, subjects, "Lấy danh sách môn học thành công.");
   } catch (error) {
     console.error("Lỗi khi lấy danh sách môn học:", error);
@@ -27,7 +37,7 @@ export const getAllSubjectsController = async (req, res) => {
       res,
       500,
       null,
-      error.message || "Đã xảy ra lỗi khi lấy danh sách môn học."
+      "Đã xảy ra lỗi hệ thống. Vui lòng thử lại sau."
     );
   }
 };

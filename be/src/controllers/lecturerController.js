@@ -18,54 +18,29 @@ import ExcelUtils from "../utils/ExcelUtils.js"; // Được sử dụng để t
  */
 export const getAllLecturersController = async (req, res) => {
   try {
-    const alllecturersData = await getAllLecturersService();
-    if (!alllecturersData) {
-      return APIResponse(res, 404, null, "Không tìm thấy giảng viên nào.");
+    const lecturers = await getAllLecturersService();
+    if (!lecturers.length) {
+      return APIResponse(
+        res,
+        200,
+        [],
+        "Không có giảng viên nào được tìm thấy."
+      );
     }
-    return APIResponse(
-      res,
-      200,
-      alllecturersData,
-      "Lấy danh sách giảng viên thành công"
-    );
-  } catch (error) {
-    console.error("Lỗi khi lấy danh sách giảng viên:", error);
-    return APIResponse(
-      res,
-      500,
-      null,
-      error.message || "Đã xảy ra lỗi khi lấy danh sách giảng viên"
-    );
-  }
-};
 
-/**
- * @route GET /api/lecturers/:id
- * @desc Lấy thông tin chi tiết của một giảng viên bằng ID.
- * @param {Object} req - Đối tượng Request của Express (chứa `req.params.id`).
- * @param {Object} res - Đối tượng Response của Express.
- * @access Private (admin, training_officer)
- */
-export const getLecturerByIdController = async (req, res) => {
-  const lecturerID = req.params.id;
-  try {
-    const lecturerByIdData = await getLecturerByIdService(lecturerID);
-    if (!lecturerByIdData) {
-      return APIResponse(res, 404, null, "Không tìm thấy giảng viên.");
-    }
     return APIResponse(
       res,
       200,
-      lecturerByIdData,
-      "Lấy thông tin giảng viên thành công."
+      lecturers,
+      "Lấy danh sách giảng viên thành công."
     );
   } catch (error) {
-    console.error(`Lỗi khi lấy thông tin giảng viên với ID ${id}:`, error);
+    console.error("Lỗi trong getAllLecturersController:", error);
     return APIResponse(
       res,
       500,
       null,
-      error.message || "Đã xảy ra lỗi khi lấy thông tin giảng viên."
+      error.message || "Đã xảy ra lỗi máy chủ."
     );
   }
 };
@@ -78,17 +53,37 @@ export const getLecturerByIdController = async (req, res) => {
  * @access Private (admin, training_officer)
  */
 export const createLecturerController = async (req, res) => {
-  const lecturerData = req.body;
+  const { lecturer_id, email, name, ...restData } = req.body;
+
+  if (!lecturer_id || !email || !name) {
+    return APIResponse(
+      res,
+      400,
+      null,
+      "Mã giảng viên, email và tên là các trường bắt buộc."
+    );
+  }
+
+  const lecturerData = { lecturer_id, email, name, ...restData };
+
   try {
     const lecturer = await createLecturerService(lecturerData);
+
     return APIResponse(res, 201, lecturer, "Tạo giảng viên thành công.");
   } catch (error) {
-    console.error("Lỗi khi tạo giảng viên:", error);
+    console.error("Lỗi khi tạo giảng viên:", error.message);
+
+    if (
+      error.message.includes("đã tồn tại") ||
+      error.message.includes("không tồn tại")
+    ) {
+      return APIResponse(res, 400, null, error.message);
+    }
     return APIResponse(
       res,
       500,
       null,
-      error.message || "Đã xảy ra lỗi khi tạo giảng viên."
+      "Đã xảy ra lỗi hệ thống khi tạo giảng viên."
     );
   }
 };
@@ -120,12 +115,18 @@ export const updateLecturerController = async (req, res) => {
       "Cập nhật thông tin giảng viên thành công."
     );
   } catch (error) {
-    console.error(`Lỗi khi cập nhật giảng viên với ID ${id}:`, error);
+    console.error(`Lỗi khi cập nhật giảng viên với ID ${id}:`, error.message);
+    if (
+      error.message.includes("không tìm thấy") ||
+      error.message.includes("Email đã tồn tại")
+    ) {
+      return APIResponse(res, 400, null, error.message);
+    }
     return APIResponse(
       res,
       500,
       null,
-      error.message || "Đã xảy ra lỗi khi cập nhật thông tin giảng viên."
+      "Đã xảy ra lỗi hệ thống khi cập nhật thông tin giảng viên."
     );
   }
 };
