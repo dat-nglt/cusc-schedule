@@ -8,7 +8,7 @@ import {
   deleteBusySlotController,
   importBusySlotsFromJSONController,
   downloadTemplateController,
-} from "../controllers/busyslotController.js";
+} from "../controllers/busySlotController.js";
 
 const busySlotRoutes = express.Router();
 

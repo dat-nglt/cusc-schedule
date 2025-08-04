@@ -28,6 +28,7 @@ import DeleteCourseModal from './DeleteCourseModal';
 import useResponsive from '../../hooks/useResponsive';
 import CourseTable from './CourseTable';
 import { getCoursesAPI, getCourseByIdAPI, addCourseAPI, updateCourseAPI, deleteCourseAPI } from '../../api/courseAPI';
+import TablePaginationLayout from '../../components/layout/TablePaginationLayout';
 
 // Hàm định dạng timestamp thành YYYY-MM-DD HH:MM:SS.sss+07
 const formatTimestamp = (timestamp) => {
@@ -334,14 +335,11 @@ const Course = () => {
                   handleEditCourse={handleEditCourse}
                   handleDeleteCourse={handleOpenDeleteModal}
                 />
-                <TablePagination
-                  component="div"
+                <TablePaginationLayout
                   count={filteredCourses.length}
                   page={page}
                   onPageChange={handleChangePage}
                   rowsPerPage={rowsPerPage}
-                  rowsPerPageOptions={[]}
-                  labelDisplayedRows={({ from, to, count }) => `${from}-${to} trên ${count}`}
                 />
               </>
             )}

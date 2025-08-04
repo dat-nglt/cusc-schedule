@@ -1,15 +1,19 @@
 import {
-    getAllClasses,
-    getClassById,
-    createClass,
-    updateClass,
-    deleteClass,
-    listClasses,
-    importClassesFromExcel,
-    importClassesFromJson,
-    validateExcelTemplate // Đổi tên hàm này để rõ ràng hơn nếu validate cho class template
+  getAllClassesService,
+  validateExcelTemplate,
+  getClassByIdService,
+  createClassService,
+  updateClassService,
+  deleteClassService,
+  listClassesService,
+  importClassesFromExcelService,
+  importClassesFromJsonService, // Đổi tên hàm này để rõ ràng hơn nếu validate cho class template
 } from "../services/classService.js";
-import { successResponse, errorResponse, APIResponse } from "../utils/APIResponse.js";
+import {
+  successResponse,
+  errorResponse,
+  APIResponse,
+} from "../utils/APIResponse.js";
 import ExcelUtils from "../utils/ExcelUtils.js";
 import path from "path";
 
@@ -21,13 +25,28 @@ import path from "path";
  * @access Private (admin, training_officer)
  */
 export const getAllClassesController = async (req, res) => {
-    try {
-        const classes = await getAllClasses();
-        return successResponse(res, classes, "Lấy tất cả lớp học thành công.");
-    } catch (error) {
-        console.error("Lỗi khi lấy tất cả lớp học:", error);
-        return errorResponse(res, error.message || "Lỗi khi lấy tất cả lớp học.", 500);
+  try {
+    const classes = await getAllClassesService();
+
+    if (!classes || classes.length === 0) {
+      return APIResponse(res, 200, [], "No classes found.");
     }
+
+    return APIResponse(
+      res,
+      200,
+      classes,
+      "Đã lấy thành công danh sách các lớp"
+    );
+  } catch (error) {
+    console.error("Error fetching all classes:", error);
+    return APIResponse(
+      res,
+      500,
+      null,
+      error.message || "An error occurred while retrieving all classes."
+    );
+  }
 };
 
 /**
@@ -38,18 +57,29 @@ export const getAllClassesController = async (req, res) => {
  * @access Private (admin, training_officer)
  */
 export const getClassByIdController = async (req, res) => {
-    try {
-        const { class_id } = req.params;
-        const classInstance = await getClassById(class_id);
+  const { class_id } = req.params;
+  try {
+    const classInstance = await getClassByIdService(class_id);
 
-        if (!classInstance) {
-            return errorResponse(res, "Không tìm thấy lớp học.", 404);
-        }
-        return successResponse(res, classInstance, "Lấy thông tin lớp học thành công.");
-    } catch (error) {
-        console.error(`Lỗi khi lấy lớp học với ID ${req.params.class_id}:`, error);
-        return errorResponse(res, error.message || "Lỗi khi lấy lớp học.", 500);
+    if (!classInstance) {
+      return APIResponse(res, 404, null, "Class not found.");
     }
+
+    return APIResponse(
+      res,
+      200,
+      classInstance,
+      "Class information retrieved successfully."
+    );
+  } catch (error) {
+    console.error(`Error fetching class with ID ${class_id}:`, error);
+    return APIResponse(
+      res,
+      500,
+      null,
+      "An unexpected error occurred while retrieving class information."
+    );
+  }
 };
 
 /**
@@ -60,23 +90,32 @@ export const getClassByIdController = async (req, res) => {
  * @access Private (admin, training_officer)
  */
 export const createClassController = async (req, res) => {
-    try {
-        const { class_id, class_name } = req.body;
+  const { class_id } = req.body;
 
-        // Kiểm tra validation cơ bản
-        if (!class_id) {
-            return errorResponse(res, "Mã lớp học là bắt buộc.", 400);
-        }
-        if (class_name && class_name.length > 50) {
-            return errorResponse(res, "Tên lớp học không được vượt quá 50 ký tự.", 400);
-        }
+  // Validation cơ bản ở controller
+  if (!class_id) {
+    return APIResponse(res, 400, null, "Mã lớp học là bắt buộc.");
+  }
 
-        const classInstance = await createClass(req.body);
-        return successResponse(res, classInstance, "Tạo lớp học thành công.", 201);
-    } catch (error) {
-        console.error("Lỗi khi tạo lớp học:", error);
-        return errorResponse(res, error.message || "Lỗi khi tạo lớp học. Dữ liệu không hợp lệ.", 400);
+  try {
+    const newClass = await createClassService(req.body);
+    return APIResponse(res, 201, newClass, "Tạo lớp học thành công.");
+  } catch (error) {
+    // Xử lý các lỗi cụ thể từ service
+    if (
+      error.message.includes("đã tồn tại") ||
+      error.message.includes("khóa học")
+    ) {
+      return APIResponse(res, 409, null, error.message); // Conflict
     }
+    if (error.message.includes("vượt quá")) {
+      return APIResponse(res, 400, null, error.message); // Bad Request
+    }
+
+    // Lỗi chung
+    console.error("Lỗi khi tạo lớp học:", error);
+    return APIResponse(res, 500, null, "Đã xảy ra lỗi khi tạo lớp học.");
+  }
 };
 
 /**
@@ -87,24 +126,37 @@ export const createClassController = async (req, res) => {
  * @access Private (admin, training_officer)
  */
 export const updateClassController = async (req, res) => {
-    try {
-        const { class_name } = req.body;
+  const { class_id } = req.params;
+  const { class_name } = req.body;
 
-        // Kiểm tra validation cơ bản
-        if (class_name && class_name.length > 50) {
-            return errorResponse(res, "Tên lớp học không được vượt quá 50 ký tự.", 400);
-        }
+  // Validation cơ bản ở controller
+  if (class_name && class_name.length > 50) {
+    return APIResponse(
+      res,
+      400,
+      null,
+      "Tên lớp học không được vượt quá 50 ký tự."
+    );
+  }
 
-        const classInstance = await updateClass(req.params.class_id, req.body);
+  try {
+    const updatedClass = await updateClassService(class_id, req.body);
 
-        if (!classInstance) {
-            return errorResponse(res, "Không tìm thấy lớp học để cập nhật.", 404);
-        }
-        return successResponse(res, classInstance, "Cập nhật lớp học thành công.");
-    } catch (error) {
-        console.error(`Lỗi khi cập nhật lớp học với ID ${req.params.class_id}:`, error);
-        return errorResponse(res, error.message || "Lỗi khi cập nhật lớp học. Dữ liệu không hợp lệ.", 400);
+    if (!updatedClass) {
+      return APIResponse(res, 404, null, "Không tìm thấy lớp học để cập nhật.");
     }
+
+    return APIResponse(res, 200, updatedClass, "Cập nhật lớp học thành công.");
+  } catch (error) {
+    // Xử lý các lỗi cụ thể từ service
+    if (error.message.includes("khóa học")) {
+      return APIResponse(res, 404, null, error.message); // Not Found
+    }
+
+    // Lỗi chung
+    console.error(`Lỗi khi cập nhật lớp học với ID ${class_id}:`, error);
+    return APIResponse(res, 500, null, "Đã xảy ra lỗi khi cập nhật lớp học.");
+  }
 };
 
 /**
@@ -115,18 +167,31 @@ export const updateClassController = async (req, res) => {
  * @access Private (admin, training_officer)
  */
 export const deleteClassController = async (req, res) => {
-    try {
-        const { class_id } = req.params;
-        const deletedCount = await deleteClass(class_id); // Giả định service trả về số lượng bản ghi bị xóa
+  const { class_id } = req.params;
+  try {
+    const isDeleted = await deleteClassService(class_id);
 
-        if (deletedCount === 0) {
-            return errorResponse(res, "Không tìm thấy lớp học để xóa.", 404);
-        }
-        return successResponse(res, null, "Xóa lớp học thành công.");
-    } catch (error) {
-        console.error(`Lỗi khi xóa lớp học với ID ${req.params.class_id}:`, error);
-        return errorResponse(res, error.message || "Lỗi khi xóa lớp học.", 400);
+    if (!isDeleted) {
+      return APIResponse(res, 404, null, "Không tìm thấy lớp học để xóa.");
     }
+
+    return APIResponse(res, 200, null, "Xóa lớp học thành công.");
+  } catch (error) {
+    // Xử lý các lỗi cụ thể từ service
+    // Ví dụ: lỗi do ràng buộc khóa ngoại
+    if (error.name === "SequelizeForeignKeyConstraintError") {
+      return APIResponse(
+        res,
+        409,
+        null,
+        "Không thể xóa lớp học vì có sinh viên hoặc dữ liệu liên quan."
+      );
+    }
+
+    // Lỗi chung
+    console.error(`Lỗi khi xóa lớp học với ID ${class_id}:`, error);
+    return APIResponse(res, 500, null, "Đã xảy ra lỗi khi xóa lớp học.");
+  }
 };
 
 /**
@@ -137,25 +202,32 @@ export const deleteClassController = async (req, res) => {
  * @access Private (admin, training_officer)
  */
 export const listClassesController = async (req, res) => {
-    try {
-        const { class_id, class_name, status, course_id } = req.query;
+  try {
+    const { class_id, class_name, status, course_id } = req.query;
 
-        // Xây dựng đối tượng filters
-        const filters = {
-            ...(class_id && { class_id }),
-            ...(class_name && { class_name }),
-            ...(status && { status }),
-            ...(course_id && { course_id }),
-        };
+    const filters = {
+      ...(class_id && { class_id }),
+      ...(class_name && { class_name }),
+      ...(status && { status }),
+      ...(course_id && { course_id }),
+    };
 
-        const classes = await listClasses(filters);
+    const classes = await listClassesService(filters);
 
-        // Sử dụng APIResponse để trả về nhất quán
-        return successResponse(res, classes, "Lấy danh sách lớp học thành công.");
-    } catch (error) {
-        console.error("Lỗi khi liệt kê lớp học:", error);
-        return errorResponse(res, error.message || "Lỗi khi liệt kê lớp học.", 500);
+    if (!classes || classes.length === 0) {
+      return APIResponse(res, 200, [], "Không tìm thấy lớp học nào.");
     }
+
+    return APIResponse(res, 200, classes, "Lấy danh sách lớp học thành công.");
+  } catch (error) {
+    console.error("Lỗi khi liệt kê lớp học:", error);
+    return APIResponse(
+      res,
+      500,
+      null,
+      "Đã xảy ra lỗi khi liệt kê danh sách lớp học."
+    );
+  }
 };
 
 /**
@@ -167,52 +239,44 @@ export const listClassesController = async (req, res) => {
  * @access Private (admin, training_officer)
  */
 export const importClassesController = async (req, res) => {
-    try {
-        if (!req.file) {
-            return APIResponse(res, 400, null, "Vui lòng chọn file Excel để import.");
-        }
-
-        const fileBuffer = req.file.buffer;
-
-        // Validate đuôi file
-        const allowedExtensions = ['.xlsx', '.xls'];
-        const fileExtension = path.extname(req.file.originalname).toLowerCase();
-
-        if (!allowedExtensions.includes(fileExtension)) {
-            return APIResponse(res, 400, null, "Chỉ chấp nhận file Excel (.xlsx, .xls).");
-        }
-
-        // Validate cấu trúc template Excel
-        // Đảm bảo `validateExcelTemplate` trong classService.js kiểm tra đúng cấu trúc cho Class
-        const templateValidation = validateExcelTemplate(fileBuffer);
-        if (!templateValidation.valid) {
-            return APIResponse(res, 400, null, templateValidation.error || "Cấu trúc template không hợp lệ. Vui lòng sử dụng template mẫu.");
-        }
-
-        // Tiến hành import dữ liệu từ Excel
-        const results = await importClassesFromExcel(fileBuffer);
-
-        const responseData = {
-            summary: {
-                total: results.total,
-                success: results.success.length,
-                errors: results.errors.length,
-            },
-            successRecords: results.success, // Các bản ghi được import thành công
-            errorRecords: results.errors, // Các bản ghi lỗi cùng với lý do
-        };
-
-        if (results.errors.length > 0) {
-            // Trả về mã 207 Multi-Status nếu có cả thành công và lỗi
-            return APIResponse(res, 207, responseData, `Import hoàn tất với ${results.success.length}/${results.total} bản ghi thành công.`);
-        } else {
-            // Trả về mã 200 OK nếu tất cả đều thành công
-            return APIResponse(res, 200, responseData, `Import thành công ${results.success.length} lớp học.`);
-        }
-    } catch (error) {
-        console.error("Lỗi khi import lớp học từ file Excel:", error);
-        return APIResponse(res, 500, null, error.message || "Đã xảy ra lỗi trong quá trình import file Excel.");
+  try {
+    if (!req.file) {
+      return APIResponse(res, 400, null, 'Vui lòng chọn file Excel để import.');
     }
+
+    const fileBuffer = req.file.buffer;
+    const fileExtension = path.extname(req.file.originalname).toLowerCase();
+    const allowedExtensions = ['.xlsx', '.xls'];
+
+    if (!allowedExtensions.includes(fileExtension)) {
+      return APIResponse(res, 400, null, 'Chỉ chấp nhận file Excel (.xlsx, .xls).');
+    }
+
+    const templateValidation = validateExcelTemplate(fileBuffer);
+    if (!templateValidation.valid) {
+      return APIResponse(res, 400, null, templateValidation.error || 'Cấu trúc template không hợp lệ. Vui lòng sử dụng template mẫu.');
+    }
+
+    const results = await importClassesFromExcelService(fileBuffer);
+    const { total, success, errors } = results;
+
+    const responseData = {
+      summary: { total, success: success.length, errors: errors.length },
+      successRecords: success,
+      errorRecords: errors,
+    };
+
+    if (errors.length > 0) {
+      const message = `Import hoàn tất với ${success.length}/${total} bản ghi thành công.`;
+      return APIResponse(res, 207, responseData, message);
+    } else {
+      const message = `Import thành công ${success.length} lớp học.`;
+      return APIResponse(res, 200, responseData, message);
+    }
+  } catch (error) {
+    console.error('Lỗi khi import lớp học từ file Excel:', error);
+    return APIResponse(res, 500, null, error.message || 'Đã xảy ra lỗi trong quá trình import file Excel.');
+  }
 };
 
 /**
@@ -223,21 +287,27 @@ export const importClassesController = async (req, res) => {
  * @access Private (admin, training_officer) - Hoặc Public tùy theo yêu cầu
  */
 export const downloadTemplateController = async (req, res) => {
-    try {
-        // Tạo buffer chứa template Excel. Đảm bảo ExcelUtils có hàm createClassTemplate.
-        const buffer = ExcelUtils.createClassTemplate();
+  try {
+    // Tạo buffer chứa template Excel. Đảm bảo ExcelUtils có hàm createClassTemplate.
+    const buffer = ExcelUtils.createClassTemplate();
 
-        // Thiết lập các headers để trình duyệt tải xuống file
-        res.setHeader('Content-Disposition', 'attachment; filename=lop_hoc_mau.xlsx');
-        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        res.setHeader('Content-Length', buffer.length); // Đặt Content-Length
+    // Thiết lập các headers để trình duyệt tải xuống file
+    res.setHeader(
+      "Content-Disposition",
+      "attachment; filename=lop_hoc_mau.xlsx"
+    );
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+    res.setHeader("Content-Length", buffer.length); // Đặt Content-Length
 
-        // Gửi buffer làm phản hồi
-        return res.send(buffer);
-    } catch (error) {
-        console.error("Lỗi khi tạo và tải xuống template lớp học:", error);
-        return APIResponse(res, 500, null, "Đã xảy ra lỗi khi tạo template.");
-    }
+    // Gửi buffer làm phản hồi
+    return res.send(buffer);
+  } catch (error) {
+    console.error("Lỗi khi tạo và tải xuống template lớp học:", error);
+    return APIResponse(res, 500, null, "Đã xảy ra lỗi khi tạo template.");
+  }
 };
 
 /**
@@ -248,38 +318,53 @@ export const downloadTemplateController = async (req, res) => {
  * @access Private (admin, training_officer)
  */
 export const importClassesFromJsonController = async (req, res) => {
-    try {
-        const { classes } = req.body;
+  try {
+    const { classes } = req.body;
 
-        // Kiểm tra dữ liệu đầu vào
-        if (!classes || !Array.isArray(classes)) {
-            return APIResponse(res, 400, null, "Dữ liệu lớp học không hợp lệ. Yêu cầu một mảng JSON.");
-        }
-
-        if (classes.length === 0) {
-            return APIResponse(res, 400, null, "Không có dữ liệu lớp học nào được cung cấp để import.");
-        }
-
-        // Tiến hành import dữ liệu từ JSON
-        const results = await importClassesFromJson(classes);
-
-        const responseData = {
-            success: true, // Chỉ ra rằng request được xử lý
-            imported: results.success, // Các bản ghi đã được import thành công (đối tượng)
-            errors: results.errors, // Các bản ghi lỗi cùng với lý do (đối tượng)
-            message: `Import thành công ${results.success.length} lớp học.`,
-        };
-
-        if (results.errors.length > 0) {
-            // Nếu có lỗi, cập nhật thông báo và trả về 207 Multi-Status
-            responseData.message = `Import hoàn tất với ${results.success.length}/${classes.length} bản ghi thành công.`;
-            return APIResponse(res, 207, responseData, responseData.message);
-        } else {
-            // Nếu không có lỗi, trả về 200 OK
-            return APIResponse(res, 200, responseData, responseData.message);
-        }
-    } catch (error) {
-        console.error("Lỗi khi import lớp học từ dữ liệu JSON:", error);
-        return APIResponse(res, 500, null, error.message || "Đã xảy ra lỗi trong quá trình import dữ liệu.");
+    // Kiểm tra dữ liệu đầu vào
+    if (!classes || !Array.isArray(classes)) {
+      return APIResponse(
+        res,
+        400,
+        null,
+        "Dữ liệu lớp học không hợp lệ. Yêu cầu một mảng JSON."
+      );
     }
+
+    if (classes.length === 0) {
+      return APIResponse(
+        res,
+        400,
+        null,
+        "Không có dữ liệu lớp học nào được cung cấp để import."
+      );
+    }
+
+    // Tiến hành import dữ liệu từ JSON
+    const results = await importClassesFromJsonService(classes);
+
+    const responseData = {
+      success: true, // Chỉ ra rằng request được xử lý
+      imported: results.success, // Các bản ghi đã được import thành công (đối tượng)
+      errors: results.errors, // Các bản ghi lỗi cùng với lý do (đối tượng)
+      message: `Import thành công ${results.success.length} lớp học.`,
+    };
+
+    if (results.errors.length > 0) {
+      // Nếu có lỗi, cập nhật thông báo và trả về 207 Multi-Status
+      responseData.message = `Import hoàn tất với ${results.success.length}/${classes.length} bản ghi thành công.`;
+      return APIResponse(res, 207, responseData, responseData.message);
+    } else {
+      // Nếu không có lỗi, trả về 200 OK
+      return APIResponse(res, 200, responseData, responseData.message);
+    }
+  } catch (error) {
+    console.error("Lỗi khi import lớp học từ dữ liệu JSON:", error);
+    return APIResponse(
+      res,
+      500,
+      null,
+      error.message || "Đã xảy ra lỗi trong quá trình import dữ liệu."
+    );
+  }
 };

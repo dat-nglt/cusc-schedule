@@ -30,6 +30,7 @@ import ClassTable from './ClassTable';
 import { getClassesAPI, getClassByIdAPI, addClassAPI, updateClassAPI, deleteClassAPI } from '../../api/classAPI';
 import { getCoursesAPI } from '../../api/courseAPI';
 import { getAllProgramsAPI } from '../../api/programAPI';
+import TablePaginationLayout from '../../components/layout/TablePaginationLayout';
 
 // Hàm định dạng timestamp thành YYYY-MM-DD HH:MM:SS.sss+07
 const formatTimestamp = (timestamp) => {
@@ -388,14 +389,11 @@ const Class = () => {
                   handleEditClass={handleEditClass}
                   handleDeleteClass={handleOpenDeleteModal}
                 />
-                <TablePagination
-                  component="div"
+                <TablePaginationLayout
                   count={filteredClasses.length}
                   page={page}
                   onPageChange={handleChangePage}
                   rowsPerPage={rowsPerPage}
-                  rowsPerPageOptions={[]}
-                  labelDisplayedRows={({ from, to, count }) => `${from}-${to} trên ${count}`}
                 />
               </>
             )}

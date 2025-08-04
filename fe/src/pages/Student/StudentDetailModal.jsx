@@ -142,7 +142,7 @@ export default function StudentDetailModal({ open, onClose, student }) {
                         <CompactDetailItem
                             icon={<ClassIcon fontSize="small" />}
                             label="Mã lớp"
-                            value={student.class}
+                            value={student.class_id}
                             color="warning"
                         />
                         <CompactDetailItem

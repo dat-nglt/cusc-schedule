@@ -33,6 +33,8 @@ import {
   updateBreakScheduleAPI,
   deleteBreakScheduleAPI,
 } from "../../api/breakScheduleAPI";
+import TablePaginationLayout from '../../components/layout/TablePaginationLayout';
+
 
 // Hàm định dạng timestamp thành YYYY-MM-DD HH:MM:SS.sss+07
 const formatTimestamp = (timestamp) => {
@@ -334,17 +336,13 @@ const BreakSchedule = () => {
                   handleDeleteBreakSchedule={handleDeleteBreakSchedule}
                   formatTimestamp={formatTimestamp} // Pass formatTimestamp to table
                 />
-                <TablePagination
-                  component="div"
+                <TablePaginationLayout
                   count={filteredBreakSchedules.length}
                   page={page}
                   onPageChange={handleChangePage}
                   rowsPerPage={rowsPerPage}
-                  rowsPerPageOptions={[]} // Keep consistent
-                  labelDisplayedRows={({ from, to, count }) =>
-                    `${from}-${to} trên ${count}`
-                  }
                 />
+
               </>
             )}
           </CardContent>

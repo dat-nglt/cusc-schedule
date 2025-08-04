@@ -28,6 +28,7 @@ import SemesterTable from './SemesterTable';
 import { getAllSemestersAPI, getSemesterByIdAPI, createSemesterAPI, updateSemesterAPI, deleteSemesterAPI } from '../../api/semesterAPI';
 import { toast } from 'react-toastify';
 import { getAllProgramsAPI } from '../../api/programAPI';
+import TablePaginationLayout from '../../components/layout/TablePaginationLayout';
 
 const Semester = () => {
     const { isSmallScreen, isMediumScreen } = useResponsive();
@@ -320,14 +321,11 @@ const Semester = () => {
                                     loading={loading}
                                     error={error}
                                 />
-                                <TablePagination
-                                    component="div"
+                                <TablePaginationLayout
                                     count={filteredSemesters.length}
                                     page={page}
                                     onPageChange={handleChangePage}
                                     rowsPerPage={rowsPerPage}
-                                    rowsPerPageOptions={[]}
-                                    labelDisplayedRows={({ from, to, count }) => `${from}-${to} trên ${count}`}
                                 />
                             </>
                         )}
