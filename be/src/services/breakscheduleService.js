@@ -2,6 +2,7 @@ import models from "../models/index.js";
 import { Op } from "sequelize";
 import ExcelUtils from "../utils/ExcelUtils.js";
 
+const { BreakSchedule } = models;
 /**
  * Lấy tất cả các lịch nghỉ.
  * @returns {Promise<Array>} Danh sách các lịch nghỉ.
@@ -57,7 +58,6 @@ export const createBreakScheduleService = async (data) => {
  * @returns {Promise<Object>} Lịch nghỉ đã được cập nhật.
  * @throws {Error} Nếu không tìm thấy lịch nghỉ.
  */
-import { BreakSchedule } from "../models"; // Giả sử đã import models
 
 export const updateBreakScheduleService = async (break_id, data) => {
   try {
@@ -82,7 +82,6 @@ export const updateBreakScheduleService = async (break_id, data) => {
  * @returns {Promise<number>} Số hàng đã bị xóa.
  * @throws {Error} Nếu không tìm thấy lịch nghỉ.
  */
-import { BreakSchedule } from "../models"; // Giả sử đã import models
 
 export const deleteBreakScheduleService = async (break_id) => {
   try {
@@ -267,51 +266,135 @@ export const importBreakSchedulesFromExcelService = async (fileBuffer) => {
  * @returns {Promise<Object>} Kết quả nhập khẩu bao gồm danh sách thành công và lỗi.
  * @throws {Error} Nếu dữ liệu JSON không hợp lệ hoặc lỗi trong quá trình nhập.
  */
-export const importBreakSchedulesFromJsonController = async (req, res) => {
-  const { breakSchedules } = req.body;
-
-  // Kiểm tra dữ liệu đầu vào
-  if (
-    !breakSchedules ||
-    !Array.isArray(breakSchedules) ||
-    breakSchedules.length === 0
-  ) {
-    return APIResponse(
-      res,
-      400,
-      null,
-      "Dữ liệu lịch nghỉ không hợp lệ hoặc rỗng. Yêu cầu một mảng JSON."
-    );
-  }
-
+export const importBreakSchedulesFromJsonService = async (breakSchedulesData) => {
   try {
-    const results = await importBreakSchedulesFromJsonService(breakSchedules);
-    const { success, errors } = results;
-    const totalRecords = breakSchedules.length;
+    if (!breakSchedulesData || !Array.isArray(breakSchedulesData)) {
+      throw new Error("Dữ liệu lịch nghỉ không hợp lệ");
+    }
 
-    const responseData = {
-      imported: success,
-      errors: errors,
-      total: totalRecords,
-      successCount: success.length,
-      errorCount: errors.length,
+    const results = {
+      success: [],
+      errors: [],
+      total: breakSchedulesData.length,
     };
 
-    if (errors.length > 0) {
-      const message = `Import hoàn tất với ${success.length}/${totalRecords} bản ghi thành công.`;
-      return APIResponse(res, 207, responseData, message); // Multi-Status
-    } else {
-      const message = `Import thành công ${totalRecords} lịch nghỉ.`;
-      return APIResponse(res, 200, responseData, message); // OK
+    // Duyệt qua từng item để validate và tạo lịch nghỉ
+    for (let i = 0; i < breakSchedulesData.length; i++) {
+      const breakScheduleData = breakSchedulesData[i];
+      const index = i + 1;
+
+      try {
+        // Validate các trường bắt buộc
+        if (
+          !breakScheduleData.break_id ||
+          !breakScheduleData.break_type ||
+          !breakScheduleData.break_start_date ||
+          !breakScheduleData.break_end_date
+        ) {
+          results.errors.push({
+            index: index,
+            break_id: breakScheduleData.break_id || "N/A",
+            error:
+              "Mã lịch nghỉ, Loại lịch nghỉ, Thời gian bắt đầu và Thời gian kết thúc là bắt buộc",
+          });
+          continue;
+        }
+
+        // Làm sạch và định dạng dữ liệu
+        const cleanedData = {
+          break_id: breakScheduleData.break_id.toString().trim(),
+          break_type: breakScheduleData.break_type.toString().trim(),
+          break_start_date: breakScheduleData.break_start_date,
+          break_end_date: breakScheduleData.break_end_date,
+          number_of_days: breakScheduleData.number_of_days
+            ? parseInt(breakScheduleData.number_of_days)
+            : null,
+          description: breakScheduleData.description
+            ? breakScheduleData.description.toString().trim()
+            : null,
+          status: breakScheduleData.status
+            ? breakScheduleData.status.toString().trim()
+            : "Hoạt động",
+        };
+
+        // Validate dates
+        const startDate = new Date(cleanedData.break_start_date);
+        const endDate = new Date(cleanedData.break_end_date);
+        const today = new Date();
+        const maxFutureDate = new Date(
+          today.getFullYear() + 5,
+          today.getMonth(),
+          today.getDate()
+        );
+
+        if (isNaN(startDate) || isNaN(endDate)) {
+          results.errors.push({
+            index: index,
+            break_id: cleanedData.break_id,
+            error: "Định dạng ngày không hợp lệ",
+          });
+          continue;
+        }
+
+        if (startDate > endDate) {
+          results.errors.push({
+            index: index,
+            break_id: cleanedData.break_id,
+            error: "Thời gian bắt đầu không được lớn hơn thời gian kết thúc",
+          });
+          continue;
+        }
+
+        if (endDate > maxFutureDate) {
+          results.errors.push({
+            index: index,
+            break_id: cleanedData.break_id,
+            error: "Thời gian kết thúc không được quá 5 năm trong tương lai",
+          });
+          continue;
+        }
+
+        // Validate number_of_days nếu được cung cấp
+        if (
+          cleanedData.number_of_days !== null &&
+          (isNaN(cleanedData.number_of_days) || cleanedData.number_of_days < 0)
+        ) {
+          results.errors.push({
+            index: index,
+            break_id: cleanedData.break_id,
+            error: "Số ngày phải là số dương",
+          });
+          continue;
+        }
+
+        // Kiểm tra break_id đã tồn tại chưa
+        const existingBreakSchedule = await BreakSchedule.findOne({
+          where: { break_id: cleanedData.break_id },
+        });
+        if (existingBreakSchedule) {
+          results.errors.push({
+            index: index,
+            break_id: cleanedData.break_id,
+            error: "Mã lịch nghỉ đã tồn tại",
+          });
+          continue;
+        }
+
+        // Tạo BreakSchedule mới
+        const newBreakSchedule = await BreakSchedule.create(cleanedData);
+        results.success.push(newBreakSchedule);
+      } catch (error) {
+        results.errors.push({
+          index: index,
+          break_id: breakScheduleData.break_id || "N/A",
+          error: error.message || "Lỗi không xác định",
+        });
+      }
     }
+    return results;
   } catch (error) {
-    console.error("Lỗi khi import lịch nghỉ từ dữ liệu JSON:", error);
-    return APIResponse(
-      res,
-      500,
-      null,
-      error.message || "Đã xảy ra lỗi trong quá trình import dữ liệu."
-    );
+    console.error("Lỗi khi nhập lịch nghỉ từ JSON:", error);
+    throw error;
   }
 };
 

@@ -70,8 +70,9 @@ export const getClassByIdService = async (class_id) => {
  * @param {number} [data.class_size] - Sĩ số lớp học.
  * @param {string} [data.status] - Trạng thái của lớp học.
  * @param {string} [data.course_id] - Mã khóa học liên kết.
+ * @param {string} [data.program_id] - Mã chương trình liên kết.
  * @returns {Promise<Object>} Lớp học đã được tạo.
- * @throws {Error} Nếu khóa học không tồn tại hoặc tên lớp học quá dài.
+ * @throws {Error} Nếu khóa học hoặc chương trình không tồn tại hoặc tên lớp học quá dài.
  */
 export const createClassService = async (data) => {
   try {
@@ -113,8 +114,9 @@ export const createClassService = async (data) => {
  * @param {number} [data.class_size] - Sĩ số lớp học mới.
  * @param {string} [data.status] - Trạng thái mới của lớp học.
  * @param {string} [data.course_id] - Mã khóa học mới liên kết.
+ * @param {string} [data.program_id] - Mã chương trình mới liên kết.
  * @returns {Promise<Object>} Lớp học đã được cập nhật.
- * @throws {Error} Nếu không tìm thấy lớp học, khóa học không tồn tại hoặc tên lớp học quá dài.
+ * @throws {Error} Nếu không tìm thấy lớp học, khóa học hoặc chương trình không tồn tại hoặc tên lớp học quá dài.
  */
 export const updateClassService = async (class_id, data) => {
   try {
@@ -170,7 +172,8 @@ export const deleteClassService = async (class_id) => {
  * @param {string} [filters.class_name] - Lọc theo tên lớp học (tìm kiếm gần đúng).
  * @param {string} [filters.status] - Lọc theo trạng thái.
  * @param {string} [filters.course_id] - Lọc theo ID khóa học (tìm kiếm gần đúng).
- * @returns {Promise<Array>} Danh sách các lớp học phù hợp với bộ lọc, kèm thông tin khóa học.
+ * @param {string} [filters.program_id] - Lọc theo ID chương trình (tìm kiếm gần đúng).
+ * @returns {Promise<Array>} Danh sách các lớp học phù hợp với bộ lọc, kèm thông tin khóa học và chương trình.
  * @throws {Error} Nếu có lỗi khi liệt kê dữ liệu.
  */
 export const listClassesService = async (filters = {}) => {

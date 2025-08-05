@@ -129,7 +129,7 @@ export default {
         [
           {
             id: adminAccountId,
-            email: "nguyenletandat.contact@gmail.com",
+            email: "ptvu2100761@student.ctuet.edu.vn",
             role: "admin",
             google_id: null,
             created_at: new Date(),

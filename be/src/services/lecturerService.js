@@ -4,7 +4,7 @@ import ExcelUtils from "../utils/ExcelUtils.js";
 import { Op } from "sequelize";
 import logger from "../utils/logger.js";
 
-const { Lecturer, Account, sequelize, Subject, LecturerAssignment } = models;
+const { Lecturer, Account, sequelize, Subject, LecturerAssignment, BusySlot } = models;
 /**
  * Lấy tất cả giảng viên.
  * @returns {Promise<Array>} Danh sách tất cả giảng viên.
@@ -13,19 +13,23 @@ const { Lecturer, Account, sequelize, Subject, LecturerAssignment } = models;
 export const getAllLecturersService = async () => {
   try {
     const alllecturersData = await Lecturer.findAll({
-      include: [
-        {
-          model: Account,
-          as: "account",
-          attributes: ["id", "email", "role", "status"],
-        },
-        {
-          model: Subject,
-          as: "subjects",
-          through: { attributes: [] }, // Loại bỏ attributes của bảng trung gian
-          attributes: ["subject_id", "subject_name"],
-        },
-      ],
+      include: [{
+        model: Account,
+        as: 'account',
+        attributes: ['id', 'email', 'role', 'status']
+      },
+      {
+        model: Subject,
+        as: 'subjects',
+        through: { attributes: [] }, // Loại bỏ attributes của bảng trung gian
+        attributes: ['subject_id', 'subject_name']
+      },
+      {
+        model: BusySlot,
+        as: 'busy_slots',
+        attributes: ['day', 'slot_id']
+      }
+      ]
     });
     return alllecturersData;
   } catch (error) {
