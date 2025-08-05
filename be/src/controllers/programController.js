@@ -6,7 +6,6 @@ import {
   deleteProgramService,
   importProgramsFromJSONService, // Giả định có thể có thêm importProgramsFromExcel nếu bạn muốn nhập từ Excel
   getProgramCreateScheduleService
-  getProgramCreateScheduleService
 } from "../services/programService.js";
 import { APIResponse } from "../utils/APIResponse.js"; // Sử dụng APIResponse nhất quán
 import ExcelUtils from "../utils/ExcelUtils.js"; // Được sử dụng để tạo template Excel
@@ -139,7 +138,6 @@ export const updateProgramController = async (req, res) => {
       500,
       null,
       error.message ||
-      "Đã xảy ra lỗi khi cập nhật thông tin chương trình đào tạo."
       "Đã xảy ra lỗi khi cập nhật thông tin chương trình đào tạo."
     );
   }

@@ -5,7 +5,6 @@ import {
   updateBreakScheduleService,
   deleteBreakScheduleService,
   listBreakSchedulesService,
-  importBreakSchedulesFromExcelService,
   importBreakSchedulesFromJsonService,
   validateBreakScheduleExcelTemplateService,
 } from "../services/breakscheduleService.js";
@@ -270,11 +269,11 @@ export const importBreakSchedulesController = async (req, res) => {
         400,
         null,
         templateValidation.error ||
-          "Cấu trúc template Excel không hợp lệ. Vui lòng sử dụng template mẫu."
+        "Cấu trúc template Excel không hợp lệ. Vui lòng sử dụng template mẫu."
       );
     }
 
-    const results = await importBreakSchedulesFromExcelService(fileBuffer);
+    const results = await importBreakSchedulesFromJsonService(fileBuffer);
     const { total, success, errors } = results;
 
     const responseData = {
@@ -336,9 +335,7 @@ export const downloadBreakScheduleTemplateController = async (req, res) => {
  * @param {Object} res - Đối tượng Response của Express.
  * @access Private (admin, training_officer)
  */
-export const importBreakSchedulesFromJsonService = async (
-  breakSchedulesData
-) => {
+export const importBreakSchedulesFromJsonController = async (breakSchedulesData) => {
   if (!breakSchedulesData || !Array.isArray(breakSchedulesData)) {
     throw new Error("Dữ liệu lịch nghỉ không hợp lệ.");
   }
