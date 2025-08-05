@@ -27,6 +27,7 @@ import useResponsive from '../../hooks/useResponsive';
 import ProgramTable from './ProgramTable';
 import { getAllProgramsAPI, getProgramByIdAPI, createProgramAPI, updateProgramAPI, deleteProgramAPI } from '../../api/programAPI';
 import { toast } from 'react-toastify';
+import TablePaginationLayout from '../../components/layout/TablePaginationLayout';
 
 const Program = () => {
     const { isSmallScreen, isMediumScreen } = useResponsive();
@@ -304,14 +305,11 @@ const Program = () => {
                                     loading={loading}
                                     error={error}
                                 />
-                                <TablePagination
-                                    component="div"
+                                <TablePaginationLayout
                                     count={filteredPrograms.length}
                                     page={page}
                                     onPageChange={handleChangePage}
                                     rowsPerPage={rowsPerPage}
-                                    rowsPerPageOptions={[]}
-                                    labelDisplayedRows={({ from, to, count }) => `${from}-${to} trên ${count}`}
                                 />
                             </>
                         )}

@@ -28,6 +28,7 @@ import SubjectTable from './SubjectTable';
 import { getAllSubjectsAPI, getSubjectByIdAPI, createSubjectAPI, updateSubjectAPI, deleteSubjectAPI } from '../../api/subjectAPI';
 import { getAllSemestersAPI } from '../../api/semesterAPI';
 import { toast } from 'react-toastify'; // Thêm import cho toast thông báo
+import TablePaginationLayout from '../../components/layout/TablePaginationLayout';
 
 
 const Subject = () => {
@@ -327,14 +328,11 @@ const Subject = () => {
                                     loading={loading}
                                     error={error}
                                 />
-                                <TablePagination
-                                    component="div"
+                                <TablePaginationLayout
                                     count={filteredSubjects.length}
                                     page={page}
                                     onPageChange={handleChangePage}
                                     rowsPerPage={rowsPerPage}
-                                    rowsPerPageOptions={[]}
-                                    labelDisplayedRows={({ from, to, count }) => `${from}-${to} trên ${count}`}
                                 />
                             </>
                         )}

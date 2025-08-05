@@ -4,7 +4,6 @@ import {
     Typography,
     Card,
     CardContent,
-    TablePagination,
     TextField,
     Select,
     MenuItem,
@@ -28,6 +27,7 @@ import StudentTable from './StudentTable';
 import { getAllStudentsAPI, getStudentByIdAPI, createStudentAPI, updateStudentAPI, deleteStudentAPI } from '../../api/studentAPI';
 import { toast } from 'react-toastify';
 import { getClassesAPI } from '../../api/classAPI';
+import TablePaginationLayout from '../../components/layout/TablePaginationLayout';
 const Student = () => {
     const { isSmallScreen, isMediumScreen } = useResponsive();
     const theme = useTheme();
@@ -55,33 +55,41 @@ const Student = () => {
     const statuses = ['Đang học', 'Đã nghỉ học', 'Đã tốt nghiệp', 'Bảo lưu'];
 
     const fetchStudents = async () => {
+        setLoading(true);
+        setError(null);
         try {
-            setLoading(true);
             const response = await getAllStudentsAPI();
-            if (!response) {
-                console.error("Không có dữ liệu học viên");
-                return;
+            if (response && response.data) {
+                setStudents(response.data);
+            } else {
+                setStudents([]);
             }
-            setStudents(response.data)
         } catch (error) {
             console.error("Lỗi khi tải danh sách học viên:", error);
+            setError(error.response?.data?.message || "Không thể tải danh sách học viên. Vui lòng thử lại.");
+            toast.error(error.response.data.message || "Không thể tải danh sách học viên. Vui lòng thử lại.");
         } finally {
             setLoading(false);
         }
     };
 
     const fetchClasses = async () => {
+        setLoading(true);
+        setError(null); // Đặt lại lỗi mỗi khi fetch
         try {
             const response = await getClassesAPI();
-            if (!response) {
-                console.error("Không có dữ liệu lớp học");
-                return;
+
+            if (response && response.data) {
+                setClasses(response.data);
+            } else {
+                console.error("No class data found or invalid response format.");
+                setClasses([]); // Đảm bảo state là mảng rỗng khi không có dữ liệu
+                setError("Không có dữ liệu lớp học.");
             }
-            setClasses(response.data);
         } catch (error) {
-            console.error("Lỗi khi tải danh sách lớp học:", error);
-        }
-        finally {
+            console.error("Lấy dữ liệu lớp học không thành công:", error.response?.data?.message);
+            setError(error.response?.data?.message || "Lỗi khi tải danh sách lớp học. Vui lòng thử lại.");
+        } finally {
             setLoading(false);
         }
     };
@@ -98,21 +106,30 @@ const Student = () => {
 
     // Hàm thêm học viên mới
     const handleAddNewStudent = async (newStudent) => {
+        setLoading(true);
+        setError(null);
         try {
-            setLoading(true);
             const response = await createStudentAPI(newStudent);
             if (response && response.data) {
                 toast.success('Thêm học viên thành công!');
-                fetchStudents(); // Tải lại danh sách học viên sau khi thêm thành công
+                await fetchStudents(); // Tải lại danh sách học viên sau khi thêm thành công
+            }
+            else {
+                const errorMessage = response?.data?.message || "Không thể thêm học viên. Vui lòng thử lại.";
+                setError(errorMessage);
+                toast.error(errorMessage);
             }
         } catch (error) {
-            console.error("Lỗi khi thêm học viên:", error);
-            setError("Không thể thêm học viên. Vui lòng kiểm tra lại thông tin.");
-            toast.error('Thêm học viên thất bại! Vui lòng kiểm tra lại thông tin.');
+            const errorMessage = error.response?.data?.message || "Không thể thêm học viên. Vui lòng thử lại.";
+            console.error("Lỗi khi thêm học viên:", errorMessage);
+            setError(errorMessage);
+            toast.error(errorMessage);
         } finally {
             setLoading(false);
+            setOpenAddModal(false); // Đóng modal sau khi thêm thành công
+            setEditedStudent(null); // Đặt lại state editedStudent để tránh lỗi khi mở modal chỉnh sửa sau này
         }
-    };
+    }
 
     // Hàm đóng modal thêm học viên
     const handleCloseAddModal = () => {
@@ -121,18 +138,30 @@ const Student = () => {
 
     // Hàm mở modal chỉnh sửa
     const handleEditStudentModal = async (id) => {
+        
+        setLoading(true);
+        setError(null);
         try {
-            setLoading(true);
-            const response = await getStudentByIdAPI(id);
-            if (response && response.data) {
-                setEditedStudent(response.data);
+            const studentToEdit = filteredStudents.find((s) => s.student_id === id);
+            if (studentToEdit) {
+                setEditedStudent(studentToEdit);
                 setOpenEditModal(true);
+                console.log(studentToEdit);
+            }
+            else {
+                const errorMessage = "Không tìm thấy học viên để chỉnh sửa.";
+                console.error(errorMessage);
+                setError(errorMessage);
+                toast.error(errorMessage);
             }
         } catch (error) {
-            console.error("Lỗi khi lấy thông tin học viên để chỉnh sửa:", error);
-            setError("Không thể lấy thông tin học viên để chỉnh sửa. Vui lòng thử lại.");
-            toast.error('Lỗi khi lấy thông tin học viên để chỉnh sửa. Vui lòng thử lại.');
-        } finally {
+            const errorMessage = error.response?.data?.message || "Không thể mở modal chỉnh sửa học viên. Vui lòng thử lại.";
+            console.error("Lỗi khi mở modal chỉnh sửa học viên:", errorMessage);
+            setError(errorMessage);
+            toast.error(errorMessage);
+        }
+
+        finally {
             setLoading(false);
         }
     };
@@ -162,18 +191,28 @@ const Student = () => {
     };
 
     // Hàm mở modal chi tiết học viên
-    const handleViewStudent = async (id) => {
+    const handleViewStudent = (id) => {
+        setLoading(true);
+        setError(null);
+
         try {
-            setLoading(true);
-            const response = await getStudentByIdAPI(id);
-            if (response && response.data) {
-                setSelectedStudent(response.data);
+            const studentToView = students.find(student => student.student_id === id);
+
+            if (studentToView) {
+                setSelectedStudent(studentToView);
+                
                 setOpenDetail(true);
+                console.log(studentToView);
+            } else {
+                const errorMessage = `Không tìm thấy học viên với ID: ${id}`;
+                setError(errorMessage);
+                toast.error(`Lỗi: ${errorMessage}`);
             }
         } catch (error) {
-            console.error("Lỗi khi lấy thông tin chi tiết học viên:", error);
-            setError("Không thể lấy thông tin chi tiết học viên. Vui lòng thử lại.");
-            toast.error('Lỗi khi lấy thông tin chi tiết học viên. Vui lòng thử lại.');
+            const errorMessage = error.message || 'Đã xảy ra lỗi không xác định.';
+            setError(errorMessage);
+            toast.error(`Lỗi: ${errorMessage}`);
+            console.error('Lỗi khi lấy thông tin học viên:', error);
         } finally {
             setLoading(false);
         }
@@ -325,14 +364,11 @@ const Student = () => {
                                     loading={loading}
                                     error={error}
                                 />
-                                <TablePagination
-                                    component="div"
+                                <TablePaginationLayout
                                     count={filteredStudents.length}
                                     page={page}
                                     onPageChange={handleChangePage}
                                     rowsPerPage={rowsPerPage}
-                                    rowsPerPageOptions={[]}
-                                    labelDisplayedRows={({ from, to, count }) => `${from}-${to} trên ${count}`}
                                 />
                             </>
                         )}

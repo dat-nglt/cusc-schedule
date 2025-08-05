@@ -54,4 +54,3 @@ const BusySlot = (sequelize) => {
 };
 
 export default BusySlot;
-

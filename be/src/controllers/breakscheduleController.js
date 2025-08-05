@@ -27,17 +27,23 @@ import path from "path";
 export const getAllBreakSchedulesController = async (req, res) => {
   try {
     const breakSchedules = await getAllBreakSchedulesService();
-    return successResponse(
+    if (!breakSchedules || breakSchedules.length === 0) {
+      return APIResponse(res, 200, [], "Không tìm thấy lịch nghỉ nào.");
+    }
+
+    return APIResponse(
       res,
+      200,
       breakSchedules,
       "Lấy tất cả lịch nghỉ thành công."
     );
   } catch (error) {
     console.error("Lỗi khi lấy tất cả lịch nghỉ:", error);
-    return errorResponse(
+    return APIResponse(
       res,
-      error.message || "Lỗi khi lấy tất cả lịch nghỉ.",
-      500
+      500,
+      null,
+      "Đã xảy ra lỗi khi lấy danh sách lịch nghỉ."
     );
   }
 };
@@ -50,24 +56,28 @@ export const getAllBreakSchedulesController = async (req, res) => {
  * @access Private (admin, training_officer)
  */
 export const getBreakScheduleByIdController = async (req, res) => {
+  const { break_id } = req.params;
   try {
-    const { break_id } = req.params;
     const breakSchedule = await getBreakScheduleByIdService(break_id);
 
     if (!breakSchedule) {
-      return errorResponse(res, "Không tìm thấy lịch nghỉ.", 404);
+      return APIResponse(res, 404, null, "Không tìm thấy lịch nghỉ.");
     }
-    return successResponse(
+
+    return APIResponse(
       res,
+      200,
       breakSchedule,
       "Lấy thông tin lịch nghỉ thành công."
     );
   } catch (error) {
-    console.error(
-      `Lỗi khi lấy lịch nghỉ với ID ${req.params.break_id}:`,
-      error
+    console.error(`Lỗi khi lấy lịch nghỉ với ID ${break_id}:`, error);
+    return APIResponse(
+      res,
+      500,
+      null,
+      "Đã xảy ra lỗi khi lấy thông tin lịch nghỉ."
     );
-    return errorResponse(res, error.message || "Lỗi khi lấy lịch nghỉ.", 500);
   }
 };
 
@@ -80,20 +90,26 @@ export const getBreakScheduleByIdController = async (req, res) => {
  */
 export const createBreakScheduleController = async (req, res) => {
   try {
-    const breakSchedule = await createBreakScheduleService(req.body);
-    return successResponse(
-      res,
-      breakSchedule,
-      "Tạo lịch nghỉ thành công.",
-      201
-    );
+    const newBreakSchedule = await createBreakScheduleService(req.body);
+    return APIResponse(res, 201, newBreakSchedule, "Tạo lịch nghỉ thành công.");
   } catch (error) {
+    // Xử lý các lỗi cụ thể từ service
+    if (error.name === "SequelizeValidationError") {
+      const messages = error.errors.map((e) => e.message);
+      return APIResponse(res, 400, null, messages.join(", "));
+    }
+    if (error.name === "SequelizeUniqueConstraintError") {
+      const messages = error.errors.map((e) => `${e.path} đã tồn tại`);
+      return APIResponse(res, 409, null, messages.join(", "));
+    }
+
+    // Lỗi chung
     console.error("Lỗi khi tạo lịch nghỉ:", error);
-    // Lỗi 400 Bad Request thường phù hợp cho lỗi validation hoặc dữ liệu không hợp lệ.
-    return errorResponse(
+    return APIResponse(
       res,
-      error.message || "Lỗi khi tạo lịch nghỉ. Dữ liệu không hợp lệ.",
-      400
+      500,
+      null,
+      error.message || "Đã xảy ra lỗi khi tạo lịch nghỉ."
     );
   }
 };
@@ -106,28 +122,38 @@ export const createBreakScheduleController = async (req, res) => {
  * @access Private (admin, training_officer)
  */
 export const updateBreakScheduleController = async (req, res) => {
+  const { break_id } = req.params;
   try {
-    const { break_id } = req.params;
-    const breakSchedule = await updateBreakScheduleService(break_id, req.body);
+    const updatedBreakSchedule = await updateBreakScheduleService(
+      break_id,
+      req.body
+    );
 
-    if (!breakSchedule) {
-      return errorResponse(res, "Không tìm thấy lịch nghỉ để cập nhật.", 404);
+    if (!updatedBreakSchedule) {
+      return APIResponse(
+        res,
+        404,
+        null,
+        "Không tìm thấy lịch nghỉ để cập nhật."
+      );
     }
-    return successResponse(
+
+    return APIResponse(
       res,
-      breakSchedule,
+      200,
+      updatedBreakSchedule,
       "Cập nhật lịch nghỉ thành công."
     );
   } catch (error) {
-    console.error(
-      `Lỗi khi cập nhật lịch nghỉ với ID ${req.params.break_id}:`,
-      error
-    );
-    return errorResponse(
-      res,
-      error.message || "Lỗi khi cập nhật lịch nghỉ. Dữ liệu không hợp lệ.",
-      400
-    );
+    // Xử lý các lỗi cụ thể từ service
+    if (error.name === "SequelizeValidationError") {
+      const messages = error.errors.map((e) => e.message);
+      return APIResponse(res, 400, null, messages.join(", "));
+    }
+
+    // Lỗi chung
+    console.error(`Lỗi khi cập nhật lịch nghỉ với ID ${break_id}:`, error);
+    return APIResponse(res, 500, null, "Đã xảy ra lỗi khi cập nhật lịch nghỉ.");
   }
 };
 
@@ -138,22 +164,31 @@ export const updateBreakScheduleController = async (req, res) => {
  * @param {Object} res - Đối tượng Response của Express.
  * @access Private (admin, training_officer)
  */
-export const deleteBreakScheduleController = async (req, res) => {
-  try {
-    const { break_id } = req.params;
-    const deletedCount = await deleteBreakScheduleService(break_id);
 
-    if (deletedCount === 0) {
-      // Giả định service trả về số lượng bản ghi bị xóa
-      return errorResponse(res, "Không tìm thấy lịch nghỉ để xóa.", 404);
+export const deleteBreakScheduleController = async (req, res) => {
+  const { break_id } = req.params;
+  try {
+    const isDeleted = await deleteBreakScheduleService(break_id);
+
+    if (!isDeleted) {
+      return APIResponse(res, 404, null, "Không tìm thấy lịch nghỉ để xóa.");
     }
-    return successResponse(res, null, "Xóa lịch nghỉ thành công.");
+
+    return APIResponse(res, 200, null, "Xóa lịch nghỉ thành công.");
   } catch (error) {
-    console.error(
-      `Lỗi khi xóa lịch nghỉ với ID ${req.params.break_id}:`,
-      error
-    );
-    return errorResponse(res, error.message || "Lỗi khi xóa lịch nghỉ.", 400);
+    // Xử lý các lỗi cụ thể từ service
+    if (error.name === "SequelizeForeignKeyConstraintError") {
+      return APIResponse(
+        res,
+        409,
+        null,
+        "Không thể xóa lịch nghỉ vì có dữ liệu liên quan."
+      );
+    }
+
+    // Lỗi chung
+    console.error(`Lỗi khi xóa lịch nghỉ với ID ${break_id}:`, error);
+    return APIResponse(res, 500, null, "Đã xảy ra lỗi khi xóa lịch nghỉ.");
   }
 };
 
@@ -164,32 +199,37 @@ export const deleteBreakScheduleController = async (req, res) => {
  * @param {Object} res - Đối tượng Response của Express.
  * @access Private (admin, training_officer)
  */
+
 export const listBreakSchedulesController = async (req, res) => {
   try {
-    // Lấy các tham số lọc từ query string
     const { break_id, break_type, break_start_date } = req.query;
 
-    // Xây dựng đối tượng filters
+    // Xây dựng đối tượng filters gọn gàng hơn
     const filters = {
-      ...(break_id && { break_id }), // Thêm break_id nếu nó tồn tại
+      ...(break_id && { break_id }),
       ...(break_type && { break_type }),
       ...(break_start_date && { break_start_date }),
     };
 
     const breakSchedules = await listBreakSchedulesService(filters);
 
-    // Sử dụng APIResponse để trả về nhất quán
-    return successResponse(
+    if (!breakSchedules || breakSchedules.length === 0) {
+      return APIResponse(res, 200, [], "Không tìm thấy lịch nghỉ nào.");
+    }
+
+    return APIResponse(
       res,
+      200,
       breakSchedules,
       "Lấy danh sách lịch nghỉ thành công."
     );
   } catch (error) {
     console.error("Lỗi khi liệt kê lịch nghỉ:", error);
-    return errorResponse(
+    return APIResponse(
       res,
-      error.message || "Lỗi khi liệt kê lịch nghỉ.",
-      500
+      500,
+      null,
+      "Đã xảy ra lỗi khi liệt kê danh sách lịch nghỉ."
     );
   }
 };
@@ -202,6 +242,7 @@ export const listBreakSchedulesController = async (req, res) => {
  * @param {Object} res - Đối tượng Response của Express.
  * @access Private (admin, training_officer)
  */
+
 export const importBreakSchedulesController = async (req, res) => {
   try {
     if (!req.file) {
@@ -209,8 +250,6 @@ export const importBreakSchedulesController = async (req, res) => {
     }
 
     const fileBuffer = req.file.buffer;
-
-    // Validate đuôi file
     const allowedExtensions = [".xlsx", ".xls"];
     const fileExtension = path.extname(req.file.originalname).toLowerCase();
 
@@ -223,8 +262,8 @@ export const importBreakSchedulesController = async (req, res) => {
       );
     }
 
-    // Validate cấu trúc template Excel
-    const templateValidation = validateBreakScheduleExcelTemplateService(fileBuffer);
+    const templateValidation =
+      validateBreakScheduleExcelTemplateService(fileBuffer);
     if (!templateValidation.valid) {
       return APIResponse(
         res,
@@ -235,35 +274,21 @@ export const importBreakSchedulesController = async (req, res) => {
       );
     }
 
-    // Tiến hành import dữ liệu từ Excel
     const results = await importBreakSchedulesFromExcelService(fileBuffer);
+    const { total, success, errors } = results;
 
     const responseData = {
-      summary: {
-        total: results.total,
-        success: results.success.length,
-        errors: results.errors.length,
-      },
-      successRecords: results.success, // Các bản ghi được import thành công
-      errorRecords: results.errors, // Các bản ghi lỗi cùng với lý do
+      summary: { total, success: success.length, errors: errors.length },
+      successRecords: success,
+      errorRecords: errors,
     };
 
-    if (results.errors.length > 0) {
-      // Trả về mã 207 Multi-Status nếu có cả thành công và lỗi
-      return APIResponse(
-        res,
-        207,
-        responseData,
-        `Import hoàn tất với ${results.success.length}/${results.total} bản ghi thành công.`
-      );
+    if (errors.length > 0) {
+      const message = `Import hoàn tất với ${success.length}/${total} bản ghi thành công.`;
+      return APIResponse(res, 207, responseData, message);
     } else {
-      // Trả về mã 200 OK nếu tất cả đều thành công
-      return APIResponse(
-        res,
-        200,
-        responseData,
-        `Import thành công ${results.success.length} lịch nghỉ.`
-      );
+      const message = `Import thành công ${success.length} lịch nghỉ.`;
+      return APIResponse(res, 200, responseData, message);
     }
   } catch (error) {
     console.error("Lỗi khi import lịch nghỉ từ file Excel:", error);
@@ -285,10 +310,8 @@ export const importBreakSchedulesController = async (req, res) => {
  */
 export const downloadBreakScheduleTemplateController = async (req, res) => {
   try {
-    // Tạo buffer chứa template Excel
     const buffer = ExcelUtils.createBreakScheduleTemplate();
 
-    // Thiết lập các headers để trình duyệt tải xuống file
     res.setHeader(
       "Content-Disposition",
       "attachment; filename=lich_nghi_mau.xlsx"
@@ -297,10 +320,9 @@ export const downloadBreakScheduleTemplateController = async (req, res) => {
       "Content-Type",
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     );
-    res.setHeader("Content-Length", buffer.length); // Đặt Content-Length
+    res.setHeader("Content-Length", buffer.length);
 
-    // Gửi buffer làm phản hồi
-    return res.send(buffer);
+    res.status(200).send(buffer);
   } catch (error) {
     console.error("Lỗi khi tạo và tải xuống template lịch nghỉ:", error);
     return APIResponse(res, 500, null, "Đã xảy ra lỗi khi tạo template.");
@@ -314,54 +336,103 @@ export const downloadBreakScheduleTemplateController = async (req, res) => {
  * @param {Object} res - Đối tượng Response của Express.
  * @access Private (admin, training_officer)
  */
-export const importBreakSchedulesFromJsonController = async (req, res) => {
-  try {
-    const { breakSchedules } = req.body;
-
-    // Kiểm tra dữ liệu đầu vào
-    if (!breakSchedules || !Array.isArray(breakSchedules)) {
-      return APIResponse(
-        res,
-        400,
-        null,
-        "Dữ liệu lịch nghỉ không hợp lệ. Yêu cầu một mảng JSON."
-      );
-    }
-
-    if (breakSchedules.length === 0) {
-      return APIResponse(
-        res,
-        400,
-        null,
-        "Không có dữ liệu lịch nghỉ nào được cung cấp để import."
-      );
-    }
-
-    // Tiến hành import dữ liệu từ JSON
-    const results = await importBreakSchedulesFromJsonService(breakSchedules);
-
-    const responseData = {
-      success: true, // Chỉ ra rằng request được xử lý
-      imported: results.success, // Các bản ghi đã được import thành công (đối tượng)
-      errors: results.errors, // Các bản ghi lỗi cùng với lý do (đối tượng)
-      message: `Import thành công ${results.success.length} lịch nghỉ.`,
-    };
-
-    if (results.errors.length > 0) {
-      // Nếu có lỗi, cập nhật thông báo và trả về 207 Multi-Status
-      responseData.message = `Import hoàn tất với ${results.success.length}/${breakSchedules.length} bản ghi thành công.`;
-      return APIResponse(res, 207, responseData, responseData.message);
-    } else {
-      // Nếu không có lỗi, trả về 200 OK
-      return APIResponse(res, 200, responseData, responseData.message);
-    }
-  } catch (error) {
-    console.error("Lỗi khi import lịch nghỉ từ dữ liệu JSON:", error);
-    return APIResponse(
-      res,
-      500,
-      null,
-      error.message || "Đã xảy ra lỗi trong quá trình import dữ liệu."
-    );
+export const importBreakSchedulesFromJsonService = async (
+  breakSchedulesData
+) => {
+  if (!breakSchedulesData || !Array.isArray(breakSchedulesData)) {
+    throw new Error("Dữ liệu lịch nghỉ không hợp lệ.");
   }
+
+  const results = { success: [], errors: [] };
+
+  // Sử dụng Promise.all để xử lý song song, cải thiện hiệu suất
+  const importPromises = breakSchedulesData.map(
+    async (breakScheduleData, index) => {
+      const recordIndex = index + 1;
+      const transaction = await sequelize.transaction();
+
+      try {
+        // Validation và làm sạch dữ liệu
+        if (
+          !breakScheduleData.break_id ||
+          !breakScheduleData.break_type ||
+          !breakScheduleData.break_start_date ||
+          !breakScheduleData.break_end_date
+        ) {
+          throw new Error("Các trường bắt buộc không được để trống.");
+        }
+
+        const cleanedData = {
+          break_id: breakScheduleData.break_id.toString().trim(),
+          break_type: breakScheduleData.break_type.toString().trim(),
+          break_start_date: breakScheduleData.break_start_date || null,
+          break_end_date: breakScheduleData.break_end_date || null,
+          number_of_days: breakScheduleData.number_of_days
+            ? parseInt(breakScheduleData.number_of_days)
+            : null,
+          description: breakScheduleData.description?.toString().trim() || null,
+          status: breakScheduleData.status?.toString().trim() || "Hoạt động",
+        };
+
+        const startDate = new Date(cleanedData.break_start_date);
+        const endDate = new Date(cleanedData.break_end_date);
+        const maxFutureDate = new Date();
+        maxFutureDate.setFullYear(maxFutureDate.getFullYear() + 5);
+
+        if (isNaN(startDate) || isNaN(endDate)) {
+          throw new Error("Định dạng ngày không hợp lệ.");
+        }
+        if (startDate > endDate) {
+          throw new Error(
+            "Thời gian bắt đầu không được lớn hơn thời gian kết thúc."
+          );
+        }
+        if (endDate > maxFutureDate) {
+          throw new Error(
+            "Thời gian kết thúc không được quá 5 năm trong tương lai."
+          );
+        }
+
+        // Kiểm tra tồn tại
+        const existingBreakSchedule = await BreakSchedule.findByPk(
+          cleanedData.break_id,
+          { transaction }
+        );
+        if (existingBreakSchedule) {
+          throw new Error("Mã lịch nghỉ đã tồn tại.");
+        }
+
+        // Tạo lịch nghỉ mới
+        const newBreakSchedule = await BreakSchedule.create(cleanedData, {
+          transaction,
+        });
+        await transaction.commit();
+
+        return newBreakSchedule;
+      } catch (error) {
+        if (transaction && !transaction.finished) {
+          await transaction.rollback();
+        }
+        return {
+          isError: true,
+          row: recordIndex,
+          break_id: breakScheduleData.break_id || "N/A",
+          error: error.message || "Lỗi không xác định.",
+        };
+      }
+    }
+  );
+
+  const allResults = await Promise.all(importPromises);
+
+  // Phân loại kết quả
+  allResults.forEach((result) => {
+    if (result?.isError) {
+      results.errors.push(result);
+    } else {
+      results.success.push(result);
+    }
+  });
+
+  return results;
 };

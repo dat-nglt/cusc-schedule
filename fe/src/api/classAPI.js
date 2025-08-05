@@ -6,14 +6,9 @@ export const getClassesAPI = async (params = {}) => {
     const response = await axiosInstance.get("/api/classes", { params });
     return response.data;
   } catch (error) {
-    console.error(
-      "Error fetching classes:",
-      error.response?.data || error.message
-    );
-    throw new Error(
-      "Error fetching classes: " +
-        (error.response?.data?.message || error.message)
-    );
+    const errorMessage = error.response?.data?.message || error.message;
+    console.error("Error fetching classes:", errorMessage);
+    throw new Error(errorMessage);
   }
 };
 
@@ -23,14 +18,9 @@ export const getClassByIdAPI = async (class_id) => {
     const response = await axiosInstance.get(`/api/classes/${class_id}`);
     return response.data;
   } catch (error) {
-    console.error(
-      "Error fetching class detail:",
-      error.response?.data || error.message
-    );
-    throw new Error(
-      "Error fetching class detail: " +
-        (error.response?.data?.message || error.message)
-    );
+    const errorMessage = error.response?.data?.message || error.message;
+    console.error("Error fetching class detail:", errorMessage);
+    throw new Error(errorMessage);
   }
 };
 
@@ -40,10 +30,9 @@ export const addClassAPI = async (classData) => {
     const response = await axiosInstance.post("/api/classes/add", classData);
     return response.data;
   } catch (error) {
-    console.error("Error adding class:", error.response?.data || error.message);
-    throw new Error(
-      "Error adding class: " + (error.response?.data?.message || error.message)
-    );
+    const errorMessage = error.response?.data?.message || error.message;
+    console.log("Error adding class:", errorMessage);
+    throw new Error(errorMessage);
   }
 };
 
@@ -56,14 +45,9 @@ export const updateClassAPI = async (class_id, classData) => {
     );
     return response.data;
   } catch (error) {
-    console.error(
-      "Error updating class:",
-      error.response?.data || error.message
-    );
-    throw new Error(
-      "Error updating class: " +
-        (error.response?.data?.message || error.message)
-    );
+    const errorMessage = error.response?.data?.message || error.message;
+    console.error("Error updating class:", errorMessage);
+    throw new Error(errorMessage);
   }
 };
 
@@ -75,14 +59,9 @@ export const deleteClassAPI = async (class_id) => {
     );
     return response.data;
   } catch (error) {
-    console.error(
-      "Error deleting class:",
-      error.response?.data || error.message
-    );
-    throw new Error(
-      "Error deleting class: " +
-        (error.response?.data?.message || error.message)
-    );
+    const errorMessage = error.response?.data?.message || error.message;
+    console.error("Error deleting class:", errorMessage);
+    throw new Error(errorMessage);
   }
 };
 
@@ -94,45 +73,43 @@ export const listClassesAPI = async (filters = {}) => {
     });
     return response.data;
   } catch (error) {
-    console.error(
-      "Error listing classes:",
-      error.response?.data || error.message
-    );
-    throw new Error(
-      "Error listing classes: " +
-        (error.response?.data?.message || error.message)
-    );
+    const errorMessage = error.response?.data?.message || error.message;
+    console.error("Error listing classes:", errorMessage);
+    throw new Error(errorMessage);
   }
 };
 
 // Nhập lớp học từ file Excel hoặc dữ liệu JSON đã được validate
 export const importClassesAPI = async (file, jsonData = null) => {
   try {
+    let response;
+
     if (jsonData) {
       // Import từ dữ liệu JSON đã được validate
-      const response = await axiosInstance.post("/api/classes/importJson", {
+      response = await axiosInstance.post("/api/classes/importJson", {
         classes: jsonData,
       });
-      return response;
-    } else {
+    } else if (file) {
       // Import từ file Excel
       const formData = new FormData();
       formData.append("excel_file", file);
-
-      const response = await axiosInstance.post(
-        "/api/classes/import",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
+      response = await axiosInstance.post("/api/classes/import", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+    } else {
+      // Xử lý trường hợp không có dữ liệu đầu vào
+      throw new Error(
+        "Dữ liệu đầu vào không hợp lệ. Vui lòng cung cấp file hoặc dữ liệu JSON."
       );
-      return response;
     }
+
+    return response.data;
   } catch (error) {
-    console.error("Error importing classes:", error);
-    throw new Error("Lỗi khi nhập lớp học từ tệp");
+    const errorMessage = error.response?.data?.message || error.message;
+    console.error("Error importing classes:", errorMessage);
+    throw new Error(errorMessage);
   }
 };
 
@@ -144,13 +121,8 @@ export const downloadClassTemplateAPI = async () => {
     });
     return response.data;
   } catch (error) {
-    console.error(
-      "Error downloading class template:",
-      error.response?.data || error.message
-    );
-    throw new Error(
-      "Error downloading class template: " +
-        (error.response?.data?.message || error.message)
-    );
+    const errorMessage = error.response?.data?.message || error.message;
+    console.error("Error downloading class template:", errorMessage);
+    throw new Error(errorMessage);
   }
 };

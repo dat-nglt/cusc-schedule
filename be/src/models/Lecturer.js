@@ -57,7 +57,7 @@ const Lecturer = (sequelize) => {
       },
       gender: {
         type: DataTypes.STRING(10), // Giới tính giảng viên (Nam,
-        allowNull: true
+        allowNull: true,
       },
       address: {
         type: DataTypes.STRING(255), // Địa chỉ giảng viên
@@ -70,7 +70,7 @@ const Lecturer = (sequelize) => {
       status: {
         type: DataTypes.STRING(30), // Trạng thái giảng viên
         allowNull: true,
-      }
+      },
       // BỎ CÁC TRƯỜNG DƯ THỪA ĐÃ CHUYỂN SANG BẢNG ACCOUNTS:
       // email: đã có trong Account
       // day_of_birth: có thể giữ ở đây hoặc chuyển sang Account nếu muốn chung hơn
@@ -85,7 +85,7 @@ const Lecturer = (sequelize) => {
       timestamps: true, // Tự động thêm created_at và updated_at
       createdAt: "created_at", // Đặt tên cột createdAt
       updatedAt: "updated_at", // Đặt tên cột updatedAt
-      deletedAt: 'deleted_at', // Đặt tên cột deletedAt nếu cần
+      deletedAt: "deleted_at", // Đặt tên cột deletedAt nếu cần
     }
   );
 
@@ -100,15 +100,20 @@ const Lecturer = (sequelize) => {
     // Mối quan hệ nhiều-nhiều: Một Lecturer có thể dạy nhiều Subject
     LecturerModel.belongsToMany(models.Subject, {
       through: models.LecturerAssignment,
-      foreignKey: 'lecturer_id',
-      otherKey: 'subject_id',
-      as: 'subjects'
+      foreignKey: "lecturer_id",
+      otherKey: "subject_id",
+      as: "subjects",
     });
 
     // Mối quan hệ một-nhiều với bảng junction LecturerAssignment
     LecturerModel.hasMany(models.LecturerAssignment, {
-      foreignKey: 'lecturer_id',
-      as: 'lecturerAssignments'
+      foreignKey: "lecturer_id",
+      as: "lecturerAssignments",
+    });
+    // Mối quan hệ một-nhiều với bảng BusySlot
+    LecturerModel.hasMany(models.BusySlot, {
+      foreignKey: "lecturer_id",
+      as: "busy_slots",
     });
     // Mối quan hệ một-nhiều với bảng BusySlot
     LecturerModel.hasMany(models.BusySlot, {

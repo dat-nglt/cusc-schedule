@@ -22,6 +22,7 @@ import EditClassSectionModal from './EditClassSectionModal';
 import DeleteClassSectionModal from './DeleteClassSectionModal';
 import useResponsive from '../../hooks/useResponsive';
 import ClassSectionTable from './ClassSectionTable';
+import TablePaginationLayout from '../../components/layout/TablePaginationLayout';
 
 const ClassSection = () => {
   const { isExtraSmallScreen, isSmallScreen, isMediumScreen, isLargeScreen } = useResponsive();
@@ -261,15 +262,11 @@ const ClassSection = () => {
                   handleEditClassSection={handleEditClassSection}
                   handleDeleteClassSection={handleDeleteClassSection}
                 />
-                <TablePagination
-                  component="div"
+                <TablePaginationLayout
                   count={filteredClassSectiones.length}
                   page={page}
                   onPageChange={handleChangePage}
                   rowsPerPage={rowsPerPage}
-                  rowsPerPageOptions={[]}
-                  labelDisplayedRows={({ from, to, count }) => `${from}-${to} trên ${count}`}
-                  sx={{ width: '100%', px: 0 }}
                 />
               </Box>
             )}

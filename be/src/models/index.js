@@ -1,3 +1,4 @@
+
 // Kết nối Sequelize từ file config
 import { sequelize } from "../config/connectDB.js";
 import { DataTypes } from "sequelize";
