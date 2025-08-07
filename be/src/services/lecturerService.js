@@ -102,25 +102,25 @@ export const getLecturerByIdService = async (lecturerID) => {
 //       status: 'active'
 //     }, { transaction });
 
-//     // Nếu có subjectIds, kiểm tra các môn học có tồn tại không
-//     if (subjectIds && subjectIds.length > 0) {
-//       const { Subject } = models;
-//       const existingSubjects = await Subject.findAll({
-//         where: {
-//           subject_id: {
-//             [Op.in]: subjectIds
-//           }
-//         },
-//         attributes: ['subject_id']
-//       });
-
-//       const existingSubjectIds = existingSubjects.map(s => s.subject_id);
-//       const invalidSubjectIds = subjectIds.filter(id => !existingSubjectIds.includes(id));
-
-//       if (invalidSubjectIds.length > 0) {
-//         throw new Error(`Các môn học không tồn tại: ${invalidSubjectIds.join(', ')}`);
+// // Nếu có subjectIds, kiểm tra các môn học có tồn tại không
+// if (subjectIds && subjectIds.length > 0) {
+//   const { Subject } = models;
+//   const existingSubjects = await Subject.findAll({
+//     where: {
+//       subject_id: {
+//         [Op.in]: subjectIds
 //       }
-//     }
+//     },
+//     attributes: ['subject_id']
+//   });
+
+//   const existingSubjectIds = existingSubjects.map(s => s.subject_id);
+//   const invalidSubjectIds = subjectIds.filter(id => !existingSubjectIds.includes(id));
+
+//   if (invalidSubjectIds.length > 0) {
+//     throw new Error(`Các môn học không tồn tại: ${invalidSubjectIds.join(', ')}`);
+//   }
+// }
 
 //     // Tạo giảng viên với account_id
 //     const lecturer = await Lecturer.create({
@@ -177,7 +177,7 @@ export const getLecturerByIdService = async (lecturerID) => {
 //   }
 // };
 
-export const createLecturerService = async (lecturerData) => {
+export const createLecturerService = async (lecturerData, subjects = []) => {
   const transaction = await sequelize.transaction();
   try {
     const [existingLecturer, existingAccount] = await Promise.all([
@@ -193,24 +193,27 @@ export const createLecturerService = async (lecturerData) => {
     }
 
     // --- 2. Kiểm tra các môn học có tồn tại không (nếu có)
-    if (lecturerData.subjects && lecturerData.subjects.length > 0) {
+
+
+    if (subjects && subjects.length > 0) {
+      const { Subject } = models;
       const existingSubjects = await Subject.findAll({
-        where: { subject_id: { [Op.in]: lecturerData.subjects } },
-        attributes: ["subject_id"],
-        transaction,
+        where: {
+          subject_id: {
+            [Op.in]: subjects
+          }
+        },
+        attributes: ['subject_id']
       });
 
-      const existingSubjectIds = existingSubjects.map((s) => s.subject_id);
-      const invalidSubjectIds = lecturerData.subjects.filter(
-        (id) => !existingSubjectIds.includes(id)
-      );
+      const existingSubjectIds = existingSubjects.map(s => s.subject_id);
+      const invalidSubjectIds = subjects.filter(id => !existingSubjectIds.includes(id));
 
       if (invalidSubjectIds.length > 0) {
-        throw new Error(
-          `Các môn học không tồn tại: ${invalidSubjectIds.join(", ")}`
-        );
+        throw new Error(`Các môn học không tồn tại: ${invalidSubjectIds.join(', ')}`);
       }
     }
+
 
     // --- 3. Tạo tài khoản và giảng viên
     const account = await Account.create(
@@ -233,14 +236,15 @@ export const createLecturerService = async (lecturerData) => {
     );
 
     // --- 4. Gán môn học cho giảng viên (nếu có)
-    if (lecturerData.subjects && lecturerData.subjects.length > 0) {
-      const assignments = lecturerData.subjects.map((subjectId) => ({
+    if (subjects && subjects.length > 0) {
+      const { LecturerAssignment } = models;
+      const assignments = subjects.map(subjectId => ({
         lecturer_id: lecturer.lecturer_id,
-        subject_id: subjectId,
+        subject_id: subjectId
       }));
+
       await LecturerAssignment.bulkCreate(assignments, { transaction });
     }
-
     // --- 5. Commit transaction
     await transaction.commit();
 
