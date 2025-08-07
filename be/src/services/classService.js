@@ -22,6 +22,8 @@ import logger from "../utils/logger.js";
 //     throw new Error("Lỗi khi lấy danh sách lớp học: " + error.message);
 //   }
 // };
+
+const { Classes, Course, sequelize } = models;
 export const getAllClassesService = async () => {
   try {
     const classes = await models.Classes.findAll({
@@ -94,6 +96,13 @@ export const createClassService = async (data) => {
       const course = await Course.findByPk(course_id);
       if (!course) {
         throw new Error("Không tìm thấy khóa học.");
+      }
+    }
+    // Kiểm tra chương trình có tồn tại không
+    if (data.program_id) {
+      const program = await models.Program.findByPk(data.program_id);
+      if (!program) {
+        throw new Error("Không tìm thấy chương trình.");
       }
     }
 

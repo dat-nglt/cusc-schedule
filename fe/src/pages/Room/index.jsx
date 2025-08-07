@@ -67,7 +67,6 @@ const RoomManagement = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  console.log("room", rooms)
 
   const fetchRooms = async () => {
     try {

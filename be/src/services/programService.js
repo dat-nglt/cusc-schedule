@@ -177,7 +177,7 @@ export const importProgramsFromJSONService = async (programsData) => {
 export const getProgramCreateScheduleService = async () => {
   try {
     const programs = await Program.findAll({
-      attributes: ['program_id', 'training_duration'],
+      attributes: ['program_id', 'program_name', 'training_duration'],
       include: [{
         model: Semester,
         as: 'semesters',
@@ -193,6 +193,7 @@ export const getProgramCreateScheduleService = async () => {
     // Chuyển đổi sang cấu trúc JSON yêu cầu
     const formattedPrograms = programs.map(program => ({
       program_id: program.program_id,
+      program_name: program.program_name,
       duration: program.training_duration,
       semesters: program.semesters.map(semester => ({
         semester_id: semester.semester_id,
