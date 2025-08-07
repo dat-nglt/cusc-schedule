@@ -337,6 +337,8 @@ const Dashboard = () => {
             if (!response) {
                 throw new Error("Không có dữ liệu phòng học");
             }
+            console.log("Rooms fetched:", response.data);
+
             setRooms(response.data);
         } catch (error) {
             console.error("Error fetching rooms:", error);
@@ -451,46 +453,56 @@ const Dashboard = () => {
     }, []); // Dependency array: đảm bảo lắng nghe lại khi socket thay đổi (thường không thay đổi)
 
     // Transform API data to required format
-    const transformDataToFormTest = () => {
-        if (!rooms.length || !programs.length || !lecturers.length || !classes.length) {
-            return null;
+    const transformDataToFormTest = (data) => {
+        const { rooms, programs, lecturers, classes, timeslot, days_of_week } = data;
+
+        console.log("Transforming data to form test structure:", { rooms, programs, lecturers, classes, timeslot, days_of_week });
+        
+
+        // Sử dụng optional chaining và nullish coalescing để code gọn hơn
+        if (!classes?.length || !rooms?.length || !lecturers?.length || !programs?.length) {
+            console.warn("Dữ liệu đầu vào không đầy đủ. Trả về cấu trúc rỗng.");
+            return {
+                classes: [],
+                rooms: [],
+                lecturers: [],
+                programs: [],
+                time_slots: [],
+                days_of_week: []
+            };
         }
 
-        // Transform classes
         const transformedClasses = classes.map(cls => ({
             class_id: cls.class_id,
             size: cls.class_size,
-            program_id: cls.program_id || "CT001" // Default program if null
+            program_id: cls.program_id ?? "CT001" // Sử dụng nullish coalescing (??)
         }));
 
-        // Transform rooms
         const transformedRooms = rooms.map(room => ({
             room_id: room.room_id,
             type: room.type === "Lý thuyết" ? "theory" : "practice",
             capacity: room.capacity
         }));
 
-        // Transform lecturers
         const transformedLecturers = lecturers.map(lecturer => ({
             lecturer_id: lecturer.lecturer_id,
             lecturer_name: lecturer.name,
-            subjects: lecturer.subjects.map(subject => subject.subject_id),
-            busy_slots: lecturer.busy_slots || []
+            subjects: lecturer.subjects?.map(subject => subject.subject_id) ?? [],
+            busy_slots: lecturer.busy_slots ?? []
         }));
 
-        // Transform programs
         const transformedPrograms = programs.map(program => ({
             program_id: program.program_id,
-            duration: parseInt(program.duration),
-            semesters: program.semesters.map(semester => ({
+            duration: parseInt(program.duration) || 0,
+            semesters: program.semesters?.map(semester => ({
                 semester_id: semester.semester_id,
-                subjects: semester.subjects.map(subject => ({
+                subjects: semester.subjects?.map(subject => ({
                     subject_id: subject.subject_id,
                     name: subject.name,
                     theory_hours: subject.theory_hours,
                     practice_hours: subject.practice_hours
-                }))
-            }))
+                })) ?? []
+            })) ?? []
         }));
 
         return {
@@ -498,14 +510,16 @@ const Dashboard = () => {
             rooms: transformedRooms,
             lecturers: transformedLecturers,
             programs: transformedPrograms,
-            time_slots: timeslot[0].time_slots,
-            days_of_week: days_of_week[0].days_of_week
+            time_slots: timeslot[0]?.time_slots ?? [],
+            days_of_week: days_of_week[0]?.days_of_week ?? []
         };
     };
 
     // Update formTest when API data is loaded
     useEffect(() => {
-        const transformed = transformDataToFormTest();
+        const dataToTransform = { rooms, programs, lecturers, classes };
+        const transformed = transformDataToFormTest(dataToTransform);
+
         if (transformed) {
             setFormTest(transformed);
         }
