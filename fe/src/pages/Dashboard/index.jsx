@@ -15,7 +15,7 @@ import { getAllRoomAPI } from '../../api/roomAPI';
 import { getProgramCreateScheduleAPI } from '../../api/programAPI';
 import { getAllLecturersAPI } from '../../api/lecturerAPI';
 import { getClassesAPI } from '../../api/classAPI';
-import { getAllSubjectsAPI } from '../../api/subjectAPI';
+import CreateSchedulesAutoModal from './CreateSchedulesAutoModal';
 
 
 
@@ -25,6 +25,7 @@ const socket = io(import.meta.env.VITE_API_URL || 'http://localhost:3000', { // 
 
 const Dashboard = () => {
     const [open, setOpen] = useState(false);
+    const [createScheduleModalOpen, setCreateScheduleModalOpen] = useState(false);
     const [statusMessage, setStatusMessage] = useState('');
     const [downloadableFiles, setDownloadableFiles] = useState([]);
     const [error, setError] = useState('');
@@ -454,10 +455,10 @@ const Dashboard = () => {
 
     // Transform API data to required format
     const transformDataToFormTest = (data) => {
-        const { rooms, programs, lecturers, classes, timeslot, days_of_week } = data;
+        const { rooms, programs, lecturers, classes } = data;
 
-        console.log("Transforming data to form test structure:", { rooms, programs, lecturers, classes, timeslot, days_of_week });
-        
+        console.log("Transforming data to form test structure:", { rooms, programs, lecturers, classes });
+
 
         // Sử dụng optional chaining và nullish coalescing để code gọn hơn
         if (!classes?.length || !rooms?.length || !lecturers?.length || !programs?.length) {
@@ -660,7 +661,8 @@ const Dashboard = () => {
                 value={progress}
                 message={statusMessage}
                 handleStopTimetableGeneration={handleStopTimetableGeneration}
-            />          {/* Quick Stats */}
+            />
+            {/* Quick Stats */}
             <QuickStats stats={stats} />
 
             {/* Main Content */}
@@ -678,9 +680,23 @@ const Dashboard = () => {
                     initialDate={new Date()}
                     scheduleItems={scheduleItems}
                     onItemMove={handleItemMove}
-                    onCreateNewSchedule={handleGenerateTimetable}
+                    onCreateNewSchedule={() => setCreateScheduleModalOpen(true)}
+                    programs={programs}
+                    rooms={rooms}
+                    lecturers={lecturers}
+                    classes={classes}
                 />
             </Box>
+
+            <CreateSchedulesAutoModal
+                open={createScheduleModalOpen}
+                onClose={() => setCreateScheduleModalOpen(false)}
+                programs={programs}
+                rooms={rooms}
+                lecturers={lecturers}
+                classes={classes}
+                onGenerate={handleGenerateTimetable}
+            />
         </Box>
     );
 };
