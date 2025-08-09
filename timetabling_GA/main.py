@@ -2,6 +2,7 @@
 import sys
 import time
 import random
+import os
 from collections import defaultdict
 from config import (
     POPULATION_SIZE, MAX_GENERATIONS, MUTATION_RATE, CROSSOVER_RATE, ELITISM_COUNT
@@ -10,149 +11,180 @@ from data_processing.loader import load_data
 from data_processing.processor import DataProcessor
 from ga_components.population import initialize_population
 from ga_components.fitness import FitnessCalculator
-from ga_components.selection import tournament_selection # or roulette_wheel_selection
-from ga_components.crossover import single_point_crossover # or uniform_crossover
+from ga_components.selection import tournament_selection
+from ga_components.crossover import lesson_based_crossover
 from ga_components.mutation import mutate_chromosome
-from utils.helpers import format_timetable # (Tùy chọn)
+from utils.helpers import format_timetable
 from utils.exporter import export_semester_schedule_to_excel, export_lecturer_view_to_excel, export_room_view_to_excel
 
+
 def generate_semester_schedule(best_weekly_chromosome, processed_data):
-    semester_schedule_by_class = defaultdict(lambda: [[] for _ in range(15)])
-    slots_scheduled_count_semester = defaultdict(int)
+    """
+    Generates a full semester schedule by distributing the lessons from the 
+    best weekly chromosome across the semester, respecting weekly quotas.
+    
+    This function has been revised to correctly populate all lesson details
+    (including lecturer and room) before distributing them.
+    """
+    semester_schedule_by_class = defaultdict(lambda: [[] for _ in range(16)])
+    
+    # Map lessons from the best weekly timetable to a dictionary for easy access
+    weekly_lessons_map = defaultdict(list)
+    for gene in best_weekly_chromosome.genes:
+        weekly_lessons_map[gene['class_id']].append(gene)
 
-    for cls_id, cls_info in processed_data.class_map.items():
-        program_duration_weeks = cls_info.get('program_duration_weeks', 15)
-        semester_schedule_by_class[cls_id] = [[] for _ in range(program_duration_weeks)]
+    all_semester_lessons_to_distribute = []
+    
+    for cls_id in processed_data.class_map:
+        program_id = processed_data.class_map[cls_id]['program_id']
+        semester_ids = processed_data.program_semester_map.get(program_id, [])
+        
+        if not semester_ids:
+            continue
+            
+        semester_id = semester_ids[0]
+        duration_weeks = processed_data.semester_map.get(semester_id, {}).get('duration_weeks', 15)
+        
+        lessons_for_this_class_weekly = weekly_lessons_map.get(cls_id, [])
+        num_weekly_lessons = len(lessons_for_this_class_weekly)
 
-        for week_num in range(program_duration_weeks):
-            weekly_lessons_for_class = []
-            for gene in best_weekly_chromosome.genes:
-                if gene['class_id'] == cls_id:
-                    class_id = gene['class_id']
-                    subject_id = gene['subject_id']
-                    lesson_type = gene['lesson_type']
-
-                    total_needed = processed_data.total_semester_slots_needed.get((class_id, subject_id, lesson_type), 0)
-
-                    if slots_scheduled_count_semester[(class_id, subject_id, lesson_type)] < total_needed:
-                        lesson_for_semester = gene.copy()
-                        lesson_for_semester['week'] = week_num + 1
-
-                        weekly_lessons_for_class.append(lesson_for_semester)
-                        slots_scheduled_count_semester[(class_id, subject_id, lesson_type)] += 1
-
-            semester_schedule_by_class[cls_id][week_num] = weekly_lessons_for_class
+        # Create a full list of lessons for the entire semester for this class
+        full_semester_lessons_for_class = []
+        for week_num in range(duration_weeks):
+            for lesson_template in lessons_for_this_class_weekly:
+                new_lesson = lesson_template.copy()
+                new_lesson['week'] = week_num + 1
+                full_semester_lessons_for_class.append(new_lesson)
+        
+        # Shuffle lessons for this class to randomize their distribution
+        random.shuffle(full_semester_lessons_for_class)
+        all_semester_lessons_to_distribute.extend(full_semester_lessons_for_class)
+    
+    # Distribute all lessons across the semester schedule by class
+    for lesson in all_semester_lessons_to_distribute:
+        cls_id = lesson['class_id']
+        week_num = lesson['week'] - 1
+        
+        # Ensure week_num is within the valid range
+        if 0 <= week_num < len(semester_schedule_by_class[cls_id]):
+            semester_schedule_by_class[cls_id][week_num].append(lesson)
 
     return semester_schedule_by_class
 
 def format_semester_schedule(semester_schedule, processed_data):
+    """
+    Formats the full semester schedule for display.
+    
+    Args:
+        semester_schedule (dict): A dictionary where keys are class_ids and
+                                  values are a list of weekly schedules.
+        processed_data (DataProcessor): The processed data object.
+    
+    Returns:
+        str: A formatted string of the full semester schedule.
+    """
     output_lines = []
-    for class_id, weekly_schedules in semester_schedule.items():
-        output_lines.append(f"\n===== SEMESTER SCHEDULE FOR CLASS: {class_id} =====")
+    
+    # Sort semester_schedule by class_id to ensure consistent output order
+    sorted_class_ids = sorted(semester_schedule.keys())
+    
+    for class_id in sorted_class_ids:
+        weekly_schedules = semester_schedule[class_id]
+        
         cls_info = processed_data.class_map.get(class_id)
-        program_duration = cls_info.get('program_duration_weeks', len(weekly_schedules)) if cls_info else len(weekly_schedules)
-
-        for week_idx in range(program_duration):
-            week_lessons = weekly_schedules[week_idx]
+        program_id = cls_info.get('program_id') if cls_info else None
+        
+        output_lines.append(f"\n===== SEMESTER SCHEDULE FOR CLASS: {class_id} ({processed_data.program_map.get(program_id, {}).get('program_name', program_id) if program_id else ''}) =====")
+        
+        if not weekly_schedules:
+            output_lines.append("  (No schedule data found for this class.)")
+            continue
+            
+        for week_idx, week_lessons in enumerate(weekly_schedules):
+            # Check if there are any lessons in the current week
             if not week_lessons:
-                has_any_lesson_for_class_this_week = any(
-                    len(lst) > 0 for w_idx, lst in enumerate(weekly_schedules) if w_idx >= week_idx
-                )
-                if not has_any_lesson_for_class_this_week and week_idx > 0:
-                    break
-                output_lines.append(f"\n  --- Week {week_idx + 1} ---")
+                continue
 
-            if week_lessons:
-                output_lines.append(f"\n  --- Week {week_idx + 1} ---")
-                sorted_week_lessons = sorted(week_lessons, key=lambda g: (
-                    processed_data.data['days_of_week'].index(g['day']),
-                    processed_data.slot_order_map[g['slot_id']]
-                ))
-                for lesson in sorted_week_lessons:
-                    output_lines.append(
-                        f"    Day: {lesson['day']}, Slot: {lesson['slot_id']}, Subject: {lesson['subject_id']} ({lesson['lesson_type']}), "
-                        f"Room: {lesson['room_id']}, Lecturer: {lesson['lecturer_id']}"
-                    )
+            output_lines.append(f"\n  --- Week {week_idx + 1} ---")
+            
+            # Sort weekly lessons for better display order
+            sorted_week_lessons = sorted(week_lessons, key=lambda g: (
+                processed_data.data['days_of_week'].index(g['day']),
+                processed_data.slot_order_map[g['slot_id']]
+            ))
+            
+            for lesson in sorted_week_lessons:
+                subject_name = processed_data.subject_map.get(lesson['subject_id'], {}).get('name', lesson['subject_id'])
+                lecturer_name = processed_data.lecturer_map.get(lesson['lecturer_id'], {}).get('name', lesson['lecturer_id'])
+                
+                output_lines.append(
+                    f"    Day: {lesson['day']}, Slot: {lesson['slot_id']}, Subject: {subject_name} ({lesson['lesson_type']}), "
+                    f"Room: {lesson['room_id']}, Lecturer: {lecturer_name}"
+                )
+                
     return "\n".join(output_lines)
 
-
-def generate_lecturer_semester_view(semester_schedule_by_class, processed_data): # Thêm processed_data
+def generate_lecturer_semester_view(semester_schedule_by_class, processed_data):
     """
     Tạo ra một cấu trúc dữ liệu lịch dạy cho từng giảng viên trong cả học kỳ.
-    Output: {lecturer_id: {week_num: [lesson_details_for_lecturer]}}
-    Trong đó lesson_details_for_lecturer là một dict chứa thông tin tiết dạy.
-    Cần processed_data để sắp xếp chính xác.
     """
     lecturer_view = defaultdict(lambda: defaultdict(list))
-    # semester_schedule_by_class: {class_id: list_of_weeks[list_of_lessons_in_week]}
-    # lesson: dict_keys(['lesson_id', 'class_id', 'subject_id', 'lesson_type', 
-    # 'program_id', 'group_id', 'day', 'slot_id', 'room_id', 'lecturer_id', 'week'])
-
     for class_id, weekly_schedules_for_class in semester_schedule_by_class.items():
         for week_idx, lessons_in_week in enumerate(weekly_schedules_for_class):
             for lesson in lessons_in_week:
-                lecturer_id = lesson['lecturer_id']
-                # week_num đã có trong lesson['week'] (là 1-indexed)
-                week_num = lesson['week'] 
-                
-                lesson_info_for_lecturer = {
-                    'day': lesson['day'],
-                    'slot_id': lesson['slot_id'],
-                    'class_id': lesson['class_id'],
-                    'subject_id': lesson['subject_id'],
-                    'lesson_type': lesson['lesson_type'],
-                    'room_id': lesson['room_id'],
-                }
-                lecturer_view[lecturer_id][week_num].append(lesson_info_for_lecturer)
-    
-    # Sắp xếp các tiết học trong mỗi tuần của mỗi giảng viên
+                lecturer_id = lesson.get('lecturer_id')
+                if lecturer_id and lecturer_id != "UNASSIGNED_LECTURER":
+                    week_num = week_idx + 1
+                    lesson_info_for_lecturer = {
+                        'day': lesson['day'],
+                        'slot_id': lesson['slot_id'],
+                        'class_id': lesson['class_id'],
+                        'subject_id': lesson['subject_id'],
+                        'lesson_type': lesson['lesson_type'],
+                        'room_id': lesson['room_id'],
+                    }
+                    lecturer_view[lecturer_id][week_num].append(lesson_info_for_lecturer)
     for lecturer_id in lecturer_view:
         for week_num in lecturer_view[lecturer_id]:
-            if processed_data.data.get('days_of_week') and processed_data.data.get('slot_order_map'):
-                # Correctly access keys in the dictionary
+            if processed_data.data.get('days_of_week') and processed_data.slot_order_map:
                 lecturer_view[lecturer_id][week_num].sort(key=lambda x: (
                     processed_data.data['days_of_week'].index(x['day']), 
                     processed_data.slot_order_map[x['slot_id']]
                 ))
-            else: # Fallback nếu processed_data không đủ thông tin
+            else:
                 lecturer_view[lecturer_id][week_num].sort(key=lambda x: (x['day'], x['slot_id']))
-            
     return lecturer_view
 
-def generate_room_semester_view(semester_schedule_by_class, processed_data): # Thêm processed_data
+def generate_room_semester_view(semester_schedule_by_class, processed_data):
     """
     Tạo ra một cấu trúc dữ liệu lịch sử dụng cho từng phòng học trong cả học kỳ.
-    Output: {room_id: {week_num: [lesson_details_for_room]}}
-    Cần processed_data để sắp xếp chính xác.
     """
     room_view = defaultdict(lambda: defaultdict(list))
-
     for class_id, weekly_schedules_for_class in semester_schedule_by_class.items():
         for week_idx, lessons_in_week in enumerate(weekly_schedules_for_class):
             for lesson in lessons_in_week:
-                room_id = lesson['room_id']
-                week_num = lesson['week']
-                
-                lesson_info_for_room = {
-                    'day': lesson['day'],
-                    'slot_id': lesson['slot_id'],
-                    'class_id': lesson['class_id'],
-                    'subject_id': lesson['subject_id'],
-                    'lesson_type': lesson['lesson_type'],
-                    'lecturer_id': lesson['lecturer_id'],
-                }
-                room_view[room_id][week_num].append(lesson_info_for_room)
+                room_id = lesson.get('room_id')
+                if room_id and room_id != "UNASSIGNED_ROOM":
+                    week_num = week_idx + 1
+                    lesson_info_for_room = {
+                        'day': lesson['day'],
+                        'slot_id': lesson['slot_id'],
+                        'class_id': lesson['class_id'],
+                        'subject_id': lesson['subject_id'],
+                        'lesson_type': lesson['lesson_type'],
+                        'lecturer_id': lesson['lecturer_id'],
+                    }
+                    room_view[room_id][week_num].append(lesson_info_for_room)
 
     for room_id in room_view:
         for week_num in room_view[room_id]:
-            if processed_data.data.get('days_of_week') and processed_data.data.get('slot_order_map'):
+            if processed_data.data.get('days_of_week') and processed_data.slot_order_map:
                 room_view[room_id][week_num].sort(key=lambda x: (
                     processed_data.data['days_of_week'].index(x['day']), 
                     processed_data.slot_order_map[x['slot_id']]
                 ))
-            else: # Fallback
+            else:
                 room_view[room_id][week_num].sort(key=lambda x: (x['day'], x['slot_id']))
-            
     return room_view
 
 def format_text_lecturer_schedule(lecturer_view, processed_data):
@@ -170,30 +202,32 @@ def format_text_lecturer_schedule(lecturer_view, processed_data):
 
     sorted_lecturer_ids = sorted(lecturer_view.keys())
 
+    if not sorted_lecturer_ids:
+        output_lines.append("\n(Không có giảng viên nào được xếp lịch)")
+        return "\n".join(output_lines)
+
     for lecturer_id in sorted_lecturer_ids:
-        output_lines.append(f"\n\n===== LỊCH DẠY GIẢNG VIÊN: {lecturer_id} =====")
+        lecturer_name = processed_data.lecturer_map.get(lecturer_id, {}).get('lecturer_name', lecturer_id)
+        output_lines.append(f"\n\n===== LỊCH DẠY GIẢNG VIÊN: {lecturer_id} - {lecturer_name} =====")
         
         lecturer_schedule = lecturer_view[lecturer_id]
-        # Sắp xếp các tuần theo số thứ tự
         sorted_weeks = sorted(lecturer_schedule.keys())
-
-        if not sorted_weeks:
-            output_lines.append("  (Không có lịch dạy)")
-            continue
 
         for week_num in sorted_weeks:
             lessons_in_week = lecturer_schedule[week_num]
             if not lessons_in_week:
                 continue 
 
-            output_lines.append(f"\n  --- Tuần {week_num} ---")
+            output_lines.append(f"\n  --- Tuần {week_num} ---")
             for lesson in lessons_in_week:
-                # day_vie = days_of_week_map_local.get(lesson['day'], lesson['day'])
-                subject_name = processed_data.subject_map.get(lesson['subject_id'], {}).get('name', lesson['subject_id'])
-                # Thay đổi ở đây: thêm từ khóa rõ ràng
+                day_vie = days_of_week_map_local.get(lesson.get('day'), lesson.get('day'))
+                subject_name = processed_data.subject_map.get(lesson.get('subject_id'), {}).get('name', lesson.get('subject_id'))
+                
                 output_lines.append(
-                    f"    Day: {lesson['day']}, Slot: {lesson['slot_id']}, Class: {lesson['class_id']}, "
-                    f"Subject: {lesson['subject_id']} ({lesson['lesson_type']}), Room: {lesson['room_id']}"
+                    f"    - Day: {day_vie} ({lesson.get('day')}), Slot: {lesson.get('slot_id')}, Class: {lesson.get('class_id')}"
+                )
+                output_lines.append(
+                    f"      Subject: {subject_name} ({lesson.get('lesson_type')}), Room: {lesson.get('room_id')}"
                 )
     return "\n".join(output_lines)
 
@@ -212,33 +246,34 @@ def format_text_room_schedule(room_view, processed_data):
     
     sorted_room_ids = sorted(room_view.keys())
 
+    if not sorted_room_ids:
+        output_lines.append("\n(Không có phòng học nào được sử dụng)")
+        return "\n".join(output_lines)
+
     for room_id in sorted_room_ids:
         output_lines.append(f"\n\n===== LỊCH SỬ DỤNG PHÒNG: {room_id} =====")
         
         room_schedule = room_view[room_id]
-        # Sắp xếp các tuần theo số thứ tự
         sorted_weeks = sorted(room_schedule.keys())
         
-        if not sorted_weeks:
-            output_lines.append("  (Không có lịch sử dụng)")
-            continue
-            
         for week_num in sorted_weeks:
             lessons_in_week = room_schedule[week_num]
             if not lessons_in_week:
                 continue
 
-            output_lines.append(f"\n  --- Tuần {week_num} ---")
+            output_lines.append(f"\n  --- Tuần {week_num} ---")
             for lesson in lessons_in_week:
-                day_vie = days_of_week_map_local.get(lesson['day'], lesson['day'])
-                subject_name = processed_data.subject_map.get(lesson['subject_id'], {}).get('name', lesson['subject_id'])
-                # Thay đổi ở đây: thêm từ khóa rõ ràng
+                day_vie = days_of_week_map_local.get(lesson.get('day'), lesson.get('day'))
+                subject_name = processed_data.subject_map.get(lesson.get('subject_id'), {}).get('name', lesson.get('subject_id'))
+                lecturer_name = processed_data.lecturer_map.get(lesson.get('lecturer_id'), {}).get('lecturer_name', lesson.get('lecturer_id'))
+                
                 output_lines.append(
-                    f"    Day: {day_vie} ({lesson['day']}), Slot: {lesson['slot_id']}, Lớp: {lesson['class_id']}, "
-                    f"Môn: {subject_name} ({lesson['lesson_type']}), GV: {lesson['lecturer_id']}"
+                    f"    - Day: {day_vie} ({lesson.get('day')}), Slot: {lesson.get('slot_id')}, Class: {lesson.get('class_id')}"
+                )
+                output_lines.append(
+                    f"      Subject: {subject_name} ({lesson.get('lesson_type')}), Lecturer: {lecturer_name}"
                 )
     return "\n".join(output_lines)
-
 
 def genetic_algorithm():
     print("Loading data...")
@@ -257,7 +292,6 @@ def genetic_algorithm():
     print(f"Initializing population of size {POPULATION_SIZE}...")
     population = initialize_population(POPULATION_SIZE, processed_data)
 
-    # Đánh giá quần thể ban đầu
     for chrom in population:
         fitness_calculator.calculate_fitness(chrom)
     
@@ -268,10 +302,9 @@ def genetic_algorithm():
     best_overall_chromosome = None
 
     for generation in range(MAX_GENERATIONS):
-        print(f"GA_PROGRESS_GENERATION:{generation + 1}/{MAX_GENERATIONS}") # Dấu hiệu mới cho Node.js
+        print(f"GA_PROGRESS_GENERATION:{generation + 1}/{MAX_GENERATIONS}")
         sys.stdout.flush()
         
-        # Sắp xếp quần thể theo fitness (cao hơn là tốt hơn)
         population.sort(key=lambda c: c.fitness, reverse=True)
 
         if best_overall_chromosome is None or population[0].fitness > best_overall_chromosome.fitness:
@@ -282,32 +315,26 @@ def genetic_algorithm():
               f"(Best Overall: {best_overall_chromosome.fitness:.2f})")
         sys.stdout.flush()
 
-        if population[0].fitness == 0: # Đã tìm thấy giải pháp hoàn hảo (không vi phạm ràng buộc cứng)
-            print("Perfect solution found (zero penalty)!")
+        if population[0].fitness >= 0:
+            print("Perfect or near-perfect solution found!")
             break
 
         new_population = []
 
-        # Elitism: Giữ lại những cá thể tốt nhất
         new_population.extend(population[:ELITISM_COUNT])
 
-        # Tạo thế hệ mới
         while len(new_population) < POPULATION_SIZE:
-            # Chọn lọc
             parent1 = tournament_selection(population)
             parent2 = tournament_selection(population)
 
-            # Lai ghép
             if random.random() < CROSSOVER_RATE:
-                child1, child2 = single_point_crossover(parent1, parent2)
+                child1, child2 = lesson_based_crossover(parent1, parent2, processed_data)
             else:
-                child1, child2 = parent1, parent2 # Không lai ghép, giữ lại bố mẹ
+                child1, child2 = parent1, parent2
 
-            # Đột biến
             mutate_chromosome(child1, processed_data, MUTATION_RATE)
             mutate_chromosome(child2, processed_data, MUTATION_RATE)
             
-            # Đánh giá cá thể mới
             fitness_calculator.calculate_fitness(child1)
             fitness_calculator.calculate_fitness(child2)
 
@@ -320,7 +347,6 @@ def genetic_algorithm():
     end_time = time.time()
     print(f"\nGA finished in {end_time - start_time:.2f} seconds.")
 
-    # Lấy cá thể tốt nhất cuối cùng
     population.sort(key=lambda c: c.fitness, reverse=True)
     final_best_chromosome = population[0]
     if best_overall_chromosome and best_overall_chromosome.fitness > final_best_chromosome.fitness:
@@ -330,26 +356,14 @@ def genetic_algorithm():
     print("\nBest timetable found:")
     print(f"Fitness: {final_best_chromosome.fitness:.2f}")
     
-    # In chi tiết thời khóa biểu (tùy chọn, có thể rất dài)
-    # print(format_timetable(final_best_chromosome, processed_data))
-    
-    # Lưu vào file (ví dụ)
     with open("results/best_timetable.txt", "w", encoding="utf-8") as f:
         f.write(f"Best Fitness: {final_best_chromosome.fitness:.2f}\n\n")
         f.write(format_timetable(final_best_chromosome, processed_data))
     print("\nBest timetable saved to results/best_timetable.txt")
     
-    # In ra các vi phạm của giải pháp tốt nhất (để debug)
     print("\n--- Constraint Check for Best Solution ---")
-    # Tạm thời gọi lại fitness để có thể in ra các vi phạm nếu cần
-    # (Trong thực tế, hàm fitness nên trả về chi tiết vi phạm)
-    # fitness_calculator.calculate_fitness(final_best_chromosome) # Đã được tính
-    # Bạn có thể thêm logic vào `FitnessCalculator` để lưu trữ chi tiết vi phạm
-    # và truy xuất chúng ở đây. Ví dụ:
-    # violations = fitness_calculator.get_last_violations()
-    # for v_type, v_count, v_penalty in violations:
-    #    print(f"Violation: {v_type}, Count: {v_count}, Penalty: {v_penalty}")
-
+    fitness_calculator.calculate_fitness(final_best_chromosome)
+    
     print("\nGenerating semester schedule...")
     semester_timetable = generate_semester_schedule(final_best_chromosome, processed_data)
 
@@ -376,14 +390,12 @@ def genetic_algorithm():
     lecturer_semester_view = generate_lecturer_semester_view(semester_timetable, processed_data)
     room_semester_view = generate_room_semester_view(semester_timetable, processed_data)
     
-
     formatted_lecturer_schedule = format_text_lecturer_schedule(lecturer_semester_view, processed_data)
     formatted_room_schedule = format_text_room_schedule(room_semester_view, processed_data)
 
     export_lecturer_view_to_excel(lecturer_semester_view, processed_data, output_folder="results")
     export_room_view_to_excel(room_semester_view, processed_data, output_folder="results")
     
-    # Save to file
     with open("results/semester_schedule_views.txt", "w", encoding="utf-8") as f:
         f.write("LỊCH DẠY GIẢNG VIÊN:\n")
         f.write(formatted_lecturer_schedule)
@@ -391,13 +403,11 @@ def genetic_algorithm():
         f.write(formatted_room_schedule)
     print("\nLecturer and Room schedules saved to results/semester_schedule_views.txt")
     
-    print("\nGA_PROGRESS_DONE") # Thông báo khi thuật toán GA hoàn tất
+    print("\nGA_PROGRESS_DONE")
     sys.stdout.flush()
 
 
 if __name__ == "__main__":
-    # Tạo thư mục results nếu chưa có
-    import os
     if not os.path.exists("results"):
         os.makedirs("results")
     genetic_algorithm()

@@ -1,0 +1,22 @@
+Best Fitness: -7.40
+
+Class: CL01, Subject: Cơ sở dữ liệu (practice), Day: Wed, Slot: S1, Room: LAB04, Lecturer: GV01
+Class: CL01, Subject: Lập trình cơ bản (practice), Day: Wed, Slot: S2, Room: LAB03, Lecturer: GV03
+Class: CL01, Subject: Lập trình cơ bản (theory), Day: Thu, Slot: S1, Room: R104, Lecturer: GV01
+Class: CL01, Subject: Cấu trúc dữ liệu (theory), Day: Thu, Slot: S2, Room: R101, Lecturer: GV03
+Class: CL01, Subject: Cấu trúc dữ liệu (practice), Day: Fri, Slot: C1, Room: LAB03, Lecturer: GV01
+Class: CL01, Subject: Thuật toán (theory), Day: Fri, Slot: C2, Room: R105, Lecturer: GV02
+Class: CL01, Subject: Cơ sở dữ liệu (theory), Day: Sat, Slot: C2, Room: R104, Lecturer: GV01
+Class: CL01, Subject: Thuật toán (practice), Day: Sat, Slot: T2, Room: LAB04, Lecturer: GV02
+Class: CL02, Subject: Cơ sở dữ liệu (practice), Day: Mon, Slot: C2, Room: LAB02, Lecturer: GV01
+Class: CL02, Subject: Lập trình cơ bản (theory), Day: Tue, Slot: S1, Room: R102, Lecturer: GV01
+Class: CL02, Subject: Lập trình cơ bản (practice), Day: Tue, Slot: S2, Room: LAB03, Lecturer: GV03
+Class: CL02, Subject: Cấu trúc dữ liệu (theory), Day: Wed, Slot: C1, Room: R102, Lecturer: GV03
+Class: CL02, Subject: Cơ sở dữ liệu (theory), Day: Wed, Slot: C2, Room: R103, Lecturer: GV01
+Class: CL02, Subject: Thuật toán (theory), Day: Thu, Slot: S2, Room: R103, Lecturer: GV02
+Class: CL02, Subject: Cấu trúc dữ liệu (practice), Day: Thu, Slot: C1, Room: LAB03, Lecturer: GV03
+Class: CL02, Subject: Thuật toán (practice), Day: Fri, Slot: S2, Room: LAB03, Lecturer: GV02
+Class: CL03, Subject: Thiết kế Web (theory), Day: Wed, Slot: S2, Room: R102, Lecturer: GV04
+Class: CL03, Subject: Mạng máy tính (theory), Day: Thu, Slot: C1, Room: R102, Lecturer: GV04
+Class: CL03, Subject: Mạng máy tính (practice), Day: Fri, Slot: T2, Room: LAB01, Lecturer: GV02
+Class: CL03, Subject: Thiết kế Web (practice), Day: Sat, Slot: C1, Room: LAB04, Lecturer: GV02

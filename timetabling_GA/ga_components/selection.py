@@ -12,25 +12,30 @@ def tournament_selection(population, k=3):
 def roulette_wheel_selection(population):
     """
     Selects a parent using roulette wheel selection.
-    Assumes fitness values are non-negative (or shifted to be so).
-    Since our fitness is -penalty, higher (less negative) is better.
-    We need to map these to probabilities.
+    Assumes fitness values are non-negative.
     """
-    max_fitness = sum(c.fitness for c in population) # This won't work directly for negative fitness
+    # Xử lý trường hợp tất cả các cá thể đều có fitness rất thấp (hoặc bằng nhau)
+    if not population:
+        return None
     
-    # Shift fitness values to be positive for roulette wheel
+    # Dịch chuyển fitness để đảm bảo tất cả đều là số dương
     min_fitness_val = min(c.fitness for c in population)
-    shifted_fitness = [(c.fitness - min_fitness_val) + 1e-6 for c in population] # Add small epsilon to avoid zero sum
     
-    total_shifted_fitness = sum(shifted_fitness)
+    # Sử dụng list comprehension để tạo danh sách fitness đã dịch chuyển
+    shifted_fitnesses = [(c.fitness - min_fitness_val) + 1e-6 for c in population]
+    
+    total_shifted_fitness = sum(shifted_fitnesses)
 
-    if total_shifted_fitness == 0: # All have same min fitness (e.g. all -infinity)
+    if total_shifted_fitness <= 1e-6:
+        # Trường hợp tất cả fitness đều như nhau, chọn ngẫu nhiên
         return random.choice(population)
 
     pick = random.uniform(0, total_shifted_fitness)
     current = 0
-    for i, c_fitness in enumerate(shifted_fitness):
-        current += c_fitness
+    for i, shifted_f in enumerate(shifted_fitnesses):
+        current += shifted_f
         if current > pick:
             return population[i]
-    return random.choice(population) # Fallback
+            
+    # Xử lý trường hợp không chọn được (lỗi số học nhỏ), chọn ngẫu nhiên để tránh lỗi
+    return random.choice(population)

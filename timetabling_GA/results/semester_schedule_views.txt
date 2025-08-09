@@ -1,0 +1,1642 @@
+LỊCH DẠY GIẢNG VIÊN:
+
+
+=========================================
+LỊCH DẠY CỦA GIẢNG VIÊN THEO HỌC KỲ:
+=========================================
+
+
+===== LỊCH DẠY GIẢNG VIÊN: GV01 - Nguyễn Văn A =====
+
+  --- Tuần 1 ---
+    - Day: Thứ 2 (Mon), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (practice), Room: LAB02
+    - Day: Thứ 3 (Tue), Slot: S1, Class: CL02
+      Subject: Lập trình cơ bản (theory), Room: R102
+    - Day: Thứ 4 (Wed), Slot: S1, Class: CL01
+      Subject: Cơ sở dữ liệu (practice), Room: LAB04
+    - Day: Thứ 4 (Wed), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (theory), Room: R103
+    - Day: Thứ 5 (Thu), Slot: S1, Class: CL01
+      Subject: Lập trình cơ bản (theory), Room: R104
+    - Day: Thứ 6 (Fri), Slot: C1, Class: CL01
+      Subject: Cấu trúc dữ liệu (practice), Room: LAB03
+    - Day: Thứ 7 (Sat), Slot: C2, Class: CL01
+      Subject: Cơ sở dữ liệu (theory), Room: R104
+
+  --- Tuần 2 ---
+    - Day: Thứ 2 (Mon), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (practice), Room: LAB02
+    - Day: Thứ 3 (Tue), Slot: S1, Class: CL02
+      Subject: Lập trình cơ bản (theory), Room: R102
+    - Day: Thứ 4 (Wed), Slot: S1, Class: CL01
+      Subject: Cơ sở dữ liệu (practice), Room: LAB04
+    - Day: Thứ 4 (Wed), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (theory), Room: R103
+    - Day: Thứ 5 (Thu), Slot: S1, Class: CL01
+      Subject: Lập trình cơ bản (theory), Room: R104
+    - Day: Thứ 6 (Fri), Slot: C1, Class: CL01
+      Subject: Cấu trúc dữ liệu (practice), Room: LAB03
+    - Day: Thứ 7 (Sat), Slot: C2, Class: CL01
+      Subject: Cơ sở dữ liệu (theory), Room: R104
+
+  --- Tuần 3 ---
+    - Day: Thứ 2 (Mon), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (practice), Room: LAB02
+    - Day: Thứ 3 (Tue), Slot: S1, Class: CL02
+      Subject: Lập trình cơ bản (theory), Room: R102
+    - Day: Thứ 4 (Wed), Slot: S1, Class: CL01
+      Subject: Cơ sở dữ liệu (practice), Room: LAB04
+    - Day: Thứ 4 (Wed), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (theory), Room: R103
+    - Day: Thứ 5 (Thu), Slot: S1, Class: CL01
+      Subject: Lập trình cơ bản (theory), Room: R104
+    - Day: Thứ 6 (Fri), Slot: C1, Class: CL01
+      Subject: Cấu trúc dữ liệu (practice), Room: LAB03
+    - Day: Thứ 7 (Sat), Slot: C2, Class: CL01
+      Subject: Cơ sở dữ liệu (theory), Room: R104
+
+  --- Tuần 4 ---
+    - Day: Thứ 2 (Mon), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (practice), Room: LAB02
+    - Day: Thứ 3 (Tue), Slot: S1, Class: CL02
+      Subject: Lập trình cơ bản (theory), Room: R102
+    - Day: Thứ 4 (Wed), Slot: S1, Class: CL01
+      Subject: Cơ sở dữ liệu (practice), Room: LAB04
+    - Day: Thứ 4 (Wed), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (theory), Room: R103
+    - Day: Thứ 5 (Thu), Slot: S1, Class: CL01
+      Subject: Lập trình cơ bản (theory), Room: R104
+    - Day: Thứ 6 (Fri), Slot: C1, Class: CL01
+      Subject: Cấu trúc dữ liệu (practice), Room: LAB03
+    - Day: Thứ 7 (Sat), Slot: C2, Class: CL01
+      Subject: Cơ sở dữ liệu (theory), Room: R104
+
+  --- Tuần 5 ---
+    - Day: Thứ 2 (Mon), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (practice), Room: LAB02
+    - Day: Thứ 3 (Tue), Slot: S1, Class: CL02
+      Subject: Lập trình cơ bản (theory), Room: R102
+    - Day: Thứ 4 (Wed), Slot: S1, Class: CL01
+      Subject: Cơ sở dữ liệu (practice), Room: LAB04
+    - Day: Thứ 4 (Wed), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (theory), Room: R103
+    - Day: Thứ 5 (Thu), Slot: S1, Class: CL01
+      Subject: Lập trình cơ bản (theory), Room: R104
+    - Day: Thứ 6 (Fri), Slot: C1, Class: CL01
+      Subject: Cấu trúc dữ liệu (practice), Room: LAB03
+    - Day: Thứ 7 (Sat), Slot: C2, Class: CL01
+      Subject: Cơ sở dữ liệu (theory), Room: R104
+
+  --- Tuần 6 ---
+    - Day: Thứ 2 (Mon), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (practice), Room: LAB02
+    - Day: Thứ 3 (Tue), Slot: S1, Class: CL02
+      Subject: Lập trình cơ bản (theory), Room: R102
+    - Day: Thứ 4 (Wed), Slot: S1, Class: CL01
+      Subject: Cơ sở dữ liệu (practice), Room: LAB04
+    - Day: Thứ 4 (Wed), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (theory), Room: R103
+    - Day: Thứ 5 (Thu), Slot: S1, Class: CL01
+      Subject: Lập trình cơ bản (theory), Room: R104
+    - Day: Thứ 6 (Fri), Slot: C1, Class: CL01
+      Subject: Cấu trúc dữ liệu (practice), Room: LAB03
+    - Day: Thứ 7 (Sat), Slot: C2, Class: CL01
+      Subject: Cơ sở dữ liệu (theory), Room: R104
+
+  --- Tuần 7 ---
+    - Day: Thứ 2 (Mon), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (practice), Room: LAB02
+    - Day: Thứ 3 (Tue), Slot: S1, Class: CL02
+      Subject: Lập trình cơ bản (theory), Room: R102
+    - Day: Thứ 4 (Wed), Slot: S1, Class: CL01
+      Subject: Cơ sở dữ liệu (practice), Room: LAB04
+    - Day: Thứ 4 (Wed), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (theory), Room: R103
+    - Day: Thứ 5 (Thu), Slot: S1, Class: CL01
+      Subject: Lập trình cơ bản (theory), Room: R104
+    - Day: Thứ 6 (Fri), Slot: C1, Class: CL01
+      Subject: Cấu trúc dữ liệu (practice), Room: LAB03
+    - Day: Thứ 7 (Sat), Slot: C2, Class: CL01
+      Subject: Cơ sở dữ liệu (theory), Room: R104
+
+  --- Tuần 8 ---
+    - Day: Thứ 2 (Mon), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (practice), Room: LAB02
+    - Day: Thứ 3 (Tue), Slot: S1, Class: CL02
+      Subject: Lập trình cơ bản (theory), Room: R102
+    - Day: Thứ 4 (Wed), Slot: S1, Class: CL01
+      Subject: Cơ sở dữ liệu (practice), Room: LAB04
+    - Day: Thứ 4 (Wed), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (theory), Room: R103
+    - Day: Thứ 5 (Thu), Slot: S1, Class: CL01
+      Subject: Lập trình cơ bản (theory), Room: R104
+    - Day: Thứ 6 (Fri), Slot: C1, Class: CL01
+      Subject: Cấu trúc dữ liệu (practice), Room: LAB03
+    - Day: Thứ 7 (Sat), Slot: C2, Class: CL01
+      Subject: Cơ sở dữ liệu (theory), Room: R104
+
+  --- Tuần 9 ---
+    - Day: Thứ 2 (Mon), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (practice), Room: LAB02
+    - Day: Thứ 3 (Tue), Slot: S1, Class: CL02
+      Subject: Lập trình cơ bản (theory), Room: R102
+    - Day: Thứ 4 (Wed), Slot: S1, Class: CL01
+      Subject: Cơ sở dữ liệu (practice), Room: LAB04
+    - Day: Thứ 4 (Wed), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (theory), Room: R103
+    - Day: Thứ 5 (Thu), Slot: S1, Class: CL01
+      Subject: Lập trình cơ bản (theory), Room: R104
+    - Day: Thứ 6 (Fri), Slot: C1, Class: CL01
+      Subject: Cấu trúc dữ liệu (practice), Room: LAB03
+    - Day: Thứ 7 (Sat), Slot: C2, Class: CL01
+      Subject: Cơ sở dữ liệu (theory), Room: R104
+
+  --- Tuần 10 ---
+    - Day: Thứ 2 (Mon), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (practice), Room: LAB02
+    - Day: Thứ 3 (Tue), Slot: S1, Class: CL02
+      Subject: Lập trình cơ bản (theory), Room: R102
+    - Day: Thứ 4 (Wed), Slot: S1, Class: CL01
+      Subject: Cơ sở dữ liệu (practice), Room: LAB04
+    - Day: Thứ 4 (Wed), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (theory), Room: R103
+    - Day: Thứ 5 (Thu), Slot: S1, Class: CL01
+      Subject: Lập trình cơ bản (theory), Room: R104
+    - Day: Thứ 6 (Fri), Slot: C1, Class: CL01
+      Subject: Cấu trúc dữ liệu (practice), Room: LAB03
+    - Day: Thứ 7 (Sat), Slot: C2, Class: CL01
+      Subject: Cơ sở dữ liệu (theory), Room: R104
+
+  --- Tuần 11 ---
+    - Day: Thứ 2 (Mon), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (practice), Room: LAB02
+    - Day: Thứ 3 (Tue), Slot: S1, Class: CL02
+      Subject: Lập trình cơ bản (theory), Room: R102
+    - Day: Thứ 4 (Wed), Slot: S1, Class: CL01
+      Subject: Cơ sở dữ liệu (practice), Room: LAB04
+    - Day: Thứ 4 (Wed), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (theory), Room: R103
+    - Day: Thứ 5 (Thu), Slot: S1, Class: CL01
+      Subject: Lập trình cơ bản (theory), Room: R104
+    - Day: Thứ 6 (Fri), Slot: C1, Class: CL01
+      Subject: Cấu trúc dữ liệu (practice), Room: LAB03
+    - Day: Thứ 7 (Sat), Slot: C2, Class: CL01
+      Subject: Cơ sở dữ liệu (theory), Room: R104
+
+  --- Tuần 12 ---
+    - Day: Thứ 2 (Mon), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (practice), Room: LAB02
+    - Day: Thứ 3 (Tue), Slot: S1, Class: CL02
+      Subject: Lập trình cơ bản (theory), Room: R102
+    - Day: Thứ 4 (Wed), Slot: S1, Class: CL01
+      Subject: Cơ sở dữ liệu (practice), Room: LAB04
+    - Day: Thứ 4 (Wed), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (theory), Room: R103
+    - Day: Thứ 5 (Thu), Slot: S1, Class: CL01
+      Subject: Lập trình cơ bản (theory), Room: R104
+    - Day: Thứ 6 (Fri), Slot: C1, Class: CL01
+      Subject: Cấu trúc dữ liệu (practice), Room: LAB03
+    - Day: Thứ 7 (Sat), Slot: C2, Class: CL01
+      Subject: Cơ sở dữ liệu (theory), Room: R104
+
+  --- Tuần 13 ---
+    - Day: Thứ 2 (Mon), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (practice), Room: LAB02
+    - Day: Thứ 3 (Tue), Slot: S1, Class: CL02
+      Subject: Lập trình cơ bản (theory), Room: R102
+    - Day: Thứ 4 (Wed), Slot: S1, Class: CL01
+      Subject: Cơ sở dữ liệu (practice), Room: LAB04
+    - Day: Thứ 4 (Wed), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (theory), Room: R103
+    - Day: Thứ 5 (Thu), Slot: S1, Class: CL01
+      Subject: Lập trình cơ bản (theory), Room: R104
+    - Day: Thứ 6 (Fri), Slot: C1, Class: CL01
+      Subject: Cấu trúc dữ liệu (practice), Room: LAB03
+    - Day: Thứ 7 (Sat), Slot: C2, Class: CL01
+      Subject: Cơ sở dữ liệu (theory), Room: R104
+
+  --- Tuần 14 ---
+    - Day: Thứ 2 (Mon), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (practice), Room: LAB02
+    - Day: Thứ 3 (Tue), Slot: S1, Class: CL02
+      Subject: Lập trình cơ bản (theory), Room: R102
+    - Day: Thứ 4 (Wed), Slot: S1, Class: CL01
+      Subject: Cơ sở dữ liệu (practice), Room: LAB04
+    - Day: Thứ 4 (Wed), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (theory), Room: R103
+    - Day: Thứ 5 (Thu), Slot: S1, Class: CL01
+      Subject: Lập trình cơ bản (theory), Room: R104
+    - Day: Thứ 6 (Fri), Slot: C1, Class: CL01
+      Subject: Cấu trúc dữ liệu (practice), Room: LAB03
+    - Day: Thứ 7 (Sat), Slot: C2, Class: CL01
+      Subject: Cơ sở dữ liệu (theory), Room: R104
+
+  --- Tuần 15 ---
+    - Day: Thứ 2 (Mon), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (practice), Room: LAB02
+    - Day: Thứ 3 (Tue), Slot: S1, Class: CL02
+      Subject: Lập trình cơ bản (theory), Room: R102
+    - Day: Thứ 4 (Wed), Slot: S1, Class: CL01
+      Subject: Cơ sở dữ liệu (practice), Room: LAB04
+    - Day: Thứ 4 (Wed), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (theory), Room: R103
+    - Day: Thứ 5 (Thu), Slot: S1, Class: CL01
+      Subject: Lập trình cơ bản (theory), Room: R104
+    - Day: Thứ 6 (Fri), Slot: C1, Class: CL01
+      Subject: Cấu trúc dữ liệu (practice), Room: LAB03
+    - Day: Thứ 7 (Sat), Slot: C2, Class: CL01
+      Subject: Cơ sở dữ liệu (theory), Room: R104
+
+
+===== LỊCH DẠY GIẢNG VIÊN: GV02 - Trần Thị B =====
+
+  --- Tuần 1 ---
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL02
+      Subject: Thuật toán (theory), Room: R103
+    - Day: Thứ 6 (Fri), Slot: S2, Class: CL02
+      Subject: Thuật toán (practice), Room: LAB03
+    - Day: Thứ 6 (Fri), Slot: C2, Class: CL01
+      Subject: Thuật toán (theory), Room: R105
+    - Day: Thứ 6 (Fri), Slot: T2, Class: CL03
+      Subject: Mạng máy tính (practice), Room: LAB01
+    - Day: Thứ 7 (Sat), Slot: C1, Class: CL03
+      Subject: Thiết kế Web (practice), Room: LAB04
+    - Day: Thứ 7 (Sat), Slot: T2, Class: CL01
+      Subject: Thuật toán (practice), Room: LAB04
+
+  --- Tuần 2 ---
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL02
+      Subject: Thuật toán (theory), Room: R103
+    - Day: Thứ 6 (Fri), Slot: S2, Class: CL02
+      Subject: Thuật toán (practice), Room: LAB03
+    - Day: Thứ 6 (Fri), Slot: C2, Class: CL01
+      Subject: Thuật toán (theory), Room: R105
+    - Day: Thứ 6 (Fri), Slot: T2, Class: CL03
+      Subject: Mạng máy tính (practice), Room: LAB01
+    - Day: Thứ 7 (Sat), Slot: C1, Class: CL03
+      Subject: Thiết kế Web (practice), Room: LAB04
+    - Day: Thứ 7 (Sat), Slot: T2, Class: CL01
+      Subject: Thuật toán (practice), Room: LAB04
+
+  --- Tuần 3 ---
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL02
+      Subject: Thuật toán (theory), Room: R103
+    - Day: Thứ 6 (Fri), Slot: S2, Class: CL02
+      Subject: Thuật toán (practice), Room: LAB03
+    - Day: Thứ 6 (Fri), Slot: C2, Class: CL01
+      Subject: Thuật toán (theory), Room: R105
+    - Day: Thứ 6 (Fri), Slot: T2, Class: CL03
+      Subject: Mạng máy tính (practice), Room: LAB01
+    - Day: Thứ 7 (Sat), Slot: C1, Class: CL03
+      Subject: Thiết kế Web (practice), Room: LAB04
+    - Day: Thứ 7 (Sat), Slot: T2, Class: CL01
+      Subject: Thuật toán (practice), Room: LAB04
+
+  --- Tuần 4 ---
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL02
+      Subject: Thuật toán (theory), Room: R103
+    - Day: Thứ 6 (Fri), Slot: S2, Class: CL02
+      Subject: Thuật toán (practice), Room: LAB03
+    - Day: Thứ 6 (Fri), Slot: C2, Class: CL01
+      Subject: Thuật toán (theory), Room: R105
+    - Day: Thứ 6 (Fri), Slot: T2, Class: CL03
+      Subject: Mạng máy tính (practice), Room: LAB01
+    - Day: Thứ 7 (Sat), Slot: C1, Class: CL03
+      Subject: Thiết kế Web (practice), Room: LAB04
+    - Day: Thứ 7 (Sat), Slot: T2, Class: CL01
+      Subject: Thuật toán (practice), Room: LAB04
+
+  --- Tuần 5 ---
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL02
+      Subject: Thuật toán (theory), Room: R103
+    - Day: Thứ 6 (Fri), Slot: S2, Class: CL02
+      Subject: Thuật toán (practice), Room: LAB03
+    - Day: Thứ 6 (Fri), Slot: C2, Class: CL01
+      Subject: Thuật toán (theory), Room: R105
+    - Day: Thứ 6 (Fri), Slot: T2, Class: CL03
+      Subject: Mạng máy tính (practice), Room: LAB01
+    - Day: Thứ 7 (Sat), Slot: C1, Class: CL03
+      Subject: Thiết kế Web (practice), Room: LAB04
+    - Day: Thứ 7 (Sat), Slot: T2, Class: CL01
+      Subject: Thuật toán (practice), Room: LAB04
+
+  --- Tuần 6 ---
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL02
+      Subject: Thuật toán (theory), Room: R103
+    - Day: Thứ 6 (Fri), Slot: S2, Class: CL02
+      Subject: Thuật toán (practice), Room: LAB03
+    - Day: Thứ 6 (Fri), Slot: C2, Class: CL01
+      Subject: Thuật toán (theory), Room: R105
+    - Day: Thứ 6 (Fri), Slot: T2, Class: CL03
+      Subject: Mạng máy tính (practice), Room: LAB01
+    - Day: Thứ 7 (Sat), Slot: C1, Class: CL03
+      Subject: Thiết kế Web (practice), Room: LAB04
+    - Day: Thứ 7 (Sat), Slot: T2, Class: CL01
+      Subject: Thuật toán (practice), Room: LAB04
+
+  --- Tuần 7 ---
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL02
+      Subject: Thuật toán (theory), Room: R103
+    - Day: Thứ 6 (Fri), Slot: S2, Class: CL02
+      Subject: Thuật toán (practice), Room: LAB03
+    - Day: Thứ 6 (Fri), Slot: C2, Class: CL01
+      Subject: Thuật toán (theory), Room: R105
+    - Day: Thứ 6 (Fri), Slot: T2, Class: CL03
+      Subject: Mạng máy tính (practice), Room: LAB01
+    - Day: Thứ 7 (Sat), Slot: C1, Class: CL03
+      Subject: Thiết kế Web (practice), Room: LAB04
+    - Day: Thứ 7 (Sat), Slot: T2, Class: CL01
+      Subject: Thuật toán (practice), Room: LAB04
+
+  --- Tuần 8 ---
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL02
+      Subject: Thuật toán (theory), Room: R103
+    - Day: Thứ 6 (Fri), Slot: S2, Class: CL02
+      Subject: Thuật toán (practice), Room: LAB03
+    - Day: Thứ 6 (Fri), Slot: C2, Class: CL01
+      Subject: Thuật toán (theory), Room: R105
+    - Day: Thứ 6 (Fri), Slot: T2, Class: CL03
+      Subject: Mạng máy tính (practice), Room: LAB01
+    - Day: Thứ 7 (Sat), Slot: C1, Class: CL03
+      Subject: Thiết kế Web (practice), Room: LAB04
+    - Day: Thứ 7 (Sat), Slot: T2, Class: CL01
+      Subject: Thuật toán (practice), Room: LAB04
+
+  --- Tuần 9 ---
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL02
+      Subject: Thuật toán (theory), Room: R103
+    - Day: Thứ 6 (Fri), Slot: S2, Class: CL02
+      Subject: Thuật toán (practice), Room: LAB03
+    - Day: Thứ 6 (Fri), Slot: C2, Class: CL01
+      Subject: Thuật toán (theory), Room: R105
+    - Day: Thứ 6 (Fri), Slot: T2, Class: CL03
+      Subject: Mạng máy tính (practice), Room: LAB01
+    - Day: Thứ 7 (Sat), Slot: C1, Class: CL03
+      Subject: Thiết kế Web (practice), Room: LAB04
+    - Day: Thứ 7 (Sat), Slot: T2, Class: CL01
+      Subject: Thuật toán (practice), Room: LAB04
+
+  --- Tuần 10 ---
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL02
+      Subject: Thuật toán (theory), Room: R103
+    - Day: Thứ 6 (Fri), Slot: S2, Class: CL02
+      Subject: Thuật toán (practice), Room: LAB03
+    - Day: Thứ 6 (Fri), Slot: C2, Class: CL01
+      Subject: Thuật toán (theory), Room: R105
+    - Day: Thứ 6 (Fri), Slot: T2, Class: CL03
+      Subject: Mạng máy tính (practice), Room: LAB01
+    - Day: Thứ 7 (Sat), Slot: C1, Class: CL03
+      Subject: Thiết kế Web (practice), Room: LAB04
+    - Day: Thứ 7 (Sat), Slot: T2, Class: CL01
+      Subject: Thuật toán (practice), Room: LAB04
+
+  --- Tuần 11 ---
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL02
+      Subject: Thuật toán (theory), Room: R103
+    - Day: Thứ 6 (Fri), Slot: S2, Class: CL02
+      Subject: Thuật toán (practice), Room: LAB03
+    - Day: Thứ 6 (Fri), Slot: C2, Class: CL01
+      Subject: Thuật toán (theory), Room: R105
+    - Day: Thứ 6 (Fri), Slot: T2, Class: CL03
+      Subject: Mạng máy tính (practice), Room: LAB01
+    - Day: Thứ 7 (Sat), Slot: C1, Class: CL03
+      Subject: Thiết kế Web (practice), Room: LAB04
+    - Day: Thứ 7 (Sat), Slot: T2, Class: CL01
+      Subject: Thuật toán (practice), Room: LAB04
+
+  --- Tuần 12 ---
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL02
+      Subject: Thuật toán (theory), Room: R103
+    - Day: Thứ 6 (Fri), Slot: S2, Class: CL02
+      Subject: Thuật toán (practice), Room: LAB03
+    - Day: Thứ 6 (Fri), Slot: C2, Class: CL01
+      Subject: Thuật toán (theory), Room: R105
+    - Day: Thứ 6 (Fri), Slot: T2, Class: CL03
+      Subject: Mạng máy tính (practice), Room: LAB01
+    - Day: Thứ 7 (Sat), Slot: C1, Class: CL03
+      Subject: Thiết kế Web (practice), Room: LAB04
+    - Day: Thứ 7 (Sat), Slot: T2, Class: CL01
+      Subject: Thuật toán (practice), Room: LAB04
+
+  --- Tuần 13 ---
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL02
+      Subject: Thuật toán (theory), Room: R103
+    - Day: Thứ 6 (Fri), Slot: S2, Class: CL02
+      Subject: Thuật toán (practice), Room: LAB03
+    - Day: Thứ 6 (Fri), Slot: C2, Class: CL01
+      Subject: Thuật toán (theory), Room: R105
+    - Day: Thứ 6 (Fri), Slot: T2, Class: CL03
+      Subject: Mạng máy tính (practice), Room: LAB01
+    - Day: Thứ 7 (Sat), Slot: C1, Class: CL03
+      Subject: Thiết kế Web (practice), Room: LAB04
+    - Day: Thứ 7 (Sat), Slot: T2, Class: CL01
+      Subject: Thuật toán (practice), Room: LAB04
+
+  --- Tuần 14 ---
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL02
+      Subject: Thuật toán (theory), Room: R103
+    - Day: Thứ 6 (Fri), Slot: S2, Class: CL02
+      Subject: Thuật toán (practice), Room: LAB03
+    - Day: Thứ 6 (Fri), Slot: C2, Class: CL01
+      Subject: Thuật toán (theory), Room: R105
+    - Day: Thứ 6 (Fri), Slot: T2, Class: CL03
+      Subject: Mạng máy tính (practice), Room: LAB01
+    - Day: Thứ 7 (Sat), Slot: C1, Class: CL03
+      Subject: Thiết kế Web (practice), Room: LAB04
+    - Day: Thứ 7 (Sat), Slot: T2, Class: CL01
+      Subject: Thuật toán (practice), Room: LAB04
+
+  --- Tuần 15 ---
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL02
+      Subject: Thuật toán (theory), Room: R103
+    - Day: Thứ 6 (Fri), Slot: S2, Class: CL02
+      Subject: Thuật toán (practice), Room: LAB03
+    - Day: Thứ 6 (Fri), Slot: C2, Class: CL01
+      Subject: Thuật toán (theory), Room: R105
+    - Day: Thứ 6 (Fri), Slot: T2, Class: CL03
+      Subject: Mạng máy tính (practice), Room: LAB01
+    - Day: Thứ 7 (Sat), Slot: C1, Class: CL03
+      Subject: Thiết kế Web (practice), Room: LAB04
+    - Day: Thứ 7 (Sat), Slot: T2, Class: CL01
+      Subject: Thuật toán (practice), Room: LAB04
+
+
+===== LỊCH DẠY GIẢNG VIÊN: GV03 - Lê Văn C =====
+
+  --- Tuần 1 ---
+    - Day: Thứ 3 (Tue), Slot: S2, Class: CL02
+      Subject: Lập trình cơ bản (practice), Room: LAB03
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL01
+      Subject: Lập trình cơ bản (practice), Room: LAB03
+    - Day: Thứ 4 (Wed), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (theory), Room: R102
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL01
+      Subject: Cấu trúc dữ liệu (theory), Room: R101
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (practice), Room: LAB03
+
+  --- Tuần 2 ---
+    - Day: Thứ 3 (Tue), Slot: S2, Class: CL02
+      Subject: Lập trình cơ bản (practice), Room: LAB03
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL01
+      Subject: Lập trình cơ bản (practice), Room: LAB03
+    - Day: Thứ 4 (Wed), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (theory), Room: R102
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL01
+      Subject: Cấu trúc dữ liệu (theory), Room: R101
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (practice), Room: LAB03
+
+  --- Tuần 3 ---
+    - Day: Thứ 3 (Tue), Slot: S2, Class: CL02
+      Subject: Lập trình cơ bản (practice), Room: LAB03
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL01
+      Subject: Lập trình cơ bản (practice), Room: LAB03
+    - Day: Thứ 4 (Wed), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (theory), Room: R102
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL01
+      Subject: Cấu trúc dữ liệu (theory), Room: R101
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (practice), Room: LAB03
+
+  --- Tuần 4 ---
+    - Day: Thứ 3 (Tue), Slot: S2, Class: CL02
+      Subject: Lập trình cơ bản (practice), Room: LAB03
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL01
+      Subject: Lập trình cơ bản (practice), Room: LAB03
+    - Day: Thứ 4 (Wed), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (theory), Room: R102
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL01
+      Subject: Cấu trúc dữ liệu (theory), Room: R101
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (practice), Room: LAB03
+
+  --- Tuần 5 ---
+    - Day: Thứ 3 (Tue), Slot: S2, Class: CL02
+      Subject: Lập trình cơ bản (practice), Room: LAB03
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL01
+      Subject: Lập trình cơ bản (practice), Room: LAB03
+    - Day: Thứ 4 (Wed), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (theory), Room: R102
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL01
+      Subject: Cấu trúc dữ liệu (theory), Room: R101
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (practice), Room: LAB03
+
+  --- Tuần 6 ---
+    - Day: Thứ 3 (Tue), Slot: S2, Class: CL02
+      Subject: Lập trình cơ bản (practice), Room: LAB03
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL01
+      Subject: Lập trình cơ bản (practice), Room: LAB03
+    - Day: Thứ 4 (Wed), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (theory), Room: R102
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL01
+      Subject: Cấu trúc dữ liệu (theory), Room: R101
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (practice), Room: LAB03
+
+  --- Tuần 7 ---
+    - Day: Thứ 3 (Tue), Slot: S2, Class: CL02
+      Subject: Lập trình cơ bản (practice), Room: LAB03
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL01
+      Subject: Lập trình cơ bản (practice), Room: LAB03
+    - Day: Thứ 4 (Wed), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (theory), Room: R102
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL01
+      Subject: Cấu trúc dữ liệu (theory), Room: R101
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (practice), Room: LAB03
+
+  --- Tuần 8 ---
+    - Day: Thứ 3 (Tue), Slot: S2, Class: CL02
+      Subject: Lập trình cơ bản (practice), Room: LAB03
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL01
+      Subject: Lập trình cơ bản (practice), Room: LAB03
+    - Day: Thứ 4 (Wed), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (theory), Room: R102
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL01
+      Subject: Cấu trúc dữ liệu (theory), Room: R101
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (practice), Room: LAB03
+
+  --- Tuần 9 ---
+    - Day: Thứ 3 (Tue), Slot: S2, Class: CL02
+      Subject: Lập trình cơ bản (practice), Room: LAB03
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL01
+      Subject: Lập trình cơ bản (practice), Room: LAB03
+    - Day: Thứ 4 (Wed), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (theory), Room: R102
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL01
+      Subject: Cấu trúc dữ liệu (theory), Room: R101
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (practice), Room: LAB03
+
+  --- Tuần 10 ---
+    - Day: Thứ 3 (Tue), Slot: S2, Class: CL02
+      Subject: Lập trình cơ bản (practice), Room: LAB03
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL01
+      Subject: Lập trình cơ bản (practice), Room: LAB03
+    - Day: Thứ 4 (Wed), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (theory), Room: R102
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL01
+      Subject: Cấu trúc dữ liệu (theory), Room: R101
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (practice), Room: LAB03
+
+  --- Tuần 11 ---
+    - Day: Thứ 3 (Tue), Slot: S2, Class: CL02
+      Subject: Lập trình cơ bản (practice), Room: LAB03
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL01
+      Subject: Lập trình cơ bản (practice), Room: LAB03
+    - Day: Thứ 4 (Wed), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (theory), Room: R102
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL01
+      Subject: Cấu trúc dữ liệu (theory), Room: R101
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (practice), Room: LAB03
+
+  --- Tuần 12 ---
+    - Day: Thứ 3 (Tue), Slot: S2, Class: CL02
+      Subject: Lập trình cơ bản (practice), Room: LAB03
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL01
+      Subject: Lập trình cơ bản (practice), Room: LAB03
+    - Day: Thứ 4 (Wed), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (theory), Room: R102
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL01
+      Subject: Cấu trúc dữ liệu (theory), Room: R101
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (practice), Room: LAB03
+
+  --- Tuần 13 ---
+    - Day: Thứ 3 (Tue), Slot: S2, Class: CL02
+      Subject: Lập trình cơ bản (practice), Room: LAB03
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL01
+      Subject: Lập trình cơ bản (practice), Room: LAB03
+    - Day: Thứ 4 (Wed), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (theory), Room: R102
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL01
+      Subject: Cấu trúc dữ liệu (theory), Room: R101
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (practice), Room: LAB03
+
+  --- Tuần 14 ---
+    - Day: Thứ 3 (Tue), Slot: S2, Class: CL02
+      Subject: Lập trình cơ bản (practice), Room: LAB03
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL01
+      Subject: Lập trình cơ bản (practice), Room: LAB03
+    - Day: Thứ 4 (Wed), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (theory), Room: R102
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL01
+      Subject: Cấu trúc dữ liệu (theory), Room: R101
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (practice), Room: LAB03
+
+  --- Tuần 15 ---
+    - Day: Thứ 3 (Tue), Slot: S2, Class: CL02
+      Subject: Lập trình cơ bản (practice), Room: LAB03
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL01
+      Subject: Lập trình cơ bản (practice), Room: LAB03
+    - Day: Thứ 4 (Wed), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (theory), Room: R102
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL01
+      Subject: Cấu trúc dữ liệu (theory), Room: R101
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (practice), Room: LAB03
+
+
+===== LỊCH DẠY GIẢNG VIÊN: GV04 - Phạm Văn D =====
+
+  --- Tuần 1 ---
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL03
+      Subject: Thiết kế Web (theory), Room: R102
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL03
+      Subject: Mạng máy tính (theory), Room: R102
+
+  --- Tuần 2 ---
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL03
+      Subject: Thiết kế Web (theory), Room: R102
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL03
+      Subject: Mạng máy tính (theory), Room: R102
+
+  --- Tuần 3 ---
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL03
+      Subject: Thiết kế Web (theory), Room: R102
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL03
+      Subject: Mạng máy tính (theory), Room: R102
+
+  --- Tuần 4 ---
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL03
+      Subject: Thiết kế Web (theory), Room: R102
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL03
+      Subject: Mạng máy tính (theory), Room: R102
+
+  --- Tuần 5 ---
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL03
+      Subject: Thiết kế Web (theory), Room: R102
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL03
+      Subject: Mạng máy tính (theory), Room: R102
+
+  --- Tuần 6 ---
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL03
+      Subject: Thiết kế Web (theory), Room: R102
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL03
+      Subject: Mạng máy tính (theory), Room: R102
+
+  --- Tuần 7 ---
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL03
+      Subject: Thiết kế Web (theory), Room: R102
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL03
+      Subject: Mạng máy tính (theory), Room: R102
+
+  --- Tuần 8 ---
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL03
+      Subject: Thiết kế Web (theory), Room: R102
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL03
+      Subject: Mạng máy tính (theory), Room: R102
+
+  --- Tuần 9 ---
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL03
+      Subject: Thiết kế Web (theory), Room: R102
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL03
+      Subject: Mạng máy tính (theory), Room: R102
+
+  --- Tuần 10 ---
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL03
+      Subject: Thiết kế Web (theory), Room: R102
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL03
+      Subject: Mạng máy tính (theory), Room: R102
+
+  --- Tuần 11 ---
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL03
+      Subject: Thiết kế Web (theory), Room: R102
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL03
+      Subject: Mạng máy tính (theory), Room: R102
+
+  --- Tuần 12 ---
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL03
+      Subject: Thiết kế Web (theory), Room: R102
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL03
+      Subject: Mạng máy tính (theory), Room: R102
+
+  --- Tuần 13 ---
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL03
+      Subject: Thiết kế Web (theory), Room: R102
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL03
+      Subject: Mạng máy tính (theory), Room: R102
+
+  --- Tuần 14 ---
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL03
+      Subject: Thiết kế Web (theory), Room: R102
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL03
+      Subject: Mạng máy tính (theory), Room: R102
+
+  --- Tuần 15 ---
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL03
+      Subject: Thiết kế Web (theory), Room: R102
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL03
+      Subject: Mạng máy tính (theory), Room: R102
+
+LỊCH SỬ DỤNG PHÒNG:
+
+
+=========================================
+LỊCH SỬ DỤNG PHÒNG HỌC THEO HỌC KỲ:
+=========================================
+
+
+===== LỊCH SỬ DỤNG PHÒNG: LAB01 =====
+
+  --- Tuần 1 ---
+    - Day: Thứ 6 (Fri), Slot: T2, Class: CL03
+      Subject: Mạng máy tính (practice), Lecturer: Trần Thị B
+
+  --- Tuần 2 ---
+    - Day: Thứ 6 (Fri), Slot: T2, Class: CL03
+      Subject: Mạng máy tính (practice), Lecturer: Trần Thị B
+
+  --- Tuần 3 ---
+    - Day: Thứ 6 (Fri), Slot: T2, Class: CL03
+      Subject: Mạng máy tính (practice), Lecturer: Trần Thị B
+
+  --- Tuần 4 ---
+    - Day: Thứ 6 (Fri), Slot: T2, Class: CL03
+      Subject: Mạng máy tính (practice), Lecturer: Trần Thị B
+
+  --- Tuần 5 ---
+    - Day: Thứ 6 (Fri), Slot: T2, Class: CL03
+      Subject: Mạng máy tính (practice), Lecturer: Trần Thị B
+
+  --- Tuần 6 ---
+    - Day: Thứ 6 (Fri), Slot: T2, Class: CL03
+      Subject: Mạng máy tính (practice), Lecturer: Trần Thị B
+
+  --- Tuần 7 ---
+    - Day: Thứ 6 (Fri), Slot: T2, Class: CL03
+      Subject: Mạng máy tính (practice), Lecturer: Trần Thị B
+
+  --- Tuần 8 ---
+    - Day: Thứ 6 (Fri), Slot: T2, Class: CL03
+      Subject: Mạng máy tính (practice), Lecturer: Trần Thị B
+
+  --- Tuần 9 ---
+    - Day: Thứ 6 (Fri), Slot: T2, Class: CL03
+      Subject: Mạng máy tính (practice), Lecturer: Trần Thị B
+
+  --- Tuần 10 ---
+    - Day: Thứ 6 (Fri), Slot: T2, Class: CL03
+      Subject: Mạng máy tính (practice), Lecturer: Trần Thị B
+
+  --- Tuần 11 ---
+    - Day: Thứ 6 (Fri), Slot: T2, Class: CL03
+      Subject: Mạng máy tính (practice), Lecturer: Trần Thị B
+
+  --- Tuần 12 ---
+    - Day: Thứ 6 (Fri), Slot: T2, Class: CL03
+      Subject: Mạng máy tính (practice), Lecturer: Trần Thị B
+
+  --- Tuần 13 ---
+    - Day: Thứ 6 (Fri), Slot: T2, Class: CL03
+      Subject: Mạng máy tính (practice), Lecturer: Trần Thị B
+
+  --- Tuần 14 ---
+    - Day: Thứ 6 (Fri), Slot: T2, Class: CL03
+      Subject: Mạng máy tính (practice), Lecturer: Trần Thị B
+
+  --- Tuần 15 ---
+    - Day: Thứ 6 (Fri), Slot: T2, Class: CL03
+      Subject: Mạng máy tính (practice), Lecturer: Trần Thị B
+
+
+===== LỊCH SỬ DỤNG PHÒNG: LAB02 =====
+
+  --- Tuần 1 ---
+    - Day: Thứ 2 (Mon), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (practice), Lecturer: Nguyễn Văn A
+
+  --- Tuần 2 ---
+    - Day: Thứ 2 (Mon), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (practice), Lecturer: Nguyễn Văn A
+
+  --- Tuần 3 ---
+    - Day: Thứ 2 (Mon), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (practice), Lecturer: Nguyễn Văn A
+
+  --- Tuần 4 ---
+    - Day: Thứ 2 (Mon), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (practice), Lecturer: Nguyễn Văn A
+
+  --- Tuần 5 ---
+    - Day: Thứ 2 (Mon), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (practice), Lecturer: Nguyễn Văn A
+
+  --- Tuần 6 ---
+    - Day: Thứ 2 (Mon), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (practice), Lecturer: Nguyễn Văn A
+
+  --- Tuần 7 ---
+    - Day: Thứ 2 (Mon), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (practice), Lecturer: Nguyễn Văn A
+
+  --- Tuần 8 ---
+    - Day: Thứ 2 (Mon), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (practice), Lecturer: Nguyễn Văn A
+
+  --- Tuần 9 ---
+    - Day: Thứ 2 (Mon), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (practice), Lecturer: Nguyễn Văn A
+
+  --- Tuần 10 ---
+    - Day: Thứ 2 (Mon), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (practice), Lecturer: Nguyễn Văn A
+
+  --- Tuần 11 ---
+    - Day: Thứ 2 (Mon), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (practice), Lecturer: Nguyễn Văn A
+
+  --- Tuần 12 ---
+    - Day: Thứ 2 (Mon), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (practice), Lecturer: Nguyễn Văn A
+
+  --- Tuần 13 ---
+    - Day: Thứ 2 (Mon), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (practice), Lecturer: Nguyễn Văn A
+
+  --- Tuần 14 ---
+    - Day: Thứ 2 (Mon), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (practice), Lecturer: Nguyễn Văn A
+
+  --- Tuần 15 ---
+    - Day: Thứ 2 (Mon), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (practice), Lecturer: Nguyễn Văn A
+
+
+===== LỊCH SỬ DỤNG PHÒNG: LAB03 =====
+
+  --- Tuần 1 ---
+    - Day: Thứ 3 (Tue), Slot: S2, Class: CL02
+      Subject: Lập trình cơ bản (practice), Lecturer: Lê Văn C
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL01
+      Subject: Lập trình cơ bản (practice), Lecturer: Lê Văn C
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (practice), Lecturer: Lê Văn C
+    - Day: Thứ 6 (Fri), Slot: S2, Class: CL02
+      Subject: Thuật toán (practice), Lecturer: Trần Thị B
+    - Day: Thứ 6 (Fri), Slot: C1, Class: CL01
+      Subject: Cấu trúc dữ liệu (practice), Lecturer: Nguyễn Văn A
+
+  --- Tuần 2 ---
+    - Day: Thứ 3 (Tue), Slot: S2, Class: CL02
+      Subject: Lập trình cơ bản (practice), Lecturer: Lê Văn C
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL01
+      Subject: Lập trình cơ bản (practice), Lecturer: Lê Văn C
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (practice), Lecturer: Lê Văn C
+    - Day: Thứ 6 (Fri), Slot: S2, Class: CL02
+      Subject: Thuật toán (practice), Lecturer: Trần Thị B
+    - Day: Thứ 6 (Fri), Slot: C1, Class: CL01
+      Subject: Cấu trúc dữ liệu (practice), Lecturer: Nguyễn Văn A
+
+  --- Tuần 3 ---
+    - Day: Thứ 3 (Tue), Slot: S2, Class: CL02
+      Subject: Lập trình cơ bản (practice), Lecturer: Lê Văn C
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL01
+      Subject: Lập trình cơ bản (practice), Lecturer: Lê Văn C
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (practice), Lecturer: Lê Văn C
+    - Day: Thứ 6 (Fri), Slot: S2, Class: CL02
+      Subject: Thuật toán (practice), Lecturer: Trần Thị B
+    - Day: Thứ 6 (Fri), Slot: C1, Class: CL01
+      Subject: Cấu trúc dữ liệu (practice), Lecturer: Nguyễn Văn A
+
+  --- Tuần 4 ---
+    - Day: Thứ 3 (Tue), Slot: S2, Class: CL02
+      Subject: Lập trình cơ bản (practice), Lecturer: Lê Văn C
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL01
+      Subject: Lập trình cơ bản (practice), Lecturer: Lê Văn C
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (practice), Lecturer: Lê Văn C
+    - Day: Thứ 6 (Fri), Slot: S2, Class: CL02
+      Subject: Thuật toán (practice), Lecturer: Trần Thị B
+    - Day: Thứ 6 (Fri), Slot: C1, Class: CL01
+      Subject: Cấu trúc dữ liệu (practice), Lecturer: Nguyễn Văn A
+
+  --- Tuần 5 ---
+    - Day: Thứ 3 (Tue), Slot: S2, Class: CL02
+      Subject: Lập trình cơ bản (practice), Lecturer: Lê Văn C
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL01
+      Subject: Lập trình cơ bản (practice), Lecturer: Lê Văn C
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (practice), Lecturer: Lê Văn C
+    - Day: Thứ 6 (Fri), Slot: S2, Class: CL02
+      Subject: Thuật toán (practice), Lecturer: Trần Thị B
+    - Day: Thứ 6 (Fri), Slot: C1, Class: CL01
+      Subject: Cấu trúc dữ liệu (practice), Lecturer: Nguyễn Văn A
+
+  --- Tuần 6 ---
+    - Day: Thứ 3 (Tue), Slot: S2, Class: CL02
+      Subject: Lập trình cơ bản (practice), Lecturer: Lê Văn C
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL01
+      Subject: Lập trình cơ bản (practice), Lecturer: Lê Văn C
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (practice), Lecturer: Lê Văn C
+    - Day: Thứ 6 (Fri), Slot: S2, Class: CL02
+      Subject: Thuật toán (practice), Lecturer: Trần Thị B
+    - Day: Thứ 6 (Fri), Slot: C1, Class: CL01
+      Subject: Cấu trúc dữ liệu (practice), Lecturer: Nguyễn Văn A
+
+  --- Tuần 7 ---
+    - Day: Thứ 3 (Tue), Slot: S2, Class: CL02
+      Subject: Lập trình cơ bản (practice), Lecturer: Lê Văn C
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL01
+      Subject: Lập trình cơ bản (practice), Lecturer: Lê Văn C
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (practice), Lecturer: Lê Văn C
+    - Day: Thứ 6 (Fri), Slot: S2, Class: CL02
+      Subject: Thuật toán (practice), Lecturer: Trần Thị B
+    - Day: Thứ 6 (Fri), Slot: C1, Class: CL01
+      Subject: Cấu trúc dữ liệu (practice), Lecturer: Nguyễn Văn A
+
+  --- Tuần 8 ---
+    - Day: Thứ 3 (Tue), Slot: S2, Class: CL02
+      Subject: Lập trình cơ bản (practice), Lecturer: Lê Văn C
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL01
+      Subject: Lập trình cơ bản (practice), Lecturer: Lê Văn C
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (practice), Lecturer: Lê Văn C
+    - Day: Thứ 6 (Fri), Slot: S2, Class: CL02
+      Subject: Thuật toán (practice), Lecturer: Trần Thị B
+    - Day: Thứ 6 (Fri), Slot: C1, Class: CL01
+      Subject: Cấu trúc dữ liệu (practice), Lecturer: Nguyễn Văn A
+
+  --- Tuần 9 ---
+    - Day: Thứ 3 (Tue), Slot: S2, Class: CL02
+      Subject: Lập trình cơ bản (practice), Lecturer: Lê Văn C
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL01
+      Subject: Lập trình cơ bản (practice), Lecturer: Lê Văn C
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (practice), Lecturer: Lê Văn C
+    - Day: Thứ 6 (Fri), Slot: S2, Class: CL02
+      Subject: Thuật toán (practice), Lecturer: Trần Thị B
+    - Day: Thứ 6 (Fri), Slot: C1, Class: CL01
+      Subject: Cấu trúc dữ liệu (practice), Lecturer: Nguyễn Văn A
+
+  --- Tuần 10 ---
+    - Day: Thứ 3 (Tue), Slot: S2, Class: CL02
+      Subject: Lập trình cơ bản (practice), Lecturer: Lê Văn C
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL01
+      Subject: Lập trình cơ bản (practice), Lecturer: Lê Văn C
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (practice), Lecturer: Lê Văn C
+    - Day: Thứ 6 (Fri), Slot: S2, Class: CL02
+      Subject: Thuật toán (practice), Lecturer: Trần Thị B
+    - Day: Thứ 6 (Fri), Slot: C1, Class: CL01
+      Subject: Cấu trúc dữ liệu (practice), Lecturer: Nguyễn Văn A
+
+  --- Tuần 11 ---
+    - Day: Thứ 3 (Tue), Slot: S2, Class: CL02
+      Subject: Lập trình cơ bản (practice), Lecturer: Lê Văn C
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL01
+      Subject: Lập trình cơ bản (practice), Lecturer: Lê Văn C
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (practice), Lecturer: Lê Văn C
+    - Day: Thứ 6 (Fri), Slot: S2, Class: CL02
+      Subject: Thuật toán (practice), Lecturer: Trần Thị B
+    - Day: Thứ 6 (Fri), Slot: C1, Class: CL01
+      Subject: Cấu trúc dữ liệu (practice), Lecturer: Nguyễn Văn A
+
+  --- Tuần 12 ---
+    - Day: Thứ 3 (Tue), Slot: S2, Class: CL02
+      Subject: Lập trình cơ bản (practice), Lecturer: Lê Văn C
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL01
+      Subject: Lập trình cơ bản (practice), Lecturer: Lê Văn C
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (practice), Lecturer: Lê Văn C
+    - Day: Thứ 6 (Fri), Slot: S2, Class: CL02
+      Subject: Thuật toán (practice), Lecturer: Trần Thị B
+    - Day: Thứ 6 (Fri), Slot: C1, Class: CL01
+      Subject: Cấu trúc dữ liệu (practice), Lecturer: Nguyễn Văn A
+
+  --- Tuần 13 ---
+    - Day: Thứ 3 (Tue), Slot: S2, Class: CL02
+      Subject: Lập trình cơ bản (practice), Lecturer: Lê Văn C
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL01
+      Subject: Lập trình cơ bản (practice), Lecturer: Lê Văn C
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (practice), Lecturer: Lê Văn C
+    - Day: Thứ 6 (Fri), Slot: S2, Class: CL02
+      Subject: Thuật toán (practice), Lecturer: Trần Thị B
+    - Day: Thứ 6 (Fri), Slot: C1, Class: CL01
+      Subject: Cấu trúc dữ liệu (practice), Lecturer: Nguyễn Văn A
+
+  --- Tuần 14 ---
+    - Day: Thứ 3 (Tue), Slot: S2, Class: CL02
+      Subject: Lập trình cơ bản (practice), Lecturer: Lê Văn C
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL01
+      Subject: Lập trình cơ bản (practice), Lecturer: Lê Văn C
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (practice), Lecturer: Lê Văn C
+    - Day: Thứ 6 (Fri), Slot: S2, Class: CL02
+      Subject: Thuật toán (practice), Lecturer: Trần Thị B
+    - Day: Thứ 6 (Fri), Slot: C1, Class: CL01
+      Subject: Cấu trúc dữ liệu (practice), Lecturer: Nguyễn Văn A
+
+  --- Tuần 15 ---
+    - Day: Thứ 3 (Tue), Slot: S2, Class: CL02
+      Subject: Lập trình cơ bản (practice), Lecturer: Lê Văn C
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL01
+      Subject: Lập trình cơ bản (practice), Lecturer: Lê Văn C
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (practice), Lecturer: Lê Văn C
+    - Day: Thứ 6 (Fri), Slot: S2, Class: CL02
+      Subject: Thuật toán (practice), Lecturer: Trần Thị B
+    - Day: Thứ 6 (Fri), Slot: C1, Class: CL01
+      Subject: Cấu trúc dữ liệu (practice), Lecturer: Nguyễn Văn A
+
+
+===== LỊCH SỬ DỤNG PHÒNG: LAB04 =====
+
+  --- Tuần 1 ---
+    - Day: Thứ 4 (Wed), Slot: S1, Class: CL01
+      Subject: Cơ sở dữ liệu (practice), Lecturer: Nguyễn Văn A
+    - Day: Thứ 7 (Sat), Slot: C1, Class: CL03
+      Subject: Thiết kế Web (practice), Lecturer: Trần Thị B
+    - Day: Thứ 7 (Sat), Slot: T2, Class: CL01
+      Subject: Thuật toán (practice), Lecturer: Trần Thị B
+
+  --- Tuần 2 ---
+    - Day: Thứ 4 (Wed), Slot: S1, Class: CL01
+      Subject: Cơ sở dữ liệu (practice), Lecturer: Nguyễn Văn A
+    - Day: Thứ 7 (Sat), Slot: C1, Class: CL03
+      Subject: Thiết kế Web (practice), Lecturer: Trần Thị B
+    - Day: Thứ 7 (Sat), Slot: T2, Class: CL01
+      Subject: Thuật toán (practice), Lecturer: Trần Thị B
+
+  --- Tuần 3 ---
+    - Day: Thứ 4 (Wed), Slot: S1, Class: CL01
+      Subject: Cơ sở dữ liệu (practice), Lecturer: Nguyễn Văn A
+    - Day: Thứ 7 (Sat), Slot: C1, Class: CL03
+      Subject: Thiết kế Web (practice), Lecturer: Trần Thị B
+    - Day: Thứ 7 (Sat), Slot: T2, Class: CL01
+      Subject: Thuật toán (practice), Lecturer: Trần Thị B
+
+  --- Tuần 4 ---
+    - Day: Thứ 4 (Wed), Slot: S1, Class: CL01
+      Subject: Cơ sở dữ liệu (practice), Lecturer: Nguyễn Văn A
+    - Day: Thứ 7 (Sat), Slot: C1, Class: CL03
+      Subject: Thiết kế Web (practice), Lecturer: Trần Thị B
+    - Day: Thứ 7 (Sat), Slot: T2, Class: CL01
+      Subject: Thuật toán (practice), Lecturer: Trần Thị B
+
+  --- Tuần 5 ---
+    - Day: Thứ 4 (Wed), Slot: S1, Class: CL01
+      Subject: Cơ sở dữ liệu (practice), Lecturer: Nguyễn Văn A
+    - Day: Thứ 7 (Sat), Slot: C1, Class: CL03
+      Subject: Thiết kế Web (practice), Lecturer: Trần Thị B
+    - Day: Thứ 7 (Sat), Slot: T2, Class: CL01
+      Subject: Thuật toán (practice), Lecturer: Trần Thị B
+
+  --- Tuần 6 ---
+    - Day: Thứ 4 (Wed), Slot: S1, Class: CL01
+      Subject: Cơ sở dữ liệu (practice), Lecturer: Nguyễn Văn A
+    - Day: Thứ 7 (Sat), Slot: C1, Class: CL03
+      Subject: Thiết kế Web (practice), Lecturer: Trần Thị B
+    - Day: Thứ 7 (Sat), Slot: T2, Class: CL01
+      Subject: Thuật toán (practice), Lecturer: Trần Thị B
+
+  --- Tuần 7 ---
+    - Day: Thứ 4 (Wed), Slot: S1, Class: CL01
+      Subject: Cơ sở dữ liệu (practice), Lecturer: Nguyễn Văn A
+    - Day: Thứ 7 (Sat), Slot: C1, Class: CL03
+      Subject: Thiết kế Web (practice), Lecturer: Trần Thị B
+    - Day: Thứ 7 (Sat), Slot: T2, Class: CL01
+      Subject: Thuật toán (practice), Lecturer: Trần Thị B
+
+  --- Tuần 8 ---
+    - Day: Thứ 4 (Wed), Slot: S1, Class: CL01
+      Subject: Cơ sở dữ liệu (practice), Lecturer: Nguyễn Văn A
+    - Day: Thứ 7 (Sat), Slot: C1, Class: CL03
+      Subject: Thiết kế Web (practice), Lecturer: Trần Thị B
+    - Day: Thứ 7 (Sat), Slot: T2, Class: CL01
+      Subject: Thuật toán (practice), Lecturer: Trần Thị B
+
+  --- Tuần 9 ---
+    - Day: Thứ 4 (Wed), Slot: S1, Class: CL01
+      Subject: Cơ sở dữ liệu (practice), Lecturer: Nguyễn Văn A
+    - Day: Thứ 7 (Sat), Slot: C1, Class: CL03
+      Subject: Thiết kế Web (practice), Lecturer: Trần Thị B
+    - Day: Thứ 7 (Sat), Slot: T2, Class: CL01
+      Subject: Thuật toán (practice), Lecturer: Trần Thị B
+
+  --- Tuần 10 ---
+    - Day: Thứ 4 (Wed), Slot: S1, Class: CL01
+      Subject: Cơ sở dữ liệu (practice), Lecturer: Nguyễn Văn A
+    - Day: Thứ 7 (Sat), Slot: C1, Class: CL03
+      Subject: Thiết kế Web (practice), Lecturer: Trần Thị B
+    - Day: Thứ 7 (Sat), Slot: T2, Class: CL01
+      Subject: Thuật toán (practice), Lecturer: Trần Thị B
+
+  --- Tuần 11 ---
+    - Day: Thứ 4 (Wed), Slot: S1, Class: CL01
+      Subject: Cơ sở dữ liệu (practice), Lecturer: Nguyễn Văn A
+    - Day: Thứ 7 (Sat), Slot: C1, Class: CL03
+      Subject: Thiết kế Web (practice), Lecturer: Trần Thị B
+    - Day: Thứ 7 (Sat), Slot: T2, Class: CL01
+      Subject: Thuật toán (practice), Lecturer: Trần Thị B
+
+  --- Tuần 12 ---
+    - Day: Thứ 4 (Wed), Slot: S1, Class: CL01
+      Subject: Cơ sở dữ liệu (practice), Lecturer: Nguyễn Văn A
+    - Day: Thứ 7 (Sat), Slot: C1, Class: CL03
+      Subject: Thiết kế Web (practice), Lecturer: Trần Thị B
+    - Day: Thứ 7 (Sat), Slot: T2, Class: CL01
+      Subject: Thuật toán (practice), Lecturer: Trần Thị B
+
+  --- Tuần 13 ---
+    - Day: Thứ 4 (Wed), Slot: S1, Class: CL01
+      Subject: Cơ sở dữ liệu (practice), Lecturer: Nguyễn Văn A
+    - Day: Thứ 7 (Sat), Slot: C1, Class: CL03
+      Subject: Thiết kế Web (practice), Lecturer: Trần Thị B
+    - Day: Thứ 7 (Sat), Slot: T2, Class: CL01
+      Subject: Thuật toán (practice), Lecturer: Trần Thị B
+
+  --- Tuần 14 ---
+    - Day: Thứ 4 (Wed), Slot: S1, Class: CL01
+      Subject: Cơ sở dữ liệu (practice), Lecturer: Nguyễn Văn A
+    - Day: Thứ 7 (Sat), Slot: C1, Class: CL03
+      Subject: Thiết kế Web (practice), Lecturer: Trần Thị B
+    - Day: Thứ 7 (Sat), Slot: T2, Class: CL01
+      Subject: Thuật toán (practice), Lecturer: Trần Thị B
+
+  --- Tuần 15 ---
+    - Day: Thứ 4 (Wed), Slot: S1, Class: CL01
+      Subject: Cơ sở dữ liệu (practice), Lecturer: Nguyễn Văn A
+    - Day: Thứ 7 (Sat), Slot: C1, Class: CL03
+      Subject: Thiết kế Web (practice), Lecturer: Trần Thị B
+    - Day: Thứ 7 (Sat), Slot: T2, Class: CL01
+      Subject: Thuật toán (practice), Lecturer: Trần Thị B
+
+
+===== LỊCH SỬ DỤNG PHÒNG: R101 =====
+
+  --- Tuần 1 ---
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL01
+      Subject: Cấu trúc dữ liệu (theory), Lecturer: Lê Văn C
+
+  --- Tuần 2 ---
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL01
+      Subject: Cấu trúc dữ liệu (theory), Lecturer: Lê Văn C
+
+  --- Tuần 3 ---
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL01
+      Subject: Cấu trúc dữ liệu (theory), Lecturer: Lê Văn C
+
+  --- Tuần 4 ---
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL01
+      Subject: Cấu trúc dữ liệu (theory), Lecturer: Lê Văn C
+
+  --- Tuần 5 ---
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL01
+      Subject: Cấu trúc dữ liệu (theory), Lecturer: Lê Văn C
+
+  --- Tuần 6 ---
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL01
+      Subject: Cấu trúc dữ liệu (theory), Lecturer: Lê Văn C
+
+  --- Tuần 7 ---
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL01
+      Subject: Cấu trúc dữ liệu (theory), Lecturer: Lê Văn C
+
+  --- Tuần 8 ---
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL01
+      Subject: Cấu trúc dữ liệu (theory), Lecturer: Lê Văn C
+
+  --- Tuần 9 ---
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL01
+      Subject: Cấu trúc dữ liệu (theory), Lecturer: Lê Văn C
+
+  --- Tuần 10 ---
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL01
+      Subject: Cấu trúc dữ liệu (theory), Lecturer: Lê Văn C
+
+  --- Tuần 11 ---
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL01
+      Subject: Cấu trúc dữ liệu (theory), Lecturer: Lê Văn C
+
+  --- Tuần 12 ---
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL01
+      Subject: Cấu trúc dữ liệu (theory), Lecturer: Lê Văn C
+
+  --- Tuần 13 ---
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL01
+      Subject: Cấu trúc dữ liệu (theory), Lecturer: Lê Văn C
+
+  --- Tuần 14 ---
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL01
+      Subject: Cấu trúc dữ liệu (theory), Lecturer: Lê Văn C
+
+  --- Tuần 15 ---
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL01
+      Subject: Cấu trúc dữ liệu (theory), Lecturer: Lê Văn C
+
+
+===== LỊCH SỬ DỤNG PHÒNG: R102 =====
+
+  --- Tuần 1 ---
+    - Day: Thứ 3 (Tue), Slot: S1, Class: CL02
+      Subject: Lập trình cơ bản (theory), Lecturer: Nguyễn Văn A
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL03
+      Subject: Thiết kế Web (theory), Lecturer: Phạm Văn D
+    - Day: Thứ 4 (Wed), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (theory), Lecturer: Lê Văn C
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL03
+      Subject: Mạng máy tính (theory), Lecturer: Phạm Văn D
+
+  --- Tuần 2 ---
+    - Day: Thứ 3 (Tue), Slot: S1, Class: CL02
+      Subject: Lập trình cơ bản (theory), Lecturer: Nguyễn Văn A
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL03
+      Subject: Thiết kế Web (theory), Lecturer: Phạm Văn D
+    - Day: Thứ 4 (Wed), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (theory), Lecturer: Lê Văn C
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL03
+      Subject: Mạng máy tính (theory), Lecturer: Phạm Văn D
+
+  --- Tuần 3 ---
+    - Day: Thứ 3 (Tue), Slot: S1, Class: CL02
+      Subject: Lập trình cơ bản (theory), Lecturer: Nguyễn Văn A
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL03
+      Subject: Thiết kế Web (theory), Lecturer: Phạm Văn D
+    - Day: Thứ 4 (Wed), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (theory), Lecturer: Lê Văn C
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL03
+      Subject: Mạng máy tính (theory), Lecturer: Phạm Văn D
+
+  --- Tuần 4 ---
+    - Day: Thứ 3 (Tue), Slot: S1, Class: CL02
+      Subject: Lập trình cơ bản (theory), Lecturer: Nguyễn Văn A
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL03
+      Subject: Thiết kế Web (theory), Lecturer: Phạm Văn D
+    - Day: Thứ 4 (Wed), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (theory), Lecturer: Lê Văn C
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL03
+      Subject: Mạng máy tính (theory), Lecturer: Phạm Văn D
+
+  --- Tuần 5 ---
+    - Day: Thứ 3 (Tue), Slot: S1, Class: CL02
+      Subject: Lập trình cơ bản (theory), Lecturer: Nguyễn Văn A
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL03
+      Subject: Thiết kế Web (theory), Lecturer: Phạm Văn D
+    - Day: Thứ 4 (Wed), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (theory), Lecturer: Lê Văn C
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL03
+      Subject: Mạng máy tính (theory), Lecturer: Phạm Văn D
+
+  --- Tuần 6 ---
+    - Day: Thứ 3 (Tue), Slot: S1, Class: CL02
+      Subject: Lập trình cơ bản (theory), Lecturer: Nguyễn Văn A
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL03
+      Subject: Thiết kế Web (theory), Lecturer: Phạm Văn D
+    - Day: Thứ 4 (Wed), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (theory), Lecturer: Lê Văn C
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL03
+      Subject: Mạng máy tính (theory), Lecturer: Phạm Văn D
+
+  --- Tuần 7 ---
+    - Day: Thứ 3 (Tue), Slot: S1, Class: CL02
+      Subject: Lập trình cơ bản (theory), Lecturer: Nguyễn Văn A
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL03
+      Subject: Thiết kế Web (theory), Lecturer: Phạm Văn D
+    - Day: Thứ 4 (Wed), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (theory), Lecturer: Lê Văn C
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL03
+      Subject: Mạng máy tính (theory), Lecturer: Phạm Văn D
+
+  --- Tuần 8 ---
+    - Day: Thứ 3 (Tue), Slot: S1, Class: CL02
+      Subject: Lập trình cơ bản (theory), Lecturer: Nguyễn Văn A
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL03
+      Subject: Thiết kế Web (theory), Lecturer: Phạm Văn D
+    - Day: Thứ 4 (Wed), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (theory), Lecturer: Lê Văn C
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL03
+      Subject: Mạng máy tính (theory), Lecturer: Phạm Văn D
+
+  --- Tuần 9 ---
+    - Day: Thứ 3 (Tue), Slot: S1, Class: CL02
+      Subject: Lập trình cơ bản (theory), Lecturer: Nguyễn Văn A
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL03
+      Subject: Thiết kế Web (theory), Lecturer: Phạm Văn D
+    - Day: Thứ 4 (Wed), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (theory), Lecturer: Lê Văn C
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL03
+      Subject: Mạng máy tính (theory), Lecturer: Phạm Văn D
+
+  --- Tuần 10 ---
+    - Day: Thứ 3 (Tue), Slot: S1, Class: CL02
+      Subject: Lập trình cơ bản (theory), Lecturer: Nguyễn Văn A
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL03
+      Subject: Thiết kế Web (theory), Lecturer: Phạm Văn D
+    - Day: Thứ 4 (Wed), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (theory), Lecturer: Lê Văn C
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL03
+      Subject: Mạng máy tính (theory), Lecturer: Phạm Văn D
+
+  --- Tuần 11 ---
+    - Day: Thứ 3 (Tue), Slot: S1, Class: CL02
+      Subject: Lập trình cơ bản (theory), Lecturer: Nguyễn Văn A
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL03
+      Subject: Thiết kế Web (theory), Lecturer: Phạm Văn D
+    - Day: Thứ 4 (Wed), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (theory), Lecturer: Lê Văn C
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL03
+      Subject: Mạng máy tính (theory), Lecturer: Phạm Văn D
+
+  --- Tuần 12 ---
+    - Day: Thứ 3 (Tue), Slot: S1, Class: CL02
+      Subject: Lập trình cơ bản (theory), Lecturer: Nguyễn Văn A
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL03
+      Subject: Thiết kế Web (theory), Lecturer: Phạm Văn D
+    - Day: Thứ 4 (Wed), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (theory), Lecturer: Lê Văn C
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL03
+      Subject: Mạng máy tính (theory), Lecturer: Phạm Văn D
+
+  --- Tuần 13 ---
+    - Day: Thứ 3 (Tue), Slot: S1, Class: CL02
+      Subject: Lập trình cơ bản (theory), Lecturer: Nguyễn Văn A
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL03
+      Subject: Thiết kế Web (theory), Lecturer: Phạm Văn D
+    - Day: Thứ 4 (Wed), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (theory), Lecturer: Lê Văn C
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL03
+      Subject: Mạng máy tính (theory), Lecturer: Phạm Văn D
+
+  --- Tuần 14 ---
+    - Day: Thứ 3 (Tue), Slot: S1, Class: CL02
+      Subject: Lập trình cơ bản (theory), Lecturer: Nguyễn Văn A
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL03
+      Subject: Thiết kế Web (theory), Lecturer: Phạm Văn D
+    - Day: Thứ 4 (Wed), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (theory), Lecturer: Lê Văn C
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL03
+      Subject: Mạng máy tính (theory), Lecturer: Phạm Văn D
+
+  --- Tuần 15 ---
+    - Day: Thứ 3 (Tue), Slot: S1, Class: CL02
+      Subject: Lập trình cơ bản (theory), Lecturer: Nguyễn Văn A
+    - Day: Thứ 4 (Wed), Slot: S2, Class: CL03
+      Subject: Thiết kế Web (theory), Lecturer: Phạm Văn D
+    - Day: Thứ 4 (Wed), Slot: C1, Class: CL02
+      Subject: Cấu trúc dữ liệu (theory), Lecturer: Lê Văn C
+    - Day: Thứ 5 (Thu), Slot: C1, Class: CL03
+      Subject: Mạng máy tính (theory), Lecturer: Phạm Văn D
+
+
+===== LỊCH SỬ DỤNG PHÒNG: R103 =====
+
+  --- Tuần 1 ---
+    - Day: Thứ 4 (Wed), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (theory), Lecturer: Nguyễn Văn A
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL02
+      Subject: Thuật toán (theory), Lecturer: Trần Thị B
+
+  --- Tuần 2 ---
+    - Day: Thứ 4 (Wed), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (theory), Lecturer: Nguyễn Văn A
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL02
+      Subject: Thuật toán (theory), Lecturer: Trần Thị B
+
+  --- Tuần 3 ---
+    - Day: Thứ 4 (Wed), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (theory), Lecturer: Nguyễn Văn A
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL02
+      Subject: Thuật toán (theory), Lecturer: Trần Thị B
+
+  --- Tuần 4 ---
+    - Day: Thứ 4 (Wed), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (theory), Lecturer: Nguyễn Văn A
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL02
+      Subject: Thuật toán (theory), Lecturer: Trần Thị B
+
+  --- Tuần 5 ---
+    - Day: Thứ 4 (Wed), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (theory), Lecturer: Nguyễn Văn A
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL02
+      Subject: Thuật toán (theory), Lecturer: Trần Thị B
+
+  --- Tuần 6 ---
+    - Day: Thứ 4 (Wed), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (theory), Lecturer: Nguyễn Văn A
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL02
+      Subject: Thuật toán (theory), Lecturer: Trần Thị B
+
+  --- Tuần 7 ---
+    - Day: Thứ 4 (Wed), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (theory), Lecturer: Nguyễn Văn A
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL02
+      Subject: Thuật toán (theory), Lecturer: Trần Thị B
+
+  --- Tuần 8 ---
+    - Day: Thứ 4 (Wed), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (theory), Lecturer: Nguyễn Văn A
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL02
+      Subject: Thuật toán (theory), Lecturer: Trần Thị B
+
+  --- Tuần 9 ---
+    - Day: Thứ 4 (Wed), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (theory), Lecturer: Nguyễn Văn A
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL02
+      Subject: Thuật toán (theory), Lecturer: Trần Thị B
+
+  --- Tuần 10 ---
+    - Day: Thứ 4 (Wed), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (theory), Lecturer: Nguyễn Văn A
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL02
+      Subject: Thuật toán (theory), Lecturer: Trần Thị B
+
+  --- Tuần 11 ---
+    - Day: Thứ 4 (Wed), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (theory), Lecturer: Nguyễn Văn A
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL02
+      Subject: Thuật toán (theory), Lecturer: Trần Thị B
+
+  --- Tuần 12 ---
+    - Day: Thứ 4 (Wed), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (theory), Lecturer: Nguyễn Văn A
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL02
+      Subject: Thuật toán (theory), Lecturer: Trần Thị B
+
+  --- Tuần 13 ---
+    - Day: Thứ 4 (Wed), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (theory), Lecturer: Nguyễn Văn A
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL02
+      Subject: Thuật toán (theory), Lecturer: Trần Thị B
+
+  --- Tuần 14 ---
+    - Day: Thứ 4 (Wed), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (theory), Lecturer: Nguyễn Văn A
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL02
+      Subject: Thuật toán (theory), Lecturer: Trần Thị B
+
+  --- Tuần 15 ---
+    - Day: Thứ 4 (Wed), Slot: C2, Class: CL02
+      Subject: Cơ sở dữ liệu (theory), Lecturer: Nguyễn Văn A
+    - Day: Thứ 5 (Thu), Slot: S2, Class: CL02
+      Subject: Thuật toán (theory), Lecturer: Trần Thị B
+
+
+===== LỊCH SỬ DỤNG PHÒNG: R104 =====
+
+  --- Tuần 1 ---
+    - Day: Thứ 5 (Thu), Slot: S1, Class: CL01
+      Subject: Lập trình cơ bản (theory), Lecturer: Nguyễn Văn A
+    - Day: Thứ 7 (Sat), Slot: C2, Class: CL01
+      Subject: Cơ sở dữ liệu (theory), Lecturer: Nguyễn Văn A
+
+  --- Tuần 2 ---
+    - Day: Thứ 5 (Thu), Slot: S1, Class: CL01
+      Subject: Lập trình cơ bản (theory), Lecturer: Nguyễn Văn A
+    - Day: Thứ 7 (Sat), Slot: C2, Class: CL01
+      Subject: Cơ sở dữ liệu (theory), Lecturer: Nguyễn Văn A
+
+  --- Tuần 3 ---
+    - Day: Thứ 5 (Thu), Slot: S1, Class: CL01
+      Subject: Lập trình cơ bản (theory), Lecturer: Nguyễn Văn A
+    - Day: Thứ 7 (Sat), Slot: C2, Class: CL01
+      Subject: Cơ sở dữ liệu (theory), Lecturer: Nguyễn Văn A
+
+  --- Tuần 4 ---
+    - Day: Thứ 5 (Thu), Slot: S1, Class: CL01
+      Subject: Lập trình cơ bản (theory), Lecturer: Nguyễn Văn A
+    - Day: Thứ 7 (Sat), Slot: C2, Class: CL01
+      Subject: Cơ sở dữ liệu (theory), Lecturer: Nguyễn Văn A
+
+  --- Tuần 5 ---
+    - Day: Thứ 5 (Thu), Slot: S1, Class: CL01
+      Subject: Lập trình cơ bản (theory), Lecturer: Nguyễn Văn A
+    - Day: Thứ 7 (Sat), Slot: C2, Class: CL01
+      Subject: Cơ sở dữ liệu (theory), Lecturer: Nguyễn Văn A
+
+  --- Tuần 6 ---
+    - Day: Thứ 5 (Thu), Slot: S1, Class: CL01
+      Subject: Lập trình cơ bản (theory), Lecturer: Nguyễn Văn A
+    - Day: Thứ 7 (Sat), Slot: C2, Class: CL01
+      Subject: Cơ sở dữ liệu (theory), Lecturer: Nguyễn Văn A
+
+  --- Tuần 7 ---
+    - Day: Thứ 5 (Thu), Slot: S1, Class: CL01
+      Subject: Lập trình cơ bản (theory), Lecturer: Nguyễn Văn A
+    - Day: Thứ 7 (Sat), Slot: C2, Class: CL01
+      Subject: Cơ sở dữ liệu (theory), Lecturer: Nguyễn Văn A
+
+  --- Tuần 8 ---
+    - Day: Thứ 5 (Thu), Slot: S1, Class: CL01
+      Subject: Lập trình cơ bản (theory), Lecturer: Nguyễn Văn A
+    - Day: Thứ 7 (Sat), Slot: C2, Class: CL01
+      Subject: Cơ sở dữ liệu (theory), Lecturer: Nguyễn Văn A
+
+  --- Tuần 9 ---
+    - Day: Thứ 5 (Thu), Slot: S1, Class: CL01
+      Subject: Lập trình cơ bản (theory), Lecturer: Nguyễn Văn A
+    - Day: Thứ 7 (Sat), Slot: C2, Class: CL01
+      Subject: Cơ sở dữ liệu (theory), Lecturer: Nguyễn Văn A
+
+  --- Tuần 10 ---
+    - Day: Thứ 5 (Thu), Slot: S1, Class: CL01
+      Subject: Lập trình cơ bản (theory), Lecturer: Nguyễn Văn A
+    - Day: Thứ 7 (Sat), Slot: C2, Class: CL01
+      Subject: Cơ sở dữ liệu (theory), Lecturer: Nguyễn Văn A
+
+  --- Tuần 11 ---
+    - Day: Thứ 5 (Thu), Slot: S1, Class: CL01
+      Subject: Lập trình cơ bản (theory), Lecturer: Nguyễn Văn A
+    - Day: Thứ 7 (Sat), Slot: C2, Class: CL01
+      Subject: Cơ sở dữ liệu (theory), Lecturer: Nguyễn Văn A
+
+  --- Tuần 12 ---
+    - Day: Thứ 5 (Thu), Slot: S1, Class: CL01
+      Subject: Lập trình cơ bản (theory), Lecturer: Nguyễn Văn A
+    - Day: Thứ 7 (Sat), Slot: C2, Class: CL01
+      Subject: Cơ sở dữ liệu (theory), Lecturer: Nguyễn Văn A
+
+  --- Tuần 13 ---
+    - Day: Thứ 5 (Thu), Slot: S1, Class: CL01
+      Subject: Lập trình cơ bản (theory), Lecturer: Nguyễn Văn A
+    - Day: Thứ 7 (Sat), Slot: C2, Class: CL01
+      Subject: Cơ sở dữ liệu (theory), Lecturer: Nguyễn Văn A
+
+  --- Tuần 14 ---
+    - Day: Thứ 5 (Thu), Slot: S1, Class: CL01
+      Subject: Lập trình cơ bản (theory), Lecturer: Nguyễn Văn A
+    - Day: Thứ 7 (Sat), Slot: C2, Class: CL01
+      Subject: Cơ sở dữ liệu (theory), Lecturer: Nguyễn Văn A
+
+  --- Tuần 15 ---
+    - Day: Thứ 5 (Thu), Slot: S1, Class: CL01
+      Subject: Lập trình cơ bản (theory), Lecturer: Nguyễn Văn A
+    - Day: Thứ 7 (Sat), Slot: C2, Class: CL01
+      Subject: Cơ sở dữ liệu (theory), Lecturer: Nguyễn Văn A
+
+
+===== LỊCH SỬ DỤNG PHÒNG: R105 =====
+
+  --- Tuần 1 ---
+    - Day: Thứ 6 (Fri), Slot: C2, Class: CL01
+      Subject: Thuật toán (theory), Lecturer: Trần Thị B
+
+  --- Tuần 2 ---
+    - Day: Thứ 6 (Fri), Slot: C2, Class: CL01
+      Subject: Thuật toán (theory), Lecturer: Trần Thị B
+
+  --- Tuần 3 ---
+    - Day: Thứ 6 (Fri), Slot: C2, Class: CL01
+      Subject: Thuật toán (theory), Lecturer: Trần Thị B
+
+  --- Tuần 4 ---
+    - Day: Thứ 6 (Fri), Slot: C2, Class: CL01
+      Subject: Thuật toán (theory), Lecturer: Trần Thị B
+
+  --- Tuần 5 ---
+    - Day: Thứ 6 (Fri), Slot: C2, Class: CL01
+      Subject: Thuật toán (theory), Lecturer: Trần Thị B
+
+  --- Tuần 6 ---
+    - Day: Thứ 6 (Fri), Slot: C2, Class: CL01
+      Subject: Thuật toán (theory), Lecturer: Trần Thị B
+
+  --- Tuần 7 ---
+    - Day: Thứ 6 (Fri), Slot: C2, Class: CL01
+      Subject: Thuật toán (theory), Lecturer: Trần Thị B
+
+  --- Tuần 8 ---
+    - Day: Thứ 6 (Fri), Slot: C2, Class: CL01
+      Subject: Thuật toán (theory), Lecturer: Trần Thị B
+
+  --- Tuần 9 ---
+    - Day: Thứ 6 (Fri), Slot: C2, Class: CL01
+      Subject: Thuật toán (theory), Lecturer: Trần Thị B
+
+  --- Tuần 10 ---
+    - Day: Thứ 6 (Fri), Slot: C2, Class: CL01
+      Subject: Thuật toán (theory), Lecturer: Trần Thị B
+
+  --- Tuần 11 ---
+    - Day: Thứ 6 (Fri), Slot: C2, Class: CL01
+      Subject: Thuật toán (theory), Lecturer: Trần Thị B
+
+  --- Tuần 12 ---
+    - Day: Thứ 6 (Fri), Slot: C2, Class: CL01
+      Subject: Thuật toán (theory), Lecturer: Trần Thị B
+
+  --- Tuần 13 ---
+    - Day: Thứ 6 (Fri), Slot: C2, Class: CL01
+      Subject: Thuật toán (theory), Lecturer: Trần Thị B
+
+  --- Tuần 14 ---
+    - Day: Thứ 6 (Fri), Slot: C2, Class: CL01
+      Subject: Thuật toán (theory), Lecturer: Trần Thị B
+
+  --- Tuần 15 ---
+    - Day: Thứ 6 (Fri), Slot: C2, Class: CL01
+      Subject: Thuật toán (theory), Lecturer: Trần Thị B
