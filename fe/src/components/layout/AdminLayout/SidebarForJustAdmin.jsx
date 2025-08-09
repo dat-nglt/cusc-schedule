@@ -25,11 +25,13 @@ import {
     AccessTime,
     Logout,
     Dashboard,
-    Event
+    Event,
+    Schedule
 } from '@mui/icons-material';
 
 const navItems = [
-    { text: 'Quản lý thời khóa biểu', icon: <Dashboard />, path: '/dashboard' },
+    { text: 'Trang chủ', icon: <Dashboard />, path: '/dashboard' },
+    { text: 'Quản lý thời khoá biểu', icon: <Schedule />, path: '/schedules' },
     { text: 'Quản lý giảng viên', icon: <Person />, path: '/lecturers' },
     { text: 'Quản lý học viên', icon: <School />, path: '/students' },
     { text: 'Quản lý lịch nghỉ', icon: <Event />, path: '/braekschedules' },

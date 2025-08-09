@@ -96,6 +96,15 @@ const routes = [
     layout: AdminLayout,
   },
   {
+    path: "/schedules",
+    component: "Schedules",
+    exact: true,
+    title: "Quản lý lịch",
+    isPrivate: true, // Riêng tư
+    roles: ["admin", "trainingofficer"],
+    layout: AdminLayout,
+  },
+  {
     path: "/courses/add",
     component: "AddCourseModal", // Lưu ý: thường là modal, có thể không cần route riêng
     exact: true,
