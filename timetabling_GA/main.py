@@ -1,6 +1,7 @@
 # timetable_ga/main.py
 import sys
 import time
+import copy
 import random
 import os
 from collections import defaultdict
@@ -275,65 +276,51 @@ def format_text_room_schedule(room_view, processed_data):
                 )
     return "\n".join(output_lines)
 
-def genetic_algorithm():
-    print("Loading data...")
-    raw_data = load_data("input_data.json")
-    if not raw_data:
-        return
-
-    print("Processing data...")
-    processed_data = DataProcessor(raw_data)
-    if not processed_data.required_lessons_weekly:
-        print("No lessons to schedule. Exiting.")
-        return
-
-    fitness_calculator = FitnessCalculator(processed_data)
-
-    print(f"Initializing population of size {POPULATION_SIZE}...")
-    population = initialize_population(POPULATION_SIZE, processed_data)
-
+def run_ga_for_semester(semester_id, full_data_processor):
+    # Sử dụng phương thức filter_for_semester của DataProcessor
+    semester_specific_data_processor = full_data_processor.filter_for_semester(semester_id)
+    
+    if not semester_specific_data_processor:
+        print(f"Lỗi: Không tìm thấy thông tin cho học kỳ {semester_id}")
+        return None, None
+        
+    fitness_calculator = FitnessCalculator(semester_specific_data_processor)
+    population = initialize_population(POPULATION_SIZE, semester_specific_data_processor)
+    
     for chrom in population:
         fitness_calculator.calculate_fitness(chrom)
-    
-    print(f"Starting GA for {MAX_GENERATIONS} generations...")
-    sys.stdout.flush()
-    
-    start_time = time.time()
+
     best_overall_chromosome = None
+    ga_log_data = []
 
     for generation in range(MAX_GENERATIONS):
-        print(f"GA_PROGRESS_GENERATION:{generation + 1}/{MAX_GENERATIONS}")
-        sys.stdout.flush()
-        
         population.sort(key=lambda c: c.fitness, reverse=True)
-
+        
         if best_overall_chromosome is None or population[0].fitness > best_overall_chromosome.fitness:
             best_overall_chromosome = population[0]
-        
-        print(f"Generation {generation + 1}/{MAX_GENERATIONS} - "
-              f"Best Fitness: {population[0].fitness:.2f} "
-              f"(Best Overall: {best_overall_chromosome.fitness:.2f})")
-        sys.stdout.flush()
+            
+        ga_log_data.append({
+            "generation": generation + 1,
+            "best_fitness_gen": population[0].fitness,
+            "best_overall_fitness": best_overall_chromosome.fitness
+        })
 
         if population[0].fitness >= 0:
-            print("Perfect or near-perfect solution found!")
             break
 
         new_population = []
-
         new_population.extend(population[:ELITISM_COUNT])
-
         while len(new_population) < POPULATION_SIZE:
             parent1 = tournament_selection(population)
             parent2 = tournament_selection(population)
 
             if random.random() < CROSSOVER_RATE:
-                child1, child2 = lesson_based_crossover(parent1, parent2, processed_data)
+                child1, child2 = lesson_based_crossover(parent1, parent2, semester_specific_data_processor)
             else:
                 child1, child2 = parent1, parent2
 
-            mutate_chromosome(child1, processed_data, MUTATION_RATE)
-            mutate_chromosome(child2, processed_data, MUTATION_RATE)
+            mutate_chromosome(child1, semester_specific_data_processor, MUTATION_RATE)
+            mutate_chromosome(child2, semester_specific_data_processor, MUTATION_RATE)
             
             fitness_calculator.calculate_fitness(child1)
             fitness_calculator.calculate_fitness(child2)
@@ -341,72 +328,176 @@ def genetic_algorithm():
             new_population.append(child1)
             if len(new_population) < POPULATION_SIZE:
                 new_population.append(child2)
-        
         population = new_population
 
-    end_time = time.time()
-    print(f"\nGA finished in {end_time - start_time:.2f} seconds.")
-
-    population.sort(key=lambda c: c.fitness, reverse=True)
-    final_best_chromosome = population[0]
-    if best_overall_chromosome and best_overall_chromosome.fitness > final_best_chromosome.fitness:
-        final_best_chromosome = best_overall_chromosome
-
-
-    print("\nBest timetable found:")
-    print(f"Fitness: {final_best_chromosome.fitness:.2f}")
+    return best_overall_chromosome, ga_log_data
+def get_data_for_semester(semester_id, full_data):
+    """
+    Tạo một bản sao của đối tượng DataProcessor, chỉ chứa dữ liệu liên quan
+    đến một học kỳ cụ thể.
+    """
+    # Lấy thông tin về các môn học của học kỳ đó từ semester_map
+    related_subject_ids = full_data.semester_map.get(semester_id, {}).get("subject_ids", [])
+    if not related_subject_ids:
+        # Xử lý trường hợp không tìm thấy học kỳ hoặc môn học
+        print(f"Không tìm thấy thông tin môn học cho học kỳ {semester_id}.")
+        return None
+        
+    # Lấy thông tin về các chương trình và lớp học của học kỳ đó
+    related_program_ids = [
+        prog['program_id'] 
+        for prog in full_data.data['programs']
+        if semester_id in [s['semester_id'] for s in prog['semesters']]
+    ]
     
-    with open("results/best_timetable.txt", "w", encoding="utf-8") as f:
-        f.write(f"Best Fitness: {final_best_chromosome.fitness:.2f}\n\n")
-        f.write(format_timetable(final_best_chromosome, processed_data))
-    print("\nBest timetable saved to results/best_timetable.txt")
-    
-    print("\n--- Constraint Check for Best Solution ---")
-    fitness_calculator.calculate_fitness(final_best_chromosome)
-    
-    print("\nGenerating semester schedule...")
-    semester_timetable = generate_semester_schedule(final_best_chromosome, processed_data)
+    # Tạo một bản sao sâu của dữ liệu gốc để chỉnh sửa
+    semester_data_dict = copy.deepcopy(full_data.data)
 
-    formatted_semester_schedule = format_semester_schedule(semester_timetable, processed_data)
-    print(formatted_semester_schedule)
-
-    with open("results/semester_schedule.txt", "w", encoding="utf-8") as f:
-        f.write(f"Best Weekly Timetable Fitness: {final_best_chromosome.fitness:.2f}\n")
-        f.write("=========================================\n")
-        f.write("OPTIMIZED WEEKLY SCHEDULE (TEMPLATE):\n")
-        f.write("=========================================\n")
-        f.write(format_timetable(final_best_chromosome, processed_data))
-        f.write("\n\n=========================================\n")
-        f.write("FULL SEMESTER SCHEDULE BY CLASS:\n")
-        f.write("=========================================\n")
-        f.write(formatted_semester_schedule)
-    print("\nFull semester schedule saved to results/semester_schedule.txt")
-
-    print("\nExporting semester schedule to Excel files...")
-    export_semester_schedule_to_excel(semester_timetable, processed_data, output_folder="results")
-    print("Finished exporting to Excel.")
-
-    print("\nGenerating lecturer and room semester views...")
-    lecturer_semester_view = generate_lecturer_semester_view(semester_timetable, processed_data)
-    room_semester_view = generate_room_semester_view(semester_timetable, processed_data)
+    # Lọc các danh sách trong bản sao dữ liệu
+    semester_data_dict['semesters'] = [
+        s for s in semester_data_dict['semesters'] if s['semester_id'] == semester_id
+    ]
     
-    formatted_lecturer_schedule = format_text_lecturer_schedule(lecturer_semester_view, processed_data)
-    formatted_room_schedule = format_text_room_schedule(room_semester_view, processed_data)
+    semester_data_dict['classes'] = [
+        c for c in semester_data_dict['classes'] if c['program_id'] in related_program_ids
+    ]
+    
+    semester_data_dict['subjects'] = [
+        s for s in semester_data_dict['subjects'] if s['subject_id'] in related_subject_ids
+    ]
+    
+    related_lecturer_ids = [
+        l['lecturer_id'] for l in semester_data_dict['lecturers']
+        if any(sub_id in related_subject_ids for sub_id in l['subjects'])
+    ]
+    semester_data_dict['lecturers'] = [
+        l for l in semester_data_dict['lecturers'] if l['lecturer_id'] in related_lecturer_ids
+    ]
 
-    export_lecturer_view_to_excel(lecturer_semester_view, processed_data, output_folder="results")
-    export_room_view_to_excel(room_semester_view, processed_data, output_folder="results")
+    # Tạo một đối tượng DataProcessor mới với dữ liệu đã lọc
+    # Note: Hàm này giả định rằng DataProcessor có thể nhận dữ liệu đã lọc.
+    # Bạn sẽ cần đảm bảo rằng hàm này cũng có thể tái tạo các map.
+    # Tuy nhiên, phiên bản DataProcessor của bạn đã làm điều này trong __init__.
+    return DataProcessor(semester_data_dict)
+
+def export_combined_results(all_semester_results, processed_data, output_folder):
     
-    with open("results/semester_schedule_views.txt", "w", encoding="utf-8") as f:
-        f.write("LỊCH DẠY GIẢNG VIÊN:\n")
-        f.write(formatted_lecturer_schedule)
-        f.write("\n\nLỊCH SỬ DỤNG PHÒNG:\n")
-        f.write(formatted_room_schedule)
-    print("\nLecturer and Room schedules saved to results/semester_schedule_views.txt")
+    # Tạo các file tổng hợp
+    log_file_path = os.path.join(output_folder, "all_semesters_ga_summary.txt")
+    semester_schedule_txt_path = os.path.join(output_folder, "full_semester_schedule.txt")
     
+    # 1. Ghi tóm tắt quá trình GA vào file log
+    with open(log_file_path, "w", encoding="utf-8") as f:
+        f.write("--- TÓM TẮT KẾT QUẢ THUẬT TOÁN DI TRUYỀN CHO CÁC HỌC KỲ ---\n\n")
+        for semester_id, result in all_semester_results.items():
+            best_chrom = result["chromosome"]
+            f.write(f"Học kỳ: {semester_id}\n")
+            program_id = None
+            for p_id, s_ids in processed_data.program_semester_map.items():
+                if semester_id in s_ids:
+                    program_id = p_id
+                    break
+
+            f.write(f"  Chương trình: {program_id}\n")
+            f.write(f"  Độ thích nghi (Fitness) tốt nhất: {best_chrom.fitness:.2f}\n")
+            f.write(f"  Số lượng tiết học được xếp: {len(best_chrom.genes)}\n")
+            f.write("  ---------------------------------------\n")
+        f.write("\n\n")
+        
+        # Thêm thông tin lịch sử GA từ mỗi học kỳ vào file
+        for semester_id, result in all_semester_results.items():
+            f.write(f"Lịch sử GA cho Học kỳ {semester_id}:\n")
+            f.write("Thế hệ, Độ_thích_nghi_Tốt_nhất_Gen, Độ_thích_nghi_Tốt_nhất_Tổng_thể\n")
+            for log_entry in result['log']:
+                f.write(f"{log_entry['generation']},{log_entry['best_fitness_gen']:.2f},{log_entry['best_overall_fitness']:.2f}\n")
+            f.write("\n")
+
+    print(f"Tóm tắt GA cho tất cả học kỳ đã được lưu vào: {log_file_path}")
+
+    # 2. Ghi lịch học kỳ đầy đủ vào file văn bản
+    with open(semester_schedule_txt_path, "w", encoding="utf-8") as f:
+        f.write("--- LỊCH HỌC KỲ TỔNG HỢP --- \n")
+        
+        # Lặp qua từng học kỳ và xuất lịch
+        for semester_id, result in all_semester_results.items():
+            best_chrom = result["chromosome"]
+            semester_specific_data = get_data_for_semester(semester_id, processed_data)
+            
+            # Tạo lịch học kỳ từ lịch tuần đã tối ưu
+            semester_timetable = generate_semester_schedule(best_chrom, semester_specific_data)
+            formatted_schedule = format_semester_schedule(semester_timetable, semester_specific_data)
+            
+            f.write(f"\n===== LỊCH HỌC KỲ CHO: {semester_id} =====\n")
+            f.write(formatted_schedule)
+            f.write("\n" + "="*80 + "\n")
+            
+    print(f"Lịch học kỳ tổng hợp đã được lưu vào: {semester_schedule_txt_path}")
+    
+    # 3. Xuất file Excel cho từng học kỳ
+    print("\n--- Bắt đầu xuất lịch ra file Excel ---")
+    for semester_id, result in all_semester_results.items():
+        best_chrom = result["chromosome"]
+        semester_specific_data = get_data_for_semester(semester_id, processed_data)
+        semester_timetable = generate_semester_schedule(best_chrom, semester_specific_data)
+        
+        # Tạo thư mục con cho mỗi học kỳ
+        semester_output_folder = os.path.join(output_folder, semester_id)
+        if not os.path.exists(semester_output_folder):
+            os.makedirs(semester_output_folder)
+            
+        print(f"  Xuất Excel cho Học kỳ: {semester_id}...")
+        
+        export_semester_schedule_to_excel(semester_timetable, semester_specific_data, output_folder=semester_output_folder)
+        
+        lecturer_semester_view = generate_lecturer_semester_view(semester_timetable, semester_specific_data)
+        room_semester_view = generate_room_semester_view(semester_timetable, semester_specific_data)
+        
+        export_lecturer_view_to_excel(lecturer_semester_view, semester_specific_data, output_folder=semester_output_folder)
+        export_room_view_to_excel(room_semester_view, semester_specific_data, output_folder=semester_output_folder)
+        print(f"  Đã hoàn tất xuất file Excel cho {semester_id} trong thư mục '{semester_output_folder}'")
+        
+    print("\n--- Đã hoàn thành xuất tất cả các file Excel. ---")
+
+def genetic_algorithm():
+    print("Loading data...")
+    raw_data = load_data("input_data.json")
+    if not raw_data:
+        return
+
+    print("Processing data...")
+    # DataProcessor giờ đây sẽ chỉ xử lý dữ liệu thô ban đầu
+    processed_data = DataProcessor(raw_data)
+    
+    # Tạo thư mục kết quả nếu chưa tồn tại
+    output_folder = "results"
+    if not os.path.exists(output_folder):
+        os.makedirs(output_folder)
+
+    # Lặp qua từng học kỳ và chạy GA riêng biệt
+    all_semester_results = {}
+    for semester_id, semester_info in processed_data.semester_map.items():
+        print(f"\n--- Bắt đầu tạo lịch cho Học kỳ: {semester_id} ---")
+        
+        # Gọi hàm con để chạy GA cho từng học kỳ
+        best_chromosome, ga_log = run_ga_for_semester(semester_id, processed_data)
+        
+        if best_chromosome:
+            all_semester_results[semester_id] = {
+                "chromosome": best_chromosome,
+                "log": ga_log
+            }
+            print(f"Lịch học cho {semester_id} đã được tạo thành công.")
+        else:
+            print(f"Không thể tạo lịch cho {semester_id}.")
+
+    # Sau khi có kết quả của tất cả các học kỳ, gộp và xuất ra file
+    if all_semester_results:
+        print("\n--- Tổng hợp và xuất kết quả ---")
+        export_combined_results(all_semester_results, processed_data, output_folder)
+        
     print("\nGA_PROGRESS_DONE")
     sys.stdout.flush()
-
-
+    
 if __name__ == "__main__":
     if not os.path.exists("results"):
         os.makedirs("results")
