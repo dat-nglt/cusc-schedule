@@ -9,28 +9,23 @@
     { "room_id": "R102", "type": "theory", "capacity": 35 },
     { "room_id": "R103", "type": "theory", "capacity": 40 },
     { "room_id": "R104", "type": "theory", "capacity": 32 },
-    { "room_id": "R105", "type": "theory", "capacity": 30 },
-    { "room_id": "LAB01", "type": "practice", "capacity": 35 },
-    { "room_id": "LAB02", "type": "practice", "capacity": 30 },
-    { "room_id": "LAB03", "type": "practice", "capacity": 30 },
-    { "room_id": "LAB04", "type": "practice", "capacity": 40 }
+    { "room_id": "LAB01", "type": "practice", "capacity": 50 },
+    { "room_id": "LAB02", "type": "practice", "capacity": 50 },
+    { "room_id": "LAB03", "type": "practice", "capacity": 50 },
+    { "room_id": "LAB04", "type": "practice", "capacity": 50 }
   ],
   "lecturers": [
     {
       "lecturer_id": "GV01",
       "lecturer_name": "Nguyễn Văn A",
       "subjects": ["MH01", "MH02", "MH05"],
-      "busy_slots": [
-        { "day": "Mon", "slot_id": "S1" }
-      ]
+      "busy_slots": [{ "day": "Mon", "slot_id": "S1" }]
     },
     {
       "lecturer_id": "GV02",
       "lecturer_name": "Trần Thị B",
       "subjects": ["MH03", "MH04", "MH06"],
-      "busy_slots": [
-        { "day": "Tue", "slot_id": "S2" }
-      ]
+      "busy_slots": [{ "day": "Tue", "slot_id": "S2" }]
     },
     {
       "lecturer_id": "GV03",

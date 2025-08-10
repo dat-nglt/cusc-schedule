@@ -1,41 +1,43 @@
 {
   "classes": [
-    { "class_id": "CL01", "size": 30, "program_id": "CT01" },
-    { "class_id": "CL02", "size": 28, "program_id": "CT01" },
-    { "class_id": "CL03", "size": 35, "program_id": "CT02" }
+    { "class_id": "CL01", "size": 38, "program_id": "CT01" },
+    { "class_id": "CL02", "size": 35, "program_id": "CT01" },
+    { "class_id": "CL03", "size": 30, "program_id": "CT02" },
+    { "class_id": "CL04", "size": 25, "program_id": "CT02" },
+    { "class_id": "CL05", "size": 20, "program_id": "CT03" }
   ],
   "rooms": [
     { "room_id": "R101", "type": "theory", "capacity": 40 },
     { "room_id": "R102", "type": "theory", "capacity": 35 },
-    { "room_id": "R103", "type": "theory", "capacity": 40 },
-    { "room_id": "R104", "type": "theory", "capacity": 32 },
-    { "room_id": "R105", "type": "theory", "capacity": 30 },
-    { "room_id": "LAB01", "type": "practice", "capacity": 35 },
-    { "room_id": "LAB02", "type": "practice", "capacity": 30 },
-    { "room_id": "LAB03", "type": "practice", "capacity": 30 },
-    { "room_id": "LAB04", "type": "practice", "capacity": 40 }
+    { "room_id": "R103", "type": "theory", "capacity": 30 },
+    { "room_id": "R104", "type": "theory", "capacity": 25 },
+    { "room_id": "LAB01", "type": "practice", "capacity": 40 },
+    { "room_id": "LAB02", "type": "practice", "capacity": 40 },
+    { "room_id": "LAB03", "type": "practice", "capacity": 40 }
   ],
   "lecturers": [
     {
       "lecturer_id": "GV01",
       "lecturer_name": "Nguyễn Văn A",
-      "subjects": ["MH01", "MH02", "MH05"],
+      "subjects": ["MH01", "MH02"],
       "busy_slots": [
-        { "day": "Mon", "slot_id": "S1" }
+        { "day": "Mon", "slot_id": "S1" },
+        { "day": "Wed", "slot_id": "C2" }
       ]
     },
     {
       "lecturer_id": "GV02",
       "lecturer_name": "Trần Thị B",
-      "subjects": ["MH03", "MH04", "MH06"],
+      "subjects": ["MH03", "MH04"],
       "busy_slots": [
-        { "day": "Tue", "slot_id": "S2" }
+        { "day": "Tue", "slot_id": "S2" },
+        { "day": "Fri", "slot_id": "T1" }
       ]
     },
     {
       "lecturer_id": "GV03",
       "lecturer_name": "Lê Văn C",
-      "subjects": ["MH05", "MH06", "MH01"],
+      "subjects": ["MH01", "MH05", "MH06"],
       "busy_slots": [{ "day": "Fri", "slot_id": "T1" }]
     },
     {
@@ -43,13 +45,31 @@
       "lecturer_name": "Phạm Văn D",
       "subjects": ["MH03", "MH04"],
       "busy_slots": []
+    },
+    {
+      "lecturer_id": "GV05",
+      "lecturer_name": "Hoàng Thị E",
+      "subjects": ["MH07", "MH08"],
+      "busy_slots": [
+        { "day": "Mon", "slot_id": "C1" },
+        { "day": "Tue", "slot_id": "C2" }
+      ]
+    },
+    {
+      "lecturer_id": "GV06",
+      "lecturer_name": "Võ Văn F",
+      "subjects": ["MH07"],
+      "busy_slots": [
+        { "day": "Thu", "slot_id": "S1" },
+        { "day": "Thu", "slot_id": "S2" }
+      ]
     }
   ],
   "programs": [
     {
       "program_id": "CT01",
       "program_name": "Chương trình Đào tạo CNTT",
-      "duration": 4,
+      "duration": 15,
       "semesters": [
         {
           "semester_id": "HK1_CT01",
@@ -64,11 +84,22 @@
     {
       "program_id": "CT02",
       "program_name": "Chương trình Đào tạo Kinh tế",
-      "duration": 3,
+      "duration": 15,
       "semesters": [
         {
           "semester_id": "HK1_CT02",
           "subject_ids": ["MH03", "MH04"]
+        }
+      ]
+    },
+    {
+      "program_id": "CT03",
+      "program_name": "Chương trình Đào tạo Ngoại ngữ",
+      "duration": 15,
+      "semesters": [
+        {
+          "semester_id": "HK1_CT03",
+          "subject_ids": ["MH07", "MH08"]
         }
       ]
     }
@@ -77,31 +108,44 @@
     {
       "semester_id": "HK1_CT01",
       "subject_ids": ["MH01", "MH02"],
-      "duration_weeks": 15
+      "duration_weeks": 15,
+      "start_date": "2025-09-08",
+      "end_date": "2025-12-21"
     },
     {
       "semester_id": "HK2_CT01",
       "subject_ids": ["MH05", "MH06"],
-      "duration_weeks": 16
+      "duration_weeks": 15,
+      "start_date": "2026-01-05",
+      "end_date": "2026-05-03"
     },
     {
       "semester_id": "HK1_CT02",
       "subject_ids": ["MH03", "MH04"],
-      "duration_weeks": 15
+      "duration_weeks": 15,
+      "start_date": "2025-09-08",
+      "end_date": "2025-12-21"
+    },
+    {
+      "semester_id": "HK1_CT03",
+      "subject_ids": ["MH07", "MH08"],
+      "duration_weeks": 15,
+      "start_date": "2025-09-08",
+      "end_date": "2025-12-21"
     }
   ],
   "subjects": [
     {
       "subject_id": "MH01",
       "name": "Lập trình cơ bản",
-      "theory_hours": 30,
+      "theory_hours": 45,
       "practice_hours": 15
     },
     {
       "subject_id": "MH02",
       "name": "Cơ sở dữ liệu",
       "theory_hours": 30,
-      "practice_hours": 15
+      "practice_hours": 30
     },
     {
       "subject_id": "MH03",
@@ -112,7 +156,7 @@
     {
       "subject_id": "MH04",
       "name": "Thiết kế Web",
-      "theory_hours": 30,
+      "theory_hours": 15,
       "practice_hours": 15
     },
     {
@@ -126,6 +170,18 @@
       "name": "Thuật toán",
       "theory_hours": 30,
       "practice_hours": 15
+    },
+    {
+      "subject_id": "MH07",
+      "name": "Tiếng Anh chuyên ngành",
+      "theory_hours": 30,
+      "practice_hours": 0
+    },
+    {
+      "subject_id": "MH08",
+      "name": "Kỹ năng mềm",
+      "theory_hours": 15,
+      "practice_hours": 0
     }
   ],
   "time_slots": [

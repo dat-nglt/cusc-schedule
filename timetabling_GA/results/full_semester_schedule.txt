@@ -4,707 +4,1074 @@
 
 ===== SEMESTER SCHEDULE FOR CLASS: CL01 (Chương trình Đào tạo CNTT) =====
 
-  --- Week 1 ---
-    Day: Mon, Slot: C2, Subject: MH05 (practice), Room: LAB02, Lecturer: GV01
-    Day: Tue, Slot: S2, Subject: MH06 (theory), Room: R103, Lecturer: GV03
-    Day: Tue, Slot: C1, Subject: Lập trình cơ bản (theory), Room: R103, Lecturer: GV01
-    Day: Wed, Slot: S1, Subject: Cơ sở dữ liệu (theory), Room: R103, Lecturer: GV01
-    Day: Thu, Slot: S1, Subject: MH05 (theory), Room: R104, Lecturer: GV01
-    Day: Fri, Slot: C1, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
-    Day: Sat, Slot: C2, Subject: Lập trình cơ bản (practice), Room: LAB02, Lecturer: GV03
-    Day: Sat, Slot: T1, Subject: MH06 (practice), Room: LAB04, Lecturer: GV03
+   --- Week 1 ---
+     Date: 2025-09-08
+       - Day: Mon, Slot: C1, Subject: Lập trình cơ bản (practice), Room: LAB03, Lecturer: GV03
+     Date: 2025-09-09
+       - Day: Tue, Slot: C2, Subject: Cơ sở dữ liệu (theory), Room: R101, Lecturer: GV01
+     Date: 2025-09-10
+       - Day: Wed, Slot: S2, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
+     Date: 2025-09-12
+       - Day: Fri, Slot: T2, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV01
+     Date: 2025-09-13
+       - Day: Sat, Slot: T1, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV03
 
-  --- Week 2 ---
-    Day: Mon, Slot: C2, Subject: MH05 (practice), Room: LAB02, Lecturer: GV01
-    Day: Tue, Slot: S2, Subject: MH06 (theory), Room: R103, Lecturer: GV03
-    Day: Tue, Slot: C1, Subject: Lập trình cơ bản (theory), Room: R103, Lecturer: GV01
-    Day: Wed, Slot: S1, Subject: Cơ sở dữ liệu (theory), Room: R103, Lecturer: GV01
-    Day: Thu, Slot: S1, Subject: MH05 (theory), Room: R104, Lecturer: GV01
-    Day: Fri, Slot: C1, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
-    Day: Sat, Slot: C2, Subject: Lập trình cơ bản (practice), Room: LAB02, Lecturer: GV03
-    Day: Sat, Slot: T1, Subject: MH06 (practice), Room: LAB04, Lecturer: GV03
+   --- Week 2 ---
+     Date: 2025-09-15
+       - Day: Mon, Slot: C1, Subject: Lập trình cơ bản (practice), Room: LAB03, Lecturer: GV03
+     Date: 2025-09-16
+       - Day: Tue, Slot: C2, Subject: Cơ sở dữ liệu (theory), Room: R101, Lecturer: GV01
+     Date: 2025-09-17
+       - Day: Wed, Slot: S2, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
+     Date: 2025-09-19
+       - Day: Fri, Slot: T2, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV01
+     Date: 2025-09-20
+       - Day: Sat, Slot: T1, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV03
 
-  --- Week 3 ---
-    Day: Mon, Slot: C2, Subject: MH05 (practice), Room: LAB02, Lecturer: GV01
-    Day: Tue, Slot: S2, Subject: MH06 (theory), Room: R103, Lecturer: GV03
-    Day: Tue, Slot: C1, Subject: Lập trình cơ bản (theory), Room: R103, Lecturer: GV01
-    Day: Wed, Slot: S1, Subject: Cơ sở dữ liệu (theory), Room: R103, Lecturer: GV01
-    Day: Thu, Slot: S1, Subject: MH05 (theory), Room: R104, Lecturer: GV01
-    Day: Fri, Slot: C1, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
-    Day: Sat, Slot: C2, Subject: Lập trình cơ bản (practice), Room: LAB02, Lecturer: GV03
-    Day: Sat, Slot: T1, Subject: MH06 (practice), Room: LAB04, Lecturer: GV03
+   --- Week 3 ---
+     Date: 2025-09-22
+       - Day: Mon, Slot: C1, Subject: Lập trình cơ bản (practice), Room: LAB03, Lecturer: GV03
+     Date: 2025-09-23
+       - Day: Tue, Slot: C2, Subject: Cơ sở dữ liệu (theory), Room: R101, Lecturer: GV01
+     Date: 2025-09-24
+       - Day: Wed, Slot: S2, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
+     Date: 2025-09-26
+       - Day: Fri, Slot: T2, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV01
+     Date: 2025-09-27
+       - Day: Sat, Slot: T1, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV03
 
-  --- Week 4 ---
-    Day: Mon, Slot: C2, Subject: MH05 (practice), Room: LAB02, Lecturer: GV01
-    Day: Tue, Slot: S2, Subject: MH06 (theory), Room: R103, Lecturer: GV03
-    Day: Tue, Slot: C1, Subject: Lập trình cơ bản (theory), Room: R103, Lecturer: GV01
-    Day: Wed, Slot: S1, Subject: Cơ sở dữ liệu (theory), Room: R103, Lecturer: GV01
-    Day: Thu, Slot: S1, Subject: MH05 (theory), Room: R104, Lecturer: GV01
-    Day: Fri, Slot: C1, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
-    Day: Sat, Slot: C2, Subject: Lập trình cơ bản (practice), Room: LAB02, Lecturer: GV03
-    Day: Sat, Slot: T1, Subject: MH06 (practice), Room: LAB04, Lecturer: GV03
+   --- Week 4 ---
+     Date: 2025-09-29
+       - Day: Mon, Slot: C1, Subject: Lập trình cơ bản (practice), Room: LAB03, Lecturer: GV03
+     Date: 2025-09-30
+       - Day: Tue, Slot: C2, Subject: Cơ sở dữ liệu (theory), Room: R101, Lecturer: GV01
+     Date: 2025-10-01
+       - Day: Wed, Slot: S2, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
+     Date: 2025-10-03
+       - Day: Fri, Slot: T2, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV01
+     Date: 2025-10-04
+       - Day: Sat, Slot: T1, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV03
 
-  --- Week 5 ---
-    Day: Mon, Slot: C2, Subject: MH05 (practice), Room: LAB02, Lecturer: GV01
-    Day: Tue, Slot: S2, Subject: MH06 (theory), Room: R103, Lecturer: GV03
-    Day: Tue, Slot: C1, Subject: Lập trình cơ bản (theory), Room: R103, Lecturer: GV01
-    Day: Wed, Slot: S1, Subject: Cơ sở dữ liệu (theory), Room: R103, Lecturer: GV01
-    Day: Thu, Slot: S1, Subject: MH05 (theory), Room: R104, Lecturer: GV01
-    Day: Fri, Slot: C1, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
-    Day: Sat, Slot: C2, Subject: Lập trình cơ bản (practice), Room: LAB02, Lecturer: GV03
-    Day: Sat, Slot: T1, Subject: MH06 (practice), Room: LAB04, Lecturer: GV03
+   --- Week 5 ---
+     Date: 2025-10-06
+       - Day: Mon, Slot: C1, Subject: Lập trình cơ bản (practice), Room: LAB03, Lecturer: GV03
+     Date: 2025-10-07
+       - Day: Tue, Slot: C2, Subject: Cơ sở dữ liệu (theory), Room: R101, Lecturer: GV01
+     Date: 2025-10-08
+       - Day: Wed, Slot: S2, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
+     Date: 2025-10-10
+       - Day: Fri, Slot: T2, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV01
+     Date: 2025-10-11
+       - Day: Sat, Slot: T1, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV03
 
-  --- Week 6 ---
-    Day: Mon, Slot: C2, Subject: MH05 (practice), Room: LAB02, Lecturer: GV01
-    Day: Tue, Slot: S2, Subject: MH06 (theory), Room: R103, Lecturer: GV03
-    Day: Tue, Slot: C1, Subject: Lập trình cơ bản (theory), Room: R103, Lecturer: GV01
-    Day: Wed, Slot: S1, Subject: Cơ sở dữ liệu (theory), Room: R103, Lecturer: GV01
-    Day: Thu, Slot: S1, Subject: MH05 (theory), Room: R104, Lecturer: GV01
-    Day: Fri, Slot: C1, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
-    Day: Sat, Slot: C2, Subject: Lập trình cơ bản (practice), Room: LAB02, Lecturer: GV03
-    Day: Sat, Slot: T1, Subject: MH06 (practice), Room: LAB04, Lecturer: GV03
+   --- Week 6 ---
+     Date: 2025-10-13
+       - Day: Mon, Slot: C1, Subject: Lập trình cơ bản (practice), Room: LAB03, Lecturer: GV03
+     Date: 2025-10-14
+       - Day: Tue, Slot: C2, Subject: Cơ sở dữ liệu (theory), Room: R101, Lecturer: GV01
+     Date: 2025-10-15
+       - Day: Wed, Slot: S2, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
+     Date: 2025-10-17
+       - Day: Fri, Slot: T2, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV01
+     Date: 2025-10-18
+       - Day: Sat, Slot: T1, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV03
 
-  --- Week 7 ---
-    Day: Mon, Slot: C2, Subject: MH05 (practice), Room: LAB02, Lecturer: GV01
-    Day: Tue, Slot: S2, Subject: MH06 (theory), Room: R103, Lecturer: GV03
-    Day: Tue, Slot: C1, Subject: Lập trình cơ bản (theory), Room: R103, Lecturer: GV01
-    Day: Wed, Slot: S1, Subject: Cơ sở dữ liệu (theory), Room: R103, Lecturer: GV01
-    Day: Thu, Slot: S1, Subject: MH05 (theory), Room: R104, Lecturer: GV01
-    Day: Fri, Slot: C1, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
-    Day: Sat, Slot: C2, Subject: Lập trình cơ bản (practice), Room: LAB02, Lecturer: GV03
-    Day: Sat, Slot: T1, Subject: MH06 (practice), Room: LAB04, Lecturer: GV03
+   --- Week 7 ---
+     Date: 2025-10-20
+       - Day: Mon, Slot: C1, Subject: Lập trình cơ bản (practice), Room: LAB03, Lecturer: GV03
+     Date: 2025-10-21
+       - Day: Tue, Slot: C2, Subject: Cơ sở dữ liệu (theory), Room: R101, Lecturer: GV01
+     Date: 2025-10-22
+       - Day: Wed, Slot: S2, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
+     Date: 2025-10-24
+       - Day: Fri, Slot: T2, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV01
+     Date: 2025-10-25
+       - Day: Sat, Slot: T1, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV03
 
-  --- Week 8 ---
-    Day: Mon, Slot: C2, Subject: MH05 (practice), Room: LAB02, Lecturer: GV01
-    Day: Tue, Slot: S2, Subject: MH06 (theory), Room: R103, Lecturer: GV03
-    Day: Tue, Slot: C1, Subject: Lập trình cơ bản (theory), Room: R103, Lecturer: GV01
-    Day: Wed, Slot: S1, Subject: Cơ sở dữ liệu (theory), Room: R103, Lecturer: GV01
-    Day: Thu, Slot: S1, Subject: MH05 (theory), Room: R104, Lecturer: GV01
-    Day: Fri, Slot: C1, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
-    Day: Sat, Slot: C2, Subject: Lập trình cơ bản (practice), Room: LAB02, Lecturer: GV03
-    Day: Sat, Slot: T1, Subject: MH06 (practice), Room: LAB04, Lecturer: GV03
+   --- Week 8 ---
+     Date: 2025-10-27
+       - Day: Mon, Slot: C1, Subject: Lập trình cơ bản (practice), Room: LAB03, Lecturer: GV03
+     Date: 2025-10-28
+       - Day: Tue, Slot: C2, Subject: Cơ sở dữ liệu (theory), Room: R101, Lecturer: GV01
+     Date: 2025-10-29
+       - Day: Wed, Slot: S2, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
+     Date: 2025-10-31
+       - Day: Fri, Slot: T2, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV01
+     Date: 2025-11-01
+       - Day: Sat, Slot: T1, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV03
 
-  --- Week 9 ---
-    Day: Mon, Slot: C2, Subject: MH05 (practice), Room: LAB02, Lecturer: GV01
-    Day: Tue, Slot: S2, Subject: MH06 (theory), Room: R103, Lecturer: GV03
-    Day: Tue, Slot: C1, Subject: Lập trình cơ bản (theory), Room: R103, Lecturer: GV01
-    Day: Wed, Slot: S1, Subject: Cơ sở dữ liệu (theory), Room: R103, Lecturer: GV01
-    Day: Thu, Slot: S1, Subject: MH05 (theory), Room: R104, Lecturer: GV01
-    Day: Fri, Slot: C1, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
-    Day: Sat, Slot: C2, Subject: Lập trình cơ bản (practice), Room: LAB02, Lecturer: GV03
-    Day: Sat, Slot: T1, Subject: MH06 (practice), Room: LAB04, Lecturer: GV03
+   --- Week 9 ---
+     Date: 2025-11-03
+       - Day: Mon, Slot: C1, Subject: Lập trình cơ bản (practice), Room: LAB03, Lecturer: GV03
+     Date: 2025-11-04
+       - Day: Tue, Slot: C2, Subject: Cơ sở dữ liệu (theory), Room: R101, Lecturer: GV01
+     Date: 2025-11-05
+       - Day: Wed, Slot: S2, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
+     Date: 2025-11-07
+       - Day: Fri, Slot: T2, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV01
+     Date: 2025-11-08
+       - Day: Sat, Slot: T1, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV03
 
-  --- Week 10 ---
-    Day: Mon, Slot: C2, Subject: MH05 (practice), Room: LAB02, Lecturer: GV01
-    Day: Tue, Slot: S2, Subject: MH06 (theory), Room: R103, Lecturer: GV03
-    Day: Tue, Slot: C1, Subject: Lập trình cơ bản (theory), Room: R103, Lecturer: GV01
-    Day: Wed, Slot: S1, Subject: Cơ sở dữ liệu (theory), Room: R103, Lecturer: GV01
-    Day: Thu, Slot: S1, Subject: MH05 (theory), Room: R104, Lecturer: GV01
-    Day: Fri, Slot: C1, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
-    Day: Sat, Slot: C2, Subject: Lập trình cơ bản (practice), Room: LAB02, Lecturer: GV03
-    Day: Sat, Slot: T1, Subject: MH06 (practice), Room: LAB04, Lecturer: GV03
+   --- Week 10 ---
+     Date: 2025-11-10
+       - Day: Mon, Slot: C1, Subject: Lập trình cơ bản (practice), Room: LAB03, Lecturer: GV03
+     Date: 2025-11-11
+       - Day: Tue, Slot: C2, Subject: Cơ sở dữ liệu (theory), Room: R101, Lecturer: GV01
+     Date: 2025-11-12
+       - Day: Wed, Slot: S2, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
+     Date: 2025-11-14
+       - Day: Fri, Slot: T2, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV01
+     Date: 2025-11-15
+       - Day: Sat, Slot: T1, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV03
 
-  --- Week 11 ---
-    Day: Mon, Slot: C2, Subject: MH05 (practice), Room: LAB02, Lecturer: GV01
-    Day: Tue, Slot: S2, Subject: MH06 (theory), Room: R103, Lecturer: GV03
-    Day: Tue, Slot: C1, Subject: Lập trình cơ bản (theory), Room: R103, Lecturer: GV01
-    Day: Wed, Slot: S1, Subject: Cơ sở dữ liệu (theory), Room: R103, Lecturer: GV01
-    Day: Thu, Slot: S1, Subject: MH05 (theory), Room: R104, Lecturer: GV01
-    Day: Fri, Slot: C1, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
-    Day: Sat, Slot: C2, Subject: Lập trình cơ bản (practice), Room: LAB02, Lecturer: GV03
-    Day: Sat, Slot: T1, Subject: MH06 (practice), Room: LAB04, Lecturer: GV03
+   --- Week 11 ---
+     Date: 2025-11-17
+       - Day: Mon, Slot: C1, Subject: Lập trình cơ bản (practice), Room: LAB03, Lecturer: GV03
+     Date: 2025-11-18
+       - Day: Tue, Slot: C2, Subject: Cơ sở dữ liệu (theory), Room: R101, Lecturer: GV01
+     Date: 2025-11-19
+       - Day: Wed, Slot: S2, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
+     Date: 2025-11-21
+       - Day: Fri, Slot: T2, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV01
+     Date: 2025-11-22
+       - Day: Sat, Slot: T1, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV03
 
-  --- Week 12 ---
-    Day: Mon, Slot: C2, Subject: MH05 (practice), Room: LAB02, Lecturer: GV01
-    Day: Tue, Slot: S2, Subject: MH06 (theory), Room: R103, Lecturer: GV03
-    Day: Tue, Slot: C1, Subject: Lập trình cơ bản (theory), Room: R103, Lecturer: GV01
-    Day: Wed, Slot: S1, Subject: Cơ sở dữ liệu (theory), Room: R103, Lecturer: GV01
-    Day: Thu, Slot: S1, Subject: MH05 (theory), Room: R104, Lecturer: GV01
-    Day: Fri, Slot: C1, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
-    Day: Sat, Slot: C2, Subject: Lập trình cơ bản (practice), Room: LAB02, Lecturer: GV03
-    Day: Sat, Slot: T1, Subject: MH06 (practice), Room: LAB04, Lecturer: GV03
+   --- Week 12 ---
+     Date: 2025-11-24
+       - Day: Mon, Slot: C1, Subject: Lập trình cơ bản (practice), Room: LAB03, Lecturer: GV03
+     Date: 2025-11-25
+       - Day: Tue, Slot: C2, Subject: Cơ sở dữ liệu (theory), Room: R101, Lecturer: GV01
+     Date: 2025-11-26
+       - Day: Wed, Slot: S2, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
+     Date: 2025-11-28
+       - Day: Fri, Slot: T2, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV01
+     Date: 2025-11-29
+       - Day: Sat, Slot: T1, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV03
 
-  --- Week 13 ---
-    Day: Mon, Slot: C2, Subject: MH05 (practice), Room: LAB02, Lecturer: GV01
-    Day: Tue, Slot: S2, Subject: MH06 (theory), Room: R103, Lecturer: GV03
-    Day: Tue, Slot: C1, Subject: Lập trình cơ bản (theory), Room: R103, Lecturer: GV01
-    Day: Wed, Slot: S1, Subject: Cơ sở dữ liệu (theory), Room: R103, Lecturer: GV01
-    Day: Thu, Slot: S1, Subject: MH05 (theory), Room: R104, Lecturer: GV01
-    Day: Fri, Slot: C1, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
-    Day: Sat, Slot: C2, Subject: Lập trình cơ bản (practice), Room: LAB02, Lecturer: GV03
-    Day: Sat, Slot: T1, Subject: MH06 (practice), Room: LAB04, Lecturer: GV03
+   --- Week 13 ---
+     Date: 2025-12-01
+       - Day: Mon, Slot: C1, Subject: Lập trình cơ bản (practice), Room: LAB03, Lecturer: GV03
+     Date: 2025-12-02
+       - Day: Tue, Slot: C2, Subject: Cơ sở dữ liệu (theory), Room: R101, Lecturer: GV01
+     Date: 2025-12-03
+       - Day: Wed, Slot: S2, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
+     Date: 2025-12-05
+       - Day: Fri, Slot: T2, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV01
+     Date: 2025-12-06
+       - Day: Sat, Slot: T1, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV03
 
-  --- Week 14 ---
-    Day: Mon, Slot: C2, Subject: MH05 (practice), Room: LAB02, Lecturer: GV01
-    Day: Tue, Slot: S2, Subject: MH06 (theory), Room: R103, Lecturer: GV03
-    Day: Tue, Slot: C1, Subject: Lập trình cơ bản (theory), Room: R103, Lecturer: GV01
-    Day: Wed, Slot: S1, Subject: Cơ sở dữ liệu (theory), Room: R103, Lecturer: GV01
-    Day: Thu, Slot: S1, Subject: MH05 (theory), Room: R104, Lecturer: GV01
-    Day: Fri, Slot: C1, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
-    Day: Sat, Slot: C2, Subject: Lập trình cơ bản (practice), Room: LAB02, Lecturer: GV03
-    Day: Sat, Slot: T1, Subject: MH06 (practice), Room: LAB04, Lecturer: GV03
+   --- Week 14 ---
+     Date: 2025-12-08
+       - Day: Mon, Slot: C1, Subject: Lập trình cơ bản (practice), Room: LAB03, Lecturer: GV03
+     Date: 2025-12-09
+       - Day: Tue, Slot: C2, Subject: Cơ sở dữ liệu (theory), Room: R101, Lecturer: GV01
+     Date: 2025-12-10
+       - Day: Wed, Slot: S2, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
+     Date: 2025-12-12
+       - Day: Fri, Slot: T2, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV01
+     Date: 2025-12-13
+       - Day: Sat, Slot: T1, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV03
 
-  --- Week 15 ---
-    Day: Mon, Slot: C2, Subject: MH05 (practice), Room: LAB02, Lecturer: GV01
-    Day: Tue, Slot: S2, Subject: MH06 (theory), Room: R103, Lecturer: GV03
-    Day: Tue, Slot: C1, Subject: Lập trình cơ bản (theory), Room: R103, Lecturer: GV01
-    Day: Wed, Slot: S1, Subject: Cơ sở dữ liệu (theory), Room: R103, Lecturer: GV01
-    Day: Thu, Slot: S1, Subject: MH05 (theory), Room: R104, Lecturer: GV01
-    Day: Fri, Slot: C1, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
-    Day: Sat, Slot: C2, Subject: Lập trình cơ bản (practice), Room: LAB02, Lecturer: GV03
-    Day: Sat, Slot: T1, Subject: MH06 (practice), Room: LAB04, Lecturer: GV03
+   --- Week 15 ---
+     Date: 2025-12-15
+       - Day: Mon, Slot: C1, Subject: Lập trình cơ bản (practice), Room: LAB03, Lecturer: GV03
+     Date: 2025-12-16
+       - Day: Tue, Slot: C2, Subject: Cơ sở dữ liệu (theory), Room: R101, Lecturer: GV01
+     Date: 2025-12-17
+       - Day: Wed, Slot: S2, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
+     Date: 2025-12-19
+       - Day: Fri, Slot: T2, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV01
+     Date: 2025-12-20
+       - Day: Sat, Slot: T1, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV03
 
 ===== SEMESTER SCHEDULE FOR CLASS: CL02 (Chương trình Đào tạo CNTT) =====
 
-  --- Week 1 ---
-    Day: Mon, Slot: C1, Subject: Cơ sở dữ liệu (theory), Room: R104, Lecturer: GV01
-    Day: Mon, Slot: C2, Subject: MH06 (theory), Room: R101, Lecturer: GV03
-    Day: Tue, Slot: S1, Subject: Lập trình cơ bản (practice), Room: LAB03, Lecturer: GV03
-    Day: Wed, Slot: T1, Subject: MH05 (theory), Room: R105, Lecturer: GV03
-    Day: Thu, Slot: S2, Subject: MH06 (practice), Room: LAB03, Lecturer: GV03
-    Day: Fri, Slot: T1, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
-    Day: Fri, Slot: T2, Subject: Lập trình cơ bản (theory), Room: R104, Lecturer: GV03
-    Day: Sat, Slot: S2, Subject: MH05 (practice), Room: LAB04, Lecturer: GV03
+   --- Week 1 ---
+     Date: 2025-09-08
+       - Day: Mon, Slot: T1, Subject: Cơ sở dữ liệu (theory), Room: R101, Lecturer: GV01
+     Date: 2025-09-09
+       - Day: Tue, Slot: T1, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV01
+     Date: 2025-09-10
+       - Day: Wed, Slot: C1, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV03
+     Date: 2025-09-12
+       - Day: Fri, Slot: T2, Subject: Lập trình cơ bản (practice), Room: LAB03, Lecturer: GV03
+     Date: 2025-09-13
+       - Day: Sat, Slot: S2, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
 
-  --- Week 2 ---
-    Day: Mon, Slot: C1, Subject: Cơ sở dữ liệu (theory), Room: R104, Lecturer: GV01
-    Day: Mon, Slot: C2, Subject: MH06 (theory), Room: R101, Lecturer: GV03
-    Day: Tue, Slot: S1, Subject: Lập trình cơ bản (practice), Room: LAB03, Lecturer: GV03
-    Day: Wed, Slot: T1, Subject: MH05 (theory), Room: R105, Lecturer: GV03
-    Day: Thu, Slot: S2, Subject: MH06 (practice), Room: LAB03, Lecturer: GV03
-    Day: Fri, Slot: T1, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
-    Day: Fri, Slot: T2, Subject: Lập trình cơ bản (theory), Room: R104, Lecturer: GV03
-    Day: Sat, Slot: S2, Subject: MH05 (practice), Room: LAB04, Lecturer: GV03
+   --- Week 2 ---
+     Date: 2025-09-15
+       - Day: Mon, Slot: T1, Subject: Cơ sở dữ liệu (theory), Room: R101, Lecturer: GV01
+     Date: 2025-09-16
+       - Day: Tue, Slot: T1, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV01
+     Date: 2025-09-17
+       - Day: Wed, Slot: C1, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV03
+     Date: 2025-09-19
+       - Day: Fri, Slot: T2, Subject: Lập trình cơ bản (practice), Room: LAB03, Lecturer: GV03
+     Date: 2025-09-20
+       - Day: Sat, Slot: S2, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
 
-  --- Week 3 ---
-    Day: Mon, Slot: C1, Subject: Cơ sở dữ liệu (theory), Room: R104, Lecturer: GV01
-    Day: Mon, Slot: C2, Subject: MH06 (theory), Room: R101, Lecturer: GV03
-    Day: Tue, Slot: S1, Subject: Lập trình cơ bản (practice), Room: LAB03, Lecturer: GV03
-    Day: Wed, Slot: T1, Subject: MH05 (theory), Room: R105, Lecturer: GV03
-    Day: Thu, Slot: S2, Subject: MH06 (practice), Room: LAB03, Lecturer: GV03
-    Day: Fri, Slot: T1, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
-    Day: Fri, Slot: T2, Subject: Lập trình cơ bản (theory), Room: R104, Lecturer: GV03
-    Day: Sat, Slot: S2, Subject: MH05 (practice), Room: LAB04, Lecturer: GV03
+   --- Week 3 ---
+     Date: 2025-09-22
+       - Day: Mon, Slot: T1, Subject: Cơ sở dữ liệu (theory), Room: R101, Lecturer: GV01
+     Date: 2025-09-23
+       - Day: Tue, Slot: T1, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV01
+     Date: 2025-09-24
+       - Day: Wed, Slot: C1, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV03
+     Date: 2025-09-26
+       - Day: Fri, Slot: T2, Subject: Lập trình cơ bản (practice), Room: LAB03, Lecturer: GV03
+     Date: 2025-09-27
+       - Day: Sat, Slot: S2, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
 
-  --- Week 4 ---
-    Day: Mon, Slot: C1, Subject: Cơ sở dữ liệu (theory), Room: R104, Lecturer: GV01
-    Day: Mon, Slot: C2, Subject: MH06 (theory), Room: R101, Lecturer: GV03
-    Day: Tue, Slot: S1, Subject: Lập trình cơ bản (practice), Room: LAB03, Lecturer: GV03
-    Day: Wed, Slot: T1, Subject: MH05 (theory), Room: R105, Lecturer: GV03
-    Day: Thu, Slot: S2, Subject: MH06 (practice), Room: LAB03, Lecturer: GV03
-    Day: Fri, Slot: T1, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
-    Day: Fri, Slot: T2, Subject: Lập trình cơ bản (theory), Room: R104, Lecturer: GV03
-    Day: Sat, Slot: S2, Subject: MH05 (practice), Room: LAB04, Lecturer: GV03
+   --- Week 4 ---
+     Date: 2025-09-29
+       - Day: Mon, Slot: T1, Subject: Cơ sở dữ liệu (theory), Room: R101, Lecturer: GV01
+     Date: 2025-09-30
+       - Day: Tue, Slot: T1, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV01
+     Date: 2025-10-01
+       - Day: Wed, Slot: C1, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV03
+     Date: 2025-10-03
+       - Day: Fri, Slot: T2, Subject: Lập trình cơ bản (practice), Room: LAB03, Lecturer: GV03
+     Date: 2025-10-04
+       - Day: Sat, Slot: S2, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
 
-  --- Week 5 ---
-    Day: Mon, Slot: C1, Subject: Cơ sở dữ liệu (theory), Room: R104, Lecturer: GV01
-    Day: Mon, Slot: C2, Subject: MH06 (theory), Room: R101, Lecturer: GV03
-    Day: Tue, Slot: S1, Subject: Lập trình cơ bản (practice), Room: LAB03, Lecturer: GV03
-    Day: Wed, Slot: T1, Subject: MH05 (theory), Room: R105, Lecturer: GV03
-    Day: Thu, Slot: S2, Subject: MH06 (practice), Room: LAB03, Lecturer: GV03
-    Day: Fri, Slot: T1, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
-    Day: Fri, Slot: T2, Subject: Lập trình cơ bản (theory), Room: R104, Lecturer: GV03
-    Day: Sat, Slot: S2, Subject: MH05 (practice), Room: LAB04, Lecturer: GV03
+   --- Week 5 ---
+     Date: 2025-10-06
+       - Day: Mon, Slot: T1, Subject: Cơ sở dữ liệu (theory), Room: R101, Lecturer: GV01
+     Date: 2025-10-07
+       - Day: Tue, Slot: T1, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV01
+     Date: 2025-10-08
+       - Day: Wed, Slot: C1, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV03
+     Date: 2025-10-10
+       - Day: Fri, Slot: T2, Subject: Lập trình cơ bản (practice), Room: LAB03, Lecturer: GV03
+     Date: 2025-10-11
+       - Day: Sat, Slot: S2, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
 
-  --- Week 6 ---
-    Day: Mon, Slot: C1, Subject: Cơ sở dữ liệu (theory), Room: R104, Lecturer: GV01
-    Day: Mon, Slot: C2, Subject: MH06 (theory), Room: R101, Lecturer: GV03
-    Day: Tue, Slot: S1, Subject: Lập trình cơ bản (practice), Room: LAB03, Lecturer: GV03
-    Day: Wed, Slot: T1, Subject: MH05 (theory), Room: R105, Lecturer: GV03
-    Day: Thu, Slot: S2, Subject: MH06 (practice), Room: LAB03, Lecturer: GV03
-    Day: Fri, Slot: T1, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
-    Day: Fri, Slot: T2, Subject: Lập trình cơ bản (theory), Room: R104, Lecturer: GV03
-    Day: Sat, Slot: S2, Subject: MH05 (practice), Room: LAB04, Lecturer: GV03
+   --- Week 6 ---
+     Date: 2025-10-13
+       - Day: Mon, Slot: T1, Subject: Cơ sở dữ liệu (theory), Room: R101, Lecturer: GV01
+     Date: 2025-10-14
+       - Day: Tue, Slot: T1, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV01
+     Date: 2025-10-15
+       - Day: Wed, Slot: C1, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV03
+     Date: 2025-10-17
+       - Day: Fri, Slot: T2, Subject: Lập trình cơ bản (practice), Room: LAB03, Lecturer: GV03
+     Date: 2025-10-18
+       - Day: Sat, Slot: S2, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
 
-  --- Week 7 ---
-    Day: Mon, Slot: C1, Subject: Cơ sở dữ liệu (theory), Room: R104, Lecturer: GV01
-    Day: Mon, Slot: C2, Subject: MH06 (theory), Room: R101, Lecturer: GV03
-    Day: Tue, Slot: S1, Subject: Lập trình cơ bản (practice), Room: LAB03, Lecturer: GV03
-    Day: Wed, Slot: T1, Subject: MH05 (theory), Room: R105, Lecturer: GV03
-    Day: Thu, Slot: S2, Subject: MH06 (practice), Room: LAB03, Lecturer: GV03
-    Day: Fri, Slot: T1, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
-    Day: Fri, Slot: T2, Subject: Lập trình cơ bản (theory), Room: R104, Lecturer: GV03
-    Day: Sat, Slot: S2, Subject: MH05 (practice), Room: LAB04, Lecturer: GV03
+   --- Week 7 ---
+     Date: 2025-10-20
+       - Day: Mon, Slot: T1, Subject: Cơ sở dữ liệu (theory), Room: R101, Lecturer: GV01
+     Date: 2025-10-21
+       - Day: Tue, Slot: T1, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV01
+     Date: 2025-10-22
+       - Day: Wed, Slot: C1, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV03
+     Date: 2025-10-24
+       - Day: Fri, Slot: T2, Subject: Lập trình cơ bản (practice), Room: LAB03, Lecturer: GV03
+     Date: 2025-10-25
+       - Day: Sat, Slot: S2, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
 
-  --- Week 8 ---
-    Day: Mon, Slot: C1, Subject: Cơ sở dữ liệu (theory), Room: R104, Lecturer: GV01
-    Day: Mon, Slot: C2, Subject: MH06 (theory), Room: R101, Lecturer: GV03
-    Day: Tue, Slot: S1, Subject: Lập trình cơ bản (practice), Room: LAB03, Lecturer: GV03
-    Day: Wed, Slot: T1, Subject: MH05 (theory), Room: R105, Lecturer: GV03
-    Day: Thu, Slot: S2, Subject: MH06 (practice), Room: LAB03, Lecturer: GV03
-    Day: Fri, Slot: T1, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
-    Day: Fri, Slot: T2, Subject: Lập trình cơ bản (theory), Room: R104, Lecturer: GV03
-    Day: Sat, Slot: S2, Subject: MH05 (practice), Room: LAB04, Lecturer: GV03
+   --- Week 8 ---
+     Date: 2025-10-27
+       - Day: Mon, Slot: T1, Subject: Cơ sở dữ liệu (theory), Room: R101, Lecturer: GV01
+     Date: 2025-10-28
+       - Day: Tue, Slot: T1, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV01
+     Date: 2025-10-29
+       - Day: Wed, Slot: C1, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV03
+     Date: 2025-10-31
+       - Day: Fri, Slot: T2, Subject: Lập trình cơ bản (practice), Room: LAB03, Lecturer: GV03
+     Date: 2025-11-01
+       - Day: Sat, Slot: S2, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
 
-  --- Week 9 ---
-    Day: Mon, Slot: C1, Subject: Cơ sở dữ liệu (theory), Room: R104, Lecturer: GV01
-    Day: Mon, Slot: C2, Subject: MH06 (theory), Room: R101, Lecturer: GV03
-    Day: Tue, Slot: S1, Subject: Lập trình cơ bản (practice), Room: LAB03, Lecturer: GV03
-    Day: Wed, Slot: T1, Subject: MH05 (theory), Room: R105, Lecturer: GV03
-    Day: Thu, Slot: S2, Subject: MH06 (practice), Room: LAB03, Lecturer: GV03
-    Day: Fri, Slot: T1, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
-    Day: Fri, Slot: T2, Subject: Lập trình cơ bản (theory), Room: R104, Lecturer: GV03
-    Day: Sat, Slot: S2, Subject: MH05 (practice), Room: LAB04, Lecturer: GV03
+   --- Week 9 ---
+     Date: 2025-11-03
+       - Day: Mon, Slot: T1, Subject: Cơ sở dữ liệu (theory), Room: R101, Lecturer: GV01
+     Date: 2025-11-04
+       - Day: Tue, Slot: T1, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV01
+     Date: 2025-11-05
+       - Day: Wed, Slot: C1, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV03
+     Date: 2025-11-07
+       - Day: Fri, Slot: T2, Subject: Lập trình cơ bản (practice), Room: LAB03, Lecturer: GV03
+     Date: 2025-11-08
+       - Day: Sat, Slot: S2, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
 
-  --- Week 10 ---
-    Day: Mon, Slot: C1, Subject: Cơ sở dữ liệu (theory), Room: R104, Lecturer: GV01
-    Day: Mon, Slot: C2, Subject: MH06 (theory), Room: R101, Lecturer: GV03
-    Day: Tue, Slot: S1, Subject: Lập trình cơ bản (practice), Room: LAB03, Lecturer: GV03
-    Day: Wed, Slot: T1, Subject: MH05 (theory), Room: R105, Lecturer: GV03
-    Day: Thu, Slot: S2, Subject: MH06 (practice), Room: LAB03, Lecturer: GV03
-    Day: Fri, Slot: T1, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
-    Day: Fri, Slot: T2, Subject: Lập trình cơ bản (theory), Room: R104, Lecturer: GV03
-    Day: Sat, Slot: S2, Subject: MH05 (practice), Room: LAB04, Lecturer: GV03
+   --- Week 10 ---
+     Date: 2025-11-10
+       - Day: Mon, Slot: T1, Subject: Cơ sở dữ liệu (theory), Room: R101, Lecturer: GV01
+     Date: 2025-11-11
+       - Day: Tue, Slot: T1, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV01
+     Date: 2025-11-12
+       - Day: Wed, Slot: C1, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV03
+     Date: 2025-11-14
+       - Day: Fri, Slot: T2, Subject: Lập trình cơ bản (practice), Room: LAB03, Lecturer: GV03
+     Date: 2025-11-15
+       - Day: Sat, Slot: S2, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
 
-  --- Week 11 ---
-    Day: Mon, Slot: C1, Subject: Cơ sở dữ liệu (theory), Room: R104, Lecturer: GV01
-    Day: Mon, Slot: C2, Subject: MH06 (theory), Room: R101, Lecturer: GV03
-    Day: Tue, Slot: S1, Subject: Lập trình cơ bản (practice), Room: LAB03, Lecturer: GV03
-    Day: Wed, Slot: T1, Subject: MH05 (theory), Room: R105, Lecturer: GV03
-    Day: Thu, Slot: S2, Subject: MH06 (practice), Room: LAB03, Lecturer: GV03
-    Day: Fri, Slot: T1, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
-    Day: Fri, Slot: T2, Subject: Lập trình cơ bản (theory), Room: R104, Lecturer: GV03
-    Day: Sat, Slot: S2, Subject: MH05 (practice), Room: LAB04, Lecturer: GV03
+   --- Week 11 ---
+     Date: 2025-11-17
+       - Day: Mon, Slot: T1, Subject: Cơ sở dữ liệu (theory), Room: R101, Lecturer: GV01
+     Date: 2025-11-18
+       - Day: Tue, Slot: T1, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV01
+     Date: 2025-11-19
+       - Day: Wed, Slot: C1, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV03
+     Date: 2025-11-21
+       - Day: Fri, Slot: T2, Subject: Lập trình cơ bản (practice), Room: LAB03, Lecturer: GV03
+     Date: 2025-11-22
+       - Day: Sat, Slot: S2, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
 
-  --- Week 12 ---
-    Day: Mon, Slot: C1, Subject: Cơ sở dữ liệu (theory), Room: R104, Lecturer: GV01
-    Day: Mon, Slot: C2, Subject: MH06 (theory), Room: R101, Lecturer: GV03
-    Day: Tue, Slot: S1, Subject: Lập trình cơ bản (practice), Room: LAB03, Lecturer: GV03
-    Day: Wed, Slot: T1, Subject: MH05 (theory), Room: R105, Lecturer: GV03
-    Day: Thu, Slot: S2, Subject: MH06 (practice), Room: LAB03, Lecturer: GV03
-    Day: Fri, Slot: T1, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
-    Day: Fri, Slot: T2, Subject: Lập trình cơ bản (theory), Room: R104, Lecturer: GV03
-    Day: Sat, Slot: S2, Subject: MH05 (practice), Room: LAB04, Lecturer: GV03
+   --- Week 12 ---
+     Date: 2025-11-24
+       - Day: Mon, Slot: T1, Subject: Cơ sở dữ liệu (theory), Room: R101, Lecturer: GV01
+     Date: 2025-11-25
+       - Day: Tue, Slot: T1, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV01
+     Date: 2025-11-26
+       - Day: Wed, Slot: C1, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV03
+     Date: 2025-11-28
+       - Day: Fri, Slot: T2, Subject: Lập trình cơ bản (practice), Room: LAB03, Lecturer: GV03
+     Date: 2025-11-29
+       - Day: Sat, Slot: S2, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
 
-  --- Week 13 ---
-    Day: Mon, Slot: C1, Subject: Cơ sở dữ liệu (theory), Room: R104, Lecturer: GV01
-    Day: Mon, Slot: C2, Subject: MH06 (theory), Room: R101, Lecturer: GV03
-    Day: Tue, Slot: S1, Subject: Lập trình cơ bản (practice), Room: LAB03, Lecturer: GV03
-    Day: Wed, Slot: T1, Subject: MH05 (theory), Room: R105, Lecturer: GV03
-    Day: Thu, Slot: S2, Subject: MH06 (practice), Room: LAB03, Lecturer: GV03
-    Day: Fri, Slot: T1, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
-    Day: Fri, Slot: T2, Subject: Lập trình cơ bản (theory), Room: R104, Lecturer: GV03
-    Day: Sat, Slot: S2, Subject: MH05 (practice), Room: LAB04, Lecturer: GV03
+   --- Week 13 ---
+     Date: 2025-12-01
+       - Day: Mon, Slot: T1, Subject: Cơ sở dữ liệu (theory), Room: R101, Lecturer: GV01
+     Date: 2025-12-02
+       - Day: Tue, Slot: T1, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV01
+     Date: 2025-12-03
+       - Day: Wed, Slot: C1, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV03
+     Date: 2025-12-05
+       - Day: Fri, Slot: T2, Subject: Lập trình cơ bản (practice), Room: LAB03, Lecturer: GV03
+     Date: 2025-12-06
+       - Day: Sat, Slot: S2, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
 
-  --- Week 14 ---
-    Day: Mon, Slot: C1, Subject: Cơ sở dữ liệu (theory), Room: R104, Lecturer: GV01
-    Day: Mon, Slot: C2, Subject: MH06 (theory), Room: R101, Lecturer: GV03
-    Day: Tue, Slot: S1, Subject: Lập trình cơ bản (practice), Room: LAB03, Lecturer: GV03
-    Day: Wed, Slot: T1, Subject: MH05 (theory), Room: R105, Lecturer: GV03
-    Day: Thu, Slot: S2, Subject: MH06 (practice), Room: LAB03, Lecturer: GV03
-    Day: Fri, Slot: T1, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
-    Day: Fri, Slot: T2, Subject: Lập trình cơ bản (theory), Room: R104, Lecturer: GV03
-    Day: Sat, Slot: S2, Subject: MH05 (practice), Room: LAB04, Lecturer: GV03
+   --- Week 14 ---
+     Date: 2025-12-08
+       - Day: Mon, Slot: T1, Subject: Cơ sở dữ liệu (theory), Room: R101, Lecturer: GV01
+     Date: 2025-12-09
+       - Day: Tue, Slot: T1, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV01
+     Date: 2025-12-10
+       - Day: Wed, Slot: C1, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV03
+     Date: 2025-12-12
+       - Day: Fri, Slot: T2, Subject: Lập trình cơ bản (practice), Room: LAB03, Lecturer: GV03
+     Date: 2025-12-13
+       - Day: Sat, Slot: S2, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
 
-  --- Week 15 ---
-    Day: Mon, Slot: C1, Subject: Cơ sở dữ liệu (theory), Room: R104, Lecturer: GV01
-    Day: Mon, Slot: C2, Subject: MH06 (theory), Room: R101, Lecturer: GV03
-    Day: Tue, Slot: S1, Subject: Lập trình cơ bản (practice), Room: LAB03, Lecturer: GV03
-    Day: Wed, Slot: T1, Subject: MH05 (theory), Room: R105, Lecturer: GV03
-    Day: Thu, Slot: S2, Subject: MH06 (practice), Room: LAB03, Lecturer: GV03
-    Day: Fri, Slot: T1, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
-    Day: Fri, Slot: T2, Subject: Lập trình cơ bản (theory), Room: R104, Lecturer: GV03
-    Day: Sat, Slot: S2, Subject: MH05 (practice), Room: LAB04, Lecturer: GV03
+   --- Week 15 ---
+     Date: 2025-12-15
+       - Day: Mon, Slot: T1, Subject: Cơ sở dữ liệu (theory), Room: R101, Lecturer: GV01
+     Date: 2025-12-16
+       - Day: Tue, Slot: T1, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV01
+     Date: 2025-12-17
+       - Day: Wed, Slot: C1, Subject: Lập trình cơ bản (theory), Room: R101, Lecturer: GV03
+     Date: 2025-12-19
+       - Day: Fri, Slot: T2, Subject: Lập trình cơ bản (practice), Room: LAB03, Lecturer: GV03
+     Date: 2025-12-20
+       - Day: Sat, Slot: S2, Subject: Cơ sở dữ liệu (practice), Room: LAB02, Lecturer: GV01
 ================================================================================
 
 ===== LỊCH HỌC KỲ CHO: HK2_CT01 =====
 
 ===== SEMESTER SCHEDULE FOR CLASS: CL01 (Chương trình Đào tạo CNTT) =====
 
-  --- Week 1 ---
-    Day: Mon, Slot: T2, Subject: MH02 (theory), Room: R103, Lecturer: GV01
-    Day: Tue, Slot: T2, Subject: Thuật toán (theory), Room: R101, Lecturer: GV03
-    Day: Wed, Slot: C1, Subject: MH01 (practice), Room: LAB04, Lecturer: GV03
-    Day: Thu, Slot: T2, Subject: MH02 (practice), Room: LAB01, Lecturer: GV01
-    Day: Fri, Slot: C1, Subject: Cấu trúc dữ liệu (practice), Room: LAB01, Lecturer: GV03
-    Day: Fri, Slot: C2, Subject: Thuật toán (practice), Room: LAB04, Lecturer: GV03
-    Day: Sat, Slot: S2, Subject: MH01 (theory), Room: R103, Lecturer: GV03
-    Day: Sat, Slot: C1, Subject: Cấu trúc dữ liệu (theory), Room: R105, Lecturer: GV01
+   --- Week 1 ---
+     Date: 2026-01-05
+       - Day: Mon, Slot: C1, Subject: Cấu trúc dữ liệu (practice), Room: LAB02, Lecturer: GV03
+     Date: 2026-01-06
+       - Day: Tue, Slot: T2, Subject: Thuật toán (theory), Room: R101, Lecturer: GV03
+     Date: 2026-01-07
+       - Day: Wed, Slot: S1, Subject: Thuật toán (practice), Room: LAB01, Lecturer: GV03
+     Date: 2026-01-10
+       - Day: Sat, Slot: S1, Subject: Cấu trúc dữ liệu (theory), Room: R101, Lecturer: GV03
 
-  --- Week 2 ---
-    Day: Mon, Slot: T2, Subject: MH02 (theory), Room: R103, Lecturer: GV01
-    Day: Tue, Slot: T2, Subject: Thuật toán (theory), Room: R101, Lecturer: GV03
-    Day: Wed, Slot: C1, Subject: MH01 (practice), Room: LAB04, Lecturer: GV03
-    Day: Thu, Slot: T2, Subject: MH02 (practice), Room: LAB01, Lecturer: GV01
-    Day: Fri, Slot: C1, Subject: Cấu trúc dữ liệu (practice), Room: LAB01, Lecturer: GV03
-    Day: Fri, Slot: C2, Subject: Thuật toán (practice), Room: LAB04, Lecturer: GV03
-    Day: Sat, Slot: S2, Subject: MH01 (theory), Room: R103, Lecturer: GV03
-    Day: Sat, Slot: C1, Subject: Cấu trúc dữ liệu (theory), Room: R105, Lecturer: GV01
+   --- Week 2 ---
+     Date: 2026-01-12
+       - Day: Mon, Slot: C1, Subject: Cấu trúc dữ liệu (practice), Room: LAB02, Lecturer: GV03
+     Date: 2026-01-13
+       - Day: Tue, Slot: T2, Subject: Thuật toán (theory), Room: R101, Lecturer: GV03
+     Date: 2026-01-14
+       - Day: Wed, Slot: S1, Subject: Thuật toán (practice), Room: LAB01, Lecturer: GV03
+     Date: 2026-01-17
+       - Day: Sat, Slot: S1, Subject: Cấu trúc dữ liệu (theory), Room: R101, Lecturer: GV03
 
-  --- Week 3 ---
-    Day: Mon, Slot: T2, Subject: MH02 (theory), Room: R103, Lecturer: GV01
-    Day: Tue, Slot: T2, Subject: Thuật toán (theory), Room: R101, Lecturer: GV03
-    Day: Wed, Slot: C1, Subject: MH01 (practice), Room: LAB04, Lecturer: GV03
-    Day: Thu, Slot: T2, Subject: MH02 (practice), Room: LAB01, Lecturer: GV01
-    Day: Fri, Slot: C1, Subject: Cấu trúc dữ liệu (practice), Room: LAB01, Lecturer: GV03
-    Day: Fri, Slot: C2, Subject: Thuật toán (practice), Room: LAB04, Lecturer: GV03
-    Day: Sat, Slot: S2, Subject: MH01 (theory), Room: R103, Lecturer: GV03
-    Day: Sat, Slot: C1, Subject: Cấu trúc dữ liệu (theory), Room: R105, Lecturer: GV01
+   --- Week 3 ---
+     Date: 2026-01-19
+       - Day: Mon, Slot: C1, Subject: Cấu trúc dữ liệu (practice), Room: LAB02, Lecturer: GV03
+     Date: 2026-01-20
+       - Day: Tue, Slot: T2, Subject: Thuật toán (theory), Room: R101, Lecturer: GV03
+     Date: 2026-01-21
+       - Day: Wed, Slot: S1, Subject: Thuật toán (practice), Room: LAB01, Lecturer: GV03
+     Date: 2026-01-24
+       - Day: Sat, Slot: S1, Subject: Cấu trúc dữ liệu (theory), Room: R101, Lecturer: GV03
 
-  --- Week 4 ---
-    Day: Mon, Slot: T2, Subject: MH02 (theory), Room: R103, Lecturer: GV01
-    Day: Tue, Slot: T2, Subject: Thuật toán (theory), Room: R101, Lecturer: GV03
-    Day: Wed, Slot: C1, Subject: MH01 (practice), Room: LAB04, Lecturer: GV03
-    Day: Thu, Slot: T2, Subject: MH02 (practice), Room: LAB01, Lecturer: GV01
-    Day: Fri, Slot: C1, Subject: Cấu trúc dữ liệu (practice), Room: LAB01, Lecturer: GV03
-    Day: Fri, Slot: C2, Subject: Thuật toán (practice), Room: LAB04, Lecturer: GV03
-    Day: Sat, Slot: S2, Subject: MH01 (theory), Room: R103, Lecturer: GV03
-    Day: Sat, Slot: C1, Subject: Cấu trúc dữ liệu (theory), Room: R105, Lecturer: GV01
+   --- Week 4 ---
+     Date: 2026-01-26
+       - Day: Mon, Slot: C1, Subject: Cấu trúc dữ liệu (practice), Room: LAB02, Lecturer: GV03
+     Date: 2026-01-27
+       - Day: Tue, Slot: T2, Subject: Thuật toán (theory), Room: R101, Lecturer: GV03
+     Date: 2026-01-28
+       - Day: Wed, Slot: S1, Subject: Thuật toán (practice), Room: LAB01, Lecturer: GV03
+     Date: 2026-01-31
+       - Day: Sat, Slot: S1, Subject: Cấu trúc dữ liệu (theory), Room: R101, Lecturer: GV03
 
-  --- Week 5 ---
-    Day: Mon, Slot: T2, Subject: MH02 (theory), Room: R103, Lecturer: GV01
-    Day: Tue, Slot: T2, Subject: Thuật toán (theory), Room: R101, Lecturer: GV03
-    Day: Wed, Slot: C1, Subject: MH01 (practice), Room: LAB04, Lecturer: GV03
-    Day: Thu, Slot: T2, Subject: MH02 (practice), Room: LAB01, Lecturer: GV01
-    Day: Fri, Slot: C1, Subject: Cấu trúc dữ liệu (practice), Room: LAB01, Lecturer: GV03
-    Day: Fri, Slot: C2, Subject: Thuật toán (practice), Room: LAB04, Lecturer: GV03
-    Day: Sat, Slot: S2, Subject: MH01 (theory), Room: R103, Lecturer: GV03
-    Day: Sat, Slot: C1, Subject: Cấu trúc dữ liệu (theory), Room: R105, Lecturer: GV01
+   --- Week 5 ---
+     Date: 2026-02-02
+       - Day: Mon, Slot: C1, Subject: Cấu trúc dữ liệu (practice), Room: LAB02, Lecturer: GV03
+     Date: 2026-02-03
+       - Day: Tue, Slot: T2, Subject: Thuật toán (theory), Room: R101, Lecturer: GV03
+     Date: 2026-02-04
+       - Day: Wed, Slot: S1, Subject: Thuật toán (practice), Room: LAB01, Lecturer: GV03
+     Date: 2026-02-07
+       - Day: Sat, Slot: S1, Subject: Cấu trúc dữ liệu (theory), Room: R101, Lecturer: GV03
 
-  --- Week 6 ---
-    Day: Mon, Slot: T2, Subject: MH02 (theory), Room: R103, Lecturer: GV01
-    Day: Tue, Slot: T2, Subject: Thuật toán (theory), Room: R101, Lecturer: GV03
-    Day: Wed, Slot: C1, Subject: MH01 (practice), Room: LAB04, Lecturer: GV03
-    Day: Thu, Slot: T2, Subject: MH02 (practice), Room: LAB01, Lecturer: GV01
-    Day: Fri, Slot: C1, Subject: Cấu trúc dữ liệu (practice), Room: LAB01, Lecturer: GV03
-    Day: Fri, Slot: C2, Subject: Thuật toán (practice), Room: LAB04, Lecturer: GV03
-    Day: Sat, Slot: S2, Subject: MH01 (theory), Room: R103, Lecturer: GV03
-    Day: Sat, Slot: C1, Subject: Cấu trúc dữ liệu (theory), Room: R105, Lecturer: GV01
+   --- Week 6 ---
+     Date: 2026-02-09
+       - Day: Mon, Slot: C1, Subject: Cấu trúc dữ liệu (practice), Room: LAB02, Lecturer: GV03
+     Date: 2026-02-10
+       - Day: Tue, Slot: T2, Subject: Thuật toán (theory), Room: R101, Lecturer: GV03
+     Date: 2026-02-11
+       - Day: Wed, Slot: S1, Subject: Thuật toán (practice), Room: LAB01, Lecturer: GV03
+     Date: 2026-02-14
+       - Day: Sat, Slot: S1, Subject: Cấu trúc dữ liệu (theory), Room: R101, Lecturer: GV03
 
-  --- Week 7 ---
-    Day: Mon, Slot: T2, Subject: MH02 (theory), Room: R103, Lecturer: GV01
-    Day: Tue, Slot: T2, Subject: Thuật toán (theory), Room: R101, Lecturer: GV03
-    Day: Wed, Slot: C1, Subject: MH01 (practice), Room: LAB04, Lecturer: GV03
-    Day: Thu, Slot: T2, Subject: MH02 (practice), Room: LAB01, Lecturer: GV01
-    Day: Fri, Slot: C1, Subject: Cấu trúc dữ liệu (practice), Room: LAB01, Lecturer: GV03
-    Day: Fri, Slot: C2, Subject: Thuật toán (practice), Room: LAB04, Lecturer: GV03
-    Day: Sat, Slot: S2, Subject: MH01 (theory), Room: R103, Lecturer: GV03
-    Day: Sat, Slot: C1, Subject: Cấu trúc dữ liệu (theory), Room: R105, Lecturer: GV01
+   --- Week 7 ---
+     Date: 2026-02-16
+       - Day: Mon, Slot: C1, Subject: Cấu trúc dữ liệu (practice), Room: LAB02, Lecturer: GV03
+     Date: 2026-02-17
+       - Day: Tue, Slot: T2, Subject: Thuật toán (theory), Room: R101, Lecturer: GV03
+     Date: 2026-02-18
+       - Day: Wed, Slot: S1, Subject: Thuật toán (practice), Room: LAB01, Lecturer: GV03
+     Date: 2026-02-21
+       - Day: Sat, Slot: S1, Subject: Cấu trúc dữ liệu (theory), Room: R101, Lecturer: GV03
 
-  --- Week 8 ---
-    Day: Mon, Slot: T2, Subject: MH02 (theory), Room: R103, Lecturer: GV01
-    Day: Tue, Slot: T2, Subject: Thuật toán (theory), Room: R101, Lecturer: GV03
-    Day: Wed, Slot: C1, Subject: MH01 (practice), Room: LAB04, Lecturer: GV03
-    Day: Thu, Slot: T2, Subject: MH02 (practice), Room: LAB01, Lecturer: GV01
-    Day: Fri, Slot: C1, Subject: Cấu trúc dữ liệu (practice), Room: LAB01, Lecturer: GV03
-    Day: Fri, Slot: C2, Subject: Thuật toán (practice), Room: LAB04, Lecturer: GV03
-    Day: Sat, Slot: S2, Subject: MH01 (theory), Room: R103, Lecturer: GV03
-    Day: Sat, Slot: C1, Subject: Cấu trúc dữ liệu (theory), Room: R105, Lecturer: GV01
+   --- Week 8 ---
+     Date: 2026-02-23
+       - Day: Mon, Slot: C1, Subject: Cấu trúc dữ liệu (practice), Room: LAB02, Lecturer: GV03
+     Date: 2026-02-24
+       - Day: Tue, Slot: T2, Subject: Thuật toán (theory), Room: R101, Lecturer: GV03
+     Date: 2026-02-25
+       - Day: Wed, Slot: S1, Subject: Thuật toán (practice), Room: LAB01, Lecturer: GV03
+     Date: 2026-02-28
+       - Day: Sat, Slot: S1, Subject: Cấu trúc dữ liệu (theory), Room: R101, Lecturer: GV03
 
-  --- Week 9 ---
-    Day: Mon, Slot: T2, Subject: MH02 (theory), Room: R103, Lecturer: GV01
-    Day: Tue, Slot: T2, Subject: Thuật toán (theory), Room: R101, Lecturer: GV03
-    Day: Wed, Slot: C1, Subject: MH01 (practice), Room: LAB04, Lecturer: GV03
-    Day: Thu, Slot: T2, Subject: MH02 (practice), Room: LAB01, Lecturer: GV01
-    Day: Fri, Slot: C1, Subject: Cấu trúc dữ liệu (practice), Room: LAB01, Lecturer: GV03
-    Day: Fri, Slot: C2, Subject: Thuật toán (practice), Room: LAB04, Lecturer: GV03
-    Day: Sat, Slot: S2, Subject: MH01 (theory), Room: R103, Lecturer: GV03
-    Day: Sat, Slot: C1, Subject: Cấu trúc dữ liệu (theory), Room: R105, Lecturer: GV01
+   --- Week 9 ---
+     Date: 2026-03-02
+       - Day: Mon, Slot: C1, Subject: Cấu trúc dữ liệu (practice), Room: LAB02, Lecturer: GV03
+     Date: 2026-03-03
+       - Day: Tue, Slot: T2, Subject: Thuật toán (theory), Room: R101, Lecturer: GV03
+     Date: 2026-03-04
+       - Day: Wed, Slot: S1, Subject: Thuật toán (practice), Room: LAB01, Lecturer: GV03
+     Date: 2026-03-07
+       - Day: Sat, Slot: S1, Subject: Cấu trúc dữ liệu (theory), Room: R101, Lecturer: GV03
 
-  --- Week 10 ---
-    Day: Mon, Slot: T2, Subject: MH02 (theory), Room: R103, Lecturer: GV01
-    Day: Tue, Slot: T2, Subject: Thuật toán (theory), Room: R101, Lecturer: GV03
-    Day: Wed, Slot: C1, Subject: MH01 (practice), Room: LAB04, Lecturer: GV03
-    Day: Thu, Slot: T2, Subject: MH02 (practice), Room: LAB01, Lecturer: GV01
-    Day: Fri, Slot: C1, Subject: Cấu trúc dữ liệu (practice), Room: LAB01, Lecturer: GV03
-    Day: Fri, Slot: C2, Subject: Thuật toán (practice), Room: LAB04, Lecturer: GV03
-    Day: Sat, Slot: S2, Subject: MH01 (theory), Room: R103, Lecturer: GV03
-    Day: Sat, Slot: C1, Subject: Cấu trúc dữ liệu (theory), Room: R105, Lecturer: GV01
+   --- Week 10 ---
+     Date: 2026-03-09
+       - Day: Mon, Slot: C1, Subject: Cấu trúc dữ liệu (practice), Room: LAB02, Lecturer: GV03
+     Date: 2026-03-10
+       - Day: Tue, Slot: T2, Subject: Thuật toán (theory), Room: R101, Lecturer: GV03
+     Date: 2026-03-11
+       - Day: Wed, Slot: S1, Subject: Thuật toán (practice), Room: LAB01, Lecturer: GV03
+     Date: 2026-03-14
+       - Day: Sat, Slot: S1, Subject: Cấu trúc dữ liệu (theory), Room: R101, Lecturer: GV03
 
-  --- Week 11 ---
-    Day: Mon, Slot: T2, Subject: MH02 (theory), Room: R103, Lecturer: GV01
-    Day: Tue, Slot: T2, Subject: Thuật toán (theory), Room: R101, Lecturer: GV03
-    Day: Wed, Slot: C1, Subject: MH01 (practice), Room: LAB04, Lecturer: GV03
-    Day: Thu, Slot: T2, Subject: MH02 (practice), Room: LAB01, Lecturer: GV01
-    Day: Fri, Slot: C1, Subject: Cấu trúc dữ liệu (practice), Room: LAB01, Lecturer: GV03
-    Day: Fri, Slot: C2, Subject: Thuật toán (practice), Room: LAB04, Lecturer: GV03
-    Day: Sat, Slot: S2, Subject: MH01 (theory), Room: R103, Lecturer: GV03
-    Day: Sat, Slot: C1, Subject: Cấu trúc dữ liệu (theory), Room: R105, Lecturer: GV01
+   --- Week 11 ---
+     Date: 2026-03-16
+       - Day: Mon, Slot: C1, Subject: Cấu trúc dữ liệu (practice), Room: LAB02, Lecturer: GV03
+     Date: 2026-03-17
+       - Day: Tue, Slot: T2, Subject: Thuật toán (theory), Room: R101, Lecturer: GV03
+     Date: 2026-03-18
+       - Day: Wed, Slot: S1, Subject: Thuật toán (practice), Room: LAB01, Lecturer: GV03
+     Date: 2026-03-21
+       - Day: Sat, Slot: S1, Subject: Cấu trúc dữ liệu (theory), Room: R101, Lecturer: GV03
 
-  --- Week 12 ---
-    Day: Mon, Slot: T2, Subject: MH02 (theory), Room: R103, Lecturer: GV01
-    Day: Tue, Slot: T2, Subject: Thuật toán (theory), Room: R101, Lecturer: GV03
-    Day: Wed, Slot: C1, Subject: MH01 (practice), Room: LAB04, Lecturer: GV03
-    Day: Thu, Slot: T2, Subject: MH02 (practice), Room: LAB01, Lecturer: GV01
-    Day: Fri, Slot: C1, Subject: Cấu trúc dữ liệu (practice), Room: LAB01, Lecturer: GV03
-    Day: Fri, Slot: C2, Subject: Thuật toán (practice), Room: LAB04, Lecturer: GV03
-    Day: Sat, Slot: S2, Subject: MH01 (theory), Room: R103, Lecturer: GV03
-    Day: Sat, Slot: C1, Subject: Cấu trúc dữ liệu (theory), Room: R105, Lecturer: GV01
+   --- Week 12 ---
+     Date: 2026-03-23
+       - Day: Mon, Slot: C1, Subject: Cấu trúc dữ liệu (practice), Room: LAB02, Lecturer: GV03
+     Date: 2026-03-24
+       - Day: Tue, Slot: T2, Subject: Thuật toán (theory), Room: R101, Lecturer: GV03
+     Date: 2026-03-25
+       - Day: Wed, Slot: S1, Subject: Thuật toán (practice), Room: LAB01, Lecturer: GV03
+     Date: 2026-03-28
+       - Day: Sat, Slot: S1, Subject: Cấu trúc dữ liệu (theory), Room: R101, Lecturer: GV03
 
-  --- Week 13 ---
-    Day: Mon, Slot: T2, Subject: MH02 (theory), Room: R103, Lecturer: GV01
-    Day: Tue, Slot: T2, Subject: Thuật toán (theory), Room: R101, Lecturer: GV03
-    Day: Wed, Slot: C1, Subject: MH01 (practice), Room: LAB04, Lecturer: GV03
-    Day: Thu, Slot: T2, Subject: MH02 (practice), Room: LAB01, Lecturer: GV01
-    Day: Fri, Slot: C1, Subject: Cấu trúc dữ liệu (practice), Room: LAB01, Lecturer: GV03
-    Day: Fri, Slot: C2, Subject: Thuật toán (practice), Room: LAB04, Lecturer: GV03
-    Day: Sat, Slot: S2, Subject: MH01 (theory), Room: R103, Lecturer: GV03
-    Day: Sat, Slot: C1, Subject: Cấu trúc dữ liệu (theory), Room: R105, Lecturer: GV01
+   --- Week 13 ---
+     Date: 2026-03-30
+       - Day: Mon, Slot: C1, Subject: Cấu trúc dữ liệu (practice), Room: LAB02, Lecturer: GV03
+     Date: 2026-03-31
+       - Day: Tue, Slot: T2, Subject: Thuật toán (theory), Room: R101, Lecturer: GV03
+     Date: 2026-04-01
+       - Day: Wed, Slot: S1, Subject: Thuật toán (practice), Room: LAB01, Lecturer: GV03
+     Date: 2026-04-04
+       - Day: Sat, Slot: S1, Subject: Cấu trúc dữ liệu (theory), Room: R101, Lecturer: GV03
 
-  --- Week 14 ---
-    Day: Mon, Slot: T2, Subject: MH02 (theory), Room: R103, Lecturer: GV01
-    Day: Tue, Slot: T2, Subject: Thuật toán (theory), Room: R101, Lecturer: GV03
-    Day: Wed, Slot: C1, Subject: MH01 (practice), Room: LAB04, Lecturer: GV03
-    Day: Thu, Slot: T2, Subject: MH02 (practice), Room: LAB01, Lecturer: GV01
-    Day: Fri, Slot: C1, Subject: Cấu trúc dữ liệu (practice), Room: LAB01, Lecturer: GV03
-    Day: Fri, Slot: C2, Subject: Thuật toán (practice), Room: LAB04, Lecturer: GV03
-    Day: Sat, Slot: S2, Subject: MH01 (theory), Room: R103, Lecturer: GV03
-    Day: Sat, Slot: C1, Subject: Cấu trúc dữ liệu (theory), Room: R105, Lecturer: GV01
+   --- Week 14 ---
+     Date: 2026-04-06
+       - Day: Mon, Slot: C1, Subject: Cấu trúc dữ liệu (practice), Room: LAB02, Lecturer: GV03
+     Date: 2026-04-07
+       - Day: Tue, Slot: T2, Subject: Thuật toán (theory), Room: R101, Lecturer: GV03
+     Date: 2026-04-08
+       - Day: Wed, Slot: S1, Subject: Thuật toán (practice), Room: LAB01, Lecturer: GV03
+     Date: 2026-04-11
+       - Day: Sat, Slot: S1, Subject: Cấu trúc dữ liệu (theory), Room: R101, Lecturer: GV03
 
-  --- Week 15 ---
-    Day: Mon, Slot: T2, Subject: MH02 (theory), Room: R103, Lecturer: GV01
-    Day: Tue, Slot: T2, Subject: Thuật toán (theory), Room: R101, Lecturer: GV03
-    Day: Wed, Slot: C1, Subject: MH01 (practice), Room: LAB04, Lecturer: GV03
-    Day: Thu, Slot: T2, Subject: MH02 (practice), Room: LAB01, Lecturer: GV01
-    Day: Fri, Slot: C1, Subject: Cấu trúc dữ liệu (practice), Room: LAB01, Lecturer: GV03
-    Day: Fri, Slot: C2, Subject: Thuật toán (practice), Room: LAB04, Lecturer: GV03
-    Day: Sat, Slot: S2, Subject: MH01 (theory), Room: R103, Lecturer: GV03
-    Day: Sat, Slot: C1, Subject: Cấu trúc dữ liệu (theory), Room: R105, Lecturer: GV01
+   --- Week 15 ---
+     Date: 2026-04-13
+       - Day: Mon, Slot: C1, Subject: Cấu trúc dữ liệu (practice), Room: LAB02, Lecturer: GV03
+     Date: 2026-04-14
+       - Day: Tue, Slot: T2, Subject: Thuật toán (theory), Room: R101, Lecturer: GV03
+     Date: 2026-04-15
+       - Day: Wed, Slot: S1, Subject: Thuật toán (practice), Room: LAB01, Lecturer: GV03
+     Date: 2026-04-18
+       - Day: Sat, Slot: S1, Subject: Cấu trúc dữ liệu (theory), Room: R101, Lecturer: GV03
 
 ===== SEMESTER SCHEDULE FOR CLASS: CL02 (Chương trình Đào tạo CNTT) =====
 
-  --- Week 1 ---
-    Day: Mon, Slot: C1, Subject: Cấu trúc dữ liệu (theory), Room: R103, Lecturer: GV01
-    Day: Tue, Slot: C1, Subject: Thuật toán (theory), Room: R101, Lecturer: GV02
-    Day: Tue, Slot: C2, Subject: MH01 (theory), Room: R104, Lecturer: GV03
-    Day: Wed, Slot: C1, Subject: MH02 (theory), Room: R101, Lecturer: GV01
-    Day: Wed, Slot: C2, Subject: Cấu trúc dữ liệu (practice), Room: LAB04, Lecturer: GV03
-    Day: Thu, Slot: S2, Subject: MH01 (practice), Room: LAB01, Lecturer: GV03
-    Day: Fri, Slot: C2, Subject: MH02 (practice), Room: LAB01, Lecturer: GV01
-    Day: Sat, Slot: C2, Subject: Thuật toán (practice), Room: LAB04, Lecturer: GV03
+   --- Week 1 ---
+     Date: 2026-01-05
+       - Day: Mon, Slot: C2, Subject: Cấu trúc dữ liệu (theory), Room: R101, Lecturer: GV03
+     Date: 2026-01-06
+       - Day: Tue, Slot: T1, Subject: Cấu trúc dữ liệu (practice), Room: LAB02, Lecturer: GV03
+     Date: 2026-01-09
+       - Day: Fri, Slot: C1, Subject: Thuật toán (practice), Room: LAB01, Lecturer: GV03
+     Date: 2026-01-10
+       - Day: Sat, Slot: S2, Subject: Thuật toán (theory), Room: R101, Lecturer: GV03
 
-  --- Week 2 ---
-    Day: Mon, Slot: C1, Subject: Cấu trúc dữ liệu (theory), Room: R103, Lecturer: GV01
-    Day: Tue, Slot: C1, Subject: Thuật toán (theory), Room: R101, Lecturer: GV02
-    Day: Tue, Slot: C2, Subject: MH01 (theory), Room: R104, Lecturer: GV03
-    Day: Wed, Slot: C1, Subject: MH02 (theory), Room: R101, Lecturer: GV01
-    Day: Wed, Slot: C2, Subject: Cấu trúc dữ liệu (practice), Room: LAB04, Lecturer: GV03
-    Day: Thu, Slot: S2, Subject: MH01 (practice), Room: LAB01, Lecturer: GV03
-    Day: Fri, Slot: C2, Subject: MH02 (practice), Room: LAB01, Lecturer: GV01
-    Day: Sat, Slot: C2, Subject: Thuật toán (practice), Room: LAB04, Lecturer: GV03
+   --- Week 2 ---
+     Date: 2026-01-12
+       - Day: Mon, Slot: C2, Subject: Cấu trúc dữ liệu (theory), Room: R101, Lecturer: GV03
+     Date: 2026-01-13
+       - Day: Tue, Slot: T1, Subject: Cấu trúc dữ liệu (practice), Room: LAB02, Lecturer: GV03
+     Date: 2026-01-16
+       - Day: Fri, Slot: C1, Subject: Thuật toán (practice), Room: LAB01, Lecturer: GV03
+     Date: 2026-01-17
+       - Day: Sat, Slot: S2, Subject: Thuật toán (theory), Room: R101, Lecturer: GV03
 
-  --- Week 3 ---
-    Day: Mon, Slot: C1, Subject: Cấu trúc dữ liệu (theory), Room: R103, Lecturer: GV01
-    Day: Tue, Slot: C1, Subject: Thuật toán (theory), Room: R101, Lecturer: GV02
-    Day: Tue, Slot: C2, Subject: MH01 (theory), Room: R104, Lecturer: GV03
-    Day: Wed, Slot: C1, Subject: MH02 (theory), Room: R101, Lecturer: GV01
-    Day: Wed, Slot: C2, Subject: Cấu trúc dữ liệu (practice), Room: LAB04, Lecturer: GV03
-    Day: Thu, Slot: S2, Subject: MH01 (practice), Room: LAB01, Lecturer: GV03
-    Day: Fri, Slot: C2, Subject: MH02 (practice), Room: LAB01, Lecturer: GV01
-    Day: Sat, Slot: C2, Subject: Thuật toán (practice), Room: LAB04, Lecturer: GV03
+   --- Week 3 ---
+     Date: 2026-01-19
+       - Day: Mon, Slot: C2, Subject: Cấu trúc dữ liệu (theory), Room: R101, Lecturer: GV03
+     Date: 2026-01-20
+       - Day: Tue, Slot: T1, Subject: Cấu trúc dữ liệu (practice), Room: LAB02, Lecturer: GV03
+     Date: 2026-01-23
+       - Day: Fri, Slot: C1, Subject: Thuật toán (practice), Room: LAB01, Lecturer: GV03
+     Date: 2026-01-24
+       - Day: Sat, Slot: S2, Subject: Thuật toán (theory), Room: R101, Lecturer: GV03
 
-  --- Week 4 ---
-    Day: Mon, Slot: C1, Subject: Cấu trúc dữ liệu (theory), Room: R103, Lecturer: GV01
-    Day: Tue, Slot: C1, Subject: Thuật toán (theory), Room: R101, Lecturer: GV02
-    Day: Tue, Slot: C2, Subject: MH01 (theory), Room: R104, Lecturer: GV03
-    Day: Wed, Slot: C1, Subject: MH02 (theory), Room: R101, Lecturer: GV01
-    Day: Wed, Slot: C2, Subject: Cấu trúc dữ liệu (practice), Room: LAB04, Lecturer: GV03
-    Day: Thu, Slot: S2, Subject: MH01 (practice), Room: LAB01, Lecturer: GV03
-    Day: Fri, Slot: C2, Subject: MH02 (practice), Room: LAB01, Lecturer: GV01
-    Day: Sat, Slot: C2, Subject: Thuật toán (practice), Room: LAB04, Lecturer: GV03
+   --- Week 4 ---
+     Date: 2026-01-26
+       - Day: Mon, Slot: C2, Subject: Cấu trúc dữ liệu (theory), Room: R101, Lecturer: GV03
+     Date: 2026-01-27
+       - Day: Tue, Slot: T1, Subject: Cấu trúc dữ liệu (practice), Room: LAB02, Lecturer: GV03
+     Date: 2026-01-30
+       - Day: Fri, Slot: C1, Subject: Thuật toán (practice), Room: LAB01, Lecturer: GV03
+     Date: 2026-01-31
+       - Day: Sat, Slot: S2, Subject: Thuật toán (theory), Room: R101, Lecturer: GV03
 
-  --- Week 5 ---
-    Day: Mon, Slot: C1, Subject: Cấu trúc dữ liệu (theory), Room: R103, Lecturer: GV01
-    Day: Tue, Slot: C1, Subject: Thuật toán (theory), Room: R101, Lecturer: GV02
-    Day: Tue, Slot: C2, Subject: MH01 (theory), Room: R104, Lecturer: GV03
-    Day: Wed, Slot: C1, Subject: MH02 (theory), Room: R101, Lecturer: GV01
-    Day: Wed, Slot: C2, Subject: Cấu trúc dữ liệu (practice), Room: LAB04, Lecturer: GV03
-    Day: Thu, Slot: S2, Subject: MH01 (practice), Room: LAB01, Lecturer: GV03
-    Day: Fri, Slot: C2, Subject: MH02 (practice), Room: LAB01, Lecturer: GV01
-    Day: Sat, Slot: C2, Subject: Thuật toán (practice), Room: LAB04, Lecturer: GV03
+   --- Week 5 ---
+     Date: 2026-02-02
+       - Day: Mon, Slot: C2, Subject: Cấu trúc dữ liệu (theory), Room: R101, Lecturer: GV03
+     Date: 2026-02-03
+       - Day: Tue, Slot: T1, Subject: Cấu trúc dữ liệu (practice), Room: LAB02, Lecturer: GV03
+     Date: 2026-02-06
+       - Day: Fri, Slot: C1, Subject: Thuật toán (practice), Room: LAB01, Lecturer: GV03
+     Date: 2026-02-07
+       - Day: Sat, Slot: S2, Subject: Thuật toán (theory), Room: R101, Lecturer: GV03
 
-  --- Week 6 ---
-    Day: Mon, Slot: C1, Subject: Cấu trúc dữ liệu (theory), Room: R103, Lecturer: GV01
-    Day: Tue, Slot: C1, Subject: Thuật toán (theory), Room: R101, Lecturer: GV02
-    Day: Tue, Slot: C2, Subject: MH01 (theory), Room: R104, Lecturer: GV03
-    Day: Wed, Slot: C1, Subject: MH02 (theory), Room: R101, Lecturer: GV01
-    Day: Wed, Slot: C2, Subject: Cấu trúc dữ liệu (practice), Room: LAB04, Lecturer: GV03
-    Day: Thu, Slot: S2, Subject: MH01 (practice), Room: LAB01, Lecturer: GV03
-    Day: Fri, Slot: C2, Subject: MH02 (practice), Room: LAB01, Lecturer: GV01
-    Day: Sat, Slot: C2, Subject: Thuật toán (practice), Room: LAB04, Lecturer: GV03
+   --- Week 6 ---
+     Date: 2026-02-09
+       - Day: Mon, Slot: C2, Subject: Cấu trúc dữ liệu (theory), Room: R101, Lecturer: GV03
+     Date: 2026-02-10
+       - Day: Tue, Slot: T1, Subject: Cấu trúc dữ liệu (practice), Room: LAB02, Lecturer: GV03
+     Date: 2026-02-13
+       - Day: Fri, Slot: C1, Subject: Thuật toán (practice), Room: LAB01, Lecturer: GV03
+     Date: 2026-02-14
+       - Day: Sat, Slot: S2, Subject: Thuật toán (theory), Room: R101, Lecturer: GV03
 
-  --- Week 7 ---
-    Day: Mon, Slot: C1, Subject: Cấu trúc dữ liệu (theory), Room: R103, Lecturer: GV01
-    Day: Tue, Slot: C1, Subject: Thuật toán (theory), Room: R101, Lecturer: GV02
-    Day: Tue, Slot: C2, Subject: MH01 (theory), Room: R104, Lecturer: GV03
-    Day: Wed, Slot: C1, Subject: MH02 (theory), Room: R101, Lecturer: GV01
-    Day: Wed, Slot: C2, Subject: Cấu trúc dữ liệu (practice), Room: LAB04, Lecturer: GV03
-    Day: Thu, Slot: S2, Subject: MH01 (practice), Room: LAB01, Lecturer: GV03
-    Day: Fri, Slot: C2, Subject: MH02 (practice), Room: LAB01, Lecturer: GV01
-    Day: Sat, Slot: C2, Subject: Thuật toán (practice), Room: LAB04, Lecturer: GV03
+   --- Week 7 ---
+     Date: 2026-02-16
+       - Day: Mon, Slot: C2, Subject: Cấu trúc dữ liệu (theory), Room: R101, Lecturer: GV03
+     Date: 2026-02-17
+       - Day: Tue, Slot: T1, Subject: Cấu trúc dữ liệu (practice), Room: LAB02, Lecturer: GV03
+     Date: 2026-02-20
+       - Day: Fri, Slot: C1, Subject: Thuật toán (practice), Room: LAB01, Lecturer: GV03
+     Date: 2026-02-21
+       - Day: Sat, Slot: S2, Subject: Thuật toán (theory), Room: R101, Lecturer: GV03
 
-  --- Week 8 ---
-    Day: Mon, Slot: C1, Subject: Cấu trúc dữ liệu (theory), Room: R103, Lecturer: GV01
-    Day: Tue, Slot: C1, Subject: Thuật toán (theory), Room: R101, Lecturer: GV02
-    Day: Tue, Slot: C2, Subject: MH01 (theory), Room: R104, Lecturer: GV03
-    Day: Wed, Slot: C1, Subject: MH02 (theory), Room: R101, Lecturer: GV01
-    Day: Wed, Slot: C2, Subject: Cấu trúc dữ liệu (practice), Room: LAB04, Lecturer: GV03
-    Day: Thu, Slot: S2, Subject: MH01 (practice), Room: LAB01, Lecturer: GV03
-    Day: Fri, Slot: C2, Subject: MH02 (practice), Room: LAB01, Lecturer: GV01
-    Day: Sat, Slot: C2, Subject: Thuật toán (practice), Room: LAB04, Lecturer: GV03
+   --- Week 8 ---
+     Date: 2026-02-23
+       - Day: Mon, Slot: C2, Subject: Cấu trúc dữ liệu (theory), Room: R101, Lecturer: GV03
+     Date: 2026-02-24
+       - Day: Tue, Slot: T1, Subject: Cấu trúc dữ liệu (practice), Room: LAB02, Lecturer: GV03
+     Date: 2026-02-27
+       - Day: Fri, Slot: C1, Subject: Thuật toán (practice), Room: LAB01, Lecturer: GV03
+     Date: 2026-02-28
+       - Day: Sat, Slot: S2, Subject: Thuật toán (theory), Room: R101, Lecturer: GV03
 
-  --- Week 9 ---
-    Day: Mon, Slot: C1, Subject: Cấu trúc dữ liệu (theory), Room: R103, Lecturer: GV01
-    Day: Tue, Slot: C1, Subject: Thuật toán (theory), Room: R101, Lecturer: GV02
-    Day: Tue, Slot: C2, Subject: MH01 (theory), Room: R104, Lecturer: GV03
-    Day: Wed, Slot: C1, Subject: MH02 (theory), Room: R101, Lecturer: GV01
-    Day: Wed, Slot: C2, Subject: Cấu trúc dữ liệu (practice), Room: LAB04, Lecturer: GV03
-    Day: Thu, Slot: S2, Subject: MH01 (practice), Room: LAB01, Lecturer: GV03
-    Day: Fri, Slot: C2, Subject: MH02 (practice), Room: LAB01, Lecturer: GV01
-    Day: Sat, Slot: C2, Subject: Thuật toán (practice), Room: LAB04, Lecturer: GV03
+   --- Week 9 ---
+     Date: 2026-03-02
+       - Day: Mon, Slot: C2, Subject: Cấu trúc dữ liệu (theory), Room: R101, Lecturer: GV03
+     Date: 2026-03-03
+       - Day: Tue, Slot: T1, Subject: Cấu trúc dữ liệu (practice), Room: LAB02, Lecturer: GV03
+     Date: 2026-03-06
+       - Day: Fri, Slot: C1, Subject: Thuật toán (practice), Room: LAB01, Lecturer: GV03
+     Date: 2026-03-07
+       - Day: Sat, Slot: S2, Subject: Thuật toán (theory), Room: R101, Lecturer: GV03
 
-  --- Week 10 ---
-    Day: Mon, Slot: C1, Subject: Cấu trúc dữ liệu (theory), Room: R103, Lecturer: GV01
-    Day: Tue, Slot: C1, Subject: Thuật toán (theory), Room: R101, Lecturer: GV02
-    Day: Tue, Slot: C2, Subject: MH01 (theory), Room: R104, Lecturer: GV03
-    Day: Wed, Slot: C1, Subject: MH02 (theory), Room: R101, Lecturer: GV01
-    Day: Wed, Slot: C2, Subject: Cấu trúc dữ liệu (practice), Room: LAB04, Lecturer: GV03
-    Day: Thu, Slot: S2, Subject: MH01 (practice), Room: LAB01, Lecturer: GV03
-    Day: Fri, Slot: C2, Subject: MH02 (practice), Room: LAB01, Lecturer: GV01
-    Day: Sat, Slot: C2, Subject: Thuật toán (practice), Room: LAB04, Lecturer: GV03
+   --- Week 10 ---
+     Date: 2026-03-09
+       - Day: Mon, Slot: C2, Subject: Cấu trúc dữ liệu (theory), Room: R101, Lecturer: GV03
+     Date: 2026-03-10
+       - Day: Tue, Slot: T1, Subject: Cấu trúc dữ liệu (practice), Room: LAB02, Lecturer: GV03
+     Date: 2026-03-13
+       - Day: Fri, Slot: C1, Subject: Thuật toán (practice), Room: LAB01, Lecturer: GV03
+     Date: 2026-03-14
+       - Day: Sat, Slot: S2, Subject: Thuật toán (theory), Room: R101, Lecturer: GV03
 
-  --- Week 11 ---
-    Day: Mon, Slot: C1, Subject: Cấu trúc dữ liệu (theory), Room: R103, Lecturer: GV01
-    Day: Tue, Slot: C1, Subject: Thuật toán (theory), Room: R101, Lecturer: GV02
-    Day: Tue, Slot: C2, Subject: MH01 (theory), Room: R104, Lecturer: GV03
-    Day: Wed, Slot: C1, Subject: MH02 (theory), Room: R101, Lecturer: GV01
-    Day: Wed, Slot: C2, Subject: Cấu trúc dữ liệu (practice), Room: LAB04, Lecturer: GV03
-    Day: Thu, Slot: S2, Subject: MH01 (practice), Room: LAB01, Lecturer: GV03
-    Day: Fri, Slot: C2, Subject: MH02 (practice), Room: LAB01, Lecturer: GV01
-    Day: Sat, Slot: C2, Subject: Thuật toán (practice), Room: LAB04, Lecturer: GV03
+   --- Week 11 ---
+     Date: 2026-03-16
+       - Day: Mon, Slot: C2, Subject: Cấu trúc dữ liệu (theory), Room: R101, Lecturer: GV03
+     Date: 2026-03-17
+       - Day: Tue, Slot: T1, Subject: Cấu trúc dữ liệu (practice), Room: LAB02, Lecturer: GV03
+     Date: 2026-03-20
+       - Day: Fri, Slot: C1, Subject: Thuật toán (practice), Room: LAB01, Lecturer: GV03
+     Date: 2026-03-21
+       - Day: Sat, Slot: S2, Subject: Thuật toán (theory), Room: R101, Lecturer: GV03
 
-  --- Week 12 ---
-    Day: Mon, Slot: C1, Subject: Cấu trúc dữ liệu (theory), Room: R103, Lecturer: GV01
-    Day: Tue, Slot: C1, Subject: Thuật toán (theory), Room: R101, Lecturer: GV02
-    Day: Tue, Slot: C2, Subject: MH01 (theory), Room: R104, Lecturer: GV03
-    Day: Wed, Slot: C1, Subject: MH02 (theory), Room: R101, Lecturer: GV01
-    Day: Wed, Slot: C2, Subject: Cấu trúc dữ liệu (practice), Room: LAB04, Lecturer: GV03
-    Day: Thu, Slot: S2, Subject: MH01 (practice), Room: LAB01, Lecturer: GV03
-    Day: Fri, Slot: C2, Subject: MH02 (practice), Room: LAB01, Lecturer: GV01
-    Day: Sat, Slot: C2, Subject: Thuật toán (practice), Room: LAB04, Lecturer: GV03
+   --- Week 12 ---
+     Date: 2026-03-23
+       - Day: Mon, Slot: C2, Subject: Cấu trúc dữ liệu (theory), Room: R101, Lecturer: GV03
+     Date: 2026-03-24
+       - Day: Tue, Slot: T1, Subject: Cấu trúc dữ liệu (practice), Room: LAB02, Lecturer: GV03
+     Date: 2026-03-27
+       - Day: Fri, Slot: C1, Subject: Thuật toán (practice), Room: LAB01, Lecturer: GV03
+     Date: 2026-03-28
+       - Day: Sat, Slot: S2, Subject: Thuật toán (theory), Room: R101, Lecturer: GV03
 
-  --- Week 13 ---
-    Day: Mon, Slot: C1, Subject: Cấu trúc dữ liệu (theory), Room: R103, Lecturer: GV01
-    Day: Tue, Slot: C1, Subject: Thuật toán (theory), Room: R101, Lecturer: GV02
-    Day: Tue, Slot: C2, Subject: MH01 (theory), Room: R104, Lecturer: GV03
-    Day: Wed, Slot: C1, Subject: MH02 (theory), Room: R101, Lecturer: GV01
-    Day: Wed, Slot: C2, Subject: Cấu trúc dữ liệu (practice), Room: LAB04, Lecturer: GV03
-    Day: Thu, Slot: S2, Subject: MH01 (practice), Room: LAB01, Lecturer: GV03
-    Day: Fri, Slot: C2, Subject: MH02 (practice), Room: LAB01, Lecturer: GV01
-    Day: Sat, Slot: C2, Subject: Thuật toán (practice), Room: LAB04, Lecturer: GV03
+   --- Week 13 ---
+     Date: 2026-03-30
+       - Day: Mon, Slot: C2, Subject: Cấu trúc dữ liệu (theory), Room: R101, Lecturer: GV03
+     Date: 2026-03-31
+       - Day: Tue, Slot: T1, Subject: Cấu trúc dữ liệu (practice), Room: LAB02, Lecturer: GV03
+     Date: 2026-04-03
+       - Day: Fri, Slot: C1, Subject: Thuật toán (practice), Room: LAB01, Lecturer: GV03
+     Date: 2026-04-04
+       - Day: Sat, Slot: S2, Subject: Thuật toán (theory), Room: R101, Lecturer: GV03
 
-  --- Week 14 ---
-    Day: Mon, Slot: C1, Subject: Cấu trúc dữ liệu (theory), Room: R103, Lecturer: GV01
-    Day: Tue, Slot: C1, Subject: Thuật toán (theory), Room: R101, Lecturer: GV02
-    Day: Tue, Slot: C2, Subject: MH01 (theory), Room: R104, Lecturer: GV03
-    Day: Wed, Slot: C1, Subject: MH02 (theory), Room: R101, Lecturer: GV01
-    Day: Wed, Slot: C2, Subject: Cấu trúc dữ liệu (practice), Room: LAB04, Lecturer: GV03
-    Day: Thu, Slot: S2, Subject: MH01 (practice), Room: LAB01, Lecturer: GV03
-    Day: Fri, Slot: C2, Subject: MH02 (practice), Room: LAB01, Lecturer: GV01
-    Day: Sat, Slot: C2, Subject: Thuật toán (practice), Room: LAB04, Lecturer: GV03
+   --- Week 14 ---
+     Date: 2026-04-06
+       - Day: Mon, Slot: C2, Subject: Cấu trúc dữ liệu (theory), Room: R101, Lecturer: GV03
+     Date: 2026-04-07
+       - Day: Tue, Slot: T1, Subject: Cấu trúc dữ liệu (practice), Room: LAB02, Lecturer: GV03
+     Date: 2026-04-10
+       - Day: Fri, Slot: C1, Subject: Thuật toán (practice), Room: LAB01, Lecturer: GV03
+     Date: 2026-04-11
+       - Day: Sat, Slot: S2, Subject: Thuật toán (theory), Room: R101, Lecturer: GV03
 
-  --- Week 15 ---
-    Day: Mon, Slot: C1, Subject: Cấu trúc dữ liệu (theory), Room: R103, Lecturer: GV01
-    Day: Tue, Slot: C1, Subject: Thuật toán (theory), Room: R101, Lecturer: GV02
-    Day: Tue, Slot: C2, Subject: MH01 (theory), Room: R104, Lecturer: GV03
-    Day: Wed, Slot: C1, Subject: MH02 (theory), Room: R101, Lecturer: GV01
-    Day: Wed, Slot: C2, Subject: Cấu trúc dữ liệu (practice), Room: LAB04, Lecturer: GV03
-    Day: Thu, Slot: S2, Subject: MH01 (practice), Room: LAB01, Lecturer: GV03
-    Day: Fri, Slot: C2, Subject: MH02 (practice), Room: LAB01, Lecturer: GV01
-    Day: Sat, Slot: C2, Subject: Thuật toán (practice), Room: LAB04, Lecturer: GV03
+   --- Week 15 ---
+     Date: 2026-04-13
+       - Day: Mon, Slot: C2, Subject: Cấu trúc dữ liệu (theory), Room: R101, Lecturer: GV03
+     Date: 2026-04-14
+       - Day: Tue, Slot: T1, Subject: Cấu trúc dữ liệu (practice), Room: LAB02, Lecturer: GV03
+     Date: 2026-04-17
+       - Day: Fri, Slot: C1, Subject: Thuật toán (practice), Room: LAB01, Lecturer: GV03
+     Date: 2026-04-18
+       - Day: Sat, Slot: S2, Subject: Thuật toán (theory), Room: R101, Lecturer: GV03
 ================================================================================
 
 ===== LỊCH HỌC KỲ CHO: HK1_CT02 =====
 
 ===== SEMESTER SCHEDULE FOR CLASS: CL03 (Chương trình Đào tạo Kinh tế) =====
 
-  --- Week 1 ---
-    Day: Mon, Slot: C2, Subject: Mạng máy tính (theory), Room: R103, Lecturer: GV04
-    Day: Tue, Slot: T2, Subject: Mạng máy tính (practice), Room: LAB01, Lecturer: GV02
-    Day: Wed, Slot: C1, Subject: Thiết kế Web (theory), Room: R103, Lecturer: GV04
-    Day: Thu, Slot: T2, Subject: Thiết kế Web (practice), Room: LAB04, Lecturer: GV02
+   --- Week 1 ---
+     Date: 2025-09-10
+       - Day: Wed, Slot: S2, Subject: Thiết kế Web (theory), Room: R103, Lecturer: GV02
+     Date: 2025-09-11
+       - Day: Thu, Slot: C2, Subject: Thiết kế Web (practice), Room: LAB01, Lecturer: GV02
+     Date: 2025-09-12
+       - Day: Fri, Slot: C2, Subject: Mạng máy tính (practice), Room: LAB01, Lecturer: GV04
+     Date: 2025-09-13
+       - Day: Sat, Slot: C2, Subject: Mạng máy tính (theory), Room: R102, Lecturer: GV04
 
-  --- Week 2 ---
-    Day: Mon, Slot: C2, Subject: Mạng máy tính (theory), Room: R103, Lecturer: GV04
-    Day: Tue, Slot: T2, Subject: Mạng máy tính (practice), Room: LAB01, Lecturer: GV02
-    Day: Wed, Slot: C1, Subject: Thiết kế Web (theory), Room: R103, Lecturer: GV04
-    Day: Thu, Slot: T2, Subject: Thiết kế Web (practice), Room: LAB04, Lecturer: GV02
+   --- Week 2 ---
+     Date: 2025-09-17
+       - Day: Wed, Slot: S2, Subject: Thiết kế Web (theory), Room: R103, Lecturer: GV02
+     Date: 2025-09-18
+       - Day: Thu, Slot: C2, Subject: Thiết kế Web (practice), Room: LAB01, Lecturer: GV02
+     Date: 2025-09-19
+       - Day: Fri, Slot: C2, Subject: Mạng máy tính (practice), Room: LAB01, Lecturer: GV04
+     Date: 2025-09-20
+       - Day: Sat, Slot: C2, Subject: Mạng máy tính (theory), Room: R102, Lecturer: GV04
 
-  --- Week 3 ---
-    Day: Mon, Slot: C2, Subject: Mạng máy tính (theory), Room: R103, Lecturer: GV04
-    Day: Tue, Slot: T2, Subject: Mạng máy tính (practice), Room: LAB01, Lecturer: GV02
-    Day: Wed, Slot: C1, Subject: Thiết kế Web (theory), Room: R103, Lecturer: GV04
-    Day: Thu, Slot: T2, Subject: Thiết kế Web (practice), Room: LAB04, Lecturer: GV02
+   --- Week 3 ---
+     Date: 2025-09-24
+       - Day: Wed, Slot: S2, Subject: Thiết kế Web (theory), Room: R103, Lecturer: GV02
+     Date: 2025-09-25
+       - Day: Thu, Slot: C2, Subject: Thiết kế Web (practice), Room: LAB01, Lecturer: GV02
+     Date: 2025-09-26
+       - Day: Fri, Slot: C2, Subject: Mạng máy tính (practice), Room: LAB01, Lecturer: GV04
+     Date: 2025-09-27
+       - Day: Sat, Slot: C2, Subject: Mạng máy tính (theory), Room: R102, Lecturer: GV04
 
-  --- Week 4 ---
-    Day: Mon, Slot: C2, Subject: Mạng máy tính (theory), Room: R103, Lecturer: GV04
-    Day: Tue, Slot: T2, Subject: Mạng máy tính (practice), Room: LAB01, Lecturer: GV02
-    Day: Wed, Slot: C1, Subject: Thiết kế Web (theory), Room: R103, Lecturer: GV04
-    Day: Thu, Slot: T2, Subject: Thiết kế Web (practice), Room: LAB04, Lecturer: GV02
+   --- Week 4 ---
+     Date: 2025-10-01
+       - Day: Wed, Slot: S2, Subject: Thiết kế Web (theory), Room: R103, Lecturer: GV02
+     Date: 2025-10-02
+       - Day: Thu, Slot: C2, Subject: Thiết kế Web (practice), Room: LAB01, Lecturer: GV02
+     Date: 2025-10-03
+       - Day: Fri, Slot: C2, Subject: Mạng máy tính (practice), Room: LAB01, Lecturer: GV04
+     Date: 2025-10-04
+       - Day: Sat, Slot: C2, Subject: Mạng máy tính (theory), Room: R102, Lecturer: GV04
 
-  --- Week 5 ---
-    Day: Mon, Slot: C2, Subject: Mạng máy tính (theory), Room: R103, Lecturer: GV04
-    Day: Tue, Slot: T2, Subject: Mạng máy tính (practice), Room: LAB01, Lecturer: GV02
-    Day: Wed, Slot: C1, Subject: Thiết kế Web (theory), Room: R103, Lecturer: GV04
-    Day: Thu, Slot: T2, Subject: Thiết kế Web (practice), Room: LAB04, Lecturer: GV02
+   --- Week 5 ---
+     Date: 2025-10-08
+       - Day: Wed, Slot: S2, Subject: Thiết kế Web (theory), Room: R103, Lecturer: GV02
+     Date: 2025-10-09
+       - Day: Thu, Slot: C2, Subject: Thiết kế Web (practice), Room: LAB01, Lecturer: GV02
+     Date: 2025-10-10
+       - Day: Fri, Slot: C2, Subject: Mạng máy tính (practice), Room: LAB01, Lecturer: GV04
+     Date: 2025-10-11
+       - Day: Sat, Slot: C2, Subject: Mạng máy tính (theory), Room: R102, Lecturer: GV04
 
-  --- Week 6 ---
-    Day: Mon, Slot: C2, Subject: Mạng máy tính (theory), Room: R103, Lecturer: GV04
-    Day: Tue, Slot: T2, Subject: Mạng máy tính (practice), Room: LAB01, Lecturer: GV02
-    Day: Wed, Slot: C1, Subject: Thiết kế Web (theory), Room: R103, Lecturer: GV04
-    Day: Thu, Slot: T2, Subject: Thiết kế Web (practice), Room: LAB04, Lecturer: GV02
+   --- Week 6 ---
+     Date: 2025-10-15
+       - Day: Wed, Slot: S2, Subject: Thiết kế Web (theory), Room: R103, Lecturer: GV02
+     Date: 2025-10-16
+       - Day: Thu, Slot: C2, Subject: Thiết kế Web (practice), Room: LAB01, Lecturer: GV02
+     Date: 2025-10-17
+       - Day: Fri, Slot: C2, Subject: Mạng máy tính (practice), Room: LAB01, Lecturer: GV04
+     Date: 2025-10-18
+       - Day: Sat, Slot: C2, Subject: Mạng máy tính (theory), Room: R102, Lecturer: GV04
 
-  --- Week 7 ---
-    Day: Mon, Slot: C2, Subject: Mạng máy tính (theory), Room: R103, Lecturer: GV04
-    Day: Tue, Slot: T2, Subject: Mạng máy tính (practice), Room: LAB01, Lecturer: GV02
-    Day: Wed, Slot: C1, Subject: Thiết kế Web (theory), Room: R103, Lecturer: GV04
-    Day: Thu, Slot: T2, Subject: Thiết kế Web (practice), Room: LAB04, Lecturer: GV02
+   --- Week 7 ---
+     Date: 2025-10-22
+       - Day: Wed, Slot: S2, Subject: Thiết kế Web (theory), Room: R103, Lecturer: GV02
+     Date: 2025-10-23
+       - Day: Thu, Slot: C2, Subject: Thiết kế Web (practice), Room: LAB01, Lecturer: GV02
+     Date: 2025-10-24
+       - Day: Fri, Slot: C2, Subject: Mạng máy tính (practice), Room: LAB01, Lecturer: GV04
+     Date: 2025-10-25
+       - Day: Sat, Slot: C2, Subject: Mạng máy tính (theory), Room: R102, Lecturer: GV04
 
-  --- Week 8 ---
-    Day: Mon, Slot: C2, Subject: Mạng máy tính (theory), Room: R103, Lecturer: GV04
-    Day: Tue, Slot: T2, Subject: Mạng máy tính (practice), Room: LAB01, Lecturer: GV02
-    Day: Wed, Slot: C1, Subject: Thiết kế Web (theory), Room: R103, Lecturer: GV04
-    Day: Thu, Slot: T2, Subject: Thiết kế Web (practice), Room: LAB04, Lecturer: GV02
+   --- Week 8 ---
+     Date: 2025-10-29
+       - Day: Wed, Slot: S2, Subject: Thiết kế Web (theory), Room: R103, Lecturer: GV02
+     Date: 2025-10-30
+       - Day: Thu, Slot: C2, Subject: Thiết kế Web (practice), Room: LAB01, Lecturer: GV02
+     Date: 2025-10-31
+       - Day: Fri, Slot: C2, Subject: Mạng máy tính (practice), Room: LAB01, Lecturer: GV04
+     Date: 2025-11-01
+       - Day: Sat, Slot: C2, Subject: Mạng máy tính (theory), Room: R102, Lecturer: GV04
 
-  --- Week 9 ---
-    Day: Mon, Slot: C2, Subject: Mạng máy tính (theory), Room: R103, Lecturer: GV04
-    Day: Tue, Slot: T2, Subject: Mạng máy tính (practice), Room: LAB01, Lecturer: GV02
-    Day: Wed, Slot: C1, Subject: Thiết kế Web (theory), Room: R103, Lecturer: GV04
-    Day: Thu, Slot: T2, Subject: Thiết kế Web (practice), Room: LAB04, Lecturer: GV02
+   --- Week 9 ---
+     Date: 2025-11-05
+       - Day: Wed, Slot: S2, Subject: Thiết kế Web (theory), Room: R103, Lecturer: GV02
+     Date: 2025-11-06
+       - Day: Thu, Slot: C2, Subject: Thiết kế Web (practice), Room: LAB01, Lecturer: GV02
+     Date: 2025-11-07
+       - Day: Fri, Slot: C2, Subject: Mạng máy tính (practice), Room: LAB01, Lecturer: GV04
+     Date: 2025-11-08
+       - Day: Sat, Slot: C2, Subject: Mạng máy tính (theory), Room: R102, Lecturer: GV04
 
-  --- Week 10 ---
-    Day: Mon, Slot: C2, Subject: Mạng máy tính (theory), Room: R103, Lecturer: GV04
-    Day: Tue, Slot: T2, Subject: Mạng máy tính (practice), Room: LAB01, Lecturer: GV02
-    Day: Wed, Slot: C1, Subject: Thiết kế Web (theory), Room: R103, Lecturer: GV04
-    Day: Thu, Slot: T2, Subject: Thiết kế Web (practice), Room: LAB04, Lecturer: GV02
+   --- Week 10 ---
+     Date: 2025-11-12
+       - Day: Wed, Slot: S2, Subject: Thiết kế Web (theory), Room: R103, Lecturer: GV02
+     Date: 2025-11-13
+       - Day: Thu, Slot: C2, Subject: Thiết kế Web (practice), Room: LAB01, Lecturer: GV02
+     Date: 2025-11-14
+       - Day: Fri, Slot: C2, Subject: Mạng máy tính (practice), Room: LAB01, Lecturer: GV04
+     Date: 2025-11-15
+       - Day: Sat, Slot: C2, Subject: Mạng máy tính (theory), Room: R102, Lecturer: GV04
 
-  --- Week 11 ---
-    Day: Mon, Slot: C2, Subject: Mạng máy tính (theory), Room: R103, Lecturer: GV04
-    Day: Tue, Slot: T2, Subject: Mạng máy tính (practice), Room: LAB01, Lecturer: GV02
-    Day: Wed, Slot: C1, Subject: Thiết kế Web (theory), Room: R103, Lecturer: GV04
-    Day: Thu, Slot: T2, Subject: Thiết kế Web (practice), Room: LAB04, Lecturer: GV02
+   --- Week 11 ---
+     Date: 2025-11-19
+       - Day: Wed, Slot: S2, Subject: Thiết kế Web (theory), Room: R103, Lecturer: GV02
+     Date: 2025-11-20
+       - Day: Thu, Slot: C2, Subject: Thiết kế Web (practice), Room: LAB01, Lecturer: GV02
+     Date: 2025-11-21
+       - Day: Fri, Slot: C2, Subject: Mạng máy tính (practice), Room: LAB01, Lecturer: GV04
+     Date: 2025-11-22
+       - Day: Sat, Slot: C2, Subject: Mạng máy tính (theory), Room: R102, Lecturer: GV04
 
-  --- Week 12 ---
-    Day: Mon, Slot: C2, Subject: Mạng máy tính (theory), Room: R103, Lecturer: GV04
-    Day: Tue, Slot: T2, Subject: Mạng máy tính (practice), Room: LAB01, Lecturer: GV02
-    Day: Wed, Slot: C1, Subject: Thiết kế Web (theory), Room: R103, Lecturer: GV04
-    Day: Thu, Slot: T2, Subject: Thiết kế Web (practice), Room: LAB04, Lecturer: GV02
+   --- Week 12 ---
+     Date: 2025-11-26
+       - Day: Wed, Slot: S2, Subject: Thiết kế Web (theory), Room: R103, Lecturer: GV02
+     Date: 2025-11-27
+       - Day: Thu, Slot: C2, Subject: Thiết kế Web (practice), Room: LAB01, Lecturer: GV02
+     Date: 2025-11-28
+       - Day: Fri, Slot: C2, Subject: Mạng máy tính (practice), Room: LAB01, Lecturer: GV04
+     Date: 2025-11-29
+       - Day: Sat, Slot: C2, Subject: Mạng máy tính (theory), Room: R102, Lecturer: GV04
 
-  --- Week 13 ---
-    Day: Mon, Slot: C2, Subject: Mạng máy tính (theory), Room: R103, Lecturer: GV04
-    Day: Tue, Slot: T2, Subject: Mạng máy tính (practice), Room: LAB01, Lecturer: GV02
-    Day: Wed, Slot: C1, Subject: Thiết kế Web (theory), Room: R103, Lecturer: GV04
-    Day: Thu, Slot: T2, Subject: Thiết kế Web (practice), Room: LAB04, Lecturer: GV02
+   --- Week 13 ---
+     Date: 2025-12-03
+       - Day: Wed, Slot: S2, Subject: Thiết kế Web (theory), Room: R103, Lecturer: GV02
+     Date: 2025-12-04
+       - Day: Thu, Slot: C2, Subject: Thiết kế Web (practice), Room: LAB01, Lecturer: GV02
+     Date: 2025-12-05
+       - Day: Fri, Slot: C2, Subject: Mạng máy tính (practice), Room: LAB01, Lecturer: GV04
+     Date: 2025-12-06
+       - Day: Sat, Slot: C2, Subject: Mạng máy tính (theory), Room: R102, Lecturer: GV04
 
-  --- Week 14 ---
-    Day: Mon, Slot: C2, Subject: Mạng máy tính (theory), Room: R103, Lecturer: GV04
-    Day: Tue, Slot: T2, Subject: Mạng máy tính (practice), Room: LAB01, Lecturer: GV02
-    Day: Wed, Slot: C1, Subject: Thiết kế Web (theory), Room: R103, Lecturer: GV04
-    Day: Thu, Slot: T2, Subject: Thiết kế Web (practice), Room: LAB04, Lecturer: GV02
+   --- Week 14 ---
+     Date: 2025-12-10
+       - Day: Wed, Slot: S2, Subject: Thiết kế Web (theory), Room: R103, Lecturer: GV02
+     Date: 2025-12-11
+       - Day: Thu, Slot: C2, Subject: Thiết kế Web (practice), Room: LAB01, Lecturer: GV02
+     Date: 2025-12-12
+       - Day: Fri, Slot: C2, Subject: Mạng máy tính (practice), Room: LAB01, Lecturer: GV04
+     Date: 2025-12-13
+       - Day: Sat, Slot: C2, Subject: Mạng máy tính (theory), Room: R102, Lecturer: GV04
 
-  --- Week 15 ---
-    Day: Mon, Slot: C2, Subject: Mạng máy tính (theory), Room: R103, Lecturer: GV04
-    Day: Tue, Slot: T2, Subject: Mạng máy tính (practice), Room: LAB01, Lecturer: GV02
-    Day: Wed, Slot: C1, Subject: Thiết kế Web (theory), Room: R103, Lecturer: GV04
-    Day: Thu, Slot: T2, Subject: Thiết kế Web (practice), Room: LAB04, Lecturer: GV02
+   --- Week 15 ---
+     Date: 2025-12-17
+       - Day: Wed, Slot: S2, Subject: Thiết kế Web (theory), Room: R103, Lecturer: GV02
+     Date: 2025-12-18
+       - Day: Thu, Slot: C2, Subject: Thiết kế Web (practice), Room: LAB01, Lecturer: GV02
+     Date: 2025-12-19
+       - Day: Fri, Slot: C2, Subject: Mạng máy tính (practice), Room: LAB01, Lecturer: GV04
+     Date: 2025-12-20
+       - Day: Sat, Slot: C2, Subject: Mạng máy tính (theory), Room: R102, Lecturer: GV04
+
+===== SEMESTER SCHEDULE FOR CLASS: CL04 (Chương trình Đào tạo Kinh tế) =====
+
+   --- Week 1 ---
+     Date: 2025-09-08
+       - Day: Mon, Slot: S1, Subject: Thiết kế Web (practice), Room: LAB01, Lecturer: GV04
+     Date: 2025-09-10
+       - Day: Wed, Slot: C2, Subject: Mạng máy tính (theory), Room: R102, Lecturer: GV04
+     Date: 2025-09-11
+       - Day: Thu, Slot: S2, Subject: Thiết kế Web (theory), Room: R103, Lecturer: GV04
+     Date: 2025-09-13
+       - Day: Sat, Slot: S2, Subject: Mạng máy tính (practice), Room: LAB01, Lecturer: GV02
+
+   --- Week 2 ---
+     Date: 2025-09-15
+       - Day: Mon, Slot: S1, Subject: Thiết kế Web (practice), Room: LAB01, Lecturer: GV04
+     Date: 2025-09-17
+       - Day: Wed, Slot: C2, Subject: Mạng máy tính (theory), Room: R102, Lecturer: GV04
+     Date: 2025-09-18
+       - Day: Thu, Slot: S2, Subject: Thiết kế Web (theory), Room: R103, Lecturer: GV04
+     Date: 2025-09-20
+       - Day: Sat, Slot: S2, Subject: Mạng máy tính (practice), Room: LAB01, Lecturer: GV02
+
+   --- Week 3 ---
+     Date: 2025-09-22
+       - Day: Mon, Slot: S1, Subject: Thiết kế Web (practice), Room: LAB01, Lecturer: GV04
+     Date: 2025-09-24
+       - Day: Wed, Slot: C2, Subject: Mạng máy tính (theory), Room: R102, Lecturer: GV04
+     Date: 2025-09-25
+       - Day: Thu, Slot: S2, Subject: Thiết kế Web (theory), Room: R103, Lecturer: GV04
+     Date: 2025-09-27
+       - Day: Sat, Slot: S2, Subject: Mạng máy tính (practice), Room: LAB01, Lecturer: GV02
+
+   --- Week 4 ---
+     Date: 2025-09-29
+       - Day: Mon, Slot: S1, Subject: Thiết kế Web (practice), Room: LAB01, Lecturer: GV04
+     Date: 2025-10-01
+       - Day: Wed, Slot: C2, Subject: Mạng máy tính (theory), Room: R102, Lecturer: GV04
+     Date: 2025-10-02
+       - Day: Thu, Slot: S2, Subject: Thiết kế Web (theory), Room: R103, Lecturer: GV04
+     Date: 2025-10-04
+       - Day: Sat, Slot: S2, Subject: Mạng máy tính (practice), Room: LAB01, Lecturer: GV02
+
+   --- Week 5 ---
+     Date: 2025-10-06
+       - Day: Mon, Slot: S1, Subject: Thiết kế Web (practice), Room: LAB01, Lecturer: GV04
+     Date: 2025-10-08
+       - Day: Wed, Slot: C2, Subject: Mạng máy tính (theory), Room: R102, Lecturer: GV04
+     Date: 2025-10-09
+       - Day: Thu, Slot: S2, Subject: Thiết kế Web (theory), Room: R103, Lecturer: GV04
+     Date: 2025-10-11
+       - Day: Sat, Slot: S2, Subject: Mạng máy tính (practice), Room: LAB01, Lecturer: GV02
+
+   --- Week 6 ---
+     Date: 2025-10-13
+       - Day: Mon, Slot: S1, Subject: Thiết kế Web (practice), Room: LAB01, Lecturer: GV04
+     Date: 2025-10-15
+       - Day: Wed, Slot: C2, Subject: Mạng máy tính (theory), Room: R102, Lecturer: GV04
+     Date: 2025-10-16
+       - Day: Thu, Slot: S2, Subject: Thiết kế Web (theory), Room: R103, Lecturer: GV04
+     Date: 2025-10-18
+       - Day: Sat, Slot: S2, Subject: Mạng máy tính (practice), Room: LAB01, Lecturer: GV02
+
+   --- Week 7 ---
+     Date: 2025-10-20
+       - Day: Mon, Slot: S1, Subject: Thiết kế Web (practice), Room: LAB01, Lecturer: GV04
+     Date: 2025-10-22
+       - Day: Wed, Slot: C2, Subject: Mạng máy tính (theory), Room: R102, Lecturer: GV04
+     Date: 2025-10-23
+       - Day: Thu, Slot: S2, Subject: Thiết kế Web (theory), Room: R103, Lecturer: GV04
+     Date: 2025-10-25
+       - Day: Sat, Slot: S2, Subject: Mạng máy tính (practice), Room: LAB01, Lecturer: GV02
+
+   --- Week 8 ---
+     Date: 2025-10-27
+       - Day: Mon, Slot: S1, Subject: Thiết kế Web (practice), Room: LAB01, Lecturer: GV04
+     Date: 2025-10-29
+       - Day: Wed, Slot: C2, Subject: Mạng máy tính (theory), Room: R102, Lecturer: GV04
+     Date: 2025-10-30
+       - Day: Thu, Slot: S2, Subject: Thiết kế Web (theory), Room: R103, Lecturer: GV04
+     Date: 2025-11-01
+       - Day: Sat, Slot: S2, Subject: Mạng máy tính (practice), Room: LAB01, Lecturer: GV02
+
+   --- Week 9 ---
+     Date: 2025-11-03
+       - Day: Mon, Slot: S1, Subject: Thiết kế Web (practice), Room: LAB01, Lecturer: GV04
+     Date: 2025-11-05
+       - Day: Wed, Slot: C2, Subject: Mạng máy tính (theory), Room: R102, Lecturer: GV04
+     Date: 2025-11-06
+       - Day: Thu, Slot: S2, Subject: Thiết kế Web (theory), Room: R103, Lecturer: GV04
+     Date: 2025-11-08
+       - Day: Sat, Slot: S2, Subject: Mạng máy tính (practice), Room: LAB01, Lecturer: GV02
+
+   --- Week 10 ---
+     Date: 2025-11-10
+       - Day: Mon, Slot: S1, Subject: Thiết kế Web (practice), Room: LAB01, Lecturer: GV04
+     Date: 2025-11-12
+       - Day: Wed, Slot: C2, Subject: Mạng máy tính (theory), Room: R102, Lecturer: GV04
+     Date: 2025-11-13
+       - Day: Thu, Slot: S2, Subject: Thiết kế Web (theory), Room: R103, Lecturer: GV04
+     Date: 2025-11-15
+       - Day: Sat, Slot: S2, Subject: Mạng máy tính (practice), Room: LAB01, Lecturer: GV02
+
+   --- Week 11 ---
+     Date: 2025-11-17
+       - Day: Mon, Slot: S1, Subject: Thiết kế Web (practice), Room: LAB01, Lecturer: GV04
+     Date: 2025-11-19
+       - Day: Wed, Slot: C2, Subject: Mạng máy tính (theory), Room: R102, Lecturer: GV04
+     Date: 2025-11-20
+       - Day: Thu, Slot: S2, Subject: Thiết kế Web (theory), Room: R103, Lecturer: GV04
+     Date: 2025-11-22
+       - Day: Sat, Slot: S2, Subject: Mạng máy tính (practice), Room: LAB01, Lecturer: GV02
+
+   --- Week 12 ---
+     Date: 2025-11-24
+       - Day: Mon, Slot: S1, Subject: Thiết kế Web (practice), Room: LAB01, Lecturer: GV04
+     Date: 2025-11-26
+       - Day: Wed, Slot: C2, Subject: Mạng máy tính (theory), Room: R102, Lecturer: GV04
+     Date: 2025-11-27
+       - Day: Thu, Slot: S2, Subject: Thiết kế Web (theory), Room: R103, Lecturer: GV04
+     Date: 2025-11-29
+       - Day: Sat, Slot: S2, Subject: Mạng máy tính (practice), Room: LAB01, Lecturer: GV02
+
+   --- Week 13 ---
+     Date: 2025-12-01
+       - Day: Mon, Slot: S1, Subject: Thiết kế Web (practice), Room: LAB01, Lecturer: GV04
+     Date: 2025-12-03
+       - Day: Wed, Slot: C2, Subject: Mạng máy tính (theory), Room: R102, Lecturer: GV04
+     Date: 2025-12-04
+       - Day: Thu, Slot: S2, Subject: Thiết kế Web (theory), Room: R103, Lecturer: GV04
+     Date: 2025-12-06
+       - Day: Sat, Slot: S2, Subject: Mạng máy tính (practice), Room: LAB01, Lecturer: GV02
+
+   --- Week 14 ---
+     Date: 2025-12-08
+       - Day: Mon, Slot: S1, Subject: Thiết kế Web (practice), Room: LAB01, Lecturer: GV04
+     Date: 2025-12-10
+       - Day: Wed, Slot: C2, Subject: Mạng máy tính (theory), Room: R102, Lecturer: GV04
+     Date: 2025-12-11
+       - Day: Thu, Slot: S2, Subject: Thiết kế Web (theory), Room: R103, Lecturer: GV04
+     Date: 2025-12-13
+       - Day: Sat, Slot: S2, Subject: Mạng máy tính (practice), Room: LAB01, Lecturer: GV02
+
+   --- Week 15 ---
+     Date: 2025-12-15
+       - Day: Mon, Slot: S1, Subject: Thiết kế Web (practice), Room: LAB01, Lecturer: GV04
+     Date: 2025-12-17
+       - Day: Wed, Slot: C2, Subject: Mạng máy tính (theory), Room: R102, Lecturer: GV04
+     Date: 2025-12-18
+       - Day: Thu, Slot: S2, Subject: Thiết kế Web (theory), Room: R103, Lecturer: GV04
+     Date: 2025-12-20
+       - Day: Sat, Slot: S2, Subject: Mạng máy tính (practice), Room: LAB01, Lecturer: GV02
+================================================================================
+
+===== LỊCH HỌC KỲ CHO: HK1_CT03 =====
+
+===== SEMESTER SCHEDULE FOR CLASS: CL05 (Chương trình Đào tạo Ngoại ngữ) =====
+
+   --- Week 1 ---
+     Date: 2025-09-10
+       - Day: Wed, Slot: C1, Subject: Kỹ năng mềm (theory), Room: R101, Lecturer: GV05
+     Date: 2025-09-11
+       - Day: Thu, Slot: C1, Subject: Tiếng Anh chuyên ngành (theory), Room: R101, Lecturer: GV06
+
+   --- Week 2 ---
+     Date: 2025-09-17
+       - Day: Wed, Slot: C1, Subject: Kỹ năng mềm (theory), Room: R101, Lecturer: GV05
+     Date: 2025-09-18
+       - Day: Thu, Slot: C1, Subject: Tiếng Anh chuyên ngành (theory), Room: R101, Lecturer: GV06
+
+   --- Week 3 ---
+     Date: 2025-09-24
+       - Day: Wed, Slot: C1, Subject: Kỹ năng mềm (theory), Room: R101, Lecturer: GV05
+     Date: 2025-09-25
+       - Day: Thu, Slot: C1, Subject: Tiếng Anh chuyên ngành (theory), Room: R101, Lecturer: GV06
+
+   --- Week 4 ---
+     Date: 2025-10-01
+       - Day: Wed, Slot: C1, Subject: Kỹ năng mềm (theory), Room: R101, Lecturer: GV05
+     Date: 2025-10-02
+       - Day: Thu, Slot: C1, Subject: Tiếng Anh chuyên ngành (theory), Room: R101, Lecturer: GV06
+
+   --- Week 5 ---
+     Date: 2025-10-08
+       - Day: Wed, Slot: C1, Subject: Kỹ năng mềm (theory), Room: R101, Lecturer: GV05
+     Date: 2025-10-09
+       - Day: Thu, Slot: C1, Subject: Tiếng Anh chuyên ngành (theory), Room: R101, Lecturer: GV06
+
+   --- Week 6 ---
+     Date: 2025-10-15
+       - Day: Wed, Slot: C1, Subject: Kỹ năng mềm (theory), Room: R101, Lecturer: GV05
+     Date: 2025-10-16
+       - Day: Thu, Slot: C1, Subject: Tiếng Anh chuyên ngành (theory), Room: R101, Lecturer: GV06
+
+   --- Week 7 ---
+     Date: 2025-10-22
+       - Day: Wed, Slot: C1, Subject: Kỹ năng mềm (theory), Room: R101, Lecturer: GV05
+     Date: 2025-10-23
+       - Day: Thu, Slot: C1, Subject: Tiếng Anh chuyên ngành (theory), Room: R101, Lecturer: GV06
+
+   --- Week 8 ---
+     Date: 2025-10-29
+       - Day: Wed, Slot: C1, Subject: Kỹ năng mềm (theory), Room: R101, Lecturer: GV05
+     Date: 2025-10-30
+       - Day: Thu, Slot: C1, Subject: Tiếng Anh chuyên ngành (theory), Room: R101, Lecturer: GV06
+
+   --- Week 9 ---
+     Date: 2025-11-05
+       - Day: Wed, Slot: C1, Subject: Kỹ năng mềm (theory), Room: R101, Lecturer: GV05
+     Date: 2025-11-06
+       - Day: Thu, Slot: C1, Subject: Tiếng Anh chuyên ngành (theory), Room: R101, Lecturer: GV06
+
+   --- Week 10 ---
+     Date: 2025-11-12
+       - Day: Wed, Slot: C1, Subject: Kỹ năng mềm (theory), Room: R101, Lecturer: GV05
+     Date: 2025-11-13
+       - Day: Thu, Slot: C1, Subject: Tiếng Anh chuyên ngành (theory), Room: R101, Lecturer: GV06
+
+   --- Week 11 ---
+     Date: 2025-11-19
+       - Day: Wed, Slot: C1, Subject: Kỹ năng mềm (theory), Room: R101, Lecturer: GV05
+     Date: 2025-11-20
+       - Day: Thu, Slot: C1, Subject: Tiếng Anh chuyên ngành (theory), Room: R101, Lecturer: GV06
+
+   --- Week 12 ---
+     Date: 2025-11-26
+       - Day: Wed, Slot: C1, Subject: Kỹ năng mềm (theory), Room: R101, Lecturer: GV05
+     Date: 2025-11-27
+       - Day: Thu, Slot: C1, Subject: Tiếng Anh chuyên ngành (theory), Room: R101, Lecturer: GV06
+
+   --- Week 13 ---
+     Date: 2025-12-03
+       - Day: Wed, Slot: C1, Subject: Kỹ năng mềm (theory), Room: R101, Lecturer: GV05
+     Date: 2025-12-04
+       - Day: Thu, Slot: C1, Subject: Tiếng Anh chuyên ngành (theory), Room: R101, Lecturer: GV06
+
+   --- Week 14 ---
+     Date: 2025-12-10
+       - Day: Wed, Slot: C1, Subject: Kỹ năng mềm (theory), Room: R101, Lecturer: GV05
+     Date: 2025-12-11
+       - Day: Thu, Slot: C1, Subject: Tiếng Anh chuyên ngành (theory), Room: R101, Lecturer: GV06
+
+   --- Week 15 ---
+     Date: 2025-12-17
+       - Day: Wed, Slot: C1, Subject: Kỹ năng mềm (theory), Room: R101, Lecturer: GV05
+     Date: 2025-12-18
+       - Day: Thu, Slot: C1, Subject: Tiếng Anh chuyên ngành (theory), Room: R101, Lecturer: GV06
 ================================================================================

@@ -1,6 +1,7 @@
-# timetable_ga/ga_components/chromosome.py
 import random
 from collections import defaultdict
+from datetime import datetime, timedelta
+import copy
 
 class Chromosome:
     """
@@ -20,8 +21,8 @@ class Chromosome:
 
 def create_random_chromosome(processed_data):
     """
-    Tạo một cá thể ban đầu bằng cách gán các tiết học vào các tài nguyên
-    phù hợp để giảm thiểu các vi phạm cứng.
+    Tạo một cá thể ban đầu bằng cách gán ngẫu nhiên các tiết học hàng tuần
+    vào các tài nguyên hợp lệ.
     """
     genes = []
     
@@ -29,65 +30,74 @@ def create_random_chromosome(processed_data):
     used_slots_per_lecturer = defaultdict(set)
     used_slots_per_room = defaultdict(set)
     used_slots_per_class = defaultdict(set)
+    
+    # Ánh xạ tên ngày sang chỉ số ngày trong tuần (Mon=0, ..., Sun=6)
+    day_mapping = {day: i for i, day in enumerate(['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'])}
 
-    # Lặp qua từng tiết học cần xếp lịch
-    for required_lesson in processed_data.required_lessons_weekly:
+    # Tạo một bản sao để tránh làm thay đổi danh sách gốc khi xáo trộn
+    required_lessons_to_schedule = copy.deepcopy(processed_data.required_lessons_weekly)
+    random.shuffle(required_lessons_to_schedule)
+
+    # Lặp qua từng tiết học cần xếp lịch cho MỘT TUẦN
+    for required_lesson in required_lessons_to_schedule:
         class_id = required_lesson['class_id']
         subject_id = required_lesson['subject_id']
         lesson_type = required_lesson['lesson_type']
         class_size = processed_data.class_map.get(class_id, {}).get('size', 0)
-
-        # Lọc các lựa chọn hợp lệ
+        
+        # --- DEBUG: IN TÀI NGUYÊN HỢP LỆ BAN ĐẦU ---
         valid_lecturers = processed_data.get_lecturers_for_subject(subject_id)
         valid_rooms = processed_data.get_rooms_for_type_and_capacity(lesson_type, class_size)
+        # print(f"\n--- Xử lý gen: {required_lesson['lesson_id']} ---")
+        # print(f"Lớp: {class_id}, Môn: {subject_id}, Loại: {lesson_type}, Sĩ số: {class_size}")
+        # print(f"Giảng viên hợp lệ: {valid_lecturers}")
+        # print(f"Phòng hợp lệ: {valid_rooms}")
         
-        # Tạo danh sách tất cả các tổ hợp day-slot có thể
+        selected_lecturer = None
+        selected_room = None
+        selected_day = None
+        selected_slot = None
+        
         all_time_slots = [(d, s['slot_id']) for d in processed_data.data['days_of_week'] for s in processed_data.data['time_slots']]
+        random.shuffle(all_time_slots)
 
-        selected_lecturer = "UNASSIGNED_LECTURER"
-        selected_room = "UNASSIGNED_ROOM"
-        selected_day = "UNASSIGNED_DAY"
-        selected_slot = "UNASSIGNED_SLOT"
-
-        # Cố gắng tìm một tổ hợp hợp lệ
-        random.shuffle(all_time_slots) # Xáo trộn để có thêm sự đa dạng
+        found_slot = False
         for day, slot_id in all_time_slots:
-            is_valid_combo = True
-            
-            # Lọc các giảng viên có thể dạy vào slot này
-            possible_lecturers_in_slot = [l for l in valid_lecturers 
-                                          if (day, slot_id) not in used_slots_per_lecturer.get(l, set())
-                                          and not any(busy['day'] == day and busy['slot_id'] == slot_id 
-                                                      for busy in processed_data.lecturer_map.get(l, {}).get('busy_slots', []))]
-            
-            if not possible_lecturers_in_slot:
-                is_valid_combo = False
-            
-            # Lọc các phòng trống vào slot này
-            possible_rooms_in_slot = [r for r in valid_rooms 
-                                      if (day, slot_id) not in used_slots_per_room.get(r, set())]
-            
-            if not possible_rooms_in_slot:
-                is_valid_combo = False
+            is_class_slot_used = (day, slot_id) in used_slots_per_class[class_id]
+            if is_class_slot_used:
+                continue
 
-            # Kiểm tra lớp học
-            if (day, slot_id) in used_slots_per_class.get(class_id, set()):
-                is_valid_combo = False
+            possible_lecturers_in_slot = [
+                l for l in valid_lecturers
+                if (day, slot_id) not in processed_data.lecturer_map.get(l, {}).get('busy_slots', [])
+            ]
             
-            if is_valid_combo:
-                selected_lecturer = random.choice(possible_lecturers_in_slot)
-                selected_room = random.choice(possible_rooms_in_slot)
-                selected_day, selected_slot = day, slot_id
-                break
+            # Lọc giảng viên và phòng đang bận trong slot này
+            available_lecturers = [l for l in possible_lecturers_in_slot if (day, slot_id) not in used_slots_per_lecturer[l]]
+            available_rooms = [r for r in valid_rooms if (day, slot_id) not in used_slots_per_room[r]]
 
-        # Cập nhật các tài nguyên đã sử dụng
-        if selected_lecturer != "UNASSIGNED_LECTURER":
+            if not available_lecturers or not available_rooms:
+                continue
+
+            # Nếu tìm thấy, gán ngẫu nhiên và thoát
+            selected_lecturer = random.choice(available_lecturers)
+            selected_room = random.choice(available_rooms)
+            selected_day, selected_slot = day, slot_id
+            found_slot = True
+            
+            # Cập nhật các tài nguyên đã sử dụng trong nhiễm sắc thể
             used_slots_per_lecturer[selected_lecturer].add((selected_day, selected_slot))
-        if selected_room != "UNASSIGNED_ROOM":
             used_slots_per_room[selected_room].add((selected_day, selected_slot))
-        if selected_day != "UNASSIGNED_DAY":
             used_slots_per_class[class_id].add((selected_day, selected_slot))
+            
+            # print(f"-> Gán thành công cho {class_id}: Ngày {selected_day}, Tiết {selected_slot}, Phòng {selected_room}, Giảng viên {selected_lecturer}")
+            break
+        
+        if not found_slot:
+            # --- DEBUG: IN THÔNG BÁO THẤT BẠI ---
+            print(f"!!! KHÔNG THỂ TÌM THẤY TỔ HỢP HỢP LỆ NÀO CHO TIẾT HỌC {required_lesson['lesson_id']} !!!")
 
+        # Thêm gen vào nhiễm sắc thể, kể cả khi không tìm thấy slot hợp lệ
         genes.append({
             "lesson_id": required_lesson['lesson_id'],
             "class_id": class_id,
@@ -98,6 +108,8 @@ def create_random_chromosome(processed_data):
             "day": selected_day,
             "slot_id": selected_slot,
             "room_id": selected_room,
-            "lecturer_id": selected_lecturer
+            "lecturer_id": selected_lecturer,
         })
+    
+    # print(f"Trong hàm create_random_chromosome, số lượng gen được tạo ra: {len(genes)}")
     return Chromosome(genes)
