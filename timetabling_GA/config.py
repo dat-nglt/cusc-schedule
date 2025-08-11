@@ -2,7 +2,7 @@
 
 # GA Parameters
 POPULATION_SIZE = 1500  # Kích thước quần thể
-MAX_GENERATIONS = 50
+MAX_GENERATIONS = 200
 MUTATION_RATE = 0.1
 CROSSOVER_RATE = 0.8
 ELITISM_COUNT = 10      # Giữ lại N cá thể tốt nhất cho thế hệ sau
@@ -27,3 +27,5 @@ PENALTY_DISTRIBUTION_DAYS = 10          # Phạt cho sự phân bố không đ�
 PENALTY_GAPS_IN_SCHEDULE = 5            # Phạt cho mỗi tiết trống xen kẽ
 
 HOURS_PER_SLOT = 2 # Số giờ mỗi tiết học căn cứ vào time_slots (ví dụ 7h-9h là 2 giờ)
+
+MAX_ASSIGNMENT_ATTEMPTS = 100

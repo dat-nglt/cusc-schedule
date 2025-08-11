@@ -7,10 +7,11 @@
     { "class_id": "CL05", "size": 20, "program_id": "CT03" }
   ],
   "rooms": [
-    { "room_id": "R101", "type": "theory", "capacity": 40 },
+    { "room_id": "R101", "type": "theory", "capacity": 25 },
     { "room_id": "R102", "type": "theory", "capacity": 35 },
     { "room_id": "R103", "type": "theory", "capacity": 30 },
-    { "room_id": "R104", "type": "theory", "capacity": 25 },
+    { "room_id": "R104", "type": "theory", "capacity": 40 },
+    { "room_id": "R105", "type": "theory", "capacity": 20 },
     { "room_id": "LAB01", "type": "practice", "capacity": 40 },
     { "room_id": "LAB02", "type": "practice", "capacity": 40 },
     { "room_id": "LAB03", "type": "practice", "capacity": 40 }
@@ -22,7 +23,10 @@
       "subjects": ["MH01", "MH02"],
       "busy_slots": [
         { "day": "Mon", "slot_id": "S1" },
-        { "day": "Wed", "slot_id": "C2" }
+        { "day": "Mon", "slot_id": "C1" },
+        { "day": "Tue", "slot_id": "S2" },
+        { "day": "Wed", "slot_id": "C2" },
+        { "day": "Thu", "slot_id": "T1" }
       ]
     },
     {
@@ -30,7 +34,10 @@
       "lecturer_name": "Trần Thị B",
       "subjects": ["MH03", "MH04"],
       "busy_slots": [
+        { "day": "Mon", "slot_id": "S1" },
         { "day": "Tue", "slot_id": "S2" },
+        { "day": "Wed", "slot_id": "C1" },
+        { "day": "Thu", "slot_id": "C2" },
         { "day": "Fri", "slot_id": "T1" }
       ]
     },
@@ -38,13 +45,25 @@
       "lecturer_id": "GV03",
       "lecturer_name": "Lê Văn C",
       "subjects": ["MH01", "MH05", "MH06"],
-      "busy_slots": [{ "day": "Fri", "slot_id": "T1" }]
+      "busy_slots": [
+        { "day": "Mon", "slot_id": "S2" },
+        { "day": "Tue", "slot_id": "T1" },
+        { "day": "Wed", "slot_id": "T2" },
+        { "day": "Thu", "slot_id": "S1" },
+        { "day": "Fri", "slot_id": "T1" }
+      ]
     },
     {
       "lecturer_id": "GV04",
       "lecturer_name": "Phạm Văn D",
       "subjects": ["MH03", "MH04"],
-      "busy_slots": []
+      "busy_slots": [
+        { "day": "Mon", "slot_id": "C2" },
+        { "day": "Tue", "slot_id": "S1" },
+        { "day": "Wed", "slot_id": "S2" },
+        { "day": "Thu", "slot_id": "S2" },
+        { "day": "Fri", "slot_id": "C1" }
+      ]
     },
     {
       "lecturer_id": "GV05",
@@ -52,7 +71,10 @@
       "subjects": ["MH07", "MH08"],
       "busy_slots": [
         { "day": "Mon", "slot_id": "C1" },
-        { "day": "Tue", "slot_id": "C2" }
+        { "day": "Tue", "slot_id": "C2" },
+        { "day": "Wed", "slot_id": "T1" },
+        { "day": "Thu", "slot_id": "T2" },
+        { "day": "Sat", "slot_id": "S1" }
       ]
     },
     {
@@ -60,8 +82,11 @@
       "lecturer_name": "Võ Văn F",
       "subjects": ["MH07"],
       "busy_slots": [
-        { "day": "Thu", "slot_id": "S1" },
-        { "day": "Thu", "slot_id": "S2" }
+        { "day": "Mon", "slot_id": "T1" },
+        { "day": "Wed", "slot_id": "S1" },
+        { "day": "Thu", "slot_id": "S2" },
+        { "day": "Fri", "slot_id": "S1" },
+        { "day": "Sat", "slot_id": "C2" }
       ]
     }
   ],

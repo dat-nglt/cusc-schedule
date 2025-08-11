@@ -28,22 +28,20 @@ class FitnessCalculator:
             lecturer_id, room_id, class_id = gene.get('lecturer_id'), gene.get('room_id'), gene.get('class_id')
             subject_id, lesson_type = gene.get('subject_id'), gene.get('lesson_type')
             
-            # --- DEBUG: GÁN ĐIỂM PHẠT CHO GEN CHƯA ĐƯỢC GÁN ---
             if not all([day, slot_id, lecturer_id, room_id, class_id, subject_id, lesson_type]):
                 penalty += PENALTY_UNASSIGNED_GEN
-                print(f"DEBUG: Gen {gene.get('lesson_id')} chưa được gán tài nguyên, phạt {PENALTY_UNASSIGNED_GEN}")
                 continue
 
             # Kiểm tra các ràng buộc cứng
             if lecturer_id in slot_occupancy[day][slot_id]['lecturers']:
                 penalty += PENALTY_LECTURER_CLASH
-                print(f"DEBUG: Trùng lịch giảng viên {lecturer_id}, phạt {PENALTY_LECTURER_CLASH}")
+                # print(f"DEBUG: Trùng lịch giảng viên {lecturer_id}, phạt {PENALTY_LECTURER_CLASH}")
             if room_id in slot_occupancy[day][slot_id]['rooms']:
                 penalty += PENALTY_ROOM_CLASH
-                print(f"DEBUG: Trùng lịch phòng {room_id}, phạt {PENALTY_ROOM_CLASH}")
+                # print(f"DEBUG: Trùng lịch phòng {room_id}, phạt {PENALTY_ROOM_CLASH}")
             if class_id in slot_occupancy[day][slot_id]['classes']:
                 penalty += PENALTY_CLASS_CLASH
-                print(f"DEBUG: Trùng lịch lớp {class_id}, phạt {PENALTY_CLASS_CLASH}")
+                # print(f"DEBUG: Trùng lịch lớp {class_id}, phạt {PENALTY_CLASS_CLASH}")
 
             slot_occupancy[day][slot_id]['lecturers'].append(lecturer_id)
             slot_occupancy[day][slot_id]['rooms'].append(room_id)

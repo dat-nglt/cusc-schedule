@@ -351,8 +351,13 @@ def run_ga_for_semester(semester_id, full_data_processor):
     if not semester_specific_data_processor:
         print(f"Lỗi: Không tìm thấy thông tin cho học kỳ {semester_id}")
         return None, None
-         
     
+    if not semester_specific_data_processor.lecturer_map:
+        print(f"Lỗi: Học kỳ {semester_id} không có giảng viên phù hợp.")
+        return None, None
+    if not semester_specific_data_processor.room_map:
+        print(f"Lỗi: Học kỳ {semester_id} không có phòng học phù hợp.")
+        return None, None        
     if not semester_specific_data_processor.required_lessons_weekly:
         print(f"Cảnh báo: Học kỳ {semester_id} không có tiết học nào được tạo sau khi lọc.")
         return None, None
@@ -386,8 +391,8 @@ def run_ga_for_semester(semester_id, full_data_processor):
             "best_overall_fitness": best_overall_chromosome.fitness
         })
 
-        if population[0].fitness >= 0:
-            break
+        # if population[0].fitness >= 0:
+        #     break
 
         new_population = []
         new_population.extend(population[:ELITISM_COUNT])
