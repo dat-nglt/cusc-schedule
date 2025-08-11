@@ -20,11 +20,15 @@ export const getLecturerByIdAPI = async (id) => {
   }
 };
 
-export const createLecturerAPI = async (lecturerData) => {
+export const createLecturerAPI = async (lecturerData, subjects = [], busySlots = []) => {
   try {
     const response = await axiosInstance.post(
       "/api/lecturers/create",
-      lecturerData
+      {
+        lecturerData,
+        subjects,
+        busySlots
+      }
     );
     return response;
   } catch (error) {

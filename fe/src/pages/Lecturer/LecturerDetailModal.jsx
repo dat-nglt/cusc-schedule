@@ -23,10 +23,24 @@ import {
     Update as UpdateIcon,
     CheckCircle as StatusIcon,
     ContentCopy as CopyIcon,
-    Close as CloseIcon
+    Close as CloseIcon,
+    Schedule as ScheduleIcon
 } from '@mui/icons-material';
 import { formatDateTime } from '../../utils/formatDateTime';
 import { toast } from 'react-toastify';
+
+const getDayInVietnamese = (day) => {
+    const dayMap = {
+        'Mon': 'Thứ 2',
+        'Tue': 'Thứ 3',
+        'Wed': 'Thứ 4',
+        'Thu': 'Thứ 5',
+        'Fri': 'Thứ 6',
+        'Sat': 'Thứ 7',
+        'Sun': 'Chủ nhật'
+    };
+    return dayMap[day] || day;
+};
 
 const CompactDetailItem = ({ icon, label, value, color = 'primary', chips }) => (
     <Paper
@@ -81,7 +95,7 @@ const CompactDetailItem = ({ icon, label, value, color = 'primary', chips }) => 
 
 export default function LecturerDetailModal({ open, onClose, lecturer }) {
     if (!lecturer) return null;
-
+    console.log('LecturerDetailModal:', lecturer);
     const handleCopyLecturerId = () => {
         navigator.clipboard.writeText(lecturer.lecturer_id);
         toast.success(`Đã sao chép mã giảng viên: ${lecturer.lecturer_id}`);
@@ -181,9 +195,18 @@ export default function LecturerDetailModal({ open, onClose, lecturer }) {
                     {/* Subjects Section */}
                     <CompactDetailItem
                         icon={<SchoolIcon fontSize="small" />}
-                        label="Môn giảng dạy"
-                        value={lecturer.department}
+                        label="Môn học"
+                        value={lecturer.subjects?.map(subject => subject.subject_name) || []}
                         color="success"
+                        chips
+                    />
+
+                    {/* Busy Slots Section */}
+                    <CompactDetailItem
+                        icon={<ScheduleIcon fontSize="small" />}
+                        label="Lịch bận"
+                        value={lecturer.busy_slots?.map(slot => `${getDayInVietnamese(slot.day)} - ${slot.slot_id}`) || []}
+                        color="error"
                         chips
                     />
 

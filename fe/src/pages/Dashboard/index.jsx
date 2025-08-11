@@ -379,63 +379,88 @@ const Dashboard = () => {
     }, []); // Dependency array: đảm bảo lắng nghe lại khi socket thay đổi (thường không thay đổi)
 
     // Transform API data to required format
-    const transformDataToFormTest = (data) => {
-        const { rooms, programs, lecturers, classes } = data;
+    const transformDataToFormTest = (data, selections = null) => {
+        const { rooms, programs, lecturers, classes, subjects, semesters } = data;
 
-        console.log("Transforming data to form test structure:", { rooms, programs, lecturers, classes });
+        console.log("Transforming data to form test structure:", { rooms, programs, lecturers, classes, subjects, semesters });
 
+        // If selections are provided, filter data based on selections
+        const filterData = (items, selectedIds, idField) => {
+            if (!selections || !selectedIds?.length) return items;
+            return items.filter(item => selectedIds.includes(item[idField]));
+        };
 
-        // Sử dụng optional chaining và nullish coalescing để code gọn hơn
-        if (!classes?.length || !rooms?.length || !lecturers?.length || !programs?.length) {
+        const filteredClasses = filterData(classes, selections?.classes, 'class_id');
+        const filteredRooms = filterData(rooms, selections?.rooms, 'room_id');
+        const filteredLecturers = filterData(lecturers, selections?.lecturers, 'lecturer_id');
+        const filteredPrograms = filterData(programs, selections?.programs, 'program_id');
+
+        // Use filtered data or all data if no selections
+        const classesToTransform = filteredClasses.length ? filteredClasses : classes;
+        const roomsToTransform = filteredRooms.length ? filteredRooms : rooms;
+        const lecturersToTransform = filteredLecturers.length ? filteredLecturers : lecturers;
+        const programsToTransform = filteredPrograms.length ? filteredPrograms : programs;
+
+        if (!classesToTransform?.length || !roomsToTransform?.length || !lecturersToTransform?.length || !programsToTransform?.length) {
             console.warn("Dữ liệu đầu vào không đầy đủ. Trả về cấu trúc rỗng.");
             return {
                 classes: [],
                 rooms: [],
                 lecturers: [],
                 programs: [],
+                semesters: [],
+                subjects: [],
                 time_slots: [],
                 days_of_week: []
             };
         }
 
-        const transformedClasses = classes.map(cls => ({
+        const transformedClasses = classesToTransform.map(cls => ({
             class_id: cls.class_id,
             size: cls.class_size,
-            program_id: cls.program_id ?? "CT001" // Sử dụng nullish coalescing (??)
+            program_id: cls.program_id ?? "CT001"
         }));
 
-        const transformedRooms = rooms.map(room => ({
+        const transformedRooms = roomsToTransform.map(room => ({
             room_id: room.room_id,
             type: room.type === "Lý thuyết" ? "theory" : "practice",
             capacity: room.capacity
         }));
 
-        const transformedLecturers = lecturers.map(lecturer => ({
+        const transformedLecturers = lecturersToTransform.map(lecturer => ({
             lecturer_id: lecturer.lecturer_id,
             lecturer_name: lecturer.name,
             subjects: lecturer.subjects?.map(subject => subject.subject_id) ?? [],
             busy_slots: lecturer.busy_slots ?? []
         }));
 
-        const transformedPrograms = programs.map(program => ({
+        const transformedPrograms = programsToTransform.map(program => ({
             program_id: program.program_id,
-            duration: parseInt(program.duration) || 0,
-            semesters: program.semesters?.map(semester => ({
-                semester_id: semester.semester_id,
-                subjects: semester.subjects?.map(subject => ({
-                    subject_id: subject.subject_id,
-                    name: subject.name,
-                    theory_hours: subject.theory_hours,
-                    practice_hours: subject.practice_hours
-                })) ?? []
-            })) ?? []
+            program_name: program.program_name,
+            duration: program.duration,
+            semesters: program.semesters ?? []
         }));
+
+        const transformedSemesters = semesters?.map(semester => ({
+            semester_id: semester.semester_id,
+            subject_ids: semester.subject_ids ?? [],
+            duration_weeks: semester.duration_weeks ?? 15
+        })) ?? [];
+
+        const transformedSubjects = subjects?.map(subject => ({
+            subject_id: subject.subject_id,
+            name: subject.name,
+            theory_hours: subject.theory_hours ?? 30,
+            practice_hours: subject.practice_hours ?? 15
+        })) ?? [];
 
         return {
             classes: transformedClasses,
             rooms: transformedRooms,
             lecturers: transformedLecturers,
             programs: transformedPrograms,
+            semesters: transformedSemesters,
+            subjects: transformedSubjects,
             time_slots: timeslot[0]?.time_slots ?? [],
             days_of_week: days_of_week[0]?.days_of_week ?? []
         };
@@ -443,13 +468,24 @@ const Dashboard = () => {
 
     // Update formTest when API data is loaded
     useEffect(() => {
-        const dataToTransform = { rooms, programs, lecturers, classes };
+        const dataToTransform = { rooms, programs, lecturers, classes, subjects, semesters };
         const transformed = transformDataToFormTest(dataToTransform);
 
         if (transformed) {
             setFormTest(transformed);
         }
-    }, [rooms, programs, lecturers, classes]);
+    }, [rooms, programs, lecturers, classes, subjects, semesters]);
+
+    // Function to update formTest with selected data from modal
+    const updateFormTestWithSelections = (selections) => {
+        const dataToTransform = { rooms, programs, lecturers, classes, subjects, semesters };
+        const transformed = transformDataToFormTest(dataToTransform, selections);
+
+        if (transformed) {
+            setFormTest(transformed);
+            console.log("FormTest updated with selections:", transformed);
+        }
+    };
 
     const handleGenerateTimetable = async () => {
         setStatusMessage('Đang gửi yêu cầu tạo thời khóa biểu...');
@@ -621,6 +657,7 @@ const Dashboard = () => {
                 lecturers={lecturers}
                 classes={classes}
                 onGenerate={handleGenerateTimetable}
+                onSelectionChange={updateFormTestWithSelections}
             />
         </Box>
     );

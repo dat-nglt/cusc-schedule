@@ -1,6 +1,6 @@
 import models from '../models/index.js'; // Import models từ index.js
 
-const { Semester } = models; // Lấy model Semester từ models
+const { Semester, Subject } = models; // Lấy model Semester từ models
 /**
  * Lấy tất cả các học kỳ.
  * @returns {Promise<Array>} Danh sách tất cả các học kỳ.
@@ -154,6 +154,36 @@ export const importSemestersFromJSONService = async (semestersData) => {
     return results;
   } catch (error) {
     console.error('Lỗi khi nhập học kỳ từ JSON:', error);
+    throw error;
+  }
+};
+
+/**
+ * Lấy danh sách học kỳ với cấu trúc để tạo thời khóa biểu.
+ * @returns {Promise<Object>} Danh sách học kỳ với cấu trúc semesters và subjects.
+ * @throws {Error} Nếu có lỗi khi lấy dữ liệu.
+ */
+export const getSemesterCreateScheduleService = async () => {
+  try {
+    const semesters = await Semester.findAll({
+      attributes: ['semester_id', 'duration_weeks'],
+      include: [{
+        model: Subject,
+        as: 'subjects',
+        attributes: ['subject_id']
+      }]
+    });
+
+    // Chuyển đổi sang cấu trúc JSON yêu cầu
+    const formattedSemesters = semesters.map(semester => ({
+      semester_id: semester.semester_id,
+      duration_weeks: semester.duration_weeks,
+      subject_ids: semester.subjects.map(subject => (subject.subject_id))
+    }));
+
+    return formattedSemesters;
+  } catch (error) {
+    console.error('Lỗi khi lấy danh sách học kỳ để tạo thời khóa biểu:', error);
     throw error;
   }
 };

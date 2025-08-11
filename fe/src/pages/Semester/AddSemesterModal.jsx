@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import {
     Dialog,
@@ -57,8 +56,7 @@ export default function AddSemesterModal({ open, onClose, onAddSemester, existin
     const [newSemester, setNewSemester] = useState({
         semester_id: '',
         semester_name: '',
-        start_date: '',
-        end_date: '',
+        duration_weeks: '',
         status: 'Đang triển khai',
         program_id: '',
     });
@@ -92,8 +90,8 @@ export default function AddSemesterModal({ open, onClose, onAddSemester, existin
     };
 
     const handleSubmit = async () => {
-        if (!newSemester.start_date || !newSemester.end_date) {
-            setLocalError('Vui lòng điền đầy đủ thông tin thời gian.');
+        if (!newSemester.duration_weeks) {
+            setLocalError('Vui lòng điền thời lượng học kỳ.');
             return;
         }
 
@@ -105,16 +103,15 @@ export default function AddSemesterModal({ open, onClose, onAddSemester, existin
             return;
         }
 
-        const startDate = new Date(newSemester.start_date);
-        const endDate = new Date(newSemester.end_date);
-
-        if (startDate >= endDate) {
-            setLocalError('Ngày kết thúc phải sau ngày bắt đầu.');
+        const durationWeeks = parseInt(newSemester.duration_weeks);
+        if (isNaN(durationWeeks) || durationWeeks <= 0) {
+            setLocalError('Thời lượng học kỳ phải là số nguyên dương.');
             return;
         }
 
         const semesterToAdd = {
             ...newSemester,
+            duration_weeks: durationWeeks,
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
         };
@@ -131,8 +128,7 @@ export default function AddSemesterModal({ open, onClose, onAddSemester, existin
         setNewSemester({
             semester_id: '',
             semester_name: '',
-            start_date: '',
-            end_date: '',
+            duration_weeks: '',
             status: 'Đang triển khai',
             program_id: '',
         });
@@ -373,44 +369,25 @@ export default function AddSemesterModal({ open, onClose, onAddSemester, existin
                                 gap: 3
                             }}>
                                 <TextField
-                                    label="Ngày bắt đầu"
-                                    name="start_date"
-                                    type="date"
-                                    value={newSemester.start_date}
+                                    label="Thời lượng học kỳ (tuần)"
+                                    name="duration_weeks"
+                                    type="number"
+                                    value={newSemester.duration_weeks}
                                     onChange={handleChange}
                                     fullWidth
                                     variant="outlined"
                                     required
                                     disabled={loading}
-                                    InputLabelProps={{ shrink: true }}
                                     InputProps={{
                                         startAdornment: (
                                             <InputAdornment position="start">
-                                                <CalendarToday color="action" />
+                                                <AccessTime color="action" />
                                             </InputAdornment>
                                         ),
+                                        inputProps: { min: 1, max: 52 }
                                     }}
                                     sx={{ mb: 2 }}
-                                />
-                                <TextField
-                                    label="Ngày kết thúc"
-                                    name="end_date"
-                                    type="date"
-                                    value={newSemester.end_date}
-                                    onChange={handleChange}
-                                    fullWidth
-                                    variant="outlined"
-                                    required
-                                    disabled={loading}
-                                    InputLabelProps={{ shrink: true }}
-                                    InputProps={{
-                                        startAdornment: (
-                                            <InputAdornment position="start">
-                                                <CalendarToday color="action" />
-                                            </InputAdornment>
-                                        ),
-                                    }}
-                                    sx={{ mb: 2 }}
+                                    helperText="Nhập số tuần học (1-52)"
                                 />
                                 <FormControl fullWidth required>
                                     <InputLabel>Trạng thái</InputLabel>

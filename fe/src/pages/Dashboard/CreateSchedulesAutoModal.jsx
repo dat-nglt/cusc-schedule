@@ -42,7 +42,8 @@ export default function CreateSchedulesAutoModal({
     rooms = [],
     lecturers = [],
     classes = [],
-    onGenerate
+    onGenerate,
+    onSelectionChange
 }) {
     const [activeStep, setActiveStep] = useState(0);
     const [selectedPrograms, setSelectedPrograms] = useState([]);
@@ -104,12 +105,20 @@ export default function CreateSchedulesAutoModal({
     };
 
     const handleGenerate = () => {
-        console.log('Selected data:', {
+        const selections = {
             programs: selectedPrograms,
             rooms: selectedRooms,
             lecturers: selectedLecturers,
             classes: selectedClasses
-        });
+        };
+
+        console.log('Selected data:', selections);
+
+        // Update parent component's formTest with selected data
+        if (onSelectionChange) {
+            onSelectionChange(selections);
+        }
+
         onGenerate();
         handleClose();
     };
