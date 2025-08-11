@@ -54,16 +54,13 @@ export default function SemesterTable({ displayedSemesters, isSmallScreen, isMed
                     <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'left', borderRight: '1px solid #e0e0e0', width: isSmallScreen ? '40%' : '35%' }}>
                         Tên học kỳ
                     </TableCell>
-                    <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '15%' }}>
-                        Ngày bắt đầu
-                    </TableCell>
-
-                    <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '15%' }}>
-                        Ngày kết thúc
+                    <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'left', borderRight: '1px solid #e0e0e0', width: isSmallScreen ? '25%' : '15%' }}>
+                        Số tuần
                     </TableCell>
                     <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '12%' }}>
                         Mã chương trình
                     </TableCell>
+
                     <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: isSmallScreen ? '25%' : '15%' }}>
                         Trạng thái
                     </TableCell>
@@ -94,10 +91,7 @@ export default function SemesterTable({ displayedSemesters, isSmallScreen, isMed
                             {semester.semester_name}
                         </TableCell>
                         <TableCell sx={{ textAlign: 'left', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                            {formatDateTime(semester.start_date)}
-                        </TableCell>
-                        <TableCell sx={{ textAlign: 'left', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                            {formatDateTime(semester.end_date)}
+                            {semester.duration_weeks ? `${semester.duration_weeks} tuần` : 'Chưa xác định'}
                         </TableCell>
                         <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
                             {semester.program_id}

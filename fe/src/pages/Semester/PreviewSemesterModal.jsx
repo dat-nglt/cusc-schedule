@@ -169,8 +169,7 @@ export default function PreviewSemesterModal({ open, onClose, previewData, fetch
                                         <TableRow>
                                             <TableCell>Mã học kỳ</TableCell>
                                             <TableCell>Tên học kỳ</TableCell>
-                                            <TableCell>Ngày bắt đầu</TableCell>
-                                            <TableCell>Ngày kết thúc</TableCell>
+                                            <TableCell>Số tuần</TableCell>
                                             <TableCell>Mã chương trình</TableCell>
                                         </TableRow>
                                     </TableHead>
@@ -179,8 +178,7 @@ export default function PreviewSemesterModal({ open, onClose, previewData, fetch
                                             <TableRow key={index}>
                                                 <TableCell>{semester.semester_id}</TableCell>
                                                 <TableCell>{semester.semester_name}</TableCell>
-                                                <TableCell>{formatDateTime(semester.start_date)}</TableCell>
-                                                <TableCell>{formatDateTime(semester.end_date)}</TableCell>
+                                                <TableCell>{semester.duration_weeks}</TableCell>
                                                 <TableCell>{semester.program_id}</TableCell>
                                             </TableRow>
                                         ))}
@@ -206,8 +204,7 @@ export default function PreviewSemesterModal({ open, onClose, previewData, fetch
                                         <TableRow>
                                             <TableCell>Mã học kỳ</TableCell>
                                             <TableCell>Tên học kỳ</TableCell>
-                                            <TableCell>Ngày bắt đầu</TableCell>
-                                            <TableCell>Ngày kết thúc</TableCell>
+                                            <TableCell>Số tuần</TableCell>
                                             <TableCell>Mã chương trình</TableCell>
                                             <TableCell>Lỗi</TableCell>
                                         </TableRow>
@@ -220,8 +217,7 @@ export default function PreviewSemesterModal({ open, onClose, previewData, fetch
                                             >
                                                 <TableCell>{semester.semester_id || '-'}</TableCell>
                                                 <TableCell>{semester.semester_name || '-'}</TableCell>
-                                                <TableCell>{formatDateTime(semester.start_date) || '-'}</TableCell>
-                                                <TableCell>{formatDateTime(semester.end_date) || '-'}</TableCell>
+                                                <TableCell>{semester.duration_weeks || '-'}</TableCell>
                                                 <TableCell>{semester.program_id || '-'}</TableCell>
                                                 <TableCell>
                                                     <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>

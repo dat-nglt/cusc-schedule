@@ -108,11 +108,11 @@ export const importSemestersFromJSONService = async (semestersData) => {
 
       try {
         // Validate các trường bắt buộc
-        if (!semesterData.semester_id || !semesterData.semester_name || !semesterData.start_date || !semesterData.end_date) {
+        if (!semesterData.semester_id || !semesterData.semester_name) {
           results.errors.push({
             index: index,
             semester_id: semesterData.semester_id || 'N/A',
-            error: 'Mã học kỳ, Tên học kỳ, Thời gian bắt đầu và Thời gian kết thúc là bắt buộc'
+            error: 'Mã học kỳ, Tên học kỳ là bắt buộc'
           });
           continue;
         }
@@ -121,45 +121,10 @@ export const importSemestersFromJSONService = async (semestersData) => {
         const cleanedData = {
           semester_id: semesterData.semester_id.toString().trim(),
           semester_name: semesterData.semester_name.toString().trim(),
-          start_date: semesterData.start_date ? new Date(semesterData.start_date) : null,
-          end_date: semesterData.end_date ? new Date(semesterData.end_date) : null,
+          duration_weeks: semesterData.duration_weeks || null, // Chuyển đổi sang chuỗi và xóa khoảng trắng
           program_id: semesterData.program_id ? semesterData.program_id.toString().trim() : null,
           status: semesterData.status || 'Hoạt động' // Mặc định là 'hoạt động' nếu không có giá trị
         };
-
-        // Validate ngày tháng
-        const startDate = new Date(cleanedData.start_date);
-        const endDate = new Date(cleanedData.end_date);
-        const today = new Date();
-        const maxFutureDate = new Date(today);
-        maxFutureDate.setFullYear(today.getFullYear() + 5); // Giới hạn 5 năm trong tương lai
-
-        if (isNaN(startDate) || isNaN(endDate)) {
-          results.errors.push({
-            index: index,
-            semester_id: cleanedData.semester_id,
-            error: 'Định dạng ngày không hợp lệ'
-          });
-          continue;
-        }
-
-        if (startDate > endDate) {
-          results.errors.push({
-            index: index,
-            semester_id: cleanedData.semester_id,
-            error: 'Thời gian bắt đầu không được lớn hơn thời gian kết thúc'
-          });
-          continue;
-        }
-
-        if (endDate > maxFutureDate) {
-          results.errors.push({
-            index: index,
-            semester_id: cleanedData.semester_id,
-            error: 'Thời gian kết thúc không được quá 5 năm trong tương lai'
-          });
-          continue;
-        }
 
         // Kiểm tra semester_id đã tồn tại chưa
         const existingSemester = await Semester.findOne({

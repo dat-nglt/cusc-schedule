@@ -357,8 +357,7 @@ export const processExcelDataProgram = (rawData, existingPrograms) => {
 const requiredSemesterFields = [
     'semester_id',
     'semester_name',
-    'start_date',
-    'end_date',
+    'duration_weeks',
     'status',
     'program_id',
 ];
@@ -389,33 +388,6 @@ const validateSemesterData = (semester, existingSemesters, allImportData = []) =
     if (missingFields.length > 0) {
         errors.push('missing_required');
     }
-
-    // Kiểm tra định dạng start_date
-    if (semester.start_date) {
-        const startDate = new Date(semester.start_date);
-        if (isNaN(startDate.getTime())) {
-            errors.push('invalid_start_date');
-        }
-    }
-
-    // Kiểm tra định dạng end_date
-    if (semester.end_date) {
-        const endDate = new Date(semester.end_date);
-        if (isNaN(endDate.getTime())) {
-            errors.push('invalid_end_date');
-        }
-    }
-
-    // Kiểm tra start_date phải nhỏ hơn end_date
-    if (semester.start_date && semester.end_date) {
-        const startDate = new Date(semester.start_date);
-        const endDate = new Date(semester.end_date);
-
-        if (!isNaN(startDate.getTime()) && !isNaN(endDate.getTime()) && startDate >= endDate) {
-            errors.push('invalid_date_range');
-        }
-    }
-
     return errors;
 };
 
@@ -426,8 +398,7 @@ export const processExcelDataSemester = (rawData, existingSemesters) => {
         const semester = {
             semester_id: row['Mã học kỳ']?.trim() || row['semester_id']?.trim() || '',
             semester_name: row['Tên học kỳ']?.trim() || row['semester_name']?.trim() || '',
-            start_date: formatDate(row['Ngày bắt đầu'] || row['start_date']),
-            end_date: formatDate(row['Ngày kết thúc'] || row['end_date']),
+            duration_weeks: row['Số tuần'] || row['duration_weeks'] || '',
             status: row['Trạng thái']?.trim() || row['status']?.trim() || 'Hoạt động',
             program_id: row['Mã chương trình đào tạo']?.trim() || row['Mã chương trình']?.trim() || row['program_id'] || '',
             rowIndex: index + 2 // +2 vì Excel bắt đầu từ row 1 và có header

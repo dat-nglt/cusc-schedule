@@ -34,6 +34,10 @@ export default {
         type: Sequelize.STRING(30),
         allowNull: true
       },
+      lesson_type: {
+        type: Sequelize.STRING(30),
+        allowNull: true
+      },
       semester: {
         type: Sequelize.STRING(30),
         allowNull: true
@@ -118,17 +122,6 @@ export default {
 
     // Add indexes for better query performance
 
-    await queryInterface.addIndex('class_schedules', ['lecturer_id', 'week_number'], {
-      name: 'idx_class_schedules_lecturer_week'
-    });
-
-    await queryInterface.addIndex('class_schedules', ['room_id', 'weekday', 'slot_id'], {
-      name: 'idx_class_schedules_room_schedule'
-    });
-
-    await queryInterface.addIndex('class_schedules', ['class_id', 'week_number'], {
-      name: 'idx_class_schedules_class_week'
-    });
   },
 
   async down(queryInterface, Sequelize) {
