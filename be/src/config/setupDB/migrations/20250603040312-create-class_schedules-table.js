@@ -13,7 +13,7 @@ export default {
         type: Sequelize.STRING(50),
         allowNull: true
       },
-      weekday: {
+      day_of_week: {
         type: Sequelize.ENUM('Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'),
         allowNull: false
       },
@@ -41,6 +41,10 @@ export default {
       academic_year: {
         type: Sequelize.SMALLINT,
         allowNull: true
+      },
+      schedule_date: {
+        type: Sequelize.DATEONLY,
+        allowNull: false
       },
       status: {
         type: Sequelize.STRING(30),
@@ -89,12 +93,6 @@ export default {
       slot_id: {
         type: Sequelize.STRING(30),
         allowNull: false,
-        references: {
-          model: 'time_slots',
-          key: 'slot_id'
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'SET NULL'
       },
       class_id: {
         type: Sequelize.STRING(30),
@@ -119,9 +117,6 @@ export default {
     });
 
     // Add indexes for better query performance
-    await queryInterface.addIndex('class_schedules', ['weekday', 'slot_id'], {
-      name: 'idx_class_schedules_weekday_timeslot'
-    });
 
     await queryInterface.addIndex('class_schedules', ['lecturer_id', 'week_number'], {
       name: 'idx_class_schedules_lecturer_week'

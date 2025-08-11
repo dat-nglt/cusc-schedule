@@ -185,7 +185,7 @@ export const getProgramCreateScheduleService = async () => {
         include: [{
           model: Subject,
           as: 'subjects',
-          attributes: ['subject_id', 'subject_name', 'theory_hours', 'practice_hours']
+          attributes: ['subject_id']
         }]
       }]
     });
@@ -197,12 +197,7 @@ export const getProgramCreateScheduleService = async () => {
       duration: program.training_duration,
       semesters: program.semesters.map(semester => ({
         semester_id: semester.semester_id,
-        subjects: semester.subjects.map(subject => ({
-          subject_id: subject.subject_id,
-          name: subject.subject_name,
-          theory_hours: subject.theory_hours,
-          practice_hours: subject.practice_hours
-        }))
+        subject_ids: semester.subjects.map(subject => (subject.subject_id))
       }))
     }));
 
