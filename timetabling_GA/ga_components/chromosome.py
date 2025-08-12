@@ -30,6 +30,7 @@ def find_available_time_slot_and_resources(processed_data, required_lesson, used
     if not valid_lecturers:
         return None, None, None, None
 
+    # Hàm get_rooms_for_type_and_capacity đã có class_size
     valid_rooms = processed_data.get_rooms_for_type_and_capacity(lesson_type, class_size)
     if not valid_rooms:
         return None, None, None, None
@@ -100,6 +101,7 @@ def create_random_chromosome(processed_data):
             "slot_id": slot_id,
             "room_id": room_id,
             "lecturer_id": lecturer_id,
+            "size": processed_data.class_map.get(required_lesson['class_id'], {}).get('size', 0) # Đã thêm trường này
         })
     
     return Chromosome(genes)

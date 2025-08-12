@@ -48,15 +48,6 @@ def display_ga_progress(
         num_hashes = int(progress_data["progress_percentage"] / 100 * progress_bar_length)
         progress_bar = "#" * num_hashes + "-" * (progress_bar_length - num_hashes)
 
-        # In chi tiết ở thế hệ đầu, cuối hoặc theo log_interval
-        if generation == 1 or generation == max_generations or (log_interval > 0 and generation % log_interval == 0):
-            print(f"[{progress_bar}] {progress_data['progress_percentage']:.2f}% | "
-                  f"Thế hệ: {generation:<4} | "
-                  f"F_hiện tại: {progress_data['current_best_fitness']:.2f} | "
-                  f"F_tổng thể: {progress_data['overall_best_fitness']:.2f}")
-        
-        # Nếu muốn cập nhật thanh tiến trình liên tục trên cùng một dòng
-        # (chỉ hiển thị được trên console hỗ trợ ký tự \r)
-        # print(f"\r[{progress_bar}] {progress_data['progress_percentage']:.2f}% "
-        #       f"F_curr: {progress_data['current_best_fitness']:.2f} F_overall: {progress_data['overall_best_fitness']:.2f}", end='', flush=True)
+        print(f"\r[{progress_bar}] {progress_data['progress_percentage']:.2f}% "
+              f"F_curr: {progress_data['current_best_fitness']:.2f} F_overall: {progress_data['overall_best_fitness']:.2f}", end='', flush=True)
         return None
