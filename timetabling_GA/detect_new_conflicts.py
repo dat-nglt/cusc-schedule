@@ -38,7 +38,8 @@ def build_occupied_slots_from_schedule(schedule, new_constraints):
                 for lesson in day_entry.get('lessons', []):
                     slot_id = lesson['slot']
                     lecturer_id = lesson.get('lecturer_id')
-                    room_id = lesson.get('room_id')
+                    room_id = lesson.get('room')
+                    print(room_id)
                     
                     if lecturer_id: occupied[date][slot_id]['lecturers'].add(lecturer_id)
                     if room_id: occupied[date][slot_id]['rooms'].add(room_id)
@@ -68,9 +69,8 @@ def detect_new_conflicts(semester_schedule, new_constraints):
         for cls in semester.get('classes', []):
             for day_schedule in cls.get('schedule', []):
                 for lesson in day_schedule.get('lessons', []):
-                    # print(lesson)
                     lecturer_id = lesson.get('lecturer_id')
-                    room_id = lesson.get('room_id')
+                    room_id = lesson.get('room')
                     date = day_schedule.get('date')
                     slot_id = lesson.get('slot')
                     
@@ -110,14 +110,18 @@ def update_schedule(schedule, old_lesson, new_lesson_info):
     """
     Tìm và xóa buổi học cũ, sau đó chèn buổi học mới vào vị trí đã tìm thấy.
     """
+    
     new_date, new_slot_id, new_room_id, new_lecturer_id = new_lesson_info
     
-    new_lesson = old_lesson.copy()
-    new_lesson['date'] = new_date
-    new_lesson['day'] = datetime.datetime.strptime(new_date, "%Y-%m-%d").strftime("%a")
-    new_lesson['slot'] = new_slot_id
-    new_lesson['room_id'] = new_room_id
-    new_lesson['lecturer_id'] = new_lecturer_id
+    
+    keys_to_remove = {'date', 'day', 'semester_id'}
+    # Tạo một bản sao 'sạch' của old_lesson, loại bỏ các khóa không cần thiết
+    clean_lesson = {key: value for key, value in old_lesson.items() if key not in keys_to_remove}
+
+    # Cập nhật các trường mới cần thiết
+    clean_lesson['slot'] = new_slot_id
+    clean_lesson['room'] = new_room_id # Giả định khóa là 'room', không phải 'room_id'
+    clean_lesson['lecturer_id'] = new_lecturer_id
     
     for semester in schedule['semesters']:
         for cls in semester['classes']:
@@ -133,24 +137,27 @@ def update_schedule(schedule, old_lesson, new_lesson_info):
     
     for semester in schedule['semesters']:
         for cls in semester['classes']:
-            if cls['class_id'] == new_lesson['class_id']:
+            if cls['class_id'] == old_lesson['class_id']:
                 found_date = False
                 for day_schedule in cls['schedule']:
-                    if day_schedule['date'] == new_lesson['date']:
-                        day_schedule['lessons'].append(new_lesson)
+                    if day_schedule['date'] == new_date: # Sử dụng new_date đã được tính toán
+                        print(f"__________________________________ {clean_lesson}")
+                        day_schedule['lessons'].append(clean_lesson)
                         found_date = True
                         break
                 if not found_date:
+                    # Nếu ngày mới chưa tồn tại, tạo một entry mới
+                    new_day_of_week = datetime.datetime.strptime(new_date, "%Y-%m-%d").strftime("%a")
                     cls['schedule'].append({
-                        "date": new_lesson['date'],
-                        "day": new_lesson['day'],
-                        "lessons": [new_lesson]
+                        "date": new_date,
+                        "day": new_day_of_week,
+                        "lessons": [clean_lesson]
                     })
                 break
 
 if __name__ == "__main__":
     try:
-        with open('all_schedules.json', 'r', encoding='utf-8') as f:
+        with open('results/all_schedules.json', 'r', encoding='utf-8') as f:
             semester_schedule = json.load(f)
         with open('input_data.json', 'r', encoding='utf-8') as f:
             raw_data = json.load(f)
@@ -165,7 +172,7 @@ if __name__ == "__main__":
     new_constraints = {
         'lecturers': {
             'GV03': [
-                {'date': '2025-09-08', 'slot_id': 'C1'}
+                {'date': '2025-09-08', 'slot_id': 'C2'}
             ]
         },
         'rooms': {
@@ -222,6 +229,7 @@ if __name__ == "__main__":
             new_slot_info = find_new_valid_slot(lesson, semester_data, occupied_slots, program_duration_weeks, semester_start_date)
             
             if new_slot_info:
+                print(new_slot_info)
                 print(f"  > Buổi học của lớp {lesson['class_id']} - môn {lesson['subject']} đã được chuyển sang ngày {new_slot_info[0]} tại khung giờ {new_slot_info[1]}.")
                 
                 update_schedule(semester_schedule, lesson, new_slot_info)

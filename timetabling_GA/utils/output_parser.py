@@ -58,13 +58,14 @@ def create_json_from_ga_results(all_semester_results, data_processor):
                 # Chuẩn bị thông tin tiết học
                 lesson_info = {
                     "slot": lesson.get('slot_id', 'N/A'),
-                    "subject_id": data_processor.subject_map.get(lesson.get('subject_id'), {}).get('subject_id', 'N/A'),
+                    "subject_id": lesson.get('subject_id'),
                     "subject": data_processor.subject_map.get(lesson.get('subject_id'), {}).get('name', 'N/A'),
                     "type": lesson.get('lesson_type', 'N/A'),
                     "room": lesson.get('room_id', 'N/A'),
-                    "lecturer_id": data_processor.lecturer_map.get(lesson.get('lecturer_id'), {}).get('lecturer_id', 'N/A'),
+                    "lecturer_id": lesson.get('lecturer_id'),
                     "lecturer": data_processor.lecturer_map.get(lesson.get('lecturer_id'), {}).get('lecturer_name', 'N/A'),
                     "size":lesson.get('size', 'N/A'),
+                    "class_id":lesson.get('class_id', 'N/A'),
                 }
                 
                 # Thêm tiết học vào cấu trúc nhóm

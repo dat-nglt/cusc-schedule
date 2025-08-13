@@ -27,37 +27,41 @@ from utils.check_hard_constraints import check_hard_constraints
 def find_new_valid_slot(lesson, processed_data, occupied_slots, program_duration_weeks, semester_start_date):
     """
     Tìm một khung thời gian trống hợp lệ cho một buổi học bị xung đột,
-    sử dụng ngày bắt đầu học kỳ để tính toán chính xác và xem xét tất cả các ràng buộc.
+    chỉ tìm kiếm trong chính tuần mà buổi học đó diễn ra.
     """
     print("\n[BẮT ĐẦU] Tìm vị trí mới cho buổi học:")
-    print(f"  - Buổi học: Lớp {lesson['class_id']}, Môn {lesson.get('subject')}, Tiết {lesson.get('type')}")
-    print(f"  - Học kỳ bắt đầu: {semester_start_date.strftime('%Y-%m-%d')}, Kéo dài {program_duration_weeks} tuần.")
+    print(f"  - Buổi học: Lớp {lesson['class_id']}, Môn {lesson.get('subject')}, Tiết {lesson.get('type')}")
+    print(f"  - Ngày bị xung đột: {lesson.get('date')}")
 
     candidate_slots = []
     
     class_id = lesson['class_id']
-    subject_id = lesson.get('subject_id') or lesson.get('subject') 
+    subject_id = lesson.get('subject_id') or lesson.get('subject')
     
     if not subject_id:
-        print("  ❌ Lỗi: Không tìm thấy ID môn học.")
+        print("  ❌ Lỗi: Không tìm thấy ID môn học.")
         return None
 
-    
     valid_lecturers = processed_data.get_lecturers_for_subject(subject_id)
     if not valid_lecturers:
-        print("  ❌ Lỗi: Không tìm thấy giảng viên nào dạy môn này.")
+        print("  ❌ Lỗi: Không tìm thấy giảng viên nào dạy môn này.")
         return None
         
     valid_rooms = processed_data.get_rooms_for_type_and_capacity(lesson['type'], lesson['size'])
     if not valid_rooms:
-        print("  ❌ Lỗi: Không tìm thấy phòng học phù hợp.")
+        print("  ❌ Lỗi: Không tìm thấy phòng học phù hợp.")
         return None
+
+    # Lấy tuần và ngày của buổi học ban đầu để giới hạn tìm kiếm
+    original_date = datetime.strptime(lesson['date'], '%Y-%m-%d')
+    week_num = int((original_date - semester_start_date).days / 7)
+    
+    # Giới hạn phạm vi tìm kiếm chỉ trong tuần này
+    weeks_to_search = [week_num]
 
     search_limit = 1000 
     days_of_week_map = {day: i for i, day in enumerate(processed_data.data.get('days_of_week', []))}
 
-    weeks_to_search = list(range(program_duration_weeks))
-    random.shuffle(weeks_to_search)
     days_to_search = processed_data.data.get('days_of_week', [])
     random.shuffle(days_to_search)
     slots_to_search = [s['slot_id'] for s in processed_data.data['time_slots']]
@@ -65,8 +69,9 @@ def find_new_valid_slot(lesson, processed_data, occupied_slots, program_duration
     random.shuffle(valid_lecturers)
     random.shuffle(valid_rooms)
     
-    print(f"  - Đang tìm kiếm trong {len(weeks_to_search)} tuần, {len(days_to_search)} ngày, {len(slots_to_search)} slot, {len(valid_lecturers)} GV, {len(valid_rooms)} phòng.")
+    print(f"  - Đang tìm kiếm trong tuần {week_num + 1}, {len(days_to_search)} ngày, {len(slots_to_search)} slot, {len(valid_lecturers)} GV, {len(valid_rooms)} phòng.")
 
+    # Vòng lặp tuần chỉ chạy duy nhất một lần
     for week in weeks_to_search:
         for day_of_week_eng in days_to_search:
             date = get_date_from_week_day(week, day_of_week_eng, semester_start_date, days_of_week_map)
@@ -91,7 +96,7 @@ def find_new_valid_slot(lesson, processed_data, occupied_slots, program_duration
                                 return (best_candidate['date'], best_candidate['slot_id'], best_candidate['room_id'], best_candidate['lecturer_id'])
     
     if not candidate_slots:
-        print("\n[KẾT THÚC] 😞 Không tìm thấy ứng viên hợp lệ nào sau khi đã thử hết tất cả các khả năng.")
+        print("\n[KẾT THÚC] 😞 Không tìm thấy ứng viên hợp lệ nào trong tuần này.")
         return None
 
     print(f"\n[KẾT THÚC] Đã tìm thấy {len(candidate_slots)} ứng viên. Chọn ngẫu nhiên một ứng viên.")
@@ -488,34 +493,55 @@ def run_ga_for_semester(semester_id, full_data_processor):
     fitness_calculator = FitnessCalculator(semester_specific_data_processor)
     population = initialize_population(POPULATION_SIZE, semester_specific_data_processor)
     
+    # Khởi tạo quần thể và tính toán fitness ban đầu
     for chrom in population:
-        fitness_calculator.calculate_fitness(chrom)
+        chrom.fitness, _ = fitness_calculator.calculate_fitness(chrom) # Gán fitness, bỏ qua chi tiết vi phạm
 
     best_overall_chromosome = None
+    best_overall_violations = {} # Thêm dictionary để lưu chi tiết vi phạm tốt nhất
     ga_log_data = []
 
     for generation in range(MAX_GENERATIONS):
+        # Sắp xếp quần thể dựa trên điểm fitness
         population.sort(key=lambda c: c.fitness, reverse=True)
         
-        if best_overall_chromosome is None or population[0].fitness > best_overall_chromosome.fitness:
-            best_overall_chromosome = population[0]
-          
+        # Lấy nhiễm sắc thể tốt nhất của thế hệ hiện tại
+        current_best_chromosome = population[0]
+
+        # Cập nhật nhiễm sắc thể tốt nhất toàn cục
+        if best_overall_chromosome is None or current_best_chromosome.fitness > best_overall_chromosome.fitness:
+            best_overall_chromosome = current_best_chromosome
+            # Tính toán lại fitness để lấy chi tiết vi phạm
+            _, best_overall_violations = fitness_calculator.calculate_fitness(best_overall_chromosome)
+        
+        # Hiển thị tiến trình GA
+        _, current_violations = fitness_calculator.calculate_fitness(current_best_chromosome)
+
+    # Now, call the improved display_ga_progress with the new violation data
         display_ga_progress(
             generation=generation,
             max_generations=MAX_GENERATIONS,
-            current_best_fitness=population[0].fitness,
+            current_best_fitness=current_best_chromosome.fitness,
             overall_best_fitness=best_overall_chromosome.fitness,
-            log_interval=1 # Ví dụ: in chi tiết mỗi 50 thế hệ
-        )  
+            current_best_violations=current_violations,
+            overall_best_violations=best_overall_violations,
+            log_interval=1
+        )
         
+        # Ghi log dữ liệu của từng thế hệ
+        # Để lấy chi tiết vi phạm của thế hệ hiện tại, ta phải chạy lại hàm calculate_fitness
+        _, current_violations = fitness_calculator.calculate_fitness(current_best_chromosome)
+
         ga_log_data.append({
             "generation": generation + 1,
-            "best_fitness_gen": population[0].fitness,
-            "best_overall_fitness": best_overall_chromosome.fitness
+            "best_fitness_gen": current_best_chromosome.fitness,
+            "best_overall_fitness": best_overall_chromosome.fitness,
+            "current_violations": current_violations
         })
 
-        # if population[0].fitness >= 0:
-        #     break
+        # Dừng nếu tìm thấy giải pháp hoàn hảo
+        # if current_best_chromosome.fitness >= 0:
+        #     break
 
         new_population = []
         new_population.extend(population[:ELITISM_COUNT])
@@ -531,8 +557,9 @@ def run_ga_for_semester(semester_id, full_data_processor):
             mutate_chromosome(child1, semester_specific_data_processor, MUTATION_RATE)
             mutate_chromosome(child2, semester_specific_data_processor, MUTATION_RATE)
             
-            fitness_calculator.calculate_fitness(child1)
-            fitness_calculator.calculate_fitness(child2)
+            # Tính toán và gán fitness mới cho con
+            child1.fitness, _ = fitness_calculator.calculate_fitness(child1)
+            child2.fitness, _ = fitness_calculator.calculate_fitness(child2)
 
             new_population.append(child1)
             if len(new_population) < POPULATION_SIZE:
@@ -644,7 +671,7 @@ def export_combined_results(all_semester_results, processed_data, output_folder)
                 for lesson in unassignable_lessons:
                     print(f"  - Lớp: {lesson['class_id']}, Môn: {lesson['subject_id']}, Ngày bị xung đột: {lesson['date']}")
             else:
-                print("\n✅ Tất cả các buổi học đều đã được sắp xếp thành công!")
+                print(f"\n✅ Tất cả các buổi học đều đã được sắp xếp thành công cho học kỳ {semester_id}")
                 
             formatted_schedule = format_semester_schedule(semester_timetable, semester_specific_data)
             
@@ -710,6 +737,7 @@ def genetic_algorithm():
                 "chromosome": best_chromosome,
                 "log": ga_log
             }
+            print()
             print(f"Lịch học tối ưu nhất cho {semester_id} đã được tạo thành công.")
         else:
             print(f"Không thể tạo lịch cho {semester_id}.")
