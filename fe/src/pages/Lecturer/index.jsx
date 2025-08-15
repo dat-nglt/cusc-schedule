@@ -258,16 +258,21 @@ const Lecturer = () => {
 
     // Tính toán dữ liệu hiển thị trên trang hiện tại
     const displayedLecturers = filteredLecturers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
-
+    console.log("lecturers", lecturers);
     // Export lecturers to Excel
     const handleExportExcel = () => {
         // Prepare data for export (filteredLecturers)
-        const data = filteredLecturers.map(l => ({
+        const data = lecturers.map(l => ({
             'Mã giảng viên': l.lecturer_id,
             'Tên': l.name,
-            'Email': l.email,
+            'Email': l.account.email,
+            'ngày sinh': l.date_of_birth,
             'Số điện thoại': l.phone_number,
+            'giới tính': l.gender,
             'Khoa/Bộ môn': l.department,
+            'địa chỉ': l.address,
+            'ngày vào làm': l.hire_date,
+            'Môn giảng dạy': l.subjects.map(s => s.subject_name).join(', '),
             'Trạng thái': l.status,
         }));
         const worksheet = XLSX.utils.json_to_sheet(data);
