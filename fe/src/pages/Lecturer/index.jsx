@@ -145,11 +145,11 @@ const Lecturer = () => {
     };
 
     // Hàm lưu thay đổi sau khi chỉnh sửa
-    const handleSaveEditedLecturer = async (updatedLecturer, subjects = [], busySlots = []) => {
+    const handleSaveEditedLecturer = async (updatedLecturer, subjects = [], busySlots = [], semesterBusySlots = []) => {
         setLoading(true);
         setError(null); // Đặt lại trạng thái lỗi
         try {
-            const response = await updateLecturerAPI(updatedLecturer.lecturer_id, updatedLecturer, subjects, busySlots);
+            const response = await updateLecturerAPI(updatedLecturer.lecturer_id, updatedLecturer, subjects, busySlots, semesterBusySlots);
 
             if (response && response.data) {
                 setLecturers(prevLecturers =>
