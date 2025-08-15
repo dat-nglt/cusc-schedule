@@ -20,14 +20,15 @@ export const getLecturerByIdAPI = async (id) => {
   }
 };
 
-export const createLecturerAPI = async (lecturerData, subjects = [], busySlots = []) => {
+export const createLecturerAPI = async (lecturerData, subjects = [], busySlots = [], semesterBusySlots = []) => {
   try {
     const response = await axiosInstance.post(
       "/api/lecturers/create",
       {
         lecturerData,
         subjects,
-        busySlots
+        busySlots,
+        semesterBusySlots
       }
     );
     return response;
@@ -37,11 +38,16 @@ export const createLecturerAPI = async (lecturerData, subjects = [], busySlots =
   }
 };
 
-export const updateLecturerAPI = async (id, lecturerData) => {
+export const updateLecturerAPI = async (id, lecturerData, subjects = [], busySlots = [], semesterBusySlots = []) => {
   try {
     const response = await axiosInstance.put(
       `/api/lecturers/update/${id}`,
-      lecturerData
+      {
+        lecturerData,
+        subjects,
+        busySlots,
+        semesterBusySlots
+      }
     );
     return response;
   } catch (error) {

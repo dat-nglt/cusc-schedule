@@ -115,6 +115,10 @@ const Lecturer = (sequelize) => {
       foreignKey: "lecturer_id",
       as: "busy_slots",
     });
+    LecturerModel.hasMany(models.SemesterBusySlot, {
+      foreignKey: "lecturer_id",
+      as: "semester_busy_slots",
+    });
   };
 
   return LecturerModel;

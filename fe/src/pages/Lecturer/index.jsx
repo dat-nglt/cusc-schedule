@@ -98,10 +98,10 @@ const Lecturer = () => {
         setOpenAddModal(true);
     };
 
-    const handleAddNewLecturer = async (newLecturer, subjects = [], busySlots = []) => {
+    const handleAddNewLecturer = async (newLecturer, subjects = [], busySlots = [], semesterBusySlots = []) => {
         try {
             setLoading(true);
-            const response = await createLecturerAPI(newLecturer, subjects, busySlots);
+            const response = await createLecturerAPI(newLecturer, subjects, busySlots, semesterBusySlots);
             if (response && response.data) {
                 fetchLecturers(); // Tải lại danh sách giảng viên sau khi thêm thành công
                 toast.success('Thêm giảng viên thành công!');
