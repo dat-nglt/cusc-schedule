@@ -454,9 +454,9 @@ const Dashboard = () => {
 
     // Transform API data to required format
     const transformDataToFormTest = (data) => {
-        const { rooms, programs, lecturers, classes, timeslot, days_of_week } = data;
+        const { rooms, programs, lecturers, classes } = data;
 
-        console.log("Transforming data to form test structure:", { rooms, programs, lecturers, classes, timeslot, days_of_week });
+        console.log("Transforming data to form test structure:", { rooms, programs, lecturers, classes });
         
 
         // Sử dụng optional chaining và nullish coalescing để code gọn hơn

@@ -81,6 +81,7 @@ const Class = () => {
           class_size: classItem.class_size,
           status: classItem.status,
           course_id: classItem.course_id,
+          programs: classItem.programs || [],
           created_at: formatTimestamp(classItem.created_at),
           updated_at: formatTimestamp(classItem.updated_at),
           course: classItem.Course ? { course_name: classItem.Course.course_name } : null,
@@ -93,6 +94,7 @@ const Class = () => {
           class_size: classItem.class_size,
           status: classItem.status,
           course_id: classItem.course_id,
+          programs: classItem.programs || [],
           created_at: formatTimestamp(classItem.created_at),
           updated_at: formatTimestamp(classItem.updated_at),
           course: classItem.Course ? { course_name: classItem.Course.course_name } : null,
@@ -439,4 +441,4 @@ const Class = () => {
   );
 };
 
-export default Class;
+export default Class;  
