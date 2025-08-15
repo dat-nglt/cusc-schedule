@@ -5,6 +5,7 @@ import {
   updateSemesterService,
   deleteSemesterService,
   importSemestersFromJSONService, // Giả định có thể có thêm importSemestersFromExcel nếu bạn muốn nhập từ Excel
+  getSemesterCreateScheduleService
 } from "../services/semesterService.js";
 import { APIResponse } from "../utils/APIResponse.js"; // Sử dụng APIResponse nhất quán
 import ExcelUtils from "../utils/ExcelUtils.js"; // Được sử dụng để tạo template Excel
@@ -225,5 +226,26 @@ export const downloadTemplateController = async (req, res) => {
   } catch (error) {
     console.error("Lỗi khi tạo và tải xuống template học kỳ:", error);
     return APIResponse(res, 500, null, "Đã xảy ra lỗi khi tạo template.");
+  }
+};
+
+
+export const getSemesterCreateScheduleController = async (req, res) => {
+  try {
+    const semesters = await getSemesterCreateScheduleService();
+    return APIResponse(
+      res,
+      200,
+      semesters,
+      "Lấy danh sách học kỳ thành công."
+    );
+  } catch (error) {
+    console.error("Lỗi khi lấy danh sách học kỳ:", error);
+    return APIResponse(
+      res,
+      500,
+      null,
+      error.message || "Đã xảy ra lỗi khi lấy danh sách học kỳ."
+    );
   }
 };

@@ -17,16 +17,13 @@ const Semester = (sequelize) => {
         type: DataTypes.STRING(50),
         allowNull: true,
       },
-      // Ngày bắt đầu học kỳ
-      start_date: {
-        type: DataTypes.DATEONLY,
+      // Số tuần của học kỳ (có thể null nếu chưa xác định)
+      duration_weeks: {
+        type: DataTypes.INTEGER,
         allowNull: true,
       },
-      // Ngày kết thúc học kỳ
-      end_date: {
-        type: DataTypes.DATEONLY,
-        allowNull: true,
-      },
+      // Ngày bắt đầu của
+
       // Trạng thái học kỳ (VD: đang học, đã kết thúc,...)
       status: {
         type: DataTypes.STRING(30),
@@ -45,7 +42,6 @@ const Semester = (sequelize) => {
       createdAt: 'created_at',        // Tên cột thời gian tạo
       updatedAt: 'updated_at',        // Tên cột thời gian cập nhật
       deletedAt: 'deleted_at',        // Tên cột thời gian xóa mềm (nếu sử dụng soft delete)
-      paranoid: true,                 // Bật chế độ xóa mềm (soft delete)
     }
   );
 

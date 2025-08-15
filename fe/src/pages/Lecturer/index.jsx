@@ -25,7 +25,7 @@ import DeleteLecturerModal from './DeleteLecturerModal';
 import useResponsive from '../../hooks/useResponsive';
 import LecturerTable from './LecturerTable';
 import { toast } from 'react-toastify';
-import { getAllLecturersAPI, getLecturerByIdAPI, createLecturerAPI, updateLecturerAPI, deleteLecturerAPI } from '../../api/lecturerAPI';
+import { getAllLecturersAPI, createLecturerAPI, updateLecturerAPI, deleteLecturerAPI } from '../../api/lecturerAPI';
 import { getAllSubjectsAPI } from '../../api/subjectAPI';
 import TablePaginationLayout from '../../components/layout/TablePaginationLayout';
 
@@ -98,10 +98,10 @@ const Lecturer = () => {
         setOpenAddModal(true);
     };
 
-    const handleAddNewLecturer = async (newLecturer) => {
+    const handleAddNewLecturer = async (newLecturer, subjects = [], busySlots = []) => {
         try {
             setLoading(true);
-            const response = await createLecturerAPI(newLecturer);
+            const response = await createLecturerAPI(newLecturer, subjects, busySlots);
             if (response && response.data) {
                 fetchLecturers(); // Tải lại danh sách giảng viên sau khi thêm thành công
                 toast.success('Thêm giảng viên thành công!');
@@ -145,11 +145,11 @@ const Lecturer = () => {
     };
 
     // Hàm lưu thay đổi sau khi chỉnh sửa
-    const handleSaveEditedLecturer = async (updatedLecturer) => {
+    const handleSaveEditedLecturer = async (updatedLecturer, subjects = [], busySlots = []) => {
         setLoading(true);
         setError(null); // Đặt lại trạng thái lỗi
         try {
-            const response = await updateLecturerAPI(updatedLecturer.lecturer_id, updatedLecturer);
+            const response = await updateLecturerAPI(updatedLecturer.lecturer_id, updatedLecturer, subjects, busySlots);
 
             if (response && response.data) {
                 setLecturers(prevLecturers =>
@@ -166,9 +166,9 @@ const Lecturer = () => {
                 throw new Error(response.message || 'Cập nhật thất bại');
             }
         } catch (err) {
-            console.error("Lỗi khi cập nhật giảng viên:", err.response.data.message);
-            setError(err.response.data.message);
-            toast.error(err.response.data.message);
+            console.error("Lỗi khi cập nhật giảng viên:", err.response?.data?.message || err.message);
+            setError(err.response?.data?.message || err.message);
+            toast.error(err.response?.data?.message || err.message);
         } finally {
             setLoading(false);
         }
@@ -375,6 +375,7 @@ const Lecturer = () => {
                 onSave={handleSaveEditedLecturer}
                 error={error}
                 loading={loading}
+                subjects={subjects}
             />
             <DeleteLecturerModal
                 open={openDeleteModal}
@@ -387,3 +388,4 @@ const Lecturer = () => {
 };
 
 export default Lecturer;
+

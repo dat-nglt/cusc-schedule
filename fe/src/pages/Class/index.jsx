@@ -208,6 +208,7 @@ const Class = () => {
         class_size: classData.class_size,
         status: classData.status || 'Hoạt động',
         course_id: classData.course_id,
+        program_id: classData.program_id,
       });
       console.log('Phản hồi từ API (thêm):', response);
 
@@ -215,12 +216,12 @@ const Class = () => {
       setClasses((prev) => [
         ...prev,
         {
-          stt: prev.length + 1,
           class_id: newClass.class_id,
           class_name: newClass.class_name,
           class_size: newClass.class_size,
           status: newClass.status,
           course_id: newClass.course_id,
+          program_id: newClass.program_id,
           created_at: formatTimestamp(newClass.created_at),
           updated_at: formatTimestamp(newClass.updated_at),
           course: newClass.Course ? { course_name: newClass.Course.course_name } : null,
@@ -249,6 +250,7 @@ const Class = () => {
         class_size: classData.class_size,
         status: classData.status,
         course_id: classData.course_id,
+        program_id: classData.program_id,
         updated_at: new Date().toISOString(),
       });
       console.log('Phản hồi từ API (chỉnh sửa):', response);

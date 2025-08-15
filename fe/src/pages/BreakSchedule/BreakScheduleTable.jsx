@@ -69,7 +69,7 @@ const BreakScheduleTable = ({ displayedBreakSchedules, isSmallScreen, isMediumSc
             }}
           >
             <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5, width: '10%' }}>
-              {schedule.stt}
+              {index + 1}
             </TableCell>
             {!isSmallScreen && (
               <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5, width: '15%' }}>

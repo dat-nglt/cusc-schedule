@@ -2,37 +2,33 @@
 import random
 from .chromosome import Chromosome
 
-def single_point_crossover(parent1, parent2):
+def lesson_based_crossover(parent1, parent2, processed_data):
     """
-    Performs single-point crossover.
-    The genes list contains dicts. We perform crossover on this list.
+    Lai ghép dựa trên tiết học. Mỗi gene (tiết học) được chọn từ một trong hai bố mẹ.
     """
-    if len(parent1.genes) != len(parent2.genes) or len(parent1.genes) < 2 : # Guard clause
-        return Chromosome(parent1.genes[:]), Chromosome(parent2.genes[:]) # Return copies
-
-    point = random.randint(1, len(parent1.genes) - 1)
+    child1_genes, child2_genes = [], []
     
-    child1_genes = parent1.genes[:point] + parent2.genes[point:]
-    child2_genes = parent2.genes[:point] + parent1.genes[point:]
+    parent1_map = {gene['lesson_id']: gene for gene in parent1.genes}
+    parent2_map = {gene['lesson_id']: gene for gene in parent2.genes}
     
-    return Chromosome(child1_genes), Chromosome(child2_genes)
-
-def uniform_crossover(parent1, parent2, gene_swap_prob=0.5):
-    """
-    Performs uniform crossover.
-    For each gene, decide randomly whether to take it from parent1 or parent2.
-    """
-    if len(parent1.genes) != len(parent2.genes): # Guard clause
-        return Chromosome(parent1.genes[:]), Chromosome(parent2.genes[:])
-
-    child1_genes = []
-    child2_genes = []
-    for i in range(len(parent1.genes)):
-        if random.random() < gene_swap_prob:
-            child1_genes.append(parent2.genes[i])
-            child2_genes.append(parent1.genes[i])
+    for lesson in processed_data.required_lessons_weekly:
+        lesson_id = lesson['lesson_id']
+        gene1 = parent1_map.get(lesson_id)
+        gene2 = parent2_map.get(lesson_id)
+        
+        if gene1 and gene2:
+            if random.random() < 0.5:
+                child1_genes.append(gene1.copy())
+                child2_genes.append(gene2.copy())
+            else:
+                child1_genes.append(gene2.copy())
+                child2_genes.append(gene1.copy())
         else:
-            child1_genes.append(parent1.genes[i])
-            child2_genes.append(parent2.genes[i])
-            
+            if gene1:
+                child1_genes.append(gene1.copy())
+                child2_genes.append(gene1.copy())
+            elif gene2:
+                child1_genes.append(gene2.copy())
+                child2_genes.append(gene2.copy())
+    
     return Chromosome(child1_genes), Chromosome(child2_genes)

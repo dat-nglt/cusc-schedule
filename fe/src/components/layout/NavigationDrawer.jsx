@@ -26,10 +26,13 @@ import {
     Room as RoomIcon,
     AccessTime as AccessTimeIcon,
     Logout as LogoutIcon,
+    Schedule,
+    Dashboard,
 } from '@mui/icons-material';
 
 const navItems = [
-    { text: 'Quản lý thời khóa biểu', icon: <DashboardIcon />, path: '/dashboard' },
+    { text: 'Trang chủ', icon: <Dashboard />, path: '/dashboard' },
+    { text: 'Quản lý thời khoá biểu', icon: <Schedule />, path: '/schedules' },
     { text: 'Quản lý giảng viên', icon: <PersonIcon />, path: '/lecturers' },
     { text: 'Quản lý học viên', icon: <SchoolIcon />, path: '/students' },
     { text: 'Quản lý chương trình đào tạo', icon: <LibraryBooksIcon />, path: '/programs' },

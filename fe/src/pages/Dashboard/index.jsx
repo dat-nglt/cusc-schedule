@@ -16,6 +16,8 @@ import { getProgramCreateScheduleAPI } from '../../api/programAPI';
 import { getAllLecturersAPI } from '../../api/lecturerAPI';
 import { getClassesAPI } from '../../api/classAPI';
 import { getAllSubjectsAPI } from '../../api/subjectAPI';
+import { getAllSemestersAPI } from '../../api/semesterAPI';
+import CreateSchedulesAutoModal from './CreateSchedulesAutoModal';
 
 
 
@@ -25,6 +27,7 @@ const socket = io(import.meta.env.VITE_API_URL || 'http://localhost:3000', { // 
 
 const Dashboard = () => {
     const [open, setOpen] = useState(false);
+    const [createScheduleModalOpen, setCreateScheduleModalOpen] = useState(false);
     const [statusMessage, setStatusMessage] = useState('');
     const [downloadableFiles, setDownloadableFiles] = useState([]);
     const [error, setError] = useState('');
@@ -34,6 +37,8 @@ const Dashboard = () => {
     const [rooms, setRooms] = useState([]);
     const [programs, setPrograms] = useState([]);
     const [lecturers, setLecturers] = useState([]);
+    const [subjects, setSubjects] = useState([]);
+    const [semesters, setSemesters] = useState([]);
     const [classes, setClasses] = useState([]);
     const [formTest, setFormTest] = useState(null);
     const days_of_week = useState({
@@ -92,244 +97,140 @@ const Dashboard = () => {
 
     const actualInputData = {
         "classes": [
-            {
-                "class_id": "C01",
-                "size": 30,
-                "program_id": "P01"
-            },
-            {
-                "class_id": "C02",
-                "size": 25,
-                "program_id": "P02"
-            },
-            {
-                "class_id": "C03",
-                "size": 28,
-                "program_id": "P03"
-            }
+            { "class_id": "CL01", "size": 30, "program_id": "CT01" },
+            { "class_id": "CL02", "size": 28, "program_id": "CT01" },
+            { "class_id": "CL03", "size": 35, "program_id": "CT02" }
         ],
         "rooms": [
-            {
-                "room_id": "LT1",
-                "type": "theory",
-                "capacity": 40
-            },
-            {
-                "room_id": "TH1",
-                "type": "practice",
-                "capacity": 30
-            },
-            {
-                "room_id": "LT2",
-                "type": "theory",
-                "capacity": 50
-            },
-            {
-                "room_id": "TH2",
-                "type": "practice",
-                "capacity": 35
-            },
-            {
-                "room_id": "LT3",
-                "type": "theory",
-                "capacity": 45
-            },
-            {
-                "room_id": "TH3",
-                "type": "practice",
-                "capacity": 25
-            },
-            {
-                "room_id": "LT4",
-                "type": "theory",
-                "capacity": 60
-            },
-            {
-                "room_id": "TH4",
-                "type": "practice",
-                "capacity": 40
-            }
+            { "room_id": "R101", "type": "theory", "capacity": 40 },
+            { "room_id": "R102", "type": "theory", "capacity": 35 },
+            { "room_id": "R103", "type": "theory", "capacity": 40 },
+            { "room_id": "R104", "type": "theory", "capacity": 32 },
+            { "room_id": "LAB01", "type": "practice", "capacity": 50 },
+            { "room_id": "LAB02", "type": "practice", "capacity": 50 },
+            { "room_id": "LAB03", "type": "practice", "capacity": 50 },
+            { "room_id": "LAB04", "type": "practice", "capacity": 50 }
         ],
         "lecturers": [
             {
                 "lecturer_id": "GV01",
-                "lecturer_name": "Nguyễn Văn An",
-                "subjects": [
-                    "M01",
-                    "M04",
-                    "M05"
-                ],
-                "busy_slots": [
-                    {
-                        "day": "Mon",
-                        "slot_id": "S1"
-                    },
-                    {
-                        "day": "Wed",
-                        "slot_id": "C1"
-                    }
-                ]
+                "lecturer_name": "Nguyễn Văn A",
+                "subjects": ["MH01", "MH02", "MH05"],
+                "busy_slots": [{ "day": "Mon", "slot_id": "S1" }]
             },
             {
                 "lecturer_id": "GV02",
-                "lecturer_name": "Trần Thị Bình",
-                "subjects": [
-                    "M02",
-                    "M03",
-                    "M06"
-                ],
-                "busy_slots": [
-                    {
-                        "day": "Tue",
-                        "slot_id": "C2"
-                    },
-                    {
-                        "day": "Thu",
-                        "slot_id": "T1"
-                    }
-                ]
+                "lecturer_name": "Trần Thị B",
+                "subjects": ["MH03", "MH04", "MH06"],
+                "busy_slots": [{ "day": "Tue", "slot_id": "S2" }]
             },
             {
                 "lecturer_id": "GV03",
-                "lecturer_name": "Phạm Minh Châu",
-                "subjects": [
-                    "M01",
-                    "M02",
-                    "M06"
-                ],
-                "busy_slots": [
-                    {
-                        "day": "Mon",
-                        "slot_id": "S2"
-                    },
-                    {
-                        "day": "Fri",
-                        "slot_id": "T2"
-                    }
-                ]
+                "lecturer_name": "Lê Văn C",
+                "subjects": ["MH05", "MH06", "MH01"],
+                "busy_slots": [{ "day": "Fri", "slot_id": "T1" }]
             },
             {
                 "lecturer_id": "GV04",
-                "lecturer_name": "Lê Quốc Dũng",
-                "subjects": [
-                    "M03",
-                    "M04"
-                ],
-                "busy_slots": [
-                    {
-                        "day": "Tue",
-                        "slot_id": "S1"
-                    },
-                    {
-                        "day": "Thu",
-                        "slot_id": "S2"
-                    }
-                ]
+                "lecturer_name": "Phạm Văn D",
+                "subjects": ["MH03", "MH04"],
+                "busy_slots": []
             }
         ],
         "programs": [
             {
-                "program_id": "P01",
-                "duration": 15,
-                "subjects": [
+                "program_id": "CT01",
+                "program_name": "Chương trình Đào tạo CNTT",
+                "duration": 4,
+                "semesters": [
                     {
-                        "subject_id": "M01",
-                        "name": "Cấu trúc dữ liệu",
-                        "theory_hours": 30,
-                        "practice_hours": 15
+                        "semester_id": "HK1_CT01",
+                        "subject_ids": ["MH01", "MH02"]
                     },
                     {
-                        "subject_id": "M02",
-                        "name": "Thuật toán",
-                        "theory_hours": 30,
-                        "practice_hours": 15
+                        "semester_id": "HK2_CT01",
+                        "subject_ids": ["MH05", "MH06"]
                     }
                 ]
             },
             {
-                "program_id": "P02",
-                "duration": 12,
-                "subjects": [
+                "program_id": "CT02",
+                "program_name": "Chương trình Đào tạo Kinh tế",
+                "duration": 3,
+                "semesters": [
                     {
-                        "subject_id": "M03",
-                        "name": "Cơ sở dữ liệu",
-                        "theory_hours": 36,
-                        "practice_hours": 12
-                    },
-                    {
-                        "subject_id": "M04",
-                        "name": "Mạng máy tính",
-                        "theory_hours": 24,
-                        "practice_hours": 12
+                        "semester_id": "HK1_CT02",
+                        "subject_ids": ["MH03", "MH04"]
                     }
                 ]
+            }
+        ],
+        "semesters": [
+            {
+                "semester_id": "HK1_CT01",
+                "subject_ids": ["MH01", "MH02"],
+                "duration_weeks": 15
             },
             {
-                "program_id": "P03",
-                "duration": 16,
-                "subjects": [
-                    {
-                        "subject_id": "M05",
-                        "name": "Trí tuệ nhân tạo",
-                        "theory_hours": 40,
-                        "practice_hours": 0
-                    },
-                    {
-                        "subject_id": "M06",
-                        "name": "Phát triển phần mềm",
-                        "theory_hours": 30,
-                        "practice_hours": 20
-                    }
-                ]
+                "semester_id": "HK2_CT01",
+                "subject_ids": ["MH05", "MH06"],
+                "duration_weeks": 16
+            },
+            {
+                "semester_id": "HK1_CT02",
+                "subject_ids": ["MH03", "MH04"],
+                "duration_weeks": 15
+            }
+        ],
+        "subjects": [
+            {
+                "subject_id": "MH01",
+                "name": "Lập trình cơ bản",
+                "theory_hours": 30,
+                "practice_hours": 15
+            },
+            {
+                "subject_id": "MH02",
+                "name": "Cơ sở dữ liệu",
+                "theory_hours": 30,
+                "practice_hours": 15
+            },
+            {
+                "subject_id": "MH03",
+                "name": "Mạng máy tính",
+                "theory_hours": 30,
+                "practice_hours": 15
+            },
+            {
+                "subject_id": "MH04",
+                "name": "Thiết kế Web",
+                "theory_hours": 30,
+                "practice_hours": 15
+            },
+            {
+                "subject_id": "MH05",
+                "name": "Cấu trúc dữ liệu",
+                "theory_hours": 30,
+                "practice_hours": 15
+            },
+            {
+                "subject_id": "MH06",
+                "name": "Thuật toán",
+                "theory_hours": 30,
+                "practice_hours": 15
             }
         ],
         "time_slots": [
-            {
-                "slot_id": "S1",
-                "start": "07:00",
-                "end": "09:00",
-                "type": "morning"
-            },
-            {
-                "slot_id": "S2",
-                "start": "09:00",
-                "end": "11:00",
-                "type": "morning"
-            },
-            {
-                "slot_id": "C1",
-                "start": "13:00",
-                "end": "15:00",
-                "type": "afternoon"
-            },
-            {
-                "slot_id": "C2",
-                "start": "15:00",
-                "end": "17:00",
-                "type": "afternoon"
-            },
-            {
-                "slot_id": "T1",
-                "start": "17:30",
-                "end": "19:30",
-                "type": "evening"
-            },
-            {
-                "slot_id": "T2",
-                "start": "19:30",
-                "end": "21:30",
-                "type": "evening"
-            }
+            { "slot_id": "S1", "start": "07:00", "end": "09:00", "type": "morning" },
+            { "slot_id": "S2", "start": "09:00", "end": "11:00", "type": "morning" },
+            { "slot_id": "C1", "start": "13:00", "end": "15:00", "type": "afternoon" },
+            { "slot_id": "C2", "start": "15:00", "end": "17:00", "type": "afternoon" },
+            { "slot_id": "T1", "start": "17:30", "end": "19:30", "type": "evening" },
+            { "slot_id": "T2", "start": "19:30", "end": "21:30", "type": "evening" }
         ],
-        "days_of_week": [
-            "Mon",
-            "Tue",
-            "Wed",
-            "Thu",
-            "Fri",
-            "Sat"
-        ]
+        "days_of_week": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
     }
+
 
     const fetchRooms = async () => {
         try {
@@ -342,6 +243,29 @@ const Dashboard = () => {
             setRooms(response.data);
         } catch (error) {
             console.error("Error fetching rooms:", error);
+        }
+    };
+    const fetchSubjests = async () => {
+        try {
+            const response = await getAllSubjectsAPI();
+            if (!response) {
+                throw new Error("Không có dữ liệu môn học");
+            }
+            setSubjects(response.data);
+        } catch (error) {
+            console.error("Error fetching subjects:", error);
+        }
+    };
+    const fetchSemesters = async () => {
+        try {
+            const response = await getAllSemestersAPI();
+            if (!response) {
+                throw new Error("Không có dữ liệu học kỳ");
+            }
+
+            setSemesters(response.data);
+        } catch (error) {
+            console.error("Error fetching semesters:", error);
         }
     };
     const fetchPrograms = async () => {
@@ -383,6 +307,8 @@ const Dashboard = () => {
         fetchRooms();
         fetchPrograms();
         fetchLecturers();
+        fetchSubjests();
+        fetchSemesters();
         fetchClasses();
     }, []);
 
@@ -453,63 +379,88 @@ const Dashboard = () => {
     }, []); // Dependency array: đảm bảo lắng nghe lại khi socket thay đổi (thường không thay đổi)
 
     // Transform API data to required format
-    const transformDataToFormTest = (data) => {
-        const { rooms, programs, lecturers, classes } = data;
+    const transformDataToFormTest = (data, selections = null) => {
+        const { rooms, programs, lecturers, classes, subjects, semesters } = data;
 
-        console.log("Transforming data to form test structure:", { rooms, programs, lecturers, classes });
-        
+        console.log("Transforming data to form test structure:", { rooms, programs, lecturers, classes, subjects, semesters });
 
-        // Sử dụng optional chaining và nullish coalescing để code gọn hơn
-        if (!classes?.length || !rooms?.length || !lecturers?.length || !programs?.length) {
+        // If selections are provided, filter data based on selections
+        const filterData = (items, selectedIds, idField) => {
+            if (!selections || !selectedIds?.length) return items;
+            return items.filter(item => selectedIds.includes(item[idField]));
+        };
+
+        const filteredClasses = filterData(classes, selections?.classes, 'class_id');
+        const filteredRooms = filterData(rooms, selections?.rooms, 'room_id');
+        const filteredLecturers = filterData(lecturers, selections?.lecturers, 'lecturer_id');
+        const filteredPrograms = filterData(programs, selections?.programs, 'program_id');
+
+        // Use filtered data or all data if no selections
+        const classesToTransform = filteredClasses.length ? filteredClasses : classes;
+        const roomsToTransform = filteredRooms.length ? filteredRooms : rooms;
+        const lecturersToTransform = filteredLecturers.length ? filteredLecturers : lecturers;
+        const programsToTransform = filteredPrograms.length ? filteredPrograms : programs;
+
+        if (!classesToTransform?.length || !roomsToTransform?.length || !lecturersToTransform?.length || !programsToTransform?.length) {
             console.warn("Dữ liệu đầu vào không đầy đủ. Trả về cấu trúc rỗng.");
             return {
                 classes: [],
                 rooms: [],
                 lecturers: [],
                 programs: [],
+                semesters: [],
+                subjects: [],
                 time_slots: [],
                 days_of_week: []
             };
         }
 
-        const transformedClasses = classes.map(cls => ({
+        const transformedClasses = classesToTransform.map(cls => ({
             class_id: cls.class_id,
             size: cls.class_size,
-            program_id: cls.program_id ?? "CT001" // Sử dụng nullish coalescing (??)
+            program_id: cls.program_id ?? "CT001"
         }));
 
-        const transformedRooms = rooms.map(room => ({
+        const transformedRooms = roomsToTransform.map(room => ({
             room_id: room.room_id,
             type: room.type === "Lý thuyết" ? "theory" : "practice",
             capacity: room.capacity
         }));
 
-        const transformedLecturers = lecturers.map(lecturer => ({
+        const transformedLecturers = lecturersToTransform.map(lecturer => ({
             lecturer_id: lecturer.lecturer_id,
             lecturer_name: lecturer.name,
             subjects: lecturer.subjects?.map(subject => subject.subject_id) ?? [],
             busy_slots: lecturer.busy_slots ?? []
         }));
 
-        const transformedPrograms = programs.map(program => ({
+        const transformedPrograms = programsToTransform.map(program => ({
             program_id: program.program_id,
-            duration: parseInt(program.duration) || 0,
-            semesters: program.semesters?.map(semester => ({
-                semester_id: semester.semester_id,
-                subjects: semester.subjects?.map(subject => ({
-                    subject_id: subject.subject_id,
-                    name: subject.name,
-                    theory_hours: subject.theory_hours,
-                    practice_hours: subject.practice_hours
-                })) ?? []
-            })) ?? []
+            program_name: program.program_name,
+            duration: program.duration,
+            semesters: program.semesters ?? []
         }));
+
+        const transformedSemesters = semesters?.map(semester => ({
+            semester_id: semester.semester_id,
+            subject_ids: semester.subject_ids ?? [],
+            duration_weeks: semester.duration_weeks ?? 15
+        })) ?? [];
+
+        const transformedSubjects = subjects?.map(subject => ({
+            subject_id: subject.subject_id,
+            name: subject.name,
+            theory_hours: subject.theory_hours ?? 30,
+            practice_hours: subject.practice_hours ?? 15
+        })) ?? [];
 
         return {
             classes: transformedClasses,
             rooms: transformedRooms,
             lecturers: transformedLecturers,
             programs: transformedPrograms,
+            semesters: transformedSemesters,
+            subjects: transformedSubjects,
             time_slots: timeslot[0]?.time_slots ?? [],
             days_of_week: days_of_week[0]?.days_of_week ?? []
         };
@@ -517,13 +468,24 @@ const Dashboard = () => {
 
     // Update formTest when API data is loaded
     useEffect(() => {
-        const dataToTransform = { rooms, programs, lecturers, classes };
+        const dataToTransform = { rooms, programs, lecturers, classes, subjects, semesters };
         const transformed = transformDataToFormTest(dataToTransform);
 
         if (transformed) {
             setFormTest(transformed);
         }
-    }, [rooms, programs, lecturers, classes]);
+    }, [rooms, programs, lecturers, classes, subjects, semesters]);
+
+    // Function to update formTest with selected data from modal
+    const updateFormTestWithSelections = (selections) => {
+        const dataToTransform = { rooms, programs, lecturers, classes, subjects, semesters };
+        const transformed = transformDataToFormTest(dataToTransform, selections);
+
+        if (transformed) {
+            setFormTest(transformed);
+            console.log("FormTest updated with selections:", transformed);
+        }
+    };
 
     const handleGenerateTimetable = async () => {
         setStatusMessage('Đang gửi yêu cầu tạo thời khóa biểu...');
@@ -660,7 +622,8 @@ const Dashboard = () => {
                 value={progress}
                 message={statusMessage}
                 handleStopTimetableGeneration={handleStopTimetableGeneration}
-            />          {/* Quick Stats */}
+            />
+            {/* Quick Stats */}
             <QuickStats stats={stats} />
 
             {/* Main Content */}
@@ -678,9 +641,24 @@ const Dashboard = () => {
                     initialDate={new Date()}
                     scheduleItems={scheduleItems}
                     onItemMove={handleItemMove}
-                    onCreateNewSchedule={handleGenerateTimetable}
+                    onCreateNewSchedule={() => setCreateScheduleModalOpen(true)}
+                    programs={programs}
+                    rooms={rooms}
+                    lecturers={lecturers}
+                    classes={classes}
                 />
             </Box>
+
+            <CreateSchedulesAutoModal
+                open={createScheduleModalOpen}
+                onClose={() => setCreateScheduleModalOpen(false)}
+                programs={programs}
+                rooms={rooms}
+                lecturers={lecturers}
+                classes={classes}
+                onGenerate={handleGenerateTimetable}
+                onSelectionChange={updateFormTestWithSelections}
+            />
         </Box>
     );
 };

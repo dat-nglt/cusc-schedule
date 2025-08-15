@@ -21,6 +21,10 @@ export default {
         type: Sequelize.DATEONLY,
         allowNull: true
       },
+      duration_weeks: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+      },
       status: {
         type: Sequelize.STRING(30),
         allowNull: true

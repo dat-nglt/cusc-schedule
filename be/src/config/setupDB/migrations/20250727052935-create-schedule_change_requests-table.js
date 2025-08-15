@@ -11,7 +11,7 @@ export default {
         allowNull: false
       },
       class_schedule_id: {
-        type: Sequelize.STRING(30),
+        type: Sequelize.INTEGER,
         allowNull: false,
         references: {
           model: 'class_schedules',

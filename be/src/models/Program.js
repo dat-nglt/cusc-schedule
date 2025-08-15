@@ -46,7 +46,6 @@ const Program = (sequelize) => {
       createdAt: "created_at", // Đặt tên cột createdAt
       updatedAt: "updated_at", // Đặt tên cột updatedAt
       deletedAt: "deleted_at", // Thêm cột deleted_at để hỗ trợ soft delete
-      paranoid: true, // Bật chế độ soft delete
     }
   );
 

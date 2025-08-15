@@ -53,8 +53,21 @@ export const getAllLecturersController = async (req, res) => {
  * @access Private (admin, training_officer)
  */
 export const createLecturerController = async (req, res) => {
-  const { lecturer_id, email, name, ...restData } = req.body;
+  const { lecturerData, subjects = [], busySlots = [] } = req.body;
 
+  // Kiểm tra nếu lecturerData không tồn tại
+  if (!lecturerData) {
+    return APIResponse(
+      res,
+      400,
+      null,
+      "Dữ liệu giảng viên là bắt buộc."
+    );
+  }
+
+  const { lecturer_id, email, name } = lecturerData;
+
+  // Kiểm tra các trường bắt buộc
   if (!lecturer_id || !email || !name) {
     return APIResponse(
       res,
@@ -64,10 +77,8 @@ export const createLecturerController = async (req, res) => {
     );
   }
 
-  const lecturerData = { lecturer_id, email, name, ...restData };
-
   try {
-    const lecturer = await createLecturerService(lecturerData);
+    const lecturer = await createLecturerService(lecturerData, subjects, busySlots);
 
     return APIResponse(res, 201, lecturer, "Tạo giảng viên thành công.");
   } catch (error) {
