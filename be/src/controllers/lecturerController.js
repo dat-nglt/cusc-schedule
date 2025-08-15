@@ -53,7 +53,7 @@ export const getAllLecturersController = async (req, res) => {
  * @access Private (admin, training_officer)
  */
 export const createLecturerController = async (req, res) => {
-  const { lecturerData, subjects = [], busySlots = [] } = req.body;
+  const { lecturerData, subjects = [], busySlots = [], semesterBusySlots = [] } = req.body;
 
   // Kiểm tra nếu lecturerData không tồn tại
   if (!lecturerData) {
@@ -78,7 +78,7 @@ export const createLecturerController = async (req, res) => {
   }
 
   try {
-    const lecturer = await createLecturerService(lecturerData, subjects, busySlots);
+    const lecturer = await createLecturerService(lecturerData, subjects, busySlots, semesterBusySlots);
 
     return APIResponse(res, 201, lecturer, "Tạo giảng viên thành công.");
   } catch (error) {
