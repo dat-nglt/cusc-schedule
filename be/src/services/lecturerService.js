@@ -4,7 +4,7 @@ import ExcelUtils from "../utils/ExcelUtils.js";
 import { Op } from "sequelize";
 import logger from "../utils/logger.js";
 
-const { Lecturer, Account, sequelize, Subject, LecturerAssignment, BusySlot } = models;
+const { Lecturer, Account, sequelize, Subject, LecturerAssignment, BusySlot, SemesterBusySlot } = models;
 /**
  * Lấy tất cả giảng viên.
  * @returns {Promise<Array>} Danh sách tất cả giảng viên.
@@ -28,6 +28,11 @@ export const getAllLecturersService = async () => {
         model: BusySlot,
         as: 'busy_slots',
         attributes: ['day', 'slot_id']
+      },
+      {
+        model: SemesterBusySlot,
+        as: 'semester_busy_slots',
+        attributes: ['date', 'slot_id']
       }
       ]
     });
@@ -177,7 +182,7 @@ export const getLecturerByIdService = async (lecturerID) => {
 //   }
 // };
 
-export const createLecturerService = async (lecturerData, subjects = [], busySlots = []) => {
+export const createLecturerService = async (lecturerData, subjects = [], busySlots = [], semesterBusySlots = []) => {
   const transaction = await sequelize.transaction();
   try {
     const [existingLecturer, existingAccount] = await Promise.all([
@@ -256,6 +261,15 @@ export const createLecturerService = async (lecturerData, subjects = [], busySlo
 
       await BusySlot.bulkCreate(busySlotsData, { transaction });
     }
+    // --- 6. Gán semester busy slots cho giảng viên (nếu có)
+    if (semesterBusySlots && semesterBusySlots.length > 0) {
+      const semesterBusySlotsData = semesterBusySlots.map(slot => ({
+        lecturer_id: lecturer.lecturer_id,
+        date: slot.date,
+        slot_id: slot.slot_id
+      }));
+      await SemesterBusySlot.bulkCreate(semesterBusySlotsData, { transaction });
+    }
 
     // --- 5. Commit transaction
     await transaction.commit();
@@ -279,6 +293,11 @@ export const createLecturerService = async (lecturerData, subjects = [], busySlo
           as: "busy_slots",
           attributes: ["day", "slot_id"],
         },
+        {
+          model: SemesterBusySlot,
+          as: "semester_busy_slots",
+          attributes: ["date", "slot_id"],
+        }
       ],
     });
 
@@ -299,7 +318,7 @@ export const createLecturerService = async (lecturerData, subjects = [], busySlo
  * @returns {Promise<Object>} Giảng viên đã được cập nhật.
  * @throws {Error} Nếu không tìm thấy giảng viên hoặc có lỗi.
  */
-export const updateLecturerService = async (id, lecturerData, subjects, busySlots) => {
+export const updateLecturerService = async (id, lecturerData, subjects, busySlots, semesterBusySlots) => {
   const transaction = await sequelize.transaction();
 
   try {
@@ -392,6 +411,25 @@ export const updateLecturerService = async (id, lecturerData, subjects, busySlot
       }
     }
 
+    // 8. Cập nhật danh sách semester busy slots
+    if (semesterBusySlots !== undefined) {
+      // Xóa tất cả các busy slots cũ
+      await SemesterBusySlot.destroy({
+        where: { lecturer_id: id },
+        transaction,
+      });
+
+      // Thêm các busy slots mới
+      if (semesterBusySlots.length > 0) {
+        const semesterBusySlotsData = SemesterBusySlot.map((slot) => ({
+          lecturer_id: id,
+          date: slot.date,
+          slot_id: slot.slot_id,
+        }));
+        await BusySlot.bulkCreate(semesterBusySlotsData, { transaction });
+      }
+    }
+
     await transaction.commit();
 
     // 8. Trả về đối tượng giảng viên đã cập nhật hoàn chỉnh
@@ -413,6 +451,11 @@ export const updateLecturerService = async (id, lecturerData, subjects, busySlot
           as: "busy_slots",
           attributes: ["day", "slot_id"],
         },
+        {
+          model: SemesterBusySlot,
+          as: "semester_busy_slots",
+          attributes: ["date", "slot_id"],
+        }
       ],
     });
 
