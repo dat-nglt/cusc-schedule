@@ -28,6 +28,7 @@ import { toast } from 'react-toastify';
 import { getAllLecturersAPI, createLecturerAPI, updateLecturerAPI, deleteLecturerAPI } from '../../api/lecturerAPI';
 import { getAllSubjectsAPI } from '../../api/subjectAPI';
 import TablePaginationLayout from '../../components/layout/TablePaginationLayout';
+import * as XLSX from 'xlsx';
 
 const Lecturer = () => {
     const { isSmallScreen, isMediumScreen } = useResponsive();
@@ -258,6 +259,23 @@ const Lecturer = () => {
     // Tính toán dữ liệu hiển thị trên trang hiện tại
     const displayedLecturers = filteredLecturers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
+    // Export lecturers to Excel
+    const handleExportExcel = () => {
+        // Prepare data for export (filteredLecturers)
+        const data = filteredLecturers.map(l => ({
+            'Mã giảng viên': l.lecturer_id,
+            'Tên': l.name,
+            'Email': l.email,
+            'Số điện thoại': l.phone_number,
+            'Khoa/Bộ môn': l.department,
+            'Trạng thái': l.status,
+        }));
+        const worksheet = XLSX.utils.json_to_sheet(data);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Giảng viên');
+        XLSX.writeFile(workbook, 'danh_sach_giang_vien.xlsx');
+    };
+
     return (
         <Box sx={{ p: 1, zIndex: 10, height: 'calc(100vh - 64px)', overflowY: 'auto' }}>
             {/* Main Content */}
@@ -324,6 +342,13 @@ const Lecturer = () => {
                                     sx={{ ml: isSmallScreen ? 0 : 'auto' }}
                                 >
                                     Thêm giảng viên
+                                </Button>
+                                <Button
+                                    variant="outlined"
+                                    color="success"
+                                    onClick={handleExportExcel}
+                                >
+                                    Xuất Excel
                                 </Button>
                             </Box>
                         </Box>
