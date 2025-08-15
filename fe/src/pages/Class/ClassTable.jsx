@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   Table,
   TableBody,
@@ -11,6 +10,7 @@ import {
 import { Visibility, Edit, Delete } from '@mui/icons-material';
 
 const ClassTable = ({ displayedClasses, isSmallScreen, isMediumScreen, handleViewClass, handleEditClass, handleDeleteClass }) => {
+  console.log('Rendering ClassTable with displayedClasses:', displayedClasses);
   return (
     <Table
       sx={{
@@ -35,25 +35,25 @@ const ClassTable = ({ displayedClasses, isSmallScreen, isMediumScreen, handleVie
           </TableCell>
           {!isSmallScreen && isMediumScreen && (
             <>
-              <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '25%' }}>
+              <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '10%' }}>
                 Sĩ số
-              </TableCell>
-              <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '30%' }}>
-                Thời gian cập nhật
               </TableCell>
             </>
           )}
           {!isMediumScreen && (
             <>
-              <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '12.5%' }}>
+              <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '10%' }}>
                 Sĩ số
               </TableCell>
-              <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '12.5%' }}>
+              <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '10%' }}>
                 Tên khóa học
+              </TableCell>
+              <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '10%' }}>
+                Mã CT
               </TableCell>
             </>
           )}
-          <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', width: isSmallScreen ? '30%' : '10%' }}>
+          <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', width: isSmallScreen ? '30%' : '12.5%' }}>
             Thao tác
           </TableCell>
         </TableRow>
@@ -69,7 +69,7 @@ const ClassTable = ({ displayedClasses, isSmallScreen, isMediumScreen, handleVie
             }}
           >
             <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5, width: '10%' }}>
-              {classItem.stt}
+              {index + 1}
             </TableCell>
             {!isSmallScreen && (
               <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5, width: '15%' }}>
@@ -81,23 +81,23 @@ const ClassTable = ({ displayedClasses, isSmallScreen, isMediumScreen, handleVie
             </TableCell>
             {!isSmallScreen && isMediumScreen && (
               <>
-                <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5, width: '25%' }}>
+                <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5, width: '10%' }}>
                   {classItem.class_size || 'N/A'}
-                </TableCell>
-                <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5, width: '30%' }}>
-                  {classItem.updated_at}
                 </TableCell>
               </>
             )}
             {!isMediumScreen && (
               <>
-                <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5, width: '12.5%' }}>
+                <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5, width: '10%' }}>
                   {classItem.class_size || 'N/A'}
                 </TableCell>
                 <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5, width: '12.5%' }}>
                   {classItem.course ? classItem.course.course_name : 'N/A'}
                 </TableCell>
-              </>
+                <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5, width: '12.5%' }}>
+                  {classItem.program_id ? classItem.program_id : 'N/A'}
+                </TableCell>
+              </> 
             )}
             <TableCell sx={{ textAlign: 'center', py: 1.5, width: isSmallScreen ? '30%' : '10%' }}>
               <Tooltip title="Xem">

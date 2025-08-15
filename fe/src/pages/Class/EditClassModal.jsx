@@ -14,13 +14,14 @@ import {
   MenuItem,
 } from '@mui/material';
 
-const EditClassModal = ({ open, onClose, classItem, onSave }) => {
+const EditClassModal = ({ open, onClose, classItem, onSave, program_ids }) => {
   const [editedClass, setEditedClass] = useState({
     class_id: '',
     class_name: '',
     class_size: '',
     status: '',
     course_id: '',
+    program_id: '',
     created_at: '',
     updated_at: '',
   });
@@ -34,6 +35,7 @@ const EditClassModal = ({ open, onClose, classItem, onSave }) => {
         class_size: classItem.class_size || '',
         status: classItem.status || 'Hoạt động',
         course_id: classItem.course_id || '',
+        program_id: classItem.program_id || '',
         created_at: classItem.created_at || '',
         updated_at: new Date().toISOString().slice(0, 16).replace('T', ' '),
       });
@@ -50,7 +52,8 @@ const EditClassModal = ({ open, onClose, classItem, onSave }) => {
       !editedClass.class_id ||
       !editedClass.class_name ||
       !editedClass.class_size ||
-      !editedClass.course_id
+      !editedClass.course_id ||
+      !editedClass.program_id
     ) {
       alert('Vui lòng điền đầy đủ thông tin!');
       return;
@@ -128,6 +131,22 @@ const EditClassModal = ({ open, onClose, classItem, onSave }) => {
             >
               <MenuItem value="Hoạt động">Hoạt động</MenuItem>
               <MenuItem value="Ngừng hoạt động">Ngừng hoạt động</MenuItem>
+            </Select>
+          </FormControl>
+          <FormControl fullWidth variant="outlined" required>
+            <InputLabel id="program-label">Chương trình</InputLabel>
+            <Select
+              labelId="program-label"
+              name="program_id"
+              value={editedClass.program_id}
+              onChange={handleChange}
+              label="Chương trình"
+            >
+              {program_ids && program_ids.map((program) => (
+                <MenuItem key={program.program_id} value={program.program_id}>
+                  {program.program_id}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
           <TextField

@@ -84,6 +84,7 @@ const Class = () => {
           created_at: formatTimestamp(classItem.created_at),
           updated_at: formatTimestamp(classItem.updated_at),
           course: classItem.Course ? { course_name: classItem.Course.course_name } : null,
+          program_id: classItem.program_id || 'Không có dữ liệu',
         }));
       } else if (response && typeof response === 'object' && Array.isArray(response.data)) {
         classesData = response.data.map((classItem, index) => ({
@@ -96,6 +97,7 @@ const Class = () => {
           created_at: formatTimestamp(classItem.created_at),
           updated_at: formatTimestamp(classItem.updated_at),
           course: classItem.Course ? { course_name: classItem.Course.course_name } : null,
+          program_id: classItem.program_id || 'Không có dữ liệu',
         }));
       } else {
         throw new Error('Dữ liệu từ API không phải là mảng hợp lệ');
@@ -185,6 +187,7 @@ const Class = () => {
         created_at: formatTimestamp(classData.created_at),
         updated_at: formatTimestamp(classData.updated_at),
         course: classData.Course ? { course_name: classData.Course.course_name } : null,
+        program_id: classData.program_id || 'Không có dữ liệu',
       });
       setOpenDetail(true);
     } catch (err) {
@@ -426,6 +429,7 @@ const Class = () => {
           setSelectedClass(null);
         }}
         classItem={selectedClass}
+        program_ids={programs}
         onSave={handleSaveEditedClass}
       />
       <DeleteClassModal

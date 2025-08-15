@@ -178,7 +178,9 @@ export const getSemesterCreateScheduleService = async () => {
     const formattedSemesters = semesters.map(semester => ({
       semester_id: semester.semester_id,
       duration_weeks: semester.duration_weeks,
-      subject_ids: semester.subjects.map(subject => (subject.subject_id))
+      subject_ids: semester.subjects.map(subject => (subject.subject_id)),
+      start_date: semester.start_date ? semester.start_date.toISOString().split('T')[0] : null,
+      end_date: semester.end_date ? semester.end_date.toISOString().split('T')[0] : null
     }));
 
     return formattedSemesters;
