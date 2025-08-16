@@ -41,7 +41,7 @@ const navItems = [
     { text: 'Quản lý khóa học', icon: <ClassIcon />, path: '/courses' },
     { text: 'Quản lý lớp', icon: <GroupsIcon />, path: '/class' },
     { text: 'Quản lý phòng', icon: <RoomIcon />, path: '/room' },
-
+    { text: 'Quản lý thay đổi lịch học', icon: <AccessTimeIcon />, path: '/scheduleChangeRequests' },
 ];
 
 const drawerWidth = 350;
