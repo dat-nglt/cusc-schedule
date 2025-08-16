@@ -119,6 +119,22 @@ const Lecturer = (sequelize) => {
       foreignKey: "lecturer_id",
       as: "semester_busy_slots",
     });
+
+    // Quan hệ với ClassSchedule
+    if (models.ClassSchedule) {
+      LecturerModel.hasMany(models.ClassSchedule, {
+        foreignKey: "lecturer_id",
+        as: "classSchedules",
+      });
+    }
+
+    // Quan hệ với ScheduleChangeRequest
+    if (models.ScheduleChangeRequest) {
+      LecturerModel.hasMany(models.ScheduleChangeRequest, {
+        foreignKey: "lecturer_id",
+        as: "scheduleChangeRequests",
+      });
+    }
   };
 
   return LecturerModel;

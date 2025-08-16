@@ -356,3 +356,4 @@ export const getCurrentGaStatus = () => {
     progress: Math.round(currentProgress),
   };
 };
+
