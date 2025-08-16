@@ -45,9 +45,9 @@ import { processExcelDataSubject } from '../../utils/ExcelValidation';
 
 // Define status options with colors and icons, similar to semester modal
 const subjectStatusOptions = [
-    { value: 'Hoạt động', color: 'success', icon: <CheckCircle /> },
-    { value: 'Tạm dừng', color: 'warning', icon: <PauseCircleFilled /> }, // Assuming PauseCircleFilled is imported from your AddSemesterModal context
-    { value: 'Ngừng hoạt động', color: 'error', icon: <StopCircle /> } // Assuming StopCircle is imported from your AddSemesterModal context
+    { value: 'Hoạt động', color: 'success', icon: <CheckCircle />, db: 'active' },
+    { value: 'Tạm ngưng', color: 'warning', icon: <PauseCircleFilled />, db: 'suspended' },
+    { value: 'Ngưng hoạt động', color: 'error', icon: <StopCircle />, db: 'inactive' }
 ];
 
 const steps = ['Thông tin học phần', 'Chi tiết & Trạng thái'];
@@ -123,8 +123,13 @@ export default function AddSubjectModal({ open, onClose, onAddSubject, existingS
             return;
         }
 
+        // Chuyển trạng thái sang tiếng Anh trước khi lưu
+        const statusObj = subjectStatusOptions.find(opt => opt.value === newSubject.status);
+        const dbStatus = statusObj ? statusObj.db : 'active';
+
         const subjectToAdd = {
             ...newSubject,
+            status: dbStatus,
             credit: parseInt(newSubject.credit),
             theory_hours: parseInt(newSubject.theory_hours),
             practice_hours: parseInt(newSubject.practice_hours),

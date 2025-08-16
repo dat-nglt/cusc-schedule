@@ -16,6 +16,12 @@ import {
     CircularProgress,
 } from '@mui/material';
 
+const statusOptions = [
+    { value: 'Hoạt động', db: 'active' },
+    { value: 'Tạm ngưng', db: 'suspended' },
+    { value: 'Ngưng hoạt động', db: 'inactive' }
+];
+
 export default function EditSubjectModal({ open, onClose, subject, onSave, error, loading }) {
     const [editedSubject, setEditedSubject] = useState({
         subject_id: '',
@@ -28,13 +34,25 @@ export default function EditSubjectModal({ open, onClose, subject, onSave, error
 
     useEffect(() => {
         if (subject) {
+            // Chuyển trạng thái từ tiếng Anh sang tiếng Việt để hiển thị
+            let viStatus = 'Hoạt động';
+            const statusMap = {
+                active: 'Hoạt động',
+                inactive: 'Ngưng hoạt động',
+                suspended: 'Tạm ngưng'
+            };
+            if (subject.status && statusMap[subject.status]) {
+                viStatus = statusMap[subject.status];
+            } else if (subject.status && statusOptions.some(opt => opt.value === subject.status)) {
+                viStatus = subject.status;
+            }
             setEditedSubject({
                 subject_id: subject.subject_id || '',
                 subject_name: subject.subject_name || '',
                 credit: subject.credit || 0,
                 theory_hours: subject.theory_hours || 0,
                 practice_hours: subject.practice_hours || 0,
-                status: subject.status || 'Hoạt động',
+                status: viStatus,
             });
         }
     }, [subject]);
@@ -68,13 +86,17 @@ export default function EditSubjectModal({ open, onClose, subject, onSave, error
             return;
         }
 
+        // Chuyển trạng thái sang tiếng Anh trước khi lưu
+        const statusObj = statusOptions.find(opt => opt.value === editedSubject.status);
+        const dbStatus = statusObj ? statusObj.db : 'active';
+
         const updatedSubjectData = {
             subject_id: editedSubject.subject_id,
             subject_name: editedSubject.subject_name,
             credit: parseInt(editedSubject.credit),
             theory_hours: parseInt(editedSubject.theory_hours),
             practice_hours: parseInt(editedSubject.practice_hours),
-            status: editedSubject.status,
+            status: dbStatus,
             updated_at: new Date().toISOString(),
         };
 
@@ -155,9 +177,11 @@ export default function EditSubjectModal({ open, onClose, subject, onSave, error
                             onChange={handleChange}
                             label="Trạng thái"
                         >
-                            <MenuItem value="Hoạt động">Hoạt động</MenuItem>
-                            <MenuItem value="Tạm dừng">Tạm dừng</MenuItem>
-                            <MenuItem value="Ngừng hoạt động">Ngừng hoạt động</MenuItem>
+                            {statusOptions.map((option) => (
+                                <MenuItem key={option.value} value={option.value}>
+                                    {option.value}
+                                </MenuItem>
+                            ))}
                         </Select>
                     </FormControl>
                 </Box>

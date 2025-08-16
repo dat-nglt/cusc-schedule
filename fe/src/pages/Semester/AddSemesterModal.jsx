@@ -43,11 +43,9 @@ import PreviewSemesterModal from './PreviewSemesterModal';
 import { processExcelDataSemester } from '../../utils/ExcelValidation'; // Assuming this utility is correctly implemented
 
 const statusOptions = [
-    { value: 'Đang triển khai', color: 'info', icon: <PlayCircleFilled /> },
-    { value: 'Đang mở đăng ký', color: 'primary', icon: <AccessTime /> }, // Using AccessTime as a placeholder, choose a suitable icon
-    { value: 'Đang diễn ra', color: 'success', icon: <DoneAll /> },
-    { value: 'Tạm dừng', color: 'warning', icon: <PauseCircleFilled /> },
-    { value: 'Đã kết thúc', color: 'error', icon: <StopCircle /> }
+    { value: 'Hoạt động', color: 'info', icon: <PlayCircleFilled />, db: 'active' },
+    { value: 'Tạm ngưng', color: 'warning', icon: <PauseCircleFilled />, db: 'suspended' },
+    { value: 'Ngưng hoạt động', color: 'error', icon: <StopCircle />, db: 'inactive' }
 ];
 
 const steps = ['Thông tin cơ bản', 'Thời gian & Trạng thái'];
@@ -59,7 +57,7 @@ export default function AddSemesterModal({ open, onClose, onAddSemester, existin
         start_date: '',
         end_date: '',
         duration_weeks: '',
-        status: 'Đang triển khai',
+        status: 'Hoạt động',
         program_id: '',
     });
 
@@ -111,8 +109,13 @@ export default function AddSemesterModal({ open, onClose, onAddSemester, existin
             return;
         }
 
+        // Chuyển trạng thái sang tiếng Anh trước khi lưu
+        const statusObj = statusOptions.find(opt => opt.value === newSemester.status);
+        const dbStatus = statusObj ? statusObj.db : 'active';
+
         const semesterToAdd = {
             ...newSemester,
+            status: dbStatus,
             duration_weeks: durationWeeks,
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),

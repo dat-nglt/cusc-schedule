@@ -51,7 +51,7 @@ const Program = () => {
 
 
     // Danh sách trạng thái để lọc
-    const statuses = ['Đang triển khai', 'Đang áp dụng', 'Tạm dừng', 'Đã kết thúc'];
+    const statuses = ['Hoạt động', 'Tạm ngưng', 'Ngưng hoạt động'];
 
     const fetchPrograms = async () => {
         try {

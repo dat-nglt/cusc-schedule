@@ -8,6 +8,21 @@ import {
   Tooltip,
 } from '@mui/material';
 import { Visibility, Edit, Delete } from '@mui/icons-material';
+import { getStatusChip } from '../../components/ui/StatusChip';
+
+// Chuyển trạng thái từ tiếng Anh sang tiếng Việt
+const getVietnameseStatus = (status) => {
+  switch (status) {
+    case 'active':
+      return 'Hoạt động';
+    case 'inactive':
+      return 'Ngưng hoạt động';
+    case 'suspended':
+      return 'Tạm ngưng';
+    default:
+      return status;
+  }
+};
 
 const ClassTable = ({ displayedClasses, isSmallScreen, isMediumScreen, handleViewClass, handleEditClass, handleDeleteClass }) => {
   console.log('Rendering ClassTable with displayedClasses:', displayedClasses);
@@ -53,7 +68,10 @@ const ClassTable = ({ displayedClasses, isSmallScreen, isMediumScreen, handleVie
               </TableCell>
             </>
           )}
-          <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', width: isSmallScreen ? '30%' : '12.5%' }}>
+          <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: isSmallScreen ? '25%' : '12%' }}>
+            Trạng thái
+          </TableCell>
+          <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', width: isSmallScreen ? '30%' : '10%' }}>
             Thao tác
           </TableCell>
         </TableRow>
@@ -99,6 +117,10 @@ const ClassTable = ({ displayedClasses, isSmallScreen, isMediumScreen, handleVie
                 </TableCell>
               </> 
             )}
+            <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
+              {/* Hiển thị trạng thái với màu sắc */}
+              {getStatusChip(getVietnameseStatus(classItem.status))}
+            </TableCell>
             <TableCell sx={{ textAlign: 'center', py: 1.5, width: isSmallScreen ? '30%' : '10%' }}>
               <Tooltip title="Xem">
                 <Visibility

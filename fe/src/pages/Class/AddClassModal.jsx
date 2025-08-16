@@ -42,8 +42,9 @@ import * as XLSX from 'xlsx';
 import PreviewClassModal from './PreviewClassModal';
 
 const statusOptions = [
-  { value: 'Hoạt động', color: 'success', icon: <PlayCircleFilled /> },
-  { value: 'Ngừng hoạt động', color: 'error', icon: <PauseCircleFilled /> },
+  { value: 'Hoạt động', color: 'success', icon: <PlayCircleFilled />, db: 'active' },
+  { value: 'Tạm ngưng', color: 'warning', icon: <PauseCircleFilled />, db: 'suspended' },
+  { value: 'Ngưng hoạt động', color: 'error', icon: <PauseCircleFilled />, db: 'inactive' }
 ];
 
 const steps = ['Thông tin cơ bản', 'Khóa học và trạng thái'];
@@ -176,8 +177,13 @@ export default function AddClassModal({
       return;
     }
 
+    // Chuyển trạng thái sang tiếng Anh trước khi lưu
+    const statusObj = statusOptions.find(opt => opt.value === newClass.status);
+    const dbStatus = statusObj ? statusObj.db : 'active';
+
     const classToAdd = {
       ...newClass,
+      status: dbStatus,
       class_size: parseInt(newClass.class_size, 10),
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),

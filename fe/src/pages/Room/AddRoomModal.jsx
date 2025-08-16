@@ -50,8 +50,9 @@ const roomTypeOptions = [
 ];
 
 const roomStatusOptions = [
-  { value: 'Sẵn sàng', color: 'success', icon: <PlayCircleFilled /> },
-  { value: 'Bảo trì', color: 'error', icon: <PauseCircleFilled /> },
+  { value: 'Hoạt động', color: 'success', icon: <PlayCircleFilled />, db: 'active' },
+  { value: 'Tạm ngưng', color: 'warning', icon: <PauseCircleFilled />, db: 'suspended' },
+  { value: 'Ngưng hoạt động', color: 'error', icon: <PauseCircleFilled />, db: 'inactive' }
 ];
 
 const steps = ['Thông tin cơ bản', 'Thông tin bổ sung'];
@@ -63,7 +64,7 @@ const AddRoomModal = ({ open, onClose, onAddRoom, existingRooms, apiError, loadi
     location: '',
     capacity: '',
     type: '',
-    status: 'Sẵn sàng', // Default status
+    status: 'Hoạt động', // Default status
     note: '',
   });
 
@@ -130,8 +131,13 @@ const AddRoomModal = ({ open, onClose, onAddRoom, existingRooms, apiError, loadi
       return;
     }
 
+    // Chuyển trạng thái sang tiếng Anh trước khi lưu
+    const statusObj = roomStatusOptions.find(opt => opt.value === formData.status);
+    const dbStatus = statusObj ? statusObj.db : 'active';
+
     const roomToAdd = {
       ...formData,
+      status: dbStatus,
       capacity: parseInt(formData.capacity, 10),
       id: Date.now(), // Ensure a unique ID for new entries
       created_at: new Date().toISOString(),
@@ -161,7 +167,7 @@ const AddRoomModal = ({ open, onClose, onAddRoom, existingRooms, apiError, loadi
       location: '',
       capacity: '',
       type: '',
-      status: 'Sẵn sàng',
+      status: 'Hoạt động',
       note: '',
     });
     setActiveStep(0);

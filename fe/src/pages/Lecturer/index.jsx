@@ -49,7 +49,7 @@ const Lecturer = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
-    const statuses = ['Đang giảng dạy', 'Tạm nghỉ', 'Đã nghỉ việc', 'Nghỉ hưu'];
+    const statuses = ['Đang giảng dạy', 'Tạm nghỉ', 'Đã nghỉ việc'];
 
     const fetchLecturers = async () => {
         setLoading(true);

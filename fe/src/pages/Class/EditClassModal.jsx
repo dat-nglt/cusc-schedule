@@ -14,6 +14,12 @@ import {
   MenuItem,
 } from '@mui/material';
 
+const statusOptions = [
+  { value: 'Hoạt động', db: 'active' },
+  { value: 'Tạm ngưng', db: 'suspended' },
+  { value: 'Ngưng hoạt động', db: 'inactive' }
+];
+
 const EditClassModal = ({ open, onClose, classItem, onSave, program_ids }) => {
   const [editedClass, setEditedClass] = useState({
     class_id: '',
@@ -28,12 +34,23 @@ const EditClassModal = ({ open, onClose, classItem, onSave, program_ids }) => {
 
   useEffect(() => {
     if (classItem) {
-      console.log('Class data received:', classItem); // Debug giá trị ban đầu
+      // Chuyển trạng thái từ tiếng Anh sang tiếng Việt để hiển thị
+      let viStatus = 'Hoạt động';
+      const statusMap = {
+        active: 'Hoạt động',
+        inactive: 'Ngưng hoạt động',
+        suspended: 'Tạm ngưng'
+      };
+      if (classItem.status && statusMap[classItem.status]) {
+        viStatus = statusMap[classItem.status];
+      } else if (classItem.status && statusOptions.some(opt => opt.value === classItem.status)) {
+        viStatus = classItem.status;
+      }
       setEditedClass({
         class_id: classItem.class_id || '',
         class_name: classItem.class_name || '',
         class_size: classItem.class_size || '',
-        status: classItem.status || 'Hoạt động',
+        status: viStatus,
         course_id: classItem.course_id || '',
         program_id: classItem.program_id || '',
         created_at: classItem.created_at || '',
@@ -65,7 +82,17 @@ const EditClassModal = ({ open, onClose, classItem, onSave, program_ids }) => {
       return;
     }
 
-    onSave(editedClass);
+    // Chuyển trạng thái sang tiếng Anh trước khi lưu
+    const statusObj = statusOptions.find(opt => opt.value === editedClass.status);
+    const dbStatus = statusObj ? statusObj.db : 'active';
+
+    const updatedClass = {
+      ...editedClass,
+      status: dbStatus,
+      updated_at: new Date().toISOString().slice(0, 16).replace('T', ' '),
+    };
+
+    onSave(updatedClass);
     onClose();
   };
 
@@ -129,8 +156,11 @@ const EditClassModal = ({ open, onClose, classItem, onSave, program_ids }) => {
               onChange={handleChange}
               label="Trạng thái"
             >
-              <MenuItem value="Hoạt động">Hoạt động</MenuItem>
-              <MenuItem value="Ngừng hoạt động">Ngừng hoạt động</MenuItem>
+              {statusOptions.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.value}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
           <FormControl fullWidth variant="outlined" required>
