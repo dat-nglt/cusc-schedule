@@ -105,9 +105,9 @@ export default {
 
       // --- Dữ liệu cho Programs ---
       await queryInterface.bulkInsert("programs", [
-        { program_id: "CT001", program_name: "Công nghệ Phần mềm", training_duration: 180, description: "Chương trình đào tạo Công nghệ Phần mềm", status: "active", created_at: new Date(), updated_at: new Date() },
-        { program_id: "CT002", program_name: "Trí tuệ nhân tạo", training_duration: 180, description: "Chương trình đào tạo Trí tuệ nhân tạo", status: "active", created_at: new Date(), updated_at: new Date() },
-        { program_id: "CT003", program_name: "Công nghệ thông tin", training_duration: 180, description: "Chương trình đào tạo Công nghệ thông tin", status: "active", created_at: new Date(), updated_at: new Date() },
+        { program_id: "CT001", program_name: "Công nghệ Phần mềm", duration: 15, description: "Chương trình đào tạo Công nghệ Phần mềm", status: "active", created_at: new Date(), updated_at: new Date() },
+        { program_id: "CT002", program_name: "Trí tuệ nhân tạo", duration: 15, description: "Chương trình đào tạo Trí tuệ nhân tạo", status: "active", created_at: new Date(), updated_at: new Date() },
+        { program_id: "CT003", program_name: "Công nghệ thông tin", duration: 15, description: "Chương trình đào tạo Công nghệ thông tin", status: "active", created_at: new Date(), updated_at: new Date() },
       ], { transaction });
 
       // --- Dữ liệu cho Courses (Bảng cha của Classes) ---
