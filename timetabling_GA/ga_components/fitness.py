@@ -1,11 +1,13 @@
 # timetable_ga/ga_components/fitness.py
+
 from collections import defaultdict
 from config import (
     PENALTY_LECTURER_CLASH, PENALTY_ROOM_CLASH, PENALTY_CLASS_CLASH,
     PENALTY_ROOM_TYPE_MISMATCH, PENALTY_ROOM_CAPACITY, PENALTY_LECTURER_BUSY,
     PENALTY_LECTURER_UNQUALIFIED, PENALTY_CONSECUTIVE_HOURS_LECTURER, 
     PENALTY_CONSECUTIVE_HOURS_CLASS, PENALTY_UNASSIGNED_GEN,
-    MAX_CONSECUTIVE_SLOTS, PENALTY_DISTRIBUTION_DAYS, PENALTY_GAPS_IN_SCHEDULE
+    MAX_CONSECUTIVE_SLOTS, PENALTY_DISTRIBUTION_DAYS, PENALTY_GAPS_IN_SCHEDULE,
+    PENALTY_WEEKEND_CLASH # Thêm hằng số phạt mới từ config
 )
 from datetime import datetime
 
@@ -16,7 +18,6 @@ class FitnessCalculator:
 
     def calculate_fitness(self, chromosome):
         penalty = 0
-        # Tạo một dictionary để lưu chi tiết các vi phạm
         violations = defaultdict(int)
         scheduled_events = chromosome.genes
 
@@ -29,12 +30,19 @@ class FitnessCalculator:
             lecturer_id, room_id, class_id = gene.get('lecturer_id'), gene.get('room_id'), gene.get('class_id')
             subject_id, lesson_type = gene.get('subject_id'), gene.get('lesson_type')
             
+            # --- RÀNG BUỘC CỨNG MỚI: KIỂM TRA NGÀY CHỦ NHẬT ---
+            # Giả sử `gene['day']` có giá trị là "Chủ nhật" hoặc "Sunday"
+            if day == 'Sun':
+                penalty += PENALTY_WEEKEND_CLASH
+                violations['Lịch rơi vào Chủ nhật'] += 1
+            # ----------------------------------------------------
+
             if not all([day, slot_id, lecturer_id, room_id, class_id, subject_id, lesson_type]):
                 penalty += PENALTY_UNASSIGNED_GEN
                 violations['Buổi học chưa được xếp'] += 1
                 continue
 
-            # Kiểm tra các ràng buộc cứng
+            # Kiểm tra các ràng buộc cứng hiện có
             if lecturer_id in slot_occupancy[day][slot_id]['lecturers']:
                 penalty += PENALTY_LECTURER_CLASH
                 violations['Giảng viên bị trùng lịch'] += 1
@@ -73,7 +81,7 @@ class FitnessCalculator:
             lecturer_slots_per_day[lecturer_id][day].append(slot_id)
             class_slots_per_day[class_id][day].append(slot_id)
 
-
+        # ... (Phần tính penalty cho các ràng buộc mềm như giờ học liên tiếp, khoảng trống, phân bổ ngày giữ nguyên)
         def _calculate_consecutive_penalty_generic(day_schedule, max_consecutive, penalty_value):
             p = 0
             for entity_id, schedule in day_schedule.items():
@@ -88,7 +96,6 @@ class FitnessCalculator:
                             else:
                                 if consecutive_count > max_consecutive:
                                     p += penalty_value * (consecutive_count - max_consecutive)
-                                    # Ghi nhận vi phạm
                                     if 'class' in day_schedule:
                                         violations['Lớp học quá nhiều giờ liên tiếp'] += consecutive_count - max_consecutive
                                     elif 'lecturer' in day_schedule:
@@ -96,13 +103,12 @@ class FitnessCalculator:
                                 consecutive_count = 1
                         if consecutive_count > max_consecutive:
                             p += penalty_value * (consecutive_count - max_consecutive)
-                            # Ghi nhận vi phạm
                             if 'class' in day_schedule:
                                 violations['Lớp học quá nhiều giờ liên tiếp'] += consecutive_count - max_consecutive
                             elif 'lecturer' in day_schedule:
                                 violations['Giảng viên dạy quá nhiều giờ liên tiếp'] += consecutive_count - max_consecutive
             return p
-            
+        
         penalty += _calculate_consecutive_penalty_generic({"class": class_slots_per_day}, MAX_CONSECUTIVE_SLOTS, PENALTY_CONSECUTIVE_HOURS_CLASS)
         penalty += _calculate_consecutive_penalty_generic({"lecturer": lecturer_slots_per_day}, MAX_CONSECUTIVE_SLOTS, PENALTY_CONSECUTIVE_HOURS_LECTURER)
 
@@ -114,7 +120,6 @@ class FitnessCalculator:
                     variance = sum([(c - avg_lessons)**2 for c in day_counts]) / len(day_counts)
                     penalty += PENALTY_DISTRIBUTION_DAYS * variance
                     violations['Phân bổ buổi học không đều'] += PENALTY_DISTRIBUTION_DAYS * variance
-
 
         for class_id, date_schedule in lecturer_slots_per_day.items():
             for date, slots in date_schedule.items():
@@ -130,6 +135,4 @@ class FitnessCalculator:
                     violations['Khoảng trống trong lịch giảng'] += PENALTY_GAPS_IN_SCHEDULE * gaps
 
         chromosome.fitness = -penalty
-        
-        # Trả về cả fitness và dictionary vi phạm
         return chromosome.fitness, violations
