@@ -64,10 +64,9 @@ const availableDegrees = [
 ];
 
 const statusOptions = [
-    { value: 'Đang giảng dạy', color: 'success' },
-    { value: 'Tạm nghỉ', color: 'warning' },
-    { value: 'Đã nghỉ việc', color: 'error' },
-    { value: 'Nghỉ hưu', color: 'info' }
+    { value: 'Đang giảng dạy', color: 'success', db: 'teaching' },
+    { value: 'Tạm nghỉ', color: 'warning', db: 'break' },
+    { value: 'Nghỉ việc', color: 'error', db: 'resigned' },
 ];
 
 const steps = ['Thông tin cá nhân', 'Thông tin liên hệ', 'Thông tin công tác', 'Lịch bận'];
@@ -193,8 +192,13 @@ const AddLecturerModal = ({ open, onClose, onAddLecturer, existingLecturers, err
             return;
         }
 
+        // Chuyển trạng thái sang tiếng Anh trước khi lưu
+        const statusObj = statusOptions.find(opt => opt.value === newLecturer.status);
+        const dbStatus = statusObj ? statusObj.db : 'teaching';
+
         const lecturerToAdd = {
             ...newLecturer,
+            status: dbStatus,
             google_id: null,
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),

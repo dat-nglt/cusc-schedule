@@ -44,10 +44,11 @@ import PreviewStudentModal from './PreviewStudentModal';
 import { processExcelDataStudent } from '../../utils/ExcelValidation';
 
 const statusOptions = [
-    { value: 'Đang học', color: 'success' },
-    { value: 'Đã nghỉ học', color: 'error' },
-    { value: 'Đã tốt nghiệp', color: 'info' },
-    { value: 'Bảo lưu', color: 'warning' }
+    { value: 'Đang học', color: 'success', db: 'studying' },
+    { value: 'Tạm nghỉ', color: 'warning', db: 'break' },
+    { value: 'Đã nghỉ học', color: 'error', db: 'dropped' },
+    { value: 'Đã tốt nghiệp', color: 'info', db: 'graduated' },
+    { value: 'Bảo lưu', color: 'warning', db: 'reserve' }
 ];
 
 const steps = ['Thông tin cá nhân', 'Thông tin liên hệ', 'Thông tin học tập'];
@@ -170,8 +171,13 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
             return;
         }
 
+        // Chuyển trạng thái sang tiếng Anh trước khi lưu
+        const statusObj = statusOptions.find(opt => opt.value === newStudent.status);
+        const dbStatus = statusObj ? statusObj.db : 'studying';
+
         const studentToAdd = {
             ...newStudent,
+            status: dbStatus,
             google_id: null,
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),

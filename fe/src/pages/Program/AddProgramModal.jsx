@@ -42,10 +42,9 @@ import PreviewProgramModal from './PreviewProgramModal';
 import { processExcelDataProgram } from '../../utils/ExcelValidation';
 
 const statusOptions = [
-    { value: 'Đang triển khai', color: 'info', icon: <PlayCircleFilled /> },
-    { value: 'Đang áp dụng', color: 'success', icon: <DoneAll /> },
-    { value: 'Tạm dừng', color: 'warning', icon: <PauseCircleFilled /> },
-    { value: 'Đã kết thúc', color: 'error', icon: <StopCircle /> }
+    { value: 'Hoạt động', color: 'info', icon: <PlayCircleFilled />, db: 'active' },
+    { value: 'Tạm ngưng', color: 'warning', icon: <PauseCircleFilled />, db: 'suspended' },
+    { value: 'Ngưng hoạt động', color: 'error', icon: <StopCircle />, db: 'inactive' }
 ];
 
 
@@ -65,7 +64,7 @@ export default function AddProgramModal({
         program_id: '',
         program_name: '',
         duration: '',
-        status: 'Đang triển khai',
+        status: 'Hoạt động',
     });
 
     const [activeStep, setActiveStep] = useState(0);
@@ -110,8 +109,13 @@ export default function AddProgramModal({
             return;
         }
 
+        // Chuyển trạng thái sang tiếng Anh trước khi lưu
+        const statusObj = statusOptions.find(opt => opt.value === newProgram.status);
+        const dbStatus = statusObj ? statusObj.db : 'active';
+
         const programToAdd = {
             ...newProgram,
+            status: dbStatus,
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
         };
@@ -129,7 +133,7 @@ export default function AddProgramModal({
             program_id: '',
             program_name: '',
             duration: '',
-            status: 'Đang triển khai',
+            status: 'Hoạt động',
         });
         setActiveStep(0);
         setLocalError('');

@@ -35,8 +35,8 @@ const breakTypes = [
 ];
 
 const statusOptions = [
-  { value: 'active', label: 'Hoạt động', color: 'success' },
-  { value: 'inactive', label: 'Ngừng hoạt động', color: 'error' }
+  { value: 'Hoạt động', label: 'Hoạt động', color: 'success', db: 'active' },
+  { value: 'Ngưng hoạt động', label: 'Ngừng hoạt động', color: 'error', db: 'inactive' }
 ];
 
 export default function EditBreakScheduleModal({ open, onClose, breakSchedule, onSave }) {
@@ -52,12 +52,23 @@ export default function EditBreakScheduleModal({ open, onClose, breakSchedule, o
 
   useEffect(() => {
     if (breakSchedule) {
+      // Chuyển trạng thái từ tiếng Anh sang tiếng Việt để hiển thị
+      let viStatus = 'Hoạt động';
+      const statusMap = {
+        active: 'Hoạt động',
+        inactive: 'Ngừng hoạt động'
+      };
+      if (breakSchedule.status && statusMap[breakSchedule.status]) {
+        viStatus = statusMap[breakSchedule.status];
+      } else if (breakSchedule.status && statusOptions.some(opt => opt.value === breakSchedule.status)) {
+        viStatus = breakSchedule.status;
+      }
       setEditedBreakSchedule({
         break_id: breakSchedule.break_id || '',
         break_type: breakSchedule.break_type || '',
         break_start_date: breakSchedule.break_start_date?.split('T')[0] || '',
         break_end_date: breakSchedule.break_end_date?.split('T')[0] || '',
-        status: breakSchedule.status || 'inactive',
+        status: viStatus,
         created_at: breakSchedule.created_at || '',
         updated_at: new Date().toISOString()
       });
@@ -83,8 +94,13 @@ export default function EditBreakScheduleModal({ open, onClose, breakSchedule, o
       return;
     }
 
+    // Chuyển trạng thái sang tiếng Anh trước khi lưu
+    const statusObj = statusOptions.find(opt => opt.value === editedBreakSchedule.status);
+    const dbStatus = statusObj ? statusObj.db : 'active';
+
     const updatedData = {
       ...editedBreakSchedule,
+      status: dbStatus,
       updated_at: new Date().toISOString()
     };
 

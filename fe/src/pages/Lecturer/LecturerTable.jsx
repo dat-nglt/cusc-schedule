@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import {
     Table,
@@ -14,6 +13,20 @@ import {
 } from '@mui/material';
 import { Visibility, Edit, Delete, Menu as MenuIcon } from '@mui/icons-material';
 import { getStatusChip } from '../../components/ui/StatusChip';
+
+// Chuyển trạng thái từ tiếng Anh sang tiếng Việt
+const getVietnameseStatus = (status) => {
+    switch (status) {
+        case 'teaching':
+            return 'Đang giảng dạy';
+        case 'break':
+            return 'Tạm nghỉ';
+        case 'resigned':
+            return 'Nghỉ việc';
+        default:
+            return status;
+    }
+};
 
 export default function LecturerTable({ displayedLecturers, isSmallScreen, isMediumScreen, handleViewLecturer, handleEditLecturer, handleDeleteLecturer }) {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -118,7 +131,8 @@ export default function LecturerTable({ displayedLecturers, isSmallScreen, isMed
                             </TableCell>
                         )}
                         <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                            {getStatusChip(lecturer.status)}
+                            {/* Sử dụng getStatusChip để hiển thị màu trạng thái */}
+                            {getStatusChip(getVietnameseStatus(lecturer.status))}
                         </TableCell>
                         <TableCell sx={{ textAlign: 'center', py: 1.5 }}>
                             {isSmallScreen ? (

@@ -60,10 +60,9 @@ const availableDegrees = [
 ];
 
 const statusOptions = [
-    { value: 'Đang giảng dạy', color: 'success' },
-    { value: 'Tạm nghỉ', color: 'warning' },
-    { value: 'Đã nghỉ việc', color: 'error' },
-    { value: 'Nghỉ hưu', color: 'info' }
+    { value: 'Đang giảng dạy', color: 'success', db: 'teaching' },
+    { value: 'Tạm nghỉ', color: 'warning', db: 'break' },
+    { value: 'Nghỉ việc', color: 'error', db: 'resigned' },
 ];
 
 const steps = ['Thông tin cá nhân', 'Thông tin liên hệ', 'Thông tin công tác', 'Lịch bận'];
@@ -91,6 +90,19 @@ export default function EditLecturerModal({ open, onClose, lecturer, onSave, err
 
     useEffect(() => {
         if (lecturer) {
+            // Chuyển trạng thái từ tiếng Anh sang tiếng Việt để hiển thị
+            let viStatus = 'Đang giảng dạy';
+            const statusMap = {
+                teaching: 'Đang giảng dạy',
+                break: 'Tạm nghỉ',
+                resigned: 'Đã nghỉ việc',
+                retired: 'Nghỉ hưu'
+            };
+            if (lecturer.status && statusMap[lecturer.status]) {
+                viStatus = statusMap[lecturer.status];
+            } else if (lecturer.status && statusOptions.some(opt => opt.value === lecturer.status)) {
+                viStatus = lecturer.status;
+            }
             setEditedLecturer({
                 lecturer_id: lecturer.lecturer_id || '',
                 name: lecturer.name || '',
@@ -103,7 +115,7 @@ export default function EditLecturerModal({ open, onClose, lecturer, onSave, err
                 hire_date: lecturer.hire_date || '',
                 degree: lecturer.degree || '',
                 subjects: lecturer.subjects?.map(s => s.subject_id) || [],
-                status: lecturer.status || 'Đang giảng dạy',
+                status: viStatus,
             });
             setBusySlots(lecturer.busy_slots || []);
             setSemesterBusySlots(lecturer.semester_busy_slots || []);
@@ -213,8 +225,13 @@ export default function EditLecturerModal({ open, onClose, lecturer, onSave, err
             return;
         }
 
+        // Chuyển trạng thái sang tiếng Anh trước khi lưu
+        const statusObj = statusOptions.find(opt => opt.value === editedLecturer.status);
+        const dbStatus = statusObj ? statusObj.db : 'teaching';
+
         const updatedLecturerData = {
             ...editedLecturer,
+            status: dbStatus,
             updated_at: new Date().toISOString(),
         };
 
