@@ -100,6 +100,12 @@ export default {
         type: Sequelize.DATE,
         defaultValue: Sequelize.NOW,
         allowNull: false
+      },
+      // Soft delete
+      deleted_at: {
+        type: Sequelize.DATE,
+        allowNull: true,
+        comment: 'Soft delete timestamp'
       }
     });
 

@@ -12,7 +12,7 @@ export default {
       // --- Dữ liệu cho các vai trò người dùng (Bảng cha đầu tiên) ---
       const users = {
         admin: [
-          { name: "Nguyễn Lê Tấn Đạt", email: "nguyenletandat.contact@gmail.com", type: "Super Admin" },
+          { name: "Nguyễn Lê Tấn Đạt", email: "ptvu2100761@student.ctuet.edu.vn", type: "Super Admin" },
         ],
         training_officer: [
           { name: "Phạm Thị D (Cán bộ ĐT)", email: "dhchuong@student.ctuet.edu.vn", department: "Phòng Đào tạo", position: "Trưởng phòng" },
