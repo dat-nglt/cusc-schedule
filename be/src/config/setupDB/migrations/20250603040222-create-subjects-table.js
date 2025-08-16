@@ -10,7 +10,7 @@ export default {
         allowNull: false
       },
       subject_name: {
-        type: Sequelize.STRING(50),
+        type: Sequelize.STRING(200),
         allowNull: true
       },
       credit: {

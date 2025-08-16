@@ -48,10 +48,6 @@ const statusOptions = [
     { value: 'Đã kết thúc', color: 'error', icon: <StopCircle /> }
 ];
 
-const trainingDurations = [1, 2, 3, 4].map(year => ({
-    value: year,
-    label: `${year} Năm`
-}));
 
 const steps = ['Thông tin cơ bản', 'Thông tin bổ sung'];
 
@@ -68,7 +64,7 @@ export default function AddProgramModal({
     const [newProgram, setNewProgram] = useState({
         program_id: '',
         program_name: '',
-        training_duration: '',
+        duration: '',
         status: 'Đang triển khai',
     });
 
@@ -101,7 +97,7 @@ export default function AddProgramModal({
     };
 
     const handleSubmit = async () => {
-        if (!newProgram.training_duration) {
+        if (!newProgram.duration) {
             setLocalError('Vui lòng điền đầy đủ thông tin bổ sung');
             return;
         }
@@ -132,7 +128,7 @@ export default function AddProgramModal({
         setNewProgram({
             program_id: '',
             program_name: '',
-            training_duration: '',
+            duration: '',
             status: 'Đang triển khai',
         });
         setActiveStep(0);
@@ -350,27 +346,24 @@ export default function AddProgramModal({
                                 gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
                                 gap: 3
                             }}>
-                                <FormControl fullWidth required>
-                                    <InputLabel>Thời gian đào tạo</InputLabel>
-                                    <Select
-                                        name="training_duration"
-                                        value={newProgram.training_duration}
-                                        onChange={handleChange}
-                                        label="Thời gian đào tạo"
-                                        disabled={loading}
-                                        startAdornment={
+                                <TextField
+                                    label="Thời gian đào tạo"
+                                    name="duration"
+                                    value={newProgram.duration}
+                                    onChange={handleChange}
+                                    fullWidth
+                                    variant="outlined"
+                                    required
+                                    disabled={loading}
+                                    InputProps={{
+                                        startAdornment: (
                                             <InputAdornment position="start">
                                                 <Schedule color="action" />
                                             </InputAdornment>
-                                        }
-                                    >
-                                        {trainingDurations.map((duration) => (
-                                            <MenuItem key={duration.value} value={duration.value}>
-                                                {duration.label}
-                                            </MenuItem>
-                                        ))}
-                                    </Select>
-                                </FormControl>
+                                        ),
+                                    }}
+                                    placeholder="Số tuần trong 1 học kỳ (VD: 15 tuần/1 học kỳ)"
+                                />
                                 <FormControl fullWidth required>
                                     <InputLabel>Trạng thái</InputLabel>
                                     <Select

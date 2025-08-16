@@ -56,6 +56,8 @@ export default function AddSemesterModal({ open, onClose, onAddSemester, existin
     const [newSemester, setNewSemester] = useState({
         semester_id: '',
         semester_name: '',
+        start_date: '',
+        end_date: '',
         duration_weeks: '',
         status: 'Đang triển khai',
         program_id: '',
@@ -90,8 +92,8 @@ export default function AddSemesterModal({ open, onClose, onAddSemester, existin
     };
 
     const handleSubmit = async () => {
-        if (!newSemester.duration_weeks) {
-            setLocalError('Vui lòng điền thời lượng học kỳ.');
+        if (!newSemester.duration_weeks || !newSemester.start_date || !newSemester.end_date) {
+            setLocalError('Vui lòng điền đầy đủ thông tin thời gian và trạng thái.');
             return;
         }
 
@@ -368,6 +370,50 @@ export default function AddSemesterModal({ open, onClose, onAddSemester, existin
                                 gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
                                 gap: 3
                             }}>
+                                <TextField
+                                    label="Ngày bắt đầu"
+                                    name="start_date"
+                                    type="date"
+                                    value={newSemester.start_date}
+                                    onChange={handleChange}
+                                    fullWidth
+                                    variant="outlined"
+                                    required
+                                    disabled={loading}
+                                    InputLabelProps={{
+                                        shrink: true,
+                                    }}
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <CalendarToday color="action" />
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                    sx={{ mb: 2 }}
+                                />
+                                <TextField
+                                    label="Ngày kết thúc"
+                                    name="end_date"
+                                    type="date"
+                                    value={newSemester.end_date}
+                                    onChange={handleChange}
+                                    fullWidth
+                                    variant="outlined"
+                                    required
+                                    disabled={loading}
+                                    InputLabelProps={{
+                                        shrink: true,
+                                    }}
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <CalendarToday color="action" />
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                    sx={{ mb: 2 }}
+                                />
                                 <TextField
                                     label="Thời lượng học kỳ (tuần)"
                                     name="duration_weeks"

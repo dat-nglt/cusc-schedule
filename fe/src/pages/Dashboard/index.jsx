@@ -256,6 +256,8 @@ const Dashboard = () => {
             console.error("Error fetching subjects:", error);
         }
     };
+    console.log("semester:", semesters);
+
     const fetchSemesters = async () => {
         try {
             const response = await getSemesterCreateScheduleAPI();

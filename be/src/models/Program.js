@@ -17,17 +17,9 @@ const Program = (sequelize) => {
         allowNull: true,
       },
       // Thời lượng đào tạo (VD: 3 năm, 4 năm,...)
-      training_duration: {
-        // Thiết kế hiện tại
-        // type: DataTypes.STRING(50),
-        // allowNull: true,
-
-        // Thiết kế do Đạt suy luận lại
+      duration: {
         type: DataTypes.INTEGER,
         allowNull: true,
-        validate: {
-          min: 1, // Đảm bảo thời lượng luôn lớn hơn 0
-        },
       },
       // Mô tả chi tiết chương trình
       description: {

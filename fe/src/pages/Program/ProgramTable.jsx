@@ -90,7 +90,7 @@ export default function ProgramTable({ displayedPrograms, isSmallScreen, isMediu
                         {!isMediumScreen && (
                             <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
                                 <Chip
-                                    label={program.training_duration + ' năm'}
+                                    label={program.duration + 'T/1HK'}
                                     size="small"
                                     sx={{
                                         bgcolor: '#e3f2fd',

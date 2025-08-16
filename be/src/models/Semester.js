@@ -23,7 +23,15 @@ const Semester = (sequelize) => {
         allowNull: true,
       },
       // Ngày bắt đầu của
-
+      start_date: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
+      // Ngày kết thúc của học kỳ
+      end_date: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
       // Trạng thái học kỳ (VD: đang học, đã kết thúc,...)
       status: {
         type: DataTypes.STRING(30),
