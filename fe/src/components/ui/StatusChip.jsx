@@ -11,7 +11,10 @@ export const getStatusChip = (status) => {
         'Đang giảng dạy': { color: '#2196f3', bgcolor: '#e3f2fd' },
         'Đang học': { color: '#4caf50', bgcolor: '#e8f5e8' },
         'Tốt nghiệp': { color: '#2196f3', bgcolor: '#e3f2fd' },
-        'Bảo lưu': { color: '#9c27b0', bgcolor: '#f3e5f5' }
+        'Bảo lưu': { color: '#9c27b0', bgcolor: '#f3e5f5' },
+        'Chờ duyệt': { color: '#ff9800', bgcolor: '#fff3e0' },
+        'Đã duyệt': { color: '#4caf50', bgcolor: '#e8f5e8' },
+        'Đã từ chối': { color: '#f44336', bgcolor: '#ffebee' },
     };
     const style = statusColors[status] || { color: '#757575', bgcolor: '#f5f5f5' };
 

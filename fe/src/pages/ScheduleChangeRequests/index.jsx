@@ -11,6 +11,13 @@ import {
     InputLabel,
     InputAdornment,
     useTheme,
+    Alert,
+    CircularProgress,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    Button,
 } from '@mui/material';
 import {
     Search as SearchIcon,
@@ -18,6 +25,7 @@ import {
 import useResponsive from '../../hooks/useResponsive';
 import ScheduleChangeRequestTable from './ScheduleChangeRequestTable';
 import TablePaginationLayout from '../../components/layout/TablePaginationLayout';
+import { getAllScheduleChangeRequestsAPI, approveScheduleChangeRequestAPI, rejectScheduleChangeRequestAPI } from '../../api/schedulechangerequestAPI';
 
 const ScheduleChangeRequests = () => {
     const { isSmallScreen, isMediumScreen } = useResponsive();
@@ -34,68 +42,28 @@ const ScheduleChangeRequests = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
+    // State cho dialog từ chối
+    const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
+    const [selectedRequestId, setSelectedRequestId] = useState(null);
+    const [rejectionReason, setRejectionReason] = useState('');
+
+    // Hàm lấy dữ liệu yêu cầu thay đổi lịch
+    const fetchScheduleChangeRequests = async () => {
+        setLoading(true);
+        setError('');
+        try {
+            const response = await getAllScheduleChangeRequestsAPI();
+            setRequests(response.data);
+        } catch (err) {
+            console.error("Error fetching schedule change requests:", err);
+            setError('Không thể tải dữ liệu yêu cầu thay đổi lịch. Vui lòng thử lại sau.');
+        } finally {
+            setLoading(false);
+        }
+    };
     // Dữ liệu mẫu cho yêu cầu thay đổi lịch
     useEffect(() => {
-        const sampleData = [
-            {
-                request_id: 1,
-                class_schedule_id: 101,
-                lecturer_id: 'GV001',
-                lecturer: { lecturer_name: 'Nguyễn Văn A' },
-                requested_date: '2024-01-15',
-                requested_start_time: '14:00:00',
-                requested_end_time: '16:00:00',
-                requested_room_id: 'P201',
-                requestedRoom: { room_name: 'Phòng 201' },
-                originalSchedule: {
-                    date: '2024-01-15',
-                    start_time: '08:00:00',
-                    end_time: '10:00:00',
-                    room_name: 'Phòng 101'
-                },
-                reason: 'mệt nghỉ',
-                status: 'pending'
-            },
-            {
-                request_id: 2,
-                class_schedule_id: 102,
-                lecturer_id: 'GV002',
-                lecturer: { lecturer_name: 'Trần Thị B' },
-                requested_date: '2024-01-16',
-                requested_start_time: '10:00:00',
-                requested_end_time: '12:00:00',
-                requested_room_id: 'P301',
-                requestedRoom: { room_name: 'Phòng 301' },
-                originalSchedule: {
-                    date: '2024-01-16',
-                    start_time: '14:00:00',
-                    end_time: '16:00:00',
-                    room_name: 'Phòng 202'
-                },
-                reason: 'Thiết bị phòng học bị hỏng, cần chuyển sang phòng khác',
-                status: 'approved'
-            },
-            {
-                request_id: 3,
-                class_schedule_id: 103,
-                lecturer_id: 'GV003',
-                lecturer: { lecturer_name: 'Lê Văn C' },
-                requested_date: '2024-01-17',
-                requested_start_time: '16:00:00',
-                requested_end_time: '18:00:00',
-                requested_room_id: 'P102',
-                requestedRoom: { room_name: 'Phòng 102' },
-                originalSchedule: {
-                    date: '2024-01-17',
-                    start_time: '08:00:00',
-                    end_time: '10:00:00',
-                    room_name: 'Phòng 103'
-                },
-                reason: 'Sinh viên có lịch thi vào buổi sáng',
-                status: 'rejected'
-            }
-        ];
-        setRequests(sampleData);
+        fetchScheduleChangeRequests();
     }, []);
 
     // Hàm xử lý thay đổi trang
@@ -110,42 +78,78 @@ const ScheduleChangeRequests = () => {
     };
 
     // Hàm xử lý duyệt yêu cầu
-    const handleApproveRequest = (id) => {
+    const handleApproveRequest = async (id) => {
         console.log('Approve request:', id);
-        // Implementation for approve request
-        setRequests(prevRequests =>
-            prevRequests.map(request =>
-                request.request_id === id
-                    ? { ...request, status: 'approved' }
-                    : request
-            )
-        );
+        setLoading(true);
+        try {
+            await approveScheduleChangeRequestAPI(id);
+            // Cập nhật state sau khi duyệt thành công
+            setRequests(prevRequests =>
+                prevRequests.map(request =>
+                    request.request_id === id
+                        ? { ...request, status: 'APPROVED' }
+                        : request
+                )
+            );
+            setError('');
+        } catch (err) {
+            console.error("Error approving request:", err);
+            setError(err.response?.data?.message || 'Không thể duyệt yêu cầu. Vui lòng thử lại.');
+        } finally {
+            setLoading(false);
+        }
     };
 
-    // Hàm xử lý từ chối yêu cầu
+    // Hàm xử lý từ chối yêu cầu - mở dialog
     const handleRejectRequest = (id) => {
-        console.log('Reject request:', id);
-        // Implementation for reject request
-        setRequests(prevRequests =>
-            prevRequests.map(request =>
-                request.request_id === id
-                    ? { ...request, status: 'rejected' }
-                    : request
-            )
-        );
+        setSelectedRequestId(id);
+        setRejectDialogOpen(true);
     };
 
+    // Hàm xử lý xác nhận từ chối yêu cầu
+    const handleConfirmReject = async () => {
+        if (!selectedRequestId) return;
+
+        setLoading(true);
+        try {
+            await rejectScheduleChangeRequestAPI(selectedRequestId, rejectionReason);
+            // Cập nhật state sau khi từ chối thành công
+            setRequests(prevRequests =>
+                prevRequests.map(request =>
+                    request.request_id === selectedRequestId
+                        ? { ...request, status: 'REJECTED' }
+                        : request
+                )
+            );
+            setError('');
+            setRejectDialogOpen(false);
+            setRejectionReason('');
+            setSelectedRequestId(null);
+        } catch (err) {
+            console.error("Error rejecting request:", err);
+            setError(err.response?.data?.message || 'Không thể từ chối yêu cầu. Vui lòng thử lại.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Hàm đóng dialog từ chối
+    const handleCloseRejectDialog = () => {
+        setRejectDialogOpen(false);
+        setRejectionReason('');
+        setSelectedRequestId(null);
+    };
+    console.log('Filtered requests:', requests);
     // Lọc danh sách yêu cầu dựa trên từ khóa tìm kiếm và trạng thái
     const filteredRequests = requests.filter((request) => {
         const matchesSearchTerm =
-            request.request_id?.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
-            request.lecturer?.lecturer_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
             request.lecturer_id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            request.requestedRoom?.room_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            request.requested_room_id?.toLowerCase().includes(searchTerm.toLowerCase());
+            request.lecturer?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            request.requested_room_id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            request.requestedRoom?.room_name?.toLowerCase().includes(searchTerm.toLowerCase());
 
         const matchesStatus = selectedStatus
-            ? request.status === selectedStatus
+            ? request.status.toLowerCase() === selectedStatus
             : true;
 
         return matchesSearchTerm && matchesStatus;
@@ -212,6 +216,20 @@ const ScheduleChangeRequests = () => {
                                 </FormControl>
                             </Box>
                         </Box>
+
+                        {/* Hiển thị loading và error */}
+                        {loading && (
+                            <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
+                                <CircularProgress />
+                            </Box>
+                        )}
+
+                        {error && (
+                            <Alert severity="error" sx={{ mb: 2 }}>
+                                {error}
+                            </Alert>
+                        )}
+
                         {filteredRequests.length === 0 ? (
                             <Typography>Không có yêu cầu thay đổi lịch nào để hiển thị.</Typography>
                         ) : (
@@ -235,6 +253,38 @@ const ScheduleChangeRequests = () => {
                     </CardContent>
                 </Card>
             </Box>
+
+            {/* Dialog xác nhận từ chối yêu cầu */}
+            <Dialog open={rejectDialogOpen} onClose={handleCloseRejectDialog} maxWidth="sm" fullWidth>
+                <DialogTitle>Từ chối yêu cầu thay đổi lịch học</DialogTitle>
+                <DialogContent>
+                    <Typography variant="body2" sx={{ mb: 2 }}>
+                        Bạn có chắc chắn muốn từ chối yêu cầu này?
+                    </Typography>
+                    <TextField
+                        fullWidth
+                        multiline
+                        rows={4}
+                        label="Lý do từ chối (tùy chọn)"
+                        value={rejectionReason}
+                        onChange={(e) => setRejectionReason(e.target.value)}
+                        placeholder="Nhập lý do từ chối yêu cầu..."
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseRejectDialog} color="inherit">
+                        Hủy
+                    </Button>
+                    <Button
+                        onClick={handleConfirmReject}
+                        color="error"
+                        variant="contained"
+                        disabled={loading}
+                    >
+                        {loading ? <CircularProgress size={20} /> : 'Từ chối'}
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     );
 };

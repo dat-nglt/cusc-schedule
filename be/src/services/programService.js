@@ -122,13 +122,13 @@ export const importProgramsFromJSONService = async (programsData) => {
         const cleanedData = {
           program_id: programData.program_id.toString().trim(),
           program_name: programData.program_name ? programData.program_name.toString().trim() : null,
-          duration: programData.duration ? parseFloat(programDataDuration) : null,
+          duration: programData.duration ? programData.duration : null,
           description: programData.description ? programData.description.toString().trim() : null,
           status: programData.status ? programData.status.toString().trim() : 'Hoạt động'
         };
 
         // Validateduration nếu được cung cấp
-        if (cleanedDataDuration !== null && (isNaN(cleanedData.duration) || cleanedData.duration < 0)) {
+        if (isNaN(cleanedData.duration) || cleanedData.duration < 0) {
           results.errors.push({
             index: index,
             program_id: cleanedData.program_id,

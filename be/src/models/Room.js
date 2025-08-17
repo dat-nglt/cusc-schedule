@@ -49,7 +49,7 @@ const Room = (sequelize) => {
         if (models.ClassSchedule) {
             RoomModel.hasMany(models.ClassSchedule, {
                 foreignKey: 'room_id',
-                as: 'classSchedules'
+                as: 'room'
             });
         }
 

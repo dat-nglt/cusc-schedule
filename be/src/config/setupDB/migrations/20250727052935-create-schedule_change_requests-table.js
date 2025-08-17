@@ -32,7 +32,7 @@ export default {
       },
       request_type: {
         type: Sequelize.ENUM('RESCHEDULE', 'CANCEL', 'ROOM_CHANGE', 'TIME_CHANGE', 'MAKEUP_CLASS', 'SUBSTITUTE'),
-        allowNull: false
+        allowNull: true
       },
       reason: {
         type: Sequelize.TEXT,
@@ -51,15 +51,9 @@ export default {
         type: Sequelize.SMALLINT,
         allowNull: true
       },
-      requested_time_slot_id: {
+      requested_slot_id: {
         type: Sequelize.STRING(30),
         allowNull: true,
-        references: {
-          model: 'time_slots',
-          key: 'slot_id'
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'SET NULL'
       },
       requested_room_id: {
         type: Sequelize.STRING(30),

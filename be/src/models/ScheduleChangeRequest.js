@@ -26,14 +26,18 @@ const ScheduleChangeRequest = (sequelize) => {
                 type: DataTypes.STRING(30),
                 allowNull: true
             },
+            requested_slot_id: {
+                type: DataTypes.STRING(30),
+                allowNull: true
+            },
             reason: {
                 type: DataTypes.TEXT,
                 allowNull: true
             },
             status: {
-                type: DataTypes.ENUM('pending', 'approved', 'rejected'),
+                type: DataTypes.ENUM('PENDING', 'APPROVED', 'REJECTED', 'CANCELED', 'EXPIRED'),
                 allowNull: false,
-                defaultValue: 'pending'
+                defaultValue: 'PENDING'
             }
         },
         {

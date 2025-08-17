@@ -135,6 +135,14 @@ const ClassSchedule = (sequelize) => {
                 as: "scheduleChangeRequests"
             });
         }
+
+        // Quan hệ với Room (thêm quan hệ mới với alias 'room')
+        if (models.Room) {
+            ClassScheduleModel.belongsTo(models.Room, {
+                foreignKey: 'room_id',
+                as: 'room'
+            });
+        }
     };
 
     return ClassScheduleModel;

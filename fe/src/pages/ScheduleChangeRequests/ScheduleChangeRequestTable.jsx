@@ -15,10 +15,11 @@ import {
 } from '@mui/material';
 import { Schedule, CheckCircle, Cancel, Menu as MenuIcon } from '@mui/icons-material';
 import { getStatusChip } from '../../components/ui/StatusChip';
+import { getSlotNumber, getSlotTime } from '../../components/ui/SlotChip';
 
 // Chuyển trạng thái từ tiếng Anh sang tiếng Việt
 const getVietnameseStatus = (status) => {
-    switch (status) {
+    switch (status?.toLowerCase()) {
         case 'pending':
             return 'Chờ duyệt';
         case 'approved':
@@ -59,15 +60,13 @@ export default function ScheduleChangeRequestTable({
         return new Date(date).toLocaleDateString('vi-VN');
     };
 
-    // Hàm format thời gian
-    const formatTime = (time) => {
-        if (!time) return '-';
-        return time.slice(0, 5);
-    };
+
 
     // Component hiển thị thông tin lịch
-    const ScheduleInfo = ({ schedule, isOriginal = false }) => {
+    const ScheduleInfo = ({ schedule, isOriginal = false, requestedSlotId = null }) => {
         if (!schedule) return <Typography variant="body2">-</Typography>;
+
+        const slotToDisplay = isOriginal ? schedule.slot_id : (requestedSlotId || schedule.slot_id);
 
         return (
             <Box>
@@ -75,10 +74,13 @@ export default function ScheduleChangeRequestTable({
                     {formatDate(schedule.date)}
                 </Typography>
                 <Typography variant="caption" display="block">
-                    {formatTime(schedule.start_time)} - {formatTime(schedule.end_time)}
+                    Tiết {getSlotNumber(slotToDisplay)}
+                </Typography>
+                <Typography variant="caption" display="block" sx={{ color: '#888', fontSize: '0.75rem' }}>
+                    {getSlotTime(slotToDisplay)}
                 </Typography>
                 <Typography variant="caption" display="block" sx={{ color: '#666' }}>
-                    {schedule.room_name || schedule.room_id}
+                    Phòng: {schedule.room_id}
                 </Typography>
             </Box>
         );
@@ -144,7 +146,7 @@ export default function ScheduleChangeRequestTable({
                         )}
                         <TableCell sx={{ textAlign: 'left', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
                             <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                                {request.lecturer?.lecturer_name || request.lecturer_id}
+                                {request.lecturer?.name || request.lecturer_id}
                             </Typography>
                             {isSmallScreen && (
                                 <Typography variant="caption" display="block" sx={{ color: '#666', mt: 0.5 }}>
@@ -154,7 +156,7 @@ export default function ScheduleChangeRequestTable({
                         </TableCell>
                         {!isSmallScreen && (
                             <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                                <ScheduleInfo schedule={request.originalSchedule} isOriginal={true} />
+                                <ScheduleInfo schedule={request.classSchedule} isOriginal={true} />
                             </TableCell>
                         )}
                         {!isSmallScreen && (
@@ -162,11 +164,12 @@ export default function ScheduleChangeRequestTable({
                                 <ScheduleInfo
                                     schedule={{
                                         date: request.requested_date,
-                                        start_time: request.requested_start_time,
-                                        end_time: request.requested_end_time,
                                         room_name: request.requestedRoom?.room_name,
+                                        room_id_request: request.requestedRoom?.room_id,
                                         room_id: request.requested_room_id
                                     }}
+                                    isOriginal={false}
+                                    requestedSlotId={request.requested_slot_id}
                                 />
                             </TableCell>
                         )}
@@ -219,7 +222,7 @@ export default function ScheduleChangeRequestTable({
                                                 handleApproveRequest(request.request_id);
                                                 handleCloseMenu();
                                             }}
-                                            disabled={request.status !== 'pending'}
+                                            disabled={request.status?.toLowerCase() !== 'pending'}
                                         >
                                             <CheckCircle sx={{ mr: 1, color: '#4caf50' }} />
                                             Duyệt
@@ -229,7 +232,7 @@ export default function ScheduleChangeRequestTable({
                                                 handleRejectRequest(request.request_id);
                                                 handleCloseMenu();
                                             }}
-                                            disabled={request.status !== 'pending'}
+                                            disabled={request.status?.toLowerCase() !== 'pending'}
                                         >
                                             <Cancel sx={{ mr: 1, color: '#d32f2f' }} />
                                             Từ chối
@@ -248,19 +251,19 @@ export default function ScheduleChangeRequestTable({
                                     <Tooltip title="Duyệt">
                                         <CheckCircle
                                             sx={{
-                                                color: request.status === 'pending' ? '#4caf50' : '#ccc',
-                                                cursor: request.status === 'pending' ? 'pointer' : 'not-allowed'
+                                                color: request.status?.toLowerCase() === 'pending' ? '#4caf50' : '#ccc',
+                                                cursor: request.status?.toLowerCase() === 'pending' ? 'pointer' : 'not-allowed'
                                             }}
-                                            onClick={() => request.status === 'pending' && handleApproveRequest(request.request_id)}
+                                            onClick={() => request.status?.toLowerCase() === 'pending' && handleApproveRequest(request.request_id)}
                                         />
                                     </Tooltip>
                                     <Tooltip title="Từ chối">
                                         <Cancel
                                             sx={{
-                                                color: request.status === 'pending' ? '#d32f2f' : '#ccc',
-                                                cursor: request.status === 'pending' ? 'pointer' : 'not-allowed'
+                                                color: request.status?.toLowerCase() === 'pending' ? '#d32f2f' : '#ccc',
+                                                cursor: request.status?.toLowerCase() === 'pending' ? 'pointer' : 'not-allowed'
                                             }}
-                                            onClick={() => request.status === 'pending' && handleRejectRequest(request.request_id)}
+                                            onClick={() => request.status?.toLowerCase() === 'pending' && handleRejectRequest(request.request_id)}
                                         />
                                     </Tooltip>
                                 </Box>
