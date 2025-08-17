@@ -41,8 +41,9 @@ import * as XLSX from 'xlsx';
 import PreviewCourseModal from './PreviewCourseModal';
 
 const statusOptions = [
-  { value: 'Hoạt động', color: 'success', icon: <PlayCircleFilled /> },
-  { value: 'Ngừng hoạt động', color: 'error', icon: <PauseCircleFilled /> }
+  { value: 'Hoạt động', color: 'success', icon: <PlayCircleFilled />, db: 'active' },
+  { value: 'Tạm ngưng', color: 'warning', icon: <PauseCircleFilled />, db: 'suspended' },
+  { value: 'Ngưng hoạt động', color: 'error', icon: <PauseCircleFilled />, db: 'inactive' }
 ];
 
 const steps = ['Thông tin cơ bản', 'Thời gian và trạng thái'];
@@ -151,8 +152,13 @@ export default function AddCourseModal({
       return;
     }
 
+    // Chuyển trạng thái sang tiếng Anh trước khi lưu
+    const statusObj = statusOptions.find(opt => opt.value === newCourse.status);
+    const dbStatus = statusObj ? statusObj.db : 'active';
+
     const courseToAdd = {
       ...newCourse,
+      status: dbStatus,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
@@ -484,9 +490,9 @@ export default function AddCourseModal({
                       <MenuItem key={option.value} value={option.value}>
                         <Box display="flex" alignItems="center">
                           {option.icon}
-                          <Chip 
-                            label={option.value} 
-                            size="small" 
+                          <Chip
+                            label={option.value}
+                            size="small"
                             color={option.color}
                             sx={{ ml: 1 }}
                           />

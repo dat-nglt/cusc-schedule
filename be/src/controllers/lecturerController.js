@@ -108,9 +108,10 @@ export const createLecturerController = async (req, res) => {
  */
 export const updateLecturerController = async (req, res) => {
   const { id } = req.params;
-  const lecturerData = req.body;
+  const { lecturerData, subjects = [], busySlots = [], semesterBusySlots = [] } = req.body;
+
   try {
-    const lecturer = await updateLecturerService(id, lecturerData);
+    const lecturer = await updateLecturerService(id, lecturerData, subjects, busySlots, semesterBusySlots);
     if (!lecturer) {
       return APIResponse(
         res,

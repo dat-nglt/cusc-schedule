@@ -54,7 +54,7 @@ const Subject = () => {
 
 
     // Danh sách trạng thái để lọc
-    const statuses = ['Hoạt động', 'Tạm dừng', 'Ngừng hoạt động'];
+    const statuses = ['Hoạt động', 'Tạm ngưng', 'Ngưng hoạt động'];
 
     // Hàm lấy danh sách học kỳ từ API
     const fetchSemesters = async () => {

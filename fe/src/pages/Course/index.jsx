@@ -81,11 +81,11 @@ const Course = () => {
         }));
       } else if (response && typeof response === 'object' && Array.isArray(response.data)) {
         coursesData = response.data.map((course, index) => ({
-          stt: index + 1,
           course_id: course.course_id,
           course_name: course.course_name,
           start_date: course.start_date,
           end_date: course.end_date,
+          status: course.status || 'Không có dữ liệu',
           created_at: formatTimestamp(course.created_at),
           updated_at: formatTimestamp(course.updated_at),
         }));
@@ -161,11 +161,11 @@ const Course = () => {
       setCourses((prev) => [
         ...prev,
         {
-          stt: prev.length + 1,
           course_id: newCourse.course_id,
           course_name: newCourse.course_name,
           start_date: newCourse.start_date,
           end_date: newCourse.end_date,
+          status: newCourse.status,
           created_at: formatTimestamp(newCourse.created_at),
           updated_at: formatTimestamp(newCourse.updated_at),
         },
@@ -252,7 +252,8 @@ const Course = () => {
   });
 
   const displayedCourses = filteredCourses.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
-
+ console.log(" courses:", courses);
+ 
   return (
     <Box sx={{ p: 1, zIndex: 10, height: 'calc(100vh - 64px)', overflowY: 'auto' }}>
       <Box sx={{ width: '100%', mb: 3 }}>

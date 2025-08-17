@@ -9,6 +9,19 @@ import {
   Tooltip,
 } from '@mui/material';
 import { Visibility, Edit, Delete } from '@mui/icons-material';
+import { getStatusChip } from '../../components/ui/StatusChip';
+
+// Chuyển trạng thái từ tiếng Anh sang tiếng Việt
+const getVietnameseStatus = (status) => {
+  switch (status) {
+    case 'active':
+      return 'Hoạt động';
+    case 'inactive':
+      return 'Ngừng hoạt động';
+    default:
+      return status;
+  }
+};
 
 const BreakScheduleTable = ({ displayedBreakSchedules, isSmallScreen, isMediumScreen, handleViewBreakSchedule, handleEditBreakSchedule, handleDeleteBreakSchedule }) => {
   return (
@@ -53,6 +66,9 @@ const BreakScheduleTable = ({ displayedBreakSchedules, isSmallScreen, isMediumSc
               </TableCell>
             </>
           )}
+          <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '12%' }}>
+            Trạng thái
+          </TableCell>
           <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', width: isSmallScreen ? '30%' : '10%' }}>
             Thao tác
           </TableCell>
@@ -99,6 +115,10 @@ const BreakScheduleTable = ({ displayedBreakSchedules, isSmallScreen, isMediumSc
                 </TableCell>
               </>
             )}
+            <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
+              {/* Hiển thị trạng thái với màu sắc */}
+              {getStatusChip(getVietnameseStatus(schedule.status))}
+            </TableCell>
             <TableCell sx={{ textAlign: 'center', py: 1.5, width: isSmallScreen ? '30%' : '10%' }}>
               <Tooltip title="Xem">
                 <Visibility

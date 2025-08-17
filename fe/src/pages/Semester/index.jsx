@@ -52,7 +52,7 @@ const Semester = () => {
     const [error, setError] = useState('');
 
     // Danh sách trạng thái để lọc
-    const statuses = ['Đang triển khai', 'Đang mở đăng ký', 'Đang diễn ra', 'Tạm dừng', 'Đã kết thúc'];
+    const statuses = ['Hoạt động', 'Tạm ngưng', 'Ngưng hoạt động'];
 
     //hàm lấy danh sách chương trình từ API
     const fetchPrograms = async () => {

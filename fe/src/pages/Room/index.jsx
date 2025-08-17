@@ -310,8 +310,9 @@ const RoomManagement = () => {
                   label="Trạng thái"
                 >
                   <MenuItem value="">Tất cả</MenuItem>
-                  <MenuItem value="Sẵn sàng">Sẵn sàng</MenuItem>
-                  <MenuItem value="Bảo trì">Bảo trì</MenuItem>
+                  <MenuItem value="Hoạt động">Hoạt động</MenuItem>
+                  <MenuItem value="Tạm ngưng">Tạm ngưng</MenuItem>
+                  <MenuItem value="Ngưng hoạt động">Ngưng hoạt động</MenuItem>
                 </Select>
               </FormControl>
 

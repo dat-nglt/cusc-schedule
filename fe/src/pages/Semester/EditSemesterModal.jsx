@@ -30,11 +30,9 @@ import {
 } from '@mui/icons-material';
 
 const statusOptions = [
-  { value: 'Đang triển khai', label: 'Đang triển khai', color: 'info' },
-  { value: 'Đang mở đăng ký', label: 'Đang mở đăng ký', color: 'success' },
-  { value: 'Đang diễn ra', label: 'Đang diễn ra', color: 'warning' },
-  { value: 'Tạm dừng', label: 'Tạm dừng', color: 'error' },
-  { value: 'Đã kết thúc', label: 'Đã kết thúc', color: 'default' }
+  { value: 'Hoạt động', label: 'Hoạt động', color: 'info', db: 'active' },
+  { value: 'Tạm ngưng', label: 'Tạm ngưng', color: 'warning', db: 'suspended' },
+  { value: 'Ngưng hoạt động', label: 'Ngưng hoạt động', color: 'error', db: 'inactive' }
 ];
 
 export default function EditSemesterModal({ open, onClose, semester, onSave, error, loading }) {
@@ -43,19 +41,31 @@ export default function EditSemesterModal({ open, onClose, semester, onSave, err
     semester_name: '',
     start_date: '',
     end_date: '',
-    status: 'Đang triển khai'
+    status: 'Hoạt động'
   });
 
   const [dateError, setDateError] = useState('');
 
   useEffect(() => {
     if (semester) {
+      // Chuyển trạng thái từ tiếng Anh sang tiếng Việt để hiển thị
+      let viStatus = 'Hoạt động';
+      const statusMap = {
+        active: 'Hoạt động',
+        inactive: 'Ngưng hoạt động',
+        suspended: 'Tạm ngưng'
+      };
+      if (semester.status && statusMap[semester.status]) {
+        viStatus = statusMap[semester.status];
+      } else if (semester.status && statusOptions.some(opt => opt.value === semester.status)) {
+        viStatus = semester.status;
+      }
       setEditedSemester({
         semester_id: semester.semester_id || '',
         semester_name: semester.semester_name || '',
         start_date: semester.start_date?.split('T')[0] || '',
         end_date: semester.end_date?.split('T')[0] || '',
-        status: semester.status || 'Đang triển khai'
+        status: viStatus
       });
     }
     setDateError('');
@@ -101,8 +111,13 @@ export default function EditSemesterModal({ open, onClose, semester, onSave, err
       return;
     }
 
+    // Chuyển trạng thái sang tiếng Anh trước khi lưu
+    const statusObj = statusOptions.find(opt => opt.value === editedSemester.status);
+    const dbStatus = statusObj ? statusObj.db : 'active';
+
     const updatedSemesterData = {
       ...editedSemester,
+      status: dbStatus,
       updated_at: new Date().toISOString()
     };
 

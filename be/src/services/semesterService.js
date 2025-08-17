@@ -117,14 +117,19 @@ export const importSemestersFromJSONService = async (semestersData) => {
           continue;
         }
 
+
         // Làm sạch và định dạng dữ liệu (chuyển sang kiểu chuỗi và xóa khoảng cách thừa ở đầu chuỗi và cuối chuỗi)
         const cleanedData = {
           semester_id: semesterData.semester_id.toString().trim(),
           semester_name: semesterData.semester_name.toString().trim(),
           duration_weeks: semesterData.duration_weeks || null, // Chuyển đổi sang chuỗi và xóa khoảng trắng
+          start_date: semesterData.start_date ? new Date(semesterData.start_date) : null,
+          end_date: semesterData.end_date ? new Date(semesterData.end_date) : null,
           program_id: semesterData.program_id ? semesterData.program_id.toString().trim() : null,
           status: semesterData.status || 'Hoạt động' // Mặc định là 'hoạt động' nếu không có giá trị
         };
+
+        console.log('Date semester:', semesterData.start_date);
 
         // Kiểm tra semester_id đã tồn tại chưa
         const existingSemester = await Semester.findOne({
@@ -166,7 +171,7 @@ export const importSemestersFromJSONService = async (semestersData) => {
 export const getSemesterCreateScheduleService = async () => {
   try {
     const semesters = await Semester.findAll({
-      attributes: ['semester_id', 'duration_weeks'],
+      attributes: ['semester_id', 'duration_weeks', 'start_date', 'end_date'],
       include: [{
         model: Subject,
         as: 'subjects',
@@ -174,11 +179,14 @@ export const getSemesterCreateScheduleService = async () => {
       }]
     });
 
+
     // Chuyển đổi sang cấu trúc JSON yêu cầu
     const formattedSemesters = semesters.map(semester => ({
       semester_id: semester.semester_id,
       duration_weeks: semester.duration_weeks,
-      subject_ids: semester.subjects.map(subject => (subject.subject_id))
+      subject_ids: semester.subjects.map(subject => (subject.subject_id)),
+      start_date: semester.start_date,
+      end_date: semester.end_date
     }));
 
     return formattedSemesters;

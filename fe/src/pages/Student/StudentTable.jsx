@@ -16,6 +16,24 @@ import { Visibility, Edit, Delete, Menu as MenuIcon } from '@mui/icons-material'
 import { getStatusChip } from '../../components/ui/StatusChip';
 import { formatDateTime } from '../../utils/formatDateTime';
 
+// Chuyển trạng thái từ tiếng Anh sang tiếng Việt
+const getVietnameseStatus = (status) => {
+    switch (status) {
+        case 'studying':
+            return 'Đang học';
+        case 'break':
+            return 'Tạm nghỉ';
+        case 'dropped':
+            return 'Đã nghỉ học';
+        case 'graduated':
+            return 'Đã tốt nghiệp';
+        case 'reserve':
+            return 'Bảo lưu';
+        default:
+            return status;
+    }
+};
+
 export default function StudentTable({ displayedStudents, isSmallScreen, isMediumScreen, handleViewStudent, handleEditStudent, handleDeleteStudent }) {
     const [anchorEl, setAnchorEl] = useState(null);
     const [selectedRowId, setSelectedRowId] = useState(null);
@@ -132,7 +150,8 @@ export default function StudentTable({ displayedStudents, isSmallScreen, isMediu
                             </TableCell>
                         )}
                         <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                            {getStatusChip(student.status)}
+                            {/* Sử dụng getStatusChip để hiển thị màu trạng thái */}
+                            {getStatusChip(getVietnameseStatus(student.status))}
                         </TableCell>
                         <TableCell sx={{ textAlign: 'center', py: 1.5 }}>
                             {isSmallScreen ? (

@@ -43,11 +43,9 @@ import PreviewSemesterModal from './PreviewSemesterModal';
 import { processExcelDataSemester } from '../../utils/ExcelValidation'; // Assuming this utility is correctly implemented
 
 const statusOptions = [
-    { value: 'Đang triển khai', color: 'info', icon: <PlayCircleFilled /> },
-    { value: 'Đang mở đăng ký', color: 'primary', icon: <AccessTime /> }, // Using AccessTime as a placeholder, choose a suitable icon
-    { value: 'Đang diễn ra', color: 'success', icon: <DoneAll /> },
-    { value: 'Tạm dừng', color: 'warning', icon: <PauseCircleFilled /> },
-    { value: 'Đã kết thúc', color: 'error', icon: <StopCircle /> }
+    { value: 'Hoạt động', color: 'info', icon: <PlayCircleFilled />, db: 'active' },
+    { value: 'Tạm ngưng', color: 'warning', icon: <PauseCircleFilled />, db: 'suspended' },
+    { value: 'Ngưng hoạt động', color: 'error', icon: <StopCircle />, db: 'inactive' }
 ];
 
 const steps = ['Thông tin cơ bản', 'Thời gian & Trạng thái'];
@@ -56,8 +54,10 @@ export default function AddSemesterModal({ open, onClose, onAddSemester, existin
     const [newSemester, setNewSemester] = useState({
         semester_id: '',
         semester_name: '',
+        start_date: '',
+        end_date: '',
         duration_weeks: '',
-        status: 'Đang triển khai',
+        status: 'Hoạt động',
         program_id: '',
     });
 
@@ -90,8 +90,8 @@ export default function AddSemesterModal({ open, onClose, onAddSemester, existin
     };
 
     const handleSubmit = async () => {
-        if (!newSemester.duration_weeks) {
-            setLocalError('Vui lòng điền thời lượng học kỳ.');
+        if (!newSemester.duration_weeks || !newSemester.start_date || !newSemester.end_date) {
+            setLocalError('Vui lòng điền đầy đủ thông tin thời gian và trạng thái.');
             return;
         }
 
@@ -109,8 +109,13 @@ export default function AddSemesterModal({ open, onClose, onAddSemester, existin
             return;
         }
 
+        // Chuyển trạng thái sang tiếng Anh trước khi lưu
+        const statusObj = statusOptions.find(opt => opt.value === newSemester.status);
+        const dbStatus = statusObj ? statusObj.db : 'active';
+
         const semesterToAdd = {
             ...newSemester,
+            status: dbStatus,
             duration_weeks: durationWeeks,
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
@@ -368,6 +373,50 @@ export default function AddSemesterModal({ open, onClose, onAddSemester, existin
                                 gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
                                 gap: 3
                             }}>
+                                <TextField
+                                    label="Ngày bắt đầu"
+                                    name="start_date"
+                                    type="date"
+                                    value={newSemester.start_date}
+                                    onChange={handleChange}
+                                    fullWidth
+                                    variant="outlined"
+                                    required
+                                    disabled={loading}
+                                    InputLabelProps={{
+                                        shrink: true,
+                                    }}
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <CalendarToday color="action" />
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                    sx={{ mb: 2 }}
+                                />
+                                <TextField
+                                    label="Ngày kết thúc"
+                                    name="end_date"
+                                    type="date"
+                                    value={newSemester.end_date}
+                                    onChange={handleChange}
+                                    fullWidth
+                                    variant="outlined"
+                                    required
+                                    disabled={loading}
+                                    InputLabelProps={{
+                                        shrink: true,
+                                    }}
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <CalendarToday color="action" />
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                    sx={{ mb: 2 }}
+                                />
                                 <TextField
                                     label="Thời lượng học kỳ (tuần)"
                                     name="duration_weeks"

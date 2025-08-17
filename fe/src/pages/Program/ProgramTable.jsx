@@ -15,6 +15,20 @@ import {
 import { Visibility, Edit, Delete, Menu as MenuIcon } from '@mui/icons-material';
 import { getStatusChip } from '../../components/ui/StatusChip';
 
+// Chuyển trạng thái từ tiếng Anh sang tiếng Việt
+const getVietnameseStatus = (status) => {
+    switch (status) {
+        case 'active':
+            return 'Hoạt động';
+        case 'inactive':
+            return 'Ngưng hoạt động';
+        case 'suspended':
+            return 'Tạm ngưng';
+        default:
+            return status;
+    }
+};
+
 export default function ProgramTable({ displayedPrograms, isSmallScreen, isMediumScreen, handleViewProgram, handleEditProgram, handleDeleteProgram }) {
     const [anchorEl, setAnchorEl] = useState(null);
     const [selectedRowId, setSelectedRowId] = useState(null);
@@ -90,7 +104,7 @@ export default function ProgramTable({ displayedPrograms, isSmallScreen, isMediu
                         {!isMediumScreen && (
                             <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
                                 <Chip
-                                    label={program.training_duration + ' năm'}
+                                    label={program.duration + 'T/1HK'}
                                     size="small"
                                     sx={{
                                         bgcolor: '#e3f2fd',
@@ -101,7 +115,8 @@ export default function ProgramTable({ displayedPrograms, isSmallScreen, isMediu
                             </TableCell>
                         )}
                         <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                            {getStatusChip(program.status)}
+                            {/* Sử dụng getStatusChip để hiển thị màu trạng thái */}
+                            {getStatusChip(getVietnameseStatus(program.status))}
                         </TableCell>
                         <TableCell sx={{ textAlign: 'center', py: 1.5 }}>
                             {isSmallScreen ? (

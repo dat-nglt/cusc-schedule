@@ -16,7 +16,7 @@ import { getProgramCreateScheduleAPI } from '../../api/programAPI';
 import { getAllLecturersAPI } from '../../api/lecturerAPI';
 import { getClassesAPI } from '../../api/classAPI';
 import { getAllSubjectsAPI } from '../../api/subjectAPI';
-import { getAllSemestersAPI } from '../../api/semesterAPI';
+import { getSemesterCreateScheduleAPI } from '../../api/semesterAPI';
 import CreateSchedulesAutoModal from './CreateSchedulesAutoModal';
 
 
@@ -256,9 +256,11 @@ const Dashboard = () => {
             console.error("Error fetching subjects:", error);
         }
     };
+    console.log("semester:", semesters);
+
     const fetchSemesters = async () => {
         try {
-            const response = await getAllSemestersAPI();
+            const response = await getSemesterCreateScheduleAPI();
             if (!response) {
                 throw new Error("Không có dữ liệu học kỳ");
             }
@@ -431,7 +433,8 @@ const Dashboard = () => {
             lecturer_id: lecturer.lecturer_id,
             lecturer_name: lecturer.name,
             subjects: lecturer.subjects?.map(subject => subject.subject_id) ?? [],
-            busy_slots: lecturer.busy_slots ?? []
+            busy_slots: lecturer.busy_slots ?? [],
+            semester_busy_slots: lecturer.semester_busy_slots ?? [],
         }));
 
         const transformedPrograms = programsToTransform.map(program => ({
@@ -440,16 +443,19 @@ const Dashboard = () => {
             duration: program.duration,
             semesters: program.semesters ?? []
         }));
-
+        console.log("semesters:", semesters)
         const transformedSemesters = semesters?.map(semester => ({
             semester_id: semester.semester_id,
-            subject_ids: semester.subject_ids ?? [],
-            duration_weeks: semester.duration_weeks ?? 15
+            subject_ids: semester.subject_ids || semester.subjects?.map(s => s.subject_id) || [],
+            start_date: semester.start_date,
+            end_date: semester.end_date,
+            duration_weeks: semester.duration_weeks
         })) ?? [];
+
 
         const transformedSubjects = subjects?.map(subject => ({
             subject_id: subject.subject_id,
-            name: subject.name,
+            name: subject.subject_name,
             theory_hours: subject.theory_hours ?? 30,
             practice_hours: subject.practice_hours ?? 15
         })) ?? [];

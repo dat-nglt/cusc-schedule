@@ -36,12 +36,12 @@ const navItems = [
     { text: 'Quản lý giảng viên', icon: <PersonIcon />, path: '/lecturers' },
     { text: 'Quản lý học viên', icon: <SchoolIcon />, path: '/students' },
     { text: 'Quản lý chương trình đào tạo', icon: <LibraryBooksIcon />, path: '/programs' },
+    { text: 'Quản lý học kỳ', icon: <LibraryBooksIcon />, path: '/semesters' },
     { text: 'Quản lý học phần', icon: <MenuBookIcon />, path: '/subjects' },
     { text: 'Quản lý khóa học', icon: <ClassIcon />, path: '/courses' },
     { text: 'Quản lý lớp', icon: <GroupsIcon />, path: '/class' },
-    { text: 'Quản lý lớp học phần', icon: <AccountBalanceIcon />, path: '/classsection' },
     { text: 'Quản lý phòng', icon: <RoomIcon />, path: '/room' },
-    { text: 'Quản lý khung giờ', icon: <AccessTimeIcon />, path: '/slottime' },
+    { text: 'Quản lý thay đổi lịch học', icon: <AccessTimeIcon />, path: '/scheduleChangeRequests' },
 ];
 
 const drawerWidth = 350;

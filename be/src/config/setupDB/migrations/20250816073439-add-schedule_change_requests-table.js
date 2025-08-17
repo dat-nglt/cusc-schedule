@@ -2,7 +2,7 @@
 
 /** @type {import('sequelize-cli').Migration} */
 export default {
-  up: async (queryInterface, Sequelize) => {
+  async up(queryInterface, Sequelize) {
     await queryInterface.createTable('schedule_change_requests', {
       request_id: {
         type: Sequelize.INTEGER,
@@ -30,32 +30,16 @@ export default {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE'
       },
-      request_type: {
-        type: Sequelize.ENUM('RESCHEDULE', 'CANCEL', 'ROOM_CHANGE', 'TIME_CHANGE', 'MAKEUP_CLASS', 'SUBSTITUTE'),
-        allowNull: true
-      },
-      reason: {
-        type: Sequelize.TEXT,
-        allowNull: false
-      },
-      // Requested changes
       requested_date: {
         type: Sequelize.DATEONLY,
-        allowNull: true
+        allowNull: true,
+        comment: 'Ngày mới mà giảng viên muốn đổi sang'
       },
-      requested_weekday: {
-        type: Sequelize.ENUM('Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'),
-        allowNull: true
-      },
-      requested_week_number: {
-        type: Sequelize.SMALLINT,
-        allowNull: true
-      },
-      requested_slot_id: {
+      requested_slot: {
         type: Sequelize.STRING(30),
         allowNull: true,
       },
-      requested_room_id: {
+      requested_room: {
         type: Sequelize.STRING(30),
         allowNull: true,
         references: {
@@ -65,25 +49,15 @@ export default {
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL'
       },
-      // thay đổi giảng viên
-      substitute_lecturer_id: {
-        type: Sequelize.STRING(50),
+      reason: {
+        type: Sequelize.TEXT,
         allowNull: true,
-        references: {
-          model: 'lecturers',
-          key: 'lecturer_id'
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'SET NULL'
+        comment: 'Lý do đổi lịch'
       },
       status: {
-        type: Sequelize.ENUM('PENDING', 'APPROVED', 'REJECTED', 'CANCELED', 'EXPIRED'),
-        defaultValue: 'PENDING',
-        allowNull: false
-      },
-      approved_at: {
-        type: Sequelize.DATE,
-        allowNull: true
+        type: Sequelize.ENUM('pending', 'approved', 'rejected'),
+        allowNull: false,
+        defaultValue: 'pending'
       },
       created_at: {
         type: Sequelize.DATE,
@@ -103,21 +77,13 @@ export default {
       }
     });
 
-    // Add indexes for better query performance
-    await queryInterface.addIndex('schedule_change_requests', ['lecturer_id', 'status'], {
-      name: 'idx_schedule_requests_lecturer_status'
-    });
-
-    await queryInterface.addIndex('schedule_change_requests', ['class_schedule_id'], {
-      name: 'idx_schedule_requests_class_schedule'
-    });
-
-    await queryInterface.addIndex('schedule_change_requests', ['status', 'created_at'], {
-      name: 'idx_schedule_requests_status_created'
-    });
+    // Index để tìm nhanh theo giảng viên và lịch học
+    await queryInterface.addIndex('schedule_change_requests', ['lecturer_id']);
+    await queryInterface.addIndex('schedule_change_requests', ['class_schedule_id']);
+    await queryInterface.addIndex('schedule_change_requests', ['status']);
   },
 
-  down: async (queryInterface, Sequelize) => {
+  async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('schedule_change_requests');
   }
 };

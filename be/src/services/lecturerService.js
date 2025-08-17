@@ -421,12 +421,12 @@ export const updateLecturerService = async (id, lecturerData, subjects, busySlot
 
       // Thêm các busy slots mới
       if (semesterBusySlots.length > 0) {
-        const semesterBusySlotsData = SemesterBusySlot.map((slot) => ({
+        const semesterBusySlotsData = semesterBusySlots.map((slot) => ({
           lecturer_id: id,
           date: slot.date,
           slot_id: slot.slot_id,
         }));
-        await BusySlot.bulkCreate(semesterBusySlotsData, { transaction });
+        await SemesterBusySlot.bulkCreate(semesterBusySlotsData, { transaction });
       }
     }
 

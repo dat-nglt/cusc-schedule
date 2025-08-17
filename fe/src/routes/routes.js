@@ -277,6 +277,15 @@ const routes = [
     roles: ["lecturer"], // Chỉ giảng viên
     layout: LecturerLayout,
   },
+  {
+    path: "/scheduleChangeRequests",
+    component: "ScheduleChangeRequests",
+    exact: true,
+    title: "Quản lý yêu cầu thay đổi lịch học",
+    isPrivate: true, // Riêng tư
+    roles: ["admin", "trainingofficer"], // Admin và Giảng viên
+    layout: AdminLayout, // Có thể cần một layout chung cho quản lý yêu cầu thay đổi lịch học
+  },
 ];
 
 export default routes;

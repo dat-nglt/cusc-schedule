@@ -17,6 +17,11 @@ import {
 } from '@mui/material';
 
 const availableTrainingDurations = [1, 2, 3, 4];
+const statusOptions = [
+    { value: 'Hoạt động', db: 'active' },
+    { value: 'Tạm ngưng', db: 'suspended' },
+    { value: 'Ngưng hoạt động', db: 'inactive' }
+];
 
 export default function EditProgramModal({ open, onClose, program, onSave, error, loading }) {
     const [editedProgram, setEditedProgram] = useState({
@@ -28,11 +33,23 @@ export default function EditProgramModal({ open, onClose, program, onSave, error
 
     useEffect(() => {
         if (program) {
+            // Chuyển trạng thái từ tiếng Anh sang tiếng Việt để hiển thị
+            let viStatus = 'Hoạt động';
+            const statusMap = {
+                active: 'Hoạt động',
+                inactive: 'Ngưng hoạt động',
+                suspended: 'Tạm ngưng'
+            };
+            if (program.status && statusMap[program.status]) {
+                viStatus = statusMap[program.status];
+            } else if (program.status && statusOptions.some(opt => opt.value === program.status)) {
+                viStatus = program.status;
+            }
             setEditedProgram({
                 program_id: program.program_id || '',
                 program_name: program.program_name || '',
                 training_duration: program.training_duration || '',
-                status: program.status || 'Đang triển khai',
+                status: viStatus,
             });
         }
     }, [program]);
@@ -64,11 +81,15 @@ export default function EditProgramModal({ open, onClose, program, onSave, error
             return;
         }
 
+        // Chuyển trạng thái sang tiếng Anh trước khi lưu
+        const statusObj = statusOptions.find(opt => opt.value === editedProgram.status);
+        const dbStatus = statusObj ? statusObj.db : 'active';
+
         const updatedProgramData = {
             program_id: editedProgram.program_id,
             program_name: editedProgram.program_name,
             training_duration: editedProgram.training_duration,
-            status: editedProgram.status,
+            status: dbStatus,
             updated_at: new Date().toISOString(),
         };
 
@@ -131,10 +152,11 @@ export default function EditProgramModal({ open, onClose, program, onSave, error
                             onChange={handleChange}
                             label="Trạng thái"
                         >
-                            <MenuItem value="Đang triển khai">Đang triển khai</MenuItem>
-                            <MenuItem value="Đang áp dụng">Đang áp dụng</MenuItem>
-                            <MenuItem value="Tạm dừng">Tạm dừng</MenuItem>
-                            <MenuItem value="Đã kết thúc">Đã kết thúc</MenuItem>
+                            {statusOptions.map((option) => (
+                                <MenuItem key={option.value} value={option.value}>
+                                    {option.value}
+                                </MenuItem>
+                            ))}
                         </Select>
                     </FormControl>
                 </Box>

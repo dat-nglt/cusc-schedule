@@ -2,15 +2,19 @@ import { Chip } from "@mui/material";
 
 export const getStatusChip = (status) => {
     const statusColors = {
-        'Đang triển khai': { color: '#4caf50', bgcolor: '#e8f5e8' },
         'Hoạt động': { color: '#4caf50', bgcolor: '#e8f5e8' },
-        'Ngừng hoạt động': { color: '#f57c00', bgcolor: '#fff3e0' },
-        'Kết thúc': { color: '#757575', bgcolor: '#f5f5f5' },
+        'Tạm ngưng': { color: '#f57c00', bgcolor: '#fff3e0' },
+        'Ngưng hoạt động': { color: '#757575', bgcolor: '#f5f5f5' },
+        'Nghỉ việc': { color: '#757575', bgcolor: '#f5f5f5' },
+        'Nghỉ học': { color: '#757575', bgcolor: '#f5f5f5' },
         'Tạm nghỉ': { color: '#f57c00', bgcolor: '#fff3e0' },
-        'Đang dạy': { color: '#2196f3', bgcolor: '#e3f2fd' },
+        'Đang giảng dạy': { color: '#2196f3', bgcolor: '#e3f2fd' },
         'Đang học': { color: '#4caf50', bgcolor: '#e8f5e8' },
         'Tốt nghiệp': { color: '#2196f3', bgcolor: '#e3f2fd' },
-        'Bảo lưu': { color: '#9c27b0', bgcolor: '#f3e5f5' }
+        'Bảo lưu': { color: '#9c27b0', bgcolor: '#f3e5f5' },
+        'Chờ duyệt': { color: '#ff9800', bgcolor: '#fff3e0' },
+        'Đã duyệt': { color: '#4caf50', bgcolor: '#e8f5e8' },
+        'Đã từ chối': { color: '#f44336', bgcolor: '#ffebee' },
     };
     const style = statusColors[status] || { color: '#757575', bgcolor: '#f5f5f5' };
 

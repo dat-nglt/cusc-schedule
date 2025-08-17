@@ -122,13 +122,13 @@ export const importProgramsFromJSONService = async (programsData) => {
         const cleanedData = {
           program_id: programData.program_id.toString().trim(),
           program_name: programData.program_name ? programData.program_name.toString().trim() : null,
-          training_duration: programData.training_duration ? parseFloat(programData.training_duration) : null,
+          duration: programData.duration ? programData.duration : null,
           description: programData.description ? programData.description.toString().trim() : null,
           status: programData.status ? programData.status.toString().trim() : 'Hoạt động'
         };
 
-        // Validate training_duration nếu được cung cấp
-        if (cleanedData.training_duration !== null && (isNaN(cleanedData.training_duration) || cleanedData.training_duration < 0)) {
+        // Validateduration nếu được cung cấp
+        if (isNaN(cleanedData.duration) || cleanedData.duration < 0) {
           results.errors.push({
             index: index,
             program_id: cleanedData.program_id,
@@ -177,7 +177,7 @@ export const importProgramsFromJSONService = async (programsData) => {
 export const getProgramCreateScheduleService = async () => {
   try {
     const programs = await Program.findAll({
-      attributes: ['program_id', 'program_name', 'training_duration'],
+      attributes: ['program_id', 'program_name', 'duration'],
       include: [{
         model: Semester,
         as: 'semesters',
@@ -194,7 +194,7 @@ export const getProgramCreateScheduleService = async () => {
     const formattedPrograms = programs.map(program => ({
       program_id: program.program_id,
       program_name: program.program_name,
-      duration: program.training_duration,
+      duration: program.duration,
       semesters: program.semesters.map(semester => ({
         semester_id: semester.semester_id,
         subject_ids: semester.subjects.map(subject => (subject.subject_id))

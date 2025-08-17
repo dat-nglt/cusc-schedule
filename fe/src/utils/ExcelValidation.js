@@ -284,7 +284,7 @@ export const processExcelDataStudent = (rawData, existingStudents) => {
 const requiredProgramFields = [
     'program_id',
     'program_name',
-    'training_duration',
+    'duration',
     'description',
 ];
 
@@ -315,11 +315,10 @@ const validateProgramData = (program, existingPrograms, allImportData = []) => {
         errors.push('missing_required');
     }
 
-    // Kiểm tra training_duration format (phải là số dương)
-    if (program.training_duration) {
-        const duration = parseFloat(program.training_duration);
-        if (isNaN(duration) || duration <= 0) {
-            errors.push('invalid_training_duration');
+    // Kiểm tra duration format (phải là số dương)
+    if (program.duration) {
+        if (isNaN(program.duration) || program.duration <= 0) {
+            errors.push('invalid_duration');
         }
     }
 
@@ -333,7 +332,7 @@ export const processExcelDataProgram = (rawData, existingPrograms) => {
         const program = {
             program_id: row['Mã chương trình']?.trim() || row['program_id']?.trim() || '',
             program_name: row['Tên chương trình']?.trim() || row['program_name']?.trim() || '',
-            training_duration: row['Thời gian đào tạo'] || row['training_duration'] || '',
+            duration: row['Thời gian đào tạo'] || row['duration'] || '',
             description: row['Mô tả']?.trim() || row['description']?.trim() || '',
             status: row['Trạng thái']?.trim() || row['status']?.trim() || 'Hoạt động',
             rowIndex: index + 2 // +2 vì Excel bắt đầu từ row 1 và có header
@@ -357,6 +356,8 @@ export const processExcelDataProgram = (rawData, existingPrograms) => {
 const requiredSemesterFields = [
     'semester_id',
     'semester_name',
+    'start_date',
+    'end_date',
     'duration_weeks',
     'status',
     'program_id',
@@ -388,6 +389,32 @@ const validateSemesterData = (semester, existingSemesters, allImportData = []) =
     if (missingFields.length > 0) {
         errors.push('missing_required');
     }
+
+    // Kiểm tra ngày bắt đầu và ngày kết thúc
+    if (semester.start_date) {
+        const startDate = new Date(semester.start_date);
+        if (isNaN(startDate.getTime())) {
+            errors.push('invalid_start_date');
+        }
+    }
+
+    if (semester.end_date) {
+        const endDate = new Date(semester.end_date);
+        if (isNaN(endDate.getTime())) {
+            errors.push('invalid_end_date');
+        }
+    }
+
+    // Kiểm tra start_date phải nhỏ hơn end_date
+    if (semester.start_date && semester.end_date) {
+        const startDate = new Date(semester.start_date);
+        const endDate = new Date(semester.end_date);
+
+        if (!isNaN(startDate.getTime()) && !isNaN(endDate.getTime()) && startDate >= endDate) {
+            errors.push('invalid_date_range');
+        }
+    }
+
     return errors;
 };
 
@@ -398,6 +425,8 @@ export const processExcelDataSemester = (rawData, existingSemesters) => {
         const semester = {
             semester_id: row['Mã học kỳ']?.trim() || row['semester_id']?.trim() || '',
             semester_name: row['Tên học kỳ']?.trim() || row['semester_name']?.trim() || '',
+            start_date: formatDate(row['Ngày bắt đầu'] || row['start_date']),
+            end_date: formatDate(row['Ngày kết thúc'] || row['end_date']),
             duration_weeks: row['Số tuần'] || row['duration_weeks'] || '',
             status: row['Trạng thái']?.trim() || row['status']?.trim() || 'Hoạt động',
             program_id: row['Mã chương trình đào tạo']?.trim() || row['Mã chương trình']?.trim() || row['program_id'] || '',

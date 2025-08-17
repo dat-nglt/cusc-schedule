@@ -16,6 +16,20 @@ import { Visibility, Edit, Delete, Menu as MenuIcon } from '@mui/icons-material'
 import { getStatusChip } from '../../components/ui/StatusChip';
 import { formatDateTime } from '../../utils/formatDateTime';
 
+// Chuyển trạng thái từ tiếng Anh sang tiếng Việt
+const getVietnameseStatus = (status) => {
+    switch (status) {
+        case 'active':
+            return 'Hoạt động';
+        case 'inactive':
+            return 'Ngưng hoạt động';
+        case 'suspended':
+            return 'Tạm ngưng';
+        default:
+            return status;
+    }
+};
+
 export default function SemesterTable({ displayedSemesters, isSmallScreen, isMediumScreen, handleViewSemester, handleEditSemester, handleDeleteSemester }) {
     const [anchorEl, setAnchorEl] = useState(null);
     const [selectedRowId, setSelectedRowId] = useState(null);
@@ -97,7 +111,8 @@ export default function SemesterTable({ displayedSemesters, isSmallScreen, isMed
                             {semester.program_id}
                         </TableCell>
                         <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                            {getStatusChip(semester.status)}
+                            {/* Sử dụng getStatusChip để hiển thị màu trạng thái */}
+                            {getStatusChip(getVietnameseStatus(semester.status))}
                         </TableCell>
                         <TableCell sx={{ textAlign: 'center', py: 1.5 }}>
                             {isSmallScreen ? (

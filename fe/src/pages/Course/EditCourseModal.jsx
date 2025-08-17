@@ -26,15 +26,32 @@ const EditCourseModal = ({ open, onClose, course, onSave }) => {
     updated_at: '',
   });
 
+  const statusOptions = [
+    { value: 'Hoạt động', db: 'active' },
+    { value: 'Tạm ngưng', db: 'suspended' },
+    { value: 'Ngừng hoạt động', db: 'inactive' }
+  ];
+
   useEffect(() => {
     if (course) {
-      console.log('Course data received:', course); // Debug giá trị ban đầu
+      // Chuyển trạng thái từ tiếng Anh sang tiếng Việt để hiển thị
+      let viStatus = 'Hoạt động';
+      const statusMap = {
+        active: 'Hoạt động',
+        inactive: 'Ngừng hoạt động',
+        suspended: 'Tạm ngưng'
+      };
+      if (course.status && statusMap[course.status]) {
+        viStatus = statusMap[course.status];
+      } else if (course.status && statusOptions.some(opt => opt.value === course.status)) {
+        viStatus = course.status;
+      }
       setEditedCourse({
         course_id: course.course_id || '',
         course_name: course.course_name || '',
         start_date: course.start_date || '',
         end_date: course.end_date || '',
-        status: course.status || 'inactive', // Đặt mặc định nếu không có
+        status: viStatus,
         created_at: course.created_at || '',
         updated_at: new Date().toISOString().slice(0, 16).replace('T', ' '),
       });
@@ -57,7 +74,18 @@ const EditCourseModal = ({ open, onClose, course, onSave }) => {
       alert('Vui lòng điền đầy đủ thông tin!');
       return;
     }
-    onSave(editedCourse);
+
+    // Chuyển trạng thái sang tiếng Anh trước khi lưu
+    const statusObj = statusOptions.find(opt => opt.value === editedCourse.status);
+    const dbStatus = statusObj ? statusObj.db : 'active';
+
+    const updatedCourse = {
+      ...editedCourse,
+      status: dbStatus,
+      updated_at: new Date().toISOString().slice(0, 16).replace('T', ' '),
+    };
+
+    onSave(updatedCourse);
     onClose();
   };
 
@@ -132,8 +160,11 @@ const EditCourseModal = ({ open, onClose, course, onSave }) => {
               onChange={handleChange}
               label="Trạng thái"
             >
-              <MenuItem value="active">Hoạt động</MenuItem>
-              <MenuItem value="inactive">Ngừng hoạt động</MenuItem>
+              {statusOptions.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.value}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
         </Box>

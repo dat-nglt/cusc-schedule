@@ -67,3 +67,13 @@ export const importSemestersAPI = async (jsonData) => {
     throw error;
   }
 };
+
+export const getSemesterCreateScheduleAPI = async () => {
+  try {
+    const response = await axiosInstance.get("/api/semesters/getSemesterCreateSchedule");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching semester create schedule:", error);
+    throw error;
+  } 
+}

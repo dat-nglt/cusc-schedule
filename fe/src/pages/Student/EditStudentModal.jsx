@@ -40,10 +40,11 @@ import {
 } from '@mui/icons-material';
 
 const statusOptions = [
-  { value: 'Đang học', color: 'success' },
-  { value: 'Đã nghỉ học', color: 'error' },
-  { value: 'Đã tốt nghiệp', color: 'info' },
-  { value: 'Bảo lưu', color: 'warning' }
+  { value: 'Đang học', color: 'success', db: 'studying' },
+  { value: 'Tạm nghỉ', color: 'warning', db: 'break' },
+  { value: 'Đã nghỉ học', color: 'error', db: 'dropped' },
+  { value: 'Đã tốt nghiệp', color: 'info', db: 'graduated' },
+  { value: 'Bảo lưu', color: 'warning', db: 'reserve' }
 ];
 
 const steps = ['Thông tin cá nhân', 'Thông tin liên hệ', 'Thông tin học tập'];
@@ -67,6 +68,20 @@ export default function EditStudentModal({ open, onClose, student, onSave, error
 
   useEffect(() => {
     if (student) {
+      // Chuyển trạng thái từ tiếng Anh sang tiếng Việt để hiển thị
+      let viStatus = 'Đang học';
+      const statusMap = {
+        studying: 'Đang học',
+        break: 'Tạm nghỉ',
+        dropped: 'Đã nghỉ học',
+        graduated: 'Đã tốt nghiệp',
+        reserve: 'Bảo lưu'
+      };
+      if (student.status && statusMap[student.status]) {
+        viStatus = statusMap[student.status];
+      } else if (student.status && statusOptions.some(opt => opt.value === student.status)) {
+        viStatus = student.status;
+      }
       setEditedStudent({
         student_id: student.student_id || '',
         name: student.name || '',
@@ -77,7 +92,7 @@ export default function EditStudentModal({ open, onClose, student, onSave, error
         phone_number: student.phone_number || '',
         class: student.class || '',
         admission_year: student.admission_year || '',
-        status: student.status || 'Đang học',
+        status: viStatus,
       });
       setActiveStep(0);
       setLocalError('');
@@ -144,8 +159,13 @@ export default function EditStudentModal({ open, onClose, student, onSave, error
       return;
     }
 
+    // Chuyển trạng thái sang tiếng Anh trước khi lưu
+    const statusObj = statusOptions.find(opt => opt.value === editedStudent.status);
+    const dbStatus = statusObj ? statusObj.db : 'studying';
+
     const updatedStudentData = {
       ...editedStudent,
+      status: dbStatus,
       updated_at: new Date().toISOString(),
     };
 

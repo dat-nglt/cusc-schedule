@@ -10,8 +10,25 @@ import {
   Tooltip,
 } from '@mui/material';
 import { Visibility, Edit, Delete } from '@mui/icons-material';
+import { getStatusChip } from '../../components/ui/StatusChip';
+
+// Chuyển trạng thái từ tiếng Anh sang tiếng Việt
+const getVietnameseStatus = (status) => {
+  switch (status) {
+    case 'active':
+      return 'Hoạt động';
+    case 'inactive':
+      return 'Ngưng hoạt động';
+    case 'suspended':
+      return 'Tạm ngưng';
+    default:
+      return status;
+  }
+};
 
 const CourseTable = ({ displayedCourses, isSmallScreen, isMediumScreen, handleViewCourse, handleEditCourse, handleDeleteCourse }) => {
+  console.log("Rendering CourseTable with courses:", displayedCourses.status);
+  
   return (
     <Table
       sx={{
@@ -54,6 +71,9 @@ const CourseTable = ({ displayedCourses, isSmallScreen, isMediumScreen, handleVi
               </TableCell>
             </>
           )}
+          <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: isSmallScreen ? '25%' : '12%' }}>
+            Trạng thái
+          </TableCell>
           <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', width: isSmallScreen ? '30%' : '10%' }}>
             Thao tác
           </TableCell>
@@ -70,7 +90,7 @@ const CourseTable = ({ displayedCourses, isSmallScreen, isMediumScreen, handleVi
             }}
           >
             <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5, width: '10%' }}>
-              {course.stt}
+              {index + 1}
             </TableCell>
             {!isSmallScreen && (
               <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5, width: '15%' }}>
@@ -100,6 +120,9 @@ const CourseTable = ({ displayedCourses, isSmallScreen, isMediumScreen, handleVi
                 </TableCell>
               </>
             )}
+            <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
+              {getStatusChip(getVietnameseStatus(course.status))}
+            </TableCell>
             <TableCell sx={{ textAlign: 'center', py: 1.5, width: isSmallScreen ? '30%' : '10%' }}>
               <Tooltip title="Xem">
                 <Visibility
@@ -119,7 +142,7 @@ const CourseTable = ({ displayedCourses, isSmallScreen, isMediumScreen, handleVi
                 <Delete
                   color="error"
                   style={{ cursor: 'pointer' }}
-                  onClick={() => handleDeleteCourse(course)} // Thay bằng handleDeleteCourse với toàn bộ course object
+                  onClick={() => handleDeleteCourse(course)}
                 />
               </Tooltip>
             </TableCell>

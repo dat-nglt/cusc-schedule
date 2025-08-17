@@ -42,8 +42,9 @@ import * as XLSX from 'xlsx';
 import PreviewClassModal from './PreviewClassModal';
 
 const statusOptions = [
-  { value: 'Hoạt động', color: 'success', icon: <PlayCircleFilled /> },
-  { value: 'Ngừng hoạt động', color: 'error', icon: <PauseCircleFilled /> },
+  { value: 'Hoạt động', color: 'success', icon: <PlayCircleFilled />, db: 'active' },
+  { value: 'Tạm ngưng', color: 'warning', icon: <PauseCircleFilled />, db: 'suspended' },
+  { value: 'Ngưng hoạt động', color: 'error', icon: <PauseCircleFilled />, db: 'inactive' }
 ];
 
 const steps = ['Thông tin cơ bản', 'Khóa học và trạng thái'];
@@ -176,8 +177,13 @@ export default function AddClassModal({
       return;
     }
 
+    // Chuyển trạng thái sang tiếng Anh trước khi lưu
+    const statusObj = statusOptions.find(opt => opt.value === newClass.status);
+    const dbStatus = statusObj ? statusObj.db : 'active';
+
     const classToAdd = {
       ...newClass,
+      status: dbStatus,
       class_size: parseInt(newClass.class_size, 10),
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
@@ -251,34 +257,34 @@ export default function AddClassModal({
       }
 
       const dataRows = rawData.slice(1);
-      const jsonData = dataRows.map(row => {
+
+      // Step 1: Map rows to objects
+      const classObjects = dataRows.map((row, index) => {
         const obj = {};
-        headers.forEach((header, index) => {
-          obj[String(header).trim()] = row[index] || '';
+        headers.forEach((header, idx) => {
+          obj[String(header).trim()] = row[idx] || '';
         });
-        return obj;
+        return {
+          class_id: obj['Mã lớp học'] || '',
+          class_name: obj['Tên lớp học'] || '',
+          class_size: obj['Sĩ số'] || '',
+          status: obj['Trạng thái'] || 'Hoạt động',
+          course_id: obj['Mã khóa học'] || '',
+          program_id: obj['Mã chương trình'] || '',
+          rowIndex: index + 2,
+        };
       });
 
-      const processedData = jsonData.map((row, index) => {
-        const classItem = {
-          class_id: row['Mã lớp học'] || '',
-          class_name: row['Tên lớp học'] || '',
-          class_size: row['Sĩ số'] || '',
-          status: row['Trạng thái'] || 'Hoạt động',
-          course_id: row['Mã khóa học'] || '',
-          program_id: row['Mã chương trình'] || '',
-          rowIndex: index + 2,
-          errors: [],
-        };
-
+      // Step 2: Add errors and duplicate checks
+      const processedData = classObjects.map((classItem, index, arr) => {
         const validationErrors = validateClassData(classItem);
 
         const isDuplicateExisting = (existingClasses || []).some(c => c.class_id === classItem.class_id);
         if (isDuplicateExisting) {
-          validationErrors.push('duplicate_id_existing');
+          validationErrors.push('Mã lớp học đã tồn tại');
         }
 
-        const isDuplicateInPreview = processedData.slice(0, index).some(c => c.class_id === classItem.class_id);
+        const isDuplicateInPreview = arr.slice(0, index).some(c => c.class_id === classItem.class_id);
         if (isDuplicateInPreview) {
           validationErrors.push('duplicate_id_in_file');
         }
@@ -286,17 +292,10 @@ export default function AddClassModal({
         return { ...classItem, errors: validationErrors };
       });
 
-      const validPreviewData = processedData.filter(item => item.errors.length === 0);
-
-      if (validPreviewData.length === 0) {
-        setLocalError('Không có dữ liệu hợp lệ nào trong file Excel');
-        e.target.value = '';
-        setFileUploaded(false);
-        return;
-      }
-
+      // Luôn hiển thị PreviewClassModal, kể cả khi không có dòng hợp lệ
       setPreviewData(processedData);
       setShowPreview(true);
+
     } catch (error) {
       console.error('Error reading Excel file:', error);
       setLocalError('Lỗi khi đọc file Excel. Vui lòng kiểm tra lại');
