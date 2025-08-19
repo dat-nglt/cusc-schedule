@@ -42,12 +42,12 @@ export default {
       },
       date: {
         type: Sequelize.DATEONLY,
-        allowNull: false,
+        allowNull: true,
         comment: 'Date in YYYY-MM-DD format'
       },
       day: {
         type: Sequelize.ENUM('Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'),
-        allowNull: false
+        allowNull: true
       },
       slot_id: {
         type: Sequelize.STRING(30),

@@ -32,6 +32,16 @@ export const getAllScheduleChangeRequestService = async () => {
     }
 };
 
+// Hàm sinh mã request_id tự động
+const generateRequestId = (lecturerId, classScheduleId) => {
+    // Đảm bảo lecturer_id và class_schedule_id được chuyển thành string
+    const lecturerIdStr = String(lecturerId).padStart(3, '0'); // Đệm 0 phía trước nếu cần
+    const classScheduleIdStr = String(classScheduleId).padStart(2, '0'); // Đệm 0 phía trước nếu cần
+
+
+    return `REQ_${lecturerIdStr}_${classScheduleIdStr}`;
+};
+
 export const CreateScheduleChangeRequestService = async (data) => {
     try {
         // Kiểm tra dữ liệu đầu vào
@@ -49,6 +59,16 @@ export const CreateScheduleChangeRequestService = async (data) => {
         if (currentSchedule.lecturer_id !== data.lecturer_id) {
             throw new Error("Bạn không được phép gửi yêu cầu thay đổi lịch học này. Chỉ giảng viên được phân công dạy mới có quyền gửi yêu cầu.");
         }
+
+
+        // Sinh mã request_id tự động
+        const requestId = generateRequestId(data.lecturer_id, data.class_schedule_id);
+
+        // Thêm request_id vào data
+        const requestData = {
+            ...data,
+            request_id: requestId
+        };
 
         // Kiểm tra xem đã có yêu cầu thay đổi lịch học nào cho lịch học này chưa
         const existingRequest = await ScheduleChangeRequest.findOne({
@@ -123,7 +143,7 @@ export const CreateScheduleChangeRequestService = async (data) => {
             }
         }
 
-        const scheduleChangeRequest = await ScheduleChangeRequest.create(data);
+        const scheduleChangeRequest = await ScheduleChangeRequest.create(requestData);
         return scheduleChangeRequest;
     }
     catch (error) {
@@ -170,7 +190,12 @@ export const approveScheduleChangeRequestService = async (requestId, adminData) 
                 throw new Error("Không thể duyệt: Hiện tại có xung đột lịch học với yêu cầu này");
             }
         }
-
+        // lưu lại ngày gốc trước khi cập nhật
+        await scheduleChangeRequest.update({
+            original_date: scheduleChangeRequest.classSchedule.date,
+            original_room_id: scheduleChangeRequest.classSchedule.room_id,
+            original_slot_id: scheduleChangeRequest.classSchedule.slot_id,
+        });
         // Cập nhật lịch học gốc với thông tin mới
         const originalSchedule = scheduleChangeRequest.classSchedule;
         await ClassSchedule.update({
@@ -184,7 +209,7 @@ export const approveScheduleChangeRequestService = async (requestId, adminData) 
         // Cập nhật trạng thái yêu cầu
         await scheduleChangeRequest.update({
             status: 'APPROVED',
-            updated_at: new Date()
+            approved_at: new Date()
         });
 
         return scheduleChangeRequest;

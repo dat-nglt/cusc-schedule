@@ -289,6 +289,7 @@ const AddLecturerModal = ({ open, onClose, onAddLecturer, existingLecturers, err
 
             setPreviewData(processedData);
             setShowPreview(true);
+            onClose();
 
         } catch (error) {
             console.error('Error reading Excel file:', error);

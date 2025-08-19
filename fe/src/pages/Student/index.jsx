@@ -138,7 +138,7 @@ const Student = () => {
 
     // Hàm mở modal chỉnh sửa
     const handleEditStudentModal = async (id) => {
-        
+
         setLoading(true);
         setError(null);
         try {
@@ -200,7 +200,7 @@ const Student = () => {
 
             if (studentToView) {
                 setSelectedStudent(studentToView);
-                
+
                 setOpenDetail(true);
                 console.log(studentToView);
             } else {
@@ -399,6 +399,7 @@ const Student = () => {
                 onSave={handleSaveEditedStudent}
                 error={error}
                 loading={loading}
+                classes={classes}
             />
             <DeleteStudentModal
                 open={openDeleteModal}

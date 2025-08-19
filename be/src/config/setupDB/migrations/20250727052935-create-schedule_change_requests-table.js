@@ -5,9 +5,8 @@ export default {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('schedule_change_requests', {
       request_id: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.STRING(100),
         primaryKey: true,
-        autoIncrement: true,
         allowNull: false
       },
       class_schedule_id: {
@@ -43,6 +42,10 @@ export default {
         type: Sequelize.DATEONLY,
         allowNull: true
       },
+      original_date: {
+        type: Sequelize.DATEONLY,
+        allowNull: true
+      },
       requested_weekday: {
         type: Sequelize.ENUM('Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'),
         allowNull: true
@@ -55,6 +58,10 @@ export default {
         type: Sequelize.STRING(30),
         allowNull: true,
       },
+      original_slot_id: {
+        type: Sequelize.STRING(30),
+        allowNull: true,
+      },
       requested_room_id: {
         type: Sequelize.STRING(30),
         allowNull: true,
@@ -64,6 +71,10 @@ export default {
         },
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL'
+      },
+      original_room_id: {
+        type: Sequelize.STRING(30),
+        allowNull: true,
       },
       // thay đổi giảng viên
       substitute_lecturer_id: {

@@ -49,7 +49,7 @@ const statusOptions = [
 
 const steps = ['Thông tin cá nhân', 'Thông tin liên hệ', 'Thông tin học tập'];
 
-export default function EditStudentModal({ open, onClose, student, onSave, error, loading }) {
+export default function EditStudentModal({ open, onClose, student, onSave, error, loading, classes }) {
   const [editedStudent, setEditedStudent] = useState({
     student_id: '',
     name: '',
@@ -85,12 +85,12 @@ export default function EditStudentModal({ open, onClose, student, onSave, error
       setEditedStudent({
         student_id: student.student_id || '',
         name: student.name || '',
-        email: student.email || '',
+        email: student.account.email || '',
         day_of_birth: student.day_of_birth || '',
         gender: student.gender || '',
         address: student.address || '',
         phone_number: student.phone_number || '',
-        class: student.class || '',
+        class: student.class.class_id || '',
         admission_year: student.admission_year || '',
         status: viStatus,
       });
@@ -169,7 +169,12 @@ export default function EditStudentModal({ open, onClose, student, onSave, error
       updated_at: new Date().toISOString(),
     };
 
-    await onSave(updatedStudentData);
+    try {
+      await onSave(updatedStudentData);
+      onClose(); // Đóng modal sau khi cập nhật thành công
+    } catch (error) {
+      // Error sẽ được xử lý bởi component cha
+    }
   };
 
   return (
@@ -399,24 +404,26 @@ export default function EditStudentModal({ open, onClose, student, onSave, error
               gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
               gap: 3
             }}>
-              <TextField
-                label="Mã lớp"
-                name="class"
-                value={editedStudent.class}
-                onChange={handleChange}
-                fullWidth
-                variant="outlined"
-                required
-                disabled={loading}
-                InputProps={{
-                  startAdornment: (
+              <FormControl fullWidth required disabled={loading}>
+                <InputLabel>Lớp</InputLabel>
+                <Select
+                  name="class"
+                  value={editedStudent.class}
+                  onChange={handleChange}
+                  label="Lớp"
+                  startAdornment={
                     <InputAdornment position="start">
                       <ClassIcon color="action" />
                     </InputAdornment>
-                  ),
-                }}
-                sx={{ mb: 2 }}
-              />
+                  }
+                >
+                  {classes && classes.map((classItem) => (
+                    <MenuItem key={classItem.class_id} value={classItem.class_id}>
+                      {classItem.class_name || classItem.class_id}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
               <TextField
                 label="Ngày nhập học"
                 name="admission_year"

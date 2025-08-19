@@ -63,28 +63,58 @@ export default function ScheduleChangeRequestTable({
 
 
     // Component hiển thị thông tin lịch
-    const ScheduleInfo = ({ schedule, isOriginal = false, requestedSlotId = null }) => {
-        if (!schedule) return <Typography variant="body2">-</Typography>;
+    const ScheduleInfo = ({ schedule, isOriginal = false, requestedSlotId = null, originalDate, originalSlot, originalRoom, status }) => {
+        if (!schedule && !originalDate) return <Typography variant="body2">-</Typography>;
 
-        const slotToDisplay = isOriginal ? schedule.slot_id : (requestedSlotId || schedule.slot_id);
+        // Xử lý cho trường hợp đã được duyệt (APPROVED)
+        if (status === 'APPROVED' && isOriginal) {
+            return (
+                <Box>
+                    <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#1976d2' }}>
+                        {formatDate(originalDate)}
+                    </Typography>
+                    <Typography variant="caption" display="block">
+                        Tiết {getSlotNumber(originalSlot)}
+                    </Typography>
+                    <Typography variant="caption" display="block" sx={{ color: '#888', fontSize: '0.75rem' }}>
+                        {getSlotTime(originalSlot)}
+                    </Typography>
+                    <Typography variant="caption" display="block" sx={{ color: '#666' }}>
+                        Phòng: {originalRoom}
+                    </Typography>
+                </Box>
+            );
+        }
 
-        return (
-            <Box>
-                <Typography variant="body2" sx={{ fontWeight: 'bold', color: isOriginal ? '#1976d2' : '#ff9800' }}>
-                    {formatDate(schedule.date)}
-                </Typography>
-                <Typography variant="caption" display="block">
-                    Tiết {getSlotNumber(slotToDisplay)}
-                </Typography>
-                <Typography variant="caption" display="block" sx={{ color: '#888', fontSize: '0.75rem' }}>
-                    {getSlotTime(slotToDisplay)}
-                </Typography>
-                <Typography variant="caption" display="block" sx={{ color: '#666' }}>
-                    Phòng: {schedule.room_id}
-                </Typography>
-            </Box>
-        );
+        // Xử lý cho trường hợp thông thường
+        if (schedule) {
+            const slotToDisplay = isOriginal ? schedule.slot_id : (requestedSlotId || schedule.slot_id);
+            const roomToDisplay = isOriginal
+                ? schedule.room_id
+                : (schedule.room_name || schedule.room_id_request || schedule.room_id);
+
+            return (
+                <Box>
+                    <Typography variant="body2" sx={{ fontWeight: 'bold', color: isOriginal ? '#1976d2' : '#ff9800' }}>
+                        {formatDate(schedule.date)}
+                    </Typography>
+                    <Typography variant="caption" display="block">
+                        Tiết {getSlotNumber(slotToDisplay)}
+                    </Typography>
+                    <Typography variant="caption" display="block" sx={{ color: '#888', fontSize: '0.75rem' }}>
+                        {getSlotTime(slotToDisplay)}
+                    </Typography>
+                    <Typography variant="caption" display="block" sx={{ color: '#666' }}>
+                        Phòng: {roomToDisplay}
+                    </Typography>
+                </Box>
+            );
+        }
+
+        return <Typography variant="body2">-</Typography>;
     };
+    console.log('displayedRequests', displayedRequests);
+
 
     return (
         <Table
@@ -98,7 +128,7 @@ export default function ScheduleChangeRequestTable({
             <TableHead>
                 <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
                     {!isSmallScreen && (
-                        <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '8%' }}>
+                        <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '14%' }}>
                             Mã YC
                         </TableCell>
                     )}
@@ -156,7 +186,14 @@ export default function ScheduleChangeRequestTable({
                         </TableCell>
                         {!isSmallScreen && (
                             <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                                <ScheduleInfo schedule={request.classSchedule} isOriginal={true} />
+                                <ScheduleInfo
+                                    schedule={request.classSchedule}
+                                    isOriginal={true}
+                                    originalDate={request.original_date}
+                                    originalSlot={request.original_slot_id}
+                                    originalRoom={request.original_room_id}
+                                    status={request.status}
+                                />
                             </TableCell>
                         )}
                         {!isSmallScreen && (
@@ -170,6 +207,7 @@ export default function ScheduleChangeRequestTable({
                                     }}
                                     isOriginal={false}
                                     requestedSlotId={request.requested_slot_id}
+                                    status={request.status}
                                 />
                             </TableCell>
                         )}

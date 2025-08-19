@@ -10,7 +10,7 @@ import logger from "../utils/logger.js";
  */
 export const generateAccessTokenService = (userId, role) => {
   return jwt.sign({ id: userId, role }, process.env.JWT_SECRET, {
-    expiresIn: "15m", // Token có hiệu lực trong 30 giây
+    expiresIn: "24h", // Token có hiệu lực trong 30 giây
   });
 };
 

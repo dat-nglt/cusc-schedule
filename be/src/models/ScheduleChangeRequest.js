@@ -5,9 +5,8 @@ const ScheduleChangeRequest = (sequelize) => {
         'ScheduleChangeRequest',
         {
             request_id: {
-                type: DataTypes.INTEGER,
+                type: DataTypes.STRING(100),
                 primaryKey: true,
-                autoIncrement: true,
                 allowNull: false
             },
             class_schedule_id: {
@@ -22,11 +21,23 @@ const ScheduleChangeRequest = (sequelize) => {
                 type: DataTypes.DATEONLY,
                 allowNull: true
             },
+            original_date: {
+                type: DataTypes.DATEONLY,
+                allowNull: true
+            },
             requested_room_id: {
                 type: DataTypes.STRING(30),
                 allowNull: true
             },
+            original_room_id: {
+                type: DataTypes.STRING(30),
+                allowNull: true
+            },
             requested_slot_id: {
+                type: DataTypes.STRING(30),
+                allowNull: true
+            },
+            original_slot_id: {
                 type: DataTypes.STRING(30),
                 allowNull: true
             },
