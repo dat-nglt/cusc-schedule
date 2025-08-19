@@ -1,71 +1,156 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Box, Grid, Typography, Paper, useTheme, useMediaQuery, Divider } from '@mui/material';
 import WeeklyCalendarForStudent from './WeeklyCalendarForStudent';
 import ScheduleFilterBar from './ScheduleFilterBar';
 import StudentDashboardSidebar from './StudentDashboardSidebar';
-
-
+import { getClassScheduleForStudentService } from '../../api/classschedule';
+import { useAuth } from '../../contexts/AuthContext';
+import { set } from 'date-fns';
 
 function StudentSchedules() {
+    const { userData } = useAuth();
+    const [scheduleItems, setScheduleItems] = useState([]);
 
-    const [scheduleItems, setScheduleItems] = useState([
+    // Test data for development - remove when API is working
+    const testScheduleData = [
         {
-            id: '3',
-            course: 'Hóa học cơ bản',
-            room: 'P.102',
-            lecturer: 'TS. Nguyễn Văn A',
-            type: 'Lý thuyết',
-            startTime: '2025-06-09T09:00:00',
-            endTime: '2025-06-09T11:00:00',
-            checkInTime: '2025-06-09T08:50:00',
-            checkOutTime: '2025-06-09T11:10:00'
+            "class_schedule_id": 8,
+            "semester_id": "HK1_CT01_2025",
+            "class_id": "DH23CS",
+            "program_id": "CT001",
+            "date": "2025-08-20",
+            "day": null,
+            "slot_id": "S2",
+            "subject_id": "MH002",
+            "lecturer_id": "GV002",
+            "room_id": "LT2",
+            "status": "active",
+            "notes": "Môn Cấu trúc dữ liệu và giải thuật",
+            "lecturer": {
+                "lecturer_id": "GV002",
+                "name": "Trần Thị B"
+            },
+            "requestedRoom": {
+                "room_id": "LT2",
+                "room_name": "Phòng 2"
+            },
+            "semester": {
+                "semester_id": "HK1_CT01_2025",
+                "semester_name": "Học kỳ 1 năm học 2024-2025"
+            },
+            "class": {
+                "class_id": "DH23CS",
+                "class_name": "Đại học 23 Công nghệ Phần mềm"
+            },
+            "program": {
+                "program_id": "CT001",
+                "program_name": "Lập trình viên quốc tế"
+            },
+            "subject": {
+                "subject_id": "MH002",
+                "subject_name": "Foundations of Programming with C"
+            }
         },
         {
-            id: '4',
-            course: 'Giải tích 1',
-            room: 'P.204',
-            lecturer: 'ThS. Trần Thị B',
-            type: 'Lý thuyết',
-            startTime: '2025-06-10T08:00:00',
-            endTime: '2025-06-10T10:00:00',
-            checkInTime: '2025-06-10T07:55:00',
-            checkOutTime: '2025-06-10T10:05:00'
+            "class_schedule_id": 9,
+            "semester_id": "HK1_CT02_2025",
+            "class_id": "DH23CS",
+            "program_id": "CT002",
+            "date": "2025-08-20",
+            "day": null,
+            "slot_id": "C1",
+            "subject_id": "MH009",
+            "lecturer_id": "GV003",
+            "room_id": "TH1",
+            "status": "active",
+            "notes": "Môn Toán rời rạc - Lý thuyết",
+            "lecturer": {
+                "lecturer_id": "GV003",
+                "name": "Lê Minh C"
+            },
+            "requestedRoom": {
+                "room_id": "TH1",
+                "room_name": "Lab 1"
+            },
+            "semester": {
+                "semester_id": "HK1_CT02_2025",
+                "semester_name": "Học kỳ 1 năm học 2024-2025"
+            },
+            "class": {
+                "class_id": "DH23CS",
+                "class_name": "Đại học 23 Công nghệ Phần mềm"
+            },
+            "program": {
+                "program_id": "CT002",
+                "program_name": "Mỹ thuật đa phương tiện"
+            },
+            "subject": {
+                "subject_id": "MH009",
+                "subject_name": "Xử lý ảnh với Adobe Photoshop"
+            }
         },
         {
-            id: '5',
-            course: 'Tin học đại cương',
-            room: 'P.105',
-            lecturer: 'ThS. Lê Văn C',
-            type: 'Thực hành',
-            startTime: '2025-06-11T13:00:00',
-            endTime: '2025-06-11T15:00:00',
-            checkInTime: '2025-06-11T12:50:00',
-            checkOutTime: '2025-06-11T15:10:00'
-        },
-        {
-            id: '6',
-            course: 'Kỹ thuật lập trình',
-            room: 'P.306',
-            lecturer: 'TS. Phạm Thị D',
-            type: 'Thực hành',
-            startTime: '2025-06-12T10:00:00',
-            endTime: '2025-06-12T12:00:00',
-            checkInTime: '2025-06-12T09:50:00',
-            checkOutTime: '2025-06-12T12:10:00'
-        },
-        {
-            id: '7',
-            course: 'Xác suất thống kê',
-            room: 'P.103',
-            lecturer: 'ThS. Đỗ Văn E',
-            type: 'Lý thuyết',
-            startTime: '2025-06-13T14:00:00',
-            endTime: '2025-06-13T16:00:00',
-            checkInTime: '2025-06-13T13:55:00',
-            checkOutTime: '2025-06-13T16:05:00'
+            "class_schedule_id": 7,
+            "semester_id": "HK1_CT01_2025",
+            "class_id": "DH23CS",
+            "program_id": "CT001",
+            "date": "2025-08-25",
+            "day": null,
+            "slot_id": "S1",
+            "subject_id": "MH001",
+            "lecturer_id": "GV001",
+            "room_id": "LT2",
+            "status": "active",
+            "notes": "Môn Lập trình cơ bản - Tiết đầu tuần",
+            "lecturer": {
+                "lecturer_id": "GV001",
+                "name": "Nguyễn Văn A"
+            },
+            "requestedRoom": {
+                "room_id": "LT2",
+                "room_name": "Phòng 2"
+            },
+            "semester": {
+                "semester_id": "HK1_CT01_2025",
+                "semester_name": "Học kỳ 1 năm học 2024-2025"
+            },
+            "class": {
+                "class_id": "DH23CS",
+                "class_name": "Đại học 23 Công nghệ Phần mềm"
+            },
+            "program": {
+                "program_id": "CT001",
+                "program_name": "Lập trình viên quốc tế"
+            },
+            "subject": {
+                "subject_id": "MH001",
+                "subject_name": "Computer Fundamentals"
+            }
         }
-    ]);
+    ];
 
+    const fetchClassScheduleForStudent = useCallback(async () => {
+        try {
+            const studentId = userData.code;
+            const response = await getClassScheduleForStudentService(studentId);
+            if (!response) {
+                throw new Error("Không có dữ liệu thời khóa biểu");
+            }
+            console.log("Raw API response:", response.data);
+            setScheduleItems(response.data || []);
+        } catch (error) {
+            console.error("Error fetching class schedule for student:", error);
+            // For development - use test data when API fails
+            console.log("Using test data for development");
+            setScheduleItems(testScheduleData);
+        }
+    }, [userData.code]);
+    useEffect(() => {
+        if (userData?.code) {
+            fetchClassScheduleForStudent();
+        }
+    }, [userData?.code, fetchClassScheduleForStudent]); // Fix dependency
+    console.log("Schedule Items:", scheduleItems);
 
     const theme = useTheme();
     // const isMobile = useMediaQuery(theme.breakpoints.down('md')); // Dùng để điều chỉnh layout trên mobile/tablet

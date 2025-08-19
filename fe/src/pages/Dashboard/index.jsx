@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
     Box,
 } from '@mui/material';
@@ -6,7 +6,6 @@ import WeeklyCalendar from './WeeklyCalendar';
 import QuickStats from './QuickStats';
 import { io } from 'socket.io-client';
 
-import { useEffect, useCallback } from 'react';
 import { generateSchedule, getDownloadUrl, stopScheduleGeneration } from '../../api/scheduleAPI';
 import ProgressModal from './ProgressModal';
 import { toast } from 'react-toastify';
@@ -20,9 +19,7 @@ import { getSemesterCreateScheduleAPI } from '../../api/semesterAPI';
 import CreateSchedulesAutoModal from './CreateSchedulesAutoModal';
 import { getAllSchedules } from '../../api/classschedule';
 
-
-
-const socket = io(import.meta.env.VITE_API_URL || 'http://localhost:3000', { // Sử dụng biến môi trường cho Socket.IO
+const socket = io(import.meta.env.VITE_API_URL || 'http://localhost:3000', {
     withCredentials: true
 });
 
@@ -42,7 +39,8 @@ const Dashboard = () => {
     const [semesters, setSemesters] = useState([]);
     const [classes, setClasses] = useState([]);
     const [formTest, setFormTest] = useState(null);
-    const days_of_week = useState({
+
+    const days_of_week = {
         "days_of_week": [
             "Mon",
             "Tue",
@@ -51,8 +49,9 @@ const Dashboard = () => {
             "Fri",
             "Sat"
         ]
-    });
-    const timeslot = useState({
+    };
+
+    const timeslot = {
         "time_slots": [
             {
                 "slot_id": "S1",
@@ -91,7 +90,7 @@ const Dashboard = () => {
                 "type": "evening"
             }
         ],
-    });
+    };
 
     console.log("SCHEDULE:", formTest)
     console.log("scheduleItems:", scheduleItems);
@@ -521,10 +520,12 @@ const Dashboard = () => {
             programs: transformedPrograms,
             semesters: transformedSemesters,
             subjects: transformedSubjects,
-            time_slots: timeslot[0]?.time_slots ?? [],
-            days_of_week: days_of_week[0]?.days_of_week ?? []
+            time_slots: timeslot?.time_slots ?? [],
+            days_of_week: days_of_week?.days_of_week ?? []
         };
-    }, [timeslot, days_of_week]);
+    }, []);
+
+
 
     // Update formTest when API data is loaded
     useEffect(() => {

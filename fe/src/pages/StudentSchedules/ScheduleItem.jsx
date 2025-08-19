@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Typography, useTheme, alpha } from '@mui/material';
-import { format, parseISO } from 'date-fns';
+import { formatScheduleTime } from '../../utils/scheduleUtils';
 
 const ScheduleItem = ({ item }) => {
     const theme = useTheme();
@@ -28,9 +28,8 @@ const ScheduleItem = ({ item }) => {
     // Text color for details, using theme's secondary text color for readability
     // const secondaryTextColor = theme.palette.text.secondary;
 
-    // Format times for display
-    const formattedStartTime = item.startTime ? format(parseISO(item.startTime), 'HH:mm') : 'N/A';
-    const formattedEndTime = item.endTime ? format(parseISO(item.endTime), 'HH:mm') : 'N/A';
+    // Format times for display using slot_id
+    const formattedTime = item.slot_id ? formatScheduleTime(item.slot_id) : 'N/A';
 
     return (
         <Box
@@ -75,7 +74,7 @@ const ScheduleItem = ({ item }) => {
                 <Typography component="span" sx={{ color: primaryTextColor }}>GV:</Typography> {item.lecturer}
             </Typography>
             <Typography variant="subtitle2" sx={{ mb: 0.3, lineHeight: 1.4, color: 'primary' }}>
-                <Typography component="span" sx={{ color: primaryTextColor }}>Giờ:</Typography> {formattedStartTime} - {formattedEndTime}
+                <Typography component="span" sx={{ color: primaryTextColor }}>Giờ:</Typography> {formattedTime}
             </Typography>
             <Typography variant="subtitle2" sx={{ lineHeight: 1.4, color: 'primary' }}>
                 <Typography component="span" sx={{ color: primaryTextColor }}>Loại:</Typography> {item.type}
