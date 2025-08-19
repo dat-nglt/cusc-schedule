@@ -138,9 +138,21 @@ export default function StudentTable({ displayedStudents, isSmallScreen, isMediu
                         )}
                         {!isMediumScreen && (
                             <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                                <Box sx={{ fontSize: '0.85rem' }}>
-                                    <div>{student.account.email}</div>
-                                    <div style={{ color: '#666', marginTop: '2px' }}>{student.account.phone_number}</div>
+                                <Box sx={{
+                                    fontSize: '0.85rem',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    gap: 0.5
+                                }}>
+                                    <div style={{ wordBreak: 'break-word' }}>{student.account.email}</div>
+                                    <div style={{
+                                        color: '#666',
+                                        borderTop: '1px solid #eee',
+                                        paddingTop: '4px',
+                                        wordBreak: 'break-word'
+                                    }}>
+                                        {student.account.phone_number}
+                                    </div>
                                 </Box>
                             </TableCell>
                         )}
