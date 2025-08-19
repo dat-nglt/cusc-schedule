@@ -150,7 +150,7 @@ function StudentProfile({ studentInfo }) {
                             }}
                                 src="https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png"
                             >
-                                {studentInfo.name.charAt(0)}
+                                {studentInfo.name}
                             </Avatar>
                             {/* IconButton mới ở góc dưới bên phải của Avatar */}
                             <IconButton

@@ -178,24 +178,7 @@ const WeeklyCalendar = ({
                         <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'center' }}>
                             <Button
                                 variant="contained"
-                                startIcon={<Add fontSize="small" />}
-                                onClick={onAddNew}
-                                sx={{
-                                    textTransform: 'none',
-                                    borderRadius: '8px',
-                                    px: 2,
-                                    minWidth: 'max-content',
-                                    whiteSpace: 'nowrap'
-                                }}
-                                size={isTablet ? 'small' : 'medium'}
-                            >
-                                Thêm lịch
-                            </Button>
-
-                            <Button
-                                variant="contained"
                                 color="success"
-                                startIcon={<PostAdd fontSize="small" />}
                                 sx={{
                                     textTransform: 'none',
                                     borderRadius: '8px',
@@ -206,25 +189,10 @@ const WeeklyCalendar = ({
                                 }}
                                 size={isTablet ? 'small' : 'medium'}
                             >
-                                Tạo lịch mới
+                                Xuất lịch học
                             </Button>
 
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                startIcon={<FileDownload fontSize="small" />}
-                                sx={{
-                                    textTransform: 'none',
-                                    borderRadius: '8px',
-                                    px: 2,
-                                    minWidth: 'max-content',
-                                    whiteSpace: 'nowrap',
-                                    display: { xs: 'none', sm: 'inline-flex' }
-                                }}
-                                size={isTablet ? 'small' : 'medium'}
-                            >
-                                Xuất báo cáo
-                            </Button>
+
                         </Box>
                     )}
 
