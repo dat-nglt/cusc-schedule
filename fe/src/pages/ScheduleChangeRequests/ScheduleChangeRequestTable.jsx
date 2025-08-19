@@ -128,7 +128,7 @@ export default function ScheduleChangeRequestTable({
             <TableHead>
                 <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
                     {!isSmallScreen && (
-                        <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '14%' }}>
+                        <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '15%' }}>
                             Mã YC
                         </TableCell>
                     )}
@@ -170,7 +170,13 @@ export default function ScheduleChangeRequestTable({
                     >
 
                         {!isSmallScreen && (
-                            <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
+                            <TableCell sx={{
+                                textAlign: 'left',
+                                borderRight: '1px solid #e0e0e0',
+                                py: 1.5,
+                                wordWrap: 'break-word',
+                                wordBreak: 'break-all'
+                            }}>
                                 {request.request_id}
                             </TableCell>
                         )}

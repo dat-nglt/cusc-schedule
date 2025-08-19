@@ -33,13 +33,20 @@ export const getAllScheduleChangeRequestService = async () => {
 };
 
 // Hàm sinh mã request_id tự động
-const generateRequestId = (lecturerId, classScheduleId) => {
+const generateRequestId = (lecturerId, classScheduleId, slotRequest) => {
     // Đảm bảo lecturer_id và class_schedule_id được chuyển thành string
     const lecturerIdStr = String(lecturerId).padStart(3, '0'); // Đệm 0 phía trước nếu cần
-    const classScheduleIdStr = String(classScheduleId).padStart(2, '0'); // Đệm 0 phía trước nếu cần
+    const classScheduleIdStr = String(classScheduleId).padStart(1, '0'); // Đệm 0 phía trước nếu cần
 
+    // Tạo timestamp dễ đọc (YYYYMMDD_HHMMSS)
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
 
-    return `REQ_${lecturerIdStr}_${classScheduleIdStr}`;
+    const timestamp = `${year}${month}${day}`;
+
+    return `REQ_${lecturerIdStr}_${classScheduleIdStr}_${slotRequest}_${timestamp}`; // Kết hợp với timestamp để đảm bảo tính duy nhất
 };
 
 export const CreateScheduleChangeRequestService = async (data) => {
@@ -62,7 +69,7 @@ export const CreateScheduleChangeRequestService = async (data) => {
 
 
         // Sinh mã request_id tự động
-        const requestId = generateRequestId(data.lecturer_id, data.class_schedule_id);
+        const requestId = generateRequestId(data.lecturer_id, data.class_schedule_id, data.requested_slot_id);
 
         // Thêm request_id vào data
         const requestData = {
