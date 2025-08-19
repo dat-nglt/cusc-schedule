@@ -223,22 +223,6 @@ function StudentProfile({ studentInfo }) {
                                         color: theme.palette.info.dark
                                     }}
                                 />
-                                <Chip
-                                    label={studentInfo.major}
-                                    size="small"
-                                    sx={{
-                                        bgcolor: alpha(theme.palette.info.main, 0.1),
-                                        color: theme.palette.info.dark
-                                    }}
-                                />
-                                <Chip
-                                    label={studentInfo.trainingLevel}
-                                    size="small"
-                                    sx={{
-                                        bgcolor: alpha(theme.palette.info.main, 0.1),
-                                        color: theme.palette.info.dark
-                                    }}
-                                />
                                 <IconButton onClick={handleOpenModal} size="small" color="primary"
                                     sx={{
                                         mt: { xs: -0.5, md: -0.5 }, // Adjust margin top to align with title

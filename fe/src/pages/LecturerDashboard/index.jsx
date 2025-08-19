@@ -5,23 +5,45 @@ import {
   Divider,
   Chip,
 } from '@mui/material';
+import { useAuth } from '../../contexts/AuthContext';
 import LecturerProfile from './LecturerProfile';
 import TeachingSection from './TeachingSection';
 import Features from './Features';
 
 const LecturerDashboard = () => {
-  const sampleLecturerInfo = {
-    name: "Nguyễn Văn A",
-    id: "GV20230001",
-    department: "Khoa Công nghệ Thông tin",
-    email: "nguyenvana@university.edu",
-    phone: "0987654321",
-    degree: "Tiến sĩ",
-    office: "Phòng A203",
-    teachingCourses: 3,
-    upcomingClasses: 2,
-    officeHours: "Thứ 3, Thứ 5: 14:00 - 16:00",
+  const { userData, loading } = useAuth();
+  // Fallback data nếu userData chưa có
+  const lecturerInfo = userData ? {
+    name: userData.name || "Chưa cập nhật",
+    id: userData.code || "Chưa có mã",
+    department: userData.department || "Chưa cập nhật",
+    email: userData.email || "Chưa cập nhật",
+    phone: userData.phone_number || "Chưa cập nhật",
+    degree: userData.degree || "Chưa cập nhật",
+    office: userData.office || "Chưa cập nhật",
+    teachingCourses: userData.teachingCourses || 0,
+    upcomingClasses: userData.upcomingClasses || 0,
+    officeHours: userData.officeHours || "Chưa cập nhật",
+  } : {
+    name: "Đang tải...",
+    id: "...",
+    department: "...",
+    email: "...",
+    phone: "...",
+    degree: "...",
+    office: "...",
+    teachingCourses: 0,
+    upcomingClasses: 0,
+    officeHours: "...",
   };
+
+  if (loading) {
+    return (
+      <Box sx={{ p: 2, display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '200px' }}>
+        <Typography>Đang tải thông tin...</Typography>
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{
@@ -65,7 +87,7 @@ const LecturerDashboard = () => {
 
       <Divider />
 
-      <LecturerProfile lecturerInfo={sampleLecturerInfo} />
+      <LecturerProfile lecturerInfo={lecturerInfo} />
 
       <Features />
 

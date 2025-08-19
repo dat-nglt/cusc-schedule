@@ -81,12 +81,71 @@ export const findUserByGoogleId = async (googleId) => {
 export const findExistsUserByIdService = async (id) => {
   try {
     const account = await Account.findByPk(id);
+
     if (account) {
-      return {
-        userData: account.dataValues, // Trả về toàn bộ đối tượng account
-        id: account.dataValues.id, // ID của người dùng
-        role: account.dataValues.role, // Vai trò của người dùng (lấy từ trường 'role' trong bảng Account)
+      const result = {
+        userData: account.dataValues,
+        id: account.dataValues.id,
+        role: account.dataValues.role,
+        email: account.dataValues.email,
+        code: null,
+        name: null,
+        day_of_birth: null,
+        gender: null,
+        phone_number: null,
+        address: null,
+        department: null,
+        hire_date: null,
+        class: null,
+        status: null,
       };
+
+      // Lấy mã định danh dựa trên role
+      switch (account.dataValues.role) {
+        case 'lecturer':
+          const lecturer = await Lecturer.findOne({ where: { account_id: id } });
+          if (lecturer) {
+            result.code = lecturer.lecturer_id;
+            result.name = lecturer.name;
+            result.day_of_birth = lecturer.day_of_birth;
+            result.address = lecturer.address;
+            result.gender = lecturer.gender;
+            result.phone_number = lecturer.phone_number;
+            result.department = lecturer.department;
+            result.hire_date = lecturer.hire_date;
+            result.status = lecturer.status;
+          }
+          break;
+
+        case 'student':
+          const student = await Student.findOne({ where: { account_id: id } });
+          if (student) {
+            result.code = student.student_id;
+            result.name = student.name;
+            result.day_of_birth = student.day_of_birth;
+            result.address = student.address;
+            result.phone_number = student.phone_number;
+            result.gender = student.gender;
+            result.class = student.class_id;
+          }
+          break;
+
+        case 'training_officer':
+          const trainingOfficer = await TrainingOfficer.findOne({ where: { account_id: id } });
+          if (trainingOfficer) {
+            result.code = trainingOfficer.training_officer_id;
+          }
+          break;
+
+        case 'admin':
+          // Admin có thể không có mã riêng, hoặc có thể thêm logic tương tự nếu cần
+          break;
+
+        default:
+          logger.warn(`Unknown role: ${account.dataValues.role} for account ID: ${id}`);
+      }
+
+      return result;
     }
     return null;
   } catch (error) {

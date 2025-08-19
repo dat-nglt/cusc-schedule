@@ -17,6 +17,7 @@ export const AuthProvider = ({ children }) => {
   const [userRole, setUserRole] = useState(
     localStorage.getItem(USER_ROLE_KEY) || null
   );
+  const [userData, setUserData] = useState({}); // Thêm state để lưu dữ liệu user
   const [loading, setLoading] = useState(true); // Trạng thái loading khi xác minh phiên
 
   // Hàm để đặt trạng thái đăng nhập và vai trò
@@ -32,6 +33,7 @@ export const AuthProvider = ({ children }) => {
     try {
       setIsLoggedIn(false);
       setUserRole(null);
+      setUserData(null); // Reset userData khi logout
       localStorage.removeItem(USER_ROLE_KEY);
       localStorage.removeItem(IS_LOGGED_IN_KEY);
       await logoutUser();
@@ -39,6 +41,7 @@ export const AuthProvider = ({ children }) => {
       console.error('Lỗi khi gọi API đăng xuất:', error);
     }
   }, []);
+  console.log("userData:", userData);
 
   // Hàm xác minh phiên với Backend
   const verifySession = useCallback(async () => {
@@ -46,8 +49,10 @@ export const AuthProvider = ({ children }) => {
     try {
       if (isLoggedIn) {
         const response = await getCurrentUserData();
-        if (response.success === 200) {
+        console.log("verifySession response:", response);
+        if (response) {
           login(response.role); // Cập nhật trạng thái đăng nhập từ dữ liệu backend
+          setUserData(response); // Lưu dữ liệu user từ API
           return true;
         }
       }
@@ -71,6 +76,7 @@ export const AuthProvider = ({ children }) => {
   const authContextValue = {
     isLoggedIn,
     userRole,
+    userData, // Thêm userData vào context value
     loading, // Trạng thái loading khi đang xác minh phiên
     login,
     logout,

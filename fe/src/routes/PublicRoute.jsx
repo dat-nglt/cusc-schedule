@@ -15,12 +15,14 @@ const PublicRoute = ({ children }) => {
     // Nếu người dùng đã đăng nhập (isLoggedIn là true)
     if (isLoggedIn) {
         // Dựa trên vai trò có thể chuyển hướng về dashboard tương ứng.
-        let redirectPath = '/dashboard';
+        let redirectPath = '';
         if (userRole === 'student') {
             redirectPath = '/student';
-        } else if (userRole === 'lecturer') {
+        }
+        if (userRole === 'lecturer') {
             redirectPath = '/lecturer';
-        } else if (userRole === 'admin') {
+        }
+        if (userRole === 'admin') {
             redirectPath = '/dashboard'; // Admin có thể vẫn dùng /dashboard chung hoặc /admin-dashboard
         }
 
