@@ -32,7 +32,7 @@ export const transformScheduleForCalendar = (scheduleItems) => {
         return {
             id: item.class_schedule_id,
             course: item.subject?.subject_name || 'Unknown Subject',
-            room: item.requestedRoom?.room_name || 'Unknown Room',
+            room: item.room?.room_name || 'Unknown room',
             lecturer: item.lecturer?.name || 'Unknown Lecturer',
             type: getSubjectType(item.notes), // Extract type from notes or determine from other fields
             startTime: startTime,

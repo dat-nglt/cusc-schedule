@@ -11,124 +11,6 @@ function StudentSchedules() {
     const { userData } = useAuth();
     const [scheduleItems, setScheduleItems] = useState([]);
 
-    // Test data for development - remove when API is working
-    const testScheduleData = [
-        {
-            "class_schedule_id": 8,
-            "semester_id": "HK1_CT01_2025",
-            "class_id": "DH23CS",
-            "program_id": "CT001",
-            "date": "2025-08-20",
-            "day": null,
-            "slot_id": "S2",
-            "subject_id": "MH002",
-            "lecturer_id": "GV002",
-            "room_id": "LT2",
-            "status": "active",
-            "notes": "Môn Cấu trúc dữ liệu và giải thuật",
-            "lecturer": {
-                "lecturer_id": "GV002",
-                "name": "Trần Thị B"
-            },
-            "requestedRoom": {
-                "room_id": "LT2",
-                "room_name": "Phòng 2"
-            },
-            "semester": {
-                "semester_id": "HK1_CT01_2025",
-                "semester_name": "Học kỳ 1 năm học 2024-2025"
-            },
-            "class": {
-                "class_id": "DH23CS",
-                "class_name": "Đại học 23 Công nghệ Phần mềm"
-            },
-            "program": {
-                "program_id": "CT001",
-                "program_name": "Lập trình viên quốc tế"
-            },
-            "subject": {
-                "subject_id": "MH002",
-                "subject_name": "Foundations of Programming with C"
-            }
-        },
-        {
-            "class_schedule_id": 9,
-            "semester_id": "HK1_CT02_2025",
-            "class_id": "DH23CS",
-            "program_id": "CT002",
-            "date": "2025-08-20",
-            "day": null,
-            "slot_id": "C1",
-            "subject_id": "MH009",
-            "lecturer_id": "GV003",
-            "room_id": "TH1",
-            "status": "active",
-            "notes": "Môn Toán rời rạc - Lý thuyết",
-            "lecturer": {
-                "lecturer_id": "GV003",
-                "name": "Lê Minh C"
-            },
-            "requestedRoom": {
-                "room_id": "TH1",
-                "room_name": "Lab 1"
-            },
-            "semester": {
-                "semester_id": "HK1_CT02_2025",
-                "semester_name": "Học kỳ 1 năm học 2024-2025"
-            },
-            "class": {
-                "class_id": "DH23CS",
-                "class_name": "Đại học 23 Công nghệ Phần mềm"
-            },
-            "program": {
-                "program_id": "CT002",
-                "program_name": "Mỹ thuật đa phương tiện"
-            },
-            "subject": {
-                "subject_id": "MH009",
-                "subject_name": "Xử lý ảnh với Adobe Photoshop"
-            }
-        },
-        {
-            "class_schedule_id": 7,
-            "semester_id": "HK1_CT01_2025",
-            "class_id": "DH23CS",
-            "program_id": "CT001",
-            "date": "2025-08-25",
-            "day": null,
-            "slot_id": "S1",
-            "subject_id": "MH001",
-            "lecturer_id": "GV001",
-            "room_id": "LT2",
-            "status": "active",
-            "notes": "Môn Lập trình cơ bản - Tiết đầu tuần",
-            "lecturer": {
-                "lecturer_id": "GV001",
-                "name": "Nguyễn Văn A"
-            },
-            "requestedRoom": {
-                "room_id": "LT2",
-                "room_name": "Phòng 2"
-            },
-            "semester": {
-                "semester_id": "HK1_CT01_2025",
-                "semester_name": "Học kỳ 1 năm học 2024-2025"
-            },
-            "class": {
-                "class_id": "DH23CS",
-                "class_name": "Đại học 23 Công nghệ Phần mềm"
-            },
-            "program": {
-                "program_id": "CT001",
-                "program_name": "Lập trình viên quốc tế"
-            },
-            "subject": {
-                "subject_id": "MH001",
-                "subject_name": "Computer Fundamentals"
-            }
-        }
-    ];
-
     const fetchClassScheduleForStudent = useCallback(async () => {
         try {
             const studentId = userData.code;
@@ -142,7 +24,7 @@ function StudentSchedules() {
             console.error("Error fetching class schedule for student:", error);
             // For development - use test data when API fails
             console.log("Using test data for development");
-            setScheduleItems(testScheduleData);
+            setScheduleItems([]);
         }
     }, [userData.code]);
     useEffect(() => {

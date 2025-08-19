@@ -13,7 +13,7 @@ export const getAllClassScheduleService = async () => {
                 },
                 {
                     model: models.Room,
-                    as: 'requestedRoom',
+                    as: 'room',
                     attributes: ['room_id', 'room_name']
                 },
                 {
@@ -60,7 +60,7 @@ export const getClassScheduleForLecturerService = async (lecturerId) => {
                 },
                 {
                     model: models.Room,
-                    as: 'requestedRoom',
+                    as: 'room',
                     attributes: ['room_id', 'room_name']
                 },
                 {
@@ -117,7 +117,7 @@ export const getClassScheduleForStudentService = async (studentId) => {
                 },
                 {
                     model: models.Room,
-                    as: 'requestedRoom',
+                    as: 'room',
                     attributes: ['room_id', 'room_name']
                 },
                 {
