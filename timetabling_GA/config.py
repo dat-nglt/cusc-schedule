@@ -2,7 +2,7 @@
 
 # GA Parameters
 POPULATION_SIZE = 1500  # Kích thước quần thể
-MAX_GENERATIONS = 50
+MAX_GENERATIONS = 1
 MUTATION_RATE = 0.1
 CROSSOVER_RATE = 0.8
 ELITISM_COUNT = 10      # Giữ lại N cá thể tốt nhất cho thế hệ sau
@@ -17,6 +17,7 @@ PENALTY_ROOM_TYPE_MISMATCH = 1000
 PENALTY_ROOM_CAPACITY = 1000
 PENALTY_LECTURER_BUSY = 1000
 PENALTY_LECTURER_UNQUALIFIED = 1000  # Giảng viên không dạy được môn
+PENALTY_WEEKEND_CLASH = 1000
 PENALTY_UNASSIGNED_GEN = 2000        # MỚI: Phạt rất nặng cho gen chưa được gán tài nguyên
 
 # Soft constraints

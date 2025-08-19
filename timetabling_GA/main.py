@@ -1,9 +1,11 @@
 # timetable_ga/main.py
 from datetime import datetime, timedelta
+import json
 import sys
 import time
 import copy
 import random
+from pprint import pprint
 import os
 from collections import defaultdict
 from config import (
@@ -17,8 +19,8 @@ from ga_components.selection import tournament_selection
 from ga_components.crossover import lesson_based_crossover
 from ga_components.mutation import mutate_chromosome
 from ga_components.chromosome import Chromosome
+from utils.exporter import export_semester_schedule_to_excel
 from utils.get_date_from_week_day import get_date_from_week_day
-from utils.exporter import export_semester_schedule_to_excel, export_lecturer_view_to_excel, export_room_view_to_excel
 from utils.output_parser import create_json_from_ga_results, export_to_json_file
 from utils.display_ga_progress import display_ga_progress
 from utils.check_hard_constraints import check_hard_constraints
@@ -30,33 +32,40 @@ def find_new_valid_slot(lesson, processed_data, occupied_slots, program_duration
     chỉ tìm kiếm trong chính tuần mà buổi học đó diễn ra.
     """
     print("\n[BẮT ĐẦU] Tìm vị trí mới cho buổi học:")
-    print(f"  - Buổi học: Lớp {lesson['class_id']}, Môn {lesson.get('subject')}, Tiết {lesson.get('type')}")
-    print(f"  - Ngày bị xung đột: {lesson.get('date')}")
-
+    print(f"  - Buổi học: Lớp {lesson['class_id']}, Môn {lesson.get('subject_id')}, Tiết {lesson.get('type')}")
+    print(f"  - Ngày bị xung đột: {lesson.get('date')}")
+    
     candidate_slots = []
     
     class_id = lesson['class_id']
     subject_id = lesson.get('subject_id') or lesson.get('subject')
     
     if not subject_id:
-        print("  ❌ Lỗi: Không tìm thấy ID môn học.")
+        print("  ❌ Lỗi: Không tìm thấy ID môn học.")
         return None
+
+    # Lấy loại buổi học từ thông tin môn học thay vì từ lesson
+    subject_info = processed_data.subject_map.get(subject_id)
+    if not subject_info:
+        print(f"  ❌ Lỗi: Không tìm thấy thông tin chi tiết của môn {subject_id}.")
+        return None
+    lesson_type = 'practice' if subject_info.get('practice_hours', 0) > 0 else 'theory'
+    lesson['type'] = lesson_type # Cập nhật lại 'type' cho buổi học
 
     valid_lecturers = processed_data.get_lecturers_for_subject(subject_id)
     if not valid_lecturers:
-        print("  ❌ Lỗi: Không tìm thấy giảng viên nào dạy môn này.")
+        print(f"  ❌ Lỗi: Không tìm thấy giảng viên nào dạy môn {subject_id}")
         return None
         
-    valid_rooms = processed_data.get_rooms_for_type_and_capacity(lesson['type'], lesson['size'])
+    valid_rooms = processed_data.get_rooms_for_type_and_capacity(lesson_type, lesson['size']) # Sử dụng lesson_type đã xác định lại
     if not valid_rooms:
-        print("  ❌ Lỗi: Không tìm thấy phòng học phù hợp.")
+        print("  ❌ Lỗi: Không tìm thấy phòng học phù hợp.")
         return None
 
     # Lấy tuần và ngày của buổi học ban đầu để giới hạn tìm kiếm
     original_date = datetime.strptime(lesson['date'], '%Y-%m-%d')
     week_num = int((original_date - semester_start_date).days / 7)
     
-    # Giới hạn phạm vi tìm kiếm chỉ trong tuần này
     weeks_to_search = [week_num]
 
     search_limit = 1000 
@@ -69,18 +78,19 @@ def find_new_valid_slot(lesson, processed_data, occupied_slots, program_duration
     random.shuffle(valid_lecturers)
     random.shuffle(valid_rooms)
     
-    print(f"  - Đang tìm kiếm trong tuần {week_num + 1}, {len(days_to_search)} ngày, {len(slots_to_search)} slot, {len(valid_lecturers)} GV, {len(valid_rooms)} phòng.")
+    print(f"  - Đang tìm kiếm trong tuần {week_num + 1}, {len(days_to_search)} ngày, {len(slots_to_search)} slot, {len(valid_lecturers)} GV, {len(valid_rooms)} phòng.")
 
-    # Vòng lặp tuần chỉ chạy duy nhất một lần
     for week in weeks_to_search:
         for day_of_week_eng in days_to_search:
+            if day_of_week_eng.lower() == 'chủ nhật' or day_of_week_eng.lower() == 'sun':
+                print("Bỏ qua ngày chủ nhật")
+                continue
             date = get_date_from_week_day(week, day_of_week_eng, semester_start_date, days_of_week_map)
             date_str = date.strftime('%Y-%m-%d')
 
             for slot_id in slots_to_search:
                 for lecturer in valid_lecturers:
                     for room in valid_rooms:
-                        # Kiểm tra các ràng buộc cứng
                         if check_hard_constraints(date_str, day_of_week_eng, slot_id, room, lecturer, class_id, occupied_slots, processed_data):
                             candidate = {
                                 'date': date_str,
@@ -123,44 +133,30 @@ def is_lecturer_semester_busy_on_date_and_slot(lecturer_id, date_str, slot_id, p
     return False
 
 def generate_semester_schedule(best_weekly_chromosome, processed_data):
-    """
-    Tạo lịch trình học kỳ đầy đủ từ lịch trình tuần tối ưu,
-    đồng thời sửa các xung đột phát sinh và phân bổ dựa trên thời gian
-    của từng chương trình học.
-
-    Args:
-        best_weekly_chromosome (Chromosome): Nhiễm sắc thể có fitness tốt nhất từ thuật toán GA,
-                                             đại diện cho lịch trình hàng tuần tối ưu.
-        processed_data (DataProcessor): Đối tượng chứa toàn bộ dữ liệu đã được xử lý (lớp, môn học,
-                                        giảng viên, phòng học, v.v.).
-
-    Returns:
-        tuple: Một tuple chứa hai giá trị:
-            - semester_schedule_by_class (defaultdict): Lịch trình học kỳ đã được sắp xếp,
-                                                         ánh xạ class_id tới một list chứa các tuần,
-                                                         và mỗi tuần chứa list các buổi học.
-            - unassignable_lessons (list): Danh sách các buổi học không thể sắp xếp lại do
-                                           không tìm thấy vị trí trống hợp lệ.
-    """
-    # Khởi tạo danh sách để lưu các buổi học không thể gán
     unassignable_lessons = []
+    # Khởi tạo danh sách để lưu các buổi học không thể gán
     
-    # Khởi tạo lịch trình học kỳ. defaultdict giúp tự động tạo list rỗng cho một lớp mới.
-    # Kích thước 16 tuần ban đầu có thể cần được điều chỉnh nếu thời lượng chương trình
-    # lớn hơn.
+    # Khởi tạo lịch trình học kỳ theo lớp với 16 tuần
     semester_schedule_by_class = defaultdict(lambda: [[] for _ in range(16)])
     
     # Ánh xạ class_id tới các buổi học hàng tuần của nó
     weekly_lessons_map = defaultdict(list)
     for gene in best_weekly_chromosome.genes:
         weekly_lessons_map[gene['class_id']].append(gene)
-
+    
     # Danh sách chứa tất cả các buổi học của toàn bộ học kỳ trước khi phân phối
     all_semester_lessons_to_distribute = []
     
     # Tạo các map tiện ích để truy cập dữ liệu nhanh hơn
     days_of_week_index_map = {day: i for i, day in enumerate(processed_data.data.get('days_of_week'))}
     semester_info_map = {sem['semester_id']: sem for sem in processed_data.data.get('semesters', [])}
+    subject_info_map = {sub['subject_id']: sub for sub in processed_data.data.get('subjects', [])}
+
+    # Cần một map để ánh xạ chỉ số ngày (0-6) sang tên ngày
+    weekday_map = {
+        0: "Mon", 1: "Tue", 2: "Wed", 3: "Thu",
+        4: "Fri", 5: "Sat", 6: "Sun"
+    }
     
     # Tạo một dictionary để lưu thông tin chương trình và học kỳ cho mỗi lớp học
     class_program_info = {}
@@ -177,7 +173,7 @@ def generate_semester_schedule(best_weekly_chromosome, processed_data):
 
         program_duration_weeks = program.get('duration', 0)
         
-        # Tìm semester_id của lớp học này dựa vào program_id
+        # Tìm semester_id của lớp học này
         semester_id_for_class = next((s['semester_id'] for s in program['semesters'] if any(cls_id == c['class_id'] for c in processed_data.data['classes'] if c['program_id'] == program['program_id'])), None)
         if not semester_id_for_class:
             continue
@@ -203,18 +199,40 @@ def generate_semester_schedule(best_weekly_chromosome, processed_data):
             for lesson_template in lessons_for_this_class_weekly:
                 new_lesson = lesson_template.copy()
                 day_of_week_eng = new_lesson['day']
-                day_offset = days_of_week_index_map.get(day_of_week_eng, 0)
-                # Tính ngày cụ thể của buổi học trong học kỳ
-                lesson_date = semester_start_date + timedelta(weeks=week_num, days=day_offset)
+                
+                # Lấy chỉ số ngày tương ứng từ gen
+                day_offset_from_gene = days_of_week_index_map.get(day_of_week_eng, None)
+                
+                if day_offset_from_gene is None:
+                    continue
+
+                # Tính ngày cụ thể của buổi học trong học kỳ dựa trên day_offset từ gen
+                lesson_date = semester_start_date + timedelta(weeks=week_num, days=day_offset_from_gene)
+
+                # 💡 SỬA LỖI: Cập nhật trường 'day' để khớp với ngày thực tế
+                new_lesson['day'] = weekday_map.get(lesson_date.weekday())
 
                 new_lesson['week'] = week_num + 1
                 new_lesson['date'] = lesson_date.strftime('%Y-%m-%d')
                 new_lesson['semester_id'] = semester_id_for_class
+
+                subject_id = new_lesson['subject_id']
+                subject_info = subject_info_map.get(subject_id)
+                if subject_info:
+                    lesson_type = 'practice' if subject_info.get('practice_hours', 0) > 0 else 'theory'
+                    new_lesson['lesson_type'] = lesson_type
+                
                 full_semester_lessons_for_class.append(new_lesson)
         
-        # Xáo trộn các buổi học của một lớp để phân bổ ngẫu nhiên, giúp tránh xung đột ban đầu
         random.shuffle(full_semester_lessons_for_class)
         all_semester_lessons_to_distribute.extend(full_semester_lessons_for_class)
+        
+        # In ra gọn gàng để kiểm tra
+        data_sorted = sorted(full_semester_lessons_for_class, key=lambda x: datetime.strptime(x['date'], "%Y-%m-%d"))
+        print("\n--- LỊCH TRÌNH HỌC KỲ CHO LỚP", cls_id, "---")
+        # for d in data_sorted:
+        #     print(f"{d} \n")
+        # break
     
     # Dictionary để theo dõi các slot đã bị chiếm dụng (theo ngày, slot, giảng viên/phòng)
     occupied_slots = defaultdict(lambda: defaultdict(lambda: {'lecturers': set(), 'rooms': set()}))
@@ -229,8 +247,14 @@ def generate_semester_schedule(best_weekly_chromosome, processed_data):
         room = lesson['room_id']
         cls_id = lesson['class_id']
         week_num = lesson['week'] - 1
-        day_of_week = processed_data.data['days_of_week'][datetime.strptime(date, '%Y-%m-%d').weekday()]
-        
+        # day_of_week = processed_data.data['days_of_week'][datetime.strptime(date, '%Y-%m-%d').weekday()]
+        try:
+            day_of_week = processed_data.data['days_of_week'][datetime.strptime(date, '%Y-%m-%d').weekday()]
+        except IndexError:
+            # Xử lý trường hợp chỉ số không tồn tại (ngày Chủ Nhật)
+            lesson['clash_reason'] = "Ngày không hợp lệ (Chủ Nhật)"
+            lessons_needing_reassignment.append(lesson)
+            continue
         # --- LOGIC KIỂM TRA RÀNG BUỘC CỨNG ---
         is_clash = (
             lecturer in occupied_slots[date][slot]['lecturers'] or
@@ -283,11 +307,10 @@ def generate_semester_schedule(best_weekly_chromosome, processed_data):
             # Nếu không tìm thấy, thêm buổi học vào danh sách không thể gán
             unassignable_lessons.append(lesson)
             
-    # Trả về cả lịch trình đã hoàn thiện và danh sách các buổi học không thể gán
+    # pprint(semester_schedule_by_class)
     return semester_schedule_by_class, unassignable_lessons
 
 def format_semester_schedule(semester_schedule, processed_data):
-
     output_lines = []
     # Sort semester_schedule by class_id to ensure consistent output order
     sorted_class_ids = sorted(semester_schedule.keys())
@@ -302,22 +325,42 @@ def format_semester_schedule(semester_schedule, processed_data):
         for week_idx, week_lessons in enumerate(weekly_schedules):
             if not week_lessons:
                 continue
-            output_lines.append(f"\n   --- Week {week_idx + 1} ---")
+            output_lines.append(f"\n    --- Week {week_idx + 1} ---")
             lessons_by_date = defaultdict(list)
             for lesson in week_lessons:
                 lessons_by_date[lesson['date']].append(lesson)
             sorted_dates = sorted(lessons_by_date.keys())
             for lesson_date in sorted_dates:
-                output_lines.append(f"     Date: {lesson_date}")
-                sorted_daily_lessons = sorted(lessons_by_date[lesson_date], key=lambda g: processed_data.slot_order_map[g['slot_id']])
+                # Kiểm tra và in ra các buổi học bị lỗi
+                lessons_with_error = [g for g in lessons_by_date[lesson_date] if g.get('slot_id') is None]
+                if lessons_with_error:
+                    output_lines.append(f"     ❗❗ Lessons with missing slot_id on {lesson_date}:")
+                    for lesson in lessons_with_error:
+                        subject_name = processed_data.subject_map.get(lesson['subject_id'], {}).get('name', lesson['subject_id'])
+                        output_lines.append(f"       - Subject: {subject_name} ({lesson['lesson_type']})")
+
+                output_lines.append(f"      Date: {lesson_date}")
+                
+                # Sắp xếp các buổi học có slot_id hợp lệ
+                def get_slot_order_key(lesson):
+                    slot_id = lesson.get('slot_id')
+                    if slot_id is not None and slot_id in processed_data.slot_order_map:
+                        return processed_data.slot_order_map[slot_id]
+                    return float('inf')  # Đẩy các buổi học không có slot_id xuống cuối danh sách
+
+                sorted_daily_lessons = sorted(lessons_by_date[lesson_date], key=get_slot_order_key)
 
                 for lesson in sorted_daily_lessons:
+                    # Bỏ qua các buổi học có slot_id là None
+                    if lesson.get('slot_id') is None:
+                        print(f"Đây: {lesson}")
+                        break
+                        continue
+                        
                     subject_name = processed_data.subject_map.get(lesson['subject_id'], {}).get('name', lesson['subject_id'])
-                    # Kiểm tra và xử lý tên giảng viên
                     lecturer_name = processed_data.lecturer_map.get(lesson['lecturer_id'], {}).get('name', lesson['lecturer_id'])
                     output_lines.append(
-                        f"       - Day: {lesson['day']}, Slot: {lesson['slot_id']}, Subject: {subject_name} ({lesson['lesson_type']}), "
-
+                        f"        - Day: {lesson['day']}, Slot: {lesson['slot_id']}, Subject: {subject_name} ({lesson['lesson_type']}), "
                         f"Room: {lesson['room_id']}, Lecturer: {lecturer_name}"
                     )
     return "\n".join(output_lines)
@@ -621,91 +664,116 @@ def get_data_for_semester(semester_id, full_data):
     # Tạo một đối tượng DataProcessor mới với dữ liệu đã lọc
     return DataProcessor(semester_data_dict)
 
+from datetime import datetime
+
+def flatten_and_sort_semester_timetable(semester_timetable, semester_id):
+    """
+    Trả về 2 đối tượng:
+    - by_class: dict {class_id: [lessons sorted]}
+    - by_semester: dict {semester_id: [lessons sorted]}
+    """
+    by_class = {}
+    all_lessons = []
+
+    for class_id, list_of_lessons in semester_timetable.items():
+        # Gộp tất cả list con thành 1 list phẳng cho class đó
+        flat_lessons = [lesson for lessons in list_of_lessons for lesson in lessons]
+        # Sort theo ngày
+        flat_lessons_sorted = sorted(
+            flat_lessons, key=lambda x: datetime.strptime(x["date"], "%Y-%m-%d")
+        )
+        by_class[class_id] = flat_lessons_sorted
+        all_lessons.extend(flat_lessons)
+
+    # Sort toàn bộ lessons theo ngày, group theo semester_id
+    all_lessons_sorted = sorted(
+        all_lessons, key=lambda x: datetime.strptime(x["date"], "%Y-%m-%d")
+    )
+    by_semester = {semester_id: all_lessons_sorted}
+
+    return by_class, by_semester
+
+
 def export_combined_results(all_semester_results, processed_data, output_folder):
-    
-    # Tạo các file tổng hợp
-    log_file_path = os.path.join(output_folder, "all_semesters_ga_summary.txt")
-    semester_schedule_txt_path = os.path.join(output_folder, "full_semester_schedule.txt")
-    
-    # 1. Ghi tóm tắt quá trình GA vào file log
-    # with open(log_file_path, "w", encoding="utf-8") as f:
-    #     f.write("--- TÓM TẮT KẾT QUẢ THUẬT TOÁN DI TRUYỀN CHO CÁC HỌC KỲ ---\n\n")
-    #     for semester_id, result in all_semester_results.items():
-    #         best_chrom = result["chromosome"]
-    #         f.write(f"Học kỳ: {semester_id}\n")
-    #         program_id = None
-    #         for p_id, s_ids in processed_data.program_semester_map.items():
-    #             if semester_id in s_ids:
-    #                 program_id = p_id
-    #                 break
-
-    #         f.write(f"  Chương trình: {program_id}\n")
-    #         f.write(f"  Độ thích nghi (Fitness) tốt nhất: {best_chrom.fitness:.2f}\n")
-    #         f.write(f"  Số lượng tiết học được xếp: {len(best_chrom.genes)}\n")
-    #         f.write("  ---------------------------------------\n")
-    #     f.write("\n\n")
-        
-    #     # Thêm thông tin lịch sử GA từ mỗi học kỳ vào file
-    #     for semester_id, result in all_semester_results.items():
-    #         f.write(f"Lịch sử GA cho Học kỳ {semester_id}:\n")
-    #         f.write("Thế hệ, Độ_thích_nghi_Tốt_nhất_Gen, Độ_thích_nghi_Tốt_nhất_Tổng_thể\n")
-    #         for log_entry in result['log']:
-    #             f.write(f"{log_entry['generation']},{log_entry['best_fitness_gen']:.2f},{log_entry['best_overall_fitness']:.2f}\n")
-    #         f.write("\n")
-
-    # print(f"Tóm tắt GA cho tất cả học kỳ đã được lưu vào: {log_file_path}")
-
-    # 2. Ghi lịch học kỳ đầy đủ vào file văn bản
-    with open(semester_schedule_txt_path, "w", encoding="utf-8") as f:
-        f.write("--- LỊCH HỌC KỲ TỔNG HỢP --- \n")
-        
-        # Lặp qua từng học kỳ và xuất lịch
-        for semester_id, result in all_semester_results.items():
-            best_chrom = result["chromosome"]
-            semester_specific_data = get_data_for_semester(semester_id, processed_data)
-            
-            # Tạo lịch học kỳ từ lịch tuần đã tối ưu
-            semester_timetable, unassignable_lessons = generate_semester_schedule(best_chrom, processed_data)
-            if unassignable_lessons:
-                print("\n⚠️ Cảnh báo: Một số buổi học không thể sắp xếp lại. Vui lòng kiểm tra thủ công:")
-                for lesson in unassignable_lessons:
-                    print(f"  - Lớp: {lesson['class_id']}, Môn: {lesson['subject_id']}, Ngày bị xung đột: {lesson['date']}")
-            else:
-                print(f"\n✅ Tất cả các buổi học đều đã được sắp xếp thành công cho học kỳ {semester_id}")
-                
-            formatted_schedule = format_semester_schedule(semester_timetable, semester_specific_data)
-            
-            f.write(f"\n===== LỊCH HỌC KỲ CHO: {semester_id} =====\n")
-            f.write(formatted_schedule)
-            f.write("\n" + "="*80 + "\n")
-            
-    print(f"Lịch học kỳ tổng hợp đã được lưu vào: {semester_schedule_txt_path}")
-    
-    # 3. Xuất file Excel cho từng học kỳ
     print("\n--- Bắt đầu xuất lịch ra file Excel ---")
+
+    combined_json = {"semesters": []}
+
+    # Vòng lặp chính để xử lý từng học kỳ
     for semester_id, result in all_semester_results.items():
         best_chrom = result["chromosome"]
         semester_specific_data = get_data_for_semester(semester_id, processed_data)
         semester_timetable, unassignable_lessons = generate_semester_schedule(best_chrom, semester_specific_data)
-        
-        # Tạo thư mục con cho mỗi học kỳ
+
+        # 🔹 Flatten timetable theo class
+        by_class, _ = flatten_and_sort_semester_timetable(semester_timetable, semester_id)
+
+        # Tạo entry cho học kỳ hiện tại
+        semester_entry = {
+            "semester_id": semester_id,
+            "classes": []
+        }
+
+        # Vòng lặp xử lý từng lớp, nằm gọn trong vòng lặp học kỳ
+        for class_id, class_schedule in by_class.items():
+            class_info = semester_specific_data.class_map.get(class_id)
+            program_name = class_info.get("program_name", "")
+
+            semester_entry["classes"].append({
+                "class_id": class_id,
+                "program_name": program_name,
+                "schedule": class_schedule
+            })
+
+        # 💡 SỬA LỖI: Thêm semester_entry vào danh sách ngay khi đã điền đầy đủ
+        combined_json["semesters"].append(semester_entry)
+
+        # Xuất Excel theo từng học kỳ
+        # Tạo thư mục đầu ra cho học kỳ cụ thể
         semester_output_folder = os.path.join(output_folder, semester_id)
         if not os.path.exists(semester_output_folder):
             os.makedirs(semester_output_folder)
             
-        print()
-        print(f"  Xuất Excel cho Học kỳ: {semester_id}...")
-        
-        export_semester_schedule_to_excel(semester_timetable, semester_specific_data, output_folder=semester_output_folder)
+        # Xuất file JSON debug để kiểm tra dữ liệu thô
+        debug_file = os.path.join(semester_output_folder, f"debug_{semester_id}_timetable.json")
+        try:
+            with open(debug_file, "w", encoding="utf-8") as f:
+                json.dump(semester_timetable, f, indent=4, ensure_ascii=False)
+            print(f"  ✅ Đã lưu dữ liệu thời khóa biểu thô vào: {debug_file}")
+        except Exception as e:
+            print(f"  ❌ Lỗi khi lưu file debug: {e}")
+
+        # Xuất file Excel thời khóa biểu
+        try:
+            export_semester_schedule_to_excel(
+                semester_schedule_json=semester_timetable,
+                output_folder=semester_output_folder
+            )
+            print(f"  ✅ Đã xuất thời khóa biểu học kỳ thành công vào thư mục: {semester_output_folder}")
+        except Exception as e:
+            print(f"  ❌ Lỗi khi xuất file Excel: {e}")
         
         lecturer_semester_view = generate_lecturer_semester_view(semester_timetable, semester_specific_data)
         room_semester_view = generate_room_semester_view(semester_timetable, semester_specific_data)
-        
-        export_lecturer_view_to_excel(lecturer_semester_view, semester_specific_data, output_folder=semester_output_folder)
-        export_room_view_to_excel(room_semester_view, semester_specific_data, output_folder=semester_output_folder)
+
+        # export_lecturer_view_to_excel(lecturer_semester_view, semester_specific_data, output_folder=semester_output_folder)
+        # export_room_view_to_excel(room_semester_view, semester_specific_data, output_folder=semester_output_folder)
+
         print(f"  Đã hoàn tất xuất file Excel cho {semester_id} trong thư mục '{semester_output_folder}'")
-        
-    print("\n--- Đã hoàn thành xuất tất cả các file Excel. ---")
+
+    # ---
+    
+    # 🔹 Xuất JSON tổng hợp (sau khi đã duyệt hết tất cả các học kỳ)
+    if not os.path.exists(output_folder):
+        os.makedirs(output_folder)
+
+    combined_file = os.path.join(output_folder, "all_semesters.json")
+    with open(combined_file, "w", encoding="utf-8") as f:
+        json.dump(combined_json, f, indent=4, ensure_ascii=False)
+
+    print(f"  >> Đã xuất toàn bộ thời khóa biểu ra {combined_file}")
+    print("\n--- Đã hoàn thành xuất tất cả các file Excel & JSON. ---")
+
 
 def genetic_algorithm():
     print("Loading data...")
@@ -717,7 +785,6 @@ def genetic_algorithm():
     processed_data = DataProcessor(raw_data)
     
     print(f"Số lượng tiết học hàng tuần cần xếp lịch: {len(processed_data.required_lessons_weekly)}")
-    print(f"Danh sách các tiết học đầu tiên: {processed_data.required_lessons_weekly[:5]}")
     
     output_folder = "results"
     if not os.path.exists(output_folder):
@@ -745,9 +812,8 @@ def genetic_algorithm():
     if all_semester_results:
         print("\n--- Tổng hợp và xuất kết quả ---")
         
-        # 1. Xuất file JSON tổng hợp
-        json_data = create_json_from_ga_results(all_semester_results, processed_data)
-        export_to_json_file(json_data, "all_schedules.json", output_folder)
+        # json_data = create_json_from_ga_results(all_semester_results, processed_data)
+        # export_to_json_file(json_data, "all_schedules.json", output_folder)
 
         # 2. Xuất file Excel (nếu cần, bạn vẫn có thể giữ lại hàm này)
         export_combined_results(all_semester_results, processed_data, output_folder)
