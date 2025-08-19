@@ -16,7 +16,7 @@ import ScheduleItem from './ScheduleItem';
 
 function TimeSlot({ day, hour, date, onDrop, scheduleItems }) {
     const theme = useTheme()
-    const [{ isOver }, drop] = useDrop(() => ({
+    const [, drop] = useDrop(() => ({
         accept: 'SCHEDULE_ITEM',
         drop: () => ({ day, hour, date }),
         collect: (monitor) => ({
@@ -25,12 +25,21 @@ function TimeSlot({ day, hour, date, onDrop, scheduleItems }) {
     }));
 
     const slotDate = addDays(date, day);
-    const slotDateTime = parseISO(format(slotDate, 'yyyy-MM-dd') + `T${hour.toString().padStart(2, '0')}:00:00`);
 
-    const itemsInSlot = scheduleItems.filter(item =>
-        isSameDay(parseISO(item.startTime), slotDate) &&
-        format(parseISO(item.startTime), 'H') === hour.toString()
-    );
+    // Filter items based on date and hour matching
+    const itemsInSlot = scheduleItems.filter(item => {
+        if (!item.startTime) return false;
+
+        try {
+            const itemDate = parseISO(item.startTime);
+            const itemHour = parseInt(format(itemDate, 'H'));
+
+            return isSameDay(itemDate, slotDate) && itemHour === hour;
+        } catch (error) {
+            console.error('Error parsing schedule item date:', error, item);
+            return false;
+        }
+    });
 
     return (
         <Box

@@ -93,6 +93,9 @@ const ScheduleItem = ({ item, onDrop }) => {
             <Typography variant="subtitle2" sx={{ mb: 0.3, lineHeight: 1.4, color: 'primary' }}>
                 <Typography component="span" sx={{ color: primaryTextColor }}>Giờ:</Typography> {formattedStartTime} - {formattedEndTime}
             </Typography>
+            <Typography variant="subtitle2" sx={{ mb: 0.3, lineHeight: 1.4, color: 'primary' }}>
+                <Typography component="span" sx={{ color: primaryTextColor }}>Lớp:</Typography> {item.class}
+            </Typography>
             <Typography variant="subtitle2" sx={{ lineHeight: 1.4, color: 'primary' }}>
                 <Typography component="span" sx={{ color: primaryTextColor }}>Loại:</Typography> {item.type}
             </Typography>

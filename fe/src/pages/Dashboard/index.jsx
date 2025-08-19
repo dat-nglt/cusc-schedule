@@ -1,4 +1,4 @@
-import { use, useState } from 'react';
+import { useState } from 'react';
 import {
     Box,
 } from '@mui/material';
@@ -6,7 +6,7 @@ import WeeklyCalendar from './WeeklyCalendar';
 import QuickStats from './QuickStats';
 import { io } from 'socket.io-client';
 
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { generateSchedule, getDownloadUrl, stopScheduleGeneration } from '../../api/scheduleAPI';
 import ProgressModal from './ProgressModal';
 import { toast } from 'react-toastify';
@@ -18,6 +18,7 @@ import { getClassesAPI } from '../../api/classAPI';
 import { getAllSubjectsAPI } from '../../api/subjectAPI';
 import { getSemesterCreateScheduleAPI } from '../../api/semesterAPI';
 import CreateSchedulesAutoModal from './CreateSchedulesAutoModal';
+import { getAllSchedules } from '../../api/classschedule';
 
 
 
@@ -33,7 +34,7 @@ const Dashboard = () => {
     const [error, setError] = useState('');
     const [gaLogs, setGaLogs] = useState([]);
     const [progress, setProgress] = useState(0);
-
+    const [scheduleItems, setScheduleItems] = useState([]);
     const [rooms, setRooms] = useState([]);
     const [programs, setPrograms] = useState([]);
     const [lecturers, setLecturers] = useState([]);
@@ -93,7 +94,45 @@ const Dashboard = () => {
     });
 
     console.log("SCHEDULE:", formTest)
+    console.log("scheduleItems:", scheduleItems);
 
+    // Transform scheduleItems for WeeklyCalendar
+    const transformScheduleItemsForCalendar = (items) => {
+        const slotTimeMap = {
+            "S1": { start: "07:00", end: "09:00" },
+            "S2": { start: "09:00", end: "11:00" },
+            "C1": { start: "13:00", end: "15:00" },
+            "C2": { start: "15:00", end: "17:00" },
+            "T1": { start: "17:30", end: "19:30" },
+            "T2": { start: "19:30", end: "21:30" }
+        };
+
+        return items.map(item => {
+            const slotInfo = slotTimeMap[item.slot_id] || { start: "08:00", end: "10:00" };
+            const startDateTime = `${item.date}T${slotInfo.start}:00`;
+            const endDateTime = `${item.date}T${slotInfo.end}:00`;
+
+            // Determine room type based on room_id or room data
+            const room = rooms.find(r => r.room_id === item.room_id);
+            const roomType = room?.type === "Thực hành" ? "Thực hành" : "Lý thuyết";
+
+            return {
+                id: item.class_schedule_id,
+                course: item.subject?.subject_name || "N/A",
+                lecturer: item.lecturer?.name || "N/A",
+                room: item.room_id,
+                type: roomType,
+                startTime: startDateTime,
+                endTime: endDateTime,
+                class: item.class?.class_name || "N/A",
+                semester: item.semester?.semester_name || "N/A",
+                notes: item.notes || "",
+                status: item.status
+            };
+        });
+    };
+
+    const transformedScheduleItems = transformScheduleItemsForCalendar(scheduleItems);
 
     const actualInputData = {
         "classes": [
@@ -304,6 +343,20 @@ const Dashboard = () => {
         }
     };
 
+    const fetchAllSchedules = async () => {
+        try {
+            const response = await getAllSchedules();
+            if (!response) {
+                throw new Error("Không có dữ liệu thời khóa biểu");
+            }
+            setScheduleItems(response.data);
+            // Xử lý dữ liệu thời khóa biểu nếu cần
+        }
+        catch (error) {
+            console.error("Error fetching schedules:", error);
+            // Xử lý lỗi nếu cần
+        }
+    };
     // Gọi các hàm fetch dữ liệu khi component mount
     useEffect(() => {
         fetchRooms();
@@ -312,6 +365,7 @@ const Dashboard = () => {
         fetchSubjests();
         fetchSemesters();
         fetchClasses();
+        fetchAllSchedules();
     }, []);
 
     useEffect(() => {
@@ -381,7 +435,7 @@ const Dashboard = () => {
     }, []); // Dependency array: đảm bảo lắng nghe lại khi socket thay đổi (thường không thay đổi)
 
     // Transform API data to required format
-    const transformDataToFormTest = (data, selections = null) => {
+    const transformDataToFormTest = useCallback((data, selections = null) => {
         const { rooms, programs, lecturers, classes, subjects, semesters } = data;
 
         console.log("Transforming data to form test structure:", { rooms, programs, lecturers, classes, subjects, semesters });
@@ -470,7 +524,7 @@ const Dashboard = () => {
             time_slots: timeslot[0]?.time_slots ?? [],
             days_of_week: days_of_week[0]?.days_of_week ?? []
         };
-    };
+    }, [timeslot, days_of_week]);
 
     // Update formTest when API data is loaded
     useEffect(() => {
@@ -480,7 +534,7 @@ const Dashboard = () => {
         if (transformed) {
             setFormTest(transformed);
         }
-    }, [rooms, programs, lecturers, classes, subjects, semesters]);
+    }, [rooms, programs, lecturers, classes, subjects, semesters, transformDataToFormTest]);
 
     // Function to update formTest with selected data from modal
     const updateFormTestWithSelections = (selections) => {
@@ -544,63 +598,6 @@ const Dashboard = () => {
     };
 
 
-    const [scheduleItems, setScheduleItems] = useState([
-        {
-            id: '3',
-            course: 'Hóa học cơ bản',
-            room: 'P.102',
-            lecturer: 'TS. Nguyễn Văn A',
-            type: 'Lý thuyết',
-            startTime: '2025-06-09T09:00:00',
-            endTime: '2025-06-09T11:00:00',
-            checkInTime: '2025-06-09T08:50:00',
-            checkOutTime: '2025-06-09T11:10:00'
-        },
-        {
-            id: '4',
-            course: 'Giải tích 1',
-            room: 'P.204',
-            lecturer: 'ThS. Trần Thị B',
-            type: 'Lý thuyết',
-            startTime: '2025-06-10T08:00:00',
-            endTime: '2025-06-10T10:00:00',
-            checkInTime: '2025-06-10T07:55:00',
-            checkOutTime: '2025-06-10T10:05:00'
-        },
-        {
-            id: '5',
-            course: 'Tin học đại cương',
-            room: 'P.105',
-            lecturer: 'ThS. Lê Văn C',
-            type: 'Thực hành',
-            startTime: '2025-06-11T13:00:00',
-            endTime: '2025-06-11T15:00:00',
-            checkInTime: '2025-06-11T12:50:00',
-            checkOutTime: '2025-06-11T15:10:00'
-        },
-        {
-            id: '6',
-            course: 'Kỹ thuật lập trình',
-            room: 'P.306',
-            lecturer: 'TS. Phạm Thị D',
-            type: 'Thực hành',
-            startTime: '2025-06-12T10:00:00',
-            endTime: '2025-06-12T12:00:00',
-            checkInTime: '2025-06-12T09:50:00',
-            checkOutTime: '2025-06-12T12:10:00'
-        },
-        {
-            id: '7',
-            course: 'Xác suất thống kê',
-            room: 'P.103',
-            lecturer: 'ThS. Đỗ Văn E',
-            type: 'Lý thuyết',
-            startTime: '2025-06-13T14:00:00',
-            endTime: '2025-06-13T16:00:00',
-            checkInTime: '2025-06-13T13:55:00',
-            checkOutTime: '2025-06-13T16:05:00'
-        }
-    ]);
 
     const handleItemMove = (itemId, newStartTime) => {
         setScheduleItems(prevItems =>
@@ -645,7 +642,7 @@ const Dashboard = () => {
                 {/* Chart Section */}
                 <WeeklyCalendar
                     initialDate={new Date()}
-                    scheduleItems={scheduleItems}
+                    scheduleItems={transformedScheduleItems}
                     onItemMove={handleItemMove}
                     onCreateNewSchedule={() => setCreateScheduleModalOpen(true)}
                     programs={programs}
