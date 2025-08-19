@@ -88,7 +88,6 @@ def create_random_chromosome(processed_data):
             used_slots_per_lecturer[lecturer_id].add((day, slot_id))
             used_slots_per_room[room_id].add((day, slot_id))
             used_slots_per_class[required_lesson['class_id']].add((day, slot_id))
-
         # Thêm gen vào nhiễm sắc thể, kể cả khi không tìm thấy slot hợp lệ (giá trị là None)
         genes.append({
             "lesson_id": required_lesson['lesson_id'],
@@ -101,6 +100,7 @@ def create_random_chromosome(processed_data):
             "slot_id": slot_id,
             "room_id": room_id,
             "lecturer_id": lecturer_id,
+            "semester_id": required_lesson['semester_id'],
             "size": processed_data.class_map.get(required_lesson['class_id'], {}).get('size', 0) # Đã thêm trường này
         })
     

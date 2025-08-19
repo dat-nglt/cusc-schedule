@@ -1,6 +1,7 @@
 import os
 from datetime import datetime, timedelta
 from collections import defaultdict
+from pprint import pprint
 import openpyxl
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
@@ -14,6 +15,7 @@ def export_semester_schedule_to_excel(semester_schedule_json, output_folder="res
     - Các ngày trước ngày bắt đầu trong tuần đầu để trống
     - Tô màu đỏ nhạt cho tiết thực hành
     """
+    
     
     if not semester_schedule_json:
         print("Không có dữ liệu lịch trình học kỳ để xuất. Đã dừng thao tác.")
@@ -183,6 +185,7 @@ def export_semester_schedule_to_excel(semester_schedule_json, output_folder="res
                 day_name = current_date.strftime('%a')
                 if day_name in day_lessons and current_date >= start_date:
                     lesson = day_lessons[day_name]
+                    # print(f"Tiết học: {lesson}")
                     lesson_type = "Lý thuyết" if lesson['lesson_type'] == "theory" else "Thực hành"
                     content = f"{lesson['subject_id']}\n({lesson_type})\nPhòng: {lesson['room_id']}\nGV: {lesson['lecturer_id']}"
                     
