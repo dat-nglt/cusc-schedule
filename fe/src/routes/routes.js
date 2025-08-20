@@ -243,7 +243,7 @@ const routes = [
   },
   {
     path: "/lecturer/schedule",
-    component: "LecturerSchedule",
+    component: "LecturerSchedules",
     exact: true,
     title: "Thời khóa biểu (Giảng viên)",
     isPrivate: true, // Riêng tư
