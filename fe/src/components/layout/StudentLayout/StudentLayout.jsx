@@ -16,8 +16,8 @@ const StudentLayout = ({ children }) => {
                 sx={{
                     mt: '90px',
                     mb: '20px',
-                    ml: { xs: 0, md: '350px' },
-                    width: { xs: '100vw', md: 'calc(100vw - 350px)' },
+                    ml: { xs: 0, md: '300px' },
+                    width: { xs: '100vw', md: 'calc(100vw - 300px)' },
                     display: 'flex',
                     justifyContent: 'center',
                     flexDirection: 'column',

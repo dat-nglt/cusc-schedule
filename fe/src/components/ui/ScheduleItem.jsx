@@ -1,13 +1,12 @@
-// components/WeeklyCalendar/ScheduleItem.jsx
 import React from 'react';
 import { Box, Typography, useTheme, alpha } from '@mui/material';
-import { format, parseISO } from 'date-fns';
-import { useDrag } from 'react-dnd';
+import { formatScheduleTime } from '../../utils/scheduleUtils';
 
-const ScheduleItem = ({ item, onDrop }) => {
+const ScheduleItem = ({ item }) => {
     const theme = useTheme();
 
-    // Define colors for each type, using theme's palette for consistency
+    // Định nghĩa màu sắc dựa trên type hoặc một thuộc tính khác
+    // Đây là một ví dụ đơn giản, bạn có thể mở rộng logic này
     const getColorForType = (type) => {
         switch (type) {
             case 'Lý thuyết':
@@ -29,30 +28,12 @@ const ScheduleItem = ({ item, onDrop }) => {
     // Text color for details, using theme's secondary text color for readability
     // const secondaryTextColor = theme.palette.text.secondary;
 
-    // Format times for display
-    const formattedStartTime = item.startTime ? format(parseISO(item.startTime), 'HH:mm') : 'N/A';
-    const formattedEndTime = item.endTime ? format(parseISO(item.endTime), 'HH:mm') : 'N/A';
-
-    // React DND hook for drag functionality
-    const [{ isDragging }, drag] = useDrag(() => ({
-        type: 'SCHEDULE_ITEM',
-        item: { id: item.id },
-        end: (draggedItem, monitor) => {
-            // Only call onDrop if the item was successfully dropped on a valid target
-            if (monitor.didDrop()) {
-                onDrop(draggedItem.id, monitor.getDropResult());
-            }
-        },
-        collect: (monitor) => ({
-            isDragging: !!monitor.isDragging(),
-        }),
-    }));
+    // Format times for display using slot_id
+    const formattedTime = item.slot_id ? formatScheduleTime(item.slot_id) : 'N/A';
 
     return (
         <Box
-            ref={drag} // Attach the drag ref to the Box component
             sx={{
-                flex: 1,
                 backgroundColor: bgColor,
                 borderLeft: `6px solid ${itemAccentColor}`, // Prominent left border for accent
                 borderRadius: 1, // More rounded corners for a softer look
@@ -62,14 +43,16 @@ const ScheduleItem = ({ item, onDrop }) => {
                 flexDirection: 'column',
                 overflow: 'hidden',
                 minHeight: '95px', // Ensure enough space for content
-                boxShadow: isDragging ? theme.shadows[6] : theme.shadows[2], // Deeper shadow when dragging
+                boxShadow: theme.shadows[2], // Deeper shadow when dragging
                 transition: 'all 0.3s ease-in-out', // Smooth transitions for all properties
-                opacity: isDragging ? 0.7 : 1, // Slight opacity change when dragging
+                opacity: 1, // Slight opacity change when dragging
                 cursor: 'grab', // Indicate draggable item
                 '&:hover': {
-                    transform: isDragging ? 'none' : 'scale(1.1)', // More noticeable lift on hover
-                    boxShadow: isDragging ? theme.shadows[6] : theme.shadows[4], // Enhanced shadow on hover
+                    transform: 'scale(1.1)', // More noticeable lift on hover
+                    boxShadow: theme.shadows[4], // Enhanced shadow on hover
                 },
+                // Add a subtle border for general definition, if desired
+                // border: `1px solid ${alpha(itemAccentColor, 0.3)}`, 
             }}
         >
             <Typography
@@ -81,24 +64,21 @@ const ScheduleItem = ({ item, onDrop }) => {
                     color: primaryTextColor, // Use accent color for the main title
                 }}
             >
-                {item.course}
+                {item.subject}
             </Typography>
             {/* Details with secondary text color and bold labels using accent color */}
+            <Typography variant="subtitle2" sx={{ mb: 0.3, lineHeight: 1.4, color: 'primary' }}>
+                {formattedTime}
+            </Typography>
             <Typography variant="subtitle2" sx={{ mb: 0.3, lineHeight: 1.4, color: theme.palette.text.primary }}>
                 <Typography component="span" sx={{ color: primaryTextColor }}>Phòng:</Typography> {item.room}
             </Typography>
             <Typography variant="subtitle2" sx={{ mb: 0.3, lineHeight: 1.4, color: 'primary' }}>
                 <Typography component="span" sx={{ color: primaryTextColor }}>GV:</Typography> {item.lecturer}
             </Typography>
-            <Typography variant="subtitle2" sx={{ mb: 0.3, lineHeight: 1.4, color: 'primary' }}>
-                <Typography component="span" sx={{ color: primaryTextColor }}>Giờ:</Typography> {formattedStartTime} - {formattedEndTime}
-            </Typography>
-            <Typography variant="subtitle2" sx={{ mb: 0.3, lineHeight: 1.4, color: 'primary' }}>
-                <Typography component="span" sx={{ color: primaryTextColor }}>Lớp:</Typography> {item.class}
-            </Typography>
-            <Typography variant="subtitle2" sx={{ lineHeight: 1.4, color: 'primary' }}>
+            {/* <Typography variant="subtitle2" sx={{ lineHeight: 1.4, color: 'primary' }}>
                 <Typography component="span" sx={{ color: primaryTextColor }}>Loại:</Typography> {item.type}
-            </Typography>
+            </Typography> */}
         </Box>
     );
 };

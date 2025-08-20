@@ -34,7 +34,7 @@ const navItems = [
     { text: 'Cài Đặt', icon: <Settings />, path: '/cai-dat' }
 ];
 
-const drawerWidth = 350;
+const drawerWidth = 300;
 
 const StyledSidebarContainer = styled(Box)(({ theme }) => ({
     width: drawerWidth,

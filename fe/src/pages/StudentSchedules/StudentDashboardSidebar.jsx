@@ -44,11 +44,11 @@ const StudentDashboardSidebar = () => {
     const theory = 10
     const announcements = [
         { id: 1, title: 'Thông báo về lịch thi cuối kỳ', date: '05/06/2025' },
-        { id: 1, title: 'Thông báo về lịch thi cuối kỳ', date: '05/06/2025' },
-        { id: 1, title: 'Thông báo về lịch thi cuối kỳ', date: '05/06/2025' },
-        { id: 1, title: 'Thông báo về lịch thi cuối kỳ', date: '05/06/2025' },
-        { id: 1, title: 'Thông báo về lịch thi cuối kỳ', date: '05/06/2025' },
-        { id: 2, title: 'Cập nhật lịch học môn Lập trình Web', date: '01/06/2025' },
+        { id: 2, title: 'Thông báo về lịch thi cuối kỳ', date: '05/06/2025' },
+        { id: 3, title: 'Thông báo về lịch thi cuối kỳ', date: '05/06/2025' },
+        { id: 4, title: 'Thông báo về lịch thi cuối kỳ', date: '05/06/2025' },
+        { id: 5, title: 'Thông báo về lịch thi cuối kỳ', date: '05/06/2025' },
+        { id: 6, title: 'Cập nhật lịch học môn Lập trình Web', date: '01/06/2025' },
     ];
 
     return (

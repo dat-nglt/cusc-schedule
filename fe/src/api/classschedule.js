@@ -10,7 +10,7 @@ export const getAllSchedules = async () => {
     }
 };
 
-export const getClassScheduleForLecturerService = async (lecturerId) => {
+export const getClassScheduleForLecturerAPI = async (lecturerId) => {
     try {
         const response = await axiosInstance.get(`/api/classSchedules/lecturer/${lecturerId}`);
         return response.data;
@@ -19,7 +19,7 @@ export const getClassScheduleForLecturerService = async (lecturerId) => {
         throw error.response ? error.response.data : new Error(error.message);
     }
 };
-export const getClassScheduleForStudentService = async (studentId) => {
+export const getClassScheduleForStudentAPI = async (studentId) => {
     try {
         const response = await axiosInstance.get(`/api/classSchedules/student/${studentId}`);
         return response.data;

@@ -12,7 +12,7 @@ import {
 } from '@mui/icons-material';
 import { format, addDays, isSameDay, parseISO } from 'date-fns';
 import { useDrop } from 'react-dnd';
-import ScheduleItem from './ScheduleItem';
+import ScheduleItem from '../../components/ui/ScheduleItem';
 
 function TimeSlot({ day, hour, date, onDrop, scheduleItems }) {
     const theme = useTheme()

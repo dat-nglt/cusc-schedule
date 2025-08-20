@@ -18,7 +18,7 @@ import { getAllSubjectsAPI } from '../../api/subjectAPI';
 import { getSemesterCreateScheduleAPI } from '../../api/semesterAPI';
 import CreateSchedulesAutoModal from './CreateSchedulesAutoModal';
 import { getAllSchedules } from '../../api/classschedule';
-
+import { transformScheduleForCalendar } from '../../utils/scheduleUtils';
 const socket = io(import.meta.env.VITE_API_URL || 'http://localhost:3000', {
     withCredentials: true
 });
@@ -95,43 +95,8 @@ const Dashboard = () => {
     console.log("SCHEDULE:", formTest)
     console.log("scheduleItems:", scheduleItems);
 
-    // Transform scheduleItems for WeeklyCalendar
-    const transformScheduleItemsForCalendar = (items) => {
-        const slotTimeMap = {
-            "S1": { start: "07:00", end: "09:00" },
-            "S2": { start: "09:00", end: "11:00" },
-            "C1": { start: "13:00", end: "15:00" },
-            "C2": { start: "15:00", end: "17:00" },
-            "T1": { start: "17:30", end: "19:30" },
-            "T2": { start: "19:30", end: "21:30" }
-        };
 
-        return items.map(item => {
-            const slotInfo = slotTimeMap[item.slot_id] || { start: "08:00", end: "10:00" };
-            const startDateTime = `${item.date}T${slotInfo.start}:00`;
-            const endDateTime = `${item.date}T${slotInfo.end}:00`;
-
-            // Determine room type based on room_id or room data
-            const room = rooms.find(r => r.room_id === item.room_id);
-            const roomType = room?.type === "Thực hành" ? "Thực hành" : "Lý thuyết";
-
-            return {
-                id: item.class_schedule_id,
-                course: item.subject?.subject_name || "N/A",
-                lecturer: item.lecturer?.name || "N/A",
-                room: item.room_id,
-                type: roomType,
-                startTime: startDateTime,
-                endTime: endDateTime,
-                class: item.class?.class_name || "N/A",
-                semester: item.semester?.semester_name || "N/A",
-                notes: item.notes || "",
-                status: item.status
-            };
-        });
-    };
-
-    const transformedScheduleItems = transformScheduleItemsForCalendar(scheduleItems);
+    const transformedScheduleItems = transformScheduleForCalendar(scheduleItems);
 
     const actualInputData = {
         "classes": [

@@ -24,35 +24,12 @@ import { useTimetable } from '../../contexts/TimetableContext';
 // Import the new CalendarModal component
 import CalendarModal from './CalendarModal'; // Adjust path as necessary
 
-import ScheduleItem from './ScheduleItem';
+import ScheduleItem from '../../components/ui/ScheduleItem';
 import { transformScheduleForCalendar, isScheduleItemInTimeSlot } from '../../utils/scheduleUtils';
 
 // Constants - Updated to include schedule hours
 const HOURS = [7, 9, 13, 15, 17, 19]; // Hours corresponding to slot starts: S1(7), S2(9), C1(13), C2(15), T1(17), T2(19)
 const DAYS = Array.from({ length: 7 }, (_, i) => i); // 0-6 (Monday-Sunday)
-
-// Schedule Item Component (remains the same)
-// <<<<<<< chuong
-// const ScheduleItem = ({ item }) => {
-//     return (
-//         <Box
-//             sx={{
-//                 backgroundColor: '#4a90e2',
-//                 color: 'white',
-//                 borderRadius: '4px',
-//                 padding: '4px 8px',
-//                 margin: '2px 0',
-//                 fontSize: '0.8rem',
-//                 overflow: 'hidden',
-//                 textOverflow: 'ellipsis',
-//                 whiteSpace: 'nowrap'
-//             }}
-//         >
-//             {item.course} - {item.room}
-//         </Box>
-//     );
-// };
-// =======
 
 
 // Time Slot Component (remains the same)

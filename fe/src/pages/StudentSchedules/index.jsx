@@ -3,9 +3,8 @@ import { Box, Grid, Typography, Paper, useTheme, useMediaQuery, Divider } from '
 import WeeklyCalendarForStudent from './WeeklyCalendarForStudent';
 import ScheduleFilterBar from './ScheduleFilterBar';
 import StudentDashboardSidebar from './StudentDashboardSidebar';
-import { getClassScheduleForStudentService } from '../../api/classschedule';
+import { getClassScheduleForStudentAPI } from '../../api/classschedule';
 import { useAuth } from '../../contexts/AuthContext';
-import { set } from 'date-fns';
 
 function StudentSchedules() {
     const { userData } = useAuth();
@@ -14,7 +13,7 @@ function StudentSchedules() {
     const fetchClassScheduleForStudent = useCallback(async () => {
         try {
             const studentId = userData.code;
-            const response = await getClassScheduleForStudentService(studentId);
+            const response = await getClassScheduleForStudentAPI(studentId);
             if (!response) {
                 throw new Error("Không có dữ liệu thời khóa biểu");
             }
