@@ -102,6 +102,7 @@
       "lecturer_name": "Hoàng Văn E",
       "subjects": [
         "MH010",
+        "MH011",
         "MH012",
         "MH013"
       ],
@@ -438,7 +439,6 @@
     "Wed",
     "Thu",
     "Fri",
-    "Sat",
-    "Sun"
+    "Sat"
   ]
 }

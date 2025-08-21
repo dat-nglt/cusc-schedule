@@ -52,6 +52,7 @@ const Dashboard = () => {
             "Sun"
         ]
     });
+    console.log("programs:", programs);
 
     const timeslot = useState({
         "time_slots": [
@@ -183,7 +184,7 @@ const Dashboard = () => {
             {
                 "lecturer_id": "GV005",
                 "lecturer_name": "Hoàng Văn E",
-                "subjects": ["MH010", "MH012", "MH013"],
+                "subjects": ["MH010", "MH011", "MH012", "MH013"],
                 "busy_slots": [],
                 "semester_busy_slots": []
             },
@@ -431,7 +432,6 @@ const Dashboard = () => {
             if (!response) {
                 throw new Error("Không có dữ liệu phòng học");
             }
-            console.log("Rooms fetched:", response.data);
 
             setRooms(response.data);
         } catch (error) {
@@ -449,7 +449,6 @@ const Dashboard = () => {
             console.error("Error fetching subjects:", error);
         }
     };
-    console.log("semester:", semesters);
 
     const fetchSemesters = async () => {
         try {
@@ -514,9 +513,9 @@ const Dashboard = () => {
     // Gọi các hàm fetch dữ liệu khi component mount
     useEffect(() => {
         fetchRooms();
-        // fetchPrograms();
+        fetchPrograms();
         fetchLecturers();
-        fetchSubjests();
+        // fetchSubjests();
         // fetchSemesters();
         fetchClasses();
         fetchAllSchedules();
@@ -731,9 +730,9 @@ const Dashboard = () => {
 
     // Transform API data to required format
     const transformDataToFormTest = useCallback((data, selections = null) => {
-        const { rooms, programs, lecturers, classes, subjects, semesters } = data;
+        const { rooms, programs, lecturers, classes } = data;
 
-        console.log("Transforming data to form test structure:", { rooms, programs, lecturers, classes, subjects, semesters });
+        console.log("Transforming data to form test structure:", { rooms, programs, lecturers, classes });
 
         // If selections are provided, filter data based on selections
         const filterData = (items, selectedIds, idField) => {
@@ -792,7 +791,6 @@ const Dashboard = () => {
             duration: program.duration,
             semesters: program.semesters ?? []
         }));
-        console.log("semesters:", semesters)
         const transformedSemesters = semesters?.map(semester => ({
             semester_id: semester.semester_id,
             subject_ids: semester.subject_ids || semester.subjects?.map(s => s.subject_id) || [],
@@ -856,7 +854,7 @@ const Dashboard = () => {
 
         try {
             // const inputData = formTest || actualInputData;
-            const inputData = actualInputData;
+            const inputData = formTest;
             const response = await generateSchedule(inputData);
 
             if (response.aborted) { // Xử lý nếu promise được resolve với trạng thái hủy

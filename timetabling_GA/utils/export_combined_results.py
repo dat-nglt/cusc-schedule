@@ -32,11 +32,11 @@ def export_combined_results(all_semester_results: Dict[str, Any], processed_data
     
     if not os.path.exists(be_results_dir):
         os.makedirs(be_results_dir, exist_ok=True)
-        print(f"\nEXPORT_EVENT:{json.dumps({
+        print("\nEXPORT_EVENT:" + json.dumps({
             'event_type': 'DIRECTORY_CREATED',
             'directory_path': be_results_dir,
             'message': 'Đã tạo thư mục /be/results'
-        })}")
+        }))
     
     # Metadata for export process
     export_metadata = {
@@ -45,11 +45,11 @@ def export_combined_results(all_semester_results: Dict[str, Any], processed_data
         "status": "in_progress"
     }
     
-    print(f"\nEXPORT_EVENT:{json.dumps({
+    print("\nEXPORT_EVENT:" + json.dumps({
         'event_type': 'EXPORT_STARTED',
         'metadata': export_metadata,
         'message': f'Bắt đầu xuất dữ liệu cho {len(all_semester_results)} học kỳ'
-    })}")
+    }))
 
     combined_data = {
         "metadata": {
@@ -69,7 +69,7 @@ def export_combined_results(all_semester_results: Dict[str, Any], processed_data
         progress_percentage = round((processed_count / total_semesters) * 100, 2)
         
         # SEMESTER PROCESSING START
-        print(f"\nEXPORT_EVENT:{json.dumps({
+        print("\nEXPORT_EVENT:" + json.dumps({
             'event_type': 'SEMESTER_PROCESSING_START',
             'semester_id': semester_id,
             'progress': {
@@ -78,7 +78,7 @@ def export_combined_results(all_semester_results: Dict[str, Any], processed_data
                 'percentage': progress_percentage
             },
             'timestamp': datetime.now().isoformat()
-        })}")
+        }))
 
         try:
             # Get semester data and generate schedule
@@ -145,7 +145,7 @@ def export_combined_results(all_semester_results: Dict[str, Any], processed_data
             )
 
             # SEMESTER PROCESSING SUCCESS
-            print(f"\nEXPORT_EVENT:{json.dumps({
+            print("\nEXPORT_EVENT:" + json.dumps({
                 'event_type': 'SEMESTER_PROCESSING_SUCCESS',
                 'semester_id': semester_id,
                 'progress': {
@@ -163,11 +163,11 @@ def export_combined_results(all_semester_results: Dict[str, Any], processed_data
                     'unassignable_lessons': len(unassignable_lessons)
                 },
                 'timestamp': datetime.now().isoformat()
-            })}")
+            }))
 
         except Exception as e:
             # SEMESTER PROCESSING ERROR
-            print(f"\nEXPORT_EVENT:{json.dumps({
+            print("\nEXPORT_EVENT:" + json.dumps({
                 'event_type': 'SEMESTER_PROCESSING_ERROR',
                 'semester_id': semester_id,
                 'progress': {
@@ -177,7 +177,7 @@ def export_combined_results(all_semester_results: Dict[str, Any], processed_data
                 },
                 'error': str(e),
                 'timestamp': datetime.now().isoformat()
-            })}")
+            }))
             continue
 
     # Export combined JSON - CẢ HAI VỊ TRÍ
@@ -194,7 +194,7 @@ def export_combined_results(all_semester_results: Dict[str, Any], processed_data
             json.dump(combined_data, f, indent=2, ensure_ascii=False)
         
         # EXPORT COMPLETE
-        print(f"\nEXPORT_EVENT:{json.dumps({
+        print("\nEXPORT_EVENT:" + json.dumps({
             'event_type': 'EXPORT_COMPLETE',
             'metadata': {
                 'total_processed': processed_count,
@@ -214,13 +214,13 @@ def export_combined_results(all_semester_results: Dict[str, Any], processed_data
                 'completion_time': datetime.now().isoformat()
             },
             'message': 'Xuất dữ liệu hoàn tất thành công - File đã được lưu ở cả hai vị trí'
-        })}")
+        }))
         
     except Exception as e:
-        print(f"\nEXPORT_EVENT:{json.dumps({
+        print("\nEXPORT_EVENT:" + json.dumps({
             'event_type': 'COMBINED_EXPORT_ERROR',
             'error': str(e),
             'timestamp': datetime.now().isoformat()
-        })}")
+        }))
 
     print("\n--- Quá trình xuất file hoàn tất ---")
