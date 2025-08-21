@@ -1,4 +1,4 @@
-import models from '../models/index.js'; // Import models từ index.js
+import models from "../models/index.js"; // Import models từ index.js
 
 const { Semester } = models; // Lấy model Semester từ models
 /**
@@ -11,7 +11,7 @@ export const getAllSemestersService = async () => {
     const semesters = await Semester.findAll();
     return semesters;
   } catch (error) {
-    console.error('Lỗi khi lấy danh sách học kỳ:', error);
+    console.error("Lỗi khi lấy danh sách học kỳ:", error);
     throw error;
   }
 };
@@ -40,11 +40,22 @@ export const getSemesterByIdService = async (id) => {
  */
 export const createSemesterService = async (semesterData) => {
   try {
-    const semester = await Semester.create(semesterData);
-    return semester;
+    const existingSemester = await Semester.findOne({
+      where: {
+        semester_id: semesterData.semester_id,
+      },
+    });
+
+    if (existingSemester) {
+      const conflictError = new Error("Học kỳ này đã tồn tại.");
+      conflictError.name = "SequelizeUniqueConstraintError"; // Gán tên lỗi để controller có thể nhận biết
+      throw conflictError;
+    }
+    const newSemester = await Semester.create(semesterData);
+
+    return newSemester;
   } catch (error) {
-    console.error('Lỗi khi tạo học kỳ:', error);
-    throw error;
+    throw new Error(`Lỗi khi tạo học kỳ: ${error.message}`);
   }
 };
 
@@ -98,7 +109,7 @@ export const importSemestersFromJSONService = async (semestersData) => {
     const results = {
       success: [],
       errors: [],
-      total: semestersData.length
+      total: semestersData.length,
     };
 
     // Validate và tạo học kỳ cho từng item
@@ -108,11 +119,17 @@ export const importSemestersFromJSONService = async (semestersData) => {
 
       try {
         // Validate các trường bắt buộc
-        if (!semesterData.semester_id || !semesterData.semester_name || !semesterData.start_date || !semesterData.end_date) {
+        if (
+          !semesterData.semester_id ||
+          !semesterData.semester_name ||
+          !semesterData.start_date ||
+          !semesterData.end_date
+        ) {
           results.errors.push({
             index: index,
-            semester_id: semesterData.semester_id || 'N/A',
-            error: 'Mã học kỳ, Tên học kỳ, Thời gian bắt đầu và Thời gian kết thúc là bắt buộc'
+            semester_id: semesterData.semester_id || "N/A",
+            error:
+              "Mã học kỳ, Tên học kỳ, Thời gian bắt đầu và Thời gian kết thúc là bắt buộc",
           });
           continue;
         }
@@ -121,10 +138,16 @@ export const importSemestersFromJSONService = async (semestersData) => {
         const cleanedData = {
           semester_id: semesterData.semester_id.toString().trim(),
           semester_name: semesterData.semester_name.toString().trim(),
-          start_date: semesterData.start_date ? new Date(semesterData.start_date) : null,
-          end_date: semesterData.end_date ? new Date(semesterData.end_date) : null,
-          program_id: semesterData.program_id ? semesterData.program_id.toString().trim() : null,
-          status: semesterData.status || 'Hoạt động' // Mặc định là 'hoạt động' nếu không có giá trị
+          start_date: semesterData.start_date
+            ? new Date(semesterData.start_date)
+            : null,
+          end_date: semesterData.end_date
+            ? new Date(semesterData.end_date)
+            : null,
+          program_id: semesterData.program_id
+            ? semesterData.program_id.toString().trim()
+            : null,
+          status: semesterData.status || "Hoạt động", // Mặc định là 'hoạt động' nếu không có giá trị
         };
 
         // Validate ngày tháng
@@ -138,7 +161,7 @@ export const importSemestersFromJSONService = async (semestersData) => {
           results.errors.push({
             index: index,
             semester_id: cleanedData.semester_id,
-            error: 'Định dạng ngày không hợp lệ'
+            error: "Định dạng ngày không hợp lệ",
           });
           continue;
         }
@@ -147,7 +170,7 @@ export const importSemestersFromJSONService = async (semestersData) => {
           results.errors.push({
             index: index,
             semester_id: cleanedData.semester_id,
-            error: 'Thời gian bắt đầu không được lớn hơn thời gian kết thúc'
+            error: "Thời gian bắt đầu không được lớn hơn thời gian kết thúc",
           });
           continue;
         }
@@ -156,20 +179,20 @@ export const importSemestersFromJSONService = async (semestersData) => {
           results.errors.push({
             index: index,
             semester_id: cleanedData.semester_id,
-            error: 'Thời gian kết thúc không được quá 5 năm trong tương lai'
+            error: "Thời gian kết thúc không được quá 5 năm trong tương lai",
           });
           continue;
         }
 
         // Kiểm tra semester_id đã tồn tại chưa
         const existingSemester = await Semester.findOne({
-          where: { semester_id: cleanedData.semester_id }
+          where: { semester_id: cleanedData.semester_id },
         });
         if (existingSemester) {
           results.errors.push({
             index: index,
             semester_id: cleanedData.semester_id,
-            error: 'Mã học kỳ đã tồn tại'
+            error: "Mã học kỳ đã tồn tại",
           });
           continue;
         }
@@ -177,18 +200,17 @@ export const importSemestersFromJSONService = async (semestersData) => {
         // Tạo Semester mới
         const newSemester = await Semester.create(cleanedData);
         results.success.push(newSemester);
-
       } catch (error) {
         results.errors.push({
           index: index,
-          semester_id: semesterData.semester_id || 'N/A',
-          error: error.message || 'Lỗi không xác định'
+          semester_id: semesterData.semester_id || "N/A",
+          error: error.message || "Lỗi không xác định",
         });
       }
     }
     return results;
   } catch (error) {
-    console.error('Lỗi khi nhập học kỳ từ JSON:', error);
+    console.error("Lỗi khi nhập học kỳ từ JSON:", error);
     throw error;
   }
 };

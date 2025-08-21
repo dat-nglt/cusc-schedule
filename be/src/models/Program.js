@@ -16,18 +16,10 @@ const Program = (sequelize) => {
         type: DataTypes.STRING(50),
         allowNull: true,
       },
-      // Thời lượng đào tạo (VD: 3 năm, 4 năm,...)
-      training_duration: {
-        // Thiết kế hiện tại
-        // type: DataTypes.STRING(50),
-        // allowNull: true,
-
-        // Thiết kế do Đạt suy luận lại
+      // Số tuần của chương trình
+      duration: {
         type: DataTypes.INTEGER,
         allowNull: true,
-        validate: {
-          min: 1, // Đảm bảo thời lượng luôn lớn hơn 0
-        },
       },
       // Mô tả chi tiết chương trình
       description: {
@@ -41,28 +33,27 @@ const Program = (sequelize) => {
       },
     },
     {
-      tableName: "programs", // Tên bảng trong CSDL
-      timestamps: true, // Tự động thêm created_at và updated_at
-      createdAt: "created_at", // Đặt tên cột createdAt
-      updatedAt: "updated_at", // Đặt tên cột updatedAt
-      deletedAt: "deleted_at", // Thêm cột deleted_at để hỗ trợ soft delete
-      paranoid: true, // Bật chế độ soft delete
+      tableName: "programs",
+      timestamps: true,
+      createdAt: "created_at",
+      updatedAt: "updated_at",
+      deletedAt: "deleted_at",
     }
   );
 
   // Khai báo mối quan hệ (association)
   ProgramModel.associate = (models) => {
-    ProgramModel.hasMany(models.Semester, {
+    // Một Chương trình có nhiều Học kỳ. Liên kết với bảng Program_Semesters.
+    ProgramModel.hasMany(models.ProgramSemesters, {
       foreignKey: "program_id",
-      as: "semesters", // Add the alias to match expected naming
+      as: "program_semesters",
       onUpdate: "CASCADE",
-      onDelete: "CASCADE", // Xóa tất cả học kỳ liên quan nếu chương trình bị xóa
+      onDelete: "CASCADE", // Xóa tất cả học kỳ thuộc chương trình nếu chương trình bị xóa
     });
-    ProgramModel.hasMany(models.Classes, {
-      foreignKey: "program_id",
-      onUpdate: "CASCADE",
-      onDelete: "SET NULL", // Nếu xóa chương trình, để null trường programs_id trong bảng Classes
-    });
+    
+    // Một Chương trình có nhiều Môn học thông qua các học kỳ.
+    // Mối quan hệ này được thiết lập thông qua bảng trung gian Program_Subject_Semesters
+    // Bỏ mối quan hệ trực tiếp với bảng Classes để đảm bảo tính toàn vẹn dữ liệu.
   };
 
   return ProgramModel;

@@ -6,6 +6,7 @@ import {
   generateScheduleController,
   downloadScheduleController,
   stopScheduleGenerationController,
+  getInputDataForAlgorithmController,
 } from "../controllers/scheduleController.js";
 
 // Đây là hàm factory sẽ nhận đối tượng `io` và trả về một Express Router
@@ -23,6 +24,12 @@ const createScheduleRouter = (io) => {
     "/stop-ga",
     authenticateAndAuthorize(["admin", "training_officer"]), // Áp dụng middleware bảo mật
     (req, res) => stopScheduleGenerationController(req, res, io) // Truyền `io` vào controller
+  );
+
+  router.get(
+    "/get-input-data",
+    authenticateAndAuthorize(["admin", "training_officer"]),
+    getInputDataForAlgorithmController
   );
 
   // Route GET để tải file kết quả

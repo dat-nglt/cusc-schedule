@@ -13,8 +13,8 @@ export default {
         type: Sequelize.STRING(50),
         allowNull: true
       },
-      training_duration: {
-        type: Sequelize.STRING(30),
+      duration: {
+        type: Sequelize.INTEGER,
         allowNull: true
       },
       description: {

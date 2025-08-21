@@ -5,13 +5,12 @@ export default {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('schedule_change_requests', {
       request_id: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.STRING(100),
         primaryKey: true,
-        autoIncrement: true,
         allowNull: false
       },
       class_schedule_id: {
-        type: Sequelize.STRING(30),
+        type: Sequelize.INTEGER,
         allowNull: false,
         references: {
           model: 'class_schedules',
@@ -32,7 +31,7 @@ export default {
       },
       request_type: {
         type: Sequelize.ENUM('RESCHEDULE', 'CANCEL', 'ROOM_CHANGE', 'TIME_CHANGE', 'MAKEUP_CLASS', 'SUBSTITUTE'),
-        allowNull: false
+        allowNull: true
       },
       reason: {
         type: Sequelize.TEXT,
@@ -40,6 +39,10 @@ export default {
       },
       // Requested changes
       requested_date: {
+        type: Sequelize.DATEONLY,
+        allowNull: true
+      },
+      original_date: {
         type: Sequelize.DATEONLY,
         allowNull: true
       },
@@ -51,15 +54,13 @@ export default {
         type: Sequelize.SMALLINT,
         allowNull: true
       },
-      requested_time_slot_id: {
+      requested_slot_id: {
         type: Sequelize.STRING(30),
         allowNull: true,
-        references: {
-          model: 'time_slots',
-          key: 'slot_id'
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'SET NULL'
+      },
+      original_slot_id: {
+        type: Sequelize.STRING(30),
+        allowNull: true,
       },
       requested_room_id: {
         type: Sequelize.STRING(30),
@@ -70,6 +71,10 @@ export default {
         },
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL'
+      },
+      original_room_id: {
+        type: Sequelize.STRING(30),
+        allowNull: true,
       },
       // thay đổi giảng viên
       substitute_lecturer_id: {
@@ -100,6 +105,12 @@ export default {
         type: Sequelize.DATE,
         defaultValue: Sequelize.NOW,
         allowNull: false
+      },
+      // Soft delete
+      deleted_at: {
+        type: Sequelize.DATE,
+        allowNull: true,
+        comment: 'Soft delete timestamp'
       }
     });
 

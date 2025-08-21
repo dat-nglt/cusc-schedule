@@ -3,7 +3,7 @@ import os
 import json
 from typing import Dict, Any
 
-# Import các thành phần chính
+# Import main components
 from data_processing.loader import load_data
 from data_processing.processor import DataProcessor
 from utils.run_ga_for_semester import run_ga_for_semester
@@ -12,60 +12,59 @@ from utils.export_combined_results import export_combined_results
 
 def genetic_algorithm():
     """
-    Chức năng chính để chạy thuật toán di truyền nhằm tạo lịch trình học kỳ.
-    Quy trình bao gồm:
-    1. Tải và xử lý dữ liệu đầu vào.
-    2. Chạy thuật toán GA riêng biệt cho từng học kỳ.
-    3. Tổng hợp và xuất kết quả cuối cùng.
+    Main function to run the genetic algorithm for creating semester schedules.
+    The process includes:
+    1. Loading and processing input data.
+    2. Running the GA separately for each semester.
+    3. Consolidating and exporting the final results.
     """
     print("Loading data...")
-    # Tải dữ liệu từ file JSON
+    # Load data from a JSON file
     raw_data = load_data("input_data.json")
     if not raw_data:
+        print("khong co json data")
         return
 
     print("Processing data...")
-    # Xử lý dữ liệu để tạo các cấu trúc tiện ích
+    # Process data to create useful structures
     processed_data = DataProcessor(raw_data)
     
-    print(f"Số lượng tiết học hàng tuần cần xếp lịch: {len(processed_data.required_lessons_weekly)}")
-    
-    # Tạo thư mục 'results' nếu chưa tồn tại
+    # Create the 'results' directory if it doesn't exist
     output_folder = "results"
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
 
     all_semester_results = {}
     
-    # Chạy GA cho từng học kỳ
+    # Run GA for each semester
     for semester_id, semester_info in processed_data.semester_map.items():
-        print(f"\n--- Bắt đầu tạo lịch cho Học kỳ: {semester_id} ---")
+        print(f"\n--- Starting to generate schedule for Semester: {semester_id} ---")
         
-        # Chạy thuật toán GA và lấy nhiễm sắc thể tốt nhất cùng log
+        # Run the genetic algorithm and get the best chromosome and log
         best_chromosome, ga_log = run_ga_for_semester(semester_id, processed_data)
         
         if best_chromosome:
-            # Lưu kết quả tốt nhất và log của từng học kỳ
+            # Save the best result and log for each semester
             all_semester_results[semester_id] = {
                 "chromosome": best_chromosome,
                 "log": ga_log
             }
             print()
-            print(f"Lịch học tối ưu nhất cho {semester_id} đã được tạo thành công.")
+            print(f"The optimal schedule for {semester_id} has been created successfully.")
         else:
-            print(f"Không thể tạo lịch cho {semester_id}.")
+            print(f"Failed to create a schedule for {semester_id}.")
 
-    # Tổng hợp và xuất kết quả nếu có
+    # Consolidate and export results if available
     if all_semester_results:
-        print("\n--- Tổng hợp và xuất kết quả ---")
+        print("\n--- Consolidating and exporting results ---")
         export_combined_results(all_semester_results, processed_data, output_folder)
         
     print("\nGA_PROGRESS_DONE")
-    # Đảm bảo tất cả output được ghi ra console
+    # Ensure all output is flushed to the console
     sys.stdout.flush()
     
 if __name__ == "__main__":
-    # Đảm bảo thư mục kết quả tồn tại trước khi chạy
+    # Ensure the results folder exists before running
     if not os.path.exists("results"):
         os.makedirs("results")
     genetic_algorithm()

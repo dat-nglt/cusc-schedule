@@ -47,25 +47,25 @@ class FitnessCalculator:
             # Check for missing data first
             if not all([day, slot_id, lecturer_id, room_id, class_id, subject_id, lesson_type]):
                 penalty += PENALTY_UNASSIGNED_GEN
-                violations['Buổi học chưa được xếp'] += 1
+                violations['Class not scheduled yet'] += 1
                 continue
 
             # Check Sunday constraint - optimized
             if day and day.lower() in ['sun', 'sunday', 'chủ nhật', 'cn']:
                 penalty += PENALTY_WEEKEND_CLASH
-                violations['Lịch rơi vào Chủ nhật'] += 1
+                violations['Classes fall on Sunday'] += 1
 
             # Check hard constraints
             current_slot = slot_occupancy[day][slot_id]
             if lecturer_id in current_slot['lecturers']:
                 penalty += PENALTY_LECTURER_CLASH
-                violations['Giảng viên bị trùng lịch'] += 1
+                violations['Lecturer has overlapping schedule'] += 1
             if room_id in current_slot['rooms']:
                 penalty += PENALTY_ROOM_CLASH
-                violations['Phòng học bị trùng lịch'] += 1
+                violations['Classroom schedule overlap'] += 1
             if class_id in current_slot['classes']:
                 penalty += PENALTY_CLASS_CLASH
-                violations['Lớp học bị trùng lịch'] += 1
+                violations['Class schedule overlap'] += 1
 
             # Update occupancy
             current_slot['lecturers'].append(lecturer_id)
@@ -80,21 +80,21 @@ class FitnessCalculator:
             if room_info:
                 if room_info['type'] != lesson_type:
                     penalty += PENALTY_ROOM_TYPE_MISMATCH
-                    violations['Sai loại phòng học'] += 1
+                    violations['Wrong type of classroom'] += 1
                 if class_info and room_info['capacity'] < class_info['size']:
                     penalty += PENALTY_ROOM_CAPACITY
-                    violations['Phòng không đủ sức chứa'] += 1
+                    violations['Room capacity if not enough'] += 1
 
             if lecturer_info:
                 if subject_id not in lecturer_info['subjects']:
                     penalty += PENALTY_LECTURER_UNQUALIFIED
-                    violations['Giảng viên không đủ điều kiện'] += 1
+                    violations['The lecturer cannot teach the subject'] += 1
                 
                 # Check busy slots
                 for busy_slot in lecturer_info.get('busy_slots', []):
                     if busy_slot['day'] == day and busy_slot['slot_id'] == slot_id:
                         penalty += PENALTY_LECTURER_BUSY
-                        violations['Giảng viên bận theo lịch cố định'] += 1
+                        violations['Lecturer busy with fixed schedule'] += 1
 
             # Track for soft constraints
             lecturer_slots_per_day[lecturer_id][day].append(slot_id)
@@ -115,7 +115,7 @@ class FitnessCalculator:
     def _calculate_consecutive_penalty(self, schedule, max_consecutive, penalty_value, entity_type):
         """Optimized consecutive penalty calculation"""
         total_penalty = 0
-        violations_key = f'{entity_type.capitalize()} quá nhiều giờ liên tiếp'
+        violations_key = f'{entity_type.capitalize()} too many hours in a row'
         
         for entity_id, day_schedule in schedule.items():
             for day, slots in day_schedule.items():

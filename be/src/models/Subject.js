@@ -1,5 +1,4 @@
 import { DataTypes } from 'sequelize';
-// import { on } from 'winston-daily-rotate-file';
 
 // Định nghĩa model Subject - Đại diện cho môn học
 const Subject = (sequelize) => {
@@ -32,38 +31,31 @@ const Subject = (sequelize) => {
         type: DataTypes.SMALLINT,
         allowNull: true,
       },
-      // Trạng thái môn học (VD: active, inactive,...)
+      // Trạng thái môn học
       status: {
         type: DataTypes.STRING(30),
         allowNull: true,
       },
-      // Mã học kỳ (liên kết đến bảng Semester)
-      semester_id: {
-        type: DataTypes.STRING(30),
-        allowNull: true,  // Cho phép null
-      },
     },
     {
-      tableName: 'subjects',         // Tên bảng trong CSDL
-      timestamps: true,              // Tự động thêm created_at và updated_at
+      tableName: 'subjects',
+      timestamps: true,
       createdAt: 'created_at',
       updatedAt: 'updated_at',
-
-
     }
   );
 
   // Khai báo mối quan hệ (association)
   SubjectModel.associate = (models) => {
-    // Mỗi môn học thuộc về một học kỳ
-    SubjectModel.belongsTo(models.Semester, {
-      foreignKey: 'semester_id',
-      as: 'semester', // Changed from 'semesters' to 'semester' for singular naming
+    // Môn học có mối quan hệ nhiều-nhiều với Chương trình và Học kỳ thông qua bảng Program_Subject_Semesters.
+    SubjectModel.hasMany(models.ProgramSubjectSemesters, {
+      foreignKey: 'subject_id',
+      as: 'program_subject_semesters',
       onUpdate: 'CASCADE',
-      onDelete: 'SET NULL', // Nếu học kỳ bị xóa, môn học sẽ không bị xóa mà chỉ đặt semester_id thành NULL
+      onDelete: 'CASCADE',
     });
 
-    // Mối quan hệ nhiều-nhiều: Một Subject có thể được nhiều Lecturer dạy
+    // Các mối quan hệ với Lecturer là chính xác và được giữ nguyên.
     SubjectModel.belongsToMany(models.Lecturer, {
       through: models.LecturerAssignment,
       foreignKey: 'subject_id',
@@ -71,12 +63,10 @@ const Subject = (sequelize) => {
       as: 'lecturers'
     });
 
-    // Mối quan hệ một-nhiều với bảng junction LecturerAssignment
     SubjectModel.hasMany(models.LecturerAssignment, {
       foreignKey: 'subject_id',
       as: 'lecturerAssignments'
     });
-
   };
 
   return SubjectModel;

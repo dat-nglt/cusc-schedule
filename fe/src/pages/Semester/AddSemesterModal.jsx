@@ -23,7 +23,8 @@ import {
     Chip,
     InputAdornment,
     Fade,
-    Paper
+    Paper,
+    duration
 } from '@mui/material';
 import {
     Close,
@@ -59,8 +60,7 @@ export default function AddSemesterModal({ open, onClose, onAddSemester, existin
         semester_name: '',
         start_date: '',
         end_date: '',
-        status: 'Đang triển khai',
-        program_id: '',
+        duration_weeks: '',
     });
 
     const [activeStep, setActiveStep] = useState(0);
@@ -69,9 +69,35 @@ export default function AddSemesterModal({ open, onClose, onAddSemester, existin
     const [previewData, setPreviewData] = useState([]);
     const [fileUploaded, setFileUploaded] = useState(false); // To track if a file was selected for import
 
+    const calculateWeeksBetweenDates = (startDate, endDate) => {
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+
+        // Kiểm tra tính hợp lệ của ngày
+        if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+            return 0;
+        }
+
+        // Đảm bảo ngày bắt đầu không sau ngày kết thúc
+        if (start > end) {
+            return 0;
+        }
+
+        // Tính số mili giây giữa hai ngày
+        const timeDifference = end.getTime() - start.getTime();
+
+        // Chuyển đổi thành số ngày (làm tròn lên)
+        const daysDifference = Math.ceil(timeDifference / (1000 * 3600 * 24));
+
+        // Tính số tuần (làm tròn lên)
+        const weeks = Math.ceil(daysDifference / 7);
+
+        return weeks;
+    }
+
     const handleNext = () => {
         if (activeStep === 0) {
-            if (!newSemester.semester_id || !newSemester.semester_name || !newSemester.program_id) {
+            if (!newSemester.semester_id || !newSemester.semester_name) {
                 setLocalError('Vui lòng điền đầy đủ thông tin cơ bản.');
                 return;
             }
@@ -87,12 +113,20 @@ export default function AddSemesterModal({ open, onClose, onAddSemester, existin
 
     const handleChange = (e) => {
         const { name, value } = e.target;
+        if (name === 'start_date' || name === 'end_date') {
+            setNewSemester((prev) => ({
+                ...prev,
+                duration_weeks: calculateWeeksBetweenDates(prev.start_date, prev.end_date),
+            }));
+        }
+        console.log(`Field changed: ${name} = ${value}`); // Debugging line to track changes
+
         setNewSemester((prev) => ({ ...prev, [name]: value }));
         setLocalError('');
     };
 
     const handleSubmit = async () => {
-        if (!newSemester.start_date || !newSemester.end_date) {
+        if (newSemester.duration_weeks <= 0) {
             setLocalError('Vui lòng điền đầy đủ thông tin thời gian.');
             return;
         }
@@ -100,6 +134,7 @@ export default function AddSemesterModal({ open, onClose, onAddSemester, existin
         const isDuplicate = existingSemesters.some(
             (semester) => semester.semester_id === newSemester.semester_id
         );
+        
         if (isDuplicate) {
             setLocalError(`Mã học kỳ "${newSemester.semester_id}" đã tồn tại.`);
             return;
@@ -133,8 +168,6 @@ export default function AddSemesterModal({ open, onClose, onAddSemester, existin
             semester_name: '',
             start_date: '',
             end_date: '',
-            status: 'Đang triển khai',
-            program_id: '',
         });
         setActiveStep(0);
         setLocalError('');
@@ -342,34 +375,13 @@ export default function AddSemesterModal({ open, onClose, onAddSemester, existin
                                     }}
                                     sx={{ mb: 2 }}
                                 />
-                                <FormControl fullWidth required>
-                                    <InputLabel>Mã chương trình</InputLabel>
-                                    <Select
-                                        name="program_id"
-                                        value={newSemester.program_id}
-                                        onChange={handleChange}
-                                        label="Mã chương trình"
-                                        disabled={loading}
-                                        startAdornment={
-                                            <InputAdornment position="start">
-                                                <School color="action" />
-                                            </InputAdornment>
-                                        }
-                                    >
-                                        {programs?.map((program) => (
-                                            <MenuItem key={program.program_id} value={program.program_id}>
-                                                {program.program_id} - {program.program_name}
-                                            </MenuItem>
-                                        ))}
-                                    </Select>
-                                </FormControl>
                             </Box>
                         )}
 
                         {activeStep === 1 && (
                             <Box sx={{
                                 display: 'grid',
-                                gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+                                gridTemplateColumns: { xs: '1fr', md: '4fr 1fr 4fr' },
                                 gap: 3
                             }}>
                                 <TextField
@@ -392,6 +404,7 @@ export default function AddSemesterModal({ open, onClose, onAddSemester, existin
                                     }}
                                     sx={{ mb: 2 }}
                                 />
+                                <Chip label={`${newSemester.duration_weeks || 0} Tuần`} sx={{ mt: 1.5 }} />
                                 <TextField
                                     label="Ngày kết thúc"
                                     name="end_date"
@@ -412,30 +425,6 @@ export default function AddSemesterModal({ open, onClose, onAddSemester, existin
                                     }}
                                     sx={{ mb: 2 }}
                                 />
-                                <FormControl fullWidth required>
-                                    <InputLabel>Trạng thái</InputLabel>
-                                    <Select
-                                        name="status"
-                                        value={newSemester.status}
-                                        onChange={handleChange}
-                                        label="Trạng thái"
-                                        disabled={loading}
-                                    >
-                                        {statusOptions.map((option) => (
-                                            <MenuItem key={option.value} value={option.value}>
-                                                <Box display="flex" alignItems="center">
-                                                    {option.icon}
-                                                    <Chip
-                                                        label={option.value}
-                                                        size="small"
-                                                        color={option.color}
-                                                        sx={{ ml: 1 }}
-                                                    />
-                                                </Box>
-                                            </MenuItem>
-                                        ))}
-                                    </Select>
-                                </FormControl>
                             </Box>
                         )}
                     </Box>

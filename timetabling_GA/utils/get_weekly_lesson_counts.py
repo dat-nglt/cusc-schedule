@@ -2,32 +2,32 @@ from typing import List
 
 def get_weekly_lesson_counts(total_slots_needed: int, total_weeks: int) -> List[int]:
     """
-    Tính toán và phân bổ số tiết học đều đặn cho mỗi tuần trong một học kỳ.
+    Calculates and distributes the number of lessons evenly across each week in a semester.
 
-    Hàm này phân chia tổng số tiết cần thiết cho một môn học thành các tuần
-    sao cho số tiết mỗi tuần gần bằng nhau nhất có thể. Các tiết học "lẻ"
-    sẽ được phân bổ thêm vào các tuần đầu tiên.
+    This function divides the total number of required lessons for a subject among
+    the weeks so that the number of lessons per week is as equal as possible. Any
+    "extra" lessons are allocated to the first weeks.
 
     Args:
-        total_slots_needed (int): Tổng số tiết học cần thiết cho môn học.
-        total_weeks (int): Tổng số tuần của học kỳ.
+        total_slots_needed (int): The total number of lessons required for the subject.
+        total_weeks (int): The total number of weeks in the semester.
 
     Returns:
-        List[int]: Một danh sách chứa số tiết học của mỗi tuần.
-                    Ví dụ: [2, 2, 2, 2, 1, 1, ...] nếu tổng số tiết là 10
-                    và tổng số tuần là 6.
+        List[int]: A list containing the number of lessons for each week.
+                   Example: [2, 2, 2, 2, 1, 1, ...] if the total lessons is 10
+                   and the total weeks is 6.
     """
-    # Xử lý trường hợp đặc biệt khi tổng số tuần bằng 0
+    # Handle the special case where the total number of weeks is zero or less
     if total_weeks <= 0:
         return []
 
-    # Số tiết cơ bản mỗi tuần
+    # The base number of lessons per week
     base_weekly = total_slots_needed // total_weeks
-    # Số tiết còn lại sau khi chia đều
+    # The remaining lessons after even distribution
     extra_slots = total_slots_needed % total_weeks
     
-    # Tạo danh sách số tiết mỗi tuần
-    # Các tuần đầu sẽ có thêm 1 tiết cho đến khi hết số tiết lẻ
+    # Create the list of weekly lesson counts
+    # The first weeks will have an extra lesson until all remaining slots are allocated
     counts = [base_weekly + 1] * extra_slots + [base_weekly] * (total_weeks - extra_slots)
     
     return counts

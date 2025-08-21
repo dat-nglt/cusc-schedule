@@ -4,27 +4,27 @@ from collections import defaultdict
 import copy
 from typing import Dict, Any, List, Tuple, Set
 
-# Giả định các hàm này đã được định nghĩa và có thể import
+# Assuming these functions are already defined and can be imported
 from data_processing.processor import DataProcessor
 from utils.find_new_valid_slot import find_new_valid_slot
 from utils.get_data_for_semester import get_data_for_semester
 
 def build_occupied_slots_from_schedule(schedule: Dict[str, Any], new_constraints: Dict[str, Any]) -> Dict[str, Dict[str, Dict[str, Set[str]]]]:
     """
-    Tạo một dictionary chứa các khung giờ đã bị chiếm dụng từ lịch trình hiện có
-    và các ràng buộc mới được thêm vào.
+    Creates a dictionary of occupied time slots from the existing schedule
+    and newly added constraints.
 
     Args:
-        schedule (Dict[str, Any]): Lịch trình học kỳ hiện tại.
-        new_constraints (Dict[str, Any]): Các ràng buộc mới (giảng viên bận, phòng không dùng được).
+        schedule (Dict[str, Any]): The current semester schedule.
+        new_constraints (Dict[str, Any]): The new constraints (lecturers busy, rooms unavailable).
 
     Returns:
-        Dict[str, Dict[str, Dict[str, Set[str]]]]: Một dictionary lồng nhau
-            biểu diễn các tài nguyên đã bị chiếm dụng theo ngày và khung giờ.
+        Dict[str, Dict[str, Dict[str, Set[str]]]]: A nested dictionary
+            representing occupied resources by date and time slot.
     """
     occupied = defaultdict(lambda: defaultdict(lambda: {'lecturers': set(), 'rooms': set(), 'classes': set()}))
 
-    # Thêm các ràng buộc mới vào occupied slots
+    # Add new constraints to the occupied slots
     for lecturer_id, busy_slots_list in new_constraints.get('lecturers', {}).items():
         for slot in busy_slots_list:
             occupied[slot['date']][slot['slot_id']]['lecturers'].add(lecturer_id)
@@ -33,7 +33,7 @@ def build_occupied_slots_from_schedule(schedule: Dict[str, Any], new_constraints
         for slot in unavailable_slots_list:
             occupied[slot['date']][slot['slot_id']]['rooms'].add(room_id)
 
-    # Thêm dữ liệu từ lịch trình đã có vào occupied slots
+    # Add data from the existing schedule to the occupied slots
     for semester in schedule.get('semesters', []):
         for cls in semester.get('classes', []):
             cls_id = cls['class_id']
@@ -52,19 +52,19 @@ def build_occupied_slots_from_schedule(schedule: Dict[str, Any], new_constraints
 
 def detect_new_conflicts(semester_schedule: Dict[str, Any], new_constraints: Dict[str, Any]) -> List[Dict[str, Any]]:
     """
-    Xác định các buổi học trong lịch trình hiện tại bị vi phạm bởi các ràng buộc mới.
+    Identifies lessons in the current schedule that are in conflict with the new constraints.
 
     Args:
-        semester_schedule (Dict[str, Any]): Lịch trình học kỳ đã có.
-        new_constraints (Dict[str, Any]): Các ràng buộc mới cần kiểm tra.
+        semester_schedule (Dict[str, Any]): The existing semester schedule.
+        new_constraints (Dict[str, Any]): The new constraints to check against.
 
     Returns:
-        List[Dict[str, Any]]: Danh sách các buổi học bị xung đột, bao gồm
-                              thông tin chi tiết.
+        List[Dict[str, Any]]: A list of conflicting lessons, including detailed
+                              information.
     """
     conflicting_lessons = []
     
-    # Tạo các set để tra cứu nhanh các ràng buộc mới
+    # Create sets for quick lookup of new constraints
     new_lecturer_busy_slots = set()
     new_room_unavailable_slots = set()
 
@@ -76,7 +76,7 @@ def detect_new_conflicts(semester_schedule: Dict[str, Any], new_constraints: Dic
         for slot in unavailable_slots_list:
             new_room_unavailable_slots.add((room_id, slot.get('date'), slot.get('slot_id')))
             
-    # Duyệt qua toàn bộ lịch trình để tìm xung đột
+    # Iterate through the entire schedule to find conflicts
     for semester in semester_schedule.get('semesters', []):
         semester_id = semester.get('semester_id')
         for cls in semester.get('classes', []):
@@ -87,14 +87,14 @@ def detect_new_conflicts(semester_schedule: Dict[str, Any], new_constraints: Dic
                 date = lesson.get('date')
                 slot_id = lesson.get('slot_id')
                 
-                # Kiểm tra xung đột với ràng buộc giảng viên
+                # Check for conflict with lecturer constraints
                 if (lecturer_id, date, slot_id) in new_lecturer_busy_slots:
                     lesson_with_context = copy.deepcopy(lesson)
                     lesson_with_context['class_id'] = cls_id
                     lesson_with_context['semester_id'] = semester_id
                     conflicting_lessons.append(lesson_with_context)
                     
-                # Kiểm tra xung đột với ràng buộc phòng học (chỉ khi chưa có xung đột)
+                # Check for conflict with room constraints (only if no conflict was found with lecturer)
                 elif (room_id, date, slot_id) in new_room_unavailable_slots:
                     lesson_with_context = copy.deepcopy(lesson)
                     lesson_with_context['class_id'] = cls_id
@@ -105,17 +105,17 @@ def detect_new_conflicts(semester_schedule: Dict[str, Any], new_constraints: Dic
 
 def update_schedule(schedule: Dict[str, Any], old_lesson: Dict[str, Any], new_lesson_info: Tuple[str, str, str, str]):
     """
-    Tìm và xóa buổi học cũ khỏi lịch trình, sau đó chèn buổi học đã cập nhật vào.
+    Finds and removes the old lesson from the schedule, then inserts the updated lesson.
     
     Args:
-        schedule (Dict[str, Any]): Lịch trình học kỳ gốc.
-        old_lesson (Dict[str, Any]): Thông tin chi tiết của buổi học cũ.
-        new_lesson_info (Tuple[str, str, str, str]): Tuple chứa thông tin mới:
+        schedule (Dict[str, Any]): The original semester schedule.
+        old_lesson (Dict[str, Any]): The details of the old lesson.
+        new_lesson_info (Tuple[str, str, str, str]): A tuple containing the new information:
                                                      (date, slot_id, room_id, lecturer_id).
     """
     new_date, new_slot_id, new_room_id, new_lecturer_id = new_lesson_info
     
-    # Tạo một bản sao của old_lesson và cập nhật các trường
+    # Create a copy of old_lesson and update the fields
     updated_lesson = copy.deepcopy(old_lesson)
     updated_lesson.update({
         'slot_id': new_slot_id,
@@ -125,19 +125,19 @@ def update_schedule(schedule: Dict[str, Any], old_lesson: Dict[str, Any], new_le
         'day': datetime.datetime.strptime(new_date, "%Y-%m-%d").strftime("%a")
     })
     
-    # Lặp qua lịch trình để tìm và thay thế buổi học
+    # Iterate through the schedule to find and replace the lesson
     for semester in schedule.get('semesters', []):
         if semester.get('semester_id') == old_lesson.get('semester_id'):
             for cls in semester.get('classes', []):
                 if cls.get('class_id') == old_lesson.get('class_id'):
-                    # Tạo danh sách mới loại bỏ buổi học cũ
+                    # Create a new list, excluding the old lesson
                     cls['schedule'] = [
                         l for l in cls['schedule'] 
                         if not (l.get('lesson_id') == old_lesson.get('lesson_id') and l.get('slot_id') == old_lesson.get('slot_id') and l.get('date') == old_lesson.get('date'))
                     ]
-                    # Thêm buổi học đã cập nhật vào
+                    # Add the updated lesson
                     cls['schedule'].append(updated_lesson)
-                    return # Kết thúc sớm khi đã tìm thấy và cập nhật
+                    return # Exit early once found and updated
 
 if __name__ == "__main__":
     try:
@@ -149,10 +149,10 @@ if __name__ == "__main__":
         full_processed_data = DataProcessor(raw_data)
         
     except FileNotFoundError:
-        print("Lỗi: Không tìm thấy tệp dữ liệu 'all_semesters.json' hoặc 'input_data.json'.")
+        print("Error: The data file 'all_semesters.json' or 'input_data.json' was not found.")
         exit()
 
-    # Định nghĩa các ràng buộc mới
+    # Define new constraints
     new_constraints = {
         'lecturers': {
             'GV001': [
@@ -166,29 +166,29 @@ if __name__ == "__main__":
         }
     }
     
-    # Bước 1: Phát hiện các buổi học bị xung đột
+    # Step 1: Detect conflicting lessons
     lessons_to_fix = detect_new_conflicts(semester_schedule, new_constraints)
 
     if lessons_to_fix:
-        print("Phát hiện các buổi học bị xung đột do ràng buộc mới:")
+        print("Found lessons conflicting with new constraints:")
         for i, lesson in enumerate(lessons_to_fix):
-            print(f"--- Buổi học #{i+1} ---")
-            print(f"  Học kỳ: {lesson.get('semester_id')}")
-            print(f"  Lớp: {lesson.get('class_id')}")
-            print(f"  Môn học: {lesson.get('subject_id')}")
-            print(f"  Tiết: {lesson.get('lesson_type')}")
-            print(f"  Ngày: {lesson.get('date')} ({lesson.get('day')})")
-            print(f"  Khung giờ: {lesson.get('slot_id')}")
-            print(f"  Giảng viên: {lesson.get('lecturer_id')}")
-            print(f"  Phòng: {lesson.get('room_id')}")
+            print(f"--- Lesson #{i+1} ---")
+            print(f"   Semester: {lesson.get('semester_id')}")
+            print(f"   Class: {lesson.get('class_id')}")
+            print(f"   Subject: {lesson.get('subject_id')}")
+            print(f"   Type: {lesson.get('lesson_type')}")
+            print(f"   Date: {lesson.get('date')} ({lesson.get('day')})")
+            print(f"   Slot: {lesson.get('slot_id')}")
+            print(f"   Lecturer: {lesson.get('lecturer_id')}")
+            print(f"   Room: {lesson.get('room_id')}")
         
-        print("\nBắt đầu tìm vị trí mới cho các buổi học này...")
+        print("\nStarting to find new slots for these lessons...")
         
-        # Bước 2: Xây dựng occupied_slots từ lịch trình cũ và ràng buộc mới
+        # Step 2: Build occupied_slots from the old schedule and new constraints
         occupied_slots = build_occupied_slots_from_schedule(semester_schedule, new_constraints)
         
         unfixable_lessons = []
-        # Bước 3: Tìm vị trí mới và cập nhật lịch trình
+        # Step 3: Find new slots and update the schedule
         for lesson in lessons_to_fix:
             semester_id = lesson.get('semester_id')
             semester_data = get_data_for_semester(semester_id, full_processed_data)
@@ -215,10 +215,10 @@ if __name__ == "__main__":
             new_slot_info = find_new_valid_slot(lesson, semester_data, occupied_slots, program_duration_weeks, semester_start_date)
             
             if new_slot_info:
-                print(f"  > Buổi học của lớp {lesson['class_id']} - môn {lesson['subject_id']} đã được chuyển sang ngày {new_slot_info[0]} tại khung giờ {new_slot_info[1]}.")
+                print(f"   > Lesson for class {lesson['class_id']} - subject {lesson['subject_id']} has been moved to {new_slot_info[0]} at slot {new_slot_info[1]}.")
                 update_schedule(semester_schedule, lesson, new_slot_info)
                 
-                # Cập nhật occupied_slots để tránh xung đột với các buổi học tiếp theo
+                # Update occupied_slots to prevent conflicts with subsequent lessons
                 old_date, old_slot = lesson['date'], lesson['slot_id']
                 new_date, new_slot_id, new_room_id, new_lecturer_id = new_slot_info
                 
@@ -230,17 +230,17 @@ if __name__ == "__main__":
                 occupied_slots[new_date][new_slot_id]['rooms'].add(new_room_id)
                 occupied_slots[new_date][new_slot_id]['classes'].add(lesson.get('class_id'))
             else:
-                print(f"  > Cảnh báo: Không tìm được vị trí mới cho buổi học của lớp {lesson['class_id']} - môn {lesson['subject_id']}.")
+                print(f"   > Warning: A new slot could not be found for the lesson of class {lesson['class_id']} - subject {lesson['subject_id']}.")
                 unfixable_lessons.append(lesson)
 
-        # Ghi lịch trình đã cập nhật vào file
+        # Write the updated schedule to a file
         with open('updated_all_schedules.json', 'w', encoding='utf-8') as f:
             json.dump(semester_schedule, f, indent=4, ensure_ascii=False)
-        print("\nLịch trình đã được cập nhật thành công và lưu vào 'updated_all_schedules.json'.")
+        print("\nSchedule has been successfully updated and saved to 'updated_all_schedules.json'.")
 
         if unfixable_lessons:
-            print("\nLưu ý: Có một số buổi học không thể sắp xếp lại. Vui lòng xử lý thủ công:")
+            print("\nNote: Some lessons could not be re-scheduled. Please handle them manually:")
             for lesson in unfixable_lessons:
-                print(f"  - Lớp: {lesson.get('class_id')}, Môn: {lesson.get('subject_id')}, Ngày: {lesson.get('date')}")
+                print(f"   - Class: {lesson.get('class_id')}, Subject: {lesson.get('subject_id')}, Date: {lesson.get('date')}")
     else:
-        print("Không có buổi học nào bị xung đột với các ràng buộc mới.")
+        print("No lessons were in conflict with the new constraints.")

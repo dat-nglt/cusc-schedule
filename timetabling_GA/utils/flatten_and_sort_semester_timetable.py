@@ -3,40 +3,40 @@ from typing import Dict, Any, List, Tuple
 
 def flatten_and_sort_semester_timetable(semester_timetable: Dict[str, Any], semester_id: str) -> Tuple[Dict[str, List[Dict[str, Any]]], Dict[str, List[Dict[str, Any]]]]:
     """
-    Tổ chức lại dữ liệu thời khóa biểu của một học kỳ thành hai định dạng:
-    - Sắp xếp theo lớp học.
-    - Sắp xếp toàn bộ các buổi học theo học kỳ.
+    Restructures a semester's timetable data into two formats:
+    - Sorted by class.
+    - Flattened and sorted by semester.
 
     Args:
-        semester_timetable (Dict[str, Any]): Dữ liệu thời khóa biểu thô của học kỳ,
-                                             có cấu trúc {class_id: [[lesson_1], [lesson_2], ...]}
-                                             trong đó mỗi lesson là một dictionary.
-        semester_id (str): ID của học kỳ hiện tại.
+        semester_timetable (Dict[str, Any]): The raw semester timetable data,
+                                              with a structure like {class_id: [[lesson_1], [lesson_2], ...]}
+                                              where each lesson is a dictionary.
+        semester_id (str): The ID of the current semester.
 
     Returns:
         Tuple[Dict[str, List[Dict[str, Any]]], Dict[str, List[Dict[str, Any]]]]:
-        - by_class: Dictionary với key là class_id và value là danh sách các buổi học đã được sắp xếp.
-        - by_semester: Dictionary với key là semester_id và value là danh sách tất cả các buổi học
-                       trong học kỳ đó, đã được sắp xếp theo ngày.
+        - by_class: A dictionary where the key is class_id and the value is a sorted list of lessons.
+        - by_semester: A dictionary where the key is semester_id and the value is a sorted list
+                       of all lessons in that semester, sorted by date.
     """
     by_class = {}
     all_lessons = []
 
-    # Lặp qua từng lớp học trong thời khóa biểu
+    # Iterate through each class in the timetable
     for class_id, list_of_lessons in semester_timetable.items():
-        # Gộp tất cả các danh sách con của các buổi học lại thành một danh sách phẳng
+        # Flatten all sub-lists of lessons into a single flat list
         flat_lessons = [lesson for week_lessons in list_of_lessons for lesson in week_lessons]
         
-        # Sắp xếp các buổi học của lớp này theo ngày
+        # Sort the lessons for this class by date
         flat_lessons_sorted = sorted(
             flat_lessons, key=lambda x: datetime.strptime(x["date"], "%Y-%m-%d")
         )
         by_class[class_id] = flat_lessons_sorted
         
-        # Thêm tất cả các buổi học của lớp này vào danh sách chung
+        # Add all lessons from this class to the overall list
         all_lessons.extend(flat_lessons)
 
-    # Sắp xếp toàn bộ các buổi học trong học kỳ theo ngày
+    # Sort all lessons in the semester by date
     all_lessons_sorted = sorted(
         all_lessons, key=lambda x: datetime.strptime(x["date"], "%Y-%m-%d")
     )

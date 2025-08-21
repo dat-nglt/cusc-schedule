@@ -15,13 +15,13 @@ import {
     FormGroup,
     FormControlLabel,
     Checkbox,
-    List,
-    ListItem,
-    ListItemText,
-    ListItemIcon,
-    Paper,
     Chip,
-    IconButton
+    IconButton,
+    Paper,
+    Grid,
+    Divider,
+    useTheme,
+    useMediaQuery
 } from '@mui/material';
 import {
     School,
@@ -33,7 +33,7 @@ import {
     NavigateBefore
 } from '@mui/icons-material';
 
-const steps = ['Chọn chương trình', 'Chọn phòng học', 'Chọn giảng viên', 'Chọn lớp học'];
+const steps = ['Chương trình', 'Phòng học', 'Giảng viên', 'Lớp học'];
 
 export default function CreateSchedulesAutoModal({
     open,
@@ -44,7 +44,9 @@ export default function CreateSchedulesAutoModal({
     classes = [],
     onGenerate
 }) {
-    const [activeStep, setActiveStep] = useState(0);
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+    const [activeStep, setActiveStep] = useState(3);
     const [selectedPrograms, setSelectedPrograms] = useState([]);
     const [selectedRooms, setSelectedRooms] = useState([]);
     const [selectedLecturers, setSelectedLecturers] = useState([]);
@@ -59,7 +61,7 @@ export default function CreateSchedulesAutoModal({
     };
 
     const handleReset = () => {
-        setActiveStep(0);
+        setActiveStep(3);
         setSelectedPrograms([]);
         setSelectedRooms([]);
         setSelectedLecturers([]);
@@ -71,45 +73,7 @@ export default function CreateSchedulesAutoModal({
         onClose();
     };
 
-    const handleProgramChange = (programId) => {
-        setSelectedPrograms(prev =>
-            prev.includes(programId)
-                ? prev.filter(id => id !== programId)
-                : [...prev, programId]
-        );
-    };
-
-    const handleRoomChange = (roomId) => {
-        setSelectedRooms(prev =>
-            prev.includes(roomId)
-                ? prev.filter(id => id !== roomId)
-                : [...prev, roomId]
-        );
-    };
-
-    const handleLecturerChange = (lecturerId) => {
-        setSelectedLecturers(prev =>
-            prev.includes(lecturerId)
-                ? prev.filter(id => id !== lecturerId)
-                : [...prev, lecturerId]
-        );
-    };
-
-    const handleClassChange = (classId) => {
-        setSelectedClasses(prev =>
-            prev.includes(classId)
-                ? prev.filter(id => id !== classId)
-                : [...prev, classId]
-        );
-    };
-
     const handleGenerate = () => {
-        console.log('Selected data:', {
-            programs: selectedPrograms,
-            rooms: selectedRooms,
-            lecturers: selectedLecturers,
-            classes: selectedClasses
-        });
         onGenerate();
         handleClose();
     };
@@ -124,45 +88,95 @@ export default function CreateSchedulesAutoModal({
         }
     };
 
+    // Hàm xử lý "Chọn tất cả" cho từng loại dữ liệu
+    const handleSelectAll = (items, selectedItems, setSelectedItems, idKey) => (event) => {
+        if (event.target.checked) {
+            setSelectedItems(items.map(item => item[idKey]));
+        } else {
+            setSelectedItems([]);
+        }
+    };
+
     const renderStepContent = (step) => {
         switch (step) {
             case 0:
                 return (
                     <Box>
-                        <Typography variant="h6" sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, gap: 1 }}>
                             <School color="primary" />
-                            Chọn chương trình học
-                        </Typography>
-                        <FormControl component="fieldset" fullWidth>
-                            <FormGroup>
-                                {programs.map((program) => (
-                                    <FormControlLabel
-                                        key={program.program_id}
-                                        control={
-                                            <Checkbox
-                                                checked={selectedPrograms.includes(program.program_id)}
-                                                onChange={() => handleProgramChange(program.program_id)}
-                                            />
-                                        }
-                                        label={
-                                            <Box>
-                                                <Typography variant="body1">{program.program_name}</Typography>
-                                                <Typography variant="caption" color="text.secondary">
-                                                    Mã chương trình: {program.program_id} | Thời gian: {program.duration}
-                                                </Typography>
-                                            </Box>
-                                        }
+                            <Typography variant="subtitle1" fontWeight="600">
+                                Chọn chương trình học
+                            </Typography>
+                        </Box>
+
+                        <Paper variant="outlined" sx={{ p: 1.5, mb: 2 }}>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={selectedPrograms.length === programs.length && programs.length > 0}
+                                        indeterminate={selectedPrograms.length > 0 && selectedPrograms.length < programs.length}
+                                        onChange={handleSelectAll(programs, selectedPrograms, setSelectedPrograms, 'program_id')}
                                     />
-                                ))}
-                            </FormGroup>
-                        </FormControl>
+                                }
+                                label="Chọn tất cả chương trình"
+                                sx={{ mb: 0 }}
+                            />
+                        </Paper>
+
+                        <Box sx={{
+                            maxHeight: 300,
+                            overflow: 'auto',
+                            border: '1px solid',
+                            borderColor: 'divider',
+                            borderRadius: 1
+                        }}>
+                            {programs.map((program) => (
+                                <Box
+                                    key={program.program_id}
+                                    sx={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        p: 1.5,
+                                        borderBottom: '1px solid',
+                                        borderColor: 'divider',
+                                        backgroundColor: selectedPrograms.includes(program.program_id) ? 'primary.50' : 'transparent',
+                                        '&:last-child': { borderBottom: 'none' },
+                                        '&:hover': { backgroundColor: 'action.hover' }
+                                    }}
+                                >
+                                    <Checkbox
+                                        checked={selectedPrograms.includes(program.program_id)}
+                                        onChange={() => setSelectedPrograms(prev =>
+                                            prev.includes(program.program_id)
+                                                ? prev.filter(id => id !== program.program_id)
+                                                : [...prev, program.program_id]
+                                        )}
+                                        sx={{ mr: 1.5 }}
+                                    />
+                                    <Box sx={{ flex: 1, minWidth: 0 }}>
+                                        <Typography variant="body2" fontWeight="500" noWrap>
+                                            {program.program_name}
+                                        </Typography>
+                                        <Box sx={{ display: 'flex', gap: 1.5, mt: 0.5 }}>
+                                            <Typography variant="caption" color="text.secondary">
+                                                Mã: {program.program_id}
+                                            </Typography>
+                                            <Typography variant="caption" color="text.secondary">
+                                                Thời lượng: {program.duration}
+                                            </Typography>
+                                        </Box>
+                                    </Box>
+                                </Box>
+                            ))}
+                        </Box>
+
                         {selectedPrograms.length > 0 && (
                             <Box sx={{ mt: 2 }}>
-                                <Typography variant="subtitle2" sx={{ mb: 1 }}>
-                                    Đã chọn {selectedPrograms.length} chương trình:
+                                <Typography variant="caption" fontWeight="medium" display="block" gutterBottom>
+                                    Đã chọn: {selectedPrograms.length} chương trình
                                 </Typography>
-                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                                    {selectedPrograms.map(id => {
+                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                    {selectedPrograms.slice(0, 3).map(id => {
                                         const program = programs.find(p => p.program_id === id);
                                         return (
                                             <Chip
@@ -170,9 +184,17 @@ export default function CreateSchedulesAutoModal({
                                                 label={program?.program_name || id}
                                                 size="small"
                                                 color="primary"
+                                                onDelete={() => setSelectedPrograms(prev => prev.filter(item => item !== id))}
                                             />
                                         );
                                     })}
+                                    {selectedPrograms.length > 3 && (
+                                        <Chip
+                                            label={`+${selectedPrograms.length - 3} khác`}
+                                            size="small"
+                                            variant="outlined"
+                                        />
+                                    )}
                                 </Box>
                             </Box>
                         )}
@@ -181,40 +203,84 @@ export default function CreateSchedulesAutoModal({
             case 1:
                 return (
                     <Box>
-                        <Typography variant="h6" sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, gap: 1 }}>
                             <Room color="primary" />
-                            Chọn phòng học
-                        </Typography>
-                        <FormControl component="fieldset" fullWidth>
-                            <FormGroup >
-                                {rooms.map((room) => (
-                                    <FormControlLabel
-                                        key={room.room_id}
-                                        control={
-                                            <Checkbox
-                                                checked={selectedRooms.includes(room.room_id)}
-                                                onChange={() => handleRoomChange(room.room_id)}
-                                            />
-                                        }
-                                        label={
-                                            <Box>
-                                                <Typography variant="body1">{room.room_name}</Typography>
-                                                <Typography variant="caption" color="text.secondary">
-                                                    Mã phòng học: {room.room_id} | Loại: {room.type} | Sức chứa: {room.capacity}
-                                                </Typography>
-                                            </Box>
-                                        }
+                            <Typography variant="subtitle1" fontWeight="600">
+                                Chọn phòng học
+                            </Typography>
+                        </Box>
+
+                        <Paper variant="outlined" sx={{ p: 1.5, mb: 2 }}>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={selectedRooms.length === rooms.length && rooms.length > 0}
+                                        indeterminate={selectedRooms.length > 0 && selectedRooms.length < rooms.length}
+                                        onChange={handleSelectAll(rooms, selectedRooms, setSelectedRooms, 'room_id')}
                                     />
-                                ))}
-                            </FormGroup>
-                        </FormControl>
+                                }
+                                label="Chọn tất cả phòng"
+                                sx={{ mb: 0 }}
+                            />
+                        </Paper>
+
+                        <Box sx={{
+                            maxHeight: 300,
+                            overflow: 'auto',
+                            border: '1px solid',
+                            borderColor: 'divider',
+                            borderRadius: 1
+                        }}>
+                            {rooms.map((room) => (
+                                <Box
+                                    key={room.room_id}
+                                    sx={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        p: 1.5,
+                                        borderBottom: '1px solid',
+                                        borderColor: 'divider',
+                                        backgroundColor: selectedRooms.includes(room.room_id) ? 'primary.50' : 'transparent',
+                                        '&:last-child': { borderBottom: 'none' },
+                                        '&:hover': { backgroundColor: 'action.hover' }
+                                    }}
+                                >
+                                    <Checkbox
+                                        checked={selectedRooms.includes(room.room_id)}
+                                        onChange={() => setSelectedRooms(prev =>
+                                            prev.includes(room.room_id)
+                                                ? prev.filter(id => id !== room.room_id)
+                                                : [...prev, room.room_id]
+                                        )}
+                                        sx={{ mr: 1.5 }}
+                                    />
+                                    <Box sx={{ flex: 1, minWidth: 0 }}>
+                                        <Typography variant="body2" fontWeight="500" noWrap>
+                                            {room.room_name}
+                                        </Typography>
+                                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 0.5 }}>
+                                            <Typography variant="caption" color="text.secondary">
+                                                Mã: {room.room_id}
+                                            </Typography>
+                                            <Typography variant="caption" color="text.secondary">
+                                                Loại: {room.type}
+                                            </Typography>
+                                            <Typography variant="caption" color="text.secondary">
+                                                Sức chứa: {room.capacity}
+                                            </Typography>
+                                        </Box>
+                                    </Box>
+                                </Box>
+                            ))}
+                        </Box>
+
                         {selectedRooms.length > 0 && (
                             <Box sx={{ mt: 2 }}>
-                                <Typography variant="subtitle2" sx={{ mb: 1 }}>
-                                    Đã chọn {selectedRooms.length} phòng:
+                                <Typography variant="caption" fontWeight="medium" display="block" gutterBottom>
+                                    Đã chọn: {selectedRooms.length} phòng
                                 </Typography>
-                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                                    {selectedRooms.map(id => {
+                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                    {selectedRooms.slice(0, 3).map(id => {
                                         const room = rooms.find(r => r.room_id === id);
                                         return (
                                             <Chip
@@ -222,9 +288,17 @@ export default function CreateSchedulesAutoModal({
                                                 label={room?.room_name || id}
                                                 size="small"
                                                 color="primary"
+                                                onDelete={() => setSelectedRooms(prev => prev.filter(item => item !== id))}
                                             />
                                         );
                                     })}
+                                    {selectedRooms.length > 3 && (
+                                        <Chip
+                                            label={`+${selectedRooms.length - 3} khác`}
+                                            size="small"
+                                            variant="outlined"
+                                        />
+                                    )}
                                 </Box>
                             </Box>
                         )}
@@ -233,40 +307,81 @@ export default function CreateSchedulesAutoModal({
             case 2:
                 return (
                     <Box>
-                        <Typography variant="h6" sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, gap: 1 }}>
                             <Person color="primary" />
-                            Chọn giảng viên
-                        </Typography>
-                        <FormControl component="fieldset" fullWidth>
-                            <FormGroup>
-                                {lecturers.map((lecturer) => (
-                                    <FormControlLabel
-                                        key={lecturer.lecturer_id}
-                                        control={
-                                            <Checkbox
-                                                checked={selectedLecturers.includes(lecturer.lecturer_id)}
-                                                onChange={() => handleLecturerChange(lecturer.lecturer_id)}
-                                            />
-                                        }
-                                        label={
-                                            <Box>
-                                                <Typography variant="body1">{lecturer.name}</Typography>
-                                                <Typography variant="caption" color="text.secondary">
-                                                    Mã giảng viên: {lecturer.lecturer_id} | Môn: {lecturer.subjects?.length || 0} môn
-                                                </Typography>
-                                            </Box>
-                                        }
+                            <Typography variant="subtitle1" fontWeight="600">
+                                Chọn giảng viên
+                            </Typography>
+                        </Box>
+
+                        <Paper variant="outlined" sx={{ p: 1.5, mb: 2 }}>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={selectedLecturers.length === lecturers.length && lecturers.length > 0}
+                                        indeterminate={selectedLecturers.length > 0 && selectedLecturers.length < lecturers.length}
+                                        onChange={handleSelectAll(lecturers, selectedLecturers, setSelectedLecturers, 'lecturer_id')}
                                     />
-                                ))}
-                            </FormGroup>
-                        </FormControl>
+                                }
+                                label="Chọn tất cả giảng viên"
+                                sx={{ mb: 0 }}
+                            />
+                        </Paper>
+
+                        <Box sx={{
+                            maxHeight: 300,
+                            overflow: 'auto',
+                            border: '1px solid',
+                            borderColor: 'divider',
+                            borderRadius: 1
+                        }}>
+                            {lecturers.map((lecturer) => (
+                                <Box
+                                    key={lecturer.lecturer_id}
+                                    sx={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        p: 1.5,
+                                        borderBottom: '1px solid',
+                                        borderColor: 'divider',
+                                        backgroundColor: selectedLecturers.includes(lecturer.lecturer_id) ? 'primary.50' : 'transparent',
+                                        '&:last-child': { borderBottom: 'none' },
+                                        '&:hover': { backgroundColor: 'action.hover' }
+                                    }}
+                                >
+                                    <Checkbox
+                                        checked={selectedLecturers.includes(lecturer.lecturer_id)}
+                                        onChange={() => setSelectedLecturers(prev =>
+                                            prev.includes(lecturer.lecturer_id)
+                                                ? prev.filter(id => id !== lecturer.lecturer_id)
+                                                : [...prev, lecturer.lecturer_id]
+                                        )}
+                                        sx={{ mr: 1.5 }}
+                                    />
+                                    <Box sx={{ flex: 1, minWidth: 0 }}>
+                                        <Typography variant="body2" fontWeight="500" noWrap>
+                                            {lecturer.name}
+                                        </Typography>
+                                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 0.5 }}>
+                                            <Typography variant="caption" color="text.secondary">
+                                                Mã: {lecturer.lecturer_id}
+                                            </Typography>
+                                            <Typography variant="caption" color="text.secondary">
+                                                Số môn: {lecturer.subjects?.length || 0}
+                                            </Typography>
+                                        </Box>
+                                    </Box>
+                                </Box>
+                            ))}
+                        </Box>
+
                         {selectedLecturers.length > 0 && (
                             <Box sx={{ mt: 2 }}>
-                                <Typography variant="subtitle2" sx={{ mb: 1 }}>
-                                    Đã chọn {selectedLecturers.length} giảng viên:
+                                <Typography variant="caption" fontWeight="medium" display="block" gutterBottom>
+                                    Đã chọn: {selectedLecturers.length} giảng viên
                                 </Typography>
-                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                                    {selectedLecturers.map(id => {
+                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                    {selectedLecturers.slice(0, 3).map(id => {
                                         const lecturer = lecturers.find(l => l.lecturer_id === id);
                                         return (
                                             <Chip
@@ -274,9 +389,17 @@ export default function CreateSchedulesAutoModal({
                                                 label={lecturer?.name || id}
                                                 size="small"
                                                 color="primary"
+                                                onDelete={() => setSelectedLecturers(prev => prev.filter(item => item !== id))}
                                             />
                                         );
                                     })}
+                                    {selectedLecturers.length > 3 && (
+                                        <Chip
+                                            label={`+${selectedLecturers.length - 3} khác`}
+                                            size="small"
+                                            variant="outlined"
+                                        />
+                                    )}
                                 </Box>
                             </Box>
                         )}
@@ -285,40 +408,84 @@ export default function CreateSchedulesAutoModal({
             case 3:
                 return (
                     <Box>
-                        <Typography variant="h6" sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, gap: 1 }}>
                             <Class color="primary" />
-                            Chọn lớp học
-                        </Typography>
-                        <FormControl component="fieldset" fullWidth>
-                            <FormGroup>
-                                {classes.map((cls) => (
-                                    <FormControlLabel
-                                        key={cls.class_id}
-                                        control={
-                                            <Checkbox
-                                                checked={selectedClasses.includes(cls.class_id)}
-                                                onChange={() => handleClassChange(cls.class_id)}
-                                            />
-                                        }
-                                        label={
-                                            <Box>
-                                                <Typography variant="body1">{cls.class_name}</Typography>
-                                                <Typography variant="caption" color="text.secondary">
-                                                    Mã lớp học: {cls.class_id} | Sĩ số: {cls.class_size} | Mã Chương trình: {cls.program_id}
-                                                </Typography>
-                                            </Box>
-                                        }
+                            <Typography variant="subtitle1" fontWeight="600">
+                                Chọn lớp học
+                            </Typography>
+                        </Box>
+
+                        <Paper variant="outlined" sx={{ p: 1.5, mb: 2 }}>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={selectedClasses.length === classes.length && classes.length > 0}
+                                        indeterminate={selectedClasses.length > 0 && selectedClasses.length < classes.length}
+                                        onChange={handleSelectAll(classes, selectedClasses, setSelectedClasses, 'class_id')}
                                     />
-                                ))}
-                            </FormGroup>
-                        </FormControl>
+                                }
+                                label="Chọn tất cả lớp"
+                                sx={{ mb: 0 }}
+                            />
+                        </Paper>
+
+                        <Box sx={{
+                            maxHeight: 300,
+                            overflow: 'auto',
+                            border: '1px solid',
+                            borderColor: 'divider',
+                            borderRadius: 1
+                        }}>
+                            {classes.map((cls) => (
+                                <Box
+                                    key={cls.class_id}
+                                    sx={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        p: 1.5,
+                                        borderBottom: '1px solid',
+                                        borderColor: 'divider',
+                                        backgroundColor: selectedClasses.includes(cls.class_id) ? 'primary.50' : 'transparent',
+                                        '&:last-child': { borderBottom: 'none' },
+                                        '&:hover': { backgroundColor: 'action.hover' }
+                                    }}
+                                >
+                                    <Checkbox
+                                        checked={selectedClasses.includes(cls.class_id)}
+                                        onChange={() => setSelectedClasses(prev =>
+                                            prev.includes(cls.class_id)
+                                                ? prev.filter(id => id !== cls.class_id)
+                                                : [...prev, cls.class_id]
+                                        )}
+                                        sx={{ mr: 1.5 }}
+                                    />
+                                    <Box sx={{ flex: 1, minWidth: 0 }}>
+                                        <Typography variant="body2" fontWeight="500" noWrap>
+                                            {cls.class_name}
+                                        </Typography>
+                                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 0.5 }}>
+                                            <Typography variant="caption" color="text.secondary">
+                                                Mã: {cls.class_id}
+                                            </Typography>
+                                            <Typography variant="caption" color="text.secondary">
+                                                Sĩ số: {cls.class_size}
+                                            </Typography>
+                                            <Typography variant="caption" color="text.secondary">
+                                                Chương trình: {cls.program_id}
+                                            </Typography>
+                                        </Box>
+                                    </Box>
+                                </Box>
+                            ))}
+                        </Box>
+
                         {selectedClasses.length > 0 && (
                             <Box sx={{ mt: 2 }}>
-                                <Typography variant="subtitle2" sx={{ mb: 1 }}>
-                                    Đã chọn {selectedClasses.length} lớp:
+                                <Typography variant="caption" fontWeight="medium" display="block" gutterBottom>
+                                    Đã chọn: {selectedClasses.length} lớp
                                 </Typography>
-                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                                    {selectedClasses.map(id => {
+                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                    {selectedClasses.slice(0, 3).map(id => {
                                         const cls = classes.find(c => c.class_id === id);
                                         return (
                                             <Chip
@@ -326,9 +493,17 @@ export default function CreateSchedulesAutoModal({
                                                 label={cls?.class_name || id}
                                                 size="small"
                                                 color="primary"
+                                                onDelete={() => setSelectedClasses(prev => prev.filter(item => item !== id))}
                                             />
                                         );
                                     })}
+                                    {selectedClasses.length > 3 && (
+                                        <Chip
+                                            label={`+${selectedClasses.length - 3} khác`}
+                                            size="small"
+                                            variant="outlined"
+                                        />
+                                    )}
                                 </Box>
                             </Box>
                         )}
@@ -345,50 +520,85 @@ export default function CreateSchedulesAutoModal({
             onClose={handleClose}
             maxWidth="md"
             fullWidth
+            fullScreen={isMobile}
             PaperProps={{
-                sx: { borderRadius: 2 }
+                sx: {
+                    borderRadius: isMobile ? 0 : 2,
+                    height: isMobile ? '100%' : 'auto',
+                    maxHeight: isMobile ? '100%' : '90vh'
+                }
             }}
         >
-            <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 1 }}>
-                <Typography variant="h5" component="div">
+            <DialogTitle sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                pb: 1,
+                backgroundColor: 'primary.main',
+                color: 'white'
+            }}>
+                <Typography variant="h6" component="div" fontWeight="bold">
                     Tạo lịch học tự động
                 </Typography>
-                <IconButton onClick={handleClose} size="small">
+                <IconButton onClick={handleClose} size="small" sx={{ color: 'white' }}>
                     <Close />
                 </IconButton>
             </DialogTitle>
 
-            <DialogContent sx={{ pt: 1 }}>
-                <Stepper activeStep={activeStep} sx={{ mb: 3 }}>
+            <DialogContent sx={{ pt: 2, pb: 1 }}>
+                <Stepper activeStep={activeStep} sx={{ my: 3, px: isMobile ? 0 : 2 }}>
                     {steps.map((label) => (
                         <Step key={label}>
-                            <StepLabel>{label}</StepLabel>
+                            <StepLabel
+                                sx={{
+                                    '& .MuiStepLabel-label': {
+                                        fontSize: isMobile ? '0.7rem' : '0.875rem'
+                                    }
+                                }}
+                            >
+                                {isMobile ? label.substring(0, 3) + '.' : label}
+                            </StepLabel>
                         </Step>
                     ))}
                 </Stepper>
 
-                <Paper elevation={1} sx={{ p: 3, minHeight: 300 }}>
+                <Paper elevation={0} sx={{ p: isMobile ? 1 : 2, minHeight: isMobile ? 300 : 400, border: '1px solid', borderColor: 'divider' }}>
                     {renderStepContent(activeStep)}
                 </Paper>
             </DialogContent>
 
-            <DialogActions sx={{ px: 3, pb: 3 }}>
+            <DialogActions sx={{
+                px: 2,
+                pb: 2,
+                pt: 1,
+                flexDirection: isMobile ? 'column' : 'row',
+                gap: isMobile ? 1 : 0
+            }}>
                 <Button
                     onClick={handleBack}
                     disabled={activeStep === 0}
                     startIcon={<NavigateBefore />}
+                    variant="outlined"
+                    fullWidth={isMobile}
+                    size={isMobile ? "small" : "medium"}
                 >
                     Quay lại
                 </Button>
 
-                <Box sx={{ flex: 1 }} />
+                {!isMobile && <Box sx={{ flex: 1 }} />}
 
                 {activeStep === steps.length - 1 ? (
                     <Button
                         variant="contained"
                         onClick={handleGenerate}
-                        disabled={!isStepValid(activeStep)}
+                        // disabled={!isStepValid(activeStep)}
                         color="success"
+                        fullWidth={isMobile}
+                        size={isMobile ? "small" : "medium"}
+                        sx={{
+                            fontWeight: 'bold',
+                            boxShadow: 2
+                        }}
                     >
                         Tạo lịch học
                     </Button>
@@ -398,6 +608,8 @@ export default function CreateSchedulesAutoModal({
                         onClick={handleNext}
                         disabled={!isStepValid(activeStep)}
                         endIcon={<NavigateNext />}
+                        fullWidth={isMobile}
+                        size={isMobile ? "small" : "medium"}
                     >
                         Tiếp theo
                     </Button>

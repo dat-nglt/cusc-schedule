@@ -4,6 +4,7 @@ import {
   runGeneticAlgorithm,
   getDownloadFilePath,
   stopGeneticAlgorithm,
+  getInputDataForAlgorithmService,
 } from "../services/scheduleService.js";
 import logger from "../utils/logger.js";
 import fs from "fs";
@@ -82,4 +83,12 @@ export const downloadScheduleController = (req, res) => {
       }
     });
   });
+};
+
+export const getInputDataForAlgorithmController = async (req, res) => {
+  try {
+    const inputData = await getInputDataForAlgorithmService();
+  } catch (error) {
+    
+  }
 };

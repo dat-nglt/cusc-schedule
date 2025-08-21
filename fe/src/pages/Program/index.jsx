@@ -28,6 +28,8 @@ import ProgramTable from './ProgramTable';
 import { getAllProgramsAPI, getProgramByIdAPI, createProgramAPI, updateProgramAPI, deleteProgramAPI } from '../../api/programAPI';
 import { toast } from 'react-toastify';
 import TablePaginationLayout from '../../components/layout/TablePaginationLayout';
+import { getAllSemestersAPI } from '../../api/semesterAPI';
+import { getAllSubjectsAPI } from '../../api/subjectAPI';
 
 const Program = () => {
     const { isSmallScreen, isMediumScreen } = useResponsive();
@@ -48,10 +50,47 @@ const Program = () => {
     const [programToDelete, setProgramToDelete] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-
+    const [semesters, setSemesters] = useState([]);
+    const [subjects, setSubjects] = useState([]);
 
     // Danh sách trạng thái để lọc
     const statuses = ['Đang triển khai', 'Đang áp dụng', 'Tạm dừng', 'Đã kết thúc'];
+
+    const fetchSubjects = async () => {
+        try {
+            setError('');
+            setLoading(true);
+            const response = await getAllSubjectsAPI();
+            if (!response) {
+                setError('Không có dữ liệu học phần');
+                return;
+            }
+            setSubjects(response.data);
+        } catch (error) {
+            console.error('Lỗi khi lấy danh sách học phần:', error);
+            setError('Không thể lấy danh sách học phần. Vui lòng thử lại sau.');
+        }
+        finally {
+            setLoading(false);
+        }
+    };
+
+
+    const fetchSemesters = async () => {
+        try {
+            setLoading(true);
+            const response = await getAllSemestersAPI();
+            if (!response) {
+                console.error("Không có dữ liệu học kỳ");
+                return;
+            }
+            setSemesters(response.data);
+        } catch (error) {
+            console.error("Lỗi khi tải danh sách học kỳ:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const fetchPrograms = async () => {
         try {
@@ -70,6 +109,8 @@ const Program = () => {
     };
 
     useEffect(() => {
+        fetchSubjects();
+        fetchSemesters();
         fetchPrograms();
     }, []);
 
@@ -329,6 +370,8 @@ const Program = () => {
                 error={error}
                 loading={loading}
                 fetchPrograms={fetchPrograms}
+                semesters={semesters}
+                subjects={subjects}
             />
             <EditProgramModal
                 open={openEditModal}

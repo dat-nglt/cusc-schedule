@@ -30,7 +30,6 @@ const setupRoutes = (app, io) => {
   app.use("/api/classes", classRoutes);
   app.use("/api/busyslots", busySlotRoutes);
   app.use("/api/rooms", roomRoutes);
-
   app.use("/api/schedule", createScheduleRouter(io));
 };
 

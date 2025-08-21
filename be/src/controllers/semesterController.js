@@ -65,19 +65,30 @@ export const getSemesterByIdController = async (req, res) => {
  * @access Private (admin, training_officer)
  */
 export const createSemesterController = async (req, res) => {
-  const semesterData = req.body;
   try {
-    const semester = await createSemesterService(semesterData);
-    return APIResponse(res, 201, semester, "Tạo học kỳ thành công.");
+    const semesterData = req.body;
+    const newSemester = await createSemesterService(semesterData);
+    
+    // Sử dụng mã HTTP 201 cho "Tạo mới thành công"
+    return APIResponse(res, 201, newSemester, "Tạo học kỳ thành công.");
+    
   } catch (error) {
+    // Xử lý lỗi tập trung và chi tiết hơn
     console.error("Lỗi khi tạo học kỳ:", error);
-    // Có thể thêm logic kiểm tra lỗi cụ thể hơn từ service (ví dụ: duplicate entry)
-    return APIResponse(
-      res,
-      500,
-      null,
-      error.message || "Đã xảy ra lỗi khi tạo học kỳ."
-    );
+    
+    // Gửi lỗi chi tiết đến client nếu cần
+    // Ví dụ: kiểm tra lỗi trùng lặp (nếu bạn sử dụng unique constraint)
+    if (error.name === 'SequelizeUniqueConstraintError' || error.code === 11000) { 
+        return APIResponse(res, 409, null, "Học kỳ này đã tồn tại.");
+    }
+
+    // Trả về lỗi 400 cho các lỗi dữ liệu đầu vào không hợp lệ
+    if (error.name === 'ValidationError') {
+        return APIResponse(res, 400, null, "Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.");
+    }
+
+    // Lỗi chung của server
+    return APIResponse(res, 500, null, "Đã xảy ra lỗi khi tạo học kỳ. Vui lòng thử lại sau.");
   }
 };
 
