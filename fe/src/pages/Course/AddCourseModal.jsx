@@ -48,15 +48,15 @@ const statusOptions = [
 
 const steps = ['Thông tin cơ bản', 'Thời gian và trạng thái'];
 
-export default function AddCourseModal({ 
-  open, 
-  onClose, 
-  onAddCourse, 
-  onImportSuccess, 
-  existingCourses, 
-  error: apiError, 
-  loading, 
-  message 
+export default function AddCourseModal({
+  open,
+  onClose,
+  onAddCourse,
+  onImportSuccess,
+  existingCourses,
+  error: apiError,
+  loading,
+  message
 }) {
   const [newCourse, setNewCourse] = useState({
     course_id: '',
@@ -230,47 +230,54 @@ export default function AddCourseModal({
       }
 
       const dataRows = rawData.slice(1);
-      const jsonData = dataRows.map(row => {
+      const seenCourseIds = [];
+      const processedData = dataRows.map((row, index) => {
         const obj = {};
-        headers.forEach((header, index) => {
-          obj[String(header).trim()] = row[index] || '';
+        headers.forEach((header, idx) => {
+          obj[String(header).trim()] = row[idx] || '';
         });
-        return obj;
-      });
 
-      const processedData = jsonData.map((row, index) => {
+        // Chuyển trạng thái từ tiếng Việt sang tiếng Anh trước khi import
+        let viStatus = obj['Trạng thái'] || 'Hoạt động';
+        const statusObj = statusOptions.find(opt => opt.value === viStatus);
+        const dbStatus = statusObj ? statusObj.db : 'active';
+
         const course = {
-          course_id: row['Mã khóa học'] || '',
-          course_name: row['Tên khóa học'] || '',
-          start_date: row['Thời gian bắt đầu'] ? new Date(row['Thời gian bắt đầu']).toISOString().split('T')[0] : '',
-          end_date: row['Thời gian kết thúc'] ? new Date(row['Thời gian kết thúc']).toISOString().split('T')[0] : '',
-          status: row['Trạng thái'] || 'Hoạt động',
+          course_id: obj['Mã khóa học'] || '',
+          course_name: obj['Tên khóa học'] || '',
+          start_date: obj['Thời gian bắt đầu'] ? new Date(obj['Thời gian bắt đầu']).toISOString().split('T')[0] : '',
+          end_date: obj['Thời gian kết thúc'] ? new Date(obj['Thời gian kết thúc']).toISOString().split('T')[0] : '',
+          status: dbStatus,
           rowIndex: index + 2,
           errors: [],
         };
 
-        const validationErrors = validateCourseData(course);
+        // Validate
+        const errors = [];
+        if (!course.course_id || !course.course_name || !course.start_date || !course.end_date) {
+          errors.push('missing_required');
+        }
+        const startDate = new Date(course.start_date);
+        const endDate = new Date(course.end_date);
+        if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+          errors.push('invalid_date');
+        } else {
+          if (startDate > endDate) errors.push('invalid_date');
+        }
+        if (!statusOptions.some(opt => opt.db === course.status)) {
+          errors.push('invalid_status');
+        }
         const isDuplicateExisting = existingCourses.some(c => c.course_id === course.course_id);
         if (isDuplicateExisting) {
-          validationErrors.push('duplicate_id_existing');
+          errors.push('duplicate_id');
         }
-
-        const isDuplicateInPreview = processedData.slice(0, index).some(c => c.course_id === course.course_id);
-        if (isDuplicateInPreview) {
-          validationErrors.push('duplicate_id_in_file');
+        if (seenCourseIds.includes(course.course_id)) {
+          errors.push('duplicate_id_in_file');
         }
+        seenCourseIds.push(course.course_id);
 
-        return { ...course, errors: validationErrors };
+        return { ...course, errors };
       });
-
-      const validPreviewData = processedData.filter(item => item.errors.length === 0);
-
-      if (validPreviewData.length === 0) {
-        setLocalError('Không có dữ liệu hợp lệ nào trong file Excel');
-        e.target.value = '';
-        setFileUploaded(false);
-        return;
-      }
 
       setPreviewData(processedData);
       setShowPreview(true);
@@ -301,13 +308,13 @@ export default function AddCourseModal({
 
   return (
     <>
-      <Dialog 
-        open={open} 
+      <Dialog
+        open={open}
         onClose={() => {
           resetForm();
           onClose();
-        }} 
-        maxWidth="md" 
+        }}
+        maxWidth="md"
         fullWidth
         PaperProps={{
           sx: {

@@ -27,6 +27,7 @@ import EditCourseModal from './EditCourseModal';
 import DeleteCourseModal from './DeleteCourseModal';
 import useResponsive from '../../hooks/useResponsive';
 import CourseTable from './CourseTable';
+import { toast } from 'react-toastify';
 import { getCoursesAPI, getCourseByIdAPI, addCourseAPI, updateCourseAPI, deleteCourseAPI } from '../../api/courseAPI';
 import TablePaginationLayout from '../../components/layout/TablePaginationLayout';
 
@@ -94,10 +95,11 @@ const Course = () => {
       }
 
       setCourses(coursesData);
-      setLoading(false);
     } catch (err) {
       console.error('Lỗi chi tiết (danh sách):', err.message);
       setError(`Lỗi khi tải danh sách khóa học: ${err.message}`);
+      toast.error(`Lỗi khi tải danh sách khóa học!. Vui lòng thử lại sau.`);
+    } finally {
       setLoading(false);
     }
   };
@@ -156,6 +158,7 @@ const Course = () => {
         status: courseData.status || 'inactive',
       });
       console.log('Phản hồi từ API (thêm):', response);
+      toast.success('Khóa học được thêm thành công!');
 
       const newCourse = response.data || response;
       setCourses((prev) => [
@@ -173,6 +176,7 @@ const Course = () => {
     } catch (err) {
       console.error('Lỗi khi thêm khóa học:', err.message, err.response?.data);
       setError(`Lỗi khi thêm khóa học: ${err.message} - ${err.response?.data?.message || 'Kiểm tra định dạng dữ liệu'}`);
+      toast.error(`Lỗi khi thêm khóa học!. Vui lòng thử lại sau.`);
     } finally {
       setLoading(false);
     }
@@ -196,11 +200,13 @@ const Course = () => {
         updated_at: new Date().toISOString(),
       });
       console.log('Phản hồi từ API (chỉnh sửa):', response);
+      toast.success('Khóa học được chỉnh sửa thành công!');
 
       await fetchCourses();
     } catch (err) {
       console.error('Lỗi khi chỉnh sửa khóa học:', err.message);
       setError(`Lỗi khi chỉnh sửa khóa học: ${err.message}`);
+      toast.error(`Lỗi khi chỉnh sửa khóa học!. Vui lòng thử lại sau.`);
     } finally {
       setLoading(false);
     }
@@ -210,6 +216,7 @@ const Course = () => {
     if (!course || !course.course_id) {
       console.error('Invalid course data in handleOpenDeleteModal:', course);
       setError('Dữ liệu khóa học không hợp lệ');
+      toast.error('Dữ liệu khóa học không hợp lệ');
       return;
     }
     setSelectedCourse(course);
@@ -227,11 +234,13 @@ const Course = () => {
       console.log('Attempting to delete course with course_id:', course_id);
       const response = await deleteCourseAPI(course_id);
       console.log('Response from API (delete):', response);
+      toast.success('Khóa học đã được xóa thành công!');
 
       await fetchCourses();
     } catch (err) {
       console.error('Lỗi khi xóa khóa học:', err.message);
       setError(`Lỗi khi xóa khóa học: ${err.message}`);
+      toast.error(`Lỗi khi xóa khóa học!. Vui lòng thử lại sau.`);
     } finally {
       setLoading(false);
     }

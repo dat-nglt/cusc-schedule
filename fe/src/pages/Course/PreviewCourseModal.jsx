@@ -80,7 +80,7 @@ export default function PreviewCourseModal({
         return courseData;
       });
 
-      const response = await importCourses(null, validData);
+      const response = await importCoursesAPI (null, validData);
 
       if (response.data && response.data) {
         setImportMessage(`Thêm thành công ${validRows.length} khóa học`);

@@ -138,7 +138,7 @@ const BreakScheduleTable = ({ displayedBreakSchedules, isSmallScreen, isMediumSc
                 <Delete
                   color="error"
                   style={{ cursor: 'pointer' }}
-                  onClick={() => handleDeleteBreakSchedule(schedule)} // Thay bằng handleDeleteBreakSchedule với toàn bộ schedule object
+                  onClick={() => handleDeleteBreakSchedule(schedule.break_id)} // Thay bằng handleDeleteBreakSchedule với toàn bộ schedule object
                 />
               </Tooltip>
             </TableCell>
