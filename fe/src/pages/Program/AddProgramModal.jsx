@@ -430,15 +430,15 @@ export default function AddProgramModal({
                                 </FormGroup>
                             </Box>
                         )}
-                        <Typography variant="h6" gutterBottom>
-                            Phân bổ môn học cho từng học kỳ
-                        </Typography>
-                        <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
-                            Chọn môn học cho từng học kỳ. Mỗi môn học chỉ có thể được chọn cho một học kỳ.
-                        </Typography>
-                        {activeStep === 2 && (
-                            <Box sx={{ maxHeight: 400, overflowY: 'scroll' }}>
 
+                        {activeStep === 2 && (
+                            <Box sx={{ maxHeight: 500, overflowY: 'scroll' }}>
+                                <Typography variant="h6" gutterBottom>
+                                    Phân bổ môn học cho từng học kỳ
+                                </Typography>
+                                <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
+                                    Chọn môn học cho từng học kỳ. Mỗi môn học chỉ có thể được chọn cho một học kỳ.
+                                </Typography>
 
                                 {newProgram.selected_semesters.map(semesterId => {
                                     const semester = semesters.find(s => s.semester_id === semesterId);

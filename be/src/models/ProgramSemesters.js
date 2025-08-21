@@ -27,7 +27,7 @@ const ProgramSemesters = (sequelize) => {
       },
     },
     {
-      tableName: 'programsemesters',
+      tableName: 'program_semesters',
       timestamps: true,
       createdAt: 'created_at',
       updatedAt: 'updated_at',

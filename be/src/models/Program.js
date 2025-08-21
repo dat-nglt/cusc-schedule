@@ -20,6 +20,7 @@ const Program = (sequelize) => {
       duration: {
         type: DataTypes.INTEGER,
         allowNull: true,
+        defaultValue: 15,
       },
       // Mô tả chi tiết chương trình
       description: {

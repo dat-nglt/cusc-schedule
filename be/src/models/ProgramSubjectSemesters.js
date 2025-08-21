@@ -22,7 +22,7 @@ const ProgramSubjectSemesters = (sequelize) => {
       },
     },
     {
-      tableName: 'programsubjectsemesters',
+      tableName: 'program_subject_semesters',
       timestamps: true,
       createdAt: 'created_at',
       updatedAt: 'updated_at',
@@ -47,12 +47,12 @@ const ProgramSubjectSemesters = (sequelize) => {
     });
 
     // Bảng này có nhiều lớp học được tạo ra
-    ProgramSubjectSemestersModel.hasMany(models.Classes, {
-      foreignKey: 'program_subject_id',
-      as: 'classes',
-      onUpdate: 'CASCADE',
-      onDelete: 'SET NULL',
-    });
+    // ProgramSubjectSemestersModel.hasMany(models.Classes, {
+    //   foreignKey: 'program_subject_id',
+    //   as: 'classes',
+    //   onUpdate: 'CASCADE',
+    //   onDelete: 'SET NULL',
+    // });
   };
 
   return ProgramSubjectSemestersModel;
