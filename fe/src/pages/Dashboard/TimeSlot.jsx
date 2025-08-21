@@ -26,8 +26,11 @@ function TimeSlot({ day, hour, date, onDrop, scheduleItems }) {
 
     const slotDate = addDays(date, day);
 
+    // Ensure scheduleItems is always an array
+    const safeScheduleItems = Array.isArray(scheduleItems) ? scheduleItems : [];
+
     // Filter items based on date and hour matching
-    const itemsInSlot = scheduleItems.filter(item => {
+    const itemsInSlot = safeScheduleItems.filter(item => {
         if (!item.startTime) return false;
 
         try {

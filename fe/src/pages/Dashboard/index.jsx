@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
     Box,
 } from '@mui/material';
@@ -6,7 +6,6 @@ import WeeklyCalendar from './WeeklyCalendar';
 import QuickStats from './QuickStats';
 import { io } from 'socket.io-client';
 
-import { useEffect } from 'react';
 import { generateSchedule, getInputDataForAlgorithmAPI, stopScheduleGeneration } from '../../api/scheduleAPI';
 import ProgressModal from './ProgressModal';
 import { toast } from 'react-toastify';
@@ -18,9 +17,12 @@ import { getClassesAPI } from '../../api/classAPI';
 import { getAllSubjectsAPI } from '../../api/subjectAPI';
 import { getSemesterCreateScheduleAPI } from '../../api/semesterAPI';
 import CreateSchedulesAutoModal from './CreateSchedulesAutoModal';
+import { getAllSchedules } from '../../api/classschedule';
+import { transformScheduleForCalendar } from '../../utils/scheduleUtils';
 import { useRef } from 'react';
-
-
+const socket = io(import.meta.env.VITE_API_URL || 'http://localhost:3000', {
+    withCredentials: true
+});
 const Dashboard = () => {
     const [open, setOpen] = useState(false);
     const [createScheduleModalOpen, setCreateScheduleModalOpen] = useState(false);
@@ -29,6 +31,7 @@ const Dashboard = () => {
     const [error, setError] = useState('');
     const [gaLogs, setGaLogs] = useState([]);
     const [progress, setProgress] = useState(0);
+    const [scheduleItems, setScheduleItems] = useState([]);
     const socketRef = useRef(null);
     const [rooms, setRooms] = useState([]);
     const [programs, setPrograms] = useState([]);
@@ -38,7 +41,6 @@ const Dashboard = () => {
     const [classes, setClasses] = useState([]);
     const [formTest, setFormTest] = useState(null);
     const [gaProgressData, setGaProgressData] = useState(null);
-
     const days_of_week = useState({
         "days_of_week": [
             "Mon",
@@ -50,7 +52,7 @@ const Dashboard = () => {
             "Sun"
         ]
     });
-    
+
     const timeslot = useState({
         "time_slots": [
             {
@@ -91,7 +93,6 @@ const Dashboard = () => {
             }
         ],
     });
-
     const actualInputData = {
         "classes": [
             {
@@ -413,26 +414,6 @@ const Dashboard = () => {
             }
         ],
         "time_slots": [
-            {
-                "subject_id": "MH04",
-                "name": "Thiết kế Web",
-                "theory_hours": 30,
-                "practice_hours": 15
-            },
-            {
-                "subject_id": "MH05",
-                "name": "Cấu trúc dữ liệu",
-                "theory_hours": 30,
-                "practice_hours": 15
-            },
-            {
-                "subject_id": "MH06",
-                "name": "Thuật toán",
-                "theory_hours": 30,
-                "practice_hours": 15
-            }
-        ],
-        "time_slots": [
             { "slot_id": "S1", "start": "07:00", "end": "09:00", "type": "morning" },
             { "slot_id": "S2", "start": "09:00", "end": "11:00", "type": "morning" },
             { "slot_id": "C1", "start": "13:00", "end": "15:00", "type": "afternoon" },
@@ -440,9 +421,106 @@ const Dashboard = () => {
             { "slot_id": "T1", "start": "17:30", "end": "19:30", "type": "evening" },
             { "slot_id": "T2", "start": "19:30", "end": "21:30", "type": "evening" }
         ],
-        "days_of_week": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+        "days_of_week": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
     }
 
+
+    const fetchRooms = async () => {
+        try {
+            const response = await getAllRoomAPI();
+            if (!response) {
+                throw new Error("Không có dữ liệu phòng học");
+            }
+            console.log("Rooms fetched:", response.data);
+
+            setRooms(response.data);
+        } catch (error) {
+            console.error("Error fetching rooms:", error);
+        }
+    };
+    const fetchSubjests = async () => {
+        try {
+            const response = await getAllSubjectsAPI();
+            if (!response) {
+                throw new Error("Không có dữ liệu môn học");
+            }
+            setSubjects(response.data);
+        } catch (error) {
+            console.error("Error fetching subjects:", error);
+        }
+    };
+    console.log("semester:", semesters);
+
+    const fetchSemesters = async () => {
+        try {
+            const response = await getSemesterCreateScheduleAPI();
+            if (!response) {
+                throw new Error("Không có dữ liệu học kỳ");
+            }
+
+            setSemesters(response.data);
+        } catch (error) {
+            console.error("Error fetching semesters:", error);
+        }
+    };
+    const fetchPrograms = async () => {
+        try {
+            const response = await getProgramCreateScheduleAPI();
+            if (!response) {
+                throw new Error("Không có dữ liệu chương trình học");
+            }
+            setPrograms(response.data);
+        } catch (error) {
+            console.error("Error fetching programs:", error);
+        }
+    };
+    const fetchLecturers = async () => {
+        try {
+            const response = await getAllLecturersAPI();
+            if (!response) {
+                throw new Error("Không có dữ liệu giảng viên");
+            }
+            setLecturers(response.data);
+        } catch (error) {
+            console.error("Error fetching lecturers:", error);
+        }
+    };
+    const fetchClasses = async () => {
+        try {
+            const response = await getClassesAPI();
+            if (!response) {
+                throw new Error("Không có dữ liệu lớp học");
+            }
+            setClasses(response.data);
+        } catch (error) {
+            console.error("Error fetching classes:", error);
+        }
+    };
+
+    const fetchAllSchedules = async () => {
+        try {
+            const response = await getAllSchedules();
+            if (!response) {
+                throw new Error("Không có dữ liệu thời khóa biểu");
+            }
+            setScheduleItems(response.data);
+            // Xử lý dữ liệu thời khóa biểu nếu cần
+        }
+        catch (error) {
+            console.error("Error fetching schedules:", error);
+            // Xử lý lỗi nếu cần
+        }
+    };
+    // Gọi các hàm fetch dữ liệu khi component mount
+    useEffect(() => {
+        fetchRooms();
+        // fetchPrograms();
+        fetchLecturers();
+        fetchSubjests();
+        // fetchSemesters();
+        fetchClasses();
+        fetchAllSchedules();
+    }, []);
 
     useEffect(() => {
         // Khởi tạo kết nối socket chỉ một lần
@@ -652,10 +730,29 @@ const Dashboard = () => {
     }, []);
 
     // Transform API data to required format
-    const transformDataToFormTest = (data) => {
-        const { rooms, programs, lecturers, classes } = data;
-        // Sử dụng optional chaining và nullish coalescing để code gọn hơn
-        if (!classes?.length || !rooms?.length || !lecturers?.length || !programs?.length) {
+    const transformDataToFormTest = useCallback((data, selections = null) => {
+        const { rooms, programs, lecturers, classes, subjects, semesters } = data;
+
+        console.log("Transforming data to form test structure:", { rooms, programs, lecturers, classes, subjects, semesters });
+
+        // If selections are provided, filter data based on selections
+        const filterData = (items, selectedIds, idField) => {
+            if (!selections || !selectedIds?.length) return items;
+            return items.filter(item => selectedIds.includes(item[idField]));
+        };
+
+        const filteredClasses = filterData(classes, selections?.classes, 'class_id');
+        const filteredRooms = filterData(rooms, selections?.rooms, 'room_id');
+        const filteredLecturers = filterData(lecturers, selections?.lecturers, 'lecturer_id');
+        const filteredPrograms = filterData(programs, selections?.programs, 'program_id');
+
+        // Use filtered data or all data if no selections
+        const classesToTransform = filteredClasses.length ? filteredClasses : classes;
+        const roomsToTransform = filteredRooms.length ? filteredRooms : rooms;
+        const lecturersToTransform = filteredLecturers.length ? filteredLecturers : lecturers;
+        const programsToTransform = filteredPrograms.length ? filteredPrograms : programs;
+
+        if (!classesToTransform?.length || !roomsToTransform?.length || !lecturersToTransform?.length || !programsToTransform?.length) {
             console.warn("Dữ liệu đầu vào không đầy đủ. Trả về cấu trúc rỗng.");
             return {
                 classes: [],
@@ -845,7 +942,7 @@ const Dashboard = () => {
                 {/* Chart Section */}
                 <WeeklyCalendar
                     initialDate={new Date()}
-                    scheduleItems={transformedScheduleItems}
+                    scheduleItems={transformDataToFormTest}
                     onItemMove={handleItemMove}
                     onCreateNewSchedule={() => setCreateScheduleModalOpen(true)}
                     programs={programs}
