@@ -360,7 +360,6 @@ const requiredSemesterFields = [
     'end_date',
     'duration_weeks',
     'status',
-    'program_id',
 ];
 
 const validateSemesterData = (semester, existingSemesters, allImportData = []) => {
@@ -429,7 +428,6 @@ export const processExcelDataSemester = (rawData, existingSemesters) => {
             end_date: formatDate(row['Ngày kết thúc'] || row['end_date']),
             duration_weeks: row['Số tuần'] || row['duration_weeks'] || '',
             status: row['Trạng thái']?.trim() || row['status']?.trim() || 'Hoạt động',
-            program_id: row['Mã chương trình đào tạo']?.trim() || row['Mã chương trình']?.trim() || row['program_id'] || '',
             rowIndex: index + 2 // +2 vì Excel bắt đầu từ row 1 và có header
         };
 
@@ -454,7 +452,6 @@ const requiredSubjectFields = [
     'theory_hours',
     'practice_hours',
     'status',
-    'semester_id',
 ];
 
 const validateSubjectData = (subject, existingSubjects, allImportData = []) => {
@@ -524,7 +521,6 @@ export const processExcelDataSubject = (rawData, existingSubjects) => {
             theory_hours: row['Số giờ lý thuyết'] ?? row['theory_hours'] ?? '',
             practice_hours: row['Số giờ thực hành'] ?? row['practice_hours'] ?? '',
             status: row['Trạng thái']?.trim() || row['status']?.trim() || 'Hoạt động',
-            semester_id: row['Mã học kỳ']?.trim() || row['semester_id']?.trim() || '',
             rowIndex: index + 2 // +2 vì Excel bắt đầu từ row 1 và có header
         };
 

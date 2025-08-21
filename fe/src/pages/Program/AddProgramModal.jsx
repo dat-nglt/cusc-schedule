@@ -582,24 +582,7 @@ export default function AddProgramModal({
                     borderTop: '1px solid #eee'
                 }}>
                     <Box>
-                        {activeStep === 0 && (
-                            <Button
-                                variant="outlined"
-                                color="primary"
-                                startIcon={<CloudUpload />}
-                                component="label"
-                                disabled={loading}
-                            >
-                                Nhập từ Excel
-                                <input
-                                    type="file"
-                                    hidden
-                                    accept=".xlsx, .xls"
-                                    onChange={handleImportExcel}
-                                    disabled={loading}
-                                />
-                            </Button>
-                        )}
+
                     </Box>
 
                     <Box sx={{ display: 'flex', gap: 2 }}>

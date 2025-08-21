@@ -65,14 +65,17 @@ export default function SemesterTable({ displayedSemesters, isSmallScreen, isMed
                             Mã học kỳ
                         </TableCell>
                     )}
-                    <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'left', borderRight: '1px solid #e0e0e0', width: isSmallScreen ? '40%' : '35%' }}>
+                    <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'left', borderRight: '1px solid #e0e0e0', width: isSmallScreen ? '20%' : '15%' }}>
                         Tên học kỳ
                     </TableCell>
                     <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'left', borderRight: '1px solid #e0e0e0', width: isSmallScreen ? '25%' : '15%' }}>
                         Số tuần
                     </TableCell>
                     <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '12%' }}>
-                        Thời gian
+                        Bắt đầu
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '12%' }}>
+                        Kết thúc
                     </TableCell>
 
                     <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: isSmallScreen ? '25%' : '15%' }}>
@@ -108,7 +111,10 @@ export default function SemesterTable({ displayedSemesters, isSmallScreen, isMed
                             {semester.duration_weeks ? `${semester.duration_weeks} tuần` : 'Chưa xác định'}
                         </TableCell>
                         <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                            {semester.duration_weeks} tuần
+                            {semester.start_date ? formatDateTime(semester.start_date) : 'Chưa xác định'}
+                        </TableCell>
+                        <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
+                            {semester.end_date ? formatDateTime(semester.end_date) : 'Chưa xác định'}
                         </TableCell>
                         <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
                             {/* Sử dụng getStatusChip để hiển thị màu trạng thái */}

@@ -33,7 +33,7 @@ export default function PreviewSemesterModal({ open, onClose, previewData, fetch
     const [importError, setImportError] = useState('');
     const [importMessage, setImportMessage] = useState('');
 
-    // Validate preview data with program checking
+    // Validate preview data without program checking
     const validatePreviewData = (data) => {
         return data.map(row => {
             let errors = row.errors || [];
@@ -41,15 +41,6 @@ export default function PreviewSemesterModal({ open, onClose, previewData, fetch
             // If there are already errors, keep only the first one
             if (errors.length > 0) {
                 errors = [errors[0]];
-            } else {
-                // Check if program_id exists in programs array
-                const programValue = row.program_id || row.program; // Check both possible field names
-                if (programValue && programValue.trim() !== '') {
-                    const programExists = programs && programs.some(p => p.program_id === programValue.trim());
-                    if (!programExists) {
-                        errors = [`Mã chương trình "${programValue}" không tồn tại trong hệ thống`];
-                    }
-                }
             }
 
             return {
@@ -172,7 +163,6 @@ export default function PreviewSemesterModal({ open, onClose, previewData, fetch
                                             <TableCell>Số tuần</TableCell>
                                             <TableCell>Ngày bắt đầu</TableCell>
                                             <TableCell>Ngày kết thúc</TableCell>
-                                            <TableCell>Mã chương trình</TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
@@ -187,7 +177,6 @@ export default function PreviewSemesterModal({ open, onClose, previewData, fetch
                                                 <TableCell>
                                                     {formatDateTime(semester.end_date)}
                                                 </TableCell>
-                                                <TableCell>{semester.program_id}</TableCell>
                                             </TableRow>
                                         ))}
                                     </TableBody>
@@ -215,7 +204,6 @@ export default function PreviewSemesterModal({ open, onClose, previewData, fetch
                                             <TableCell>Số tuần</TableCell>
                                             <TableCell>Ngày bắt đầu</TableCell>
                                             <TableCell>Ngày kết thúc</TableCell>
-                                            <TableCell>Mã chương trình</TableCell>
                                             <TableCell>Lỗi</TableCell>
                                         </TableRow>
                                     </TableHead>
@@ -234,7 +222,6 @@ export default function PreviewSemesterModal({ open, onClose, previewData, fetch
                                                 <TableCell>
                                                     {semester.end_date ? formatDateTime(semester.end_date) : '-'}
                                                 </TableCell>
-                                                <TableCell>{semester.program_id || '-'}</TableCell>
                                                 <TableCell>
                                                     <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
                                                         {semester.errors.map((error) => getErrorChip(error, 'học kỳ'))}

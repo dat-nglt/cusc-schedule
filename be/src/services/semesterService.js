@@ -145,9 +145,7 @@ export const importSemestersFromJSONService = async (semestersData) => {
           end_date: semesterData.end_date
             ? new Date(semesterData.end_date)
             : null,
-          program_id: semesterData.program_id
-            ? semesterData.program_id.toString().trim()
-            : null,
+          duration_weeks: semesterData.duration_weeks,
           status: semesterData.status || "Hoạt động", // Mặc định là 'hoạt động' nếu không có giá trị
         };
 
