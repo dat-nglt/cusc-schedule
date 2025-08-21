@@ -60,11 +60,8 @@ export default function AddSubjectModal({ open, onClose, onAddSubject, existingS
     const [newSubject, setNewSubject] = useState({
         subject_id: '',
         subject_name: '',
-        credit: 0,
         theory_hours: 0,
         practice_hours: 0,
-        status: 'Hoạt động',
-        semester_id: ''
     });
 
     const [activeStep, setActiveStep] = useState(0);
@@ -90,11 +87,6 @@ export default function AddSubjectModal({ open, onClose, onAddSubject, existingS
                 setLocalError('Vui lòng điền đầy đủ thông tin chi tiết hợp lệ.');
                 return;
             }
-            const totalHours = parseInt(newSubject.theory_hours) + parseInt(newSubject.practice_hours);
-            if (totalHours === 0) {
-                setLocalError('Tổng số tiết lý thuyết và thực hành phải lớn hơn 0!');
-                return;
-            }
         }
         setLocalError('');
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -112,25 +104,13 @@ export default function AddSubjectModal({ open, onClose, onAddSubject, existingS
     };
 
     const handleSubmit = async () => {
-        // Final validation before submission
-        if (newSubject.credit <= 0 || newSubject.theory_hours < 0 || newSubject.practice_hours < 0 || !newSubject.semester_id) {
+        if (!newSubject.subject_id || !newSubject.subject_name || newSubject.theory_hours <= 0 || newSubject.practice_hours <= 0) {
             setLocalError('Vui lòng điền đầy đủ thông tin chi tiết hợp lệ trước khi thêm.');
             return;
         }
-        const totalHours = parseInt(newSubject.theory_hours) + parseInt(newSubject.practice_hours);
-        if (totalHours === 0) {
-            setLocalError('Tổng số tiết lý thuyết và thực hành phải lớn hơn 0!');
-            return;
-        }
-
-        // Chuyển trạng thái sang tiếng Anh trước khi lưu
-        const statusObj = subjectStatusOptions.find(opt => opt.value === newSubject.status);
-        const dbStatus = statusObj ? statusObj.db : 'active';
 
         const subjectToAdd = {
             ...newSubject,
-            status: dbStatus,
-            credit: parseInt(newSubject.credit),
             theory_hours: parseInt(newSubject.theory_hours),
             practice_hours: parseInt(newSubject.practice_hours),
             created_at: new Date().toISOString(),
@@ -372,27 +352,7 @@ export default function AddSubjectModal({ open, onClose, onAddSubject, existingS
                                 gap: 3
                             }}>
                                 <TextField
-                                    label="Số tín chỉ"
-                                    name="credit"
-                                    type="number"
-                                    value={newSubject.credit}
-                                    onChange={handleChange}
-                                    fullWidth
-                                    variant="outlined"
-                                    required
-                                    inputProps={{ min: 1 }}
-                                    disabled={loading}
-                                    InputProps={{
-                                        startAdornment: (
-                                            <InputAdornment position="start">
-                                                <FormatListNumbered color="action" />
-                                            </InputAdornment>
-                                        ),
-                                    }}
-                                    sx={{ mb: 2 }}
-                                />
-                                <TextField
-                                    label="Số tiết lý thuyết"
+                                    label="Số giờ lý thuyết"
                                     name="theory_hours"
                                     type="number"
                                     value={newSubject.theory_hours}
@@ -412,7 +372,7 @@ export default function AddSubjectModal({ open, onClose, onAddSubject, existingS
                                     sx={{ mb: 2 }}
                                 />
                                 <TextField
-                                    label="Số tiết thực hành"
+                                    label="Số giờ thực hành"
                                     name="practice_hours"
                                     type="number"
                                     value={newSubject.practice_hours}
@@ -431,60 +391,7 @@ export default function AddSubjectModal({ open, onClose, onAddSubject, existingS
                                     }}
                                     sx={{ mb: 2 }}
                                 />
-                                <FormControl fullWidth required>
-                                    <InputLabel>Học kỳ</InputLabel>
-                                    <Select
-                                        name="semester_id"
-                                        value={newSubject.semester_id}
-                                        onChange={handleChange}
-                                        label="Học kỳ"
-                                        disabled={loading}
-                                        InputProps={{
-                                            startAdornment: (
-                                                <InputAdornment position="start">
-                                                    <AccessTime color="action" />
-                                                </InputAdornment>
-                                            ),
-                                        }}
-                                    >
-                                        {semesters && semesters.map((semester) => (
-                                            <MenuItem key={semester.semester_id} value={semester.semester_id}>
-                                                {semester.semester_id} - {semester.semester_name}
-                                            </MenuItem>
-                                        ))}
-                                    </Select>
-                                </FormControl>
-                                <FormControl fullWidth required>
-                                    <InputLabel>Trạng thái</InputLabel>
-                                    <Select
-                                        name="status"
-                                        value={newSubject.status}
-                                        onChange={handleChange}
-                                        label="Trạng thái"
-                                        disabled={loading}
-                                        InputProps={{
-                                            startAdornment: (
-                                                <InputAdornment position="start">
-                                                    <HelpOutline color="action" />
-                                                </InputAdornment>
-                                            ),
-                                        }}
-                                    >
-                                        {subjectStatusOptions.map((option) => (
-                                            <MenuItem key={option.value} value={option.value}>
-                                                <Box display="flex" alignItems="center">
-                                                    {option.icon}
-                                                    <Chip
-                                                        label={option.value}
-                                                        size="small"
-                                                        color={option.color}
-                                                        sx={{ ml: 1 }}
-                                                    />
-                                                </Box>
-                                            </MenuItem>
-                                        ))}
-                                    </Select>
-                                </FormControl>
+
                             </Box>
                         )}
                     </Box>

@@ -23,9 +23,13 @@ import RoomModel from "./Room.js";
 import BusySlotModel from "./BusySlot.js";
 import SemesterBusySlotModel from "./SemesterBusySlot.js";
 import ScheduleChangeRequestModel from "./ScheduleChangeRequest.js";
+import ProgramSemestersModel from "./ProgramSemesters.js";
+import ProgramSubjectSemestersModel from "./ProgramSubjectSemesters.js";
 
 // Khởi tạo từng model với instance của Sequelize
 const Account = AccountModel(sequelize, DataTypes);
+const ProgramSubjectSemesters = ProgramSubjectSemestersModel(sequelize, DataTypes);
+const ProgramSemesters = ProgramSemestersModel(sequelize, DataTypes);
 const BlacklistedToken = BlacklistedTokenModel(sequelize, DataTypes);
 const Admin = AdminModel(sequelize, DataTypes);
 const Classes = ClassesModel(sequelize, DataTypes);
@@ -48,6 +52,8 @@ const ScheduleChangeRequest = ScheduleChangeRequestModel(sequelize, DataTypes);
 // Gom tất cả model vào object `models`
 const models = {
   Account,
+  ProgramSubjectSemesters,
+  ProgramSemesters,
   BlacklistedToken,
   Admin,
   Classes,
@@ -57,8 +63,8 @@ const models = {
   Lecturer,
   Program,
   Semester,
-  Student,
   Subject,
+  Student,
   TrainingOfficer,
   LecturerAssignment,
   TimeSlot,

@@ -43,10 +43,38 @@ export const getSubjectByIdService = async (subjectId) => {
  */
 export const createSubjectService = async (subjectData) => {
   try {
+    // 1. Kiểm tra tính hợp lệ của dữ liệu đầu vào
+    console.log("Kiểm tra tính hợp lệ của dữ liệu môn học:", subjectData);
+    
+    if (
+      !subjectData.subject_id ||
+      !subjectData.subject_name ||
+      subjectData.theory_hours < 0 ||
+      subjectData.practice_hours < 0
+    ) {
+      // Ném lỗi với tên cụ thể để controller có thể nhận biết
+      const error = new Error(
+        "Dữ liệu không hợp lệ. Vui lòng điền đầy đủ và đúng thông tin."
+      );
+      error.name = "ValidationError";
+      throw error;
+    }
+
+    // 2. Kiểm tra xung đột dữ liệu (ví dụ: tên môn học đã tồn tại)
+    const existingSubject = await Subject.findOne({
+      where: { subject_id: subjectData.subject_id },
+    });
+
+    if (existingSubject) {
+      const conflictError = new Error("Môn học với tên này đã tồn tại.");
+      conflictError.name = "SequelizeUniqueConstraintError";
+      throw conflictError;
+    }
+
+    // 3. Thực hiện tạo mới nếu mọi thứ đều hợp lệ
     const newSubject = await Subject.create(subjectData);
     return newSubject;
   } catch (error) {
-    console.error("Lỗi khi tạo môn học:", error);
     throw error;
   }
 };

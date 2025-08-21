@@ -1,7 +1,7 @@
 import random
 from typing import Dict, Any, List, Optional, Tuple
 
-# Import các cấu hình và thành phần của GA
+# Import GA configurations and components
 from config import (
     POPULATION_SIZE, MAX_GENERATIONS, MUTATION_RATE, CROSSOVER_RATE, ELITISM_COUNT
 )
@@ -13,51 +13,51 @@ from ga_components.crossover import lesson_based_crossover
 from ga_components.mutation import mutate_chromosome
 from utils.display_ga_progress import display_ga_progress
 
-# Giả định DataProcessor là một class đã tồn tại
+# Assuming DataProcessor is an existing class
 from data_processing.processor import DataProcessor
 
 
 def run_ga_for_semester(semester_id: str, full_data_processor: DataProcessor) -> Tuple[Optional[Chromosome], Optional[List[Dict[str, Any]]]]:
     """
-    Chạy thuật toán Di truyền (Genetic Algorithm) để tìm kiếm lịch trình tuần tối ưu
-    cho một học kỳ cụ thể.
+    Runs the Genetic Algorithm to find the optimal weekly schedule
+    for a specific semester.
 
     Args:
-        semester_id (str): ID của học kỳ cần tạo lịch trình.
-        full_data_processor (DataProcessor): Đối tượng xử lý dữ liệu chứa toàn bộ thông tin
-                                             đầu vào.
+        semester_id (str): The ID of the semester for which to generate the schedule.
+        full_data_processor (DataProcessor): The data processor object containing all
+                                             input information.
 
     Returns:
         Tuple[Optional[Chromosome], Optional[List[Dict[str, Any]]]]:
-        - best_overall_chromosome: Nhiễm sắc thể có fitness tốt nhất trong suốt quá trình
-                                     tiến hóa, hoặc None nếu không tìm thấy.
-        - ga_log_data: Dữ liệu log của quá trình GA qua các thế hệ.
+        - best_overall_chromosome: The chromosome with the best fitness throughout the
+                                   evolutionary process, or None if not found.
+        - ga_log_data: The log data of the GA process across generations.
     """
-    # Lọc dữ liệu chỉ liên quan đến học kỳ hiện tại
+    # Filter data to only include the current semester's information
     semester_specific_data_processor = full_data_processor.filter_for_semester(semester_id)
     
-    # Kiểm tra tính hợp lệ của dữ liệu sau khi lọc
+    # Check the validity of the filtered data
     if not semester_specific_data_processor:
-        print(f"Lỗi: Không tìm thấy thông tin cho học kỳ {semester_id}.")
+        print(f"Error: No information found for semester {semester_id}.")
         return None, None
     
     if not semester_specific_data_processor.lecturer_map:
-        print(f"Lỗi: Học kỳ {semester_id} không có giảng viên phù hợp.")
+        print(f"Error: Semester {semester_id} has no suitable lecturers.")
         return None, None
         
     if not semester_specific_data_processor.room_map:
-        print(f"Lỗi: Học kỳ {semester_id} không có phòng học phù hợp.")
+        print(f"Error: Semester {semester_id} has no suitable classrooms.")
         return None, None
         
     if not semester_specific_data_processor.required_lessons_weekly:
-        print(f"Cảnh báo: Học kỳ {semester_id} không có tiết học nào được tạo sau khi lọc.")
+        print(f"Warning: Semester {semester_id} has no lessons created after filtering.")
         return None, None
         
-    # Khởi tạo các đối tượng và dữ liệu cần thiết cho GA
+    # Initialize necessary objects and data for the GA
     fitness_calculator = FitnessCalculator(semester_specific_data_processor)
     population = initialize_population(POPULATION_SIZE, semester_specific_data_processor)
     
-    # Tính toán fitness ban đầu cho toàn bộ quần thể
+    # Calculate initial fitness for the entire population
     for chrom in population:
         chrom.fitness, _ = fitness_calculator.calculate_fitness(chrom)
 
@@ -65,22 +65,32 @@ def run_ga_for_semester(semester_id: str, full_data_processor: DataProcessor) ->
     best_overall_violations = {}
     ga_log_data = []
 
-    # Bắt đầu vòng lặp tiến hóa
+    # Tạo thông tin học kỳ để truyền vào display_ga_progress
+    semester_info = {
+        'semester_id': semester_id,
+        'semester_name': f"Học kỳ {semester_id.split('_')[0]}",
+        'academic_year': semester_id.split('_')[-1],
+        'total_lessons': len(semester_specific_data_processor.required_lessons_weekly),
+        'total_lecturers': len(semester_specific_data_processor.lecturer_map),
+        'total_rooms': len(semester_specific_data_processor.room_map)
+    }
+
+    # Start the evolutionary loop
     for generation in range(MAX_GENERATIONS):
-        # Sắp xếp quần thể để xác định nhiễm sắc thể tốt nhất
+        # Sort the population to identify the best chromosome
         population.sort(key=lambda c: c.fitness, reverse=True)
         current_best_chromosome = population[0]
 
-        # Cập nhật nhiễm sắc thể tốt nhất toàn cục nếu tìm thấy
+        # Update the overall best chromosome if a new one is found
         if best_overall_chromosome is None or current_best_chromosome.fitness > best_overall_chromosome.fitness:
             best_overall_chromosome = current_best_chromosome
-            # Lấy chi tiết vi phạm của nhiễm sắc thể tốt nhất
+            # Get detailed violations for the best chromosome
             _, best_overall_violations = fitness_calculator.calculate_fitness(best_overall_chromosome)
         
-        # Lấy chi tiết vi phạm của thế hệ hiện tại để hiển thị tiến trình
+        # Get detailed violations for the current generation's best to display progress
         _, current_violations = fitness_calculator.calculate_fitness(current_best_chromosome)
 
-        # Hiển thị tiến trình của thuật toán
+        # Display the algorithm's progress - THÊM semester_info
         display_ga_progress(
             generation=generation,
             max_generations=MAX_GENERATIONS,
@@ -88,10 +98,11 @@ def run_ga_for_semester(semester_id: str, full_data_processor: DataProcessor) ->
             overall_best_fitness=best_overall_chromosome.fitness,
             current_best_violations=current_violations,
             overall_best_violations=best_overall_violations,
+            semester_info=semester_info,  # THÊM THÔNG TIN HỌC KỲ
             log_interval=1
         )
         
-        # Ghi lại dữ liệu log của thế hệ hiện tại
+        # Log data for the current generation
         ga_log_data.append({
             "generation": generation + 1,
             "best_fitness_gen": current_best_chromosome.fitness,
@@ -99,42 +110,42 @@ def run_ga_for_semester(semester_id: str, full_data_processor: DataProcessor) ->
             "current_violations": current_violations
         })
 
-        # Dừng nếu tìm thấy giải pháp hoàn hảo (fitness >= 0)
+        # Stop if a perfect solution is found (fitness >= 0)
         # if current_best_chromosome.fitness >= 0:
-        #     break
+        #    break
 
-        # Tạo quần thể mới cho thế hệ tiếp theo
+        # Create a new population for the next generation
         new_population = []
         
-        # Áp dụng cơ chế elitism: giữ lại các cá thể tốt nhất
+        # Apply elitism: preserve the best individuals
         new_population.extend(population[:ELITISM_COUNT])
         
-        # Tạo cá thể mới thông qua lai ghép và đột biến
+        # Create new individuals through crossover and mutation
         while len(new_population) < POPULATION_SIZE:
-            # Chọn hai cá thể cha mẹ
+            # Select two parents
             parent1 = tournament_selection(population)
             parent2 = tournament_selection(population)
 
-            # Lai ghép (Crossover)
+            # Crossover
             if random.random() < CROSSOVER_RATE:
                 child1, child2 = lesson_based_crossover(parent1, parent2, semester_specific_data_processor)
             else:
                 child1, child2 = parent1, parent2
 
-            # Đột biến (Mutation)
+            # Mutation
             mutate_chromosome(child1, semester_specific_data_processor, MUTATION_RATE)
             mutate_chromosome(child2, semester_specific_data_processor, MUTATION_RATE)
             
-            # Tính toán và gán fitness mới cho các cá thể con
+            # Calculate and assign new fitness to the offspring
             child1.fitness, _ = fitness_calculator.calculate_fitness(child1)
             child2.fitness, _ = fitness_calculator.calculate_fitness(child2)
 
-            # Thêm cá thể con vào quần thể mới
+            # Add offspring to the new population
             new_population.append(child1)
             if len(new_population) < POPULATION_SIZE:
                 new_population.append(child2)
         
-        # Cập nhật quần thể
+        # Update the population
         population = new_population
 
     return best_overall_chromosome, ga_log_data

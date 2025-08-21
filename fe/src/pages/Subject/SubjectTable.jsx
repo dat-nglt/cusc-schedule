@@ -73,11 +73,6 @@ export default function SubjectTable({ displayedSubjects, isSmallScreen, isMediu
                     <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'left', borderRight: '1px solid #e0e0e0', width: isSmallScreen ? '40%' : '18%' }}>
                         Số giờ thực hành
                     </TableCell>
-                    {!isMediumScreen && (
-                        <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '20%' }}>
-                            Học kỳ
-                        </TableCell>
-                    )}
                     <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: isSmallScreen ? '25%' : '12%' }}>
                         Trạng thái
                     </TableCell>
@@ -113,14 +108,6 @@ export default function SubjectTable({ displayedSubjects, isSmallScreen, isMediu
                         <TableCell sx={{ textAlign: 'left', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
                             {subject.practice_hours}
                         </TableCell>
-                        {!isMediumScreen && (
-                            <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                                <Box sx={{ fontSize: '0.85rem' }}>
-                                    <div>{subject.semester_id}</div>
-                                    {/* <div style={{ color: '#666', marginTop: '2px' }}>{subject.phone_number}</div> */}
-                                </Box>
-                            </TableCell>
-                        )}
                         <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
                             {/* Sử dụng getStatusChip để hiển thị màu trạng thái */}
                             {getStatusChip(getVietnameseStatus(subject.status))}

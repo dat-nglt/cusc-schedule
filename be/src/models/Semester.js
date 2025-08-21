@@ -1,7 +1,5 @@
 import { DataTypes } from 'sequelize';
-// import { Hooks } from 'sequelize/lib/hooks';
 
-// Định nghĩa model Semester - Đại diện cho một học kỳ
 const Semester = (sequelize) => {
   const SemesterModel = sequelize.define(
     'Semester',
@@ -12,64 +10,50 @@ const Semester = (sequelize) => {
         primaryKey: true,
         allowNull: false,
       },
-      // Tên học kỳ (ví dụ: Học kỳ 1 - 2025)
+      // Tên học kỳ (ví dụ: Học kỳ I - 2025)
       semester_name: {
         type: DataTypes.STRING(50),
         allowNull: true,
       },
-      // Số tuần của học kỳ (có thể null nếu chưa xác định)
+      // Số tuần của học kỳ
       duration_weeks: {
         type: DataTypes.INTEGER,
         allowNull: true,
       },
-      // Ngày bắt đầu của
+      // Ngày bắt đầu
       start_date: {
         type: DataTypes.DATE,
         allowNull: true,
       },
-      // Ngày kết thúc của học kỳ
+      // Ngày kết thúc
       end_date: {
         type: DataTypes.DATE,
         allowNull: true,
       },
-      // Trạng thái học kỳ (VD: đang học, đã kết thúc,...)
+      // Trạng thái học kỳ
       status: {
         type: DataTypes.STRING(30),
         allowNull: true,
       },
-      // Liên kết đến chương trình đào tạo
-      program_id: {
-        type: DataTypes.STRING(30),
-        allowNull: true,
-        // Mối quan hệ sẽ được khai báo rõ hơn trong associate
-      },
     },
     {
-      tableName: 'semesters',         // Tên bảng trong CSDL
-      timestamps: true,               // Tự động tạo created_at và updated_at
-      createdAt: 'created_at',        // Tên cột thời gian tạo
-      updatedAt: 'updated_at',        // Tên cột thời gian cập nhật
-      deletedAt: 'deleted_at',        // Tên cột thời gian xóa mềm (nếu sử dụng soft delete)
+      tableName: 'semesters',
+      timestamps: true,
+      createdAt: 'created_at',
+      updatedAt: 'updated_at',
+      deletedAt: 'deleted_at',
     }
   );
 
-  // Khai báo mối quan hệ (association)
+  // Mối quan hệ được định nghĩa trong các bảng liên kết
   SemesterModel.associate = (models) => {
-    // Một học kỳ thuộc về một chương trình đào tạo
-    SemesterModel.belongsTo(models.Program, {
-      foreignKey: 'program_id',
-      as: 'program', // Add alias for consistency
-      onUpdate: 'CASCADE',       // Khi cập nhật khóa ngoại ở bảng chương trình
-      onDelete: "CASCADE", // Xóa học kỳ nếu chương trình bị xóa
+    // Một học kỳ được sử dụng bởi nhiều Chương trình thông qua bảng Program_Semesters
+    SemesterModel.hasMany(models.ProgramSemesters, {
+      foreignKey: 'semester_id',
+      as: 'program_semesters',
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE',
     });
-    // Một học kỳ có nhiều học phần
-    SemesterModel.hasMany(models.Subject, {
-      foreignKey: "semester_id",
-      as: "subjects", // Add alias for consistency
-      onUpdate: "CASCADE",
-      onDelete: "CASCADE",
-    });
-
   };
 
   return SemesterModel;

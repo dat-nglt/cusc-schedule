@@ -1,40 +1,48 @@
 import os
 from datetime import datetime, timedelta
 from collections import defaultdict
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from pprint import pprint
 import openpyxl
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
 
-def export_semester_schedule_to_excel(semester_schedule_json: Dict[str, Any], output_folder: str = "results") -> None:
+def export_semester_schedule_to_excel(
+    semester_schedule_json: Dict[str, Any], 
+    output_folder: str = "results",
+    semester_id: Optional[str] = None # Thêm tham số này và đặt giá trị mặc định là None
+) -> str:
     """
-    Xuất lịch trình học kỳ từ dữ liệu JSON ra file Excel, mỗi tuần một sheet.
+    Exports a semester timetable from JSON data to an Excel file, with one sheet per week.
 
-    Hàm này tạo một workbook Excel, sau đó tạo một sheet cho mỗi tuần học.
-    Nó điền các ô với thông tin chi tiết về buổi học như tên môn học, loại tiết học,
-    phòng và giảng viên. Các ô được định dạng với màu sắc và viền để dễ đọc hơn.
+    This function creates an Excel workbook and a separate sheet for each academic week.
+    It populates the cells with detailed lesson information such as subject name,
+    lesson type, room, and lecturer. Cells are formatted with colors and borders for
+    improved readability.
 
     Args:
-        semester_schedule_json (Dict[str, Any]): Dữ liệu lịch trình của một học kỳ dưới dạng JSON.
-        output_folder (str): Đường dẫn đến thư mục để lưu file Excel.
+        semester_schedule_json (Dict[str, Any]): Timetable data for a single semester in JSON format.
+        output_folder (str): The path to the directory where the Excel file will be saved.
+        semester_id (Optional[str]): The ID of the semester, used for unique file naming.
+    
+    Returns:
+        str: The path to the saved Excel file.
     """
     if not semester_schedule_json:
-        print("Không có dữ liệu lịch trình học kỳ để xuất. Đã dừng thao tác.")
-        return
+        print("No semester timetable data to export. Operation aborted.")
+        return ""
 
-    # --- Cấu hình ánh xạ và kiểu dáng ---
-    # Ánh xạ tên ngày tiếng Anh sang chỉ số và tên tiếng Việt
+    # --- Configuration for mappings and styles ---
     days_of_week_index_map = {
         "Mon": 0, "Tue": 1, "Wed": 2, "Thu": 3,
         "Fri": 4, "Sat": 5, "Sun": 6
     }
     index_to_day_name_map = {
-        0: "Thứ 2", 1: "Thứ 3", 2: "Thứ 4", 3: "Thứ 5",
-        4: "Thứ 6", 5: "Thứ 7", 6: "Chủ Nhật"
+        0: "Monday", 1: "Tuesday", 2: "Wednesday", 3: "Thursday",
+        4: "Friday", 5: "Saturday", 6: "Sunday"
     }
-
-    # Tìm ngày bắt đầu và kết thúc của học kỳ
+    
+    # Find the start and end dates of the semester
     all_dates = []
     for class_schedules in semester_schedule_json.values():
         for week_schedule in class_schedules:
@@ -43,19 +51,15 @@ def export_semester_schedule_to_excel(semester_schedule_json: Dict[str, Any], ou
                     all_dates.append(datetime.strptime(lesson['date'], '%Y-%m-%d'))
     
     if not all_dates:
-        print("Không tìm thấy ngày học nào trong dữ liệu.")
-        return
+        print("No lesson dates found in the data.")
+        return ""
 
     start_date = min(all_dates)
     last_lesson_date = max(all_dates)
     
-    print(f"Ngày bắt đầu học kỳ: {start_date.strftime('%d/%m/%Y')}")
-
-    # Tính ngày thứ 2 của tuần đầu tiên có lịch học
     days_to_monday = days_of_week_index_map.get(start_date.strftime('%a'), 0)
     week_start_date = start_date - timedelta(days=days_to_monday)
     
-    # Tạo danh sách các tuần học (từ thứ Hai đến Chủ Nhật)
     weeks = []
     current_week_start = week_start_date
     while current_week_start <= last_lesson_date:
@@ -63,13 +67,12 @@ def export_semester_schedule_to_excel(semester_schedule_json: Dict[str, Any], ou
         weeks.append((current_week_start, week_end_date))
         current_week_start += timedelta(days=7)
 
-    # --- Tạo workbook Excel ---
+    # --- Create Excel workbook ---
     workbook = openpyxl.Workbook()
-    # Xóa sheet mặc định
     if len(workbook.worksheets) > 0:
         workbook.remove(workbook.worksheets[0])
 
-    # --- Định nghĩa kiểu dáng cho các ô ---
+    # --- Define cell styles ---
     header_font = Font(bold=True, color="FFFFFF", name="Times New Roman", size=11)
     sheet_title_font = Font(bold=True, size=16, name="Times New Roman")
     slot_time_font = Font(bold=True, name="Times New Roman", size=11)
@@ -85,16 +88,16 @@ def export_semester_schedule_to_excel(semester_schedule_json: Dict[str, Any], ou
     thin_border = Side(style='thin', color="000000")
     cell_border = Border(left=thin_border, right=thin_border, top=thin_border, bottom=thin_border)
 
-    # --- Tạo các sheet cho từng tuần ---
+    # --- Create sheets for each week ---
     for week_num, (week_start, week_end) in enumerate(weeks, 1):
-        sheet = workbook.create_sheet(title=f"Tuần_{week_num}")
+        sheet = workbook.create_sheet(title=f"Week_{week_num}")
         
-        # --- Header trường đại học và tiêu đề sheet ---
+        # --- University header and sheet title ---
         current_row = 1
         university_header = [
-            "TRUNG TÂM CÔNG NGHỆ PHẦN MỀM ĐẠI HỌC CẦN THƠ",
             "CANTHO UNIVERSITY SOFTWARE CENTER",
-            "Khu III, Đại học Cần Thơ - 01 Lý Tự Trọng, TP. Cần Thơ - Tel: 0292.3731072 & Fax: 0292.3731071 - Email: cusc@ctu.edu.vn"
+            "TRUNG TÂM PHẦN MỀM ĐẠI HỌC CẦN THƠ",
+            "Khu 3, Đại học Cần Thơ - 01 Lý Tự Trọng, TP Cần Thơ - Tel: 0292.3731072 & Fax: 0292.3731071 - Email: cusc@ctu.edu.vn"
         ]
         
         for i, line in enumerate(university_header):
@@ -111,13 +114,13 @@ def export_semester_schedule_to_excel(semester_schedule_json: Dict[str, Any], ou
         current_row += 1
         
         sheet.merge_cells(start_row=current_row, start_column=1, end_row=current_row, end_column=10)
-        title_cell = sheet.cell(row=current_row, column=1, value=f"THỜI KHÓA BIỂU TUẦN {week_num} ({week_start.strftime('%d/%m/%Y')} - {week_end.strftime('%d/%m/%Y')})")
+        title_cell = sheet.cell(row=current_row, column=1, value=f"WEEK {week_num} TIMETABLE ({week_start.strftime('%d/%m/%Y')} - {week_end.strftime('%d/%m/%Y')})")
         title_cell.font = sheet_title_font
         title_cell.alignment = Alignment(horizontal="center", vertical="center")
         current_row += 2
         
-        # --- Tiêu đề các cột (Slot, Lớp, Sĩ số, và các ngày trong tuần) ---
-        headers = ["Slot Thời Gian", "Lớp", "SL SV"]
+        # --- Column headers (Time Slot, Class, Student Count, and days of the week) ---
+        headers = ["Time Slot", "Class", "Students"]
         current_date = week_start
         for i in range(7):
             day_display = f"{index_to_day_name_map[i]}\n{current_date.strftime('%d/%m')}"
@@ -131,54 +134,47 @@ def export_semester_schedule_to_excel(semester_schedule_json: Dict[str, Any], ou
             cell.alignment = cell_alignment
             cell.border = cell_border
         
-        # Điều chỉnh chiều cao dòng cho header
         sheet.row_dimensions[current_row].height = 40
         current_row += 1
         
-        # --- Nhóm dữ liệu theo slot và lớp để sắp xếp và hiển thị ---
+        # --- Group data by slot and class for sorting and display ---
         schedule_grid = defaultdict(lambda: defaultdict(dict))
         for class_id, class_schedules in semester_schedule_json.items():
             for week_schedule in class_schedules:
                 for lesson in week_schedule:
                     if 'date' in lesson:
                         lesson_date = datetime.strptime(lesson['date'], '%Y-%m-%d')
-                        # Chỉ xử lý các buổi học trong tuần hiện tại
                         if week_start <= lesson_date <= week_end:
                             schedule_grid[(lesson['slot_id'], class_id)][lesson['day']] = lesson
 
-        # --- Đổ dữ liệu lịch trình vào sheet ---
+        # --- Populate the timetable data into the sheet ---
         sorted_keys = sorted(schedule_grid.keys())
         for slot_id, class_id in sorted_keys:
             day_lessons = schedule_grid[(slot_id, class_id)]
             
-            # Lấy sĩ số lớp
             class_size = next((l.get('size', 'N/A') for l in day_lessons.values()), 'N/A')
             
-            # Ghi thông tin cơ bản: Slot, Lớp, Sĩ số
             sheet.cell(row=current_row, column=1, value=slot_id).font = slot_time_font
             sheet.cell(row=current_row, column=2, value=class_id)
             sheet.cell(row=current_row, column=3, value=class_size)
             
-            # Ghi lịch học từng ngày
             current_date = week_start
             for col_idx in range(4, 11):
                 day_name = current_date.strftime('%a')
                 if day_name in day_lessons and current_date >= start_date:
                     lesson = day_lessons[day_name]
-                    lesson_type = "Lý thuyết" if lesson['lesson_type'] == "theory" else "Thực hành"
-                    content = f"{lesson['subject_id']}\n({lesson_type})\nPhòng: {lesson['room_id']}\nGV: {lesson['lecturer_id']}"
+                    lesson_type = "Theory" if lesson['lesson_type'] == "theory" else "Practice"
+                    content = f"{lesson['subject_id']}\n({lesson_type})\nRoom: {lesson['room_id']}\nLecturer: {lesson['lecturer_id']}"
                     
                     cell = sheet.cell(row=current_row, column=col_idx, value=content)
                     cell.fill = theory_fill if lesson['lesson_type'] == "theory" else practice_fill
                 else:
-                    # Ghi một chuỗi rỗng để đảm bảo ô không bị bỏ qua
                     cell = sheet.cell(row=current_row, column=col_idx, value="")
 
                 cell.alignment = cell_alignment
                 cell.border = cell_border
                 current_date += timedelta(days=1)
             
-            # Áp dụng kiểu dáng cho các cột cơ bản
             for col in [1, 2, 3]:
                 sheet.cell(row=current_row, column=col).alignment = cell_alignment
                 sheet.cell(row=current_row, column=col).border = cell_border
@@ -186,36 +182,49 @@ def export_semester_schedule_to_excel(semester_schedule_json: Dict[str, Any], ou
             sheet.row_dimensions[current_row].height = 60
             current_row += 1
 
-        # Hợp nhất các ô slot thời gian giống nhau
-        merge_slot_cells(sheet, date_row=current_row - len(sorted_keys))
+        merge_slot_cells(sheet, start_row=current_row - len(sorted_keys))
         
-        # Điều chỉnh độ rộng cột
         sheet.column_dimensions['A'].width = 15
         sheet.column_dimensions['B'].width = 12
         sheet.column_dimensions['C'].width = 8
         for col_idx in range(4, 11):
             sheet.column_dimensions[get_column_letter(col_idx)].width = 25
 
-    # --- Lưu file Excel ---
+    # --- Save the Excel file ---
     os.makedirs(output_folder, exist_ok=True)
-    output_path = os.path.join(output_folder, "TKB_Hoc_Ky.xlsx")
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    repo_root = os.path.dirname(os.path.dirname(current_dir))  # Đi lên 2 cấp từ timetabling_GA
+    be_results_dir = os.path.join(repo_root, 'be', 'results')
+    
+    # Tạo tên file duy nhất dựa trên semester_id
+    if semester_id:
+        output_path = os.path.join(output_folder, f"LichHocKy_{semester_id}.xlsx")
+        output_be_path = os.path.join(be_results_dir, f"LichHocKy_{semester_id}.xlsx")
+    else:
+        output_path = os.path.join(output_folder, "Semester_Timetable.xlsx")
     
     try:
-        # Xóa file cũ nếu tồn tại để tránh lỗi
         if os.path.exists(output_path):
             os.remove(output_path)
         workbook.save(output_path)
-        print(f"🎉 Đã xuất thành công file Excel tại: {output_path}")
+        if os.path.exists(output_be_path):
+            os.remove(output_be_path)
+        workbook.save(output_be_path)
+        print(f"\nSuccessfully exported Excel file to: {output_path}")
+        print(f"\nSuccessfully exported Excel file to: {output_be_path}")
+        return output_be_path
     except Exception as e:
-        print(f"❌ Lỗi khi lưu file Excel: {str(e)}")
+        print(f"Error saving Excel file: {str(e)}")
+        # Ném lại lỗi để hàm gọi có thể bắt được và xử lý
+        raise e
 
 def merge_slot_cells(sheet: openpyxl.worksheet.worksheet.Worksheet, start_row: int) -> None:
     """
-    Hợp nhất các ô trong cột 'Slot Thời Gian' có giá trị giống nhau.
+    Merges cells in the 'Time Slot' column that have the same value.
 
     Args:
-        sheet (openpyxl.worksheet.worksheet.Worksheet): Sheet Excel cần xử lý.
-        start_row (int): Dòng bắt đầu của bảng dữ liệu.
+        sheet (openpyxl.worksheet.worksheet.Worksheet): The Excel sheet to process.
+        start_row (int): The starting row of the data table.
     """
     if sheet.max_row < start_row:
         return
@@ -223,7 +232,7 @@ def merge_slot_cells(sheet: openpyxl.worksheet.worksheet.Worksheet, start_row: i
     current_slot = None
     merge_start = start_row
     
-    for row in range(start_row, sheet.max_row + 2):  # Thêm 1 dòng để xử lý trường hợp cuối
+    for row in range(start_row, sheet.max_row + 2):
         slot_value = sheet.cell(row=row, column=1).value
         
         if slot_value != current_slot:

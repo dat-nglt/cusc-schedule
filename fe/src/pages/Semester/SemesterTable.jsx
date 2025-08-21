@@ -72,7 +72,7 @@ export default function SemesterTable({ displayedSemesters, isSmallScreen, isMed
                         Số tuần
                     </TableCell>
                     <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '12%' }}>
-                        Mã chương trình
+                        Thời gian
                     </TableCell>
 
                     <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: isSmallScreen ? '25%' : '15%' }}>
@@ -108,7 +108,7 @@ export default function SemesterTable({ displayedSemesters, isSmallScreen, isMed
                             {semester.duration_weeks ? `${semester.duration_weeks} tuần` : 'Chưa xác định'}
                         </TableCell>
                         <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                            {semester.program_id}
+                            {semester.duration_weeks} tuần
                         </TableCell>
                         <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
                             {/* Sử dụng getStatusChip để hiển thị màu trạng thái */}

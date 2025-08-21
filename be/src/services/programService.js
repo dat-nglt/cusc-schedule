@@ -1,6 +1,6 @@
 import models from '../models/index.js';
 
-const { sequelize, Program, Semester, Subject } = models;
+const { sequelize, Program, Semester, Subject, ProgramSemesters, ProgramSubjectSemesters  } = models;
 /**
  * Lấy tất cả các chương trình đào tạo.
  * @returns {Promise<Array>} Danh sách tất cả các chương trình.
@@ -38,14 +38,64 @@ export const getProgramByIdService = async (id) => {
  * @returns {Promise<Object>} Chương trình đã được tạo.
  * @throws {Error} Nếu có lỗi khi tạo chương trình.
  */
+
 export const createProgramService = async (programData) => {
-  try {
-    const program = await Program.create(programData);
-    return program;
-  } catch (error) {
-    console.error('Lỗi khi tạo chương trình đào tạo:', error);
-    throw error;
-  }
+    // Sử dụng transaction để đảm bảo tất cả các thao tác đều thành công
+    const t = await sequelize.transaction();
+    try {
+        // Kiểm tra dữ liệu đầu vào bắt buộc
+        if (!programData.program_id || !programData.program_name || !programData.semesters) {
+            const error = new Error("Dữ liệu không hợp lệ. Vui lòng cung cấp đủ thông tin chương trình và học kỳ.");
+            error.name = 'ValidationError';
+            throw error;
+        }
+
+        // 1. Tạo bản ghi Program chính
+        const newProgram = await Program.create({
+            program_id: programData.program_id,
+            program_name: programData.program_name,
+            status: programData.status,
+        }, { transaction: t });
+
+        // 2. Lặp qua danh sách semesters và subjects để tạo bản ghi
+        const semestersData = programData.semesters;
+        if (semestersData && semestersData.length > 0) {
+            for (const [index, semester] of semestersData.entries()) {
+                const programSemesterId = (`PS_${newProgram.program_id}_${semester.semester_id}`).toUpperCase();
+
+                await ProgramSemesters.create({
+                    program_semester_id: programSemesterId,
+                    program_id: newProgram.program_id,
+                    semester_id: semester.semester_id,
+                    semester_number: index + 1,
+                }, { transaction: t });
+
+                const subjectsData = semester.subjects;
+                if (subjectsData && subjectsData.length > 0) {
+                    for (const subject of subjectsData) {
+                        const psSemesterId = (`PSS_${programSemesterId}_${subject.subject_id}`).toUpperCase();
+                        
+                        await ProgramSubjectSemesters.create({
+                            ps_semester_id: psSemesterId,
+                            program_semester_id: programSemesterId,
+                            subject_id: subject.subject_id,
+                        }, { transaction: t });
+                    }
+                }
+            }
+        }
+
+        // Commit transaction
+        await t.commit();
+        
+        return newProgram;
+
+    } catch (error) {
+        // Rollback transaction nếu có lỗi
+        await t.rollback();
+        console.error('Lỗi khi tạo chương trình đào tạo:', error);
+        throw error; // Ném lỗi để controller xử lý
+    }
 };
 
 /**

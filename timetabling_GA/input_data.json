@@ -67,49 +67,77 @@
     {
       "lecturer_id": "GV001",
       "lecturer_name": "Nguyễn Văn A",
-      "subjects": ["MH001", "MH002", "MH003"],
+      "subjects": [
+        "MH001",
+        "MH002",
+        "MH003"
+      ],
       "busy_slots": [],
       "semester_busy_slots": []
     },
     {
       "lecturer_id": "GV002",
       "lecturer_name": "Trần Thị B",
-      "subjects": ["MH004", "MH005", "MH006"],
+      "subjects": [
+        "MH004",
+        "MH005",
+        "MH006"
+      ],
       "busy_slots": [],
       "semester_busy_slots": []
     },
     {
       "lecturer_id": "GV003",
       "lecturer_name": "Lê Minh C",
-      "subjects": ["MH007", "MH008", "MH009", "MH011"],
+      "subjects": [
+        "MH007",
+        "MH008",
+        "MH009"
+      ],
       "busy_slots": [],
       "semester_busy_slots": []
     },
     {
       "lecturer_id": "GV005",
       "lecturer_name": "Hoàng Văn E",
-      "subjects": ["MH010", "MH012", "MH013", "MH011"],
+      "subjects": [
+        "MH010",
+        "MH012",
+        "MH013"
+      ],
       "busy_slots": [],
       "semester_busy_slots": []
     },
     {
       "lecturer_id": "GV006",
       "lecturer_name": "Đỗ Thị F",
-      "subjects": ["MH014", "MH015", "MH016"],
+      "subjects": [
+        "MH014",
+        "MH015",
+        "MH016"
+      ],
       "busy_slots": [],
       "semester_busy_slots": []
     },
     {
       "lecturer_id": "GV007",
       "lecturer_name": "Vũ Văn G",
-      "subjects": ["MH003", "MH005", "MH010"],
+      "subjects": [
+        "MH003",
+        "MH005",
+        "MH010"
+      ],
       "busy_slots": [],
       "semester_busy_slots": []
     },
     {
       "lecturer_id": "GV008",
       "lecturer_name": "Vũ Văn G1",
-      "subjects": ["MH015", "MH013", "MH002"],
+      "subjects": [
+        "MH015",
+        "MH013",
+        "MH002"
+      ],
       "busy_slots": [],
       "semester_busy_slots": []
     }
@@ -122,19 +150,31 @@
       "semesters": [
         {
           "semester_id": "HK1_CT01_2025",
-          "subject_ids": ["MH001", "MH002"]
+          "subject_ids": [
+            "MH001",
+            "MH002"
+          ]
         },
         {
           "semester_id": "HK2_CT01_2025",
-          "subject_ids": ["MH003", "MH004"]
+          "subject_ids": [
+            "MH003",
+            "MH004"
+          ]
         },
         {
           "semester_id": "HK3_CT01_2025",
-          "subject_ids": ["MH005", "MH006"]
+          "subject_ids": [
+            "MH005",
+            "MH006"
+          ]
         },
         {
           "semester_id": "HK4_CT01_2025",
-          "subject_ids": ["MH007", "MH008"]
+          "subject_ids": [
+            "MH007",
+            "MH008"
+          ]
         }
       ]
     },
@@ -145,19 +185,31 @@
       "semesters": [
         {
           "semester_id": "HK1_CT02_2025",
-          "subject_ids": ["MH009", "MH010"]
+          "subject_ids": [
+            "MH009",
+            "MH010"
+          ]
         },
         {
           "semester_id": "HK2_CT02_2025",
-          "subject_ids": ["MH011", "MH012"]
+          "subject_ids": [
+            "MH011",
+            "MH012"
+          ]
         },
         {
           "semester_id": "HK3_CT02_2025",
-          "subject_ids": ["MH013", "MH014"]
+          "subject_ids": [
+            "MH013",
+            "MH014"
+          ]
         },
         {
           "semester_id": "HK4_CT02_2025",
-          "subject_ids": ["MH015", "MH016"]
+          "subject_ids": [
+            "MH015",
+            "MH016"
+          ]
         }
       ]
     }
@@ -165,56 +217,80 @@
   "semesters": [
     {
       "semester_id": "HK1_CT01_2025",
-      "subject_ids": ["MH001", "MH002"],
+      "subject_ids": [
+        "MH001",
+        "MH002"
+      ],
       "start_date": "2025-08-15",
       "end_date": "2025-11-28",
       "duration_weeks": 15
     },
     {
       "semester_id": "HK2_CT01_2025",
-      "subject_ids": ["MH003", "MH004"],
+      "subject_ids": [
+        "MH003",
+        "MH004"
+      ],
       "start_date": "2025-12-05",
       "end_date": "2026-03-20",
       "duration_weeks": 15
     },
     {
       "semester_id": "HK3_CT01_2025",
-      "subject_ids": ["MH005", "MH006"],
+      "subject_ids": [
+        "MH005",
+        "MH006"
+      ],
       "start_date": "2026-03-27",
       "end_date": "2026-07-10",
       "duration_weeks": 15
     },
     {
       "semester_id": "HK4_CT01_2025",
-      "subject_ids": ["MH007", "MH008"],
+      "subject_ids": [
+        "MH007",
+        "MH008"
+      ],
       "start_date": "2026-07-17",
       "end_date": "2026-10-30",
       "duration_weeks": 15
     },
     {
       "semester_id": "HK1_CT02_2025",
-      "subject_ids": ["MH009", "MH010"],
+      "subject_ids": [
+        "MH009",
+        "MH010"
+      ],
       "start_date": "2025-08-15",
       "end_date": "2025-11-28",
       "duration_weeks": 15
     },
     {
       "semester_id": "HK2_CT02_2025",
-      "subject_ids": ["MH011", "MH012"],
+      "subject_ids": [
+        "MH011",
+        "MH012"
+      ],
       "start_date": "2025-12-05",
       "end_date": "2026-03-20",
       "duration_weeks": 15
     },
     {
       "semester_id": "HK3_CT02_2025",
-      "subject_ids": ["MH013", "MH014"],
+      "subject_ids": [
+        "MH013",
+        "MH014"
+      ],
       "start_date": "2026-03-27",
       "end_date": "2026-07-10",
       "duration_weeks": 15
     },
     {
       "semester_id": "HK4_CT02_2025",
-      "subject_ids": ["MH015", "MH016"],
+      "subject_ids": [
+        "MH015",
+        "MH016"
+      ],
       "start_date": "2026-07-17",
       "end_date": "2026-10-30",
       "duration_weeks": 15
@@ -356,5 +432,13 @@
       "type": "evening"
     }
   ],
-  "days_of_week": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+  "days_of_week": [
+    "Mon",
+    "Tue",
+    "Wed",
+    "Thu",
+    "Fri",
+    "Sat",
+    "Sun"
+  ]
 }

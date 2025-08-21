@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import {
     Box,
 } from '@mui/material';
@@ -6,7 +6,8 @@ import WeeklyCalendar from './WeeklyCalendar';
 import QuickStats from './QuickStats';
 import { io } from 'socket.io-client';
 
-import { generateSchedule, getDownloadUrl, stopScheduleGeneration } from '../../api/scheduleAPI';
+import { useEffect } from 'react';
+import { generateSchedule, getInputDataForAlgorithmAPI, stopScheduleGeneration } from '../../api/scheduleAPI';
 import ProgressModal from './ProgressModal';
 import { toast } from 'react-toastify';
 
@@ -17,11 +18,8 @@ import { getClassesAPI } from '../../api/classAPI';
 import { getAllSubjectsAPI } from '../../api/subjectAPI';
 import { getSemesterCreateScheduleAPI } from '../../api/semesterAPI';
 import CreateSchedulesAutoModal from './CreateSchedulesAutoModal';
-import { getAllSchedules } from '../../api/classschedule';
-import { transformScheduleForCalendar } from '../../utils/scheduleUtils';
-const socket = io(import.meta.env.VITE_API_URL || 'http://localhost:3000', {
-    withCredentials: true
-});
+import { useRef } from 'react';
+
 
 const Dashboard = () => {
     const [open, setOpen] = useState(false);
@@ -31,7 +29,7 @@ const Dashboard = () => {
     const [error, setError] = useState('');
     const [gaLogs, setGaLogs] = useState([]);
     const [progress, setProgress] = useState(0);
-    const [scheduleItems, setScheduleItems] = useState([]);
+    const socketRef = useRef(null);
     const [rooms, setRooms] = useState([]);
     const [programs, setPrograms] = useState([]);
     const [lecturers, setLecturers] = useState([]);
@@ -39,19 +37,21 @@ const Dashboard = () => {
     const [semesters, setSemesters] = useState([]);
     const [classes, setClasses] = useState([]);
     const [formTest, setFormTest] = useState(null);
+    const [gaProgressData, setGaProgressData] = useState(null);
 
-    const days_of_week = {
+    const days_of_week = useState({
         "days_of_week": [
             "Mon",
             "Tue",
             "Wed",
             "Thu",
             "Fri",
-            "Sat"
+            "Sat",
+            "Sun"
         ]
-    };
-
-    const timeslot = {
+    });
+    
+    const timeslot = useState({
         "time_slots": [
             {
                 "slot_id": "S1",
@@ -90,120 +90,329 @@ const Dashboard = () => {
                 "type": "evening"
             }
         ],
-    };
-
-    console.log("SCHEDULE:", formTest)
-    console.log("scheduleItems:", scheduleItems);
-
-
-    const transformedScheduleItems = transformScheduleForCalendar(scheduleItems);
+    });
 
     const actualInputData = {
         "classes": [
-            { "class_id": "CL01", "size": 30, "program_id": "CT01" },
-            { "class_id": "CL02", "size": 28, "program_id": "CT01" },
-            { "class_id": "CL03", "size": 35, "program_id": "CT02" }
+            {
+                "class_id": "DH23CS",
+                "size": 30,
+                "program_id": "CT001"
+            },
+            {
+                "class_id": "DH23AI",
+                "size": 30,
+                "program_id": "CT002"
+            },
+            {
+                "class_id": "DH22IT",
+                "size": 30,
+                "program_id": "CT002"
+            },
+            {
+                "class_id": "L01",
+                "size": 35,
+                "program_id": "CT001"
+            }
         ],
         "rooms": [
-            { "room_id": "R101", "type": "theory", "capacity": 40 },
-            { "room_id": "R102", "type": "theory", "capacity": 35 },
-            { "room_id": "R103", "type": "theory", "capacity": 40 },
-            { "room_id": "R104", "type": "theory", "capacity": 32 },
-            { "room_id": "LAB01", "type": "practice", "capacity": 50 },
-            { "room_id": "LAB02", "type": "practice", "capacity": 50 },
-            { "room_id": "LAB03", "type": "practice", "capacity": 50 },
-            { "room_id": "LAB04", "type": "practice", "capacity": 50 }
+            {
+                "room_id": "LT1",
+                "type": "theory",
+                "capacity": 50
+            },
+            {
+                "room_id": "TH1",
+                "type": "practice",
+                "capacity": 30
+            },
+            {
+                "room_id": "LT2",
+                "type": "theory",
+                "capacity": 45
+            },
+            {
+                "room_id": "TH2",
+                "type": "practice",
+                "capacity": 35
+            },
+            {
+                "room_id": "LT3",
+                "type": "theory",
+                "capacity": 40
+            },
+            {
+                "room_id": "TH3",
+                "type": "practice",
+                "capacity": 30
+            },
+            {
+                "room_id": "LT4",
+                "type": "theory",
+                "capacity": 30
+            },
+            {
+                "room_id": "TH4",
+                "type": "practice",
+                "capacity": 25
+            }
         ],
         "lecturers": [
             {
-                "lecturer_id": "GV01",
+                "lecturer_id": "GV001",
                 "lecturer_name": "Nguyễn Văn A",
-                "subjects": ["MH01", "MH02", "MH05"],
-                "busy_slots": [{ "day": "Mon", "slot_id": "S1" }]
+                "subjects": ["MH001", "MH002", "MH003"],
+                "busy_slots": [],
+                "semester_busy_slots": []
             },
             {
-                "lecturer_id": "GV02",
+                "lecturer_id": "GV002",
                 "lecturer_name": "Trần Thị B",
-                "subjects": ["MH03", "MH04", "MH06"],
-                "busy_slots": [{ "day": "Tue", "slot_id": "S2" }]
+                "subjects": ["MH004", "MH005", "MH006"],
+                "busy_slots": [],
+                "semester_busy_slots": []
             },
             {
-                "lecturer_id": "GV03",
-                "lecturer_name": "Lê Văn C",
-                "subjects": ["MH05", "MH06", "MH01"],
-                "busy_slots": [{ "day": "Fri", "slot_id": "T1" }]
+                "lecturer_id": "GV003",
+                "lecturer_name": "Lê Minh C",
+                "subjects": ["MH007", "MH008", "MH009"],
+                "busy_slots": [],
+                "semester_busy_slots": []
             },
             {
-                "lecturer_id": "GV04",
-                "lecturer_name": "Phạm Văn D",
-                "subjects": ["MH03", "MH04"],
-                "busy_slots": []
+                "lecturer_id": "GV005",
+                "lecturer_name": "Hoàng Văn E",
+                "subjects": ["MH010", "MH012", "MH013"],
+                "busy_slots": [],
+                "semester_busy_slots": []
+            },
+            {
+                "lecturer_id": "GV006",
+                "lecturer_name": "Đỗ Thị F",
+                "subjects": ["MH014", "MH015", "MH016"],
+                "busy_slots": [],
+                "semester_busy_slots": []
+            },
+            {
+                "lecturer_id": "GV007",
+                "lecturer_name": "Vũ Văn G",
+                "subjects": ["MH003", "MH005", "MH010"],
+                "busy_slots": [],
+                "semester_busy_slots": []
+            },
+            {
+                "lecturer_id": "GV008",
+                "lecturer_name": "Vũ Văn G1",
+                "subjects": ["MH015", "MH013", "MH002"],
+                "busy_slots": [],
+                "semester_busy_slots": []
             }
         ],
         "programs": [
             {
-                "program_id": "CT01",
-                "program_name": "Chương trình Đào tạo CNTT",
-                "duration": 4,
+                "program_id": "CT001",
+                "program_name": "Chương trình Đào tạo CNTT123",
+                "duration": 15,
                 "semesters": [
                     {
-                        "semester_id": "HK1_CT01",
-                        "subject_ids": ["MH01", "MH02"]
+                        "semester_id": "HK1_CT01_2025",
+                        "subject_ids": ["MH001", "MH002"]
                     },
                     {
-                        "semester_id": "HK2_CT01",
-                        "subject_ids": ["MH05", "MH06"]
+                        "semester_id": "HK2_CT01_2025",
+                        "subject_ids": ["MH003", "MH004"]
+                    },
+                    {
+                        "semester_id": "HK3_CT01_2025",
+                        "subject_ids": ["MH005", "MH006"]
+                    },
+                    {
+                        "semester_id": "HK4_CT01_2025",
+                        "subject_ids": ["MH007", "MH008"]
                     }
                 ]
             },
             {
-                "program_id": "CT02",
-                "program_name": "Chương trình Đào tạo Kinh tế",
-                "duration": 3,
+                "program_id": "CT002",
+                "program_name": "nhập tay",
+                "duration": 15,
                 "semesters": [
                     {
-                        "semester_id": "HK1_CT02",
-                        "subject_ids": ["MH03", "MH04"]
+                        "semester_id": "HK1_CT02_2025",
+                        "subject_ids": ["MH009", "MH010"]
+                    },
+                    {
+                        "semester_id": "HK2_CT02_2025",
+                        "subject_ids": ["MH011", "MH012"]
+                    },
+                    {
+                        "semester_id": "HK3_CT02_2025",
+                        "subject_ids": ["MH013", "MH014"]
+                    },
+                    {
+                        "semester_id": "HK4_CT02_2025",
+                        "subject_ids": ["MH015", "MH016"]
                     }
                 ]
             }
         ],
         "semesters": [
             {
-                "semester_id": "HK1_CT01",
-                "subject_ids": ["MH01", "MH02"],
+                "semester_id": "HK1_CT01_2025",
+                "subject_ids": ["MH001", "MH002"],
+                "start_date": "2025-08-15",
+                "end_date": "2025-11-28",
                 "duration_weeks": 15
             },
             {
-                "semester_id": "HK2_CT01",
-                "subject_ids": ["MH05", "MH06"],
-                "duration_weeks": 16
+                "semester_id": "HK2_CT01_2025",
+                "subject_ids": ["MH003", "MH004"],
+                "start_date": "2025-12-05",
+                "end_date": "2026-03-20",
+                "duration_weeks": 15
             },
             {
-                "semester_id": "HK1_CT02",
-                "subject_ids": ["MH03", "MH04"],
+                "semester_id": "HK3_CT01_2025",
+                "subject_ids": ["MH005", "MH006"],
+                "start_date": "2026-03-27",
+                "end_date": "2026-07-10",
+                "duration_weeks": 15
+            },
+            {
+                "semester_id": "HK4_CT01_2025",
+                "subject_ids": ["MH007", "MH008"],
+                "start_date": "2026-07-17",
+                "end_date": "2026-10-30",
+                "duration_weeks": 15
+            },
+            {
+                "semester_id": "HK1_CT02_2025",
+                "subject_ids": ["MH009", "MH010"],
+                "start_date": "2025-08-15",
+                "end_date": "2025-11-28",
+                "duration_weeks": 15
+            },
+            {
+                "semester_id": "HK2_CT02_2025",
+                "subject_ids": ["MH011", "MH012"],
+                "start_date": "2025-12-05",
+                "end_date": "2026-03-20",
+                "duration_weeks": 15
+            },
+            {
+                "semester_id": "HK3_CT02_2025",
+                "subject_ids": ["MH013", "MH014"],
+                "start_date": "2026-03-27",
+                "end_date": "2026-07-10",
+                "duration_weeks": 15
+            },
+            {
+                "semester_id": "HK4_CT02_2025",
+                "subject_ids": ["MH015", "MH016"],
+                "start_date": "2026-07-17",
+                "end_date": "2026-10-30",
                 "duration_weeks": 15
             }
         ],
         "subjects": [
             {
-                "subject_id": "MH01",
-                "name": "Lập trình cơ bản",
+                "subject_id": "MH001",
+                "name": "Computer Fundamentals",
+                "theory_hours": 30,
+                "practice_hours": 10
+            },
+            {
+                "subject_id": "MH002",
+                "name": "Foundations of Programming with C",
+                "theory_hours": 45,
+                "practice_hours": 15
+            },
+            {
+                "subject_id": "MH003",
+                "name": "Data Processing with XML and JSON",
                 "theory_hours": 30,
                 "practice_hours": 15
             },
             {
-                "subject_id": "MH02",
-                "name": "Cơ sở dữ liệu",
+                "subject_id": "MH004",
+                "name": "OOAD with UML",
                 "theory_hours": 30,
+                "practice_hours": 10
+            },
+            {
+                "subject_id": "MH005",
+                "name": "ASP.NET Core MVC-The Framework for Future Web Innovations",
+                "theory_hours": 45,
                 "practice_hours": 15
             },
             {
-                "subject_id": "MH03",
-                "name": "Mạng máy tính",
-                "theory_hours": 30,
+                "subject_id": "MH006",
+                "name": "Powerful and Rich Applications with Microsoft Azure",
+                "theory_hours": 45,
                 "practice_hours": 15
             },
+            {
+                "subject_id": "MH007",
+                "name": "Deployment System and Containerize with Docker and Kubernetes",
+                "theory_hours": 30,
+                "practice_hours": 10
+            },
+            {
+                "subject_id": "MH008",
+                "name": "Project-Robust Java Applications for Enterprises",
+                "theory_hours": 30,
+                "practice_hours": 10
+            },
+            {
+                "subject_id": "MH009",
+                "name": "Xử lý ảnh với Adobe Photoshop",
+                "theory_hours": 30,
+                "practice_hours": 10
+            },
+            {
+                "subject_id": "MH010",
+                "name": "Nhiếp ảnh kỹ thuật số và xử lý hậu kỳ với Lightroom",
+                "theory_hours": 30,
+                "practice_hours": 10
+            },
+            {
+                "subject_id": "MH011",
+                "name": "Tạo hoạt hình 2D cho Web",
+                "theory_hours": 30,
+                "practice_hours": 10
+            },
+            {
+                "subject_id": "MH012",
+                "name": "Tạo giao diện tương tác cao cho người dùng",
+                "theory_hours": 30,
+                "practice_hours": 5
+            },
+            {
+                "subject_id": "MH013",
+                "name": "Tạo chất liệu (texture) cho mô hình 3D trong game 3D",
+                "theory_hours": 30,
+                "practice_hours": 10
+            },
+            {
+                "subject_id": "MH014",
+                "name": "Thiết kế màn chơi với Unity 3D",
+                "theory_hours": 30,
+                "practice_hours": 10
+            },
+            {
+                "subject_id": "MH015",
+                "name": "Tạo chuyển động cho nhân vật",
+                "theory_hours": 30,
+                "practice_hours": 10
+            },
+            {
+                "subject_id": "MH016",
+                "name": "Sử dụng Black Magic Fusion biên tập hình ảnh nâng cao",
+                "theory_hours": 30,
+                "practice_hours": 10
+            }
+        ],
+        "time_slots": [
             {
                 "subject_id": "MH04",
                 "name": "Thiết kế Web",
@@ -231,113 +440,27 @@ const Dashboard = () => {
             { "slot_id": "T1", "start": "17:30", "end": "19:30", "type": "evening" },
             { "slot_id": "T2", "start": "19:30", "end": "21:30", "type": "evening" }
         ],
-        "days_of_week": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+        "days_of_week": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
     }
 
 
-    const fetchRooms = async () => {
-        try {
-            const response = await getAllRoomAPI();
-            if (!response) {
-                throw new Error("Không có dữ liệu phòng học");
-            }
-            console.log("Rooms fetched:", response.data);
-
-            setRooms(response.data);
-        } catch (error) {
-            console.error("Error fetching rooms:", error);
-        }
-    };
-    const fetchSubjests = async () => {
-        try {
-            const response = await getAllSubjectsAPI();
-            if (!response) {
-                throw new Error("Không có dữ liệu môn học");
-            }
-            setSubjects(response.data);
-        } catch (error) {
-            console.error("Error fetching subjects:", error);
-        }
-    };
-    console.log("semester:", semesters);
-
-    const fetchSemesters = async () => {
-        try {
-            const response = await getSemesterCreateScheduleAPI();
-            if (!response) {
-                throw new Error("Không có dữ liệu học kỳ");
-            }
-
-            setSemesters(response.data);
-        } catch (error) {
-            console.error("Error fetching semesters:", error);
-        }
-    };
-    const fetchPrograms = async () => {
-        try {
-            const response = await getProgramCreateScheduleAPI();
-            if (!response) {
-                throw new Error("Không có dữ liệu chương trình học");
-            }
-            setPrograms(response.data);
-        } catch (error) {
-            console.error("Error fetching programs:", error);
-        }
-    };
-    const fetchLecturers = async () => {
-        try {
-            const response = await getAllLecturersAPI();
-            if (!response) {
-                throw new Error("Không có dữ liệu giảng viên");
-            }
-            setLecturers(response.data);
-        } catch (error) {
-            console.error("Error fetching lecturers:", error);
-        }
-    };
-    const fetchClasses = async () => {
-        try {
-            const response = await getClassesAPI();
-            if (!response) {
-                throw new Error("Không có dữ liệu lớp học");
-            }
-            setClasses(response.data);
-        } catch (error) {
-            console.error("Error fetching classes:", error);
-        }
-    };
-
-    const fetchAllSchedules = async () => {
-        try {
-            const response = await getAllSchedules();
-            if (!response) {
-                throw new Error("Không có dữ liệu thời khóa biểu");
-            }
-            setScheduleItems(response.data);
-            // Xử lý dữ liệu thời khóa biểu nếu cần
-        }
-        catch (error) {
-            console.error("Error fetching schedules:", error);
-            // Xử lý lỗi nếu cần
-        }
-    };
-    // Gọi các hàm fetch dữ liệu khi component mount
     useEffect(() => {
-        fetchRooms();
-        fetchPrograms();
-        fetchLecturers();
-        fetchSubjests();
-        fetchSemesters();
-        fetchClasses();
-        fetchAllSchedules();
-    }, []);
+        // Khởi tạo kết nối socket chỉ một lần
+        if (!socketRef.current) {
+            console.log('Creating new socket connection...');
+            const socket = io(import.meta.env.VITE_API_URL || 'http://localhost:3000', {
+                withCredentials: true,
+            });
+            socketRef.current = socket;
+        }
 
-    useEffect(() => {
-        // Lắng nghe các sự kiện trạng thái từ backend
-        socket.on('ga_status', (data) => {
+        const socket = socketRef.current;
 
-            setStatusMessage(data.message); // Cập nhật tin nhắn trạng thái
-            setProgress(data.progress); // Cập nhật tiến độ
+        // --- Hàm xử lý cập nhật trạng thái GA (từ sự kiện 'ga_status') ---
+        const handleGAStatus = (data) => {
+            // console.log('GA Status:', data);
+            setStatusMessage(data.message);
+            setProgress(data.progress);
 
             switch (data.stage) {
                 case 'START':
@@ -348,80 +471,191 @@ const Dashboard = () => {
                 case 'GENERATING_SEMESTER_SCHEDULE':
                 case 'EXPORTING_EXCEL':
                 case 'GENERATING_VIEWS':
-                case 'STOPPING': // Khi backend báo hiệu đang dừng
-                    setOpen(true); // Mở dialog/hiển thị thanh tiến độ
+                case 'STOPPING':
+                    setOpen(true);
                     break;
-                case 'ABORTED': // Khi backend báo hiệu tiến trình đã bị hủy
-                    setOpen(false); // Đóng dialog
+                case 'ABORTED':
+                    setOpen(false);
                     toast.info('Tiến trình tạo thời khóa biểu đã bị hủy.');
                     setDownloadableFiles([]);
                     setError('');
                     break;
                 case 'COMPLETED':
-                    setOpen(false); // Đóng dialog
+                    setOpen(false);
                     toast.success('Thời khóa biểu đã được tạo thành công!');
-                    setDownloadableFiles([
-                        ...(data.excelFiles || []), // Backend cần gửi kèm danh sách file trong trạng thái COMPLETED
-                        ...(data.jsonFiles || [])
-                    ]);
                     setError('');
+                    // Yêu cầu danh sách file mới nhất
+                    socket.emit('get_results');
                     break;
-                case 'ERROR': // Khi có lỗi
-                    setOpen(false); // Đóng dialog
+                case 'ERROR':
+                    setOpen(false);
                     toast.error('Đã xảy ra lỗi trong quá trình tạo thời khóa biểu.');
                     setError(data.message || 'Lỗi không xác định.');
-                    setDownloadableFiles([]); // Xóa file tải về nếu lỗi
+                    setDownloadableFiles([]);
+                    break;
+                case 'IDLE':
+                    setOpen(false);
+                    setStatusMessage('Sẵn sàng nhận yêu cầu mới');
+                    setProgress(0);
                     break;
                 default:
+                    console.warn('Unknown GA stage:', data.stage);
                     break;
             }
-        });
-
-        socket.on('ga_log', (data) => {
-            setGaLogs(prevLogs => [...prevLogs, data.message]);
-        });
-
-        socket.on('ga_error', (data) => {
-            setOpen(false); // Đóng dialog/progress
-            setError(data.message || 'Lỗi không xác định trong quá trình GA.');
-            setStatusMessage('');
-            setProgress(0);
-            setDownloadableFiles([]); // Xóa file tải về nếu lỗi
-            toast.error(data.message || 'Lỗi nghiêm trọng trong thuật toán GA!');
-        });
-
-        // Cleanup function
-        return () => {
-            socket.off('ga_status');
-            socket.off('ga_log');
-            socket.off('ga_error');
         };
-    }, []); // Dependency array: đảm bảo lắng nghe lại khi socket thay đổi (thường không thay đổi)
+
+        // --- Hàm xử lý tiến trình GA chi tiết (từ sự kiện 'ga_progress') ---
+        const handleGAProgress = (data) => {
+            // console.log('GA Progress Detail:', data);
+            setGaProgressData(data); // Lưu toàn bộ dữ liệu tiến trình chi tiết
+
+            // Cập nhật log chi tiết
+            const generationInfo = data.generation_info;
+            const fitnessInfo = data.fitness_metrics;
+            const violationInfo = data.violation_analysis;
+
+            const logEntry = `Gen ${generationInfo.current}/${generationInfo.max}: ` +
+                `Fitness ${fitnessInfo.current_best} ` +
+                `(Best: ${fitnessInfo.overall_best}) ` +
+                `Violations: ${violationInfo.current.total_violations}`;
+
+            setGaLogs(prevLogs => {
+                if (prevLogs.length > 100) { // Giới hạn số lượng log
+                    return [...prevLogs.slice(50), logEntry];
+                }
+                return [...prevLogs, logEntry];
+            });
+
+            // Thông báo khi có cải thiện
+            if (fitnessInfo.has_improvement === 'true' && generationInfo.current > 0) {
+                toast.success(`Cải thiện mới ở thế hệ ${generationInfo.current}! ` +
+                    `Fitness: ${fitnessInfo.overall_best}`);
+            }
+        };
+
+        // --- Hàm xử lý các sự kiện xuất file (từ sự kiện 'ga_export') ---
+        const handleGAExport = (data) => {
+            // console.log('GA Export Event:', data);
+
+            switch (data.event_type) {
+                case 'EXPORT_STARTED':
+                    toast.info(`Bắt đầu xuất file cho ${data.metadata?.total_semesters || 'nhiều'} học kỳ.`);
+                    break;
+
+                case 'SEMESTER_EXPORT_START':
+                    toast.info(`Đang xử lý học kỳ ${data.semester_id} (${data.current}/${data.total})...`);
+                    break;
+
+                case 'SEMESTER_PROCESSING_START':
+                    toast.info(`Bắt đầu xử lý học kỳ ${data.semester_id}`);
+                    break;
+
+                case 'EXCEL_EXPORT_SUCCESS':
+                    toast.success(`Đã xuất file Excel: ${data.file_name}`);
+                    setDownloadableFiles(prevFiles => [
+                        ...prevFiles,
+                        {
+                            name: data.file_name,
+                            path: data.file_path,
+                            type: 'excel',
+                            semester: data.semester_id,
+                            timestamp: data.timestamp
+                        }
+                    ]);
+                    break;
+
+                case 'COMBINED_JSON_EXPORT_SUCCESS':
+                    toast.success(`Đã xuất file JSON tổng hợp: ${data.file_name}`);
+                    setDownloadableFiles(prevFiles => [
+                        ...prevFiles,
+                        {
+                            name: data.file_name,
+                            path: data.file_path,
+                            type: 'json',
+                            timestamp: data.timestamp
+                        }
+                    ]);
+                    break;
+
+                case 'EXPORT_COMPLETE':
+                    toast.success(`Hoàn thành xuất file! Đã xử lý ${data.metadata?.successful_semesters || 0} học kỳ.`);
+                    break;
+
+                case 'SEMESTER_PROCESSING_ERROR':
+                    toast.error(`Lỗi xử lý học kỳ ${data.semester_id}: ${data.error}`);
+                    break;
+
+                case 'EXCEL_EXPORT_ERROR':
+                    toast.error(`Lỗi xuất Excel cho học kỳ ${data.semester_id}: ${data.error}`);
+                    break;
+
+                default:
+                    console.log('Export event:', data.event_type, data);
+                    break;
+            }
+        };
+
+        // --- Hàm xử lý log thông thường ---
+        const handleGALog = (data) => {
+            setGaLogs(prevLogs => {
+                const newLog = `${data.timestamp || new Date().toISOString()} [${data.type}]: ${data.message}`;
+                if (prevLogs.length > 200) {
+                    return [...prevLogs.slice(100), newLog];
+                }
+                return [...prevLogs, newLog];
+            });
+        };
+
+        // --- Hàm xử lý lỗi ---
+        const handleGAError = (data) => {
+            console.error('GA Error:', data);
+            setOpen(false);
+            setError(data.message || 'Lỗi không xác định.');
+            setStatusMessage('Đã xảy ra lỗi');
+            setProgress(0);
+            setDownloadableFiles([]);
+            toast.error(data.message || 'Lỗi nghiêm trọng trong thuật toán GA!');
+        };
+
+        // --- Hàm nhận kết quả file ---
+        const handleGAResults = (data) => {
+            console.log('GA Results:', data);
+            if (data.excelFiles && data.jsonFiles) {
+                const allFiles = [
+                    ...data.excelFiles.map(file => ({ name: file, type: 'excel' })),
+                    ...data.jsonFiles.map(file => ({ name: file, type: 'json' }))
+                ];
+                setDownloadableFiles(allFiles);
+            }
+        };
+
+        // --- Lắng nghe các sự kiện ---
+        socket.on('ga_status', handleGAStatus);
+        socket.on('ga_progress', handleGAProgress);
+        socket.on('ga_export', handleGAExport);
+        socket.on('ga_log', handleGALog);
+        socket.on('ga_error', handleGAError);
+        socket.on('ga_results', handleGAResults);
+
+        // Yêu cầu danh sách file hiện có khi component mount
+        socket.emit('get_results');
+
+        // --- Cleanup Function ---
+        return () => {
+            socket.off('ga_status', handleGAStatus);
+            socket.off('ga_progress', handleGAProgress);
+            socket.off('ga_export', handleGAExport);
+            socket.off('ga_log', handleGALog);
+            socket.off('ga_error', handleGAError);
+            socket.off('ga_results', handleGAResults);
+        };
+    }, []);
 
     // Transform API data to required format
-    const transformDataToFormTest = useCallback((data, selections = null) => {
-        const { rooms, programs, lecturers, classes, subjects, semesters } = data;
-
-        console.log("Transforming data to form test structure:", { rooms, programs, lecturers, classes, subjects, semesters });
-
-        // If selections are provided, filter data based on selections
-        const filterData = (items, selectedIds, idField) => {
-            if (!selections || !selectedIds?.length) return items;
-            return items.filter(item => selectedIds.includes(item[idField]));
-        };
-
-        const filteredClasses = filterData(classes, selections?.classes, 'class_id');
-        const filteredRooms = filterData(rooms, selections?.rooms, 'room_id');
-        const filteredLecturers = filterData(lecturers, selections?.lecturers, 'lecturer_id');
-        const filteredPrograms = filterData(programs, selections?.programs, 'program_id');
-
-        // Use filtered data or all data if no selections
-        const classesToTransform = filteredClasses.length ? filteredClasses : classes;
-        const roomsToTransform = filteredRooms.length ? filteredRooms : rooms;
-        const lecturersToTransform = filteredLecturers.length ? filteredLecturers : lecturers;
-        const programsToTransform = filteredPrograms.length ? filteredPrograms : programs;
-
-        if (!classesToTransform?.length || !roomsToTransform?.length || !lecturersToTransform?.length || !programsToTransform?.length) {
+    const transformDataToFormTest = (data) => {
+        const { rooms, programs, lecturers, classes } = data;
+        // Sử dụng optional chaining và nullish coalescing để code gọn hơn
+        if (!classes?.length || !rooms?.length || !lecturers?.length || !programs?.length) {
             console.warn("Dữ liệu đầu vào không đầy đủ. Trả về cấu trúc rỗng.");
             return {
                 classes: [],
@@ -521,9 +755,11 @@ const Dashboard = () => {
         setProgress(0);
         setOpen(true);
 
+        // await getInputDataForAlgorithmAPI()
+
         try {
-            // Use formTest data if available, otherwise use actualInputData as fallback
-            const inputData = formTest || actualInputData;
+            // const inputData = formTest || actualInputData;
+            const inputData = actualInputData;
             const response = await generateSchedule(inputData);
 
             if (response.aborted) { // Xử lý nếu promise được resolve với trạng thái hủy
@@ -547,6 +783,7 @@ const Dashboard = () => {
     const handleStopTimetableGeneration = async () => {
         try {
             // Gọi API để gửi yêu cầu dừng
+            setOpen(false); // Mở dialog để hiển thị tiến trình dừng
             await stopScheduleGeneration(); // Hàm này gửi POST request đến /api/stop-ga
             setStatusMessage('Đang yêu cầu dừng tiến trình...');
             // UI sẽ đợi thông báo 'ga_status' với stage 'ABORTED' từ backend
@@ -557,11 +794,11 @@ const Dashboard = () => {
         }
     };
 
-    const handleDownload = (filename) => {
-        // Lấy URL download từ API Service
-        const downloadUrl = getDownloadUrl(filename);
-        window.open(downloadUrl, '_blank');
-    };
+    // const handleDownload = (filename) => {
+    //     // Lấy URL download từ API Service
+    //     const downloadUrl = getDownloadUrl(filename);
+    //     window.open(downloadUrl, '_blank');
+    // };
 
 
 

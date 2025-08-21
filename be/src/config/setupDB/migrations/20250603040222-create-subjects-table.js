@@ -38,21 +38,11 @@ export default {
         type: Sequelize.DATE,
         defaultValue: Sequelize.NOW,
         allowNull: false
-      },
-      semester_id: {
-        type: Sequelize.STRING(30),
-        allowNull: true,
-        references: {
-          model: 'semesters',
-          key: 'semester_id'
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'SET NULL'
       }
     });
   },
 
-  async down(queryInterface, Sequelize) {
+  async down(queryInterface) {
     await queryInterface.dropTable('subjects');
   }
 };

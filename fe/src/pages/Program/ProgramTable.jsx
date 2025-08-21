@@ -67,11 +67,6 @@ export default function ProgramTable({ displayedPrograms, isSmallScreen, isMediu
                     <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'left', borderRight: '1px solid #e0e0e0', width: isSmallScreen ? '40%' : '35%' }}>
                         Tên chương trình
                     </TableCell>
-                    {!isMediumScreen && (
-                        <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '15%' }}>
-                            Thời gian đào tạo
-                        </TableCell>
-                    )}
                     <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: isSmallScreen ? '25%' : '15%' }}>
                         Trạng thái
                     </TableCell>
@@ -101,19 +96,6 @@ export default function ProgramTable({ displayedPrograms, isSmallScreen, isMediu
                         <TableCell sx={{ textAlign: 'left', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
                             {program.program_name}
                         </TableCell>
-                        {!isMediumScreen && (
-                            <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                                <Chip
-                                    label={program.duration + 'T/1HK'}
-                                    size="small"
-                                    sx={{
-                                        bgcolor: '#e3f2fd',
-                                        color: '#1976d2',
-                                        fontWeight: 'bold'
-                                    }}
-                                />
-                            </TableCell>
-                        )}
                         <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
                             {/* Sử dụng getStatusChip để hiển thị màu trạng thái */}
                             {getStatusChip(getVietnameseStatus(program.status))}

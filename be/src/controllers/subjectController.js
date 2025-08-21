@@ -76,19 +76,26 @@ export const getSubjectByIdController = async (req, res) => {
  * @access Private (admin, training_officer)
  */
 export const createSubjectController = async (req, res) => {
-  const subjectData = req.body;
   try {
-    const subject = await createSubjectService(subjectData);
-    return APIResponse(res, 201, subject, "Tạo môn học thành công.");
+    const subjectData = req.body;
+    const newSubject = await createSubjectService(subjectData);
+
+    // Trả về mã 201 Created khi tạo thành công
+    return APIResponse(res, 201, newSubject, "Tạo môn học thành công.");
   } catch (error) {
     console.error("Lỗi khi tạo môn học:", error);
-    // Có thể thêm logic kiểm tra lỗi cụ thể hơn từ service (ví dụ: duplicate entry)
-    return APIResponse(
-      res,
-      500,
-      null,
-      error.message || "Đã xảy ra lỗi khi tạo môn học."
-    );
+
+    // Xử lý lỗi cụ thể
+    if (error.name === "ValidationError") {
+      return APIResponse(res, 400, null, error.message);
+    }
+
+    if (error.name === "SequelizeUniqueConstraintError") {
+      return APIResponse(res, 409, null, error.message);
+    }
+
+    // Xử lý các lỗi chung khác
+    return APIResponse(res, 500, null, "Đã xảy ra lỗi khi tạo môn học.");
   }
 };
 
