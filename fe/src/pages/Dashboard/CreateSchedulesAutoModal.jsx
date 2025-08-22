@@ -53,6 +53,10 @@ export default function CreateSchedulesAutoModal({
     const [selectedLecturers, setSelectedLecturers] = useState([]);
     const [selectedClasses, setSelectedClasses] = useState([]);
 
+    const handleStepChange = (step) => {
+        setActiveStep(step);
+    };
+
     const handleNext = () => {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
     };
