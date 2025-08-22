@@ -10,7 +10,7 @@ export default {
         autoIncrement: true,
         allowNull: false
       },
-      program_semester_id: {
+      semester_id: {
         type: Sequelize.STRING(30),
         allowNull: false,
         references: {
@@ -106,7 +106,6 @@ export default {
     });
 
     // Add indexes for better query performance
-    await queryInterface.addIndex('class_schedules', ['program_semester_id']);
     await queryInterface.addIndex('class_schedules', ['class_id']);
     await queryInterface.addIndex('class_schedules', ['date']);
     await queryInterface.addIndex('class_schedules', ['day']);
@@ -115,7 +114,6 @@ export default {
     await queryInterface.addIndex('class_schedules', ['room_id']);
 
     // Compound indexes for common queries
-    await queryInterface.addIndex('class_schedules', ['program_semester_id', 'class_id']);
     await queryInterface.addIndex('class_schedules', ['class_id', 'date']);
   },
 

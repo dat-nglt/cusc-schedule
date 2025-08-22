@@ -8,7 +8,7 @@ export default {
      */
     await queryInterface.bulkInsert('class_schedules', [
       {
-        semester_id: 'HK1_CT01_2025',
+        semester_id: 'PS_CT001_HK1_2025',
         class_id: 'DH23CS',
         program_id: 'CT001',
         date: '2025-08-19',
@@ -22,7 +22,7 @@ export default {
         updated_at: new Date()
       },
       {
-        semester_id: 'HK1_CT01_2025',
+        semester_id: 'PS_CT001_HK1_2025',
         class_id: 'DH23AI',
         program_id: 'CT001',
         date: '2025-08-20',
@@ -36,9 +36,9 @@ export default {
         updated_at: new Date()
       },
       {
-        semester_id: 'HK1_CT02_2025',
+        semester_id: 'PS_CT001_HK1_2025',
         class_id: 'DH22IT',
-        program_id: 'CT002',
+        program_id: 'CT001',
         date: '2025-08-20',
         slot_id: 'C1',
         subject_id: 'MH009',

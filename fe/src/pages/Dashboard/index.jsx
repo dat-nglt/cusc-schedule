@@ -100,13 +100,15 @@ const Dashboard = () => {
         }
     };
 
+
     const fetchAllSchedules = async () => {
         try {
             const response = await getAllSchedules();
             if (!response) {
                 throw new Error("Không có dữ liệu thời khóa biểu");
             }
-            setScheduleItems(response.data);
+            // Chuyển đổi dữ liệu trước khi set
+            setScheduleItems(transformScheduleForCalendar(response.data));
             // Xử lý dữ liệu thời khóa biểu nếu cần
         }
         catch (error) {
@@ -614,7 +616,7 @@ const Dashboard = () => {
                 {/* Chart Section */}
                 <WeeklyCalendar
                     initialDate={new Date()}
-                    scheduleItems={transformDataToFormTest}
+                    scheduleItems={scheduleItems}
                     onItemMove={handleItemMove}
                     onCreateNewSchedule={() => setCreateScheduleModalOpen(true)}
                     programs={programs}

@@ -32,12 +32,14 @@ function TimeSlot({ day, hour, date, onDrop, scheduleItems }) {
     // Filter items based on date and hour matching
     const itemsInSlot = safeScheduleItems.filter(item => {
         if (!item.startTime) return false;
-
         try {
             const itemDate = parseISO(item.startTime);
+            // So sánh ngày
+            if (!isSameDay(itemDate, slotDate)) return false;
+            // So sánh giờ bắt đầu
             const itemHour = parseInt(format(itemDate, 'H'));
 
-            return isSameDay(itemDate, slotDate) && itemHour === hour;
+            return itemHour === hour;
         } catch (error) {
             console.error('Error parsing schedule item date:', error, item);
             return false;
