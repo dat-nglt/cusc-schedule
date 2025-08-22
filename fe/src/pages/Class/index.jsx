@@ -23,11 +23,12 @@ import {
 } from '@mui/icons-material';
 import ClassDetailModal from './ClassDetailModal';
 import AddClassModal from './AddClassModal';
+import { toast } from 'react-toastify';
 import EditClassModal from './EditClassModal';
 import DeleteClassModal from './DeleteClassModal';
 import useResponsive from '../../hooks/useResponsive';
 import ClassTable from './ClassTable';
-import { getClassesAPI, getClassByIdAPI, addClassAPI, updateClassAPI, deleteClassAPI } from '../../api/classAPI';
+import { getClassesAPI, addClassAPI, updateClassAPI, deleteClassAPI } from '../../api/classAPI';
 import { getCoursesAPI } from '../../api/courseAPI';
 import { getAllProgramsAPI } from '../../api/programAPI';
 import TablePaginationLayout from '../../components/layout/TablePaginationLayout';
@@ -159,46 +160,6 @@ const Class = () => {
     fetchPrograms();
   }, []);
 
-  const handleViewClass = async (class_id) => {
-    try {
-      setLoading(true);
-      const response = await getClassByIdAPI(class_id);
-      console.log('Phản hồi từ API (chi tiết):', response);
-
-      let classData = {};
-      if (response && typeof response === 'object') {
-        if (Array.isArray(response.data)) {
-          classData = response.data[0] || {};
-        } else if (response.data) {
-          classData = response.data;
-        } else {
-          classData = response;
-        }
-      } else {
-        throw new Error('Dữ liệu từ API không phải là object hợp lệ');
-      }
-
-      setSelectedClass({
-        class_id: classData.class_id,
-        class_name: classData.class_name,
-        class_size: classData.class_size,
-        status: classData.status || 'Không có dữ liệu',
-        course_id: classData.course_id,
-        created_at: formatTimestamp(classData.created_at),
-        updated_at: formatTimestamp(classData.updated_at),
-        course: classData.Course ? { course_name: classData.Course.course_name } : null,
-        program_id: classData.program_id || 'Không có dữ liệu',
-      });
-      setOpenDetail(true);
-    } catch (err) {
-      console.error('Lỗi khi lấy chi tiết:', err.message);
-      setError(`Lỗi khi lấy chi tiết lớp học: ${err.message}`);
-      setOpenDetail(false);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleAddClass = async (classData) => {
     try {
       setLoading(true);
@@ -211,7 +172,9 @@ const Class = () => {
         course_id: classData.course_id,
         program_id: classData.program_id,
       });
-      console.log('Phản hồi từ API (thêm):', response);
+      if (response) {
+        toast.success('Thêm lớp học thành công');
+      }
 
       const newClass = response.data || response;
       setClasses((prev) => [
@@ -285,7 +248,13 @@ const Class = () => {
       }
       console.log('Attempting to delete class with class_id:', class_id);
       const response = await deleteClassAPI(class_id);
-      console.log('Response from API (delete):', response);
+      if (response) {
+        toast.success('Xóa lớp học thành công');
+      } else {
+        throw new Error(`Unexpected response status: ${response.status}`);
+      }
+
+      console.log('Phản hồi từ API (xóa):', response);
 
       await fetchClasses();
     } catch (err) {
@@ -311,6 +280,13 @@ const Class = () => {
   });
 
   const displayedClasses = filteredClasses.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+
+  // Thêm hàm này để mở modal xem chi tiết với đúng classItem
+  const handleViewClass = (classId) => {
+    const found = classes.find(item => item.class_id === classId);
+    setSelectedClass(found || null);
+    setOpenDetail(true);
+  };
 
   return (
     <Box sx={{ p: 1, zIndex: 10, height: 'calc(100vh - 64px)', overflowY: 'auto' }}>
@@ -390,7 +366,7 @@ const Class = () => {
                   displayedClasses={displayedClasses}
                   isSmallScreen={isSmallScreen}
                   isMediumScreen={isMediumScreen}
-                  handleViewClass={handleViewClass}
+                  handleViewClass={handleViewClass} // truyền hàm này vào
                   handleEditClass={handleEditClass}
                   handleDeleteClass={handleOpenDeleteModal}
                 />

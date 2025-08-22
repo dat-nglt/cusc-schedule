@@ -71,7 +71,7 @@ const ClassTable = ({ displayedClasses, isSmallScreen, isMediumScreen, handleVie
           <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: isSmallScreen ? '25%' : '12%' }}>
             Trạng thái
           </TableCell>
-          <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', width: isSmallScreen ? '30%' : '10%' }}>
+          <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', width: isSmallScreen ? '30%' : '13%' }}>
             Thao tác
           </TableCell>
         </TableRow>
@@ -115,7 +115,7 @@ const ClassTable = ({ displayedClasses, isSmallScreen, isMediumScreen, handleVie
                 <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5, width: '12.5%' }}>
                   {classItem.program_id ? classItem.program_id : 'N/A'}
                 </TableCell>
-              </> 
+              </>
             )}
             <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
               {/* Hiển thị trạng thái với màu sắc */}
