@@ -64,9 +64,9 @@ export const getClassScheduleForLecturerService = async (lecturerId) => {
                     attributes: ['room_id', 'room_name']
                 },
                 {
-                    model: models.Semester,
-                    as: 'semester',
-                    attributes: ['semester_id', 'semester_name']
+                    model: models.ProgramSemesters,
+                    as: 'program_semester',
+                    attributes: ['program_semester_id']
                 },
                 {
                     model: models.Classes,
@@ -121,9 +121,9 @@ export const getClassScheduleForStudentService = async (studentId) => {
                     attributes: ['room_id', 'room_name']
                 },
                 {
-                    model: models.Semester,
-                    as: 'semester',
-                    attributes: ['semester_id', 'semester_name']
+                    model: models.ProgramSemesters,
+                    as: 'program_semester',
+                    attributes: ['program_semester_id']
                 },
                 {
                     model: models.Classes,
