@@ -39,7 +39,6 @@ const navItems = [
     { text: 'Quản lý học phần', icon: <MenuBookIcon />, path: '/subjects' },
     { text: 'Quản lý khóa học', icon: <ClassIcon />, path: '/courses' },
     { text: 'Quản lý lớp', icon: <GroupsIcon />, path: '/class' },
-    { text: 'Quản lý lớp học phần', icon: <AccountBalanceIcon />, path: '/classsection' },
     { text: 'Quản lý phòng', icon: <RoomIcon />, path: '/room' },
     { text: 'Quản lý khung giờ', icon: <AccessTimeIcon />, path: '/slottime' },
 ];

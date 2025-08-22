@@ -42,7 +42,8 @@ export default function CreateSchedulesAutoModal({
     rooms = [],
     lecturers = [],
     classes = [],
-    onGenerate
+    onGenerate,
+    onSelectionChange
 }) {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -74,6 +75,16 @@ export default function CreateSchedulesAutoModal({
     };
 
     const handleGenerate = () => {
+
+        const selections = {
+            programs: selectedPrograms,
+            rooms: selectedRooms,
+            lecturers: selectedLecturers,
+            classes: selectedClasses
+        }
+
+        onSelectionChange(selections)
+
         onGenerate();
         handleClose();
     };

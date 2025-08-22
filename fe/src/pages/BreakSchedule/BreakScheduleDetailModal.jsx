@@ -1,16 +1,21 @@
-// src/pages/BreakSchedule/BreakScheduleDetailModal.jsx
 import React from 'react';
 import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions,
   Button,
   Typography,
   Grid,
   Box,
   IconButton,
   Tooltip,
+  Chip,
+  Divider,
+  Card,
+  CardContent,
+  useTheme,
+  useMediaQuery,
+  Avatar
 } from '@mui/material';
 import {
   Code as CodeIcon,
@@ -19,7 +24,11 @@ import {
   ToggleOn as ToggleOnIcon,
   Event as EventIcon,
   Update as UpdateIcon,
+  ContentCopy as CopyIcon,
+  Close as CloseIcon,
+  BeachAccess as BreakIcon
 } from '@mui/icons-material';
+import { toast } from 'react-toastify';
 
 // Hàm định dạng thời gian từ YYYY-MM-DD HH:mm thành DD/MM/YYYY HH:mm
 const formatDateTime = (dateTime) => {
@@ -36,236 +45,288 @@ const formatDateTime = (dateTime) => {
 // Hàm kiểm tra giá trị và trả về giá trị hoặc thông báo mặc định
 const getValueOrDefault = (value) => value || 'Không có dữ liệu';
 
+const InfoCard = ({ title, icon, children, span = 1, minHeight = 220 }) => (
+  <Grid item xs={12} sm={6} md={span}>
+    <Card
+      variant="outlined"
+      sx={{
+        height: '100%',
+        minHeight: minHeight,
+        borderRadius: 2,
+        borderColor: 'divider',
+        display: 'flex',
+        flexDirection: 'column',
+        '&:hover': {
+          boxShadow: 1
+        }
+      }}
+    >
+      <CardContent sx={{ p: 2.5, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
+          <Box sx={{ color: 'primary.main' }}>
+            {icon}
+          </Box>
+          <Typography variant="subtitle2" fontWeight="600" color="primary">
+            {title}
+          </Typography>
+        </Box>
+        <Box sx={{ flexGrow: 1 }}>
+          {children}
+        </Box>
+      </CardContent>
+    </Card>
+  </Grid>
+);
+
+const InfoItem = ({ label, value, icon }) => (
+  <Box sx={{ mb: 2, '&:last-child': { mb: 0 } }}>
+    <Typography variant="caption" color="text.secondary" display="block" gutterBottom>
+      {label}
+    </Typography>
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+      {icon && (
+        <Box sx={{ color: 'text.secondary' }}>
+          {icon}
+        </Box>
+      )}
+      <Typography variant="body2" fontWeight="500">
+        {value || (
+          <Typography component="span" variant="body2" color="text.secondary" fontStyle="italic">
+            Chưa cập nhật
+          </Typography>
+        )}
+      </Typography>
+    </Box>
+  </Box>
+);
+
 const BreakScheduleDetailModal = ({ open, onClose, breakSchedule }) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
   if (!breakSchedule) return null;
 
   // Hàm sao chép mã lịch nghỉ
   const handleCopyMaLichNghi = () => {
     navigator.clipboard.writeText(breakSchedule.break_id);
-    alert('Đã sao chép mã lịch nghỉ!');
+    toast.success(`Đã sao chép mã lịch nghỉ: ${breakSchedule.break_id}`);
+  };
+
+  const getStatusColor = (status) => {
+    switch (status?.toLowerCase()) {
+      case 'active': return 'success';
+      case 'inactive': return 'error';
+      case 'pending': return 'warning';
+      default: return 'default';
+    }
+  };
+
+  const getStatusText = (status) => {
+    switch (status?.toLowerCase()) {
+      case 'active': return 'Đang áp dụng';
+      case 'inactive': return 'Không áp dụng';
+      case 'pending': return 'Chờ xử lý';
+      default: return status || 'Không xác định';
+    }
+  };
+
+  const getBreakTypeText = (breakType) => {
+    switch (breakType?.toLowerCase()) {
+      case 'holiday': return 'Ngày lễ';
+      case 'break': return 'Nghỉ giữa giờ';
+      case 'maintenance': return 'Bảo trì';
+      case 'emergency': return 'Khẩn cấp';
+      default: return breakType || 'Không xác định';
+    }
   };
 
   return (
     <Dialog
       open={open}
       onClose={onClose}
-      maxWidth="sm"
+      maxWidth="lg"
       fullWidth
+      fullScreen={isMobile}
       sx={{
         '& .MuiDialog-paper': {
-          borderRadius: 2,
-          boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-        },
+          borderRadius: isMobile ? 0 : 2,
+          maxWidth: 950,
+          overflow: 'hidden'
+        }
       }}
     >
       <DialogTitle
         sx={{
-          bgcolor: '#1976d2',
-          color: '#fff',
+          p: 3,
           display: 'flex',
-          alignItems: 'center',
           justifyContent: 'space-between',
-          py: 1.5,
+          alignItems: 'center',
+          borderBottom: '1px solid',
+          borderColor: 'divider',
+          bgcolor: 'grey.50'
         }}
       >
-        <Typography variant="h6">
-          Chi tiết lịch nghỉ {breakSchedule.break_id}
-        </Typography>
-        <Tooltip title="Sao chép mã lịch nghỉ">
-          <IconButton
-            onClick={handleCopyMaLichNghi}
-            sx={{ color: '#fff' }}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <Avatar
+            sx={{
+              width: 48,
+              height: 48,
+              bgcolor: 'primary.main',
+              fontSize: '1.2rem',
+              fontWeight: 'bold'
+            }}
           >
-            <CodeIcon />
-          </IconButton>
-        </Tooltip>
+            <BreakIcon />
+          </Avatar>
+          <Box>
+            <Typography variant="h6" fontWeight="600" gutterBottom>
+              Chi tiết lịch nghỉ
+            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Typography variant="body2" color="text.secondary">
+                {breakSchedule.break_id}
+              </Typography>
+              <Tooltip title="Sao chép mã lịch nghỉ">
+                <IconButton
+                  onClick={handleCopyMaLichNghi}
+                  size="small"
+                  sx={{ p: 0.5 }}
+                >
+                  <CopyIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
+              <Chip
+                label={getStatusText(breakSchedule.status)}
+                color={getStatusColor(breakSchedule.status)}
+                size="small"
+                sx={{ ml: 1 }}
+              />
+            </Box>
+          </Box>
+        </Box>
+        <IconButton
+          onClick={onClose}
+          sx={{
+            bgcolor: 'background.paper',
+            '&:hover': { bgcolor: 'grey.100' }
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
       </DialogTitle>
-      <DialogContent sx={{ mt: 2, px: 3 }}>
-        <Grid container spacing={2}>
-          {/* Mã lịch nghỉ */}
-          <Grid item xs={12}>
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                bgcolor: '#f9f9f9',
-                p: 2,
-                borderRadius: 1,
-                border: '1px solid #e0e0e0',
-              }}
-            >
-              <CodeIcon sx={{ mr: 1, color: '#1976d2' }} />
-              <Box>
-                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#333' }}>
-                  Mã lịch nghỉ
-                </Typography>
-                <Typography variant="body1" sx={{ color: '#666' }}>
-                  {getValueOrDefault(breakSchedule.break_id)}
-                </Typography>
-              </Box>
-            </Box>
+
+      <DialogContent sx={{ p: 3, mt: 3 }}>
+        <Grid container spacing={3}>
+          {/* Hàng 1: 2 cột - Thông tin cơ bản & Thời gian */}
+          <Grid item xs={12} md={6}>
+            <InfoCard title="Thông tin cơ bản" icon={<CodeIcon />}>
+              <InfoItem
+                label="Mã lịch nghỉ"
+                value={breakSchedule.break_id}
+                icon={<CodeIcon fontSize="small" />}
+              />
+              <InfoItem
+                label="Loại lịch nghỉ"
+                value={getBreakTypeText(breakSchedule.break_type)}
+                icon={<LabelIcon fontSize="small" />}
+              />
+              <InfoItem
+                label="Trạng thái"
+                value={getStatusText(breakSchedule.status)}
+                icon={<ToggleOnIcon fontSize="small" />}
+              />
+            </InfoCard>
           </Grid>
 
-          {/* Loại lịch nghỉ */}
-          <Grid item xs={12}>
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                bgcolor: '#f9f9f9',
-                p: 2,
-                borderRadius: 1,
-                border: '1px solid #e0e0e0',
-              }}
-            >
-              <LabelIcon sx={{ mr: 1, color: '#1976d2' }} />
-              <Box>
-                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#333' }}>
-                  Loại lịch nghỉ
-                </Typography>
-                <Typography variant="body1" sx={{ color: '#666' }}>
-                  {getValueOrDefault(breakSchedule.break_type)}
-                </Typography>
-              </Box>
-            </Box>
+          <Grid item xs={12} md={6}>
+            <InfoCard title="Thời gian" icon={<ScheduleIcon />}>
+              <InfoItem
+                label="Thời gian bắt đầu"
+                value={formatDateTime(breakSchedule.break_start_date)}
+                icon={<ScheduleIcon fontSize="small" />}
+              />
+              <InfoItem
+                label="Thời gian kết thúc"
+                value={formatDateTime(breakSchedule.break_end_date)}
+                icon={<ScheduleIcon fontSize="small" />}
+              />
+              <InfoItem
+                label="Mô tả"
+                value={breakSchedule.description}
+                icon={<LabelIcon fontSize="small" />}
+              />
+            </InfoCard>
           </Grid>
 
-          {/* Thời gian bắt đầu */}
-          <Grid item xs={6}>
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                bgcolor: '#f9f9f9',
-                p: 2,
-                borderRadius: 1,
-                border: '1px solid #e0e0e0',
-              }}
-            >
-              <ScheduleIcon sx={{ mr: 1, color: '#1976d2' }} />
-              <Box>
-                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#333' }}>
-                  Thời gian bắt đầu
-                </Typography>
-                <Typography variant="body1" sx={{ color: '#666' }}>
-                  {formatDateTime(breakSchedule.break_start_date)}
-                </Typography>
-              </Box>
-            </Box>
+          {/* Hàng 2: 2 cột - Lịch sử hệ thống */}
+          <Grid item xs={12} md={6}>
+            <InfoCard title="Lịch sử hệ thống" icon={<EventIcon />}>
+              <InfoItem
+                label="Thời gian tạo"
+                value={formatDateTime(breakSchedule.created_at)}
+                icon={<EventIcon fontSize="small" />}
+              />
+              <InfoItem
+                label="Thời gian cập nhật"
+                value={formatDateTime(breakSchedule.updated_at)}
+                icon={<UpdateIcon fontSize="small" />}
+              />
+              <InfoItem
+                label="Người tạo"
+                value={breakSchedule.created_by}
+                icon={<EventIcon fontSize="small" />}
+              />
+            </InfoCard>
           </Grid>
 
-          {/* Thời gian kết thúc */}
-          <Grid item xs={6}>
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                bgcolor: '#f9f9f9',
-                p: 2,
-                borderRadius: 1,
-                border: '1px solid #e0e0e0',
-              }}
-            >
-              <ScheduleIcon sx={{ mr: 1, color: '#1976d2' }} />
-              <Box>
-                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#333' }}>
-                  Thời gian kết thúc
-                </Typography>
-                <Typography variant="body1" sx={{ color: '#666' }}>
-                  {formatDateTime(breakSchedule.break_end_date)}
-                </Typography>
-              </Box>
-            </Box>
-          </Grid>
-
-          {/* Trạng thái */}
-          <Grid item xs={6}>
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                bgcolor: '#f9f9f9',
-                p: 2,
-                borderRadius: 1,
-                border: '1px solid #e0e0e0',
-              }}
-            >
-              <ToggleOnIcon sx={{ mr: 1, color: '#1976d2' }} />
-              <Box>
-                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#333' }}>
-                  Trạng thái
-                </Typography>
-                <Typography variant="body1" sx={{ color: '#666' }}>
-                  {getValueOrDefault(breakSchedule.status)}
-                </Typography>
-              </Box>
-            </Box>
-          </Grid>
-
-          {/* Thời gian tạo */}
-          <Grid item xs={6}>
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                bgcolor: '#f9f9f9',
-                p: 2,
-                borderRadius: 1,
-                border: '1px solid #e0e0e0',
-              }}
-            >
-              <EventIcon sx={{ mr: 1, color: '#1976d2' }} />
-              <Box>
-                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#333' }}>
-                  Thời gian tạo
-                </Typography>
-                <Typography variant="body1" sx={{ color: '#666' }}>
-                  {formatDateTime(breakSchedule.created_at)}
-                </Typography>
-              </Box>
-            </Box>
-          </Grid>
-
-          {/* Thời gian cập nhật */}
-          <Grid item xs={6}>
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                bgcolor: '#f9f9f9',
-                p: 2,
-                borderRadius: 1,
-                border: '1px solid #e0e0e0',
-              }}
-            >
-              <UpdateIcon sx={{ mr: 1, color: '#1976d2' }} />
-              <Box>
-                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#333' }}>
-                  Thời gian cập nhật
-                </Typography>
-                <Typography variant="body1" sx={{ color: '#666' }}>
-                  {formatDateTime(breakSchedule.updated_at)}
-                </Typography>
-              </Box>
-            </Box>
+          <Grid item xs={12} md={6}>
+            <InfoCard title="Thông tin bổ sung" icon={<LabelIcon />}>
+              <InfoItem
+                label="Ghi chú"
+                value={breakSchedule.notes}
+                icon={<LabelIcon fontSize="small" />}
+              />
+              <InfoItem
+                label="Độ ưu tiên"
+                value={breakSchedule.priority}
+                icon={<LabelIcon fontSize="small" />}
+              />
+              <InfoItem
+                label="Ảnh hưởng"
+                value={breakSchedule.impact}
+                icon={<LabelIcon fontSize="small" />}
+              />
+            </InfoCard>
           </Grid>
         </Grid>
       </DialogContent>
-      <DialogActions sx={{ px: 3, pb: 2 }}>
+
+      <Divider />
+      <Box sx={{ p: 2.5, display: 'flex', justifyContent: 'flex-end', gap: 1.5 }}>
         <Button
           onClick={onClose}
-          variant="contained"
-          color="primary"
+          variant="outlined"
           sx={{
-            bgcolor: '#1976d2',
-            '&:hover': { bgcolor: '#115293' },
             borderRadius: 1,
             px: 3,
+            textTransform: 'none',
+            fontWeight: '500'
           }}
         >
           Đóng
         </Button>
-      </DialogActions>
+        <Button
+          variant="contained"
+          sx={{
+            borderRadius: 1,
+            px: 3,
+            textTransform: 'none',
+            fontWeight: '500'
+          }}
+        >
+          Chỉnh sửa thông tin
+        </Button>
+      </Box>
     </Dialog>
   );
 };
