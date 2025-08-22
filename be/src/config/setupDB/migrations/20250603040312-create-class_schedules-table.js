@@ -10,12 +10,12 @@ export default {
         autoIncrement: true,
         allowNull: false
       },
-      semester_id: {
+      program_semester_id: {
         type: Sequelize.STRING(30),
         allowNull: false,
         references: {
-          model: 'semesters',
-          key: 'semester_id'
+          model: 'program_semesters',
+          key: 'program_semester_id'
         },
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE'
@@ -106,7 +106,7 @@ export default {
     });
 
     // Add indexes for better query performance
-    await queryInterface.addIndex('class_schedules', ['semester_id']);
+    await queryInterface.addIndex('class_schedules', ['program_semester_id']);
     await queryInterface.addIndex('class_schedules', ['class_id']);
     await queryInterface.addIndex('class_schedules', ['date']);
     await queryInterface.addIndex('class_schedules', ['day']);
@@ -115,7 +115,7 @@ export default {
     await queryInterface.addIndex('class_schedules', ['room_id']);
 
     // Compound indexes for common queries
-    await queryInterface.addIndex('class_schedules', ['semester_id', 'class_id']);
+    await queryInterface.addIndex('class_schedules', ['program_semester_id', 'class_id']);
     await queryInterface.addIndex('class_schedules', ['class_id', 'date']);
   },
 

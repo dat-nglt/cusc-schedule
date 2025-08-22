@@ -40,6 +40,12 @@ export const getSemesterByIdService = async (id) => {
  */
 export const createSemesterService = async (semesterData) => {
   try {
+    const startYear = new Date(semesterData.start_date).getFullYear();
+    const endYear = new Date(semesterData.end_date).getFullYear();
+
+    const generatedSemesterId = `${semesterData.semester_id}_${startYear}-${endYear}`;
+    const generatedSemesterName = `${semesterData.semester_name} năm học ${startYear}-${endYear}`;
+    // Kiểm tra xem semester_id đã tồn tại chưa
     const existingSemester = await Semester.findOne({
       where: {
         semester_id: semesterData.semester_id,
@@ -51,7 +57,13 @@ export const createSemesterService = async (semesterData) => {
       conflictError.name = "SequelizeUniqueConstraintError"; // Gán tên lỗi để controller có thể nhận biết
       throw conflictError;
     }
-    const newSemester = await Semester.create(semesterData);
+    const semesterDataWithId = {
+      ...semesterData,
+      semester_id: generatedSemesterId,
+      semester_name: generatedSemesterName
+    };
+
+    const newSemester = await Semester.create(semesterDataWithId);
 
     return newSemester;
   } catch (error) {
@@ -118,24 +130,22 @@ export const importSemestersFromJSONService = async (semestersData) => {
       const index = i + 1;
 
       try {
-        // Validate các trường bắt buộc
+        // Validate các trường bắt buộc (bỏ semester_id vì sẽ tự động sinh)
         if (
-          !semesterData.semester_id ||
           !semesterData.semester_name ||
           !semesterData.start_date ||
           !semesterData.end_date
         ) {
           results.errors.push({
             index: index,
-            semester_id: semesterData.semester_id || "N/A",
+            semester_id: "N/A",
             error:
-              "Mã học kỳ, Tên học kỳ, Thời gian bắt đầu và Thời gian kết thúc là bắt buộc",
+              "Tên học kỳ, Thời gian bắt đầu và Thời gian kết thúc là bắt buộc",
           });
           continue;
         }
 
-
-        // Làm sạch và định dạng dữ liệu (chuyển sang kiểu chuỗi và xóa khoảng cách thừa ở đầu chuỗi và cuối chuỗi)
+        // Làm sạch và định dạng dữ liệu
         const cleanedData = {
           semester_id: semesterData.semester_id.toString().trim(),
           semester_name: semesterData.semester_name.toString().trim(),
@@ -159,7 +169,7 @@ export const importSemestersFromJSONService = async (semestersData) => {
         if (isNaN(startDate) || isNaN(endDate)) {
           results.errors.push({
             index: index,
-            semester_id: cleanedData.semester_id,
+            semester_id: "N/A",
             error: "Định dạng ngày không hợp lệ",
           });
           continue;
@@ -168,7 +178,7 @@ export const importSemestersFromJSONService = async (semestersData) => {
         if (startDate > endDate) {
           results.errors.push({
             index: index,
-            semester_id: cleanedData.semester_id,
+            semester_id: "N/A",
             error: "Thời gian bắt đầu không được lớn hơn thời gian kết thúc",
           });
           continue;
@@ -177,32 +187,45 @@ export const importSemestersFromJSONService = async (semestersData) => {
         if (endDate > maxFutureDate) {
           results.errors.push({
             index: index,
-            semester_id: cleanedData.semester_id,
+            semester_id: "N/A",
             error: "Thời gian kết thúc không được quá 5 năm trong tương lai",
           });
           continue;
         }
 
+        // Tự động sinh semester_id
+        const startYear = startDate.getFullYear();
+        const endYear = endDate.getFullYear();
+        const generatedSemesterId = `${cleanedData.semester_id}_${startYear}`;
+        const generatedSemesterName = `${cleanedData.semester_name}_${startYear}`;
+
         // Kiểm tra semester_id đã tồn tại chưa
         const existingSemester = await Semester.findOne({
-          where: { semester_id: cleanedData.semester_id },
+          where: { semester_id: generatedSemesterId },
         });
         if (existingSemester) {
           results.errors.push({
             index: index,
-            semester_id: cleanedData.semester_id,
+            semester_id: generatedSemesterId,
             error: "Mã học kỳ đã tồn tại",
           });
           continue;
         }
 
-        // Tạo Semester mới
+        // Thêm semester_id vào cleanedData
+        cleanedData.semester_id = generatedSemesterId;
+        cleanedData.semester_name = generatedSemesterName;
+
+        // Tạo Semester mới bằng cách gọi trực tiếp Semester.create thay vì createSemesterService
+        // để tránh việc sinh ID lại lần nữa
         const newSemester = await Semester.create(cleanedData);
         results.success.push(newSemester);
       } catch (error) {
         results.errors.push({
           index: index,
-          semester_id: semesterData.semester_id || "N/A",
+          semester_id: semesterData.semester_name ?
+            `${semesterData.semester_name}_${new Date(semesterData.start_date).getFullYear()}_${new Date(semesterData.end_date).getFullYear()}` :
+            "N/A",
           error: error.message || "Lỗi không xác định",
         });
       }
