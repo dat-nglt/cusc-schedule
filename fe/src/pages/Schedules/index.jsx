@@ -55,13 +55,13 @@ import ProgressModal from '../Dashboard/ProgressModal';
 import { toast } from 'react-toastify';
 
 import { getAllRoomAPI } from '../../api/roomAPI';
-import { getProgramCreateScheduleAPI } from '../../api/programAPI';
+import { getProgramToCreateScheduleAPI } from '../../api/programAPI';
 import { getAllLecturersAPI } from '../../api/lecturerAPI';
 import { getClassesAPI } from '../../api/classAPI';
 import CreateSchedulesAutoModal from '../Dashboard/CreateSchedulesAutoModal';
 // import { getAllSchedules } from '../../api/classschedule';
 import { useRef } from 'react';
-import { getAllSchedules } from '../../api/classschedule';
+// import { getAllSchedules } from '../../api/classschedule';
 
 const ScheduleManagement = () => {
 
@@ -102,7 +102,7 @@ const ScheduleManagement = () => {
 
     const fetchPrograms = async () => {
         try {
-            const response = await getProgramCreateScheduleAPI();
+            const response = await getProgramToCreateScheduleAPI();
             if (!response) {
                 throw new Error("Không có dữ liệu chương trình học");
             }
@@ -147,29 +147,27 @@ const ScheduleManagement = () => {
     console.log("formTest data:", formTest);
 
     // Fetch all schedules
-    const fetchAllSchedules = async () => {
-        try {
-            const response = await getAllSchedules();
-            if (!response) {
-                throw new Error("Không có dữ liệu thời khóa biểu");
-            }
-            setScheduleItems(response.data);
-            // Xử lý dữ liệu thời khóa biểu nếu cần
-        }
-        catch (error) {
-            console.error("Error fetching schedules:", error);
-            // Xử lý lỗi nếu cần
-        }
-    };
+    // const fetchAllSchedules = async () => {
+    //     try {
+    //         const response = await getAllSchedules();
+    //         if (!response) {
+    //             throw new Error("Không có dữ liệu thời khóa biểu");
+    //         }
+    //         setScheduleItems(response.data);
+    //         // Xử lý dữ liệu thời khóa biểu nếu cần
+    //     }
+    //     catch (error) {
+    //         console.error("Error fetching schedules:", error);
+    //         // Xử lý lỗi nếu cần
+    //     }
+    // };
     // Gọi các hàm fetch dữ liệu khi component mount
     useEffect(() => {
         fetchRooms();
         fetchPrograms();
         fetchLecturers();
-        // fetchSubjests();
-        // fetchSemesters();
         fetchClasses();
-        fetchAllSchedules();
+        // fetchAllSchedules();
     }, []);
 
     useEffect(() => {

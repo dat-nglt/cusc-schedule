@@ -68,7 +68,7 @@ export const importProgramsAPI = async (jsonData) => {
   }
 };
 
-export const getProgramCreateScheduleAPI = async () => {
+export const getProgramToCreateScheduleAPI = async () => {
   try {
     const response = await axiosInstance.get("/api/programs/getProgramCreateSchedule");
     return response.data;

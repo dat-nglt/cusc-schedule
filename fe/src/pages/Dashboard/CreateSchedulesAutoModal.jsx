@@ -47,15 +47,11 @@ export default function CreateSchedulesAutoModal({
 }) {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-    const [activeStep, setActiveStep] = useState(0);
+    const [activeStep, setActiveStep] = useState(3);
     const [selectedPrograms, setSelectedPrograms] = useState([]);
     const [selectedRooms, setSelectedRooms] = useState([]);
     const [selectedLecturers, setSelectedLecturers] = useState([]);
     const [selectedClasses, setSelectedClasses] = useState([]);
-
-    const handleStepChange = (step) => {
-        setActiveStep(step);
-    };
 
     const handleNext = () => {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -66,7 +62,7 @@ export default function CreateSchedulesAutoModal({
     };
 
     const handleReset = () => {
-        setActiveStep(0);
+        setActiveStep(3);
         setSelectedPrograms([]);
         setSelectedRooms([]);
         setSelectedLecturers([]);
@@ -79,17 +75,15 @@ export default function CreateSchedulesAutoModal({
     };
 
     const handleGenerate = () => {
-        // Gửi selections về parent component
+
         const selections = {
             programs: selectedPrograms,
             rooms: selectedRooms,
             lecturers: selectedLecturers,
             classes: selectedClasses
-        };
-
-        if (onSelectionChange) {
-            onSelectionChange(selections);
         }
+
+        onSelectionChange(selections)
 
         onGenerate();
         handleClose();
@@ -108,9 +102,7 @@ export default function CreateSchedulesAutoModal({
     // Hàm xử lý "Chọn tất cả" cho từng loại dữ liệu
     const handleSelectAll = (items, selectedItems, setSelectedItems, idKey) => (event) => {
         if (event.target.checked) {
-            if (Array.isArray(items)) {
-                setSelectedItems(items.map(item => item[idKey]));
-            }
+            setSelectedItems(items.map(item => item[idKey]));
         } else {
             setSelectedItems([]);
         }
@@ -132,8 +124,8 @@ export default function CreateSchedulesAutoModal({
                             <FormControlLabel
                                 control={
                                     <Checkbox
-                                        checked={Array.isArray(programs) && selectedPrograms.length === programs.length && programs.length > 0}
-                                        indeterminate={selectedPrograms.length > 0 && Array.isArray(programs) && selectedPrograms.length < programs.length}
+                                        checked={selectedPrograms.length === programs.length && programs.length > 0}
+                                        indeterminate={selectedPrograms.length > 0 && selectedPrograms.length < programs.length}
                                         onChange={handleSelectAll(programs, selectedPrograms, setSelectedPrograms, 'program_id')}
                                     />
                                 }
@@ -149,7 +141,7 @@ export default function CreateSchedulesAutoModal({
                             borderColor: 'divider',
                             borderRadius: 1
                         }}>
-                            {Array.isArray(programs) && programs.length > 0 ? programs.map((program) => (
+                            {programs.map((program) => (
                                 <Box
                                     key={program.program_id}
                                     sx={{
@@ -186,13 +178,7 @@ export default function CreateSchedulesAutoModal({
                                         </Box>
                                     </Box>
                                 </Box>
-                            )) : (
-                                <Box sx={{ p: 3, textAlign: 'center' }}>
-                                    <Typography variant="body2" color="text.secondary">
-                                        Không có chương trình nào để hiển thị
-                                    </Typography>
-                                </Box>
-                            )}
+                            ))}
                         </Box>
 
                         {selectedPrograms.length > 0 && (
@@ -202,7 +188,7 @@ export default function CreateSchedulesAutoModal({
                                 </Typography>
                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                                     {selectedPrograms.slice(0, 3).map(id => {
-                                        const program = Array.isArray(programs) ? programs.find(p => p.program_id === id) : null;
+                                        const program = programs.find(p => p.program_id === id);
                                         return (
                                             <Chip
                                                 key={id}
@@ -239,8 +225,8 @@ export default function CreateSchedulesAutoModal({
                             <FormControlLabel
                                 control={
                                     <Checkbox
-                                        checked={Array.isArray(rooms) && selectedRooms.length === rooms.length && rooms.length > 0}
-                                        indeterminate={selectedRooms.length > 0 && Array.isArray(rooms) && selectedRooms.length < rooms.length}
+                                        checked={selectedRooms.length === rooms.length && rooms.length > 0}
+                                        indeterminate={selectedRooms.length > 0 && selectedRooms.length < rooms.length}
                                         onChange={handleSelectAll(rooms, selectedRooms, setSelectedRooms, 'room_id')}
                                     />
                                 }
@@ -256,7 +242,7 @@ export default function CreateSchedulesAutoModal({
                             borderColor: 'divider',
                             borderRadius: 1
                         }}>
-                            {Array.isArray(rooms) && rooms.map((room) => (
+                            {rooms.map((room) => (
                                 <Box
                                     key={room.room_id}
                                     sx={{
@@ -306,7 +292,7 @@ export default function CreateSchedulesAutoModal({
                                 </Typography>
                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                                     {selectedRooms.slice(0, 3).map(id => {
-                                        const room = Array.isArray(rooms) ? rooms.find(r => r.room_id === id) : null;
+                                        const room = rooms.find(r => r.room_id === id);
                                         return (
                                             <Chip
                                                 key={id}
@@ -343,8 +329,8 @@ export default function CreateSchedulesAutoModal({
                             <FormControlLabel
                                 control={
                                     <Checkbox
-                                        checked={Array.isArray(lecturers) && selectedLecturers.length === lecturers.length && lecturers.length > 0}
-                                        indeterminate={selectedLecturers.length > 0 && Array.isArray(lecturers) && selectedLecturers.length < lecturers.length}
+                                        checked={selectedLecturers.length === lecturers.length && lecturers.length > 0}
+                                        indeterminate={selectedLecturers.length > 0 && selectedLecturers.length < lecturers.length}
                                         onChange={handleSelectAll(lecturers, selectedLecturers, setSelectedLecturers, 'lecturer_id')}
                                     />
                                 }
@@ -360,7 +346,7 @@ export default function CreateSchedulesAutoModal({
                             borderColor: 'divider',
                             borderRadius: 1
                         }}>
-                            {Array.isArray(lecturers) && lecturers.map((lecturer) => (
+                            {lecturers.map((lecturer) => (
                                 <Box
                                     key={lecturer.lecturer_id}
                                     sx={{
@@ -407,7 +393,7 @@ export default function CreateSchedulesAutoModal({
                                 </Typography>
                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                                     {selectedLecturers.slice(0, 3).map(id => {
-                                        const lecturer = Array.isArray(lecturers) ? lecturers.find(l => l.lecturer_id === id) : null;
+                                        const lecturer = lecturers.find(l => l.lecturer_id === id);
                                         return (
                                             <Chip
                                                 key={id}
@@ -444,8 +430,8 @@ export default function CreateSchedulesAutoModal({
                             <FormControlLabel
                                 control={
                                     <Checkbox
-                                        checked={Array.isArray(classes) && selectedClasses.length === classes.length && classes.length > 0}
-                                        indeterminate={selectedClasses.length > 0 && Array.isArray(classes) && selectedClasses.length < classes.length}
+                                        checked={selectedClasses.length === classes.length && classes.length > 0}
+                                        indeterminate={selectedClasses.length > 0 && selectedClasses.length < classes.length}
                                         onChange={handleSelectAll(classes, selectedClasses, setSelectedClasses, 'class_id')}
                                     />
                                 }
@@ -461,7 +447,7 @@ export default function CreateSchedulesAutoModal({
                             borderColor: 'divider',
                             borderRadius: 1
                         }}>
-                            {Array.isArray(classes) && classes.map((cls) => (
+                            {classes.map((cls) => (
                                 <Box
                                     key={cls.class_id}
                                     sx={{
@@ -511,7 +497,7 @@ export default function CreateSchedulesAutoModal({
                                 </Typography>
                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                                     {selectedClasses.slice(0, 3).map(id => {
-                                        const cls = Array.isArray(classes) ? classes.find(c => c.class_id === id) : null;
+                                        const cls = classes.find(c => c.class_id === id);
                                         return (
                                             <Chip
                                                 key={id}
