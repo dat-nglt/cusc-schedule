@@ -27,6 +27,30 @@ const ClassSchedule = (sequelize) => {
                 type: DataTypes.STRING(30),
                 allowNull: true,
             },
+            // Tuần học trong học kỳ
+            week: {
+                type: DataTypes.INTEGER,
+                allowNull: true,
+                comment: 'Week number in the semester'
+            },
+            // Sĩ số lớp
+            size: {
+                type: DataTypes.INTEGER,
+                allowNull: true,
+                comment: 'Number of students attending this class schedule'
+            },
+            // Mã nhóm (nếu có)
+            group_id: {
+                type: DataTypes.STRING(100),
+                allowNull: true,
+                comment: 'Group identifier if applicable'
+            },
+            // Loại buổi học (Lý thuyết, Thực hành, ...)
+            lesson_type: {
+                type: DataTypes.STRING(50),
+                allowNull: true,
+                comment: 'Type of lesson (e.g., Lecture, Lab, Tutorial)'
+            },
             // Ngày học cụ thể
             date: {
                 type: DataTypes.DATEONLY,

@@ -40,6 +40,26 @@ export default {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE'
       },
+      week: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+        comment: 'Week number in the semester'
+      },
+      size: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+        comment: 'Number of students attending this class schedule'
+      },
+      group_id: {
+        type: Sequelize.STRING(100),
+        allowNull: true,
+        comment: 'Group identifier if applicable'
+      },
+      lesson_type: {
+        type: Sequelize.STRING(50),
+        allowNull: true,
+        comment: 'Type of lesson (e.g., Lecture, Lab, Tutorial)'
+      },
       date: {
         type: Sequelize.DATEONLY,
         allowNull: true,
