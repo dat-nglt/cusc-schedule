@@ -28,7 +28,7 @@ export default function EditProgramModal({ open, onClose, program, onSave, error
         program_id: '',
         program_name: '',
         training_duration: '',
-        status: 'Đang triển khai',
+        status: 'active',
     });
 
     useEffect(() => {

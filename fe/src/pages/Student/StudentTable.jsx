@@ -237,7 +237,7 @@ export default function StudentTable({
                                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                         <Phone sx={{ fontSize: '1rem', mr: 0.5, color: 'text.secondary' }} />
                                         <Box>
-                                            {student.account?.phone_number || 'N/A'}
+                                            {student.phone_number || 'N/A'}
                                         </Box>
                                     </Box>
                                 </Box>

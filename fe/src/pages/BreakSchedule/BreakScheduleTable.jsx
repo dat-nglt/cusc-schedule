@@ -102,17 +102,7 @@ const BreakScheduleTable = ({
             }}>
               Kết thúc
             </TableCell>
-            <TableCell sx={{
-              fontWeight: 'bold',
-              fontSize: '0.875rem',
-              textAlign: 'center',
-              borderRight: '1px solid #e0e0e0',
-              width: isSmallScreen ? 'none' : '15%',
-              display: isMediumScreen ? 'none' : 'table-cell',
-              py: 1.5
-            }}>
-              Cập nhật
-            </TableCell>
+
             <TableCell sx={{
               fontWeight: 'bold',
               fontSize: '0.875rem',
@@ -175,14 +165,7 @@ const BreakScheduleTable = ({
               }}>
                 {schedule.break_end_date}
               </TableCell>
-              <TableCell sx={{
-                textAlign: 'center',
-                borderRight: '1px solid #e0e0e0',
-                py: 1.5,
-                display: isMediumScreen ? 'none' : 'table-cell'
-              }}>
-                {schedule.updated_at}
-              </TableCell>
+
               <TableCell sx={{
                 textAlign: 'center',
                 py: 1.5

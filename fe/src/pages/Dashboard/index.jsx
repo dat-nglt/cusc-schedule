@@ -11,7 +11,7 @@ import ProgressModal from './ProgressModal';
 import { toast } from 'react-toastify';
 
 import { getAllRoomAPI } from '../../api/roomAPI';
-import { getProgramCreateScheduleAPI } from '../../api/programAPI';
+import { getProgramToCreateScheduleAPI } from '../../api/programAPI';
 import { getAllLecturersAPI } from '../../api/lecturerAPI';
 import { getClassesAPI } from '../../api/classAPI';
 import CreateSchedulesAutoModal from './CreateSchedulesAutoModal';
@@ -55,7 +55,7 @@ const Dashboard = () => {
 
     const fetchPrograms = async () => {
         try {
-            const response = await getProgramCreateScheduleAPI();
+            const response = await getProgramToCreateScheduleAPI();
             if (!response) {
                 throw new Error("Không có dữ liệu chương trình học");
             }

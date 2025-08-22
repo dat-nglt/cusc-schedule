@@ -133,7 +133,7 @@ export default function AddSubjectModal({ open, onClose, onAddSubject, existingS
             credit: 0,
             theory_hours: 0,
             practice_hours: 0,
-            status: 'Hoạt động',
+            status: 'active',
             semester_id: ''
         });
         setActiveStep(0);

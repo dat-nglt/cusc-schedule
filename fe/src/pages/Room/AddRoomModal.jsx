@@ -44,9 +44,8 @@ import PreviewRoomModal from './PreviewRoomModal';
 
 // Define options for room types and statuses
 const roomTypeOptions = [
-  { value: 'Lý thuyết', label: 'Lý thuyết' },
-  { value: 'Thực hành', label: 'Thực hành' },
-  { value: 'Phòng hội thảo', label: 'Phòng hội thảo' }, // Added as a potential option
+  { value: 'theory', label: 'Lý thuyết' },
+  { value: 'practice', label: 'Thực hành' },
 ];
 
 const roomStatusOptions = [

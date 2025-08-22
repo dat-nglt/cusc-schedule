@@ -244,7 +244,7 @@ export default function LecturerDetailModal({ open, onClose, lecturer }) {
                             />
                             <InfoItem
                                 label="Ngày sinh"
-                                value={lecturer.date_of_birth}
+                                value={lecturer.day_of_birth}
                                 icon={<CakeIcon fontSize="small" />}
                             />
                         </InfoCard>
@@ -254,7 +254,7 @@ export default function LecturerDetailModal({ open, onClose, lecturer }) {
                         <InfoCard title="Thông tin liên hệ" icon={<EmailIcon />} minHeight={220}>
                             <InfoItem
                                 label="Email"
-                                value={lecturer.email}
+                                value={lecturer.account.email}
                                 icon={<EmailIcon fontSize="small" />}
                             />
                             <InfoItem
@@ -275,7 +275,15 @@ export default function LecturerDetailModal({ open, onClose, lecturer }) {
                         <InfoCard title="Thông tin giảng dạy" icon={<SchoolIcon />} minHeight={220}>
                             <InfoItem
                                 label="Môn giảng dạy"
-                                value={lecturer.subjects || []}
+                                value={
+                                    Array.isArray(lecturer?.subjects)
+                                        ? lecturer.subjects.map(
+                                            s => typeof s === 'object' && s !== null
+                                                ? s.subject_name || s.name || ''
+                                                : s
+                                        )
+                                        : []
+                                }
                                 icon={<SubjectIcon fontSize="small" />}
                                 chips
                             />

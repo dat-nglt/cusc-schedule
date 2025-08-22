@@ -259,104 +259,117 @@ export const deleteStudentService = async (id) => {
  * @throws {Error} Nếu dữ liệu JSON không hợp lệ hoặc lỗi trong quá trình nhập.
  */
 export const importStudentsFromJSONService = async (studentsData) => {
-  const results = {
-    success: [],
-    errors: [],
-  };
-
-  // Sử dụng Promise.all để xử lý song song, cải thiện hiệu suất
-  const importPromises = studentsData.map(async (studentData, index) => {
-    const recordIndex = index + 1;
-
-    // 1. Validate dữ liệu
-    if (!studentData.student_id) {
-      return {
-        isError: true,
-        record: { student_id: studentData.student_id || "N/A" },
-        error: "Mã học viên là bắt buộc",
-      };
-    }
-    if (!studentData.name) {
-      return {
-        isError: true,
-        record: { student_id: studentData.student_id },
-        error: "Tên học viên là bắt buộc",
-      };
-    }
-    if (!studentData.email) {
-      return {
-        isError: true,
-        record: { student_id: studentData.student_id },
-        error: "Email là bắt buộc",
-      };
-    }
-    if (!isValidEmail(studentData.email)) {
-      return {
-        isError: true,
-        record: { student_id: studentData.student_id },
-        error: "Email không đúng định dạng",
-      };
-    }
-    if (
-      studentData.gpa &&
-      (isNaN(parseFloat(studentData.gpa)) ||
-        parseFloat(studentData.gpa) < 0 ||
-        parseFloat(studentData.gpa) > 4)
-    ) {
-      return {
-        isError: true,
-        record: { student_id: studentData.student_id },
-        error: "Điểm trung bình (GPA) phải là số từ 0 đến 4",
-      };
+  try {
+    if (!studentsData || !Array.isArray(studentsData)) {
+      throw new Error("Dữ liệu học viên không hợp lệ");
     }
 
-    const transaction = await sequelize.transaction();
-    try {
-      // 2. Kiểm tra dữ liệu đã tồn tại
-      const [existingStudentById, existingEmail] = await Promise.all([
-        Student.findOne({
-          where: { student_id: studentData.student_id },
-          transaction,
-        }),
-        Account.findOne({ where: { email: studentData.email }, transaction }),
-      ]);
+    const results = {
+      success: [],
+      errors: [],
+      total: studentsData.length,
+    };
 
-      if (existingStudentById) {
-        throw new Error("Mã học viên đã tồn tại");
+    for (let i = 0; i < studentsData.length; i++) {
+      const studentData = studentsData[i];
+      const index = i + 1;
+
+      try {
+        // Validate required fields
+        if (
+          !studentData.student_id ||
+          !studentData.name ||
+          !studentData.email
+        ) {
+          results.errors.push({
+            index: index,
+            student_id: studentData.student_id || "N/A",
+            error: "Mã học viên, Tên và Email là bắt buộc",
+          });
+          continue;
+        }
+
+        // Clean và format data
+        const cleanedData = {
+          student_id: studentData.student_id.toString().trim(),
+          name: studentData.name.toString().trim(),
+          email: studentData.email ? studentData.email.toString().trim() : null,
+          gender: studentData.gender ? studentData.gender.toString().trim() : null,
+          address: studentData.address ? studentData.address.toString().trim() : null,
+          day_of_birth: studentData.day_of_birth || null,
+          phone_number: studentData.phone_number ? studentData.phone_number.toString().trim() : null,
+          class_id: studentData.class_id ? studentData.class_id.toString().trim() : null,
+          admission_year: studentData.admission_year || null,
+          gpa: studentData.gpa !== undefined ? parseFloat(studentData.gpa) : null,
+          status: studentData.status || "Đang học",
+        };
+
+        // Validate GPA nếu có
+        if (
+          cleanedData.gpa !== null &&
+          (isNaN(cleanedData.gpa) || cleanedData.gpa < 0 || cleanedData.gpa > 4)
+        ) {
+          results.errors.push({
+            index: index,
+            student_id: cleanedData.student_id,
+            error: "Điểm trung bình (GPA) phải là số từ 0 đến 4",
+          });
+          continue;
+        }
+
+        // Validate email format nếu có
+        if (cleanedData.email && !ExcelUtils.isValidEmail(cleanedData.email)) {
+          results.errors.push({
+            index: index,
+            student_id: cleanedData.student_id,
+            error: "Email không đúng định dạng",
+          });
+          continue;
+        }
+
+        // Kiểm tra student_id đã tồn tại chưa
+        const existingStudentById = await Student.findOne({
+          where: { student_id: cleanedData.student_id },
+        });
+        if (existingStudentById) {
+          results.errors.push({
+            index: index,
+            student_id: cleanedData.student_id,
+            error: "Mã học viên đã tồn tại",
+          });
+          continue;
+        }
+
+        // Kiểm tra email đã tồn tại chưa (nếu có)
+        if (cleanedData.email) {
+          const existingStudentByEmail = await Account.findOne({
+            where: { email: cleanedData.email },
+          });
+          if (existingStudentByEmail) {
+            results.errors.push({
+              index: index,
+              student_id: cleanedData.student_id,
+              error: "Email đã tồn tại",
+            });
+            continue;
+          }
+        }
+
+        // Tạo student mới
+        const newStudent = await createStudentService(cleanedData);
+        results.success.push(newStudent);
+      } catch (error) {
+        results.errors.push({
+          index: index,
+          student_id: studentData.student_id || "N/A",
+          error: error.message || "Lỗi không xác định",
+        });
       }
-      if (existingEmail) {
-        throw new Error("Email đã tồn tại");
-      }
-
-      // 3. Tạo học viên mới
-      const newStudent = await createStudentService(studentData, {
-        transaction,
-      });
-      await transaction.commit();
-
-      return { isError: false, record: newStudent };
-    } catch (error) {
-      if (transaction && !transaction.finished) {
-        await transaction.rollback();
-      }
-      return {
-        isError: true,
-        record: { student_id: studentData.student_id },
-        error: error.message || "Lỗi không xác định",
-      };
     }
-  });
 
-  const allResults = await Promise.all(importPromises);
-
-  // Phân loại kết quả
-  allResults.forEach((result) => {
-    if (result.isError) {
-      results.errors.push(result.record);
-    } else {
-      results.success.push(result.record);
-    }
-  });
-
-  return results;
+    return results;
+  } catch (error) {
+    console.error("Lỗi khi nhập học viên từ JSON:", error);
+    throw error;
+  }
 };

@@ -221,7 +221,7 @@ export default function StudentDetailModal({ open, onClose, student }) {
                             />
                             <InfoItem
                                 label="Ngày sinh"
-                                value={student.date_of_birth}
+                                value={student.day_of_birth}
                                 icon={<CakeIcon fontSize="small" />}
                             />
                         </InfoCard>
@@ -231,7 +231,7 @@ export default function StudentDetailModal({ open, onClose, student }) {
                         <InfoCard title="Thông tin liên hệ" icon={<EmailIcon />}>
                             <InfoItem
                                 label="Email"
-                                value={student.email}
+                                value={student.account.email}
                                 icon={<EmailIcon fontSize="small" />}
                             />
                             <InfoItem

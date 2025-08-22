@@ -28,7 +28,7 @@ export default {
         date: '2025-08-20',
         slot_id: 'S2',
         subject_id: 'MH002',
-        lecturer_id: 'GV002',
+        lecturer_id: 'GV003',
         room_id: 'LT2',
         status: 'active',
         notes: 'Môn Cấu trúc dữ liệu và giải thuật',

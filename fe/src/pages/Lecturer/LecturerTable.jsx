@@ -232,7 +232,7 @@ export default function LecturerTable({
                                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                         <Phone sx={{ fontSize: '1rem', mr: 0.5, color: 'text.secondary' }} />
                                         <Box>
-                                            {lecturer.account?.phone_number || 'N/A'}
+                                            {lecturer.phone_number || 'N/A'}
                                         </Box>
                                     </Box>
                                 </Box>

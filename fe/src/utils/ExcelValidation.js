@@ -1,4 +1,4 @@
-const validGenders = ['Nam', 'Nữ'];
+const validGenders = ['male', 'female'];
 // Helper function để format date từ Excel
 const formatDate = (dateValue) => {
     if (!dateValue) return '';
@@ -70,7 +70,8 @@ const requiredLecturerFields = [
     'phone_number',
     'department',
     'hire_date',
-    'degree'
+    'degree',
+    'status'
 ];
 
 const validateLecturerData = (lecturer, existingLecturers, allImportData = []) => {
@@ -107,14 +108,7 @@ const validateLecturerData = (lecturer, existingLecturers, allImportData = []) =
             errors.push('invalid_email');
         }
     }
-
-    // Kiểm tra format số điện thoại
-    if (lecturer.phone_number) {
-        const phoneRegex = /^[0-9]{10,11}$/;
-        if (!phoneRegex.test(lecturer.phone_number.toString())) {
-            errors.push('invalid_phone');
-        }
-    }    // Kiểm tra ngày sinh và ngày tuyển dụng
+    // Kiểm tra ngày sinh và ngày tuyển dụng
     if (lecturer.day_of_birth) {
         const birthDate = new Date(lecturer.day_of_birth);
         const today = new Date();
@@ -141,6 +135,21 @@ const validateLecturerData = (lecturer, existingLecturers, allImportData = []) =
     return errors;
 };
 
+// Helper function để chuẩn hóa gender
+const normalizeGender = (gender) => {
+    if (!gender) return '';
+    if (gender.trim() === 'Nam') return 'male';
+    if (gender.trim() === 'Nữ') return 'female';
+    return gender.trim();
+};
+
+// Helper function để chuẩn hóa status
+const normalizeStatus = (status) => {
+    if (!status) return '';
+    if (status.trim() === 'Hoạt động') return 'active';
+    return status.trim();
+};
+
 export const processExcelDataLecturer = (rawData, existingLecturers) => {
     // Xử lý dữ liệu thô từ Excel
     const processedData = rawData.map((row, index) => {
@@ -150,7 +159,7 @@ export const processExcelDataLecturer = (rawData, existingLecturers) => {
             name: row['Họ tên']?.trim() || row['name']?.trim() || '',
             email: row['Email']?.trim() || row['email']?.trim() || '',
             day_of_birth: formatDate(row['Ngày sinh'] || row['day_of_birth']),
-            gender: row['Giới tính']?.trim() || row['gender']?.trim() || '',
+            gender: normalizeGender(row['Giới tính']?.trim() || row['gender']?.trim() || ''),
             address: row['Địa chỉ']?.trim() || row['address']?.trim() || '',
             phone_number: row['Số điện thoại'] || row['phone_number'] || '',
             academic_rank: row['Học hàm']?.trim() || row['academic_rank']?.trim() || '',
@@ -158,7 +167,7 @@ export const processExcelDataLecturer = (rawData, existingLecturers) => {
             department: row['Khoa/Bộ môn']?.trim() || row['department']?.trim() || '',
             hire_date: formatDate(row['Ngày tuyển dụng'] || row['hire_date']),
             degree: row['Học vị']?.trim() || row['degree']?.trim() || '',
-            status: row['Trạng thái']?.trim() || row['status']?.trim() || 'Hoạt động',
+            status: normalizeStatus(row['Trạng thái']?.trim() || row['status']?.trim() || 'Hoạt động'),
             rowIndex: index + 2 // +2 vì Excel bắt đầu từ row 1 và có header
         };
 
@@ -224,12 +233,6 @@ const validateStudentData = (student, existingStudents, allImportData = []) => {
     }
 
     // Kiểm tra format số điện thoại
-    if (student.phone_number) {
-        const phoneRegex = /^[0-9]{10,11}$/;
-        if (!phoneRegex.test(student.phone_number.toString())) {
-            errors.push('invalid_phone');
-        }
-    }
     // Kiểm tra ngày sinh 
     if (student.day_of_birth) {
         const birthDate = new Date(student.day_of_birth);
@@ -257,13 +260,13 @@ export const processExcelDataStudent = (rawData, existingStudents) => {
             name: row['Họ tên']?.trim() || row['name']?.trim() || '',
             email: row['Email']?.trim() || row['email']?.trim() || '',
             day_of_birth: formatDate(row['Ngày sinh'] || row['day_of_birth']),
-            gender: row['Giới tính']?.trim() || row['gender']?.trim() || '',
+            gender: normalizeGender(row['Giới tính']?.trim() || row['gender']?.trim() || ''),
             address: row['Địa chỉ']?.trim() || row['address']?.trim() || '',
             phone_number: row['Số điện thoại'] || row['phone_number'] || '',
             class: row['Lớp'] || row['class'] || '',
             admission_year: formatDate(row['Năm nhập học'] || row['admission_year']),
             gpa: row['Điểm trung bình'] || row['gpa'] || '',
-            status: row['Trạng thái']?.trim() || row['status']?.trim() || 'Đang học',
+            status: normalizeStatus(row['Trạng thái']?.trim() || row['status']?.trim() || 'Đang học'),
             rowIndex: index + 2 // +2 vì Excel bắt đầu từ row 1 và có header
         };
 
@@ -334,7 +337,7 @@ export const processExcelDataProgram = (rawData, existingPrograms) => {
             program_name: row['Tên chương trình']?.trim() || row['program_name']?.trim() || '',
             duration: row['Thời gian đào tạo'] || row['duration'] || '',
             description: row['Mô tả']?.trim() || row['description']?.trim() || '',
-            status: row['Trạng thái']?.trim() || row['status']?.trim() || 'Hoạt động',
+            status: normalizeStatus(row['Trạng thái']?.trim() || row['status']?.trim() || 'Hoạt động'),
             rowIndex: index + 2 // +2 vì Excel bắt đầu từ row 1 và có header
         };
 
@@ -427,7 +430,7 @@ export const processExcelDataSemester = (rawData, existingSemesters) => {
             start_date: formatDate(row['Ngày bắt đầu'] || row['start_date']),
             end_date: formatDate(row['Ngày kết thúc'] || row['end_date']),
             duration_weeks: row['Số tuần'] || row['duration_weeks'] || '',
-            status: row['Trạng thái']?.trim() || row['status']?.trim() || 'Hoạt động',
+            status: normalizeStatus(row['Trạng thái']?.trim() || row['status']?.trim() || 'Hoạt động'),
             rowIndex: index + 2 // +2 vì Excel bắt đầu từ row 1 và có header
         };
 
@@ -520,7 +523,7 @@ export const processExcelDataSubject = (rawData, existingSubjects) => {
             credit: row['Số tín chỉ'] ?? row['credit'] ?? '',
             theory_hours: row['Số giờ lý thuyết'] ?? row['theory_hours'] ?? '',
             practice_hours: row['Số giờ thực hành'] ?? row['practice_hours'] ?? '',
-            status: row['Trạng thái']?.trim() || row['status']?.trim() || 'Hoạt động',
+            status: normalizeStatus(row['Trạng thái']?.trim() || row['status']?.trim() || 'Hoạt động'),
             rowIndex: index + 2 // +2 vì Excel bắt đầu từ row 1 và có header
         };
 
@@ -630,7 +633,7 @@ export const processExcelDataTimeslot = (rawData, existingTimeslots) => {
             end_time: formatTime(row['Giờ kết thúc'] || row['Thời gian kết thúc'] || row['end_time'] || ''),
             type: row['Loại']?.trim() || row['Buổi']?.trim() || row['type'] || '',
             description: row['Mô tả']?.trim() || row['description']?.trim() || '',
-            status: row['Trạng thái']?.trim() || row['status']?.trim() || 'active',
+            status: normalizeStatus(row['Trạng thái']?.trim() || row['status']?.trim() || 'active'),
             rowIndex: index + 2 // +2 vì Excel bắt đầu từ row 1 và có header
         };
 
@@ -707,6 +710,15 @@ const validateRoomData = (room, existingRooms, allImportData = []) => {
     return errors;
 };
 
+// Helper function để chuẩn hóa type phòng
+const normalizeRoomType = (type) => {
+    if (!type) return '';
+    const t = type.trim().toLowerCase();
+    if (t === 'lý thuyết') return 'theory';
+    if (t === 'thực hành') return 'practice';
+    return type.trim();
+};
+
 export const processExcelDataRoom = (rawData, existingRooms) => {
     // Xử lý dữ liệu thô từ Excel
     const processedData = rawData.map((row, index) => {
@@ -719,10 +731,10 @@ export const processExcelDataRoom = (rawData, existingRooms) => {
 
             // Giữ nguyên với các giá trị không phải chuỗi hoặc có logic mặc định
             capacity: row['Sức chứa'] || row['capacity'] || '',
-            status: row['Trạng thái'] || row['status'] || 'available',
+            status: normalizeStatus(row['Trạng thái'] || row['status'] || 'available'),
 
             // Áp dụng trim cho các trường chuỗi còn lại
-            type: row['Loại phòng']?.trim() || row['type']?.trim() || '',
+            type: normalizeRoomType(row['Loại phòng']?.trim() || row['type']?.trim() || ''),
             note: row['Ghi chú']?.trim() || row['note']?.trim() || '',
 
             rowIndex: index + 2

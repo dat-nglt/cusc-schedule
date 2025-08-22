@@ -170,8 +170,8 @@ const EditRoomModal = ({ open, onClose, room, onSave, error, loading }) => {
               onChange={handleChange}
               label="Loại phòng học"
             >
-              <MenuItem value="Lý thuyết">Lý thuyết</MenuItem>
-              <MenuItem value="Thực hành">Thực hành</MenuItem>
+              <MenuItem value="theory">Lý thuyết</MenuItem>
+              <MenuItem value="practice">Thực hành</MenuItem>
               {/* <MenuItem value="Phòng hội thảo">Phòng hội thảo</MenuItem> */}
             </Select>
           </FormControl>

@@ -225,13 +225,13 @@ export default function SubjectDetailModal({ open, onClose, subject }) {
                                 icon={<CreditIcon fontSize="small" />}
                             />
                             <InfoItem
-                                label="Số tiết lý thuyết"
-                                value={subject.theory_hours ? `${subject.theory_hours} tiết` : null}
+                                label="Số giờ lý thuyết"
+                                value={subject.theory_hours ? `${subject.theory_hours} giờ` : null}
                                 icon={<TimeIcon fontSize="small" />}
                             />
                             <InfoItem
-                                label="Số tiết thực hành"
-                                value={subject.practice_hours ? `${subject.practice_hours} tiết` : null}
+                                label="Số giờ thực hành"
+                                value={subject.practice_hours ? `${subject.practice_hours} giờ` : null}
                                 icon={<TimeIcon fontSize="small" />}
                             />
                         </InfoCard>

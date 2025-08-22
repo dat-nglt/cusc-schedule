@@ -40,7 +40,7 @@ import {
 } from '@mui/icons-material';
 
 const statusOptions = [
-  { value: 'Đang học', color: 'success', db: 'studying' },
+  { value: 'Hoạt động', color: 'success', db: 'active' },
   { value: 'Tạm nghỉ', color: 'warning', db: 'break' },
   { value: 'Đã nghỉ học', color: 'error', db: 'dropped' },
   { value: 'Đã tốt nghiệp', color: 'info', db: 'graduated' },
@@ -60,7 +60,7 @@ export default function EditStudentModal({ open, onClose, student, onSave, error
     phone_number: '',
     class: '',
     admission_year: '',
-    status: 'Đang học',
+    status: 'Hoạt động',
   });
 
   const [activeStep, setActiveStep] = useState(0);
@@ -324,9 +324,8 @@ export default function EditStudentModal({ open, onClose, student, onSave, error
                     </InputAdornment>
                   }
                 >
-                  <MenuItem value="Nam">Nam</MenuItem>
-                  <MenuItem value="Nữ">Nữ</MenuItem>
-                  <MenuItem value="Khác">Khác</MenuItem>
+                  <MenuItem value="male">Nam</MenuItem>
+                  <MenuItem value="female">Nữ</MenuItem>
                 </Select>
               </FormControl>
             </Box>

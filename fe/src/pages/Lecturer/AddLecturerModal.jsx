@@ -64,7 +64,7 @@ const availableDegrees = [
 ];
 
 const statusOptions = [
-    { value: 'Đang giảng dạy', color: 'success', db: 'teaching' },
+    { value: 'Hoạt động', color: 'success', db: 'active' },
     { value: 'Tạm nghỉ', color: 'warning', db: 'break' },
     { value: 'Nghỉ việc', color: 'error', db: 'resigned' },
 ];
@@ -84,7 +84,7 @@ const AddLecturerModal = ({ open, onClose, onAddLecturer, existingLecturers, err
         hire_date: '',
         degree: '',
         subjects: [],
-        status: 'Đang giảng dạy',
+        status: 'Hoạt động',
     });
 
     const [busySlots, setBusySlots] = useState([]);
@@ -496,9 +496,9 @@ const AddLecturerModal = ({ open, onClose, onAddLecturer, existingLecturers, err
                                             </InputAdornment>
                                         }
                                     >
-                                        <MenuItem value="Nam">Nam</MenuItem>
-                                        <MenuItem value="Nữ">Nữ</MenuItem>
-                                        <MenuItem value="Khác">Khác</MenuItem>
+                                        <MenuItem value="male">Nam</MenuItem>
+                                        <MenuItem value="female">Nữ</MenuItem>
+
                                     </Select>
                                 </FormControl>
                             </Box>

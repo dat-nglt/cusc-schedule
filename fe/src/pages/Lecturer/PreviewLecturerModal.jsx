@@ -183,7 +183,13 @@ export default function PreviewLecturerModal({ open, onClose, previewData, fetch
                         <TableCell>{lecturer.lecturer_id}</TableCell>
                         <TableCell>{lecturer.name}</TableCell>
                         <TableCell>{lecturer.email}</TableCell>
-                        <TableCell>{lecturer.gender}</TableCell>
+                        <TableCell>
+                          {lecturer.gender === "male"
+                            ? "Nam"
+                            : lecturer.gender === "female"
+                              ? "Nữ"
+                              : lecturer.gender}
+                        </TableCell>
                         <TableCell>{lecturer.phone_number}</TableCell>
                         <TableCell>
                           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>

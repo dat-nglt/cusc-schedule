@@ -78,7 +78,7 @@ export default function AddProgramModal({
     const [newProgram, setNewProgram] = useState({
         program_id: '',
         program_name: '',
-        status: 'Đang triển khai',
+        status: 'active', // Mặc định là 'active'
         selected_semesters: [], // Mảng chứa ID của các học kỳ được chọn
         semester_subjects: {} // Đối tượng chứa môn học cho từng học kỳ { semesterId: [subjectIds] }
     });
