@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+
+import { useState, useEffect } from 'react';
 import {
     Box,
     Typography,
@@ -10,7 +11,6 @@ import {
     FormControl,
     InputLabel,
     InputAdornment,
-    IconButton,
     Button,
     useTheme,
 } from '@mui/material';
@@ -28,7 +28,6 @@ import { toast } from 'react-toastify';
 import { getAllLecturersAPI, createLecturerAPI, updateLecturerAPI, deleteLecturerAPI } from '../../api/lecturerAPI';
 import { getAllSubjectsAPI } from '../../api/subjectAPI';
 import TablePaginationLayout from '../../components/layout/TablePaginationLayout';
-import * as XLSX from 'xlsx';
 
 const Lecturer = () => {
     const { isSmallScreen, isMediumScreen } = useResponsive();
@@ -49,7 +48,7 @@ const Lecturer = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
-    const statuses = ['Đang giảng dạy', 'Tạm nghỉ', 'Đã nghỉ việc'];
+    const statuses = ['Đang giảng dạy', 'Tạm nghỉ', 'Đã nghỉ việc', 'Nghỉ hưu'];
 
     const fetchLecturers = async () => {
         setLoading(true);
@@ -57,6 +56,8 @@ const Lecturer = () => {
         try {
             const response = await getAllLecturersAPI();
             if (response && response.data) {
+                console.log();
+
                 setLecturers(response.data);
             } else {
                 setLecturers([]);
@@ -99,43 +100,57 @@ const Lecturer = () => {
         setOpenAddModal(true);
     };
 
-    const handleAddNewLecturer = async (newLecturer, subjects = [], busySlots = [], semesterBusySlots = []) => {
+    const handleAddNewLecturer = async (
+        newLecturerData,
+        newLecturerSubjects,
+        busySlots,
+        semesterBusySlots
+    ) => {
         try {
             setLoading(true);
-            const response = await createLecturerAPI(newLecturer, subjects, busySlots, semesterBusySlots);
+
+            const response = await createLecturerAPI({
+                newLecturerData,
+                newLecturerSubjects,
+                busySlots,
+                semesterBusySlots,
+            });
+
             if (response && response.data) {
-                fetchLecturers(); // Tải lại danh sách giảng viên sau khi thêm thành công
-                toast.success('Thêm giảng viên thành công!');
+                fetchLecturers();
+                toast.success("Thêm giảng viên thành công!");
             }
         } catch (error) {
             console.error("Lỗi khi thêm giảng viên:", error);
-            setError("Không thể thêm giảng viên. Vui lòng kiểm tra lại thông tin.");
-            toast.error('Thêm giảng viên thất bại! Vui lòng kiểm tra lại thông tin.');
+
+            const errorMessage =
+                error.response?.data?.message ||
+                error.message ||
+                "Không thể thêm giảng viên. Vui lòng kiểm tra lại thông tin.";
+
+            setError(errorMessage);
+            toast.error(`Thêm giảng viên thất bại: ${errorMessage}`);
         } finally {
             setLoading(false);
-            setError('');
         }
     };
 
-    const handleCloseAddModal = () => {
-        setOpenAddModal(false);
-    };
 
     // Hàm mở modal chỉnh sửa
     const handleEditLecturer = (id) => {
         try {
             const lecturerToEdit = lecturers.find(lecturer => lecturer.lecturer_id === id);
-
             if (lecturerToEdit) {
                 setEditedLecturer({ ...lecturerToEdit });
                 setOpenEditModal(true); // Mở modal chỉnh sửa
             } else {
-                console.error("Không tìm thấy giảng viên để chỉnh sửa với ID:", id);
-                setError("Không tìm thấy thông tin giảng viên này.");
+                setError("Không tìm thấy thông tin giảng viên, vui lòng kiểm tra lại!");
             }
         } catch (err) {
-            console.error("Lỗi khi chuẩn bị chỉnh sửa giảng viên:", err);
-            setError("Đã xảy ra lỗi hệ thống. Vui lòng thử lại.");
+            setEditedLecturer(null);
+            setOpenEditModal(false);
+            setError("Đã xảy ra lỗi khi chuẩn bị chỉnh sửa giảng viên.");
+            toast.error('Lỗi khi chuẩn bị chỉnh sửa giảng viên. Vui lòng thử lại.');
         }
     };
 
@@ -145,12 +160,16 @@ const Lecturer = () => {
         setEditedLecturer(null);
     };
 
+    const handleCloseAddModal = () => {
+        setOpenAddModal(false);
+    };
+
     // Hàm lưu thay đổi sau khi chỉnh sửa
-    const handleSaveEditedLecturer = async (updatedLecturer, subjects = [], busySlots = [], semesterBusySlots = []) => {
+    const handleSaveEditedLecturer = async (updatedLecturer) => {
         setLoading(true);
         setError(null); // Đặt lại trạng thái lỗi
         try {
-            const response = await updateLecturerAPI(updatedLecturer.lecturer_id, updatedLecturer, subjects, busySlots, semesterBusySlots);
+            const response = await updateLecturerAPI(updatedLecturer.lecturer_id, updatedLecturer);
 
             if (response && response.data) {
                 setLecturers(prevLecturers =>
@@ -167,9 +186,9 @@ const Lecturer = () => {
                 throw new Error(response.message || 'Cập nhật thất bại');
             }
         } catch (err) {
-            console.error("Lỗi khi cập nhật giảng viên:", err.response?.data?.message || err.message);
-            setError(err.response?.data?.message || err.message);
-            toast.error(err.response?.data?.message || err.message);
+            console.error("Lỗi khi cập nhật giảng viên:", err.response.data.message);
+            setError(err.response.data.message);
+            toast.error(err.response.data.message);
         } finally {
             setLoading(false);
         }
@@ -189,20 +208,21 @@ const Lecturer = () => {
                 setSelectedLecturer(lecturerFound);
                 setOpenDetail(true); // Mở modal hoặc panel hiển thị chi tiết
             } else {
-                console.error("Không tìm thấy giảng viên với ID:", id);
                 setError("Không tìm thấy thông tin giảng viên này.");
             }
         } catch (err) {
-            console.error("Lỗi khi xem chi tiết giảng viên:", err);
-            setError("Đã xảy ra lỗi hệ thống.");
+            setSelectedLecturer(null);
+            setOpenDetail(false);
+            toast.error('Lỗi khi xem chi tiết giảng viên. Vui lòng thử lại.');
+            setError("Lỗi khi xem chi tiết giảng viên. Vui lòng thử lại.");
         }
     };
 
 
     // Hàm xử lý xóa giảng viên
     const handleDeleteLecturer = (id) => {
-        const lecturer = lecturers.find((l) => l.lecturer_id === id);
-        setLecturerToDelete(lecturer);
+        const lecturerDeletedID = lecturers.find((l) => l.lecturer_id === id);
+        setLecturerToDelete(lecturerDeletedID);
         setOpenDeleteModal(true);
     };
 
@@ -212,11 +232,13 @@ const Lecturer = () => {
             setLoading(true);
             const response = await deleteLecturerAPI(id);
             if (response) {
+                setLecturers((prevLecturers) =>
+                    prevLecturers.filter((lecturer) => lecturer.lecturer_id !== id)
+                );
                 toast.success('Xóa giảng viên thành công!');
                 fetchLecturers(); // Tải lại danh sách giảng viên sau khi xóa thành công
             }
         } catch (error) {
-            console.error("Lỗi khi xóa giảng viên:", error);
             setError("Không thể xóa giảng viên. Vui lòng thử lại.");
             toast.error('Xóa giảng viên thất bại! Vui lòng thử lại.');
         } finally {
@@ -258,28 +280,6 @@ const Lecturer = () => {
 
     // Tính toán dữ liệu hiển thị trên trang hiện tại
     const displayedLecturers = filteredLecturers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
-    console.log("lecturers", lecturers);
-    // Export lecturers to Excel
-    const handleExportExcel = () => {
-        // Prepare data for export (filteredLecturers)
-        const data = lecturers.map(l => ({
-            'Mã giảng viên': l.lecturer_id,
-            'Tên': l.name,
-            'Email': l.account.email,
-            'ngày sinh': l.date_of_birth,
-            'Số điện thoại': l.phone_number,
-            'giới tính': l.gender,
-            'Khoa/Bộ môn': l.department,
-            'địa chỉ': l.address,
-            'ngày vào làm': l.hire_date,
-            'Môn giảng dạy': l.subjects.map(s => s.subject_name).join(', '),
-            'Trạng thái': l.status,
-        }));
-        const worksheet = XLSX.utils.json_to_sheet(data);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, 'Giảng viên');
-        XLSX.writeFile(workbook, 'danh_sach_giang_vien.xlsx');
-    };
 
     return (
         <Box sx={{ p: 1, zIndex: 10, height: 'calc(100vh - 64px)', overflowY: 'auto' }}>
@@ -348,13 +348,6 @@ const Lecturer = () => {
                                 >
                                     Thêm giảng viên
                                 </Button>
-                                <Button
-                                    variant="outlined"
-                                    color="success"
-                                    onClick={handleExportExcel}
-                                >
-                                    Xuất Excel
-                                </Button>
                             </Box>
                         </Box>
                         {filteredLecturers.length === 0 ? (
@@ -405,7 +398,6 @@ const Lecturer = () => {
                 onSave={handleSaveEditedLecturer}
                 error={error}
                 loading={loading}
-                subjects={subjects}
             />
             <DeleteLecturerModal
                 open={openDeleteModal}
@@ -418,4 +410,3 @@ const Lecturer = () => {
 };
 
 export default Lecturer;
-

@@ -14,7 +14,7 @@ import {
     useTheme,
 } from '@mui/material';
 import { Visibility, Edit, Delete, MoreVert } from '@mui/icons-material';
-import { getStatusChip } from '../../components/ui/StatusChip';
+import { getStatusForLectuer } from '../../components/ui/StatusChip';
 import { formatDateTime } from '../../utils/formatDateTime';
 
 export default function SemesterTable({
@@ -199,7 +199,7 @@ export default function SemesterTable({
                                 py: 1.5
                             }}>
                                 <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                                    {getStatusChip(semester.status)}
+                                    {getStatusForLectuer(semester.status)}
                                 </Box>
                             </TableCell>
                             <TableCell sx={{

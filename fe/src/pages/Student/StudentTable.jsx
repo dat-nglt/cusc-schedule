@@ -15,7 +15,7 @@ import {
     useTheme,
 } from '@mui/material';
 import { Visibility, Edit, Delete, MoreVert, Email, Phone } from '@mui/icons-material';
-import { getStatusChip } from '../../components/ui/StatusChip';
+import { getStatusForLectuer } from '../../components/ui/StatusChip';
 import { formatDateTime } from '../../utils/formatDateTime';
 
 export default function StudentTable({
@@ -260,7 +260,7 @@ export default function StudentTable({
                                 }}
                             >
                                 <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                                    {getStatusChip(student.status)}
+                                    {getStatusForLectuer(student.status)}
                                 </Box>
                             </TableCell>
                             <TableCell

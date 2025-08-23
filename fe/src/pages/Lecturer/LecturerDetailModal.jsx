@@ -36,14 +36,17 @@ import {
 } from '@mui/icons-material';
 import { formatDateTime } from '../../utils/formatDateTime';
 import { toast } from 'react-toastify';
+import { getStatusForLectuer } from '../../components/ui/StatusChip';
 
-const InfoCard = ({ title, icon, children, span = 1, minHeight = 200 }) => (
+const InfoCard = ({ title, icon, children, span = 1, minHeight = 220 }) => (
     <Grid item xs={12} sm={6} md={span}>
         <Card
             variant="outlined"
             sx={{
                 height: '100%',
                 minHeight: minHeight,
+                maxWidth: 250,
+                minWidth: 250,
                 borderRadius: 2,
                 borderColor: 'divider',
                 display: 'flex',
@@ -55,7 +58,7 @@ const InfoCard = ({ title, icon, children, span = 1, minHeight = 200 }) => (
         >
             <CardContent sx={{ p: 2.5, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
-                    <Box sx={{ color: 'primary.main' }}>
+                    <Box sx={{ color: 'primary.main', mt: 0.5 }}>
                         {icon}
                     </Box>
                     <Typography variant="subtitle2" fontWeight="600" color="primary">
@@ -77,7 +80,7 @@ const InfoItem = ({ label, value, icon, chips }) => (
         </Typography>
         <Box sx={{ display: 'flex', alignItems: chips ? 'flex-start' : 'center', gap: 1 }}>
             {icon && (
-                <Box sx={{ color: 'text.secondary', mt: chips ? 0.5 : 0 }}>
+                <Box sx={{ color: 'text.secondary', mt: 1 }}>
                     {icon}
                 </Box>
             )}
@@ -95,7 +98,7 @@ const InfoItem = ({ label, value, icon, chips }) => (
                             />
                         ))
                     ) : (
-                        <Typography variant="body2" color="text.secondary" fontStyle="italic">
+                        <Typography variant="body2" color="text.secondary" fontStyle="italic" sx={{ mt: 1 }}>
                             Chưa có dữ liệu
                         </Typography>
                     )}
@@ -116,7 +119,6 @@ const InfoItem = ({ label, value, icon, chips }) => (
 export default function LecturerDetailModal({ open, onClose, lecturer }) {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-    const isTablet = useMediaQuery(theme.breakpoints.down('md'));
 
     if (!lecturer) return null;
 
@@ -156,13 +158,12 @@ export default function LecturerDetailModal({ open, onClose, lecturer }) {
         <Dialog
             open={open}
             onClose={onClose}
-            maxWidth="lg"
             fullWidth
             fullScreen={isMobile}
             sx={{
                 '& .MuiDialog-paper': {
                     borderRadius: isMobile ? 0 : 2,
-                    maxWidth: 950,
+                    maxWidth: "fit-content",
                     overflow: 'hidden'
                 }
             }}
@@ -228,7 +229,7 @@ export default function LecturerDetailModal({ open, onClose, lecturer }) {
             </DialogTitle>
 
             <DialogContent sx={{ p: 3, mt: 3 }}>
-                <Grid container spacing={3}>
+                <Grid container spacing={1.5} justifyContent={"center"}>
                     {/* Hàng 1: 2 cột - Thông tin cá nhân & Thông tin liên hệ */}
                     <Grid item xs={12} md={6}>
                         <InfoCard title="Thông tin cá nhân" icon={<PersonIcon />} minHeight={220}>
@@ -239,12 +240,12 @@ export default function LecturerDetailModal({ open, onClose, lecturer }) {
                             />
                             <InfoItem
                                 label="Giới tính"
-                                value={getGenderText(lecturer.gender)}
+                                value={lecturer.gender}
                                 icon={<GenderIcon fontSize="small" />}
                             />
                             <InfoItem
                                 label="Ngày sinh"
-                                value={lecturer.day_of_birth}
+                                value={formatDateTime(lecturer.day_of_birth)}
                                 icon={<CakeIcon fontSize="small" />}
                             />
                         </InfoCard>
@@ -275,15 +276,7 @@ export default function LecturerDetailModal({ open, onClose, lecturer }) {
                         <InfoCard title="Thông tin giảng dạy" icon={<SchoolIcon />} minHeight={220}>
                             <InfoItem
                                 label="Môn giảng dạy"
-                                value={
-                                    Array.isArray(lecturer?.subjects)
-                                        ? lecturer.subjects.map(
-                                            s => typeof s === 'object' && s !== null
-                                                ? s.subject_name || s.name || ''
-                                                : s
-                                        )
-                                        : []
-                                }
+                                value={lecturer.subjects || []}
                                 icon={<SubjectIcon fontSize="small" />}
                                 chips
                             />
@@ -314,7 +307,7 @@ export default function LecturerDetailModal({ open, onClose, lecturer }) {
                             />
                             <InfoItem
                                 label="Trạng thái"
-                                value={getStatusText(lecturer.status)}
+                                value={getStatusForLectuer(lecturer.status)}
                                 icon={<StatusIcon fontSize="small" />}
                             />
                         </InfoCard>
@@ -327,6 +320,8 @@ export default function LecturerDetailModal({ open, onClose, lecturer }) {
                 <Button
                     onClick={onClose}
                     variant="outlined"
+                    color='secondary'
+                    startIcon={<CloseIcon />}
                     sx={{
                         borderRadius: 1,
                         px: 3,
@@ -338,6 +333,8 @@ export default function LecturerDetailModal({ open, onClose, lecturer }) {
                 </Button>
                 <Button
                     variant="contained"
+                    color='primary'
+                    startIcon={<PersonIcon />}
                     sx={{
                         borderRadius: 1,
                         px: 3,

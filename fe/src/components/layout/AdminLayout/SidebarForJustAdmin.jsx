@@ -26,22 +26,24 @@ import {
     Logout,
     Dashboard,
     Event,
-    Schedule
+    Schedule,
+    WorkOff,
+    ViewWeek
 } from '@mui/icons-material';
 
 const navItems = [
     { text: 'Trang chủ', icon: <Dashboard />, path: '/dashboard' },
     { text: 'Quản lý thời khoá biểu', icon: <Schedule />, path: '/schedules' },
+    { text: 'Quản lý chương trình', icon: <LibraryBooks />, path: '/programs' },
     { text: 'Quản lý giảng viên', icon: <Person />, path: '/lecturers' },
     { text: 'Quản lý học viên', icon: <School />, path: '/students' },
-    { text: 'Quản lý lịch nghỉ', icon: <Event />, path: '/braekschedules' },
-    { text: 'Quản lý chương trình', icon: <LibraryBooks />, path: '/programs' },
-    { text: 'Quản lý học kỳ', icon: <LibraryBooks />, path: '/semesters' },
+    { text: 'Quản lý lớp học', icon: <Groups />, path: '/class' },
+    { text: 'Quản lý phòng', icon: <Room />, path: '/room' },
     { text: 'Quản lý học phần', icon: <MenuBook />, path: '/subjects' },
     { text: 'Quản lý khóa học', icon: <Class />, path: '/courses' },
-    { text: 'Quản lý lớp', icon: <Groups />, path: '/class' },
-    { text: 'Quản lý phòng', icon: <Room />, path: '/room' },
-    { text: 'Quản lý yêu cầu thay đổi lịch học', icon: <AccessTime />, path: '/scheduleChangeRequests' },
+    { text: 'Quản lý học kỳ', icon: <ViewWeek />, path: '/semesters' },
+    { text: 'Quản lý lịch nghỉ', icon: <WorkOff />, path: '/braekschedules' },
+    { text: 'Quản lý khung giờ', icon: <AccessTime />, path: '/slottime' },
 ];
 
 const drawerWidth = 350;

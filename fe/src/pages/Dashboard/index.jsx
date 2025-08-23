@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import {
     Box,
 } from '@mui/material';
@@ -6,21 +6,15 @@ import WeeklyCalendar from './WeeklyCalendar';
 import QuickStats from './QuickStats';
 import { io } from 'socket.io-client';
 
-import { generateSchedule, getInputDataForAlgorithmAPI, stopScheduleGeneration } from '../../api/scheduleAPI';
+import { useEffect } from 'react';
+import { generateSchedule, stopScheduleGeneration } from '../../api/scheduleAPI';
 import ProgressModal from './ProgressModal';
 import { toast } from 'react-toastify';
 
-import { getAllRoomAPI } from '../../api/roomAPI';
-import { getProgramToCreateScheduleAPI } from '../../api/programAPI';
-import { getAllLecturersAPI } from '../../api/lecturerAPI';
-import { getClassesAPI } from '../../api/classAPI';
 import CreateSchedulesAutoModal from './CreateSchedulesAutoModal';
-import { getAllSchedules } from '../../api/classschedule';
-import { transformScheduleForCalendar } from '../../utils/scheduleUtils';
 import { useRef } from 'react';
-const socket = io(import.meta.env.VITE_API_URL || 'http://localhost:3000', {
-    withCredentials: true
-});
+
+
 const Dashboard = () => {
     const [open, setOpen] = useState(false);
     const [createScheduleModalOpen, setCreateScheduleModalOpen] = useState(false);
@@ -29,7 +23,6 @@ const Dashboard = () => {
     const [error, setError] = useState('');
     const [gaLogs, setGaLogs] = useState([]);
     const [progress, setProgress] = useState(0);
-    const [scheduleItems, setScheduleItems] = useState([]);
     const socketRef = useRef(null);
     const [rooms, setRooms] = useState([]);
     const [programs, setPrograms] = useState([]);
@@ -37,93 +30,421 @@ const Dashboard = () => {
     const [classes, setClasses] = useState([]);
     const [formTest, setFormTest] = useState(null);
     const [gaProgressData, setGaProgressData] = useState(null);
-    const [programsResponseData, setProgramsResponseData] = useState(null);
 
-
-    const fetchRooms = async () => {
-        try {
-            const response = await getAllRoomAPI();
-            if (!response) {
-                throw new Error("Không có dữ liệu phòng học");
+    const days_of_week = useState({
+        "days_of_week": [
+            "Mon",
+            "Tue",
+            "Wed",
+            "Thu",
+            "Fri",
+            "Sat",
+            "Sun"
+        ]
+    });
+    
+    const timeslot = useState({
+        "time_slots": [
+            {
+                "slot_id": "S1",
+                "start": "07:00",
+                "end": "09:00",
+                "type": "morning"
+            },
+            {
+                "slot_id": "S2",
+                "start": "09:00",
+                "end": "11:00",
+                "type": "morning"
+            },
+            {
+                "slot_id": "C1",
+                "start": "13:00",
+                "end": "15:00",
+                "type": "afternoon"
+            },
+            {
+                "slot_id": "C2",
+                "start": "15:00",
+                "end": "17:00",
+                "type": "afternoon"
+            },
+            {
+                "slot_id": "T1",
+                "start": "17:30",
+                "end": "19:30",
+                "type": "evening"
+            },
+            {
+                "slot_id": "T2",
+                "start": "19:30",
+                "end": "21:30",
+                "type": "evening"
             }
+        ],
+    });
 
-            setRooms(response.data);
-        } catch (error) {
-            console.error("Error fetching rooms:", error);
-        }
-    };
-
-    const fetchPrograms = async () => {
-        try {
-            const response = await getProgramToCreateScheduleAPI();
-            if (!response) {
-                throw new Error("Không có dữ liệu chương trình học");
+    const actualInputData = {
+        "classes": [
+            {
+                "class_id": "DH23CS",
+                "size": 30,
+                "program_id": "CT001"
+            },
+            {
+                "class_id": "DH23AI",
+                "size": 30,
+                "program_id": "CT002"
+            },
+            {
+                "class_id": "DH22IT",
+                "size": 30,
+                "program_id": "CT002"
+            },
+            {
+                "class_id": "L01",
+                "size": 35,
+                "program_id": "CT001"
             }
-
-            console.log("Programs API response:", response);
-
-            // Lưu response data gốc
-            setProgramsResponseData(response.data);
-
-            // Xử lý response data - có thể là object với key 'programs'
-            let programsData = response.data;
-            if (programsData && programsData.programs) {
-                programsData = programsData.programs;
+        ],
+        "rooms": [
+            {
+                "room_id": "LT1",
+                "type": "theory",
+                "capacity": 50
+            },
+            {
+                "room_id": "TH1",
+                "type": "practice",
+                "capacity": 30
+            },
+            {
+                "room_id": "LT2",
+                "type": "theory",
+                "capacity": 45
+            },
+            {
+                "room_id": "TH2",
+                "type": "practice",
+                "capacity": 35
+            },
+            {
+                "room_id": "LT3",
+                "type": "theory",
+                "capacity": 40
+            },
+            {
+                "room_id": "TH3",
+                "type": "practice",
+                "capacity": 30
+            },
+            {
+                "room_id": "LT4",
+                "type": "theory",
+                "capacity": 30
+            },
+            {
+                "room_id": "TH4",
+                "type": "practice",
+                "capacity": 25
             }
-
-            setPrograms(programsData);
-            console.log("Programs set to:", programsData);
-        } catch (error) {
-            console.error("Error fetching programs:", error);
-        }
-    };
-    const fetchLecturers = async () => {
-        try {
-            const response = await getAllLecturersAPI();
-            if (!response) {
-                throw new Error("Không có dữ liệu giảng viên");
+        ],
+        "lecturers": [
+            {
+                "lecturer_id": "GV001",
+                "lecturer_name": "Nguyễn Văn A",
+                "subjects": ["MH001", "MH002", "MH003"],
+                "busy_slots": [],
+                "semester_busy_slots": []
+            },
+            {
+                "lecturer_id": "GV002",
+                "lecturer_name": "Trần Thị B",
+                "subjects": ["MH004", "MH005", "MH006"],
+                "busy_slots": [],
+                "semester_busy_slots": []
+            },
+            {
+                "lecturer_id": "GV003",
+                "lecturer_name": "Lê Minh C",
+                "subjects": ["MH007", "MH008", "MH009"],
+                "busy_slots": [],
+                "semester_busy_slots": []
+            },
+            {
+                "lecturer_id": "GV005",
+                "lecturer_name": "Hoàng Văn E",
+                "subjects": ["MH010", "MH012", "MH013"],
+                "busy_slots": [],
+                "semester_busy_slots": []
+            },
+            {
+                "lecturer_id": "GV006",
+                "lecturer_name": "Đỗ Thị F",
+                "subjects": ["MH014", "MH015", "MH016"],
+                "busy_slots": [],
+                "semester_busy_slots": []
+            },
+            {
+                "lecturer_id": "GV007",
+                "lecturer_name": "Vũ Văn G",
+                "subjects": ["MH003", "MH005", "MH010"],
+                "busy_slots": [],
+                "semester_busy_slots": []
+            },
+            {
+                "lecturer_id": "GV008",
+                "lecturer_name": "Vũ Văn G1",
+                "subjects": ["MH015", "MH013", "MH002"],
+                "busy_slots": [],
+                "semester_busy_slots": []
             }
-            setLecturers(response.data);
-        } catch (error) {
-            console.error("Error fetching lecturers:", error);
-        }
-    };
-    const fetchClasses = async () => {
-        try {
-            const response = await getClassesAPI();
-            if (!response) {
-                throw new Error("Không có dữ liệu lớp học");
+        ],
+        "programs": [
+            {
+                "program_id": "CT001",
+                "program_name": "Chương trình Đào tạo CNTT123",
+                "duration": 15,
+                "semesters": [
+                    {
+                        "semester_id": "HK1_CT01_2025",
+                        "subject_ids": ["MH001", "MH002"]
+                    },
+                    {
+                        "semester_id": "HK2_CT01_2025",
+                        "subject_ids": ["MH003", "MH004"]
+                    },
+                    {
+                        "semester_id": "HK3_CT01_2025",
+                        "subject_ids": ["MH005", "MH006"]
+                    },
+                    {
+                        "semester_id": "HK4_CT01_2025",
+                        "subject_ids": ["MH007", "MH008"]
+                    }
+                ]
+            },
+            {
+                "program_id": "CT002",
+                "program_name": "nhập tay",
+                "duration": 15,
+                "semesters": [
+                    {
+                        "semester_id": "HK1_CT02_2025",
+                        "subject_ids": ["MH009", "MH010"]
+                    },
+                    {
+                        "semester_id": "HK2_CT02_2025",
+                        "subject_ids": ["MH011", "MH012"]
+                    },
+                    {
+                        "semester_id": "HK3_CT02_2025",
+                        "subject_ids": ["MH013", "MH014"]
+                    },
+                    {
+                        "semester_id": "HK4_CT02_2025",
+                        "subject_ids": ["MH015", "MH016"]
+                    }
+                ]
             }
-            setClasses(response.data);
-        } catch (error) {
-            console.error("Error fetching classes:", error);
-        }
-    };
-
-
-    const fetchAllSchedules = async () => {
-        try {
-            const response = await getAllSchedules();
-            if (!response) {
-                throw new Error("Không có dữ liệu thời khóa biểu");
+        ],
+        "semesters": [
+            {
+                "semester_id": "HK1_CT01_2025",
+                "subject_ids": ["MH001", "MH002"],
+                "start_date": "2025-08-15",
+                "end_date": "2025-11-28",
+                "duration_weeks": 15
+            },
+            {
+                "semester_id": "HK2_CT01_2025",
+                "subject_ids": ["MH003", "MH004"],
+                "start_date": "2025-12-05",
+                "end_date": "2026-03-20",
+                "duration_weeks": 15
+            },
+            {
+                "semester_id": "HK3_CT01_2025",
+                "subject_ids": ["MH005", "MH006"],
+                "start_date": "2026-03-27",
+                "end_date": "2026-07-10",
+                "duration_weeks": 15
+            },
+            {
+                "semester_id": "HK4_CT01_2025",
+                "subject_ids": ["MH007", "MH008"],
+                "start_date": "2026-07-17",
+                "end_date": "2026-10-30",
+                "duration_weeks": 15
+            },
+            {
+                "semester_id": "HK1_CT02_2025",
+                "subject_ids": ["MH009", "MH010"],
+                "start_date": "2025-08-15",
+                "end_date": "2025-11-28",
+                "duration_weeks": 15
+            },
+            {
+                "semester_id": "HK2_CT02_2025",
+                "subject_ids": ["MH011", "MH012"],
+                "start_date": "2025-12-05",
+                "end_date": "2026-03-20",
+                "duration_weeks": 15
+            },
+            {
+                "semester_id": "HK3_CT02_2025",
+                "subject_ids": ["MH013", "MH014"],
+                "start_date": "2026-03-27",
+                "end_date": "2026-07-10",
+                "duration_weeks": 15
+            },
+            {
+                "semester_id": "HK4_CT02_2025",
+                "subject_ids": ["MH015", "MH016"],
+                "start_date": "2026-07-17",
+                "end_date": "2026-10-30",
+                "duration_weeks": 15
             }
-            // Chuyển đổi dữ liệu trước khi set
-            setScheduleItems(transformScheduleForCalendar(response.data));
-            // Xử lý dữ liệu thời khóa biểu nếu cần
-        }
-        catch (error) {
-            console.error("Error fetching schedules:", error);
-            // Xử lý lỗi nếu cần
-        }
-    };
-    // Gọi các hàm fetch dữ liệu khi component mount
-    useEffect(() => {
-        fetchRooms();
-        fetchPrograms();
-        fetchLecturers();
-        fetchClasses();
-        fetchAllSchedules();
-    }, []);
+        ],
+        "subjects": [
+            {
+                "subject_id": "MH001",
+                "name": "Computer Fundamentals",
+                "theory_hours": 30,
+                "practice_hours": 10
+            },
+            {
+                "subject_id": "MH002",
+                "name": "Foundations of Programming with C",
+                "theory_hours": 45,
+                "practice_hours": 15
+            },
+            {
+                "subject_id": "MH003",
+                "name": "Data Processing with XML and JSON",
+                "theory_hours": 30,
+                "practice_hours": 15
+            },
+            {
+                "subject_id": "MH004",
+                "name": "OOAD with UML",
+                "theory_hours": 30,
+                "practice_hours": 10
+            },
+            {
+                "subject_id": "MH005",
+                "name": "ASP.NET Core MVC-The Framework for Future Web Innovations",
+                "theory_hours": 45,
+                "practice_hours": 15
+            },
+            {
+                "subject_id": "MH006",
+                "name": "Powerful and Rich Applications with Microsoft Azure",
+                "theory_hours": 45,
+                "practice_hours": 15
+            },
+            {
+                "subject_id": "MH007",
+                "name": "Deployment System and Containerize with Docker and Kubernetes",
+                "theory_hours": 30,
+                "practice_hours": 10
+            },
+            {
+                "subject_id": "MH008",
+                "name": "Project-Robust Java Applications for Enterprises",
+                "theory_hours": 30,
+                "practice_hours": 10
+            },
+            {
+                "subject_id": "MH009",
+                "name": "Xử lý ảnh với Adobe Photoshop",
+                "theory_hours": 30,
+                "practice_hours": 10
+            },
+            {
+                "subject_id": "MH010",
+                "name": "Nhiếp ảnh kỹ thuật số và xử lý hậu kỳ với Lightroom",
+                "theory_hours": 30,
+                "practice_hours": 10
+            },
+            {
+                "subject_id": "MH011",
+                "name": "Tạo hoạt hình 2D cho Web",
+                "theory_hours": 30,
+                "practice_hours": 10
+            },
+            {
+                "subject_id": "MH012",
+                "name": "Tạo giao diện tương tác cao cho người dùng",
+                "theory_hours": 30,
+                "practice_hours": 5
+            },
+            {
+                "subject_id": "MH013",
+                "name": "Tạo chất liệu (texture) cho mô hình 3D trong game 3D",
+                "theory_hours": 30,
+                "practice_hours": 10
+            },
+            {
+                "subject_id": "MH014",
+                "name": "Thiết kế màn chơi với Unity 3D",
+                "theory_hours": 30,
+                "practice_hours": 10
+            },
+            {
+                "subject_id": "MH015",
+                "name": "Tạo chuyển động cho nhân vật",
+                "theory_hours": 30,
+                "practice_hours": 10
+            },
+            {
+                "subject_id": "MH016",
+                "name": "Sử dụng Black Magic Fusion biên tập hình ảnh nâng cao",
+                "theory_hours": 30,
+                "practice_hours": 10
+            }
+        ],
+        "time_slots": [
+            {
+                "slot_id": "S1",
+                "start": "07:00",
+                "end": "09:00",
+                "type": "morning"
+            },
+            {
+                "slot_id": "S2",
+                "start": "09:00",
+                "end": "11:00",
+                "type": "morning"
+            },
+            {
+                "slot_id": "C1",
+                "start": "13:00",
+                "end": "15:00",
+                "type": "afternoon"
+            },
+            {
+                "slot_id": "C2",
+                "start": "15:00",
+                "end": "17:00",
+                "type": "afternoon"
+            },
+            {
+                "slot_id": "T1",
+                "start": "17:30",
+                "end": "19:30",
+                "type": "evening"
+            },
+            {
+                "slot_id": "T2",
+                "start": "19:30",
+                "end": "21:30",
+                "type": "evening"
+            }
+        ],
+        "days_of_week": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+    }
+
 
     useEffect(() => {
         // Khởi tạo kết nối socket chỉ một lần
@@ -333,190 +654,73 @@ const Dashboard = () => {
     }, []);
 
     // Transform API data to required format
-    const transformDataToFormTest = useCallback((data, selections = null) => {
+    const transformDataToFormTest = (data) => {
         const { rooms, programs, lecturers, classes } = data;
-
-        console.log("Transforming data to form test structure:", { rooms, programs, lecturers, classes });
-
-        // If selections are provided, filter data based on selections
-        const filterData = (items, selectedIds, idField) => {
-            if (!selections || !selectedIds?.length) return items;
-            return items.filter(item => selectedIds.includes(item[idField]));
-        };
-
-        const filteredClasses = filterData(classes, selections?.classes, 'class_id');
-        const filteredRooms = filterData(rooms, selections?.rooms, 'room_id');
-        const filteredLecturers = filterData(lecturers, selections?.lecturers, 'lecturer_id');
-        const filteredPrograms = filterData(programs, selections?.programs, 'program_id');
-
-        // Use filtered data or all data if no selections
-        const classesToTransform = filteredClasses.length ? filteredClasses : classes;
-        const roomsToTransform = filteredRooms.length ? filteredRooms : rooms;
-        const lecturersToTransform = filteredLecturers.length ? filteredLecturers : lecturers;
-        const programsToTransform = filteredPrograms.length ? filteredPrograms : programs;
-
-        if (!classesToTransform?.length || !roomsToTransform?.length || !lecturersToTransform?.length || !programsToTransform?.length) {
+        // Sử dụng optional chaining và nullish coalescing để code gọn hơn
+        if (!classes?.length || !rooms?.length || !lecturers?.length || !programs?.length) {
             console.warn("Dữ liệu đầu vào không đầy đủ. Trả về cấu trúc rỗng.");
             return {
                 classes: [],
                 rooms: [],
                 lecturers: [],
                 programs: [],
-                semesters: [],
-                subjects: [],
                 time_slots: [],
                 days_of_week: []
             };
         }
 
-        const transformedClasses = classesToTransform.map(cls => ({
+        const transformedClasses = classes.map(cls => ({
             class_id: cls.class_id,
             size: cls.class_size,
-            program_id: cls.program_id ?? "CT01"
+            program_id: cls.program_id ?? "CT001" // Sử dụng nullish coalescing (??)
         }));
 
-        const transformedRooms = roomsToTransform.map(room => ({
+        const transformedRooms = rooms.map(room => ({
             room_id: room.room_id,
             type: room.type === "Lý thuyết" ? "theory" : "practice",
             capacity: room.capacity
         }));
 
-        const transformedLecturers = lecturersToTransform.map(lecturer => ({
+        const transformedLecturers = lecturers.map(lecturer => ({
             lecturer_id: lecturer.lecturer_id,
             lecturer_name: lecturer.name,
             subjects: lecturer.subjects?.map(subject => subject.subject_id) ?? [],
-            busy_slots: lecturer.busy_slots ?? [],
-            semester_busy_slots: lecturer.semester_busy_slots ?? [],
+            busy_slots: lecturer.busy_slots ?? []
         }));
 
-        // Transform programs với semesters và subjects từ response data mới
-        const transformedPrograms = programsToTransform.map(program => ({
+        const transformedPrograms = programs.map(program => ({
             program_id: program.program_id,
-            program_name: program.program_name,
-            duration: program.duration,
+            duration: parseInt(program.duration) || 0,
             semesters: program.semesters?.map(semester => ({
                 semester_id: semester.semester_id,
-                subject_ids: semester.subject_ids
+                subjects: semester.subjects?.map(subject => ({
+                    subject_id: subject.subject_id,
+                    name: subject.name,
+                    theory_hours: subject.theory_hours,
+                    practice_hours: subject.practice_hours
+                })) ?? []
             })) ?? []
         }));
-
-        // Extract semesters từ programs (nếu có) hoặc từ data.semesters
-        const transformedSemesters = [];
-
-        // Lấy từ response API nếu có semesters riêng biệt
-        if (data.semesters && Array.isArray(data.semesters)) {
-            data.semesters.forEach(semester => {
-                transformedSemesters.push({
-                    semester_id: semester.semester_id,
-                    subject_ids: semester.subject_ids,
-                    start_date: semester.start_date || "2025-08-15",
-                    end_date: semester.end_date || "2025-11-28",
-                    duration_weeks: semester.duration_weeks || 15
-                });
-            });
-        } else {
-            // Fallback: extract từ programs
-            programsToTransform.forEach(program => {
-                if (program.semesters) {
-                    program.semesters.forEach(semester => {
-                        transformedSemesters.push({
-                            semester_id: semester.semester_id,
-                            subject_ids: semester.subject_ids,
-                            start_date: semester.start_date || "2025-08-15",
-                            end_date: semester.end_date || "2025-11-28",
-                            duration_weeks: semester.duration_weeks || 15
-                        });
-                    });
-                }
-            });
-        }
-
-        // Extract subjects từ response data mới (nếu có)
-        const transformedSubjects = [];
-        if (data.subjects && Array.isArray(data.subjects)) {
-            data.subjects.forEach(subject => {
-                transformedSubjects.push({
-                    subject_id: subject.subject_id,
-                    name: subject.name || subject.subject_name,
-                    theory_hours: subject.theory_hours ?? 30,
-                    practice_hours: subject.practice_hours ?? 15
-                });
-            });
-        }
-
-        console.log("Transformed data:", {
-            classes: transformedClasses,
-            rooms: transformedRooms,
-            lecturers: transformedLecturers,
-            programs: transformedPrograms,
-            semesters: transformedSemesters,
-            subjects: transformedSubjects
-        });
 
         return {
             classes: transformedClasses,
             rooms: transformedRooms,
             lecturers: transformedLecturers,
             programs: transformedPrograms,
-            semesters: transformedSemesters,
-            subjects: transformedSubjects,
-            time_slots: [
-                { "slot_id": "S1", "start": "07:00", "end": "09:00", "type": "morning" },
-                { "slot_id": "S2", "start": "09:00", "end": "11:00", "type": "morning" },
-                { "slot_id": "C1", "start": "13:00", "end": "15:00", "type": "afternoon" },
-                { "slot_id": "C2", "start": "15:00", "end": "17:00", "type": "afternoon" },
-                { "slot_id": "T1", "start": "17:30", "end": "19:30", "type": "evening" },
-                { "slot_id": "T2", "start": "19:30", "end": "21:30", "type": "evening" }
-            ],
-            days_of_week: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+            time_slots: timeslot[0]?.time_slots ?? [],
+            days_of_week: days_of_week[0]?.days_of_week ?? []
         };
-    }, []);
-
-
+    };
 
     // Update formTest when API data is loaded
     useEffect(() => {
         const dataToTransform = { rooms, programs, lecturers, classes };
-
-        // Thêm subjects và semesters từ programs response nếu có
-        if (programsResponseData) {
-            if (programsResponseData.subjects) {
-                dataToTransform.subjects = programsResponseData.subjects;
-            }
-            if (programsResponseData.semesters) {
-                dataToTransform.semesters = programsResponseData.semesters;
-            }
-        }
-
         const transformed = transformDataToFormTest(dataToTransform);
 
         if (transformed) {
             setFormTest(transformed);
-            console.log("FormTest structure created:", transformed);
         }
-    }, [rooms, programs, lecturers, classes, programsResponseData, transformDataToFormTest]);
-
-    // Function to update formTest with selected data from modal
-    const updateFormTestWithSelections = (selections) => {
-        const dataToTransform = { rooms, programs, lecturers, classes };
-
-        // Thêm subjects và semesters từ programs response nếu có
-        if (programsResponseData) {
-            if (programsResponseData.subjects) {
-                dataToTransform.subjects = programsResponseData.subjects;
-            }
-            if (programsResponseData.semesters) {
-                dataToTransform.semesters = programsResponseData.semesters;
-            }
-        }
-
-        const transformed = transformDataToFormTest(dataToTransform, selections);
-
-        if (transformed) {
-            setFormTest(transformed);
-            console.log("FormTest updated with selections:", transformed);
-        }
-    };
+    }, [rooms, programs, lecturers, classes]);
 
     const handleGenerateTimetable = async () => {
         setStatusMessage('Đang gửi yêu cầu tạo thời khóa biểu...');
@@ -530,7 +734,7 @@ const Dashboard = () => {
 
         try {
             // const inputData = formTest || actualInputData;
-            const inputData = formTest;
+            const inputData = actualInputData;
             const response = await generateSchedule(inputData);
 
             if (response.aborted) { // Xử lý nếu promise được resolve với trạng thái hủy
@@ -572,6 +776,63 @@ const Dashboard = () => {
     // };
 
 
+    const [scheduleItems, setScheduleItems] = useState([
+        {
+            id: '3',
+            course: 'Hóa học cơ bản',
+            room: 'P.102',
+            lecturer: 'TS. Nguyễn Văn A',
+            type: 'Lý thuyết',
+            startTime: '2025-06-09T09:00:00',
+            endTime: '2025-06-09T11:00:00',
+            checkInTime: '2025-06-09T08:50:00',
+            checkOutTime: '2025-06-09T11:10:00'
+        },
+        {
+            id: '4',
+            course: 'Giải tích 1',
+            room: 'P.204',
+            lecturer: 'ThS. Trần Thị B',
+            type: 'Lý thuyết',
+            startTime: '2025-06-10T08:00:00',
+            endTime: '2025-06-10T10:00:00',
+            checkInTime: '2025-06-10T07:55:00',
+            checkOutTime: '2025-06-10T10:05:00'
+        },
+        {
+            id: '5',
+            course: 'Tin học đại cương',
+            room: 'P.105',
+            lecturer: 'ThS. Lê Văn C',
+            type: 'Thực hành',
+            startTime: '2025-06-11T13:00:00',
+            endTime: '2025-06-11T15:00:00',
+            checkInTime: '2025-06-11T12:50:00',
+            checkOutTime: '2025-06-11T15:10:00'
+        },
+        {
+            id: '6',
+            course: 'Kỹ thuật lập trình',
+            room: 'P.306',
+            lecturer: 'TS. Phạm Thị D',
+            type: 'Thực hành',
+            startTime: '2025-06-12T10:00:00',
+            endTime: '2025-06-12T12:00:00',
+            checkInTime: '2025-06-12T09:50:00',
+            checkOutTime: '2025-06-12T12:10:00'
+        },
+        {
+            id: '7',
+            course: 'Xác suất thống kê',
+            room: 'P.103',
+            lecturer: 'ThS. Đỗ Văn E',
+            type: 'Lý thuyết',
+            startTime: '2025-06-13T14:00:00',
+            endTime: '2025-06-13T16:00:00',
+            checkInTime: '2025-06-13T13:55:00',
+            checkOutTime: '2025-06-13T16:05:00'
+        }
+    ]);
 
     const handleItemMove = (itemId, newStartTime) => {
         setScheduleItems(prevItems =>
@@ -634,7 +895,6 @@ const Dashboard = () => {
                 lecturers={lecturers}
                 classes={classes}
                 onGenerate={handleGenerateTimetable}
-                onSelectionChange={updateFormTestWithSelections}
             />
         </Box>
     );

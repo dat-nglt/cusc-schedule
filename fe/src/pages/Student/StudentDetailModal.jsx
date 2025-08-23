@@ -37,36 +37,36 @@ import { formatDateTime } from '../../utils/formatDateTime';
 import { toast } from 'react-toastify';
 
 const InfoCard = ({ title, icon, children, span = 1, minHeight = 220 }) => (
-    <Grid item xs={12} sm={6} md={span}>
-        <Card
-            variant="outlined"
-            sx={{
-                height: '100%',
-                minHeight: minHeight,
-                borderRadius: 2,
-                borderColor: 'divider',
-                display: 'flex',
-                flexDirection: 'column',
-                '&:hover': {
-                    boxShadow: 1
-                }
-            }}
-        >
-            <CardContent sx={{ p: 2.5, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
-                    <Box sx={{ color: 'primary.main' }}>
-                        {icon}
-                    </Box>
-                    <Typography variant="subtitle2" fontWeight="600" color="primary">
-                        {title}
-                    </Typography>
-                </Box>
-                <Box sx={{ flexGrow: 1 }}>
-                    {children}
-                </Box>
-            </CardContent>
-        </Card>
-    </Grid>
+  <Grid item xs={12} sm={6} md={span}>
+    <Card
+      variant="outlined"
+      sx={{
+        height: '100%',
+        minHeight: minHeight,
+        borderRadius: 2,
+        borderColor: 'divider',
+        display: 'flex',
+        flexDirection: 'column',
+        '&:hover': {
+          boxShadow: 1
+        }
+      }}
+    >
+      <CardContent sx={{ p: 2.5, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
+          <Box sx={{ color: 'primary.main', mt: 0.5 }}>
+            {icon}
+          </Box>
+          <Typography variant="subtitle2" fontWeight="600" color="primary">
+            {title}
+          </Typography>
+        </Box>
+        <Box sx={{ flexGrow: 1 }}>
+          {children}
+        </Box>
+      </CardContent>
+    </Card>
+  </Grid>
 );
 
 const InfoItem = ({ label, value, icon }) => (
@@ -76,7 +76,7 @@ const InfoItem = ({ label, value, icon }) => (
         </Typography>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             {icon && (
-                <Box sx={{ color: 'text.secondary' }}>
+                <Box sx={{ color: 'text.secondary', mt: 1 }}>
                     {icon}
                 </Box>
             )}
@@ -205,7 +205,7 @@ export default function StudentDetailModal({ open, onClose, student }) {
             </DialogTitle>
 
             <DialogContent sx={{ p: 3, mt: 3 }}>
-                <Grid container spacing={3}>
+                <Grid container spacing={3} justifyContent={"center"}>
                     {/* Hàng 1: 2 cột - Thông tin cá nhân & Thông tin liên hệ */}
                     <Grid item xs={12} md={6}>
                         <InfoCard title="Thông tin cá nhân" icon={<PersonIcon />}>
@@ -295,6 +295,8 @@ export default function StudentDetailModal({ open, onClose, student }) {
                 <Button
                     onClick={onClose}
                     variant="outlined"
+                    color='secondary'
+                    startIcon={<CloseIcon />}
                     sx={{
                         borderRadius: 1,
                         px: 3,

@@ -15,7 +15,7 @@ import {
     Chip
 } from '@mui/material';
 import { Visibility, Edit, Delete, MoreVert, Email, Phone } from '@mui/icons-material';
-import { getStatusChip } from '../../components/ui/StatusChip';
+import { getStatusForLectuer } from '../../components/ui/StatusChip';
 
 export default function LecturerTable({
     displayedLecturers,
@@ -69,7 +69,7 @@ export default function LecturerTable({
                                 fontSize: '0.875rem',
                                 textAlign: 'center',
                                 borderRight: '1px solid #e0e0e0',
-                                width: '12%',
+                                width: '20%',
                                 display: isSmallScreen ? 'none' : 'table-cell',
                                 py: 1.5
                             }}
@@ -82,7 +82,7 @@ export default function LecturerTable({
                                 fontSize: '0.875rem',
                                 textAlign: 'center',
                                 borderRight: '1px solid #e0e0e0',
-                                width: isSmallScreen ? '30%' : '20%',
+                                width: isSmallScreen ? '30%' : '30%',
                                 py: 1.5
                             }}
                         >
@@ -94,25 +94,12 @@ export default function LecturerTable({
                                 fontSize: '0.875rem',
                                 textAlign: 'center',
                                 borderRight: '1px solid #e0e0e0',
-                                width: '25%',
+                                width: '15%',
                                 display: isSmallScreen ? 'none' : 'table-cell',
                                 py: 1.5
                             }}
                         >
-                            Môn giảng dạy
-                        </TableCell>
-                        <TableCell
-                            sx={{
-                                fontWeight: 'bold',
-                                fontSize: '0.875rem',
-                                textAlign: 'center',
-                                borderRight: '1px solid #e0e0e0',
-                                width: '20%',
-                                display: isMediumScreen ? 'none' : 'table-cell',
-                                py: 1.5
-                            }}
-                        >
-                            Liên hệ
+                            Khoa bộ môn
                         </TableCell>
                         <TableCell
                             sx={{
@@ -189,20 +176,18 @@ export default function LecturerTable({
                                 }}
                             >
                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, justifyContent: 'center' }}>
-                                    {lecturer.subjects && lecturer.subjects.length > 0 ? (
-                                        lecturer.subjects.slice(0, 2).map((subject) => (
-                                            <Chip
-                                                key={subject.subject_id}
-                                                label={subject.subject_id}
-                                                size="small"
-                                                color="primary"
-                                                variant="outlined"
-                                                sx={{ fontSize: '0.7rem', height: 24 }}
-                                            />
-                                        ))
+                                    {lecturer.department ? (
+                                        <Chip
+                                            key={lecturer.lecturer_id}
+                                            label={lecturer.department}
+                                            size="small"
+                                            color="primary"
+                                            variant="outlined"
+                                            sx={{ fontSize: '0.7rem', height: 24 }}
+                                        />
                                     ) : (
                                         <Box sx={{ fontSize: '0.85rem', color: '#999', fontStyle: 'italic', textAlign: 'center' }}>
-                                            Chưa có môn học
+                                            Chưa trực thuộc khoa
                                         </Box>
                                     )}
                                     {lecturer.subjects && lecturer.subjects.length > 2 && (
@@ -216,36 +201,13 @@ export default function LecturerTable({
                             </TableCell>
                             <TableCell
                                 sx={{
-                                    textAlign: 'center', // Căn giữa toàn bộ nội dung trong ô
-                                    borderRight: '1px solid #e0e0e0',
-                                    py: 1.5,
-                                    display: isMediumScreen ? 'none' : 'table-cell'
-                                }}
-                            >
-                                <Box sx={{ fontSize: '0.85rem' }}>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 0.5, justifyContent: 'center' }}>
-                                        <Email sx={{ fontSize: '1rem', mr: 0.5, color: 'text.secondary' }} />
-                                        <Box sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                            {lecturer.account?.email || 'N/A'}
-                                        </Box>
-                                    </Box>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                        <Phone sx={{ fontSize: '1rem', mr: 0.5, color: 'text.secondary' }} />
-                                        <Box>
-                                            {lecturer.phone_number || 'N/A'}
-                                        </Box>
-                                    </Box>
-                                </Box>
-                            </TableCell>
-                            <TableCell
-                                sx={{
                                     textAlign: 'center',
                                     borderRight: '1px solid #e0e0e0',
                                     py: 1.5
                                 }}
                             >
                                 <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                                    {getStatusChip(lecturer.status)}
+                                    {getStatusForLectuer(lecturer.status)}
                                 </Box>
                             </TableCell>
                             <TableCell

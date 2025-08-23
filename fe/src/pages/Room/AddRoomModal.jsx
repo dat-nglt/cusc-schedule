@@ -264,6 +264,7 @@ const AddRoomModal = ({ open, onClose, onAddRoom, existingRooms, apiError, loadi
             borderRadius: '12px',
             boxShadow: '0px 8px 24px rgba(0, 0, 0, 0.1)',
             overflow: 'hidden',
+            maxHeight: '80vh',
           },
         }}
       >
@@ -567,3 +568,5 @@ const AddRoomModal = ({ open, onClose, onAddRoom, existingRooms, apiError, loadi
 };
 
 export default AddRoomModal;
+
+// Cần sửa

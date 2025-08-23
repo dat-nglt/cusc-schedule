@@ -24,7 +24,7 @@ import EditStudentModal from './EditStudentModal';
 import DeleteStudentModal from './DeleteStudentModal';
 import useResponsive from '../../hooks/useResponsive';
 import StudentTable from './StudentTable';
-import { getAllStudentsAPI, getStudentByIdAPI, createStudentAPI, updateStudentAPI, deleteStudentAPI } from '../../api/studentAPI';
+import { getAllStudentsAPI, createStudentAPI, updateStudentAPI, deleteStudentAPI } from '../../api/studentAPI';
 import { toast } from 'react-toastify';
 import { getClassesAPI } from '../../api/classAPI';
 import TablePaginationLayout from '../../components/layout/TablePaginationLayout';
