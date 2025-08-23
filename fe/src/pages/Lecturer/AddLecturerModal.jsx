@@ -96,7 +96,7 @@ const AddLecturerModal = ({ open, onClose, onAddLecturer, existingLecturers, err
     });
     const [busySlots, setBusySlots] = useState([]);
     const [semesterBusySlots, setSemesterBusySlots] = useState([]);
-    const [activeStep, setActiveStep] = useState(3);
+    const [activeStep, setActiveStep] = useState(0);
     const [localError, setLocalError] = useState('');
     const [showPreview, setShowPreview] = useState(false);
     const [previewData, setPreviewData] = useState([]);
@@ -267,14 +267,14 @@ const AddLecturerModal = ({ open, onClose, onAddLecturer, existingLecturers, err
         };
 
         console.log(newLecturerData);
-        
+
 
         await onAddLecturer(newLecturerData, newLecturer.subjects, busySlots, semesterBusySlots);
 
-        // if (!error && !loading) {
-        //     resetForm();
-        //     onClose();
-        // }
+        if (!error && !loading) {
+            resetForm();
+            onClose();
+        }
     };
     // Hàm reset form về trạng thái ban đầu
     const resetForm = () => {

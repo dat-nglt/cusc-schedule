@@ -73,7 +73,7 @@ const CourseTable = ({
             <TableCell sx={{
               fontWeight: 'bold',
               fontSize: '0.875rem',
-              textAlign: 'left',
+              textAlign: 'center',
               borderRight: '1px solid #e0e0e0',
               width: isSmallScreen ? '40%' : '25%',
               py: 1.5
@@ -139,7 +139,7 @@ const CourseTable = ({
                 {course.course_id}
               </TableCell>
               <TableCell sx={{
-                textAlign: 'left',
+                textAlign: 'center',
                 borderRight: '1px solid #e0e0e0',
                 py: 1.5,
                 overflow: 'hidden',
@@ -164,7 +164,7 @@ const CourseTable = ({
               }}>
                 {course.end_date}
               </TableCell>
-                <TableCell sx={{
+              <TableCell sx={{
                 textAlign: 'center',
                 py: 1.5
               }}>

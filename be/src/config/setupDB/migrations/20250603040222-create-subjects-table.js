@@ -38,6 +38,10 @@ export default {
         type: Sequelize.DATE,
         defaultValue: Sequelize.NOW,
         allowNull: false
+      },
+      deleted_at: {             // 👈 thêm cột deleted_at cho soft delete
+        type: Sequelize.DATE,
+        allowNull: true
       }
     });
   },

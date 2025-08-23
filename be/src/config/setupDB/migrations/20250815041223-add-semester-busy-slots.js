@@ -29,17 +29,17 @@ export default {
         type: Sequelize.STRING(30),
         allowNull: true,
       },
-      createdAt: {
+      created_at: {
         type: Sequelize.DATE,
         allowNull: false,
         defaultValue: Sequelize.NOW
       },
-      updatedAt: {
+      updated_at: {
         type: Sequelize.DATE,
         allowNull: false,
         defaultValue: Sequelize.NOW
       },
-      deletedAt: {
+      deleted_at: {
         type: Sequelize.DATE,
         allowNull: true,
         comment: 'Soft delete timestamp'
@@ -48,6 +48,6 @@ export default {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('semester_busy_slotsbusy_slots');
+    await queryInterface.dropTable('semester_busy_slots'); // Sửa tên bảng
   }
 };

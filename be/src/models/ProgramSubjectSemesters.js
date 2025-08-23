@@ -46,7 +46,6 @@ const ProgramSubjectSemesters = (sequelize) => {
       onDelete: 'CASCADE',
     });
 
-    // Bảng này có nhiều lớp học được tạo ra
     // ProgramSubjectSemestersModel.hasMany(models.Classes, {
     //   foreignKey: 'program_subject_id',
     //   as: 'classes',

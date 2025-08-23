@@ -11,7 +11,6 @@ export const validateLecturerData = (
     email,
     phone_number,
     day_of_birth,
-    hire_date,
     gender,
     department,
     degree,
@@ -79,32 +78,8 @@ export const validateLecturerData = (
       }
     }
 
-    if (hire_date) {
-      const hireDate = new Date(hire_date);
-      hireDate.setHours(0, 0, 0, 0);
-
-      if (hireDate > today) {
-        errors.hire_date = "Ngày tuyển dụng không thể ở tương lai";
-      }
-
-      if (day_of_birth) {
-        const birthDate = new Date(day_of_birth);
-        birthDate.setHours(0, 0, 0, 0);
-
-        if (hireDate < birthDate) {
-          errors.hire_date = "Ngày tuyển dụng không thể trước ngày sinh";
-        }
-
-        const minHireDate = new Date(birthDate);
-        minHireDate.setFullYear(minHireDate.getFullYear() + 18);
-        if (hireDate < minHireDate) {
-          errors.hire_date = "Ngày tuyển dụng phải sau khi đủ 18 tuổi";
-        }
-      }
-    }
   } catch (error) {
     errors.day_of_birth = "Ngày sinh không hợp lệ";
-    errors.hire_date = "Ngày tuyển dụng không hợp lệ";
   }
 
   // 4. Validation trùng lặp
@@ -273,34 +248,6 @@ export const validateWorkInfo = (data) => {
     errors.degree = "Bằng cấp là bắt buộc";
   } else if (!validDegrees.includes(data.degree)) {
     errors.degree = "Bằng cấp không hợp lệ";
-  }
-
-  // Hire date validation (nếu có)
-  if (data.hire_date) {
-    try {
-      const hireDate = new Date(data.hire_date);
-      hireDate.setHours(0, 0, 0, 0);
-
-      const birthDate = new Date(data.day_of_birth);
-      birthDate.setHours(0, 0, 0, 0);
-
-      if (hireDate > today) {
-        errors.hire_date = "Ngày tuyển dụng không thể ở tương lai";
-      }
-
-      if (hireDate < birthDate) {
-        errors.hire_date = "Ngày tuyển dụng không thể trước ngày sinh";
-      }
-
-      // Kiểm tra nếu ngày tuyển dụng trước 18 tuổi
-      const minHireDate = new Date(birthDate);
-      minHireDate.setFullYear(minHireDate.getFullYear() + 18);
-      if (hireDate < minHireDate) {
-        errors.hire_date = "Ngày tuyển dụng phải sau khi đủ 18 tuổi";
-      }
-    } catch (error) {
-      errors.hire_date = "Ngày tuyển dụng không hợp lệ";
-    }
   }
 
   // Subjects validation (nếu cần)

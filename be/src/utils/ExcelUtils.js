@@ -388,7 +388,6 @@ export function getVietnameseColumnMapping() {
         // Cột dành riêng cho Giảng viên
         "Mã giảng viên": "lecturer_id",
         "Khoa/Bộ môn": "department",
-        "Ngày tuyển dụng": "hire_date",
         "Học vị": "degree",
 
         // Cột dành riêng cho Khóa học
