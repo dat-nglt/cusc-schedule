@@ -24,7 +24,7 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ErrorIcon from '@mui/icons-material/Error';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import { importClasses } from '../../api/classAPI';
+import { importClassesAPI } from '../../api/classAPI';
 
 export default function PreviewClassModal({
   open,
@@ -81,7 +81,7 @@ export default function PreviewClassModal({
         return classData;
       });
 
-      const response = await importClasses(null, validData);
+      const response = await importClassesAPI(null, validData);
 
       if (response.data && response.data) {
         setImportMessage(`Thêm thành công ${validRows.length} lớp học`);

@@ -12,51 +12,83 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Chip,
+  Divider,
+  IconButton,
+  InputAdornment
 } from '@mui/material';
+import {
+  Close,
+  Event as EventIcon,
+  EventAvailable as EventAvailableIcon,
+  EventBusy as EventBusyIcon,
+  CalendarToday as CalendarIcon,
+  ToggleOn as StatusIcon
+} from '@mui/icons-material';
 
-const EditBreakScheduleModal = ({ open, onClose, breakSchedule, onSave }) => {
+const breakTypes = [
+  { value: 'holiday', label: 'Ngày lễ' },
+  { value: 'semester_break', label: 'Nghỉ giữa kỳ' },
+  { value: 'summer_break', label: 'Nghỉ hè' },
+  { value: 'winter_break', label: 'Nghỉ đông' },
+  { value: 'other', label: 'Khác' }
+];
+
+const statusOptions = [
+  { value: 'active', label: 'Hoạt động', color: 'success' },
+  { value: 'inactive', label: 'Ngừng hoạt động', color: 'error' }
+];
+
+export default function EditBreakScheduleModal({ open, onClose, breakSchedule, onSave }) {
   const [editedBreakSchedule, setEditedBreakSchedule] = useState({
     break_id: '',
     break_type: '',
     break_start_date: '',
     break_end_date: '',
-    status: '',
+    status: 'inactive',
     created_at: '',
-    updated_at: '',
+    updated_at: ''
   });
 
   useEffect(() => {
     if (breakSchedule) {
-      console.log('BreakSchedule data received:', breakSchedule); // Debug giá trị ban đầu
       setEditedBreakSchedule({
         break_id: breakSchedule.break_id || '',
         break_type: breakSchedule.break_type || '',
-        break_start_date: breakSchedule.break_start_date || '',
-        break_end_date: breakSchedule.break_end_date || '',
-        status: breakSchedule.status || 'inactive', // Đặt mặc định nếu không có
+        break_start_date: breakSchedule.break_start_date?.split('T')[0] || '',
+        break_end_date: breakSchedule.break_end_date?.split('T')[0] || '',
+        status: breakSchedule.status || 'inactive',
         created_at: breakSchedule.created_at || '',
-        updated_at: new Date().toISOString().slice(0, 16).replace('T', ' '),
+        updated_at: new Date().toISOString()
       });
     }
   }, [breakSchedule]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setEditedBreakSchedule((prev) => ({ ...prev, [name]: value }));
+    setEditedBreakSchedule(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSave = () => {
-    if (
-      !editedBreakSchedule.break_id ||
-      !editedBreakSchedule.break_type ||
-      !editedBreakSchedule.break_start_date ||
-      !editedBreakSchedule.break_end_date ||
-      !editedBreakSchedule.status
-    ) {
+    // Validate dates
+    if (new Date(editedBreakSchedule.break_start_date) > new Date(editedBreakSchedule.break_end_date)) {
+      alert('Ngày kết thúc phải sau ngày bắt đầu');
+      return;
+    }
+
+    if (!editedBreakSchedule.break_type || 
+        !editedBreakSchedule.break_start_date || 
+        !editedBreakSchedule.break_end_date) {
       alert('Vui lòng điền đầy đủ thông tin!');
       return;
     }
-    onSave(editedBreakSchedule);
+
+    const updatedData = {
+      ...editedBreakSchedule,
+      updated_at: new Date().toISOString()
+    };
+
+    onSave(updatedData);
     onClose();
   };
 
@@ -66,87 +98,169 @@ const EditBreakScheduleModal = ({ open, onClose, breakSchedule, onSave }) => {
       onClose={onClose}
       maxWidth="sm"
       fullWidth
-      sx={{
-        '& .MuiDialog-paper': {
-          borderRadius: 2,
-          boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-          margin: 0,
-          maxHeight: 'calc(100% - 64px)',
-          top: '40px',
-        },
+      PaperProps={{
+        sx: {
+          borderRadius: '12px',
+          boxShadow: '0px 8px 24px rgba(0, 0, 0, 0.1)',
+          overflow: 'hidden'
+        }
       }}
     >
-      <DialogTitle>
-        <Typography variant="h6">Chỉnh sửa lịch nghỉ</Typography>
+      {/* Header with gradient */}
+      <DialogTitle sx={{
+        background: 'linear-gradient(135deg, #1976d2 0%, #115293 100%)',
+        color: 'white',
+        py: 2,
+        px: 3,
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+      }}>
+        <Box display="flex" alignItems="center">
+          <EventIcon sx={{ fontSize: 28, mr: 2 }} />
+          <Typography variant="h6" fontWeight="600">
+            Chỉnh sửa lịch nghỉ
+          </Typography>
+        </Box>
+        <IconButton
+          edge="end"
+          color="inherit"
+          onClick={onClose}
+          aria-label="close"
+        >
+          <Close />
+        </IconButton>
       </DialogTitle>
-      <DialogContent>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
+
+      <DialogContent sx={{ p: 3 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
           <TextField
             label="Mã lịch nghỉ"
             name="break_id"
             value={editedBreakSchedule.break_id}
-            onChange={handleChange}
             fullWidth
             variant="outlined"
-            required
-            InputProps={{ readOnly: true }}
+            InputProps={{
+              readOnly: true,
+              startAdornment: (
+                <InputAdornment position="start">
+                  <CalendarIcon color="action" />
+                </InputAdornment>
+              ),
+            }}
+            sx={{ mb: 2 }}
           />
-          <TextField
-            label="Loại lịch nghỉ"
-            name="break_type"
-            value={editedBreakSchedule.break_type}
-            onChange={handleChange}
-            fullWidth
-            variant="outlined"
-            required
-          />
-          <TextField
-            label="Thời gian bắt đầu"
-            name="break_start_date"
-            type="date"
-            value={editedBreakSchedule.break_start_date}
-            onChange={handleChange}
-            fullWidth
-            variant="outlined"
-            InputLabelProps={{ shrink: true }}
-            required
-          />
-          <TextField
-            label="Thời gian kết thúc"
-            name="break_end_date"
-            type="date"
-            value={editedBreakSchedule.break_end_date}
-            onChange={handleChange}
-            fullWidth
-            variant="outlined"
-            InputLabelProps={{ shrink: true }}
-            required
-          />
-          <FormControl fullWidth variant="outlined" required>
-            <InputLabel id="status-label">Trạng thái</InputLabel>
+
+          <FormControl fullWidth>
+            <InputLabel>Loại lịch nghỉ</InputLabel>
             <Select
-              labelId="status-label"
+              name="break_type"
+              value={editedBreakSchedule.break_type}
+              onChange={handleChange}
+              label="Loại lịch nghỉ"
+              startAdornment={
+                <InputAdornment position="start">
+                  <EventIcon color="action" />
+                </InputAdornment>
+              }
+            >
+              {breakTypes.map((type) => (
+                <MenuItem key={type.value} value={type.value}>
+                  {type.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <Box sx={{ display: 'grid', gridTemplateColumns: { sm: '1fr 1fr' }, gap: 2 }}>
+            <TextField
+              label="Ngày bắt đầu"
+              name="break_start_date"
+              type="date"
+              value={editedBreakSchedule.break_start_date}
+              onChange={handleChange}
+              fullWidth
+              variant="outlined"
+              InputLabelProps={{ shrink: true }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <EventAvailableIcon color="action" />
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <TextField
+              label="Ngày kết thúc"
+              name="break_end_date"
+              type="date"
+              value={editedBreakSchedule.break_end_date}
+              onChange={handleChange}
+              fullWidth
+              variant="outlined"
+              InputLabelProps={{ shrink: true }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <EventBusyIcon color="action" />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Box>
+
+          <FormControl fullWidth>
+            <InputLabel>Trạng thái</InputLabel>
+            <Select
               name="status"
               value={editedBreakSchedule.status}
               onChange={handleChange}
               label="Trạng thái"
+              startAdornment={
+                <InputAdornment position="start">
+                  <StatusIcon color="action" />
+                </InputAdornment>
+              }
             >
-              <MenuItem value="active">Hoạt động</MenuItem>
-              <MenuItem value="inactive">Ngừng hoạt động</MenuItem>
+              {statusOptions.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  <Chip
+                    label={option.label}
+                    size="small"
+                    color={option.color}
+                    sx={{ mr: 1 }}
+                  />
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
         </Box>
       </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose} variant="outlined" sx={{ color: '#1976d2' }}>
+
+      <DialogActions sx={{
+        p: 3,
+        display: 'flex',
+        justifyContent: 'flex-end',
+        gap: 2,
+        borderTop: '1px solid #eee'
+      }}>
+        <Button
+          onClick={onClose}
+          variant="outlined"
+          sx={{ borderRadius: 1, px: 3 }}
+        >
           Hủy
         </Button>
-        <Button onClick={handleSave} variant="contained" sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}>
-          Lưu
+        <Button
+          onClick={handleSave}
+          variant="contained"
+          color="primary"
+          sx={{ borderRadius: 1, px: 3 }}
+        >
+          Lưu thay đổi
         </Button>
       </DialogActions>
     </Dialog>
   );
-};
-
-export default EditBreakScheduleModal;
+}

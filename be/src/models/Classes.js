@@ -43,6 +43,11 @@ const Classes = (sequelize) => {
         defaultValue: DataTypes.NOW,
         allowNull: false,
       },
+      // Mã chương trình đào tạo liên kết (foreign key đến Program)
+      program_id: {
+        type: DataTypes.STRING(30),
+        allowNull: true,
+      },
     },
     {
       tableName: 'classes',          // Tên bảng trong CSDL
@@ -59,6 +64,17 @@ const Classes = (sequelize) => {
       foreignKey: 'course_id',
       onUpdate: 'CASCADE',       // Nếu thay đổi ID khóa học, cập nhật theo
       onDelete: 'SET NULL',      // Nếu xóa khóa học, để null trường course_id
+    });
+    // Một lớp học có nhiều sinh viên
+    ClassesModel.hasMany(models.Student, {
+      foreignKey: 'class_id',    // Khóa ngoại trong bảng Student trỏ về class_id
+      onUpdate: 'CASCADE',       // Nếu thay đổi ID lớp học, cập nhật theo
+      onDelete: 'SET NULL',
+    });
+    ClassesModel.belongsTo(models.Program, {
+      foreignKey: 'program_id',
+      onUpdate: 'CASCADE',       // Nếu thay đổi ID học kỳ, cập nhật theo
+      onDelete: 'SET NULL',      // Nếu xóa học kỳ, để null trường program_id
     });
   };
 

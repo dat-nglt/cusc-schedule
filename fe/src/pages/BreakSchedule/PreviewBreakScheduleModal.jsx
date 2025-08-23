@@ -24,7 +24,7 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ErrorIcon from '@mui/icons-material/Error';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import { importBreakSchedules } from '../../api/breakScheduleAPI';
+import { importBreakSchedulesAPI } from '../../api/breakScheduleAPI';
 
 export default function PreviewBreakScheduleModal({
   open,
@@ -80,7 +80,7 @@ export default function PreviewBreakScheduleModal({
         return scheduleData;
       });
 
-      const response = await importBreakSchedules(null, validData);
+      const response = await importBreakSchedulesAPI(null, validData);
 
       if (response.data && response.data) {
         setImportMessage(`Thêm thành công ${validRows.length} lịch nghỉ`);

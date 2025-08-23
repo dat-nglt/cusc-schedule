@@ -13,6 +13,7 @@ import {
   InputAdornment,
   IconButton,
   Button,
+  useTheme,
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -26,7 +27,8 @@ import EditCourseModal from './EditCourseModal';
 import DeleteCourseModal from './DeleteCourseModal';
 import useResponsive from '../../hooks/useResponsive';
 import CourseTable from './CourseTable';
-import { getCourses, getCourseById, addCourse, updateCourse, deleteCourse, listCourses, importCourses } from '../../api/courseAPI';
+import { getCoursesAPI, getCourseByIdAPI, addCourseAPI, updateCourseAPI, deleteCourseAPI } from '../../api/courseAPI';
+import TablePaginationLayout from '../../components/layout/TablePaginationLayout';
 
 // Hàm định dạng timestamp thành YYYY-MM-DD HH:MM:SS.sss+07
 const formatTimestamp = (timestamp) => {
@@ -44,7 +46,7 @@ const formatTimestamp = (timestamp) => {
 
 const Course = () => {
   const { isSmallScreen, isMediumScreen } = useResponsive();
-
+  const theme = useTheme();
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -63,7 +65,7 @@ const Course = () => {
   const fetchCourses = async () => {
     try {
       setLoading(true);
-      const response = await getCourses();
+      const response = await getCoursesAPI();
       console.log('Phản hồi từ API (danh sách):', response);
 
       let coursesData = [];
@@ -107,7 +109,7 @@ const Course = () => {
   const handleViewCourse = async (course_id) => {
     try {
       setLoading(true);
-      const response = await getCourseById(course_id);
+      const response = await getCourseByIdAPI(course_id);
       console.log('Phản hồi từ API (chi tiết):', response);
 
       let courseData = {};
@@ -146,7 +148,7 @@ const Course = () => {
     try {
       setLoading(true);
       console.log('Gửi dữ liệu thêm khóa học:', courseData);
-      const response = await addCourse({
+      const response = await addCourseAPI({
         course_id: courseData.course_id,
         course_name: courseData.course_name,
         start_date: courseData.start_date,
@@ -185,7 +187,7 @@ const Course = () => {
     try {
       setLoading(true);
       console.log('Gửi dữ liệu chỉnh sửa khóa học:', courseData);
-      const response = await updateCourse(courseData.course_id, {
+      const response = await updateCourseAPI(courseData.course_id, {
         course_id: courseData.course_id,
         course_name: courseData.course_name,
         start_date: courseData.start_date,
@@ -223,7 +225,7 @@ const Course = () => {
         return;
       }
       console.log('Attempting to delete course with course_id:', course_id);
-      const response = await deleteCourse(course_id);
+      const response = await deleteCourseAPI(course_id);
       console.log('Response from API (delete):', response);
 
       await fetchCourses();
@@ -252,41 +254,52 @@ const Course = () => {
   const displayedCourses = filteredCourses.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   return (
-    <Box sx={{ p: 3, zIndex: 10, height: 'calc(100vh - 64px)', overflowY: 'auto' }}>
+    <Box sx={{ p: 1, zIndex: 10, height: 'calc(100vh - 64px)', overflowY: 'auto' }}>
       <Box sx={{ width: '100%', mb: 3 }}>
         <Card sx={{ flexGrow: 1 }}>
           <CardContent>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, gap: 2 }}>
-              <Typography variant="h6">
+            <Box sx={{
+              display: 'flex',
+              flexDirection: isSmallScreen ? 'column' : 'row',
+              justifyContent: 'space-between',
+              alignItems: isSmallScreen ? 'stretch' : 'center',
+              mb: 3,
+              gap: 2
+            }}>
+              <Typography variant="h5" fontWeight="600">
                 Danh sách khóa học
               </Typography>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                {isSmallScreen ? (
-                  <IconButton
-                    color="primary"
-                    onClick={() => setOpenAdd(true)}
-                    sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
-                  >
-                    <AddIcon sx={{ color: '#fff' }} />
-                  </IconButton>
-                ) : (
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    startIcon={<AddIcon />}
-                    onClick={() => setOpenAdd(true)}
-                    sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' }, minWidth: isSmallScreen ? 100 : 150, height: '56px' }}
-                  >
-                    Thêm khóa học
-                  </Button>
-                )}
-                <FormControl sx={{ minWidth: isSmallScreen ? 100 : 150 }} variant="outlined">
-                  <InputLabel id="year-filter-label">{isSmallScreen ? 'Lọc' : 'Lọc theo năm'}</InputLabel>
+
+              <Box sx={{
+                display: 'flex',
+                gap: 2,
+                flexDirection: isSmallScreen ? 'column' : 'row',
+                width: isSmallScreen ? '100%' : 'auto'
+              }}>
+                <TextField
+                  size="small"
+                  placeholder="Tìm kiếm theo mã hoặc tên khóa học..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SearchIcon />
+                      </InputAdornment>
+                    ),
+                  }}
+                  sx={{
+                    minWidth: 200,
+                    backgroundColor: theme.palette.background.paper
+                  }}
+                />
+
+                <FormControl size="small" sx={{ minWidth: 120 }}>
+                  <InputLabel>Năm</InputLabel>
                   <Select
-                    labelId="year-filter-label"
                     value={selectedYear}
                     onChange={(e) => setSelectedYear(e.target.value)}
-                    label={isSmallScreen ? 'Lọc' : 'Lọc theo năm'}
+                    label="Năm"
                   >
                     <MenuItem value="">Tất cả</MenuItem>
                     {years.map((year) => (
@@ -296,24 +309,16 @@ const Course = () => {
                     ))}
                   </Select>
                 </FormControl>
+
+                <Button
+                  variant="contained"
+                  startIcon={<AddIcon />}
+                  onClick={() => setOpenAdd(true)}
+                  sx={{ ml: isSmallScreen ? 0 : 'auto' }}
+                >
+                  Thêm khóa học
+                </Button>
               </Box>
-            </Box>
-            <Box sx={{ mb: 2 }}>
-              <TextField
-                fullWidth
-                variant="outlined"
-                placeholder="Tìm kiếm theo mã hoặc tên khóa học..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                sx={{ bgcolor: '#fff' }}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon color="action" />
-                    </InputAdornment>
-                  ),
-                }}
-              />
             </Box>
             {loading && <Typography>Loading...</Typography>}
             {error && <Typography color="error">{error}</Typography>}
@@ -330,14 +335,11 @@ const Course = () => {
                   handleEditCourse={handleEditCourse}
                   handleDeleteCourse={handleOpenDeleteModal}
                 />
-                <TablePagination
-                  component="div"
+                <TablePaginationLayout
                   count={filteredCourses.length}
                   page={page}
                   onPageChange={handleChangePage}
                   rowsPerPage={rowsPerPage}
-                  rowsPerPageOptions={[]}
-                  labelDisplayedRows={({ from, to, count }) => `${from}-${to} trên ${count}`}
                 />
               </>
             )}

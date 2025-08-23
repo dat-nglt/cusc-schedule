@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import {
     Dialog,
@@ -14,11 +15,44 @@ import {
     MenuItem,
     Alert,
     CircularProgress,
+    IconButton,
+    Divider,
+    Stepper,
+    Step,
+    StepLabel,
+    Chip,
+    InputAdornment,
+    Fade,
+    Paper,
+    duration
 } from '@mui/material';
-import UploadFileIcon from '@mui/icons-material/UploadFile';
+import {
+    Close,
+    CloudUpload,
+    CalendarToday, // For start_date/end_date
+    Class, // For semester_id
+    School, // For program_id
+    PlayCircleFilled, // For 'Đang triển khai'
+    DoneAll, // For 'Đang áp dụng' (or similar, depending on status meanings)
+    PauseCircleFilled, // For 'Tạm dừng'
+    StopCircle, // For 'Đã kết thúc'
+    CheckCircle,
+    Error as ErrorIcon,
+    AccessTime // For semester_name (generic time/period icon)
+} from '@mui/icons-material';
 import * as XLSX from 'xlsx';
 import PreviewSemesterModal from './PreviewSemesterModal';
-import { processExcelDataSemester } from '../../utils/ExcelValidation';
+import { processExcelDataSemester } from '../../utils/ExcelValidation'; // Assuming this utility is correctly implemented
+
+const statusOptions = [
+    { value: 'Đang triển khai', color: 'info', icon: <PlayCircleFilled /> },
+    { value: 'Đang mở đăng ký', color: 'primary', icon: <AccessTime /> }, // Using AccessTime as a placeholder, choose a suitable icon
+    { value: 'Đang diễn ra', color: 'success', icon: <DoneAll /> },
+    { value: 'Tạm dừng', color: 'warning', icon: <PauseCircleFilled /> },
+    { value: 'Đã kết thúc', color: 'error', icon: <StopCircle /> }
+];
+
+const steps = ['Thông tin cơ bản', 'Thời gian & Trạng thái'];
 
 export default function AddSemesterModal({ open, onClose, onAddSemester, existingSemesters, error, loading, message, fetchSemesters, programs }) {
     const [newSemester, setNewSemester] = useState({
@@ -26,107 +60,156 @@ export default function AddSemesterModal({ open, onClose, onAddSemester, existin
         semester_name: '',
         start_date: '',
         end_date: '',
-        status: 'Đang triển khai',
-        program_id: '',
+        duration_weeks: '',
     });
 
+    const [activeStep, setActiveStep] = useState(0);
     const [localError, setLocalError] = useState('');
     const [showPreview, setShowPreview] = useState(false);
     const [previewData, setPreviewData] = useState([]);
+    const [fileUploaded, setFileUploaded] = useState(false); // To track if a file was selected for import
+
+    const calculateWeeksBetweenDates = (startDate, endDate) => {
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+
+        // Kiểm tra tính hợp lệ của ngày
+        if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+            return 0;
+        }
+
+        // Đảm bảo ngày bắt đầu không sau ngày kết thúc
+        if (start > end) {
+            return 0;
+        }
+
+        // Tính số mili giây giữa hai ngày
+        const timeDifference = end.getTime() - start.getTime();
+
+        // Chuyển đổi thành số ngày (làm tròn lên)
+        const daysDifference = Math.ceil(timeDifference / (1000 * 3600 * 24));
+
+        // Tính số tuần (làm tròn lên)
+        const weeks = Math.ceil(daysDifference / 7);
+
+        return weeks;
+    }
+
+    const handleNext = () => {
+        if (activeStep === 0) {
+            if (!newSemester.semester_id || !newSemester.semester_name) {
+                setLocalError('Vui lòng điền đầy đủ thông tin cơ bản.');
+                return;
+            }
+        }
+        setLocalError('');
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    };
+
+    const handleBack = () => {
+        setLocalError('');
+        setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
+        if (name === 'start_date' || name === 'end_date') {
+            setNewSemester((prev) => ({
+                ...prev,
+                duration_weeks: calculateWeeksBetweenDates(prev.start_date, prev.end_date),
+            }));
+        }
+        console.log(`Field changed: ${name} = ${value}`); // Debugging line to track changes
+
         setNewSemester((prev) => ({ ...prev, [name]: value }));
         setLocalError('');
     };
 
     const handleSubmit = async () => {
-        if (
-            !newSemester.semester_id ||
-            !newSemester.semester_name ||
-            !newSemester.start_date ||
-            !newSemester.end_date ||
-            !newSemester.program_id
-        ) {
-            setLocalError('Vui lòng điền đầy đủ thông tin!');
+        if (newSemester.duration_weeks <= 0) {
+            setLocalError('Vui lòng điền đầy đủ thông tin thời gian.');
             return;
         }
 
-        // Kiểm tra trùng mã học kỳ
         const isDuplicate = existingSemesters.some(
             (semester) => semester.semester_id === newSemester.semester_id
         );
+
         if (isDuplicate) {
-            setLocalError(`Mã học kỳ "${newSemester.semester_id}" đã tồn tại!`);
+            setLocalError(`Mã học kỳ "${newSemester.semester_id}" đã tồn tại.`);
             return;
         }
 
-        // Kiểm tra ngày hợp lệ
         const startDate = new Date(newSemester.start_date);
         const endDate = new Date(newSemester.end_date);
 
         if (startDate >= endDate) {
-            setLocalError('Ngày kết thúc phải sau ngày bắt đầu!');
+            setLocalError('Ngày kết thúc phải sau ngày bắt đầu.');
             return;
         }
 
         const semesterToAdd = {
             ...newSemester,
-            id: Date.now(),
-            created_at: startDate.toISOString(),
-            updated_at: endDate.toISOString(),
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
         };
 
-        // Gọi hàm onAddSemester được truyền từ component cha
         await onAddSemester(semesterToAdd);
 
+        if (!error && !loading) {
+            resetForm();
+            onClose();
+        }
+    };
+
+    const resetForm = () => {
         setNewSemester({
             semester_id: '',
             semester_name: '',
             start_date: '',
             end_date: '',
-            status: 'Đang triển khai',
-            program_id: '',
         });
+        setActiveStep(0);
         setLocalError('');
-        onClose();
+        setFileUploaded(false);
     };
 
     const handleImportExcel = async (e) => {
         const file = e.target.files[0];
         if (!file) {
-            setLocalError('Vui lòng chọn một file Excel!');
+            setLocalError('Vui lòng chọn một file Excel');
             return;
         }
 
         const validExtensions = ['.xlsx', '.xls'];
         const fileExtension = file.name.slice(file.name.lastIndexOf('.')).toLowerCase();
         if (!validExtensions.includes(fileExtension)) {
-            setLocalError('Chỉ hỗ trợ file Excel (.xlsx, .xls)!');
+            setLocalError('Chỉ hỗ trợ file Excel (.xlsx, .xls)');
+            e.target.value = '';
             return;
         }
 
         try {
-            setLocalError(''); // Clear previous errors
-            // Đọc file Excel
+            setLocalError('');
+            setFileUploaded(true);
+
             const arrayBuffer = await file.arrayBuffer();
             const workbook = XLSX.read(arrayBuffer, { type: 'array' });
             const sheetName = workbook.SheetNames[0];
             const worksheet = workbook.Sheets[sheetName];
 
-            // Chuyển đổi sang JSON
             const rawData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
             if (rawData.length < 2) {
-                setLocalError('File Excel phải có ít nhất 2 dòng (header + dữ liệu)!');
+                setLocalError('File Excel phải có ít nhất 2 dòng (header + dữ liệu)');
+                e.target.value = '';
+                setFileUploaded(false);
                 return;
             }
 
-            // Lấy header và data
             const headers = rawData[0];
             const dataRows = rawData.slice(1);
 
-            // Chuyển đổi thành object với header làm key
             const jsonData = dataRows.map(row => {
                 const obj = {};
                 headers.forEach((header, index) => {
@@ -135,169 +218,287 @@ export default function AddSemesterModal({ open, onClose, onAddSemester, existin
                 return obj;
             });
 
-            // Xử lý và validate dữ liệu
-            const processedData = processExcelDataSemester(jsonData, existingSemesters);
+            const processedData = processExcelDataSemester(jsonData, existingSemesters, programs);
 
             if (processedData.length === 0) {
-                setLocalError('Không có dữ liệu hợp lệ trong file Excel!');
+                setLocalError('Không có dữ liệu hợp lệ nào trong file Excel');
+                e.target.value = '';
+                setFileUploaded(false);
                 return;
             }
 
-            // Hiển thị preview
             setPreviewData(processedData);
             setShowPreview(true);
             onClose();
 
         } catch (error) {
             console.error('Error reading Excel file:', error);
-            setLocalError('Lỗi khi đọc file Excel! Vui lòng kiểm tra format file.');
+            setLocalError('Lỗi khi đọc file Excel. Vui lòng kiểm tra lại');
+            setFileUploaded(false);
+        } finally {
+            e.target.value = '';
         }
-
-        // Reset file input
-        e.target.value = '';
     };
-
 
     const handleClosePreview = () => {
         setShowPreview(false);
         setPreviewData([]);
+        setFileUploaded(false);
     };
 
     return (
         <>
-            <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-                <DialogTitle>
-                    <Box display="flex" justifyContent="space-between" alignItems="center">
-                        <Typography variant="h6">Thêm học kỳ mới</Typography>
-                        <label htmlFor="excel-upload">
-                            <input
-                                id="excel-upload"
-                                type="file"
-                                accept=".xlsx, .xls"
-                                hidden
-                                onChange={handleImportExcel}
-                            />
-                            <Button
-                                variant="outlined"
-                                component="span"
-                                startIcon={<UploadFileIcon />}
-                                size="small"
-                            >
-                                Thêm tự động
-                            </Button>
-                        </label>
+            <Dialog
+                open={open}
+                onClose={() => {
+                    resetForm();
+                    onClose();
+                }}
+                maxWidth="md"
+                fullWidth
+                PaperProps={{
+                    sx: {
+                        borderRadius: '12px',
+                        boxShadow: '0px 8px 24px rgba(0, 0, 0, 0.1)',
+                        overflow: 'hidden',
+                        maxHeight: '80vh',
+                    }
+                }}
+            >
+                <DialogTitle sx={{
+                    background: 'linear-gradient(135deg, #1976d2 0%, #115293 100%)',
+                    color: 'white',
+                    py: 2,
+                    px: 3,
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                }}>
+                    <Box display="flex" alignItems="center">
+                        <CalendarToday sx={{ fontSize: 28, mr: 2 }} /> {/* Icon for semester */}
+                        <Typography variant="h6" fontWeight="600">
+                            Thêm Học Kỳ Mới
+                        </Typography>
                     </Box>
+                    <IconButton
+                        edge="end"
+                        color="inherit"
+                        onClick={() => {
+                            resetForm();
+                            onClose();
+                        }}
+                        aria-label="close"
+                        disabled={loading}
+                    >
+                        <Close />
+                    </IconButton>
                 </DialogTitle>
-                <DialogContent>
-                    {(error || localError) && (
-                        <Alert severity="error" sx={{ mb: 2 }}>
-                            {error || localError}
-                        </Alert>
-                    )}
-                    {message && (
-                        <Alert severity="success" sx={{ mb: 2 }}>
-                            {message}
-                        </Alert>
-                    )}
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
-                        <TextField
-                            label="Mã học kỳ"
-                            name="semester_id"
-                            value={newSemester.semester_id}
-                            onChange={handleChange}
-                            fullWidth
-                            variant="outlined"
-                            required
-                        />
-                        <TextField
-                            label="Tên học kỳ"
-                            name="semester_name"
-                            value={newSemester.semester_name}
-                            onChange={handleChange}
-                            fullWidth
-                            variant="outlined"
-                            required
-                        />
-                        <FormControl fullWidth required>
-                            <InputLabel>Mã chương trình</InputLabel>
-                            <Select
-                                name="program_id"
-                                value={newSemester.program_id}
-                                onChange={handleChange}
-                                label="Mã chương trình"
-                            >
-                                {programs?.map((program) => (
-                                    <MenuItem key={program.id} value={program.program_id}>
-                                        {program.program_id} - {program.program_name}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                        <TextField
-                            label="Ngày bắt đầu"
-                            name="start_date"
-                            type="date"
-                            value={newSemester.start_date}
-                            onChange={handleChange}
-                            fullWidth
-                            variant="outlined"
-                            required
-                            InputLabelProps={{
-                                shrink: true,
-                            }}
-                        />
-                        <TextField
-                            label="Ngày kết thúc"
-                            name="end_date"
-                            type="date"
-                            value={newSemester.end_date}
-                            onChange={handleChange}
-                            fullWidth
-                            variant="outlined"
-                            required
-                            InputLabelProps={{
-                                shrink: true,
-                            }}
-                        />
-                        <FormControl fullWidth required>
-                            <InputLabel>Trạng thái</InputLabel>
-                            <Select
-                                name="status"
-                                value={newSemester.status}
-                                onChange={handleChange}
-                                label="Trạng thái"
-                            >
-                                <MenuItem value="Đang triển khai">Đang triển khai</MenuItem>
-                                <MenuItem value="Đang mở đăng ký">Đang mở đăng ký</MenuItem>
-                                <MenuItem value="Đang diễn ra">Đang diễn ra</MenuItem>
-                                <MenuItem value="Tạm dừng">Tạm dừng</MenuItem>
-                                <MenuItem value="Đã kết thúc">Đã kết thúc</MenuItem>
-                            </Select>
-                        </FormControl>
+
+                <DialogContent sx={{ p: 0 }}>
+                    <Box sx={{ px: 3, pt: 3, pb: 2 }}>
+                        <Stepper activeStep={activeStep} alternativeLabel>
+                            {steps.map((label) => (
+                                <Step key={label}>
+                                    <StepLabel>{label}</StepLabel>
+                                </Step>
+                            ))}
+                        </Stepper>
+                    </Box>
+
+                    <Divider />
+
+                    <Box sx={{ px: 3, pt: 2 }}>
+                        {(error || localError) && (
+                            <Fade in={!!(error || localError)}>
+                                <Alert
+                                    severity="error"
+                                    icon={<ErrorIcon />}
+                                    sx={{ mb: 2 }}
+                                >
+                                    {error || localError}
+                                </Alert>
+                            </Fade>
+                        )}
+                        {message && (
+                            <Fade in={!!message}>
+                                <Alert
+                                    severity="success"
+                                    icon={<CheckCircle />}
+                                    sx={{ mb: 2 }}
+                                >
+                                    {message}
+                                </Alert>
+                            </Fade>
+                        )}
+                    </Box>
+
+                    <Box sx={{ p: 3 }}>
+                        {activeStep === 0 && (
+                            <Box sx={{
+                                display: 'grid',
+                                gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+                                gap: 3
+                            }}>
+                                <TextField
+                                    label="Mã học kỳ"
+                                    name="semester_id"
+                                    value={newSemester.semester_id}
+                                    onChange={handleChange}
+                                    fullWidth
+                                    variant="outlined"
+                                    required
+                                    disabled={loading}
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <Class color="action" />
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                    sx={{ mb: 2 }}
+                                />
+                                <TextField
+                                    label="Tên học kỳ"
+                                    name="semester_name"
+                                    value={newSemester.semester_name}
+                                    onChange={handleChange}
+                                    fullWidth
+                                    variant="outlined"
+                                    required
+                                    disabled={loading}
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <AccessTime color="action" />
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                    sx={{ mb: 2 }}
+                                />
+                            </Box>
+                        )}
+
+                        {activeStep === 1 && (
+                            <Box sx={{
+                                display: 'grid',
+                                gridTemplateColumns: { xs: '1fr', md: '4fr 1fr 4fr' },
+                                gap: 3
+                            }}>
+                                <TextField
+                                    label="Ngày bắt đầu"
+                                    name="start_date"
+                                    type="date"
+                                    value={newSemester.start_date}
+                                    onChange={handleChange}
+                                    fullWidth
+                                    variant="outlined"
+                                    required
+                                    disabled={loading}
+                                    InputLabelProps={{ shrink: true }}
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <CalendarToday color="action" />
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                    sx={{ mb: 2 }}
+                                />
+                                <Chip label={`${newSemester.duration_weeks || 0} Tuần`} sx={{ mt: 1.5 }} />
+                                <TextField
+                                    label="Ngày kết thúc"
+                                    name="end_date"
+                                    type="date"
+                                    value={newSemester.end_date}
+                                    onChange={handleChange}
+                                    fullWidth
+                                    variant="outlined"
+                                    required
+                                    disabled={loading}
+                                    InputLabelProps={{ shrink: true }}
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <CalendarToday color="action" />
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                    sx={{ mb: 2 }}
+                                />
+                            </Box>
+                        )}
                     </Box>
                 </DialogContent>
-                <DialogActions>
-                    <Button onClick={onClose} variant="outlined" sx={{ color: '#1976d2' }} disabled={loading}>
-                        Hủy
-                    </Button>
-                    <Button
-                        onClick={handleSubmit}
-                        variant="contained"
-                        sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
-                        disabled={loading}
-                        startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
-                    >
-                        {loading ? 'Đang thêm...' : 'Thêm'}
-                    </Button>
+
+                <DialogActions sx={{
+                    p: 3,
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    borderTop: '1px solid #eee'
+                }}>
+                    <Box>
+                        {activeStep === 0 && (
+                            <Button
+                                variant="outlined"
+                                color="primary"
+                                startIcon={<CloudUpload />}
+                                component="label"
+                                disabled={loading}
+                            >
+                                Nhập từ Excel
+                                <input
+                                    type="file"
+                                    hidden
+                                    accept=".xlsx, .xls"
+                                    onChange={handleImportExcel}
+                                    disabled={loading}
+                                />
+                            </Button>
+                        )}
+                    </Box>
+
+                    <Box sx={{ display: 'flex', gap: 2 }}>
+                        {activeStep > 0 && (
+                            <Button
+                                onClick={handleBack}
+                                variant="outlined"
+                                disabled={loading}
+                            >
+                                Quay lại
+                            </Button>
+                        )}
+
+                        {activeStep < steps.length - 1 ? (
+                            <Button
+                                onClick={handleNext}
+                                variant="contained"
+                                color="primary"
+                                disabled={loading}
+                            >
+                                Tiếp theo
+                            </Button>
+                        ) : (
+                            <Button
+                                onClick={handleSubmit}
+                                variant="contained"
+                                color="primary"
+                                disabled={loading}
+                                startIcon={loading ? <CircularProgress size={20} /> : null}
+                            >
+                                {loading ? 'Đang xử lý...' : 'Thêm học kỳ'}
+                            </Button>
+                        )}
+                    </Box>
                 </DialogActions>
             </Dialog>
 
-            {/* Preview Modal */}
             <PreviewSemesterModal
                 open={showPreview}
                 onClose={handleClosePreview}
                 previewData={previewData}
                 fetchSemesters={fetchSemesters}
+                programs={programs} // Ensure programs are passed if needed in PreviewSemesterModal
             />
         </>
     );

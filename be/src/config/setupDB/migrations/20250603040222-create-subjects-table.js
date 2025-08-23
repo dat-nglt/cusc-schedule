@@ -1,7 +1,7 @@
 'use strict';
 
 /** @type {import('sequelize-cli').Migration} */
-module.exports = {
+export default {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('subjects', {
       subject_id: {
@@ -10,7 +10,7 @@ module.exports = {
         allowNull: false
       },
       subject_name: {
-        type: Sequelize.STRING(50),
+        type: Sequelize.STRING(200),
         allowNull: true
       },
       credit: {
@@ -38,21 +38,11 @@ module.exports = {
         type: Sequelize.DATE,
         defaultValue: Sequelize.NOW,
         allowNull: false
-      },
-      semester_id: {
-        type: Sequelize.STRING(30),
-        allowNull: true,
-        references: {
-          model: 'semesters',
-          key: 'semester_id'
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'SET NULL'
       }
     });
   },
 
-  async down(queryInterface, Sequelize) {
+  async down(queryInterface) {
     await queryInterface.dropTable('subjects');
   }
 };

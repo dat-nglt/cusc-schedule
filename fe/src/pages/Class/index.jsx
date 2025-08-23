@@ -13,6 +13,7 @@ import {
   InputAdornment,
   IconButton,
   Button,
+  useTheme,
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -26,8 +27,10 @@ import EditClassModal from './EditClassModal';
 import DeleteClassModal from './DeleteClassModal';
 import useResponsive from '../../hooks/useResponsive';
 import ClassTable from './ClassTable';
-import { getClasses, getClassById, addClass, updateClass, deleteClass, listClasses } from '../../api/classAPI';
-import { getCourses } from '../../api/courseAPI';
+import { getClassesAPI, getClassByIdAPI, addClassAPI, updateClassAPI, deleteClassAPI } from '../../api/classAPI';
+import { getCoursesAPI } from '../../api/courseAPI';
+import { getAllProgramsAPI } from '../../api/programAPI';
+import TablePaginationLayout from '../../components/layout/TablePaginationLayout';
 
 // Hàm định dạng timestamp thành YYYY-MM-DD HH:MM:SS.sss+07
 const formatTimestamp = (timestamp) => {
@@ -45,9 +48,10 @@ const formatTimestamp = (timestamp) => {
 
 const Class = () => {
   const { isSmallScreen, isMediumScreen } = useResponsive();
-
+  const theme = useTheme();
   const [classes, setClasses] = useState([]);
   const [courses, setCourses] = useState([]);
+  const [programs, setPrograms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(0);
@@ -65,7 +69,7 @@ const Class = () => {
   const fetchClasses = async () => {
     try {
       setLoading(true);
-      const response = await getClasses();
+      const response = await getClassesAPI();
       console.log('Phản hồi từ API (danh sách):', response);
 
       let classesData = [];
@@ -109,7 +113,7 @@ const Class = () => {
   const fetchCourses = async () => {
     try {
       setLoading(true);
-      const response = await getCourses();
+      const response = await getCoursesAPI();
       console.log('Phản hồi từ API (khóa học):', response);
       let coursesData = [];
       if (Array.isArray(response)) {
@@ -134,15 +138,29 @@ const Class = () => {
     }
   };
 
+  const fetchPrograms = async () => {
+    try {
+      const response = await getAllProgramsAPI();
+      if (!response) {
+        throw new Error('Không có dữ liệu chương trình đào tạo');
+      }
+      setPrograms(response.data);
+    } catch (err) {
+      console.error('Lỗi khi tải danh sách chương trình đào tạo:', err.message);
+      setError(`Lỗi khi tải danh sách chương trình đào tạo: ${err.message}`);
+    }
+  };
+
   useEffect(() => {
     fetchClasses();
     fetchCourses();
+    fetchPrograms();
   }, []);
 
   const handleViewClass = async (class_id) => {
     try {
       setLoading(true);
-      const response = await getClassById(class_id);
+      const response = await getClassByIdAPI(class_id);
       console.log('Phản hồi từ API (chi tiết):', response);
 
       let classData = {};
@@ -182,12 +200,13 @@ const Class = () => {
     try {
       setLoading(true);
       console.log('Gửi dữ liệu thêm lớp học:', classData);
-      const response = await addClass({
+      const response = await addClassAPI({
         class_id: classData.class_id,
         class_name: classData.class_name,
         class_size: classData.class_size,
         status: classData.status || 'Hoạt động',
         course_id: classData.course_id,
+        program_id: classData.program_id,
       });
       console.log('Phản hồi từ API (thêm):', response);
 
@@ -195,12 +214,12 @@ const Class = () => {
       setClasses((prev) => [
         ...prev,
         {
-          stt: prev.length + 1,
           class_id: newClass.class_id,
           class_name: newClass.class_name,
           class_size: newClass.class_size,
           status: newClass.status,
           course_id: newClass.course_id,
+          program_id: newClass.program_id,
           created_at: formatTimestamp(newClass.created_at),
           updated_at: formatTimestamp(newClass.updated_at),
           course: newClass.Course ? { course_name: newClass.Course.course_name } : null,
@@ -223,12 +242,13 @@ const Class = () => {
     try {
       setLoading(true);
       console.log('Gửi dữ liệu chỉnh sửa lớp học:', classData);
-      const response = await updateClass(classData.class_id, {
+      const response = await updateClassAPI(classData.class_id, {
         class_id: classData.class_id,
         class_name: classData.class_name,
         class_size: classData.class_size,
         status: classData.status,
         course_id: classData.course_id,
+        program_id: classData.program_id,
         updated_at: new Date().toISOString(),
       });
       console.log('Phản hồi từ API (chỉnh sửa):', response);
@@ -261,7 +281,7 @@ const Class = () => {
         return;
       }
       console.log('Attempting to delete class with class_id:', class_id);
-      const response = await deleteClass(class_id);
+      const response = await deleteClassAPI(class_id);
       console.log('Response from API (delete):', response);
 
       await fetchClasses();
@@ -290,41 +310,52 @@ const Class = () => {
   const displayedClasses = filteredClasses.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   return (
-    <Box sx={{ p: 3, zIndex: 10, height: 'calc(100vh - 64px)', overflowY: 'auto' }}>
+    <Box sx={{ p: 1, zIndex: 10, height: 'calc(100vh - 64px)', overflowY: 'auto' }}>
       <Box sx={{ width: '100%', mb: 3 }}>
         <Card sx={{ flexGrow: 1 }}>
           <CardContent>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, gap: 2 }}>
-              <Typography variant="h6">
+            <Box sx={{
+              display: 'flex',
+              flexDirection: isSmallScreen ? 'column' : 'row',
+              justifyContent: 'space-between',
+              alignItems: isSmallScreen ? 'stretch' : 'center',
+              mb: 3,
+              gap: 2
+            }}>
+              <Typography variant="h5" fontWeight="600">
                 Danh sách lớp học
               </Typography>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                {isSmallScreen ? (
-                  <IconButton
-                    color="primary"
-                    onClick={() => setOpenAdd(true)}
-                    sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
-                  >
-                    <AddIcon sx={{ color: '#fff' }} />
-                  </IconButton>
-                ) : (
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    startIcon={<AddIcon />}
-                    onClick={() => setOpenAdd(true)}
-                    sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' }, minWidth: isSmallScreen ? 100 : 150, height: '56px' }}
-                  >
-                    Thêm lớp học
-                  </Button>
-                )}
-                <FormControl sx={{ minWidth: isSmallScreen ? 100 : 150 }} variant="outlined">
-                  <InputLabel id="year-filter-label">{isSmallScreen ? 'Lọc' : 'Lọc theo năm'}</InputLabel>
+
+              <Box sx={{
+                display: 'flex',
+                gap: 2,
+                flexDirection: isSmallScreen ? 'column' : 'row',
+                width: isSmallScreen ? '100%' : 'auto'
+              }}>
+                <TextField
+                  size="small"
+                  placeholder="Tìm kiếm theo mã hoặc tên lớp học..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SearchIcon />
+                      </InputAdornment>
+                    ),
+                  }}
+                  sx={{
+                    minWidth: 200,
+                    backgroundColor: theme.palette.background.paper
+                  }}
+                />
+
+                <FormControl size="small" sx={{ minWidth: 120 }}>
+                  <InputLabel>Năm</InputLabel>
                   <Select
-                    labelId="year-filter-label"
                     value={selectedYear}
                     onChange={(e) => setSelectedYear(e.target.value)}
-                    label={isSmallScreen ? 'Lọc' : 'Lọc theo năm'}
+                    label="Năm"
                   >
                     <MenuItem value="">Tất cả</MenuItem>
                     {years.map((year) => (
@@ -334,24 +365,16 @@ const Class = () => {
                     ))}
                   </Select>
                 </FormControl>
+
+                <Button
+                  variant="contained"
+                  startIcon={<AddIcon />}
+                  onClick={() => setOpenAdd(true)}
+                  sx={{ ml: isSmallScreen ? 0 : 'auto' }}
+                >
+                  Thêm lớp học
+                </Button>
               </Box>
-            </Box>
-            <Box sx={{ mb: 2 }}>
-              <TextField
-                fullWidth
-                variant="outlined"
-                placeholder="Tìm kiếm theo mã hoặc tên lớp học..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                sx={{ bgcolor: '#fff' }}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon color="action" />
-                    </InputAdornment>
-                  ),
-                }}
-              />
             </Box>
             {loading && <Typography>Loading...</Typography>}
             {error && <Typography color="error">{error}</Typography>}
@@ -368,14 +391,11 @@ const Class = () => {
                   handleEditClass={handleEditClass}
                   handleDeleteClass={handleOpenDeleteModal}
                 />
-                <TablePagination
-                  component="div"
+                <TablePaginationLayout
                   count={filteredClasses.length}
                   page={page}
                   onPageChange={handleChangePage}
                   rowsPerPage={rowsPerPage}
-                  rowsPerPageOptions={[]}
-                  labelDisplayedRows={({ from, to, count }) => `${from}-${to} trên ${count}`}
                 />
               </>
             )}
@@ -397,6 +417,7 @@ const Class = () => {
         onImportSuccess={fetchClasses}
         existingClasses={classes}
         existingCourses={courses}
+        existingPrograms={programs}
       />
       <EditClassModal
         open={openEdit}

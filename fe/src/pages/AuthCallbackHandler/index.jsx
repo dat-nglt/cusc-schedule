@@ -2,103 +2,168 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { getCurrentUserData } from '../../api/authAPI'; // Hoặc đường dẫn đúng tới service của bạn
-// Import các component MUI
+import { getCurrentUserData } from '../../api/authAPI';
 import {
-  CircularProgress, // Biểu tượng loading hình tròn
-  Box,              // Component bao bọc đơn giản
-  Typography,       // Để hiển thị văn bản
-  Alert,            // Để hiển thị thông báo lỗi/thành công
-  Container,        // Để căn giữa nội dung
+  LinearProgress,
+  Box,
+  Typography,
+  Container,
+  Fade,
+  Stack,
+  useTheme,
+  Avatar
 } from '@mui/material';
-import { CheckCircleOutline, ErrorOutline } from '@mui/icons-material'; // Icons cho thông báo
+import {
+  CheckCircle,
+  Error as ErrorIcon,
+  AccountCircle
+} from '@mui/icons-material';
 
 function AuthCallbackHandler() {
   const navigate = useNavigate();
+  const theme = useTheme();
   const { login, logout } = useAuth();
-  const [message, setMessage] = useState('Đang xác thực, vui lòng chờ...');
-  const [loading, setLoading] = useState(true); // Thêm trạng thái loading
-  const [isError, setIsError] = useState(false); // Trạng thái lỗi để hiển thị Alert phù hợp
+  const [message, setMessage] = useState('Đang xác thực tài khoản...');
+  const [loading, setLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
+    const timer = setInterval(() => {
+      setProgress((oldProgress) => {
+        if (oldProgress === 100) {
+          return 100;
+        }
+        const diff = Math.random() * 10;
+        return Math.min(oldProgress + diff, 90);
+      });
+    }, 500);
+
     const handleAuthProcess = async () => {
-      setLoading(true); // Bắt đầu loading
-      setIsError(false); // Đặt lại trạng thái lỗi
       try {
         const response = await getCurrentUserData();
-        console.log("API Response:", response); // Log đầy đủ phản hồi để debug
 
-        if (response && response.success) { // Giả sử API trả về { success: true, role: '...' }
+        if (response?.success) {
+          setProgress(100);
           login(response.role);
-          setMessage('Xác thực thành công! Đang chuyển hướng đến Dashboard...');
-          // Sử dụng icon CheckCircleOutline cho thông báo thành công
-          // Tự động chuyển hướng sau 1.5 giây để người dùng kịp nhìn thấy thông báo
-          setTimeout(() => {
-            navigate('/dashboard', { replace: true });
-          }, 1500);
+          setMessage('Xác thực thành công!');
+          setTimeout(() => navigate('/dashboard', { replace: true }), 1000);
         } else {
-          // Xử lý trường hợp API trả về success: false hoặc không có dữ liệu mong muốn
-          const errorMessage = response?.message || 'Lỗi không xác định từ server.';
-          console.error('Lỗi khi lấy thông tin người dùng:', errorMessage);
-          logout();
-          setMessage(`Xác thực thất bại: ${errorMessage}`);
-          setIsError(true); // Đặt trạng thái lỗi
-          // Tự động chuyển hướng về trang đăng nhập sau 2.5 giây
-          setTimeout(() => {
-            navigate(`/login?error=${encodeURIComponent(errorMessage)}`, { replace: true });
-          }, 2500);
+          const errorMessage = response?.message || 'Xác thực không thành công';
+          throw new Error(errorMessage);
         }
       } catch (error) {
-        console.error('Lỗi trong quá trình xử lý callback frontend:', error);
+        setProgress(100);
         logout();
-        const clientErrorMessage = error.message || 'Có lỗi xảy ra trong quá trình xác thực.';
-        setMessage(`Có lỗi xảy ra: ${clientErrorMessage}`);
-        setIsError(true); // Đặt trạng thái lỗi
-        // Tự động chuyển hướng về trang đăng nhập sau 2.5 giây
+        setMessage(error.message);
+        setIsError(true);
         setTimeout(() => {
-          navigate(`/login?error=${encodeURIComponent(clientErrorMessage)}`, { replace: true });
-        }, 1500);
+          navigate(`/login?error=${encodeURIComponent(error.message)}`, { replace: true });
+        }, 2000);
       } finally {
-        setLoading(false); // Kết thúc loading
+        setLoading(false);
+        clearInterval(timer);
       }
     };
 
     handleAuthProcess();
+
+    return () => clearInterval(timer);
   }, [navigate, login, logout]);
 
   return (
-    <Container
-      maxWidth="sm" // Giới hạn chiều rộng của container
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        minHeight: '100vh', // Chiếm toàn bộ chiều cao màn hình
-        textAlign: 'center',
-        p: 3, // Padding
-      }}
-    >
-      <Box sx={{ my: 4 }}>
-        {loading ? (
-          <>
-            <CircularProgress size={60} sx={{ mb: 2 }} />
-            <Typography variant="h6" color="text.secondary">
-              {message}
-            </Typography>
-          </>
-        ) : (
-          <Alert
-            severity={isError ? "error" : "success"}
-            icon={isError ? <ErrorOutline fontSize="inherit" /> : <CheckCircleOutline fontSize="inherit" />}
-            sx={{ width: '100%' }}
-          >
-            <Typography variant="body1">{message}</Typography>
-          </Alert>
-        )}
-      </Box>
+    <Container maxWidth="sm" sx={{
+      height: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      // background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`
+    }}>
+      <Fade in={true} timeout={500}>
+        <Box
+          sx={{
+            background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
+            color: 'white',
+            p: 4,
+            borderRadius: 2,
+            textAlign: 'center',
+            position: 'relative',
+            overflow: 'hidden',
+            '&::before': {
+              content: '""',
+              position: 'absolute',
+              top: -50,
+              right: -50,
+              width: 100,
+              height: 100,
+              borderRadius: '50%',
+              background: 'rgba(255, 255, 255, 0.1)'
+            }
+          }}
+        >
+          <Avatar
+            src="https://sanvieclamcantho.com/upload/imagelogo/trung-tam-cong-nghe-phan-mem-dai-hoc-can-tho1573111986.png"
+            alt="Logo"
+            sx={{
+              width: 72,
+              height: 72,
+              margin: '0 auto 16px',
+              border: '3px solid white',
+              boxShadow: theme.shadows[3]
+            }}
+          />
+          <Typography variant="h5" component="h1" fontWeight="600">
+            HỆ THỐNG QUẢN LÝ THỜI KHOÁ BIỂU
+          </Typography>
+          <Box sx={{
+            p: 2,
+            borderRadius: 3,
+          }}>
+            <Stack direction="row" alignItems="center" justifyContent="center" spacing={2}>
+              {loading ? (
+                <AccountCircle sx={{
+                  fontSize: 32,
+                  color: 'primary.main',
+                  flexShrink: 0
+                }} />
+              ) : isError ? (
+                <ErrorIcon sx={{
+                  fontSize: 32,
+                  color: 'error.main',
+                  flexShrink: 0
+                }} />
+              ) : (
+                <CheckCircle sx={{
+                  fontSize: 32,
+                  color: 'success.main',
+                  flexShrink: 0
+                }} />
+              )}
+              <Typography variant="body1" sx={{
+                fontWeight: 500,
+                color: isError ? 'error.dark' : loading ? 'text.main' : 'success.light'
+              }}>
+                {message}
+              </Typography>
+            </Stack>
+          </Box>
 
-    </Container>
+          <LinearProgress
+            variant="determinate"
+            value={progress}
+            color={isError ? 'error' : 'primary'}
+            sx={{
+              width: '80%',
+              margin: '0 auto',
+              height: 3,
+              borderRadius: 4,
+              mb: 2,
+              transition: 'all 0.3s ease',
+              backgroundColor: 'divider'
+            }}
+          />
+          </Box>
+      </Fade>
+    </Container >
   );
 }
 

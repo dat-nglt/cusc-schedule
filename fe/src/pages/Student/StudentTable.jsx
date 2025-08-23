@@ -11,182 +11,329 @@ import {
     MenuItem,
     Tooltip,
     Chip,
+    useMediaQuery,
+    useTheme,
 } from '@mui/material';
-import { Visibility, Edit, Delete, Menu as MenuIcon } from '@mui/icons-material';
-import { getStatusChip } from '../../components/ui/StatusChip';
+import { Visibility, Edit, Delete, MoreVert, Email, Phone } from '@mui/icons-material';
+import { getStatusForLectuer } from '../../components/ui/StatusChip';
 import { formatDateTime } from '../../utils/formatDateTime';
 
-export default function StudentTable({ displayedStudents, isSmallScreen, isMediumScreen, handleViewStudent, handleEditStudent, handleDeleteStudent }) {
+export default function StudentTable({
+    displayedStudents,
+    handleViewStudent,
+    handleEditStudent,
+    handleDeleteStudent
+}) {
+    const theme = useTheme();
+    const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+    const isMediumScreen = useMediaQuery(theme.breakpoints.down('md'));
+
     const [anchorEl, setAnchorEl] = useState(null);
     const [selectedRowId, setSelectedRowId] = useState(null);
 
-    // Hàm mở menu
     const handleOpenMenu = (event, id) => {
         setAnchorEl(event.currentTarget);
         setSelectedRowId(id);
     };
 
-    // Hàm đóng menu
     const handleCloseMenu = () => {
         setAnchorEl(null);
         setSelectedRowId(null);
     };
 
-
     return (
-        <Table
-            sx={{
-                minWidth: isSmallScreen ? 300 : isMediumScreen ? 500 : 650,
-                border: '1px solid #e0e0e0',
-                width: '100%',
-                tableLayout: 'fixed',
-            }}
-        >
-            <TableHead>
-                <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
-                    <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '8%' }}>
-                        STT
-                    </TableCell>
-                    {!isSmallScreen && (
-                        <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '15%' }}>
+        <Box sx={{ width: '100%', overflow: 'auto' }}>
+            <Table
+                sx={{
+                    minWidth: 650,
+                    border: '1px solid #e0e0e0',
+                    tableLayout: 'fixed',
+                }}
+            >
+                <TableHead>
+                    <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
+                        <TableCell
+                            sx={{
+                                fontWeight: 'bold',
+                                fontSize: '0.875rem',
+                                textAlign: 'center',
+                                borderRight: '1px solid #e0e0e0',
+                                width: '8%',
+                                py: 1.5
+                            }}
+                        >
+                            STT
+                        </TableCell>
+                        <TableCell
+                            sx={{
+                                fontWeight: 'bold',
+                                fontSize: '0.875rem',
+                                textAlign: 'center',
+                                borderRight: '1px solid #e0e0e0',
+                                width: '15%',
+                                display: isSmallScreen ? 'none' : 'table-cell',
+                                py: 1.5
+                            }}
+                        >
                             Mã học viên
                         </TableCell>
-                    )}
-                    <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'left', borderRight: '1px solid #e0e0e0', width: isSmallScreen ? '35%' : '20%' }}>
-                        Họ tên
-                    </TableCell>
-                    {!isMediumScreen && (
-                        <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: '12%' }}>
+                        <TableCell
+                            sx={{
+                                fontWeight: 'bold',
+                                fontSize: '0.875rem',
+                                textAlign: 'center',
+                                borderRight: '1px solid #e0e0e0',
+                                width: isSmallScreen ? '30%' : '20%',
+                                py: 1.5
+                            }}
+                        >
+                            Họ tên
+                        </TableCell>
+                        <TableCell
+                            sx={{
+                                fontWeight: 'bold',
+                                fontSize: '0.875rem',
+                                textAlign: 'center',
+                                borderRight: '1px solid #e0e0e0',
+                                width: '12%',
+                                display: isMediumScreen ? 'none' : 'table-cell',
+                                py: 1.5
+                            }}
+                        >
                             Mã lớp
                         </TableCell>
-                    )}
-                    {!isSmallScreen && (
-                        <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'left', borderRight: '1px solid #e0e0e0', width: '20%' }}>
+                        <TableCell
+                            sx={{
+                                fontWeight: 'bold',
+                                fontSize: '0.875rem',
+                                textAlign: 'center',
+                                borderRight: '1px solid #e0e0e0',
+                                width: '20%',
+                                display: isMediumScreen ? 'none' : 'table-cell',
+                                py: 1.5
+                            }}
+                        >
+                            Liên hệ
+                        </TableCell>
+                        <TableCell
+                            sx={{
+                                fontWeight: 'bold',
+                                fontSize: '0.875rem',
+                                textAlign: 'center',
+                                borderRight: '1px solid #e0e0e0',
+                                width: '15%',
+                                display: isSmallScreen ? 'none' : 'table-cell',
+                                py: 1.5
+                            }}
+                        >
                             Năm nhập học
                         </TableCell>
-                    )}
-                    <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', borderRight: '1px solid #e0e0e0', width: isSmallScreen ? '25%' : '15%' }}>
-                        Trạng thái
-                    </TableCell>
-                    <TableCell sx={{ fontWeight: 'bold', fontSize: '1rem', color: '#333', textAlign: 'center', width: isSmallScreen ? '22%' : '10%' }}>
-                        Thao tác
-                    </TableCell>
-                </TableRow>
-            </TableHead>
-            <TableBody>
-                {displayedStudents.map((student, index) => (
-                    <TableRow
-                        key={student.student_id}
-                        sx={{
-                            backgroundColor: index % 2 === 0 ? '#fafafa' : '#ffffff',
-                            '&:hover': { backgroundColor: '#e3f2fd', cursor: 'pointer' },
-                            borderBottom: '1px solid #e0e0e0',
-                        }}
-                    >
-                        <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                            {index + 1}
+                        <TableCell
+                            sx={{
+                                fontWeight: 'bold',
+                                fontSize: '0.875rem',
+                                textAlign: 'center',
+                                borderRight: '1px solid #e0e0e0',
+                                width: '15%',
+                                py: 1.5
+                            }}
+                        >
+                            Trạng thái
                         </TableCell>
-                        {!isSmallScreen && (
-                            <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                                {student.student_id}
-                            </TableCell>
-                        )}
-                        <TableCell sx={{ textAlign: 'left', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                            {student.name}
-                        </TableCell>
-                        {!isMediumScreen && (
-                            <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                                <Chip
-                                    label={student.class}
-                                    size="small"
-                                    sx={{ bgcolor: '#e3f2fd', color: '#1976d2', fontWeight: 'bold' }}
-                                />
-                            </TableCell>
-                        )}
-                        {!isSmallScreen && (
-                            <TableCell sx={{ textAlign: 'left', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                                {formatDateTime(student.admission_year)}
-                            </TableCell>
-                        )}
-                        <TableCell sx={{ textAlign: 'center', borderRight: '1px solid #e0e0e0', py: 1.5 }}>
-                            {getStatusChip(student.status)}
-                        </TableCell>
-                        <TableCell sx={{ textAlign: 'center', py: 1.5 }}>
-                            {isSmallScreen ? (
-                                <>
-                                    <Tooltip title="Thao tác">
-                                        <IconButton
-                                            onClick={(event) => handleOpenMenu(event, student.student_id)}
-                                            sx={{ color: '#1976d2' }}
-                                        >
-                                            <MenuIcon />
-                                        </IconButton>
-                                    </Tooltip>
-                                    <Menu
-                                        anchorEl={anchorEl}
-                                        open={Boolean(anchorEl) && selectedRowId === student.student_id}
-                                        onClose={handleCloseMenu}
-                                        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                                        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                                    >
-                                        <MenuItem
-                                            onClick={() => {
-                                                handleViewStudent(student.student_id);
-                                                handleCloseMenu();
-                                            }}
-                                        >
-                                            <Visibility sx={{ mr: 1, color: '#1976d2' }} />
-                                            Xem
-                                        </MenuItem>
-                                        <MenuItem
-                                            onClick={() => {
-                                                handleEditStudent(student.student_id);
-                                                handleCloseMenu();
-                                            }}
-                                        >
-                                            <Edit sx={{ mr: 1, color: '#1976d2' }} />
-                                            Sửa
-                                        </MenuItem>
-                                        <MenuItem
-                                            onClick={() => {
-                                                handleDeleteStudent(student.student_id);
-                                                handleCloseMenu();
-                                            }}
-                                        >
-                                            <Delete sx={{ mr: 1, color: '#d32f2f' }} />
-                                            Xóa
-                                        </MenuItem>
-                                    </Menu>
-                                </>
-                            ) : (
-                                <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1 }}>
-                                    <Tooltip title="Xem">
-                                        <Visibility
-                                            color="primary"
-                                            style={{ cursor: 'pointer' }}
-                                            onClick={() => handleViewStudent(student.student_id)}
-                                        />
-                                    </Tooltip>
-                                    <Tooltip title="Sửa">
-                                        <Edit
-                                            color="primary"
-                                            style={{ cursor: 'pointer' }}
-                                            onClick={() => handleEditStudent(student.student_id)}
-                                        />
-                                    </Tooltip>
-                                    <Tooltip title="Xóa">
-                                        <Delete
-                                            color="error"
-                                            style={{ cursor: 'pointer' }}
-                                            onClick={() => handleDeleteStudent(student.student_id)}
-                                        />
-                                    </Tooltip>
-                                </Box>
-                            )}
+                        <TableCell
+                            sx={{
+                                fontWeight: 'bold',
+                                fontSize: '0.875rem',
+                                textAlign: 'center',
+                                width: '10%',
+                                py: 1.5
+                            }}
+                        >
+                            Thao tác
                         </TableCell>
                     </TableRow>
-                ))}
-            </TableBody>
-        </Table>
+                </TableHead>
+                <TableBody>
+                    {displayedStudents.map((student, index) => (
+                        <TableRow
+                            key={student.student_id}
+                            sx={{
+                                backgroundColor: index % 2 === 0 ? '#fafafa' : '#ffffff',
+                                '&:hover': { backgroundColor: '#f1f8ff' },
+                                borderBottom: '1px solid #e0e0e0',
+                            }}
+                        >
+                            <TableCell
+                                sx={{
+                                    textAlign: 'center',
+                                    borderRight: '1px solid #e0e0e0',
+                                    py: 1.5
+                                }}
+                            >
+                                {index + 1}
+                            </TableCell>
+                            <TableCell
+                                sx={{
+                                    textAlign: 'center',
+                                    borderRight: '1px solid #e0e0e0',
+                                    py: 1.5,
+                                    display: isSmallScreen ? 'none' : 'table-cell'
+                                }}
+                            >
+                                {student.student_id}
+                            </TableCell>
+                            <TableCell
+                                sx={{
+                                    textAlign: 'center',
+                                    borderRight: '1px solid #e0e0e0',
+                                    py: 1.5,
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    whiteSpace: 'nowrap'
+                                }}
+                            >
+                                {student.name}
+                            </TableCell>
+                            <TableCell
+                                sx={{
+                                    textAlign: 'center',
+                                    borderRight: '1px solid #e0e0e0',
+                                    py: 1.5,
+                                    display: isMediumScreen ? 'none' : 'table-cell'
+                                }}
+                            >
+                                {student.class_id ? (
+                                    <Chip
+                                        label={student.class?.class_id || student.class_id}
+                                        size="small"
+                                        color="primary"
+                                        variant="outlined"
+                                        sx={{ fontWeight: 'bold', maxWidth: '100%' }}
+                                    />
+                                ) : (
+                                    <Chip
+                                        label="Chưa có lớp"
+                                        size="small"
+                                        color="default"
+                                        variant="outlined"
+                                    />
+                                )}
+                            </TableCell>
+                            <TableCell
+                                sx={{
+                                    textAlign: 'center', // Căn giữa toàn bộ nội dung trong ô
+                                    borderRight: '1px solid #e0e0e0',
+                                    py: 1.5,
+                                    display: isMediumScreen ? 'none' : 'table-cell'
+                                }}
+                            >
+                                <Box sx={{ fontSize: '0.85rem' }}>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 0.5, justifyContent: 'center' }}>
+                                        <Email sx={{ fontSize: '1rem', mr: 0.5, color: 'text.secondary' }} />
+                                        <Box sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                            {student.account?.email || 'N/A'}
+                                        </Box>
+                                    </Box>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                        <Phone sx={{ fontSize: '1rem', mr: 0.5, color: 'text.secondary' }} />
+                                        <Box>
+                                            {student.account?.phone_number || 'N/A'}
+                                        </Box>
+                                    </Box>
+                                </Box>
+                            </TableCell>
+                            <TableCell
+                                sx={{
+                                    textAlign: 'center',
+                                    borderRight: '1px solid #e0e0e0',
+                                    py: 1.5,
+                                    display: isSmallScreen ? 'none' : 'table-cell'
+                                }}
+                            >
+                                {formatDateTime(student.admission_year)}
+                            </TableCell>
+                            <TableCell
+                                sx={{
+                                    textAlign: 'center',
+                                    borderRight: '1px solid #e0e0e0',
+                                    py: 1.5
+                                }}
+                            >
+                                <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                                    {getStatusForLectuer(student.status)}
+                                </Box>
+                            </TableCell>
+                            <TableCell
+                                sx={{
+                                    textAlign: 'center',
+                                    py: 1.5
+                                }}
+                            >
+                                <Tooltip title="Thao tác">
+                                    <IconButton
+                                        size="small"
+                                        onClick={(event) => handleOpenMenu(event, student.student_id)}
+                                        sx={{
+                                            color: 'text.secondary',
+                                            '&:hover': {
+                                                backgroundColor: 'primary.light',
+                                                color: 'primary.contrastText'
+                                            }
+                                        }}
+                                    >
+                                        <MoreVert />
+                                    </IconButton>
+                                </Tooltip>
+
+                                <Menu
+                                    anchorEl={anchorEl}
+                                    open={Boolean(anchorEl) && selectedRowId === student.student_id}
+                                    onClose={handleCloseMenu}
+                                    anchorOrigin={{
+                                        vertical: 'top',
+                                        horizontal: 'left'
+                                    }}
+                                    transformOrigin={{
+                                        vertical: 'top',
+                                        horizontal: 'left'
+                                    }}
+                                >
+                                    <MenuItem
+                                        onClick={() => {
+                                            handleViewStudent(student.student_id);
+                                            handleCloseMenu();
+                                        }}
+                                        sx={{ py: 1 }}
+                                    >
+                                        <Visibility sx={{ mr: 1.5, fontSize: '20px', color: 'info.main' }} />
+                                        Xem chi tiết
+                                    </MenuItem>
+                                    <MenuItem
+                                        onClick={() => {
+                                            handleEditStudent(student.student_id);
+                                            handleCloseMenu();
+                                        }}
+                                        sx={{ py: 1 }}
+                                    >
+                                        <Edit sx={{ mr: 1.5, fontSize: '20px', color: 'primary.main' }} />
+                                        Chỉnh sửa
+                                    </MenuItem>
+                                    <MenuItem
+                                        onClick={() => {
+                                            handleDeleteStudent(student.student_id);
+                                            handleCloseMenu();
+                                        }}
+                                        sx={{ py: 1 }}
+                                    >
+                                        <Delete sx={{ mr: 1.5, fontSize: '20px', color: 'error.main' }} />
+                                        Xóa
+                                    </MenuItem>
+                                </Menu>
+                            </TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+        </Box>
     )
 }

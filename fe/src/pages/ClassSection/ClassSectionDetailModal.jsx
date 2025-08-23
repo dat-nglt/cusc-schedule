@@ -3,13 +3,15 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions,
   Button,
   Typography,
-  Grid,
   Box,
   IconButton,
-  Tooltip,
+  Chip,
+  Divider,
+  Stack,
+  Paper,
+  Tooltip
 } from '@mui/material';
 import {
   Code as CodeIcon,
@@ -20,9 +22,13 @@ import {
   ToggleOn as ToggleOnIcon,
   Event as EventIcon,
   Update as UpdateIcon,
+  ContentCopy as CopyIcon,
+  Close as CloseIcon,
+  Power
 } from '@mui/icons-material';
+import { toast } from 'react-toastify';
 
-// Hàm định dạng thời gian từ YYYY-MM-DD HH:mm thành DD/MM/YYYY HH:mm
+// Helper function to format date-time
 const formatDateTime = (dateTime) => {
   if (!dateTime) return 'Không có dữ liệu';
   try {
@@ -34,256 +40,198 @@ const formatDateTime = (dateTime) => {
   }
 };
 
-// Hàm kiểm tra giá trị và trả về giá trị hoặc thông báo mặc định
-const getValueOrDefault = (value) => value || 'Không có dữ liệu';
+// Reusable CompactDetailItem component for consistent styling
+const CompactDetailItem = ({ icon, label, value, color = 'primary' }) => (
+  <Paper
+    elevation={0}
+    sx={{
+      p: 1.5,
+      borderRadius: 1,
+      border: '1px solid',
+      borderColor: 'divider',
+      display: 'flex',
+      alignItems: 'center',
+      gap: 1.5,
+      flex: 1, // Allows items to grow and shrink in a flex/grid container
+      minWidth: 'fit-content' // Ensures content doesn't get too cramped
+    }}
+  >
+    <Box sx={{ color: `${color}.main` }}>{icon}</Box>
+    <Box>
+      <Typography variant="caption" color="text.secondary" display="block">
+        {label}
+      </Typography>
+      <Typography variant="body2" fontWeight="medium">
+        {value || 'Không có dữ liệu'}
+      </Typography>
+    </Box>
+  </Paper>
+);
 
 const ClassSectionDetailModal = ({ open, onClose, cls }) => {
   if (!cls) return null;
 
-  // Hàm sao chép mã lớp học phần
   const handleCopyMaLopHocPhan = () => {
     navigator.clipboard.writeText(cls.maLopHocPhan);
-    alert('Đã sao chép mã lớp học phần!');
+    toast.success(`Đã sao chép mã lớp học phần: ${cls.maLopHocPhan}`);
   };
 
   return (
     <Dialog
       open={open}
       onClose={onClose}
-      maxWidth="sm"
+      maxWidth="sm" // Consistent max-width with other modals
       fullWidth
       sx={{
         '& .MuiDialog-paper': {
           borderRadius: 2,
-          boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-        },
+          maxWidth: 500 // Consistent max-width
+        }
       }}
     >
       <DialogTitle
         sx={{
-          bgcolor: '#1976d2',
-          color: '#fff',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
+          bgcolor: 'primary.main', // Consistent primary color
+          color: 'white',
           py: 1.5,
+          px: 2,
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
         }}
       >
-        <Typography variant="h6">
-          Chi tiết lớp học phần {cls.maLopHocPhan}
-        </Typography>
-        <Tooltip title="Sao chép mã lớp học phần">
-          <IconButton
-            onClick={handleCopyMaLopHocPhan}
-            sx={{ color: '#fff' }}
-          >
-            <CodeIcon />
+        <Box>
+          <Typography variant="subtitle1" fontWeight="bold">
+            {cls.tenLopHocPhan || 'Chi tiết lớp học phần'}
+          </Typography>
+          <Typography variant="caption" sx={{ opacity: 0.9 }}>
+            {cls.maLopHocPhan}
+          </Typography>
+        </Box>
+        <Box>
+          <Tooltip title="Sao chép mã">
+            <IconButton onClick={handleCopyMaLopHocPhan} size="small" sx={{ color: 'white', p: 0.5 }}>
+              <CopyIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+          <IconButton onClick={onClose} size="small" sx={{ color: 'white', ml: 0.5, p: 0.5 }}>
+            <CloseIcon fontSize="small" />
           </IconButton>
-        </Tooltip>
+        </Box>
       </DialogTitle>
-      <DialogContent sx={{ mt: 2, px: 3 }}>
-        <Grid container spacing={2}>
-          {/* Mã lớp học phần */}
-          <Grid item xs={12}>
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                bgcolor: '#f9f9f9',
-                p: 2,
-                borderRadius: 1,
-                border: '1px solid #e0e0e0',
-              }}
-            >
-              <CodeIcon sx={{ mr: 1, color: '#1976d2' }} />
-              <Box>
-                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#333' }}>
-                  Mã lớp học phần
-                </Typography>
-                <Typography variant="body1" sx={{ color: '#666' }}>
-                  {getValueOrDefault(cls.maLopHocPhan)}
-                </Typography>
+
+      <DialogContent sx={{ p: 2 }}>
+        <Stack spacing={1.5}>
+          {/* Identification Info */}
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+              gap: 1.5,
+              py: 1
+            }}
+          >
+            <CompactDetailItem
+              icon={<CodeIcon fontSize="small" />}
+              label="Mã lớp học phần"
+              value={cls.maLopHocPhan}
+              color="primary"
+            />
+            <CompactDetailItem
+              icon={<ClassIcon fontSize="small" />}
+              label="Mã lớp học"
+              value={cls.maLopHoc}
+              color="secondary"
+            />
+            <CompactDetailItem
+              icon={<SchoolIcon fontSize="small" />}
+              label="Mã học phần"
+              value={cls.maHocPhan}
+              color="info"
+            />
+            <CompactDetailItem
+              icon={<LabelIcon fontSize="small" />}
+              label="Tên lớp học phần"
+              value={cls.tenLopHocPhan}
+              color="success"
+            />
+          </Box>
+
+          {/* Capacity & Status */}
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+              gap: 1.5
+            }}
+          >
+            <CompactDetailItem
+              icon={<GroupIcon fontSize="small" />}
+              label="Sĩ số tối đa"
+              value={cls.siSoToiDa}
+              color="warning"
+            />
+          </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+            <Typography variant="caption" color="text.secondary">
+              Trạng thái:
+            </Typography>
+            <Chip
+              label={cls.status === 'active' ? 'Đang mở' : 'Chưa mở'}
+              color={cls.status === 'active' ? 'success' : 'error'}
+              size="small"
+              icon={<Power sx={{ fontSize: '0.8rem' }} />}
+              sx={{ fontWeight: 'medium' }}
+            />
+          </Box>
+
+          {/* Timeline Info */}
+          <Box sx={{ mt: 1.5 }}>
+            <Stack spacing={1}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                <EventIcon color="action" fontSize="small" />
+                <Box>
+                  <Typography variant="caption" color="text.secondary">
+                    Tạo lúc:
+                  </Typography>
+                  <Typography variant="body2" display="block">
+                    {formatDateTime(cls.thoiGianTao)}
+                  </Typography>
+                </Box>
               </Box>
-            </Box>
-          </Grid>
-          {/* Mã lớp học */}
-          <Grid item xs={12}>
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                bgcolor: '#f9f9f9',
-                p: 2,
-                borderRadius: 1,
-                border: '1px solid #e0e0e0',
-              }}
-            >
-              <ClassIcon sx={{ mr: 1, color: '#1976d2' }} />
-              <Box>
-                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#333' }}>
-                  Mã lớp học
-                </Typography>
-                <Typography variant="body1" sx={{ color: '#666' }}>
-                  {getValueOrDefault(cls.maLopHoc)}
-                </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                <UpdateIcon color="action" fontSize="small" />
+                <Box>
+                  <Typography variant="caption" color="text.secondary">
+                    Cập nhật:
+                  </Typography>
+                  <Typography variant="body2" display="block">
+                    {formatDateTime(cls.thoiGianCapNhat)}
+                  </Typography>
+                </Box>
               </Box>
-            </Box>
-          </Grid>
-          {/* Mã học phần */}
-          <Grid item xs={6}>
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                bgcolor: '#f9f9f9',
-                p: 2,
-                borderRadius: 1,
-                border: '1px solid #e0e0e0',
-              }}
-            >
-              <SchoolIcon sx={{ mr: 1, color: '#1976d2' }} />
-              <Box>
-                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#333' }}>
-                  Mã học phần
-                </Typography>
-                <Typography variant="body1" sx={{ color: '#666' }}>
-                  {getValueOrDefault(cls.maHocPhan)}
-                </Typography>
-              </Box>
-            </Box>
-          </Grid>
-          {/* Tên lớp học phần */}
-          <Grid item xs={6}>
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                bgcolor: '#f9f9f9',
-                p: 2,
-                borderRadius: 1,
-                border: '1px solid #e0e0e0',
-              }}
-            >
-              <LabelIcon sx={{ mr: 1, color: '#1976d2' }} />
-              <Box>
-                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#333' }}>
-                  Tên lớp học phần
-                </Typography>
-                <Typography variant="body1" sx={{ color: '#666' }}>
-                  {getValueOrDefault(cls.tenLopHocPhan)}
-                </Typography>
-              </Box>
-            </Box>
-          </Grid>
-          {/* Sĩ số tối đa */}
-          <Grid item xs={6}>
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                bgcolor: '#f9f9f9',
-                p: 2,
-                borderRadius: 1,
-                border: '1px solid #e0e0e0',
-              }}
-            >
-              <GroupIcon sx={{ mr: 1, color: '#1976d2' }} />
-              <Box>
-                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#333' }}>
-                  Sĩ số tối đa
-                </Typography>
-                <Typography variant="body1" sx={{ color: '#666' }}>
-                  {getValueOrDefault(cls.siSoToiDa)}
-                </Typography>
-              </Box>
-            </Box>
-          </Grid>
-          {/* Trạng thái */}
-          <Grid item xs={6}>
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                bgcolor: '#f9f9f9',
-                p: 2,
-                borderRadius: 1,
-                border: '1px solid #e0e0e0',
-              }}
-            >
-              <ToggleOnIcon sx={{ mr: 1, color: '#1976d2' }} />
-              <Box>
-                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#333' }}>
-                  Trạng thái
-                </Typography>
-                <Typography variant="body1" sx={{ color: '#666' }}>
-                  {getValueOrDefault(cls.trangThai)}
-                </Typography>
-              </Box>
-            </Box>
-          </Grid>
-          {/* Thời gian tạo */}
-          <Grid item xs={6}>
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                bgcolor: '#f9f9f9',
-                p: 2,
-                borderRadius: 1,
-                border: '1px solid #e0e0e0',
-              }}
-            >
-              <EventIcon sx={{ mr: 1, color: '#1976d2' }} />
-              <Box>
-                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#333' }}>
-                  Thời gian tạo
-                </Typography>
-                <Typography variant="body1" sx={{ color: '#666' }}>
-                  {formatDateTime(cls.thoiGianTao)}
-                </Typography>
-              </Box>
-            </Box>
-          </Grid>
-          {/* Thời gian cập nhật */}
-          <Grid item xs={6}>
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                bgcolor: '#f9f9f9',
-                p: 2,
-                borderRadius: 1,
-                border: '1px solid #e0e0e0',
-              }}
-            >
-              <UpdateIcon sx={{ mr: 1, color: '#1976d2' }} />
-              <Box>
-                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#333' }}>
-                  Thời gian cập nhật
-                </Typography>
-                <Typography variant="body1" sx={{ color: '#666' }}>
-                  {formatDateTime(cls.thoiGianCapNhat)}
-                </Typography>
-              </Box>
-            </Box>
-          </Grid>
-        </Grid>
+            </Stack>
+          </Box>
+        </Stack>
       </DialogContent>
-      <DialogActions sx={{ px: 3, pb: 2 }}>
+
+      <Divider />
+      <Box sx={{ p: 1.5, display: 'flex', justifyContent: 'flex-end' }}>
         <Button
           onClick={onClose}
           variant="contained"
           color="primary"
+          size="small"
           sx={{
-            bgcolor: '#1976d2',
-            '&:hover': { bgcolor: '#115293' },
             borderRadius: 1,
-            px: 3,
+            px: 2,
+            fontSize: '0.8rem',
+            textTransform: 'none'
           }}
         >
           Đóng
         </Button>
-      </DialogActions>
+      </Box>
     </Dialog>
   );
 };

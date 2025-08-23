@@ -13,6 +13,7 @@ import {
   InputAdornment,
   IconButton,
   Button,
+  useTheme,
 } from '@mui/material';
 import { Add as AddIcon, Search as SearchIcon } from '@mui/icons-material';
 import ClassSectionDetailModal from './ClassSectionDetailModal';
@@ -21,6 +22,7 @@ import EditClassSectionModal from './EditClassSectionModal';
 import DeleteClassSectionModal from './DeleteClassSectionModal';
 import useResponsive from '../../hooks/useResponsive';
 import ClassSectionTable from './ClassSectionTable';
+import TablePaginationLayout from '../../components/layout/TablePaginationLayout';
 
 const ClassSection = () => {
   const { isExtraSmallScreen, isSmallScreen, isMediumScreen, isLargeScreen } = useResponsive();
@@ -54,6 +56,7 @@ const ClassSection = () => {
   ]);
 
   // State cho phân trang, tìm kiếm, lọc theo trạng thái và modal
+  const theme = useTheme();
   const [page, setPage] = useState(0);
   const [rowsPerPage] = useState(8);
   const [searchTerm, setSearchTerm] = useState('');
@@ -177,43 +180,50 @@ const ClassSection = () => {
         {/* Bảng danh sách lớp học phần */}
         <Card sx={{ width: '100%', boxShadow: 1 }}>
           <CardContent>
-            <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'stretch', sm: 'center' }, mb: 2, gap: 2 }}>
-              <Typography variant="h6" sx={{ mb: { xs: 1, sm: 0 } }}>
+            <Box sx={{
+              display: 'flex',
+              flexDirection: { xs: 'column', sm: 'row' },
+              justifyContent: 'space-between',
+              alignItems: { xs: 'stretch', sm: 'center' },
+              mb: 3,
+              gap: 2
+            }}>
+              <Typography variant="h5" fontWeight="600" sx={{ mb: { xs: 1, sm: 0 } }}>
                 Danh sách lớp học phần
               </Typography>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexGrow: 1, justifyContent: { xs: 'flex-start', sm: 'flex-end' } }}>
-                {isSmallScreen ? (
-                  <IconButton
-                    color="primary"
-                    onClick={handleAddClassSection}
-                    sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
-                  >
-                    <AddIcon sx={{ color: '#fff' }} />
-                  </IconButton>
-                ) : (
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    startIcon={<AddIcon />}
-                    onClick={handleAddClassSection}
-                    sx={{
-                      bgcolor: '#1976d2',
-                      '&:hover': { bgcolor: '#115293' },
-                      minWidth: isSmallScreen ? 100 : 150,
-                      height: '56px'
-                    }}
-                  >
-                    Thêm lớp học phần
-                  </Button>
-                )}
-                <FormControl sx={{ minWidth: isSmallScreen ? 100 : 200, flexGrow: 1, maxWidth: { xs: '100%', sm: 200 } }} variant="outlined">
-                  <InputLabel id="trang-thai-filter-label">{isSmallScreen ? 'Trạng thái' : 'Lọc theo trạng thái'}</InputLabel>
+
+              <Box sx={{
+                display: 'flex',
+                gap: 2,
+                flexDirection: { xs: 'column', sm: 'row' },
+                width: { xs: '100%', sm: 'auto' },
+                alignItems: { xs: 'flex-start', sm: 'center' }
+              }}>
+                <TextField
+                  size="small"
+                  placeholder="Tìm kiếm theo mã lớp học phần, mã lớp học, mã học phần, tên lớp học phần..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SearchIcon />
+                      </InputAdornment>
+                    ),
+                  }}
+                  sx={{
+                    minWidth: 200,
+                    backgroundColor: theme.palette.background.paper,
+                    flexGrow: 1
+                  }}
+                />
+
+                <FormControl size="small" sx={{ minWidth: 120 }}>
+                  <InputLabel>Trạng thái</InputLabel>
                   <Select
-                    labelId="trang-thai-filter-label"
                     value={selectedTrangThai}
                     onChange={(e) => setSelectedTrangThai(e.target.value)}
-                    label={isSmallScreen ? 'Trạng thái' : 'Lọc theo trạng thái'}
-                    sx={{ width: '100%' }}
+                    label="Trạng thái"
                   >
                     <MenuItem value="">Tất cả</MenuItem>
                     {trangThaiOptions.map((trangThai) => (
@@ -223,24 +233,20 @@ const ClassSection = () => {
                     ))}
                   </Select>
                 </FormControl>
+
+                <Button
+                  variant="contained"
+                  startIcon={<AddIcon />}
+                  onClick={handleAddClassSection}
+                  sx={{
+                    ml: { xs: 0, sm: 'auto' },
+                    minWidth: { xs: '100%', sm: 150 },
+                    height: '40px'
+                  }}
+                >
+                  Thêm lớp học phần
+                </Button>
               </Box>
-            </Box>
-            <Box sx={{ mb: 2 }}>
-              <TextField
-                fullWidth
-                variant="outlined"
-                placeholder="Tìm kiếm theo mã lớp học phần, mã lớp học, mã học phần, tên lớp học phần..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                sx={{ bgcolor: '#fff', width: '100%' }}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon color="action" />
-                    </InputAdornment>
-                  ),
-                }}
-              />
             </Box>
             {filteredClassSectiones.length === 0 ? (
               <Typography>Không có lớp học phần nào để hiển thị.</Typography>
@@ -256,15 +262,11 @@ const ClassSection = () => {
                   handleEditClassSection={handleEditClassSection}
                   handleDeleteClassSection={handleDeleteClassSection}
                 />
-                <TablePagination
-                  component="div"
+                <TablePaginationLayout
                   count={filteredClassSectiones.length}
                   page={page}
                   onPageChange={handleChangePage}
                   rowsPerPage={rowsPerPage}
-                  rowsPerPageOptions={[]}
-                  labelDisplayedRows={({ from, to, count }) => `${from}-${to} trên ${count}`}
-                  sx={{ width: '100%', px: 0 }}
                 />
               </Box>
             )}

@@ -1,67 +1,107 @@
 # timetable_ga/ga_components/chromosome.py
 import random
+import copy
+from collections import defaultdict
+from config import MAX_ASSIGNMENT_ATTEMPTS
 
 class Chromosome:
     def __init__(self, genes=None):
-        # genes is a list of dictionaries, where each dict is a scheduled lesson:
-        # {'lesson_id': str, 'class_id': str, 'subject_id': str, 'lesson_type': str,
-        #  'day': str, 'slot_id': str, 'room_id': str, 'lecturer_id': str}
         self.genes = genes if genes is not None else []
-        self.fitness = float('-inf') # Sẽ được tính toán bởi fitness function
+        self.fitness = float('-inf')
 
     def __str__(self):
         return f"Fitness: {self.fitness:.2f}, Genes: {len(self.genes)} scheduled"
 
-    def __lt__(self, other): # For sorting by fitness
-        return self.fitness > other.fitness # Higher fitness is better
+    def __lt__(self, other):
+        return self.fitness > other.fitness
+
+def find_available_time_slot_and_resources(processed_data, required_lesson, used_slots_per_lecturer, used_slots_per_room, used_slots_per_class):
+    """
+    Tìm kiếm ngẫu nhiên một tổ hợp hợp lệ (day, slot, lecturer, room)
+    cho một tiết học, có giới hạn số lần thử.
+    """
+    class_id = required_lesson['class_id']
+    subject_id = required_lesson['subject_id']
+    lesson_type = required_lesson['lesson_type']
+    class_size = processed_data.class_map.get(class_id, {}).get('size', 0)
+
+    # Lấy danh sách tất cả các tài nguyên hợp lệ
+    valid_lecturers = processed_data.get_lecturers_for_subject(subject_id)
+    if not valid_lecturers:
+        return None, None, None, None
+
+    # Hàm get_rooms_for_type_and_capacity đã có class_size
+    valid_rooms = processed_data.get_rooms_for_type_and_capacity(lesson_type, class_size)
+    if not valid_rooms:
+        return None, None, None, None
+
+    all_time_slots = [(d, s['slot_id']) for d in processed_data.data['days_of_week'] for s in processed_data.data['time_slots']]
+    random.shuffle(all_time_slots)
+
+    for _ in range(MAX_ASSIGNMENT_ATTEMPTS):
+        day, slot_id = random.choice(all_time_slots)
+        
+        # Kiểm tra xung đột với các gen đã gán
+        if (day, slot_id) in used_slots_per_class[class_id]:
+            continue
+
+        # Tìm giảng viên và phòng trống ngẫu nhiên
+        available_lecturers = [
+            l for l in valid_lecturers 
+            if (day, slot_id) not in processed_data.lecturer_map.get(l, {}).get('busy_slots', set())
+            and (day, slot_id) not in used_slots_per_lecturer[l]
+        ]
+        
+        available_rooms = [
+            r for r in valid_rooms 
+            if (day, slot_id) not in used_slots_per_room[r]
+        ]
+
+        if available_lecturers and available_rooms:
+            selected_lecturer = random.choice(available_lecturers)
+            selected_room = random.choice(available_rooms)
+            return day, slot_id, selected_lecturer, selected_room
+
+    return None, None, None, None # Không tìm thấy sau số lần thử tối đa
+
 
 def create_random_chromosome(processed_data):
     """
-    Creates a random chromosome (a potential timetable).
-    Each required lesson is randomly assigned a day, slot, room, and lecturer.
-    This initial assignment might be very invalid.
+    Tạo một cá thể ban đầu bằng cách gán ngẫu nhiên các tiết học hàng tuần
+    vào các tài nguyên hợp lệ, có giới hạn số lần thử.
     """
     genes = []
-    for required_lesson in processed_data.required_lessons_weekly:
-        class_id = required_lesson['class_id']
-        subject_id = required_lesson['subject_id']
-        lesson_type = required_lesson['type']
+    used_slots_per_lecturer = defaultdict(set)
+    used_slots_per_room = defaultdict(set)
+    used_slots_per_class = defaultdict(set)
 
-        cls_info = processed_data.class_map[class_id]
-        class_size = cls_info['size']
+    required_lessons_to_schedule = copy.deepcopy(processed_data.required_lessons_weekly)
+    random.shuffle(required_lessons_to_schedule)
 
-        possible_lecturers = processed_data.get_lecturers_for_subject(subject_id)
-        possible_rooms = processed_data.get_rooms_for_type_and_capacity(lesson_type, class_size)
+    for required_lesson in required_lessons_to_schedule:
+        day, slot_id, lecturer_id, room_id = find_available_time_slot_and_resources(
+            processed_data, required_lesson, used_slots_per_lecturer, used_slots_per_room, used_slots_per_class
+        )
         
-        # Handle cases where no suitable lecturer or room is found (should ideally not happen with good data)
-        if not possible_lecturers:
-            # print(f"Warning: No lecturer for subject {subject_id} for lesson {required_lesson['lesson_id']}")
-            lecturer_id = "UNASSIGNED_LECTURER" # Placeholder
-            lecturer_name = "Unknown"
-        else:
-            lecturer_id = random.choice(possible_lecturers)
-            lecturer_name = next((lecturer['lecturer_name'] for lecturer in processed_data.data['lecturers'] if lecturer['lecturer_id'] == lecturer_id), "Unknown")
-
-        if not possible_rooms:
-            # print(f"Warning: No room for lesson {required_lesson['lesson_id']} (type: {lesson_type}, size: {class_size})")
-            room_id = "UNASSIGNED_ROOM" # Placeholder
-        else:
-            room_id = random.choice(possible_rooms)
-            
-        day = random.choice(processed_data.data['days_of_week'])
-        slot_id = random.choice(processed_data.data['time_slots'])['slot_id']
-
+        # Cập nhật các tài nguyên đã sử dụng nếu tìm thấy
+        if all([day, slot_id, lecturer_id, room_id]):
+            used_slots_per_lecturer[lecturer_id].add((day, slot_id))
+            used_slots_per_room[room_id].add((day, slot_id))
+            used_slots_per_class[required_lesson['class_id']].add((day, slot_id))
+        # Thêm gen vào nhiễm sắc thể, kể cả khi không tìm thấy slot hợp lệ (giá trị là None)
         genes.append({
-            "lesson_id": required_lesson['lesson_id'], # Unique ID for this specific teaching instance
-            "class_id": class_id,
-            "subject_id": subject_id,
-            "lesson_type": lesson_type,
+            "lesson_id": required_lesson['lesson_id'],
+            "class_id": required_lesson['class_id'],
+            "subject_id": required_lesson['subject_id'],
+            "lesson_type": required_lesson['lesson_type'],
             "program_id": required_lesson['program_id'],
-            "group_id": required_lesson['group_id'], # Useful for checking consecutive lessons of same subject
+            "group_id": required_lesson['group_id'],
             "day": day,
             "slot_id": slot_id,
             "room_id": room_id,
             "lecturer_id": lecturer_id,
-            "lecturer_name": lecturer_name,
+            "semester_id": required_lesson['semester_id'],
+            "size": processed_data.class_map.get(required_lesson['class_id'], {}).get('size', 0) # Đã thêm trường này
         })
+    
     return Chromosome(genes)

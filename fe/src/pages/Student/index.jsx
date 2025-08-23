@@ -4,7 +4,6 @@ import {
     Typography,
     Card,
     CardContent,
-    TablePagination,
     TextField,
     Select,
     MenuItem,
@@ -13,6 +12,7 @@ import {
     InputAdornment,
     IconButton,
     Button,
+    useTheme,
 } from '@mui/material';
 import {
     Add as AddIcon,
@@ -24,14 +24,18 @@ import EditStudentModal from './EditStudentModal';
 import DeleteStudentModal from './DeleteStudentModal';
 import useResponsive from '../../hooks/useResponsive';
 import StudentTable from './StudentTable';
-import { getAllStudents, getStudentById, createStudent, updateStudent, deleteStudent } from '../../api/studentAPI';
+import { getAllStudentsAPI, createStudentAPI, updateStudentAPI, deleteStudentAPI } from '../../api/studentAPI';
 import { toast } from 'react-toastify';
-
+import { getClassesAPI } from '../../api/classAPI';
+import TablePaginationLayout from '../../components/layout/TablePaginationLayout';
 const Student = () => {
     const { isSmallScreen, isMediumScreen } = useResponsive();
+    const theme = useTheme();
 
     // Dữ liệu mẫu cho danh sách học viên
     const [students, setStudents] = useState([]);
+    // Lấy danh sách lớp học để hiển thị trong modal thêm học viên
+    const [classes, setClasses] = useState([]);
     // State cho phân trang, tìm kiếm, lọc theo trạng thái và modal
     const [page, setPage] = useState(0);
     const [rowsPerPage] = useState(8);
@@ -50,18 +54,41 @@ const Student = () => {
     // Danh sách trạng thái để lọc
     const statuses = ['Đang học', 'Đã nghỉ học', 'Đã tốt nghiệp', 'Bảo lưu'];
 
-
     const fetchStudents = async () => {
+        setLoading(true);
+        setError(null);
         try {
-            setLoading(true);
-            const response = await getAllStudents();
-            if (!response) {
-                console.error("Không có dữ liệu học viên");
-                return;
+            const response = await getAllStudentsAPI();
+            if (response && response.data) {
+                setStudents(response.data);
+            } else {
+                setStudents([]);
             }
-            setStudents(response.data.data)
         } catch (error) {
             console.error("Lỗi khi tải danh sách học viên:", error);
+            setError(error.response?.data?.message || "Không thể tải danh sách học viên. Vui lòng thử lại.");
+            toast.error(error.response.data.message || "Không thể tải danh sách học viên. Vui lòng thử lại.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const fetchClasses = async () => {
+        setLoading(true);
+        setError(null); // Đặt lại lỗi mỗi khi fetch
+        try {
+            const response = await getClassesAPI();
+
+            if (response && response.data) {
+                setClasses(response.data);
+            } else {
+                console.error("No class data found or invalid response format.");
+                setClasses([]); // Đảm bảo state là mảng rỗng khi không có dữ liệu
+                setError("Không có dữ liệu lớp học.");
+            }
+        } catch (error) {
+            console.error("Lấy dữ liệu lớp học không thành công:", error.response?.data?.message);
+            setError(error.response?.data?.message || "Lỗi khi tải danh sách lớp học. Vui lòng thử lại.");
         } finally {
             setLoading(false);
         }
@@ -69,6 +96,7 @@ const Student = () => {
 
     useEffect(() => {
         fetchStudents();
+        fetchClasses();
     }, [])
 
     // Hàm mở modal Thêm 
@@ -78,21 +106,30 @@ const Student = () => {
 
     // Hàm thêm học viên mới
     const handleAddNewStudent = async (newStudent) => {
+        setLoading(true);
+        setError(null);
         try {
-            setLoading(true);
-            const response = await createStudent(newStudent);
+            const response = await createStudentAPI(newStudent);
             if (response && response.data) {
                 toast.success('Thêm học viên thành công!');
-                fetchStudents(); // Tải lại danh sách học viên sau khi thêm thành công
+                await fetchStudents(); // Tải lại danh sách học viên sau khi thêm thành công
+            }
+            else {
+                const errorMessage = response?.data?.message || "Không thể thêm học viên. Vui lòng thử lại.";
+                setError(errorMessage);
+                toast.error(errorMessage);
             }
         } catch (error) {
-            console.error("Lỗi khi thêm học viên:", error);
-            setError("Không thể thêm học viên. Vui lòng kiểm tra lại thông tin.");
-            toast.error('Thêm học viên thất bại! Vui lòng kiểm tra lại thông tin.');
+            const errorMessage = error.response?.data?.message || "Không thể thêm học viên. Vui lòng thử lại.";
+            console.error("Lỗi khi thêm học viên:", errorMessage);
+            setError(errorMessage);
+            toast.error(errorMessage);
         } finally {
             setLoading(false);
+            setOpenAddModal(false); // Đóng modal sau khi thêm thành công
+            setEditedStudent(null); // Đặt lại state editedStudent để tránh lỗi khi mở modal chỉnh sửa sau này
         }
-    };
+    }
 
     // Hàm đóng modal thêm học viên
     const handleCloseAddModal = () => {
@@ -101,18 +138,30 @@ const Student = () => {
 
     // Hàm mở modal chỉnh sửa
     const handleEditStudentModal = async (id) => {
+
+        setLoading(true);
+        setError(null);
         try {
-            setLoading(true);
-            const response = await getStudentById(id);
-            if (response && response.data) {
-                setEditedStudent(response.data.data);
+            const studentToEdit = filteredStudents.find((s) => s.student_id === id);
+            if (studentToEdit) {
+                setEditedStudent(studentToEdit);
                 setOpenEditModal(true);
+                console.log(studentToEdit);
+            }
+            else {
+                const errorMessage = "Không tìm thấy học viên để chỉnh sửa.";
+                console.error(errorMessage);
+                setError(errorMessage);
+                toast.error(errorMessage);
             }
         } catch (error) {
-            console.error("Lỗi khi lấy thông tin học viên để chỉnh sửa:", error);
-            setError("Không thể lấy thông tin học viên để chỉnh sửa. Vui lòng thử lại.");
-            toast.error('Lỗi khi lấy thông tin học viên để chỉnh sửa. Vui lòng thử lại.');
-        } finally {
+            const errorMessage = error.response?.data?.message || "Không thể mở modal chỉnh sửa học viên. Vui lòng thử lại.";
+            console.error("Lỗi khi mở modal chỉnh sửa học viên:", errorMessage);
+            setError(errorMessage);
+            toast.error(errorMessage);
+        }
+
+        finally {
             setLoading(false);
         }
     };
@@ -121,7 +170,7 @@ const Student = () => {
     const handleSaveEditedStudent = async (updatedStudent) => {
         try {
             setLoading(true);
-            const response = await updateStudent(updatedStudent.student_id, updatedStudent);
+            const response = await updateStudentAPI(updatedStudent.student_id, updatedStudent);
             if (response && response.data) {
                 toast.success('Cập nhật học viên thành công!');
                 fetchStudents(); // Tải lại danh sách học viên sau khi cập nhật thành công
@@ -142,18 +191,28 @@ const Student = () => {
     };
 
     // Hàm mở modal chi tiết học viên
-    const handleViewStudent = async (id) => {
+    const handleViewStudent = (id) => {
+        setLoading(true);
+        setError(null);
+
         try {
-            setLoading(true);
-            const response = await getStudentById(id);
-            if (response && response.data) {
-                setSelectedStudent(response.data.data);
+            const studentToView = students.find(student => student.student_id === id);
+
+            if (studentToView) {
+                setSelectedStudent(studentToView);
+
                 setOpenDetail(true);
+                console.log(studentToView);
+            } else {
+                const errorMessage = `Không tìm thấy học viên với ID: ${id}`;
+                setError(errorMessage);
+                toast.error(`Lỗi: ${errorMessage}`);
             }
         } catch (error) {
-            console.error("Lỗi khi lấy thông tin chi tiết học viên:", error);
-            setError("Không thể lấy thông tin chi tiết học viên. Vui lòng thử lại.");
-            toast.error('Lỗi khi lấy thông tin chi tiết học viên. Vui lòng thử lại.');
+            const errorMessage = error.message || 'Đã xảy ra lỗi không xác định.';
+            setError(errorMessage);
+            toast.error(`Lỗi: ${errorMessage}`);
+            console.error('Lỗi khi lấy thông tin học viên:', error);
         } finally {
             setLoading(false);
         }
@@ -177,7 +236,7 @@ const Student = () => {
     const confirmDeleteStudent = async (id) => {
         try {
             setLoading(true);
-            const response = await deleteStudent(id);
+            const response = await deleteStudentAPI(id);
             if (response) {
                 toast.success('Xóa học viên thành công!');
                 fetchStudents(); // Tải lại danh sách học viên sau khi xóa thành công
@@ -223,48 +282,54 @@ const Student = () => {
     const displayedStudents = filteredStudents.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
     return (
-        <Box sx={{ p: 3, zIndex: 10, height: 'calc(100vh -.64px)', overflowY: 'auto' }}>
+        <Box sx={{ p: 1, zIndex: 10, height: 'calc(100vh -.64px)', overflowY: 'auto' }}>
             {/* Main Content */}
             <Box sx={{ width: '100%', mb: 3 }}>
                 {/* Bảng danh sách học viên */}
                 <Card sx={{ flexGrow: 1 }}>
                     <CardContent>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, gap: 2 }}>
-                            <Typography variant="h6">
+                        <Box sx={{
+                            display: 'flex',
+                            flexDirection: isSmallScreen ? 'column' : 'row',
+                            justifyContent: 'space-between',
+                            alignItems: isSmallScreen ? 'stretch' : 'center',
+                            mb: 3,
+                            gap: 2
+                        }}>
+                            <Typography variant="h5" fontWeight="600">
                                 Danh sách học viên
                             </Typography>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                {isSmallScreen ? (
-                                    <IconButton
-                                        color="primary"
-                                        onClick={handleAddStudentModal}
-                                        sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
-                                    >
-                                        <AddIcon sx={{ color: '# philanthropic' }} />
-                                    </IconButton>
-                                ) : (
-                                    <Button
-                                        variant="contained"
-                                        color="primary"
-                                        startIcon={<AddIcon />}
-                                        onClick={handleAddStudentModal}
-                                        sx={{
-                                            bgcolor: '#1976d2',
-                                            '&:hover': { bgcolor: '#115293' },
-                                            minWidth: isSmallScreen ? 100 : 150,
-                                            height: '56px'
-                                        }}
-                                    >
-                                        Thêm học viên
-                                    </Button>
-                                )}
-                                <FormControl sx={{ minWidth: isSmallScreen ? 100 : 150 }} variant="outlined">
-                                    <InputLabel id="status-filter-label">{isSmallScreen ? 'Lọc' : 'Lọc theo trạng thái'}</InputLabel>
+
+                            <Box sx={{
+                                display: 'flex',
+                                gap: 2,
+                                flexDirection: isSmallScreen ? 'column' : 'row',
+                                width: isSmallScreen ? '100%' : 'auto'
+                            }}>
+                                <TextField
+                                    size="small"
+                                    placeholder="Tìm kiếm theo mã học viên, tên, mã lớp hoặc khóa học..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <SearchIcon />
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                    sx={{
+                                        minWidth: 200,
+                                        backgroundColor: theme.palette.background.paper
+                                    }}
+                                />
+
+                                <FormControl size="small" sx={{ minWidth: 120 }}>
+                                    <InputLabel>Trạng thái</InputLabel>
                                     <Select
-                                        labelId="status-filter-label"
                                         value={selectedStatus}
                                         onChange={(e) => setSelectedStatus(e.target.value)}
-                                        label={isSmallScreen ? 'Lọc' : 'Lọc theo trạng thái'}
+                                        label="Trạng thái"
                                     >
                                         <MenuItem value="">Tất cả</MenuItem>
                                         {statuses.map((status) => (
@@ -274,24 +339,16 @@ const Student = () => {
                                         ))}
                                     </Select>
                                 </FormControl>
+
+                                <Button
+                                    variant="contained"
+                                    startIcon={<AddIcon />}
+                                    onClick={handleAddStudentModal}
+                                    sx={{ ml: isSmallScreen ? 0 : 'auto' }}
+                                >
+                                    Thêm học viên
+                                </Button>
                             </Box>
-                        </Box>
-                        <Box sx={{ mb: 2 }}>
-                            <TextField
-                                fullWidth
-                                variant="outlined"
-                                placeholder="Tìm kiếm theo mã học viên, tên, mã lớp hoặc khóa học..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                sx={{ bgcolor: '#fff' }}
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            <SearchIcon color="action" />
-                                        </InputAdornment>
-                                    ),
-                                }}
-                            />
                         </Box>
                         {filteredStudents.length === 0 ? (
                             <Typography>Không có học viên nào để hiển thị.</Typography>
@@ -307,14 +364,11 @@ const Student = () => {
                                     loading={loading}
                                     error={error}
                                 />
-                                <TablePagination
-                                    component="div"
+                                <TablePaginationLayout
                                     count={filteredStudents.length}
                                     page={page}
                                     onPageChange={handleChangePage}
                                     rowsPerPage={rowsPerPage}
-                                    rowsPerPageOptions={[]}
-                                    labelDisplayedRows={({ from, to, count }) => `${from}-${to} trên ${count}`}
                                 />
                             </>
                         )}
@@ -336,6 +390,7 @@ const Student = () => {
                 error={error}
                 loading={loading}
                 fetchStudents={fetchStudents}
+                classes={classes}
             />
             <EditStudentModal
                 open={openEditModal}

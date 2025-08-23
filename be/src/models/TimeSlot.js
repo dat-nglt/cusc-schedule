@@ -21,9 +21,14 @@ const TimeSlot = (sequelize) => {
         type: DataTypes.TIME,
         allowNull: true,
       },
-       // Thời gian kết thúc
+      // Thời gian kết thúc
       end_time: {
         type: DataTypes.TIME,
+        allowNull: true,
+      },
+      // buổi (sáng, trưa, chiều, tối)
+      type: {
+        type: DataTypes.STRING(30),
         allowNull: true,
       },
       // Mô tả chi tiết khung thời gian
@@ -36,7 +41,7 @@ const TimeSlot = (sequelize) => {
         type: DataTypes.STRING(30),
         allowNull: true,
       },
-    
+
     },
     {
       tableName: "time_slots", // Tên bảng trong CSDL

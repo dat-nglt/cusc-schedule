@@ -13,6 +13,7 @@ import {
     InputAdornment,
     IconButton,
     Button,
+    useTheme,
 } from '@mui/material';
 import {
     Add as AddIcon,
@@ -24,14 +25,15 @@ import EditSubjectModal from './EditSubjectModal';
 import DeleteSubjectModal from './DeleteSubjectModal';
 import useResponsive from '../../hooks/useResponsive';
 import SubjectTable from './SubjectTable';
-import { getAllSubjects, getSubjectById, createSubject, updateSubject, deleteSubject } from '../../api/subjectAPI';
-import { getAllSemesters } from '../../api/semesterAPI';
+import { getAllSubjectsAPI, getSubjectByIdAPI, createSubjectAPI, updateSubjectAPI, deleteSubjectAPI } from '../../api/subjectAPI';
+import { getAllSemestersAPI } from '../../api/semesterAPI';
 import { toast } from 'react-toastify'; // Thêm import cho toast thông báo
+import TablePaginationLayout from '../../components/layout/TablePaginationLayout';
 
 
 const Subject = () => {
     const { isSmallScreen, isMediumScreen } = useResponsive();
-
+    const theme = useTheme();
     // Dữ liệu mẫu cho danh sách học phần
     const [subjects, setSubjects] = useState([]);
     const [semesters, setSemesters] = useState([]);
@@ -57,9 +59,9 @@ const Subject = () => {
     // Hàm lấy danh sách học kỳ từ API
     const fetchSemesters = async () => {
         try {
-            const response = await getAllSemesters();
+            const response = await getAllSemestersAPI();
             if (response && response.data) {
-                setSemesters(response.data.data);
+                setSemesters(response.data);
             } else {
                 setError('Không có dữ liệu học kỳ');
             }
@@ -74,12 +76,12 @@ const Subject = () => {
         try {
             setError('');
             setLoading(true);
-            const response = await getAllSubjects();
+            const response = await getAllSubjectsAPI();
             if (!response) {
                 setError('Không có dữ liệu học phần');
                 return;
             }
-            setSubjects(response.data.data);
+            setSubjects(response.data);
         } catch (error) {
             console.error('Lỗi khi lấy danh sách học phần:', error);
             setError('Không thể lấy danh sách học phần. Vui lòng thử lại sau.');
@@ -109,7 +111,7 @@ const Subject = () => {
     const handleAddNewSubject = async (newSubject) => {
         try {
             setLoading(true);
-            const response = await createSubject(newSubject);
+            const response = await createSubjectAPI(newSubject);
             if (response && response.data) {
                 toast.success('Học phần đã được thêm thành công!')
                 fetchSubjects(); // Tải lại danh sách học phần sau khi thêm thành công
@@ -127,9 +129,9 @@ const Subject = () => {
     const handleEditSubject = async (id) => {
         try {
             setLoading(true);
-            const response = await getSubjectById(id);
+            const response = await getSubjectByIdAPI(id);
             if (response && response.data) {
-                setEditedSubject(response.data.data);
+                setEditedSubject(response.data);
                 setOpenEditModal(true);
             }
         } catch (error) {
@@ -151,7 +153,7 @@ const Subject = () => {
     const handleSaveEditedSubject = async (updatedSubject) => {
         try {
             setLoading(true);
-            const response = await updateSubject(updatedSubject.subject_id, updatedSubject);
+            const response = await updateSubjectAPI(updatedSubject.subject_id, updatedSubject);
             if (response && response.data) {
                 toast.success('Học phần đã được cập nhật thành công!');
                 fetchSubjects(); // Tải lại danh sách học phần sau khi cập nhật thành công
@@ -174,9 +176,9 @@ const Subject = () => {
     const handleViewSubject = async (id) => {
         try {
             setLoading(true);
-            const response = await getSubjectById(id);
+            const response = await getSubjectByIdAPI(id);
             if (response && response.data) {
-                setSelectedSubject(response.data.data);
+                setSelectedSubject(response.data);
                 setOpenDetail(true);
             }
         } catch (error) {
@@ -199,7 +201,7 @@ const Subject = () => {
     const confirmDeleteSubject = async (id) => {
         try {
             setLoading(true);
-            const response = await deleteSubject(id);
+            const response = await deleteSubjectAPI(id);
             if (response) {
                 toast.success('Học phần đã được xóa thành công!');
                 fetchSubjects(); // Tải lại danh sách học phần sau khi xóa thành công
@@ -244,48 +246,54 @@ const Subject = () => {
     const displayedSubjects = filteredSubjects.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
     return (
-        <Box sx={{ p: 3, zIndex: 10, height: 'calc(100vh - 64px)', overflowY: 'auto' }}>
+        <Box sx={{ p: 1, zIndex: 10, height: 'calc(100vh - 64px)', overflowY: 'auto' }}>
             {/* Main Content */}
             <Box sx={{ width: '100%', mb: 3 }}>
                 {/* Bảng danh sách học phần */}
                 <Card sx={{ flexGrow: 1 }}>
                     <CardContent>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, gap: 2 }}>
-                            <Typography variant="h6">
+                        <Box sx={{
+                            display: 'flex',
+                            flexDirection: isSmallScreen ? 'column' : 'row',
+                            justifyContent: 'space-between',
+                            alignItems: isSmallScreen ? 'stretch' : 'center',
+                            mb: 3,
+                            gap: 2
+                        }}>
+                            <Typography variant="h5" fontWeight="600">
                                 Danh sách học phần
                             </Typography>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                {isSmallScreen ? (
-                                    <IconButton
-                                        color="primary"
-                                        onClick={handleAddSubject}
-                                        sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
-                                    >
-                                        <AddIcon sx={{ color: '#fff' }} />
-                                    </IconButton>
-                                ) : (
-                                    <Button
-                                        variant="contained"
-                                        color="primary"
-                                        startIcon={<AddIcon />}
-                                        onClick={handleAddSubject}
-                                        sx={{
-                                            bgcolor: '#1976d2',
-                                            '&:hover': { bgcolor: '#115293' },
-                                            minWidth: isSmallScreen ? 100 : 150,
-                                            height: '56px'
-                                        }}
-                                    >
-                                        Thêm học phần
-                                    </Button>
-                                )}
-                                <FormControl sx={{ minWidth: isSmallScreen ? 100 : 150 }} variant="outlined">
-                                    <InputLabel id="status-filter-label">{isSmallScreen ? 'Lọc' : 'Lọc theo trạng thái'}</InputLabel>
+
+                            <Box sx={{
+                                display: 'flex',
+                                gap: 2,
+                                flexDirection: isSmallScreen ? 'column' : 'row',
+                                width: isSmallScreen ? '100%' : 'auto'
+                            }}>
+                                <TextField
+                                    size="small"
+                                    placeholder="Tìm kiếm theo mã học phần hoặc tên học phần..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <SearchIcon />
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                    sx={{
+                                        minWidth: 200,
+                                        backgroundColor: theme.palette.background.paper
+                                    }}
+                                />
+
+                                <FormControl size="small" sx={{ minWidth: 120 }}>
+                                    <InputLabel>Trạng thái</InputLabel>
                                     <Select
-                                        labelId="status-filter-label"
                                         value={selectedStatus}
                                         onChange={(e) => setSelectedStatus(e.target.value)}
-                                        label={isSmallScreen ? 'Lọc' : 'Lọc theo trạng thái'}
+                                        label="Trạng thái"
                                     >
                                         <MenuItem value="">Tất cả</MenuItem>
                                         {statuses.map((status) => (
@@ -295,24 +303,16 @@ const Subject = () => {
                                         ))}
                                     </Select>
                                 </FormControl>
+
+                                <Button
+                                    variant="contained"
+                                    startIcon={<AddIcon />}
+                                    onClick={handleAddSubject}
+                                    sx={{ ml: isSmallScreen ? 0 : 'auto' }}
+                                >
+                                    Thêm học phần
+                                </Button>
                             </Box>
-                        </Box>
-                        <Box sx={{ mb: 2 }}>
-                            <TextField
-                                fullWidth
-                                variant="outlined"
-                                placeholder="Tìm kiếm theo mã học phần hoặc tên học phần..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                sx={{ bgcolor: '#fff' }}
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            <SearchIcon color="action" />
-                                        </InputAdornment>
-                                    ),
-                                }}
-                            />
                         </Box>
                         {filteredSubjects.length === 0 ? (
                             <Typography>Không có học phần nào để hiển thị.</Typography>
@@ -328,14 +328,11 @@ const Subject = () => {
                                     loading={loading}
                                     error={error}
                                 />
-                                <TablePagination
-                                    component="div"
+                                <TablePaginationLayout
                                     count={filteredSubjects.length}
                                     page={page}
                                     onPageChange={handleChangePage}
                                     rowsPerPage={rowsPerPage}
-                                    rowsPerPageOptions={[]}
-                                    labelDisplayedRows={({ from, to, count }) => `${from}-${to} trên ${count}`}
                                 />
                             </>
                         )}

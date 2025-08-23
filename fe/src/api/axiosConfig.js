@@ -4,7 +4,7 @@ import axios from "axios";
 // Tạo instance của axios
 const axiosInstance = axios.create({
   baseURL: import.meta.API_URL || "http://localhost:3000", // Sử dụng biến môi trường hoặc default
-  timeout: 10000, // Thời gian timeout (10 giây)
+  timeout: 30000, // Thời gian timeout (10 giây)
   headers: {
     "Content-Type": "application/json",
   },
@@ -102,7 +102,9 @@ axiosInstance.interceptors.response.use(
     // Xử lý các lỗi khác không phải 401 hoặc 401 đã được xử lý retry
     else if (error.response?.status === 403) {
       console.log("Forbidden (403), access denied.");
-      // window.location.href = '/unauthorized'; // Hoặc xử lý khác
+      window.location.href = `${
+        import.meta.env.VITE_FRONTEND_URL || "http://localhost:5000"
+      }/login?error=${encodeURIComponent("access_denied")}`;
     }
 
     return Promise.reject(error);

@@ -11,8 +11,7 @@ import {
 
 const DeleteRoomModal = ({ open, onClose, onDelete, room }) => {
   const handleDelete = () => {
-    onDelete(room.id);
-    onClose();
+    onDelete(room.room_id);
   };
 
   return (
@@ -28,7 +27,7 @@ const DeleteRoomModal = ({ open, onClose, onDelete, room }) => {
               fontWeight: 'bold', // In đậm
             }}
           >
-            {room?.maPhongHoc}
+            {room?.room_id}
           </Box> không?
         </Typography>
       </DialogContent>

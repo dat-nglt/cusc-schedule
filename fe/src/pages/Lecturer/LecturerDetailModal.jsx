@@ -3,330 +3,348 @@ import {
     Dialog,
     DialogTitle,
     DialogContent,
-    DialogActions,
     Button,
     Typography,
-    Grid,
     Box,
     IconButton,
-    Tooltip,
     Chip,
+    Divider,
+    Grid,
+    Card,
+    CardContent,
+    useTheme,
+    useMediaQuery,
+    Avatar,
+    Tooltip
 } from '@mui/material';
 import {
     Person as PersonIcon,
     Badge as BadgeIcon,
     School as SchoolIcon,
-    Email as EmailIcon,
-    Phone as PhoneIcon,
     Event as EventIcon,
     Update as UpdateIcon,
     CheckCircle as StatusIcon,
+    ContentCopy as CopyIcon,
+    Close as CloseIcon,
+    Email as EmailIcon,
+    Phone as PhoneIcon,
+    LocationOn as LocationIcon,
+    Cake as CakeIcon,
+    Transgender as GenderIcon,
+    Subject as SubjectIcon,
+    Work as WorkIcon
 } from '@mui/icons-material';
-import { getStatusChip } from '../../components/ui/StatusChip';
 import { formatDateTime } from '../../utils/formatDateTime';
 import { toast } from 'react-toastify';
-// Hàm kiểm tra giá trị và trả về giá trị hoặc thông báo mặc định
-const getValueOrDefault = (value) => value || 'Không có dữ liệu';
+import { getStatusForLectuer } from '../../components/ui/StatusChip';
+
+const InfoCard = ({ title, icon, children, span = 1, minHeight = 220 }) => (
+    <Grid item xs={12} sm={6} md={span}>
+        <Card
+            variant="outlined"
+            sx={{
+                height: '100%',
+                minHeight: minHeight,
+                maxWidth: 250,
+                minWidth: 250,
+                borderRadius: 2,
+                borderColor: 'divider',
+                display: 'flex',
+                flexDirection: 'column',
+                '&:hover': {
+                    boxShadow: 1
+                }
+            }}
+        >
+            <CardContent sx={{ p: 2.5, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
+                    <Box sx={{ color: 'primary.main', mt: 0.5 }}>
+                        {icon}
+                    </Box>
+                    <Typography variant="subtitle2" fontWeight="600" color="primary">
+                        {title}
+                    </Typography>
+                </Box>
+                <Box sx={{ flexGrow: 1 }}>
+                    {children}
+                </Box>
+            </CardContent>
+        </Card>
+    </Grid>
+);
+
+const InfoItem = ({ label, value, icon, chips }) => (
+    <Box sx={{ mb: 2, '&:last-child': { mb: 0 } }}>
+        <Typography variant="caption" color="text.secondary" display="block" gutterBottom>
+            {label}
+        </Typography>
+        <Box sx={{ display: 'flex', alignItems: chips ? 'flex-start' : 'center', gap: 1 }}>
+            {icon && (
+                <Box sx={{ color: 'text.secondary', mt: 1 }}>
+                    {icon}
+                </Box>
+            )}
+            {chips ? (
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, flexGrow: 1 }}>
+                    {value && value.length > 0 ? (
+                        value.map((item, idx) => (
+                            <Chip
+                                key={idx}
+                                label={item}
+                                size="small"
+                                color="primary"
+                                variant="outlined"
+                                sx={{ mb: 0.5 }}
+                            />
+                        ))
+                    ) : (
+                        <Typography variant="body2" color="text.secondary" fontStyle="italic" sx={{ mt: 1 }}>
+                            Chưa có dữ liệu
+                        </Typography>
+                    )}
+                </Box>
+            ) : (
+                <Typography variant="body2" fontWeight="500">
+                    {value || (
+                        <Typography component="span" variant="body2" color="text.secondary" fontStyle="italic">
+                            Chưa cập nhật
+                        </Typography>
+                    )}
+                </Typography>
+            )}
+        </Box>
+    </Box>
+);
 
 export default function LecturerDetailModal({ open, onClose, lecturer }) {
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
     if (!lecturer) return null;
 
-    // Hàm sao chép mã giảng viên
-    const handleCopyMaGiangVien = () => {
+    const handleCopyLecturerId = () => {
         navigator.clipboard.writeText(lecturer.lecturer_id);
-        toast.success('Đã sao chép mã giảng viên: ' + lecturer.lecturer_id);
+        toast.success(`Đã sao chép mã giảng viên: ${lecturer.lecturer_id}`);
     };
 
+    const getStatusColor = (status) => {
+        switch (status?.toLowerCase()) {
+            case 'active': return 'success';
+            case 'inactive': return 'error';
+            case 'pending': return 'warning';
+            default: return 'default';
+        }
+    };
 
+    const getStatusText = (status) => {
+        switch (status?.toLowerCase()) {
+            case 'active': return 'Đang giảng dạy';
+            case 'inactive': return 'Ngừng giảng dạy';
+            case 'pending': return 'Chờ xử lý';
+            default: return status || 'Không xác định';
+        }
+    };
+
+    const getGenderText = (gender) => {
+        switch (gender?.toLowerCase()) {
+            case 'male': return 'Nam';
+            case 'female': return 'Nữ';
+            case 'other': return 'Khác';
+            default: return 'Chưa xác định';
+        }
+    };
 
     return (
         <Dialog
             open={open}
             onClose={onClose}
-            maxWidth="md"
             fullWidth
+            fullScreen={isMobile}
             sx={{
                 '& .MuiDialog-paper': {
-                    borderRadius: 2,
-                    boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-                },
+                    borderRadius: isMobile ? 0 : 2,
+                    maxWidth: "fit-content",
+                    overflow: 'hidden'
+                }
             }}
         >
             <DialogTitle
                 sx={{
-                    bgcolor: '#1976d2',
-                    color: '#fff',
+                    p: 3,
                     display: 'flex',
-                    alignItems: 'center',
                     justifyContent: 'space-between',
-                    py: 1.5,
+                    alignItems: 'center',
+                    borderBottom: '1px solid',
+                    borderColor: 'divider',
+                    bgcolor: 'grey.50'
                 }}
             >
-                <Typography variant="h6">
-                    Chi tiết giảng viên {lecturer.name || lecturer.lecturer_id}
-                </Typography>
-                <Tooltip title="Sao chép mã giảng viên">
-                    <IconButton
-                        onClick={handleCopyMaGiangVien}
-                        sx={{ color: '#fff' }}
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <Avatar
+                        sx={{
+                            width: 48,
+                            height: 48,
+                            bgcolor: 'primary.main',
+                            fontSize: '1.2rem',
+                            fontWeight: 'bold'
+                        }}
                     >
-                        <BadgeIcon />
-                    </IconButton>
-                </Tooltip>
+                        {lecturer.name?.[0]?.toUpperCase() || 'G'}
+                    </Avatar>
+                    <Box>
+                        <Typography variant="h6" fontWeight="600" gutterBottom>
+                            {lecturer.name || 'Chi tiết giảng viên'}
+                        </Typography>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <Typography variant="body2" color="text.secondary">
+                                {lecturer.lecturer_id}
+                            </Typography>
+                            <Tooltip title="Sao chép mã giảng viên">
+                                <IconButton
+                                    onClick={handleCopyLecturerId}
+                                    size="small"
+                                    sx={{ p: 0.5 }}
+                                >
+                                    <CopyIcon fontSize="small" />
+                                </IconButton>
+                            </Tooltip>
+                            <Chip
+                                label={getStatusText(lecturer.status)}
+                                color={getStatusColor(lecturer.status)}
+                                size="small"
+                                sx={{ ml: 1 }}
+                            />
+                        </Box>
+                    </Box>
+                </Box>
+                <IconButton
+                    onClick={onClose}
+                    sx={{
+                        bgcolor: 'background.paper',
+                        '&:hover': { bgcolor: 'grey.100' }
+                    }}
+                >
+                    <CloseIcon />
+                </IconButton>
             </DialogTitle>
-            <DialogContent sx={{ mt: 2, px: 3 }}>
-                <Grid container spacing={2}>
-                    {/* Mã giảng viên */}
+
+            <DialogContent sx={{ p: 3, mt: 3 }}>
+                <Grid container spacing={1.5} justifyContent={"center"}>
+                    {/* Hàng 1: 2 cột - Thông tin cá nhân & Thông tin liên hệ */}
                     <Grid item xs={12} md={6}>
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                bgcolor: '#f9f9f9',
-                                p: 2,
-                                borderRadius: 1,
-                                border: '1px solid #e0e0e0',
-                            }}
-                        >
-                            <BadgeIcon sx={{ mr: 1, color: '#1976d2' }} />
-                            <Box>
-                                <Typography
-                                    variant="body2"
-                                    sx={{ fontWeight: 'bold', color: '#333' }}
-                                >
-                                    Mã giảng viên
-                                </Typography>
-                                <Typography variant="body1" sx={{ color: '#666' }}>
-                                    {getValueOrDefault(lecturer.lecturer_id)}
-                                </Typography>
-                            </Box>
-                        </Box>
+                        <InfoCard title="Thông tin cá nhân" icon={<PersonIcon />} minHeight={220}>
+                            <InfoItem
+                                label="Mã giảng viên"
+                                value={lecturer.lecturer_id}
+                                icon={<BadgeIcon fontSize="small" />}
+                            />
+                            <InfoItem
+                                label="Giới tính"
+                                value={lecturer.gender}
+                                icon={<GenderIcon fontSize="small" />}
+                            />
+                            <InfoItem
+                                label="Ngày sinh"
+                                value={formatDateTime(lecturer.day_of_birth)}
+                                icon={<CakeIcon fontSize="small" />}
+                            />
+                        </InfoCard>
                     </Grid>
 
-                    {/* Họ tên */}
                     <Grid item xs={12} md={6}>
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                bgcolor: '#f9f9f9',
-                                p: 2,
-                                borderRadius: 1,
-                                border: '1px solid #e0e0e0',
-                            }}
-                        >
-                            <PersonIcon sx={{ mr: 1, color: '#1976d2' }} />
-                            <Box>
-                                <Typography
-                                    variant="body2"
-                                    sx={{ fontWeight: 'bold', color: '#333' }}
-                                >
-                                    Họ tên
-                                </Typography>
-                                <Typography variant="body1" sx={{ color: '#666' }}>
-                                    {getValueOrDefault(lecturer.name)}
-                                </Typography>
-                            </Box>
-                        </Box>
+                        <InfoCard title="Thông tin liên hệ" icon={<EmailIcon />} minHeight={220}>
+                            <InfoItem
+                                label="Email"
+                                value={lecturer.account.email}
+                                icon={<EmailIcon fontSize="small" />}
+                            />
+                            <InfoItem
+                                label="Số điện thoại"
+                                value={lecturer.phone_number}
+                                icon={<PhoneIcon fontSize="small" />}
+                            />
+                            <InfoItem
+                                label="Địa chỉ"
+                                value={lecturer.address}
+                                icon={<LocationIcon fontSize="small" />}
+                            />
+                        </InfoCard>
                     </Grid>
 
-                    {/* Môn giảng dạy */}
-                    <Grid item xs={12}>
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                alignItems: 'flex-start',
-                                bgcolor: '#f9f9f9',
-                                p: 2,
-                                borderRadius: 1,
-                                border: '1px solid #e0e0e0',
-                            }}
-                        >
-                            <SchoolIcon sx={{ mr: 1, color: '#1976d2', mt: 0.5 }} />
-                            <Box sx={{ width: '100%' }}>
-                                <Typography
-                                    variant="body2"
-                                    sx={{ fontWeight: 'bold', color: '#333', mb: 1 }}
-                                >
-                                    Môn giảng dạy
-                                </Typography>
-                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                                    {lecturer.department && lecturer.department.length > 0 ? (
-                                        Array.isArray(lecturer.department) ? (
-                                            lecturer.department.map((mon, idx) => (
-                                                <Chip
-                                                    key={idx}
-                                                    label={mon}
-                                                    sx={{ bgcolor: '#e3f2fd', color: '#1976d2' }}
-                                                />
-                                            ))
-                                        ) : (
-                                            <Chip
-                                                label={lecturer.department}
-                                                sx={{ bgcolor: '#e3f2fd', color: '#1976d2' }}
-                                            />
-                                        )
-                                    ) : (
-                                        <Typography variant="body1" sx={{ color: '#666' }}>
-                                            Không có dữ liệu
-                                        </Typography>
-                                    )}
-                                </Box>
-                            </Box>
-                        </Box>
+                    {/* Hàng 2: 2 cột - Thông tin giảng dạy & Lịch sử hệ thống */}
+                    <Grid item xs={12} md={6}>
+                        <InfoCard title="Thông tin giảng dạy" icon={<SchoolIcon />} minHeight={220}>
+                            <InfoItem
+                                label="Môn giảng dạy"
+                                value={lecturer.subjects || []}
+                                icon={<SubjectIcon fontSize="small" />}
+                                chips
+                            />
+                            <InfoItem
+                                label="Khoa/Bộ môn"
+                                value={lecturer.department}
+                                icon={<SchoolIcon fontSize="small" />}
+                            />
+                            <InfoItem
+                                label="Chức vụ"
+                                value={lecturer.position || 'Giảng viên'}
+                                icon={<WorkIcon fontSize="small" />}
+                            />
+                        </InfoCard>
                     </Grid>
 
-                    {/* Email */}
                     <Grid item xs={12} md={6}>
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                bgcolor: '#f9f9f9',
-                                p: 2,
-                                borderRadius: 1,
-                                border: '1px solid #e0e0e0',
-                            }}
-                        >
-                            <EmailIcon sx={{ mr: 1, color: '#1976d2' }} />
-                            <Box>
-                                <Typography
-                                    variant="body2"
-                                    sx={{ fontWeight: 'bold', color: '#333' }}
-                                >
-                                    Email
-                                </Typography>
-                                <Typography variant="body1" sx={{ color: '#666' }}>
-                                    {getValueOrDefault(lecturer.email)}
-                                </Typography>
-                            </Box>
-                        </Box>
-                    </Grid>
-
-                    {/* Số điện thoại */}
-                    <Grid item xs={12} md={6}>
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                bgcolor: '#f9f9f9',
-                                p: 2,
-                                borderRadius: 1,
-                                border: '1px solid #e0e0e0',
-                            }}
-                        >
-                            <PhoneIcon sx={{ mr: 1, color: '#1976d2' }} />
-                            <Box>
-                                <Typography
-                                    variant="body2"
-                                    sx={{ fontWeight: 'bold', color: '#333' }}
-                                >
-                                    Số điện thoại
-                                </Typography>
-                                <Typography variant="body1" sx={{ color: '#666' }}>
-                                    {getValueOrDefault(lecturer.phone_number)}
-                                </Typography>
-                            </Box>
-                        </Box>
-                    </Grid>
-
-                    {/* Trạng thái */}
-                    <Grid item xs={12} md={6}>
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                bgcolor: '#f9f9f9',
-                                p: 2,
-                                borderRadius: 1,
-                                border: '1px solid #e0e0e0',
-                            }}
-                        >
-                            <StatusIcon sx={{ mr: 1, color: '#1976d2' }} />
-                            <Box>
-                                <Typography
-                                    variant="body2"
-                                    sx={{ fontWeight: 'bold', color: '#333' }}
-                                >
-                                    Trạng thái
-                                </Typography>
-                                <Box sx={{ mt: 0.5 }}>
-                                    {getStatusChip(lecturer.status)}
-                                </Box>
-                            </Box>
-                        </Box>
-                    </Grid>
-
-                    {/* Thời gian tạo */}
-                    <Grid item xs={12} md={6}>
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                bgcolor: '#f9f9f9',
-                                p: 2,
-                                borderRadius: 1,
-                                border: '1px solid #e0e0e0',
-                            }}
-                        >
-                            <EventIcon sx={{ mr: 1, color: '#1976d2' }} />
-                            <Box>
-                                <Typography
-                                    variant="body2"
-                                    sx={{ fontWeight: 'bold', color: '#333' }}
-                                >
-                                    Thời gian tạo
-                                </Typography>
-                                <Typography variant="body1" sx={{ color: '#666' }}>
-                                    {formatDateTime(lecturer.created_at)}
-                                </Typography>
-                            </Box>
-                        </Box>
-                    </Grid>
-
-                    {/* Thời gian cập nhật */}
-                    <Grid item xs={12} md={6}>
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                bgcolor: '#f9f9f9',
-                                p: 2,
-                                borderRadius: 1,
-                                border: '1px solid #e0e0e0',
-                            }}
-                        >
-                            <UpdateIcon sx={{ mr: 1, color: '#1976d2' }} />
-                            <Box>
-                                <Typography
-                                    variant="body2"
-                                    sx={{ fontWeight: 'bold', color: '#333' }}
-                                >
-                                    Thời gian cập nhật
-                                </Typography>
-                                <Typography variant="body1" sx={{ color: '#666' }}>
-                                    {formatDateTime(lecturer.updated_at)}
-                                </Typography>
-                            </Box>
-                        </Box>
+                        <InfoCard title="Lịch sử hệ thống" icon={<EventIcon />} minHeight={220}>
+                            <InfoItem
+                                label="Ngày tạo"
+                                value={formatDateTime(lecturer.created_at)}
+                                icon={<EventIcon fontSize="small" />}
+                            />
+                            <InfoItem
+                                label="Cập nhật cuối"
+                                value={formatDateTime(lecturer.updated_at)}
+                                icon={<UpdateIcon fontSize="small" />}
+                            />
+                            <InfoItem
+                                label="Trạng thái"
+                                value={getStatusForLectuer(lecturer.status)}
+                                icon={<StatusIcon fontSize="small" />}
+                            />
+                        </InfoCard>
                     </Grid>
                 </Grid>
             </DialogContent>
-            <DialogActions sx={{ px: 3, pb: 2 }}>
+
+            <Divider />
+            <Box sx={{ p: 2.5, display: 'flex', justifyContent: 'flex-end', gap: 1.5 }}>
                 <Button
                     onClick={onClose}
-                    variant="contained"
-                    color="primary"
+                    variant="outlined"
+                    color='secondary'
+                    startIcon={<CloseIcon />}
                     sx={{
-                        bgcolor: '#1976d2',
-                        '&:hover': { bgcolor: '#115293' },
                         borderRadius: 1,
                         px: 3,
+                        textTransform: 'none',
+                        fontWeight: '500'
                     }}
                 >
                     Đóng
                 </Button>
-            </DialogActions>
+                <Button
+                    variant="contained"
+                    color='primary'
+                    startIcon={<PersonIcon />}
+                    sx={{
+                        borderRadius: 1,
+                        px: 3,
+                        textTransform: 'none',
+                        fontWeight: '500'
+                    }}
+                >
+                    Chỉnh sửa thông tin
+                </Button>
+            </Box>
         </Dialog>
-    )
+    );
 }

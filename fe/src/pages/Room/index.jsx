@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
   Card,
   CardContent,
-  TablePagination,
   TextField,
   Select,
   MenuItem,
@@ -13,263 +12,581 @@ import {
   InputAdornment,
   IconButton,
   Button,
+  Chip,
+  Avatar,
+  Paper,
+  Modal,
+  Divider,
+  useTheme,
+  alpha
 } from '@mui/material';
-import { Add as AddIcon, Search as SearchIcon } from '@mui/icons-material';
-import RoomDetailModal from './RoomDetailModal';
+import {
+  Add as AddIcon,
+  Search as SearchIcon,
+  MeetingRoom as RoomIcon,
+  Computer as ComputerIcon,
+  School as SchoolIcon,
+  Groups as GroupsIcon,
+  Construction as MaintenanceIcon,
+  Close as CloseIcon,
+  Edit as EditIcon,
+  Delete as DeleteIcon,
+  Visibility as ViewIcon
+} from '@mui/icons-material';
+import useResponsive from '../../hooks/useResponsive';
 import AddRoomModal from './AddRoomModal';
 import EditRoomModal from './EditRoomModal';
 import DeleteRoomModal from './DeleteRoomModal';
-import useResponsive from '../../hooks/useResponsive';
-import RoomTable from './RoomTable';
+import RoomDetailModal from './RoomDetailModal';
+import {
+  getAllRoomAPI,
+  createRoomAPI,
+  updateRoomAPI,
+  deleteRoomAPI,
+} from '../../api/roomAPI';
+import { toast } from 'react-toastify';
 
-const Room = () => {
-  const { isExtraSmallScreen, isSmallScreen, isMediumScreen, isLargeScreen } = useResponsive();
+const RoomManagement = () => {
+  const theme = useTheme();
+  const { isSmallScreen } = useResponsive();
 
-  // Dữ liệu mẫu cho danh sách phòng học
-  const [rooms, setRooms] = useState([
-    { id: 1, stt: 1, maPhongHoc: 'P101', tenPhongHoc: 'Phòng 101', toaNha: 'A', tang: 1, sucChua: 50, loaiPhongHoc: 'Phòng lý thuyết', trangThai: 'Hoạt động', thoiGianTao: '2025-05-15 09:00', thoiGianCapNhat: '2025-05-20 14:30' },
-    { id: 2, stt: 2, maPhongHoc: 'P102', tenPhongHoc: 'Phòng 102', toaNha: 'A', tang: 1, sucChua: 40, loaiPhongHoc: 'Phòng thực hành', trangThai: 'Hoạt động', thoiGianTao: '2025-05-16 10:15', thoiGianCapNhat: '2025-05-21 15:00' },
-    { id: 3, stt: 3, maPhongHoc: 'P201', tenPhongHoc: 'Phòng 201', toaNha: 'A', tang: 2, sucChua: 60, loaiPhongHoc: 'Phòng lý thuyết', trangThai: 'Hoạt động', thoiGianTao: '2025-05-17 11:30', thoiGianCapNhat: '2025-05-22 09:45' },
-    { id: 4, stt: 4, maPhongHoc: 'P202', tenPhongHoc: 'Phòng 202', toaNha: 'A', tang: 2, sucChua: 30, loaiPhongHoc: 'Phòng thực hành', trangThai: 'Không hoạt động', thoiGianTao: '2025-05-18 14:00', thoiGianCapNhat: '2025-05-23 13:15' },
-    { id: 5, stt: 5, maPhongHoc: 'P301', tenPhongHoc: 'Phòng 301', toaNha: 'B', tang: 3, sucChua: 80, loaiPhongHoc: 'Phòng hội thảo', trangThai: 'Hoạt động', thoiGianTao: '2025-05-19 15:30', thoiGianCapNhat: '2025-05-24 10:20' },
-    { id: 6, stt: 6, maPhongHoc: 'P302', tenPhongHoc: 'Phòng 302', toaNha: 'B', tang: 3, sucChua: 50, loaiPhongHoc: 'Phòng lý thuyết', trangThai: 'Hoạt động', thoiGianTao: '2025-05-20 09:45', thoiGianCapNhat: '2025-05-25 16:10' },
-    { id: 7, stt: 7, maPhongHoc: 'P401', tenPhongHoc: 'Phòng 401', toaNha: 'B', tang: 4, sucChua: 40, loaiPhongHoc: 'Phòng thực hành', trangThai: 'Hoạt động', thoiGianTao: '2025-05-21 11:00', thoiGianCapNhat: '2025-05-26 13:40' },
-    { id: 8, stt: 8, maPhongHoc: 'P402', tenPhongHoc: 'Phòng 402', toaNha: 'B', tang: 4, sucChua: 70, loaiPhongHoc: 'Phòng hội thảo', trangThai: 'Không hoạt động', thoiGianTao: '2025-05-22 14:20', thoiGianCapNhat: '2025-05-27 15:55' },
-  ]);
+  // State for rooms data
+  const [rooms, setRooms] = useState([]);
 
-  // State cho phân trang, tìm kiếm, lọc theo loại phòng học và modal
-  const [page, setPage] = useState(0);
-  const [rowsPerPage] = useState(8);
+  // State for filters and modals
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedLoaiPhongHoc, setSelectedLoaiPhongHoc] = useState('');
-  const [openDetail, setOpenDetail] = useState(false);
+  const [buildingFilter, setBuildingFilter] = useState('');
+  const [typeFilter, setTypeFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
   const [selectedRoom, setSelectedRoom] = useState(null);
+  const [openDetailModal, setOpenDetailModal] = useState(false);
   const [openAddModal, setOpenAddModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
-  const [editedRoom, setEditedRoom] = useState(null);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [roomToDelete, setRoomToDelete] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  // Danh sách loại phòng học để lọc
-  const loaiPhongHocOptions = ['Phòng lý thuyết', 'Phòng thực hành', 'Phòng hội thảo'];
 
-  // Hàm xử lý khi nhấn nút Thêm phòng học
-  const handleAddRoom = () => {
-    setOpenAddModal(true);
-  };
+  const fetchRooms = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      const response = await getAllRoomAPI();
+      if (!response) {
+        console.error("Không có dữ liệu phòng học");
+        setError("Không có dữ liệu phòng học");
+        return;
+      }
+      setRooms(response.data || []);
+    } catch (error) {
+      console.error("Lỗi khi tải danh sách phòng học:", error);
+      setError("Không thể tải danh sách phòng học. Vui lòng thử lại.");
+      toast.error('Lỗi khi tải danh sách phòng học. Vui lòng thử lại.');
+    } finally {
+      setLoading(false);
+    }
+  }
 
-  // Hàm đóng modal thêm phòng học
-  const handleCloseAddModal = () => {
-    setOpenAddModal(false);
-  };
+  // Fetch rooms on component mount
+  useEffect(() => {
+    fetchRooms();
+  }, []);
 
-  // Hàm thêm phòng học mới
-  const handleAddNewRoom = (newRoom) => {
-    setRooms((prevRooms) => {
-      const updatedRooms = [...prevRooms, { ...newRoom, stt: prevRooms.length + 1 }];
-      return updatedRooms;
-    });
-  };
+  // Filter rooms based on search and filters
+  const filteredRooms = rooms.filter(room => {
+    const matchesSearch = (room.room_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      room.room_id?.toLowerCase().includes(searchTerm.toLowerCase())) ?? true;
+    const matchesBuilding = buildingFilter ? room.location?.includes(buildingFilter) : true;
+    const matchesType = typeFilter ? room.type === typeFilter : true;
+    const matchesStatus = statusFilter ? room.status === statusFilter : true;
 
-  // Hàm xử lý khi nhấn nút chỉnh sửa
-  const handleEditRoom = (id) => {
-    const roomToEdit = rooms.find((r) => r.id === id);
-    setEditedRoom(roomToEdit);
-    setOpenEditModal(true);
-  };
+    return matchesSearch && matchesBuilding && matchesType && matchesStatus;
+  });
 
-  // Hàm đóng modal chỉnh sửa
-  const handleCloseEditModal = () => {
-    setOpenEditModal(false);
-    setEditedRoom(null);
-  };
+  // Group rooms by building and floor (optional feature if needed)
+  const groupedRooms = filteredRooms.reduce((acc, room) => {
+    // Extract building from location string (assuming format like "Tầng 2, Tòa A")
+    const locationParts = room.location?.split(',') || [];
+    const building = locationParts.length > 1 ? locationParts[1]?.trim() : 'Unknown';
+    const floor = locationParts.length > 0 ? locationParts[0]?.trim() : 'Unknown';
 
-  // Hàm lưu thay đổi sau khi chỉnh sửa
-  const handleSaveEditedRoom = (updatedRoom) => {
-    setRooms((prevRooms) =>
-      prevRooms.map((room) =>
-        room.id === updatedRoom.id ? { ...room, ...updatedRoom } : room
-      )
-    );
-  };
+    const key = `${building}-${floor}`;
+    if (!acc[key]) {
+      acc[key] = {
+        building,
+        floor,
+        rooms: []
+      };
+    }
+    acc[key].rooms.push(room);
+    return acc;
+  }, {});
 
-  // Hàm xử lý thay đổi trang
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  // Hàm xử lý xem phòng học
-  const handleViewRoom = (id) => {
-    const room = rooms.find((r) => r.id === id);
+  // Handle room selection
+  const handleRoomClick = (room) => {
     setSelectedRoom(room);
-    setOpenDetail(true);
+    setOpenDetailModal(true);
   };
 
-  // Hàm mở modal xác nhận xóa
+  // Add new room
+  const handleAddRoom = async (newRoomData) => {
+    try {
+      setLoading(true);
+      setError('');
+      const response = await createRoomAPI(newRoomData);
+      if (response) {
+        toast.success('Thêm phòng học thành công!');
+        await fetchRooms(); // Refresh the room list
+        setOpenAddModal(false);
+      }
+    } catch (error) {
+      console.error("Lỗi khi thêm phòng học:", error);
+      setError("Không thể thêm phòng học. Vui lòng kiểm tra lại thông tin.");
+      toast.error('Thêm phòng học thất bại! Vui lòng thử lại.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Edit room
+  const handleEditRoom = async (updatedRoomData) => {
+    try {
+      setLoading(true);
+      setError('');
+      const response = await updateRoomAPI(updatedRoomData.room_id, updatedRoomData);
+      if (response) {
+        toast.success('Cập nhật phòng học thành công!');
+        await fetchRooms(); // Refresh the room list
+        setOpenEditModal(false);
+      }
+    } catch (error) {
+      console.error("Lỗi khi cập nhật phòng học:", error);
+      setError("Không thể cập nhật phòng học. Vui lòng kiểm tra lại thông tin.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Delete room
+  const handleDeleteRoom = (roomId) => {
+    const room = rooms.find((r) => r.room_id === roomId);
+    setRoomToDelete(room);
+    setOpenDeleteModal(true);
+  };
+
+  // Confirm delete room
+  const confirmDeleteRoom = async (roomId) => {
+    try {
+      setLoading(true);
+      setError('');
+      const response = await deleteRoomAPI(roomId);
+      if (response) {
+        toast.success('Xóa phòng học thành công!');
+        await fetchRooms(); // Refresh the room list
+      }
+    } catch (error) {
+      console.error("Lỗi khi xóa phòng học:", error);
+      setError("Không thể xóa phòng học. Vui lòng thử lại.");
+      toast.error('Xóa phòng học thất bại! Vui lòng thử lại.');
+    } finally {
+      setLoading(false);
+      setOpenDeleteModal(false);
+      setRoomToDelete(null);
+    }
+  };
+
+  // Open delete confirmation modal
   const handleOpenDeleteModal = (room) => {
     setRoomToDelete(room);
     setOpenDeleteModal(true);
   };
 
-  // Hàm đóng modal xóa
+  // Handle add room button click
+  const handleAddRoomClick = () => {
+    setOpenAddModal(true);
+  };
+
+  // Handle edit room click
+  const handleEditRoomClick = (room) => {
+    setSelectedRoom(room);
+    setOpenEditModal(true);
+  };
+
+  // Close modal handlers
+  const handleCloseAddModal = () => {
+    setOpenAddModal(false);
+  };
+
+  const handleCloseEditModal = () => {
+    setOpenEditModal(false);
+    setSelectedRoom(null);
+  };
+
   const handleCloseDeleteModal = () => {
     setOpenDeleteModal(false);
     setRoomToDelete(null);
   };
 
-  // Hàm xử lý xóa phòng học
-  const handleDeleteRoom = (id) => {
-    setRooms((prevRooms) => prevRooms.filter((room) => room.id !== id));
-  };
-
-  // Hàm đóng modal chi tiết (định nghĩa mới)
-  const handleCloseDetail = () => {
-    setOpenDetail(false);
+  const handleCloseDetailModal = () => {
+    setOpenDetailModal(false);
     setSelectedRoom(null);
   };
 
-  // Lọc danh sách phòng học dựa trên từ khóa tìm kiếm và loại phòng học
-  const filteredRooms = rooms.filter((room) => {
-    const matchesSearchTerm =
-      room.maPhongHoc.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      room.tenPhongHoc.toLowerCase().includes(searchTerm.toLowerCase());
-
-    const matchesLoaiPhongHoc = selectedLoaiPhongHoc
-      ? room.loaiPhongHoc === selectedLoaiPhongHoc
-      : true;
-
-    return matchesSearchTerm && matchesLoaiPhongHoc;
-  });
-
-  // Tính toán dữ liệu hiển thị trên trang hiện tại
-  const displayedRooms = filteredRooms.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
-
   return (
-    <Box sx={{ p: 2, height: 'calc(100vh - 64px)', overflowY: 'auto', width: '100%' }}>
-      {/* Main Content */}
-      <Box sx={{ width: '100%', mb: 2 }}>
-        {/* Bảng danh sách phòng học */}
-        <Card sx={{ width: '100%', boxShadow: 1 }}>
-          <CardContent>
-            <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'stretch', sm: 'center' }, mb: 2, gap: 2 }}>
-              <Typography variant="h6" sx={{ mb: { xs: 1, sm: 0 } }}>
-                Danh sách phòng học
-              </Typography>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexGrow: 1, justifyContent: { xs: 'flex-start', sm: 'flex-end' } }}>
-                {isSmallScreen ? (
-                  <IconButton
-                    color="primary"
-                    onClick={handleAddRoom}
-                    sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
-                  >
-                    <AddIcon sx={{ color: '#fff' }} />
-                  </IconButton>
-                ) : (
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    startIcon={<AddIcon />}
-                    onClick={handleAddRoom}
-                    sx={{
-                      bgcolor: '#1976d2',
-                      '&:hover': { bgcolor: '#115293' },
-                      minWidth: isSmallScreen ? 100 : 150,
-                      height: '56px'
-                    }}
-                  >
-                    Thêm phòng
-                  </Button>
-                )}
-                <FormControl sx={{ minWidth: isSmallScreen ? 100 : 200, flexGrow: 1, maxWidth: { xs: '100%', sm: 200 } }} variant="outlined">
-                  <InputLabel id="loai-phong-hoc-filter-label">{isSmallScreen ? 'Loại' : 'Lọc theo loại phòng'}</InputLabel>
-                  <Select
-                    labelId="loai-phong-hoc-filter-label"
-                    value={selectedLoaiPhongHoc}
-                    onChange={(e) => setSelectedLoaiPhongHoc(e.target.value)}
-                    label={isSmallScreen ? 'Loại' : 'Lọc theo loại phòng'}
-                    sx={{ width: '100%' }}
-                  >
-                    <MenuItem value="">Tất cả</MenuItem>
-                    {loaiPhongHocOptions.map((loai) => (
-                      <MenuItem key={loai} value={loai}>
-                        {loai}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Box>
-            </Box>
-            <Box sx={{ mb: 2 }}>
+    <Box sx={{ p: 1, zIndex: 10, height: 'calc(100vh - 64px)', overflowY: 'auto' }}>
+      {/* Header and Filters */}
+      <Card sx={{ width: '100%', boxShadow: 1 }}>
+        <CardContent>
+          <Box sx={{
+            display: 'flex',
+            flexDirection: isSmallScreen ? 'column' : 'row',
+            justifyContent: 'space-between',
+            alignItems: isSmallScreen ? 'stretch' : 'center',
+            mb: 3,
+            gap: 2
+          }}>
+            <Typography variant="h5" fontWeight="600">
+              Quản lý Phòng học
+            </Typography>
+
+            <Box sx={{
+              display: 'flex',
+              gap: 2,
+              flexDirection: isSmallScreen ? 'column' : 'row',
+              width: isSmallScreen ? '100%' : 'auto'
+            }}>
               <TextField
-                fullWidth
-                variant="outlined"
-                placeholder="Tìm kiếm theo mã hoặc tên phòng học..."
+                size="small"
+                placeholder="Tìm phòng..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                sx={{ bgcolor: '#fff', width: '100%' }}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <SearchIcon color="action" />
+                      <SearchIcon />
                     </InputAdornment>
                   ),
                 }}
+                sx={{
+                  minWidth: 200,
+                  backgroundColor: theme.palette.background.paper
+                }}
               />
+
+              <FormControl size="small" sx={{ minWidth: 120 }}>
+                <InputLabel>Tòa nhà</InputLabel>
+                <Select
+                  value={buildingFilter}
+                  onChange={(e) => setBuildingFilter(e.target.value)}
+                  label="Tòa nhà"
+                >
+                  <MenuItem value="">Tất cả</MenuItem>
+                  <MenuItem value="A">Tòa A</MenuItem>
+                  <MenuItem value="B">Tòa B</MenuItem>
+                  <MenuItem value="C">Tòa C</MenuItem>
+                </Select>
+              </FormControl>
+
+              <FormControl size="small" sx={{ minWidth: 120 }}>
+                <InputLabel>Loại phòng</InputLabel>
+                <Select
+                  value={typeFilter}
+                  onChange={(e) => setTypeFilter(e.target.value)}
+                  label="Loại phòng"
+                >
+                  <MenuItem value="">Tất cả</MenuItem>
+                  <MenuItem value="Lý thuyết">Lý thuyết</MenuItem>
+                  <MenuItem value="Thực hành">Thực hành</MenuItem>
+                  {/* <MenuItem value="Phòng hội thảo">Phòng hội thảo</MenuItem> */}
+                </Select>
+              </FormControl>
+
+              <FormControl size="small" sx={{ minWidth: 120 }}>
+                <InputLabel>Trạng thái</InputLabel>
+                <Select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  label="Trạng thái"
+                >
+                  <MenuItem value="">Tất cả</MenuItem>
+                  <MenuItem value="Hoạt động">Hoạt động</MenuItem>
+                  <MenuItem value="Tạm ngưng">Tạm ngưng</MenuItem>
+                  <MenuItem value="Ngưng hoạt động">Ngưng hoạt động</MenuItem>
+                </Select>
+              </FormControl>
+
+              <Button
+                variant="contained"
+                startIcon={<AddIcon />}
+                onClick={handleAddRoomClick}
+                sx={{ ml: isSmallScreen ? 0 : 'auto' }}
+              >
+                Thêm phòng
+              </Button>
             </Box>
-            {filteredRooms.length === 0 ? (
+          </Box>
+
+          {/* Room Matrix Visualization */}
+          {loading ? (
+            <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+              <Typography>Đang tải dữ liệu phòng học...</Typography>
+            </Box>
+          ) : error ? (
+            <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+              <Typography color="error">{error}</Typography>
+            </Box>
+          ) : filteredRooms.length === 0 ? (
+            <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
               <Typography>Không có phòng học nào để hiển thị.</Typography>
-            ) : (
-              <Box sx={{ width: '100%', overflowX: 'auto' }}>
-                <RoomTable
-                  displayedRooms={displayedRooms}
-                  isExtraSmallScreen={isExtraSmallScreen}
-                  isSmallScreen={isSmallScreen}
-                  isMediumScreen={isMediumScreen}
-                  isLargeScreen={isLargeScreen}
-                  handleViewRoom={handleViewRoom}
-                  handleEditRoom={handleEditRoom}
-                  handleDeleteRoom={handleOpenDeleteModal}
-                />
-                <TablePagination
-                  component="div"
-                  count={filteredRooms.length}
-                  page={page}
-                  onPageChange={handleChangePage}
-                  rowsPerPage={rowsPerPage}
-                  rowsPerPageOptions={[]}
-                  labelDisplayedRows={({ from, to, count }) => `${from}-${to} trên ${count}`}
-                  sx={{ width: '100%', px: 0 }}
-                />
-              </Box>
-            )}
-          </CardContent>
-        </Card>
-      </Box>
-      <RoomDetailModal
-        open={openDetail}
-        onClose={handleCloseDetail}
-        room={selectedRoom}
-      />
-      <AddRoomModal
-        open={openAddModal}
-        onClose={handleCloseAddModal}
-        onAddRoom={handleAddNewRoom}
-        existingRooms={rooms}
-      />
-      <EditRoomModal
-        open={openEditModal}
-        onClose={handleCloseEditModal}
-        room={editedRoom}
-        onSave={handleSaveEditedRoom}
-      />
-      <DeleteRoomModal
-        open={openDeleteModal}
-        onClose={handleCloseDeleteModal}
-        onDelete={handleDeleteRoom}
-        room={roomToDelete}
-      />
+            </Box>
+          ) : (
+            <Box sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 4,
+              mt: 3
+            }}>
+              {Object.values(groupedRooms).map(group => (
+                <Box key={`${group.building}-${group.floor}`}>
+                  <Typography variant="body1" sx={{ mb: 2, bgcolor: theme.palette.primary.light, color: theme.palette.primary.contrastText, p: 1, borderRadius: 1 }}>
+                    {group.floor}
+                  </Typography>
+
+                  <Box sx={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                    gap: 3
+                  }}>
+                    {group.rooms.map(room => (
+                      <RoomCard
+                        key={room.room_id}
+                        room={room}
+                        onClick={() => handleRoomClick(room)}
+                        onEdit={() => handleEditRoomClick(room)}
+                        onDelete={() => handleDeleteRoom(room.room_id)}
+                      />
+                    ))}
+                  </Box>
+                </Box>
+              ))}
+            </Box>
+          )}
+
+          {/* Room Detail Modal */}
+          <RoomDetailModal
+            open={openDetailModal}
+            onClose={handleCloseDetailModal}
+            room={selectedRoom}
+          />
+
+          {/* Add Room Modal */}
+          <AddRoomModal
+            open={openAddModal}
+            onClose={handleCloseAddModal}
+            onAddRoom={handleAddRoom}
+            existingRooms={rooms}
+            error={error}
+            loading={loading}
+            fetchRooms={fetchRooms}
+          />
+
+          {/* Edit Room Modal */}
+          <EditRoomModal
+            open={openEditModal}
+            onClose={handleCloseEditModal}
+            room={selectedRoom}
+            onSave={handleEditRoom}
+            error={error}
+            loading={loading}
+          />
+
+          {/* Delete Room Modal */}
+          <DeleteRoomModal
+            open={openDeleteModal}
+            onClose={handleCloseDeleteModal}
+            room={roomToDelete}
+            onDelete={confirmDeleteRoom}
+          />
+        </CardContent>
+      </Card>
     </Box>
   );
 };
 
-export default Room;
+// Room Card Component
+const RoomCard = ({ room, onClick, onEdit, onDelete }) => {
+  const theme = useTheme();
+
+  return (
+    <Card
+      elevation={0}
+      onClick={onClick}
+      sx={{
+        border: `1px solid ${alpha(theme.palette.divider, 0.2)}`,
+        borderRadius: '12px',
+        overflow: 'hidden',
+        cursor: 'pointer',
+        transition: 'all 0.3s ease',
+        '&:hover': {
+          transform: 'translateY(-4px)',
+          boxShadow: theme.shadows[4],
+          borderColor: alpha(theme.palette.primary.main, 0.3)
+        }
+      }}
+    >
+      {/* Status bar */}
+      <Box sx={{
+        height: 6,
+        backgroundColor: room.status === 'active'
+          ? theme.palette.success.main
+          : theme.palette.warning.main
+      }} />
+
+      <CardContent sx={{ p: 2.5 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1.5 }}>
+          <Typography variant="h6" fontWeight="600">
+            {room.room_name || room.room_id}
+          </Typography>
+          <Chip
+            label={room.status === 'active' ? 'Sẵn sàng' : 'Bảo trì'}
+            size="small"
+            sx={{
+              backgroundColor: room.status === 'active'
+                ? alpha(theme.palette.success.main, 0.1)
+                : alpha(theme.palette.warning.main, 0.1),
+              color: room.status === 'active'
+                ? theme.palette.success.dark
+                : theme.palette.warning.dark
+            }}
+          />
+        </Box>
+
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          {room.location} • {room.type === 'theory'
+            ? 'Lý thuyết'
+            : room.type === 'practice'
+              ? 'Thực hành'
+              : room.type} • {room.capacity} chỗ
+        </Typography>
+
+        {/* Room matrix visualization */}
+        <Box sx={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(10, 1fr)',
+          gap: 1,
+          mb: 2,
+          p: 1,
+          backgroundColor: alpha(theme.palette.grey[100], 0.5),
+          borderRadius: '8px'
+        }}>
+          {[...Array(Math.min(room.capacity || 0, 30))].map((_, i) => (
+            <>
+              <Box
+                key={i}
+                sx={{
+                  aspectRatio: '1/1', // Đảm bảo ô vuông
+                  borderRadius: '4px',
+                  backgroundColor: alpha(
+                    room.status === 'active'
+                      ? theme.palette.primary.main
+                      : theme.palette.warning.main,
+                    room.status === 'active' ? 0.2 : 0.1
+                  ),
+                  border: `1px solid ${alpha(
+                    room.status === 'active'
+                      ? theme.palette.primary.main
+                      : theme.palette.warning.main,
+                    0.3
+                  )}`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  // Thêm style cho text nếu có
+                  color: alpha(theme.palette.text.primary, 0.7), // Màu chữ cho 'OK'
+                  fontWeight: 'bold',
+                  fontSize: '0.75rem', // Kích thước chữ cho 'OK'
+                }}
+              >
+                {/* Kiểm tra nếu là ô cuối cùng được render */}
+                {i === 29 ? (
+                  <Typography variant="caption" sx={{
+                    color: room.status === 'active' ? theme.palette.primary.dark : theme.palette.warning.dark
+                  }}>
+                    {
+                      room.capacity - 30 === 0 ? "" : `+${room.capacity - 30}`
+                    }
+                  </Typography>
+                ) : (
+                  // Nếu không phải ô cuối cùng, hiển thị ComputerIcon nếu là phòng thực hành
+                  i === 0 && room.type?.toLowerCase().includes('thực hành') && (
+                    <ComputerIcon fontSize="small" sx={{
+                      color: alpha(theme.palette.text.secondary, 0.6)
+                    }} />
+                  )
+                )}
+              </Box>
+            </>
+          ))}
+        </Box>
+
+        {/* Note */}
+        {room.note && (
+          <>
+            <Typography variant="caption" color="text.secondary">
+              Ghi chú:
+            </Typography>
+            <Typography variant="body2" sx={{ mt: 1, p: 1, backgroundColor: alpha(theme.palette.grey[100], 0.5), borderRadius: '4px' }}>
+              {room.note}
+            </Typography>
+          </>
+        )}
+
+        {/* Action buttons */}
+        <Box sx={{
+          display: 'flex',
+          justifyContent: 'flex-end',
+          gap: 1,
+          mt: 2,
+          '& button': {
+            minWidth: 32,
+            height: 32
+          }
+        }}>
+          <IconButton
+            size="small"
+            onClick={(e) => {
+              e.stopPropagation();
+              onEdit();
+            }}
+            sx={{
+              backgroundColor: alpha(theme.palette.info.main, 0.1),
+              '&:hover': {
+                backgroundColor: alpha(theme.palette.info.main, 0.2)
+              }
+            }}
+          >
+            <EditIcon fontSize="small" color="info" />
+          </IconButton>
+          <IconButton
+            size="small"
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete();
+            }}
+            sx={{
+              backgroundColor: alpha(theme.palette.error.main, 0.1),
+              '&:hover': {
+                backgroundColor: alpha(theme.palette.error.main, 0.2)
+              }
+            }}
+          >
+            <DeleteIcon fontSize="small" color="error" />
+          </IconButton>
+        </Box>
+      </CardContent>
+    </Card>
+  );
+};
+
+export default RoomManagement;

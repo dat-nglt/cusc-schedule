@@ -1,97 +1,210 @@
-# timetable_ga/data_processing/processor.py
 import math
+import copy
+from collections import defaultdict
 from config import HOURS_PER_SLOT
 
 class DataProcessor:
+    """
+    Xử lý dữ liệu thô từ file JSON để tạo ra các cấu trúc dữ liệu 
+    được tối ưu hóa cho thuật toán di truyền.
+    """
     def __init__(self, data):
         self.data = data
+        self.class_map = {cls['class_id']: cls for cls in data['classes']}
+        self.program_map = {prog['program_id']: prog for prog in data['programs']}
+        self.subject_map = {subj['subject_id']: subj for subj in data['subjects']}
+        self.lecturer_map = {lect['lecturer_id']: lect for lect in data['lecturers']}
+        self.room_map = {room['room_id']: room for room in data['rooms']}
+        self.semester_map = {sem['semester_id']: sem for sem in data.get('semesters', [])}
+        
+        self.program_semester_map = defaultdict(list)
+        for program in data['programs']:
+            for semester in program['semesters']:
+                self.program_semester_map[program['program_id']].append(semester['semester_id'])
+                
         self.slot_order_map = {slot['slot_id']: i for i, slot in enumerate(data['time_slots'])}
         
-        # Lưu trữ tổng số slot cần cho mỗi môn trong cả học kỳ
+        # Hàm tính toán tổng số tiết học cho toàn học kỳ đã được sửa
         self.total_semester_slots_needed = self._calculate_total_semester_slots()
         
-        # required_lessons giờ đây sẽ là số tiết cần xếp cho MỘT TUẦN ĐẠI DIỆN
-        self.required_lessons_weekly = self._generate_weekly_required_lessons()
-
-        self.lecturer_map = {lecturer['lecturer_id']: lecturer for lecturer in data['lecturers']}
-        self.room_map = {room['room_id']: room for room in data['rooms']}
-        self.class_map = {cls['class_id']: cls for cls in data['classes']}
-        self.subject_map = {}
-        for program in data['programs']:
-            for subject in program['subjects']:
-                self.subject_map[subject['subject_id']] = subject
-        # Thêm thông tin program_duration vào class_map để dễ truy cập
-        for cls_id, cls_data in self.class_map.items():
-            program = next((p for p in self.data['programs'] if p['program_id'] == cls_data['program_id']), None)
-            if program:
-                self.class_map[cls_id]['program_duration_weeks'] = program.get('duration', 15) # Mặc định 15 tuần nếu không có
+        # Hàm tạo danh sách tiết học hàng tuần đã được sửa
+        self.required_lessons_weekly = self._generate_required_lessons_weekly()
 
     def _calculate_total_semester_slots(self):
-        total_slots = {} # { (class_id, subject_id, type): count }
+        total_slots = {}
         for cls in self.data['classes']:
             program_id = cls['program_id']
-            program = next((p for p in self.data['programs'] if p['program_id'] == program_id), None)
-            if not program:
-                continue
-            for subject in program['subjects']:
-                num_theory_slots_semester = math.ceil(subject['theory_hours'] / HOURS_PER_SLOT)
-                if num_theory_slots_semester > 0:
-                    total_slots[(cls['class_id'], subject['subject_id'], 'theory')] = num_theory_slots_semester
-                
-                num_practice_slots_semester = math.ceil(subject['practice_hours'] / HOURS_PER_SLOT)
-                if num_practice_slots_semester > 0:
-                    total_slots[(cls['class_id'], subject['subject_id'], 'practice')] = num_practice_slots_semester
-        return total_slots
-
-    def _generate_weekly_required_lessons(self):
-        """
-        Generates a flat list of lesson blocks needed for ONE representative WEEK.
-        """
-        weekly_lessons = []
-        lesson_id_counter = 0 # Đảm bảo lesson_id là duy nhất cho các tiết trong tuần
-        
-        for cls in self.data['classes']:
-            program_id = cls['program_id']
-            program = next((p for p in self.data['programs'] if p['program_id'] == program_id), None)
+            program = self.program_map.get(program_id)
             if not program:
                 continue
             
-            program_duration_weeks = program.get('duration', 1) # Lấy số tuần, mặc định là 1 nếu không có để tránh chia cho 0
-            if program_duration_weeks == 0: program_duration_weeks = 1 # Đảm bảo không chia cho 0
+            # Lặp qua các học kỳ trong dữ liệu đã được lọc
+            for semester in program['semesters']:
+                for subject_id in semester['subject_ids']:
+                    subject = self.subject_map.get(subject_id)
+                    if not subject:
+                        continue
+                    
+                    num_theory_slots_semester = math.ceil(subject['theory_hours'] / HOURS_PER_SLOT)
+                    if num_theory_slots_semester > 0:
+                        total_slots[(cls['class_id'], subject_id, 'theory', semester['semester_id'])] = num_theory_slots_semester
+                    
+                    num_practice_slots_semester = math.ceil(subject['practice_hours'] / HOURS_PER_SLOT)
+                    if num_practice_slots_semester > 0:
+                        total_slots[(cls['class_id'], subject_id, 'practice', semester['semester_id'])] = num_practice_slots_semester
+        return total_slots
+    
+    def _generate_required_lessons_weekly(self):
+        weekly_lessons = []
+        lesson_id_counter = 0
 
-            for subject in program['subjects']:
-                # Số slot lý thuyết mỗi tuần
-                total_theory_slots_semester = self.total_semester_slots_needed.get((cls['class_id'], subject['subject_id'], 'theory'), 0)
-                num_weekly_theory_slots = math.ceil(total_theory_slots_semester / program_duration_weeks)
+        for cls in self.data['classes']:
+            program_id = cls['program_id']
+            program = self.program_map.get(program_id)
+            if not program:
+                continue
+            
+            program_duration_weeks = program.get('duration', 0)
+            if program_duration_weeks == 0:
+                continue
 
-                for _ in range(num_weekly_theory_slots):
-                    weekly_lessons.append({
-                        "lesson_id": f"L{lesson_id_counter}", # ID cho tiết học cụ thể trong tuần mẫu
-                        "class_id": cls['class_id'],
-                        "subject_id": subject['subject_id'],
-                        "type": "theory",
-                        "program_id": program_id,
-                        "group_id": f"{cls['class_id']}_{subject['subject_id']}_theory"
-                    })
-                    lesson_id_counter += 1
+            for semester in program['semesters']:
+                for subject_id in semester['subject_ids']:
+                    # print(f"DataProcessor: {self.total_semester_slots_needed}")
+                    # Lấy tổng số tiết lý thuyết và thực hành cho toàn học kỳ
+                    total_theory_slots_semester = self.total_semester_slots_needed.get((cls['class_id'], subject_id, 'theory', semester['semester_id']), 0)
+                    total_practice_slots_semester = self.total_semester_slots_needed.get((cls['class_id'], subject_id, 'practice', semester['semester_id']), 0)
 
-                # Số slot thực hành mỗi tuần
-                total_practice_slots_semester = self.total_semester_slots_needed.get((cls['class_id'], subject['subject_id'], 'practice'), 0)
-                num_weekly_practice_slots = math.ceil(total_practice_slots_semester / program_duration_weeks)
-                
-                for _ in range(num_weekly_practice_slots):
-                    weekly_lessons.append({
-                        "lesson_id": f"L{lesson_id_counter}",
-                        "class_id": cls['class_id'],
-                        "subject_id": subject['subject_id'],
-                        "type": "practice",
-                        "program_id": program_id,
-                        "group_id": f"{cls['class_id']}_{subject['subject_id']}_practice"
-                    })
-                    lesson_id_counter += 1
+                    # Phân bổ tiết lý thuyết
+                    if total_theory_slots_semester > 0:
+                        base_weekly_theory = total_theory_slots_semester // program_duration_weeks
+                        extra_theory_slots = total_theory_slots_semester % program_duration_weeks
+                        
+                        for _ in range(base_weekly_theory + 1 if extra_theory_slots > 0 else base_weekly_theory):
+                            weekly_lessons.append({
+                                "lesson_id": f"L{lesson_id_counter}",
+                                "class_id": cls['class_id'],
+                                "subject_id": subject_id,
+                                "lesson_type": "theory",
+                                "program_id": program_id,
+                                "semester_id": semester['semester_id'],
+                                "group_id": f"{cls['class_id']}_{subject_id}_theory_{semester['semester_id']}",
+                                "count": 1 # Số tiết này dùng để tạo một "gen" trong chromosome
+                            })
+                            lesson_id_counter += 1
+
+                    # Phân bổ tiết thực hành
+                    if total_practice_slots_semester > 0:
+                        base_weekly_practice = total_practice_slots_semester // program_duration_weeks
+                        extra_practice_slots = total_practice_slots_semester % program_duration_weeks
+
+                        for _ in range(base_weekly_practice + 1 if extra_practice_slots > 0 else base_weekly_practice):
+                            weekly_lessons.append({
+                                "lesson_id": f"L{lesson_id_counter}",
+                                "class_id": cls['class_id'],
+                                "subject_id": subject_id,
+                                "lesson_type": "practice",
+                                "program_id": program_id,
+                                "semester_id": semester['semester_id'],
+                                "group_id": f"{cls['class_id']}_{subject_id}_practice_{semester['semester_id']}",
+                                "count": 1
+                            })
+                            lesson_id_counter += 1
         return weekly_lessons
 
-    # Các hàm get_lecturers_for_subject, get_rooms_for_type_and_capacity giữ nguyên
+    # def _generate_required_lessons_weekly(self):
+    #     weekly_lessons = []
+    #     lesson_id_counter = 0
+
+    #     for cls in self.data['classes']:
+    #         program_id = cls['program_id']
+    #         program = self.program_map.get(program_id)
+    #         if not program:
+    #             continue
+            
+    #         program_duration_weeks = program.get('duration', 0)
+    #         if program_duration_weeks == 0:
+    #             continue
+
+    #         # Lặp qua các học kỳ trong dữ liệu đã được lọc
+    #         for semester in program['semesters']:
+    #             for subject_id in semester['subject_ids']:
+    #                 total_theory_slots_semester = self.total_semester_slots_needed.get((cls['class_id'], subject_id, 'theory', semester['semester_id']), 0)
+    #                 total_practice_slots_semester = self.total_semester_slots_needed.get((cls['class_id'], subject_id, 'practice', semester['semester_id']), 0)
+                    
+    #                 if program_duration_weeks > 0:
+    #                     num_weekly_theory_slots = math.ceil(total_theory_slots_semester / program_duration_weeks)
+    #                     num_weekly_practice_slots = math.ceil(total_practice_slots_semester / program_duration_weeks)
+    #                 else:
+    #                     num_weekly_theory_slots = 0
+    #                     num_weekly_practice_slots = 0
+
+    #                 for _ in range(num_weekly_theory_slots):
+    #                     weekly_lessons.append({
+    #                         "lesson_id": f"L{lesson_id_counter}",
+    #                         "class_id": cls['class_id'],
+    #                         "subject_id": subject_id,
+    #                         "lesson_type": "theory",
+    #                         "program_id": program_id,
+    #                         "semester_id": semester['semester_id'],
+    #                         "group_id": f"{cls['class_id']}_{subject_id}_theory_{semester['semester_id']}"
+    #                     })
+    #                     lesson_id_counter += 1
+
+    #                 for _ in range(num_weekly_practice_slots):
+    #                     weekly_lessons.append({
+    #                         "lesson_id": f"L{lesson_id_counter}",
+    #                         "class_id": cls['class_id'],
+    #                         "subject_id": subject_id,
+    #                         "lesson_type": "practice",
+    #                         "program_id": program_id,
+    #                         "semester_id": semester['semester_id'],
+    #                         "group_id": f"{cls['class_id']}_{subject_id}_practice_{semester['semester_id']}"
+    #                     })
+    #                     lesson_id_counter += 1
+    #     return weekly_lessons
+    
+    def filter_for_semester(self, semester_id):
+        filtered_data = copy.deepcopy(self.data)
+        
+        # 1. Lấy thông tin của học kỳ được chọn
+        semester_info = next((s for s in self.data['semesters'] if s['semester_id'] == semester_id), None)
+        if not semester_info:
+            # Nếu không tìm thấy học kỳ, trả về None
+            return None
+        
+        related_subject_ids = semester_info['subject_ids']
+        
+        # 2. Lọc danh sách các học kỳ, chỉ giữ lại học kỳ được chọn
+        filtered_data['semesters'] = [semester_info]
+        
+        # 3. Lọc danh sách các môn học, chỉ giữ lại các môn thuộc học kỳ này
+        filtered_data['subjects'] = [s for s in self.data['subjects'] if s['subject_id'] in related_subject_ids]
+
+        # 4. Lọc các chương trình, chỉ giữ lại các chương trình có học kỳ này
+        related_program_info = next((p for p in self.data['programs'] if semester_id in [s['semester_id'] for s in p['semesters']]), None)
+        if not related_program_info:
+            filtered_data['programs'] = []
+        else:
+            # Quan trọng: Sửa đổi chương trình để chỉ chứa học kỳ đã lọc
+            new_program_info = copy.deepcopy(related_program_info)
+            new_program_info['semesters'] = [s for s in related_program_info['semesters'] if s['semester_id'] == semester_id]
+            filtered_data['programs'] = [new_program_info]
+
+        # 5. Lọc các lớp học, chỉ giữ lại các lớp thuộc chương trình đã lọc
+        related_program_ids = [p['program_id'] for p in filtered_data['programs']]
+        filtered_data['classes'] = [c for c in self.data['classes'] if c['program_id'] in related_program_ids]
+        
+        # 6. Lọc các giảng viên, chỉ giữ lại những người dạy các môn học đã lọc
+        related_lecturer_ids = [l['lecturer_id'] for l in self.data['lecturers'] if any(sub in related_subject_ids for sub in l['subjects'])]
+        filtered_data['lecturers'] = [l for l in self.data['lecturers'] if l['lecturer_id'] in related_lecturer_ids]
+        
+        # 7. Tạo một DataProcessor mới với dữ liệu đã được lọc
+        return DataProcessor(filtered_data)
+    
+    def get_lessons_for_class_weekly(self, class_id):
+        return [lesson for lesson in self.required_lessons_weekly if lesson.get('class_id') == class_id]
+
     def get_lecturers_for_subject(self, subject_id):
         return [lecturer['lecturer_id'] for lecturer in self.data['lecturers'] if subject_id in lecturer['subjects']]
 

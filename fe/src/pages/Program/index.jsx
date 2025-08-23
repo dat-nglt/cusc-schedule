@@ -13,6 +13,7 @@ import {
     InputAdornment,
     IconButton,
     Button,
+    useTheme,
 } from '@mui/material';
 import {
     Add as AddIcon,
@@ -24,12 +25,15 @@ import EditProgramModal from './EditProgramModal';
 import DeleteProgramModal from './DeleteProgramModal';
 import useResponsive from '../../hooks/useResponsive';
 import ProgramTable from './ProgramTable';
-import { getAllPrograms, getProgramById, createProgram, updateProgram, deleteProgram } from '../../api/programAPI';
+import { getAllProgramsAPI, getProgramByIdAPI, createProgramAPI, updateProgramAPI, deleteProgramAPI } from '../../api/programAPI';
 import { toast } from 'react-toastify';
+import TablePaginationLayout from '../../components/layout/TablePaginationLayout';
+import { getAllSemestersAPI } from '../../api/semesterAPI';
+import { getAllSubjectsAPI } from '../../api/subjectAPI';
 
 const Program = () => {
     const { isSmallScreen, isMediumScreen } = useResponsive();
-
+    const theme = useTheme()
     // Dữ liệu mẫu cho danh sách chương trình đào tạo
     const [programs, setPrograms] = useState([]);
     // State cho phân trang, tìm kiếm, lọc theo trạng thái và modal
@@ -46,20 +50,57 @@ const Program = () => {
     const [programToDelete, setProgramToDelete] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-
+    const [semesters, setSemesters] = useState([]);
+    const [subjects, setSubjects] = useState([]);
 
     // Danh sách trạng thái để lọc
     const statuses = ['Đang triển khai', 'Đang áp dụng', 'Tạm dừng', 'Đã kết thúc'];
 
+    const fetchSubjects = async () => {
+        try {
+            setError('');
+            setLoading(true);
+            const response = await getAllSubjectsAPI();
+            if (!response) {
+                setError('Không có dữ liệu học phần');
+                return;
+            }
+            setSubjects(response.data);
+        } catch (error) {
+            console.error('Lỗi khi lấy danh sách học phần:', error);
+            setError('Không thể lấy danh sách học phần. Vui lòng thử lại sau.');
+        }
+        finally {
+            setLoading(false);
+        }
+    };
+
+
+    const fetchSemesters = async () => {
+        try {
+            setLoading(true);
+            const response = await getAllSemestersAPI();
+            if (!response) {
+                console.error("Không có dữ liệu học kỳ");
+                return;
+            }
+            setSemesters(response.data);
+        } catch (error) {
+            console.error("Lỗi khi tải danh sách học kỳ:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const fetchPrograms = async () => {
         try {
             setLoading(true);
-            const response = await getAllPrograms();
+            const response = await getAllProgramsAPI();
             if (!response) {
                 console.error("Không có dữ liệu chương trình đào tạo");
                 return;
             }
-            setPrograms(response.data.data);
+            setPrograms(response.data);
         } catch (error) {
             console.error("Lỗi khi tải danh sách chương trình đào tạo:", error);
         } finally {
@@ -68,6 +109,8 @@ const Program = () => {
     };
 
     useEffect(() => {
+        fetchSubjects();
+        fetchSemesters();
         fetchPrograms();
     }, []);
 
@@ -80,7 +123,7 @@ const Program = () => {
     const handleAddNewProgram = async (newProgram) => {
         try {
             setLoading(true);
-            const response = await createProgram(newProgram);
+            const response = await createProgramAPI(newProgram);
             if (response && response.data) {
                 toast.success('Thêm chương trình đào tạo thành công!')
                 fetchPrograms(); // Tải lại danh sách chương trình sau khi thêm thành công
@@ -103,9 +146,9 @@ const Program = () => {
     const handleEditProgram = async (id) => {
         try {
             setLoading(true);
-            const response = await getProgramById(id);
+            const response = await getProgramByIdAPI(id);
             if (response && response.data) {
-                setEditedProgram(response.data.data);
+                setEditedProgram(response.data);
                 setOpenEditModal(true);
             }
         } catch (error) {
@@ -127,7 +170,7 @@ const Program = () => {
     const handleSaveEditedProgram = async (updatedProgram) => {
         try {
             setLoading(true);
-            const response = await updateProgram(updatedProgram.program_id, updatedProgram);
+            const response = await updateProgramAPI(updatedProgram.program_id, updatedProgram);
             if (response && response.data) {
                 toast.success('Cập nhật chương trình đào tạo thành công!');
                 fetchPrograms(); // Tải lại danh sách chương trình sau khi cập nhật thành công
@@ -150,9 +193,9 @@ const Program = () => {
     const handleViewProgram = async (id) => {
         try {
             setLoading(true);
-            const response = await getProgramById(id);
+            const response = await getProgramByIdAPI(id);
             if (response && response.data) {
-                setSelectedProgram(response.data.data);
+                setSelectedProgram(response.data);
                 setOpenDetail(true);
             }
         } catch (error) {
@@ -175,7 +218,7 @@ const Program = () => {
     const confirmDeleteProgram = async (id) => {
         try {
             setLoading(true);
-            const response = await deleteProgram(id);
+            const response = await deleteProgramAPI(id);
             if (response) {
                 toast.success('Xóa chương trình đào tạo thành công!');
                 fetchPrograms(); // Tải lại danh sách chương trình sau khi xóa thành công
@@ -221,48 +264,54 @@ const Program = () => {
     const displayedPrograms = filteredPrograms.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
     return (
-        <Box sx={{ p: 3, zIndex: 10, height: 'calc(100vh - 64px)', overflowY: 'auto' }}>
+        <Box sx={{ p: 1, zIndex: 10, height: 'calc(100vh - 64px)', overflowY: 'auto' }}>
             {/* Main Content */}
             <Box sx={{ width: '100%', mb: 3 }}>
                 {/* Bảng danh sách chương trình đào tạo */}
                 <Card sx={{ flexGrow: 1 }}>
                     <CardContent>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, gap: 2 }}>
-                            <Typography variant="h6">
+                        <Box sx={{
+                            display: 'flex',
+                            flexDirection: isSmallScreen ? 'column' : 'row',
+                            justifyContent: 'space-between',
+                            alignItems: isSmallScreen ? 'stretch' : 'center',
+                            mb: 3,
+                            gap: 2
+                        }}>
+                            <Typography variant="h5" fontWeight="600">
                                 Danh sách chương trình đào tạo
                             </Typography>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                {isSmallScreen ? (
-                                    <IconButton
-                                        color="primary"
-                                        onClick={handleAddProgram}
-                                        sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
-                                    >
-                                        <AddIcon sx={{ color: '#fff' }} />
-                                    </IconButton>
-                                ) : (
-                                    <Button
-                                        variant="contained"
-                                        color="primary"
-                                        startIcon={<AddIcon />}
-                                        onClick={handleAddProgram}
-                                        sx={{
-                                            bgcolor: '#1976d2',
-                                            '&:hover': { bgcolor: '#115293' },
-                                            minWidth: isSmallScreen ? 100 : 150,
-                                            height: '56px'
-                                        }}
-                                    >
-                                        Thêm chương trình
-                                    </Button>
-                                )}
-                                <FormControl sx={{ minWidth: isSmallScreen ? 100 : 150 }} variant="outlined">
-                                    <InputLabel id="status-filter-label">{isSmallScreen ? 'Lọc' : 'Lọc theo trạng thái'}</InputLabel>
+
+                            <Box sx={{
+                                display: 'flex',
+                                gap: 2,
+                                flexDirection: isSmallScreen ? 'column' : 'row',
+                                width: isSmallScreen ? '100%' : 'auto'
+                            }}>
+                                <TextField
+                                    size="small"
+                                    placeholder="Tìm kiếm theo mã, tên chương trình hoặc thời gian đào tạo..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <SearchIcon />
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                    sx={{
+                                        minWidth: 200,
+                                        backgroundColor: theme.palette.background.paper
+                                    }}
+                                />
+
+                                <FormControl size="small" sx={{ minWidth: 120 }}>
+                                    <InputLabel>Trạng thái</InputLabel>
                                     <Select
-                                        labelId="status-filter-label"
                                         value={selectedStatus}
                                         onChange={(e) => setSelectedStatus(e.target.value)}
-                                        label={isSmallScreen ? 'Lọc' : 'Lọc theo trạng thái'}
+                                        label="Trạng thái"
                                     >
                                         <MenuItem value="">Tất cả</MenuItem>
                                         {statuses.map((status) => (
@@ -272,24 +321,16 @@ const Program = () => {
                                         ))}
                                     </Select>
                                 </FormControl>
+
+                                <Button
+                                    variant="contained"
+                                    startIcon={<AddIcon />}
+                                    onClick={handleAddProgram}
+                                    sx={{ ml: isSmallScreen ? 0 : 'auto' }}
+                                >
+                                    Thêm chương trình
+                                </Button>
                             </Box>
-                        </Box>
-                        <Box sx={{ mb: 2 }}>
-                            <TextField
-                                fullWidth
-                                variant="outlined"
-                                placeholder="Tìm kiếm theo mã, tên chương trình hoặc thời gian đào tạo..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                sx={{ bgcolor: '#fff' }}
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            <SearchIcon color="action" />
-                                        </InputAdornment>
-                                    ),
-                                }}
-                            />
                         </Box>
                         {filteredPrograms.length === 0 ? (
                             <Typography>Không có chương trình đào tạo nào để hiển thị.</Typography>
@@ -305,14 +346,11 @@ const Program = () => {
                                     loading={loading}
                                     error={error}
                                 />
-                                <TablePagination
-                                    component="div"
+                                <TablePaginationLayout
                                     count={filteredPrograms.length}
                                     page={page}
                                     onPageChange={handleChangePage}
                                     rowsPerPage={rowsPerPage}
-                                    rowsPerPageOptions={[]}
-                                    labelDisplayedRows={({ from, to, count }) => `${from}-${to} trên ${count}`}
                                 />
                             </>
                         )}
@@ -332,6 +370,8 @@ const Program = () => {
                 error={error}
                 loading={loading}
                 fetchPrograms={fetchPrograms}
+                semesters={semesters}
+                subjects={subjects}
             />
             <EditProgramModal
                 open={openEditModal}

@@ -1,21 +1,28 @@
 'use strict';
 
 /** @type {import('sequelize-cli').Migration} */
-module.exports = {
-  async up(queryInterface, Sequelize) {
+export default {
+  up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('class_sections', {
-      class_section_id: {
+      class_id: {
         type: Sequelize.STRING(30),
-        primaryKey: true,
-        allowNull: false
+        allowNull: false,
+        references: {
+          model: 'classes',
+          key: 'class_id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL'
       },
-      max_students: {
-        type: Sequelize.SMALLINT,
-        allowNull: true
-      },
-      status: {
+      subject_id: {
         type: Sequelize.STRING(30),
-        allowNull: true
+        allowNull: false,
+        references: {
+          model: 'subjects',
+          key: 'subject_id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL'
       },
       created_at: {
         type: Sequelize.DATE,
@@ -27,30 +34,16 @@ module.exports = {
         defaultValue: Sequelize.NOW,
         allowNull: false
       },
-      class_id: {
-        type: Sequelize.STRING(30),
-        allowNull: true,
-        references: {
-          model: 'classes',
-          key: 'class_id'
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'SET NULL'
-      },
-      subject_id: {
-        type: Sequelize.STRING(30),
-        allowNull: true,
-        references: {
-          model: 'subjects',
-          key: 'subject_id'
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'SET NULL'
-      }
+    });
+
+    await queryInterface.addIndex('class_sections', {
+      fields: ['class_id', 'subject_id'],
+      type: 'primary key',
+      name: 'class_sections_pkey'
     });
   },
 
-  async down(queryInterface, Sequelize) {
+  down: async (queryInterface, Sequelize) => {
     await queryInterface.dropTable('class_sections');
   }
 };

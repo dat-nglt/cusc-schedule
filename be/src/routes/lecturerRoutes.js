@@ -1,18 +1,14 @@
-import express from 'express';
-import { authenticateAndAuthorize } from '../middleware/authMiddleware.js';
+import express from "express";
+import { authenticateAndAuthorize } from "../middleware/authMiddleware.js";
 import {
-    getAllLecturersController,
-    getLecturerByIdController,
-    createLecturerController,
-    updateLecturerController,
-    deleteLecturerController,
-    importLecturersFromJsonController,
-    downloadTemplateController,
-    listLecturersController, // Thêm controller cho chức năng liệt kê có bộ lọc
-    importLecturersController, // Thêm controller nếu có nhập từ Excel
-} from '../controllers/lecturerController.js';
-// Nếu có tính năng import từ Excel, hãy thêm dòng này:
-// import { uploadExcel } from '../middleware/excelMiddleware.js';
+  getAllLecturersController,
+  // getLecturerByIdController,
+  createLecturerController,
+  updateLecturerController,
+  deleteLecturerController,
+  importLecturersFromJsonController,
+  downloadTemplateController,
+} from "../controllers/lecturerController.js";
 
 const lecturerRoutes = express.Router();
 
@@ -23,9 +19,9 @@ const lecturerRoutes = express.Router();
  * @access Private
  */
 lecturerRoutes.get(
-    '/getAll',
-    authenticateAndAuthorize(['admin', 'training_officer']),
-    getAllLecturersController
+  "/getAll",
+  authenticateAndAuthorize(["admin", "training_officer"]),
+  getAllLecturersController
 );
 
 /**
@@ -34,11 +30,11 @@ lecturerRoutes.get(
  * Yêu cầu quyền admin hoặc training_officer.
  * @access Private
  */
-lecturerRoutes.get(
-    '/:id',
-    authenticateAndAuthorize(['admin', 'training_officer']),
-    getLecturerByIdController
-);
+// lecturerRoutes.get(
+//   "/:id",
+//   authenticateAndAuthorize(["admin", "training_officer"]),
+//   getLecturerByIdController
+// );
 
 /**
  * @route POST /api/lecturers/create
@@ -47,9 +43,9 @@ lecturerRoutes.get(
  * @access Private
  */
 lecturerRoutes.post(
-    '/create',
-    authenticateAndAuthorize(['admin', 'training_officer']),
-    createLecturerController
+  "/create",
+  authenticateAndAuthorize(["admin", "training_officer"]),
+  createLecturerController
 );
 
 /**
@@ -59,9 +55,9 @@ lecturerRoutes.post(
  * @access Private
  */
 lecturerRoutes.put(
-    '/update/:id',
-    authenticateAndAuthorize(['admin', 'training_officer']),
-    updateLecturerController
+  "/update/:id",
+  authenticateAndAuthorize(["admin", "training_officer"]),
+  updateLecturerController
 );
 
 /**
@@ -71,9 +67,9 @@ lecturerRoutes.put(
  * @access Private
  */
 lecturerRoutes.delete(
-    '/delete/:id',
-    authenticateAndAuthorize(['admin', 'training_officer']),
-    deleteLecturerController
+  "/delete/:id",
+  authenticateAndAuthorize(["admin", "training_officer"]),
+  deleteLecturerController
 );
 
 /**
@@ -97,9 +93,9 @@ lecturerRoutes.delete(
  * @access Private
  */
 lecturerRoutes.post(
-    '/importJson',
-    authenticateAndAuthorize(['admin', 'training_officer']),
-    importLecturersFromJsonController
+  "/importJson",
+  authenticateAndAuthorize(["admin", "training_officer"]),
+  importLecturersFromJsonController
 );
 
 /**
@@ -124,9 +120,9 @@ lecturerRoutes.post(
  * @access Private
  */
 lecturerRoutes.get(
-    '/template/download',
-    authenticateAndAuthorize(['admin', 'training_officer']),
-    downloadTemplateController
+  "/template/download",
+  authenticateAndAuthorize(["admin", "training_officer"]),
+  downloadTemplateController
 );
 
 export default lecturerRoutes;

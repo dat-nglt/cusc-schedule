@@ -73,8 +73,8 @@ export const loginWithGoogle = (role) => {
     return; // Dừng hàm nếu role không hợp lệ
   }
 
-  const encodedRole = encodeURIComponent(role);
+  // const encodedRole = encodeURIComponent(role);
 
   // Thêm role làm query parameter
-  window.location.href = `http://localhost:3000/auth/google?role=${encodedRole}`;
+  window.location.href = `http://localhost:3000/auth/google?role=${role}`;
 };

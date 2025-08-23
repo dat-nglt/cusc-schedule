@@ -1,12 +1,14 @@
-// app.js (hoặc server.js)
 import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import session from "express-session";
 import passport from "passport";
-import morgan from "morgan"; // Import Morgan
-import logger from "./utils/logger.js"; // Import logger đã cấu hìnhwinston-daily-rotate-file'
+import morgan from "morgan";
+import http from "http";
+import { Server } from "socket.io";
+
+import logger from "./utils/logger.js";
 import setupRoutes from "./routes/router.js";
 import connectDB from "./config/connectDB.js";
 import models from "./models/index.js";
@@ -15,7 +17,16 @@ import configurePassport from "./config/passport.js";
 dotenv.config();
 
 const app = express();
+const serverIO = http.createServer(app);
 const PORT = process.env.PORT || 3000;
+
+const io = new Server(serverIO, {
+  cors: {
+    origin: process.env.FRONTEND_URL || "http://localhost:3000",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  },
+});
 
 async function startServer() {
   try {
@@ -30,6 +41,18 @@ async function startServer() {
       })
     );
     logger.info("✅ Middleware Morgan for HTTP request logging configured.");
+
+    io.on("connection", (socket) => {
+      logger.info(`⚡️ Client connected: ${socket.id}`);
+      socket.emit("message", "Welcome to the Timetable GA Server!"); // Gửi tin nhắn chào mừng
+      socket.on("disconnect", () => {
+        logger.warn(`🔌 Client disconnected: ${socket.id}`);
+      });
+      // Có thể thêm các event listener khác từ client tại đây
+    });
+    logger.info(
+      "✅ Socket.IO server configured and listening for connections."
+    );
 
     app.use(
       session({
@@ -58,17 +81,20 @@ async function startServer() {
     app.use(express.urlencoded({ extended: true }));
 
     // Cấu hình Router
-    setupRoutes(app);
+    setupRoutes(app, io);
     logger.info("✅ Router has been setup.");
 
-    // Khởi động Server
-    app.listen(PORT, () => {
+    serverIO.listen(PORT, () => {
       logger.info(
         `✅ Server is running on port ${PORT} (${
           process.env.NODE_ENV || "development"
         } environment)`
       );
     });
+
+    // 10. Tăng socket timeout cho Node.js server (quan trọng cho các tác vụ dài)
+    serverIO.setTimeout(600000); // 10 phút
+    logger.info("✅ Server socket timeout set to 10 minutes.");
   } catch (error) {
     logger.error("❌ Failed to start server:", error);
     process.exit(1);

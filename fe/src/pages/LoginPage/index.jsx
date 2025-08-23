@@ -55,25 +55,22 @@ const LoginPage = () => {
             switch (errorParam) {
 
                 case 'account_not_found':
-                    toast.error('Tài khoản Google của bạn không tồn tại trong hệ thống. Vui lòng liên hệ quản trị viên để được cấp quyền hoặc đăng ký tài khoản.');
+                    toast.error('Tài khoản Google của bạn không tồn tại trong hệ thống. Vui lòng liên hệ quản trị viên để được cấp quyền hoặc đăng ký tài khoản!');
                     break;
-                case 'account_already_linked':
-                    toast.error('Tài khoản Google này đã được liên kết với một tài khoản khác trong hệ thống. Vui lòng sử dụng tài khoản Google đã liên kết.');
+                case 'valid_linked_account':
+                    toast.error('Tài khoản Google này đã được liên kết với một tài khoản khác trong hệ thống. Vui lòng sử dụng tài khoản Google đã liên kết!');
                     break;
                 case 'authentication_failed':
-                    toast.error('Đăng nhập Google thất bại. Vui lòng thử lại.');
-                    break;
-                case 'server_error_oauth':
-                    toast.error('Đã xảy ra lỗi máy chủ trong quá trình xác thực. Vui lòng thử lại sau.');
+                    toast.error('Đăng nhập Google thất bại. Vui lòng thử lại!');
                     break;
                 case 'email_not_available':
-                    toast.error('Không thể lấy địa chỉ email từ tài khoản Google của bạn. Vui lòng thử lại với tài khoản Google khác.');
+                    toast.error('Không thể lấy địa chỉ email từ tài khoản Google của bạn. Vui lòng thử lại với tài khoản Google khác!');
                     break;
-                case 'user_not_found_session':
-                    toast.error('Phiên đăng nhập không hợp lệ. Vui lòng đăng nhập lại.');
+                case 'invalid_role_access':
+                    toast.error('Quyền truy cập hệ thống không hợp lệ. Vui lòng kiểm tra lại!');
                     break;
                 default:
-                    toast.error('Xác thực không thành công! Vui lòng thử lại!');
+                    toast.error('Đăng nhập không thành công! Vui lòng thử lại!');
             }
 
 
@@ -343,8 +340,8 @@ const LoginPage = () => {
                                     boxShadow: theme.shadows[3]
                                 }}
                             />
-                            <Typography variant="h5" component="h1" fontWeight="600">
-                                QUẢN LÝ TỔ CHỨC ĐÀO TẠO
+                            <Typography variant="h6" component="h1" fontWeight="600">
+                                HỆ THỐNG QUẢN LÝ THỜI KHOÁ BIỂU
                             </Typography>
                             <Typography
                                 variant="subtitle1"
@@ -541,7 +538,7 @@ const LoginPage = () => {
                                                 background: 'linear-gradient(90deg, #357ABD 0%, #2D9144 100%)'
                                             },
                                             '& .MuiButton-startIcon': {
-                                                backgroundColor: 'white',
+                                                border: '1px solid white',
                                                 borderRadius: '50%',
                                                 p: 0.5,
                                                 ml: -1,
@@ -549,11 +546,11 @@ const LoginPage = () => {
                                             }
                                         }}
                                     >
-                                        Sign in with Google
+                                        Đăng nhập với Google
                                     </Button>
 
                                     {/* Help text */}
-                                    <Typography
+                                    {/* <Typography
                                         variant="caption"
                                         display="block"
                                         textAlign="center"
@@ -561,7 +558,7 @@ const LoginPage = () => {
                                         color="text.secondary"
                                     >
                                         Bạn sẽ được chuyển hướng đến Google để đăng nhập an toàn
-                                    </Typography>
+                                    </Typography> */}
                                 </Box>
                             )}
                         </CardContent>

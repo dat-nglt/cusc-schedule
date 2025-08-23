@@ -1,3 +1,4 @@
+
 // Kết nối Sequelize từ file config
 import { sequelize } from "../config/connectDB.js";
 import { DataTypes } from "sequelize";
@@ -5,6 +6,7 @@ import { DataTypes } from "sequelize";
 // Import các định nghĩa model (mỗi file là một bảng)
 import AdminModel from "./Admin.js";
 import ClassesModel from "./Classes.js";
+import ClassScheduleModel from "./ClassSchedule.js";
 import BreakScheduleModel from "./BreakSchedule.js";
 import CourseModel from "./Course.js";
 import LecturerModel from "./Lecturer.js";
@@ -15,14 +17,23 @@ import SubjectModel from "./Subject.js";
 import TrainingOfficerModel from "./TrainingOfficer.js";
 import AccountModel from "./Accounts.js";
 import BlacklistedTokenModel from "./BlacklistedToken.js";
+import LecturerAssignmentModel from "./LecturerAssignment.js";
 import TimeSlotModel from "./TimeSlot.js";
-
+import RoomModel from "./Room.js";
+import BusySlotModel from "./BusySlot.js";
+import SemesterBusySlotModel from "./SemesterBusySlot.js";
+import ScheduleChangeRequestModel from "./ScheduleChangeRequest.js";
+import ProgramSemestersModel from "./ProgramSemesters.js";
+import ProgramSubjectSemestersModel from "./ProgramSubjectSemesters.js";
 
 // Khởi tạo từng model với instance của Sequelize
 const Account = AccountModel(sequelize, DataTypes);
+const ProgramSubjectSemesters = ProgramSubjectSemestersModel(sequelize, DataTypes);
+const ProgramSemesters = ProgramSemestersModel(sequelize, DataTypes);
 const BlacklistedToken = BlacklistedTokenModel(sequelize, DataTypes);
 const Admin = AdminModel(sequelize, DataTypes);
 const Classes = ClassesModel(sequelize, DataTypes);
+const ClassSchedule = ClassScheduleModel(sequelize, DataTypes);
 const BreakSchedule = BreakScheduleModel(sequelize, DataTypes);
 const Course = CourseModel(sequelize, DataTypes);
 const Lecturer = LecturerModel(sequelize, DataTypes);
@@ -31,23 +42,36 @@ const Semester = SemesterModel(sequelize, DataTypes);
 const Student = StudentModel(sequelize, DataTypes);
 const Subject = SubjectModel(sequelize, DataTypes);
 const TrainingOfficer = TrainingOfficerModel(sequelize, DataTypes);
+const LecturerAssignment = LecturerAssignmentModel(sequelize, DataTypes);
 const TimeSlot = TimeSlotModel(sequelize, DataTypes);
+const Room = RoomModel(sequelize, DataTypes);
+const BusySlot = BusySlotModel(sequelize, DataTypes);
+const SemesterBusySlot = SemesterBusySlotModel(sequelize, DataTypes);
+const ScheduleChangeRequest = ScheduleChangeRequestModel(sequelize, DataTypes);
 
 // Gom tất cả model vào object `models`
 const models = {
   Account,
+  ProgramSubjectSemesters,
+  ProgramSemesters,
   BlacklistedToken,
   Admin,
   Classes,
+  ClassSchedule,
   BreakSchedule,
   Course,
   Lecturer,
   Program,
   Semester,
-  Student,
   Subject,
+  Student,
   TrainingOfficer,
+  LecturerAssignment,
   TimeSlot,
+  Room,
+  BusySlot,
+  SemesterBusySlot,
+  ScheduleChangeRequest,
   sequelize, // export luôn cả instance Sequelize
 };
 

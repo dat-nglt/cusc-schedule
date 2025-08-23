@@ -1,7 +1,7 @@
 "use strict";
 
 /** @type {import('sequelize-cli').Migration} */
-module.exports = {
+export default {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable("students", {
       // *** KHÓA NGOẠI user_id liên kết với bảng 'accounts' ***
@@ -31,7 +31,26 @@ module.exports = {
         type: Sequelize.STRING(50),
         allowNull: true,
       },
-
+      // *** Ngày sinh của sinh viên ***
+      day_of_birth: {
+        type: Sequelize.DATEONLY,
+        allowNull: true
+      },
+      // *** Giới tính của sinh viên ***
+      gender: {
+        type: Sequelize.STRING(20), // Có thể là 'Nam', 'Nữ', 'Khác'
+        allowNull: true,
+      },
+      // *** Địa chỉ của sinh viên ***
+      address: {
+        type: Sequelize.STRING(255), // Hoặc kiểu dữ liệu phù hợp với địa chỉ
+        allowNull: true,
+      },
+      // *** Số điện thoại của sinh viên ***
+      phone_number: {
+        type: Sequelize.STRING(20), // Hoặc kiểu dữ liệu phù hợp với số điện thoại
+        allowNull: true,
+      },
       // *** class_id: Khóa ngoại liên kết với bảng 'classes' ***
       // Đảm bảo tên cột khớp với tên trong model và seeder!
       class_id: {
@@ -54,6 +73,11 @@ module.exports = {
       },
       gpa: {
         type: Sequelize.DECIMAL(3, 2),
+        allowNull: true,
+      },
+      // *** Trạng thái của sinh viên (đang học, tốt nghiệp) *** 
+      status: {
+        type: Sequelize.STRING(30),
         allowNull: true,
       },
 

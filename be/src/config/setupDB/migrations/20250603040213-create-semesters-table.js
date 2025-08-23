@@ -1,8 +1,8 @@
 'use strict';
 
 /** @type {import('sequelize-cli').Migration} */
-module.exports = {
-  async up(queryInterface, Sequelize) {
+export default {
+  up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('semesters', {
       semester_id: {
         type: Sequelize.STRING(30),
@@ -21,6 +21,10 @@ module.exports = {
         type: Sequelize.DATEONLY,
         allowNull: true
       },
+      duration_weeks: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+      },
       status: {
         type: Sequelize.STRING(30),
         allowNull: true
@@ -34,21 +38,11 @@ module.exports = {
         type: Sequelize.DATE,
         defaultValue: Sequelize.NOW,
         allowNull: false
-      },
-      program_id: {
-        type: Sequelize.STRING(30),
-        allowNull: true,
-        references: {
-          model: 'programs',
-          key: 'program_id'
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'SET NULL'
       }
     });
   },
 
-  async down(queryInterface, Sequelize) {
+  down: async (queryInterface) => {
     await queryInterface.dropTable('semesters');
   }
 };

@@ -1,10 +1,10 @@
 import {
-    getAllStudents,
-    getStudentById,
-    createStudent,
-    updateStudent,
-    importStudentsFromJSON, // Đảm bảo tên hàm này đúng trong service
-    deleteStudent,
+  getAllStudentsService,
+  getStudentByIdService,
+  createStudentService,
+  updateStudentService,
+  importStudentsFromJSONService, // Đảm bảo tên hàm này đúng trong service
+  deleteStudentService,
 } from "../services/studentService.js";
 import { APIResponse } from "../utils/APIResponse.js";
 import ExcelUtils from "../utils/ExcelUtils.js"; // Được sử dụng để tạo template Excel
@@ -17,13 +17,21 @@ import ExcelUtils from "../utils/ExcelUtils.js"; // Được sử dụng để t
  * @access Private (admin, training_officer)
  */
 export const getAllStudentsController = async (req, res) => {
-    try {
-        const students = await getAllStudents(); // Đổi tên biến từ 'Students' thành 'students' để nhất quán
-        return APIResponse(res, 200, students, "Lấy danh sách học viên thành công.");
-    } catch (error) {
-        console.error("Lỗi khi lấy danh sách học viên:", error);
-        return APIResponse(res, 500, null, error.message || "Đã xảy ra lỗi khi lấy danh sách học viên.");
+  try {
+    const students = await getAllStudentsService();
+    if (!students || students.length === 0) {
+      return APIResponse(res, 200, [], "No students found.");
     }
+    return APIResponse(res, 200, students, "Successfully retrieved students.");
+  } catch (error) {
+    console.error("Không thể tải danh sách học viên");
+    return APIResponse(
+      res,
+      500,
+      null,
+      error.message || "Không thể tải danh sách học viên"
+    );
+  }
 };
 
 /**
@@ -34,17 +42,22 @@ export const getAllStudentsController = async (req, res) => {
  * @access Private (admin, training_officer)
  */
 export const getStudentByIdController = async (req, res) => {
-    const { id } = req.params;
-    try {
-        const student = await getStudentById(id); // Đổi tên biến từ 'Student' thành 'student' để nhất quán
-        if (!student) {
-            return APIResponse(res, 404, null, "Không tìm thấy học viên.");
-        }
-        return APIResponse(res, 200, student, "Lấy thông tin học viên thành công.");
-    } catch (error) {
-        console.error(`Lỗi khi lấy thông tin học viên với ID ${id}:`, error);
-        return APIResponse(res, 500, null, error.message || "Đã xảy ra lỗi khi lấy thông tin học viên.");
+  const { id } = req.params;
+  try {
+    const student = await getStudentByIdService(id); // Đổi tên biến từ 'Student' thành 'student' để nhất quán
+    if (!student) {
+      return APIResponse(res, 404, null, "Không tìm thấy học viên.");
     }
+    return APIResponse(res, 200, student, "Lấy thông tin học viên thành công.");
+  } catch (error) {
+    console.error(`Lỗi khi lấy thông tin học viên với ID ${id}:`, error);
+    return APIResponse(
+      res,
+      500,
+      null,
+      error.message || "Đã xảy ra lỗi khi lấy thông tin học viên."
+    );
+  }
 };
 
 /**
@@ -55,15 +68,26 @@ export const getStudentByIdController = async (req, res) => {
  * @access Private (admin, training_officer)
  */
 export const createStudentController = async (req, res) => {
-    const studentData = req.body; // Đổi tên biến từ 'StudentData' thành 'studentData' để nhất quán
-    try {
-        const student = await createStudent(studentData); // Đổi tên biến từ 'Student' thành 'student' để nhất quán
-        return APIResponse(res, 201, student, "Tạo học viên thành công.");
-    } catch (error) {
-        console.error("Lỗi khi tạo học viên:", error);
-        // Có thể thêm logic kiểm tra lỗi cụ thể hơn từ service (ví dụ: duplicate entry)
-        return APIResponse(res, 500, null, error.message || "Đã xảy ra lỗi khi tạo học viên.");
+  const studentData = req.body;
+  try {
+    const newStudent = await createStudentService(studentData);
+    return APIResponse(res, 201, newStudent, "Student created successfully.");
+  } catch (error) {
+    if (
+      error.message.includes("Mã học viên") ||
+      error.message.includes("Email")
+    ) {
+      return APIResponse(res, 409, null, error.message); // Conflict
     }
+    // Lỗi chung
+    console.error("Error creating student:", error);
+    return APIResponse(
+      res,
+      500,
+      null,
+      error.message || "An error occurred while creating the student."
+    );
+  }
 };
 
 /**
@@ -74,18 +98,33 @@ export const createStudentController = async (req, res) => {
  * @access Private (admin, training_officer)
  */
 export const updateStudentController = async (req, res) => {
-    const { id } = req.params;
-    const studentData = req.body; // Đổi tên biến từ 'StudentData' thành 'studentData' để nhất quán
-    try {
-        const student = await updateStudent(id, studentData); // Đổi tên biến từ 'Student' thành 'student' để nhất quán
-        if (!student) {
-            return APIResponse(res, 404, null, "Không tìm thấy học viên để cập nhật.");
-        }
-        return APIResponse(res, 200, student, "Cập nhật thông tin học viên thành công.");
-    } catch (error) {
-        console.error(`Lỗi khi cập nhật học viên với ID ${id}:`, error);
-        return APIResponse(res, 500, null, error.message || "Đã xảy ra lỗi khi cập nhật thông tin học viên.");
+  const { id } = req.params;
+  const studentData = req.body;
+  try {
+    const updatedStudent = await updateStudentService(id, studentData);
+    if (!updatedStudent) {
+      return APIResponse(res, 404, null, "Không tìm thấy thông tin học vieneF");
     }
+
+    return APIResponse(
+      res,
+      200,
+      updatedStudent,
+      "Cập nhật thông tin học viên thành công"
+    );
+  } catch (error) {
+    if (error.message.includes("Email")) {
+      return APIResponse(res, 409, null, error.message); // Conflict
+    }
+
+    console.error(`Lỗi khi thực hiện cập nhật Học viên ${id}:`, error.message);
+    return APIResponse(
+      res,
+      500,
+      null,
+      error.message || "Xảy ra lỗi trong quá trình cập nhật thông tin học viên"
+    );
+  }
 };
 
 /**
@@ -96,17 +135,24 @@ export const updateStudentController = async (req, res) => {
  * @access Private (admin, training_officer)
  */
 export const deleteStudentController = async (req, res) => {
-    const { id } = req.params;
-    try {
-        const deletedCount = await deleteStudent(id); // Giả định service trả về số lượng bản ghi bị xóa
-        if (deletedCount === 0) {
-            return APIResponse(res, 404, null, "Không tìm thấy học viên để xóa.");
-        }
-        return APIResponse(res, 200, null, "Xóa học viên thành công.");
-    } catch (error) {
-        console.error(`Lỗi khi xóa học viên với ID ${id}:`, error);
-        return APIResponse(res, 500, null, error.message || "Đã xảy ra lỗi khi xóa học viên.");
+  const { id } = req.params;
+  try {
+    const isDeleted = await deleteStudentService(id);
+
+    if (!isDeleted) {
+      return APIResponse(res, 404, null, "Không tìm thấy thông tin học viên");
     }
+
+    return APIResponse(res, 200, null, "Xoá học viên thành công");
+  } catch (error) {
+    console.error(`Lỗi trong quá trình xoá học viên ${id}:`, error.message);
+    return APIResponse(
+      res,
+      500,
+      null,
+      error.message || "Lỗi trong quá trình xoá học viên"
+    );
+  }
 };
 
 /**
@@ -117,41 +163,48 @@ export const deleteStudentController = async (req, res) => {
  * @access Private (admin, training_officer)
  */
 export const importStudentsFromJSONController = async (req, res) => {
-    try {
-        const { students } = req.body;
+  const { students } = req.body;
 
-        // Kiểm tra dữ liệu đầu vào
-        if (!students || !Array.isArray(students)) {
-            return APIResponse(res, 400, null, "Dữ liệu học viên không hợp lệ. Yêu cầu một mảng JSON.");
-        }
+  // Kiểm tra dữ liệu đầu vào
+  if (!students || !Array.isArray(students) || students.length === 0) {
+    return APIResponse(
+      res,
+      400,
+      null,
+      "Invalid or empty student data. An array of students is required."
+    );
+  }
 
-        if (students.length === 0) {
-            return APIResponse(res, 400, null, "Không có học viên nào để import.");
-        }
+  try {
+    const results = await importStudentsFromJSONService(students);
 
-        // Tiến hành import dữ liệu từ JSON
-        const results = await importStudentsFromJSON(students); // Đảm bảo tên hàm đúng: importStudentsFromJSON
+    const { success, errors } = results;
+    const totalRecords = students.length;
 
-        const responseData = {
-            success: true, // Chỉ ra rằng request được xử lý
-            imported: results.success, // Các bản ghi đã được import thành công (đối tượng)
-            errors: results.errors, // Các bản ghi lỗi cùng với lý do (đối tượng)
-            message: `Đã thêm thành công ${results.success.length} học viên.`
-        };
+    const responseData = {
+      imported: success,
+      errors,
+      total: totalRecords,
+      successCount: success.length,
+      errorCount: errors.length,
+    };
 
-        if (results.errors.length > 0) {
-            // Nếu có lỗi, cập nhật thông báo và trả về 207 Multi-Status (để báo hiệu một phần thành công)
-            responseData.message = `Thêm hoàn tất với ${results.success.length}/${students.length} bản ghi thành công.`;
-            return APIResponse(res, 207, responseData, responseData.message);
-        } else {
-            // Nếu không có lỗi, trả về 200 OK
-            return APIResponse(res, 200, responseData, responseData.message);
-        }
-
-    } catch (error) {
-        console.error("Lỗi khi import học viên từ dữ liệu JSON:", error);
-        return APIResponse(res, 500, null, error.message || "Đã xảy ra lỗi trong quá trình import dữ liệu.");
+    if (errors.length > 0) {
+      const message = `Import completed with ${success.length}/${totalRecords} successful records.`;
+      return APIResponse(res, 207, responseData, message); // Multi-Status
+    } else {
+      const message = `Successfully imported all ${totalRecords} students.`;
+      return APIResponse(res, 200, responseData, message); // OK
     }
+  } catch (error) {
+    console.error("Error importing students from JSON:", error);
+    return APIResponse(
+      res,
+      500,
+      null,
+      error.message || "An error occurred during the import process."
+    );
+  }
 };
 
 /**
@@ -162,20 +215,25 @@ export const importStudentsFromJSONController = async (req, res) => {
  * @access Private (admin, training_officer) - Hoặc Public tùy theo yêu cầu
  */
 export const downloadTemplateController = async (req, res) => {
-    try {
-        // Tạo buffer chứa template Excel. Đảm bảo ExcelUtils có hàm createStudentTemplate.
-        const buffer = ExcelUtils.createStudentTemplate();
+  try {
+    // Tạo buffer chứa template Excel. Đảm bảo ExcelUtils có hàm createStudentTemplate.
+    const buffer = ExcelUtils.createStudentTemplate();
 
-        // Thiết lập các headers để trình duyệt tải xuống file
-        res.setHeader('Content-Disposition', 'attachment; filename=hoc_vien_mau.xlsx');
-        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        res.setHeader('Content-Length', buffer.length); // Đặt Content-Length
+    // Thiết lập các headers để trình duyệt tải xuống file
+    res.setHeader(
+      "Content-Disposition",
+      "attachment; filename=hoc_vien_mau.xlsx"
+    );
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+    res.setHeader("Content-Length", buffer.length); // Đặt Content-Length
 
-        // Gửi buffer làm phản hồi
-        return res.send(buffer);
-
-    } catch (error) {
-        console.error("Lỗi khi tạo và tải xuống template học viên:", error);
-        return APIResponse(res, 500, null, "Đã xảy ra lỗi khi tạo template.");
-    }
+    // Gửi buffer làm phản hồi
+    return res.send(buffer);
+  } catch (error) {
+    console.error("Lỗi khi tạo và tải xuống template học viên:", error);
+    return APIResponse(res, 500, null, "Đã xảy ra lỗi khi tạo template.");
+  }
 };

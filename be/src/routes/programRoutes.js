@@ -1,15 +1,16 @@
 import express from "express";
 import { authenticateAndAuthorize } from "../middleware/authMiddleware.js"; // Đảm bảo import .js extension nếu dùng ES Modules
 import {
-    getAllProgramsController,
-    getProgramByIdController,
-    createProgramController,
-    updateProgramController,
-    deleteProgramController,
-    importProgramsFromJSONController,
-    downloadTemplateController,
-    listProgramsController, // Thêm controller cho chức năng liệt kê có bộ lọc
-    importProgramsFromExcelController, // Thêm controller nếu có nhập từ Excel
+  getAllProgramsController,
+  getProgramByIdController,
+  createProgramController,
+  updateProgramController,
+  deleteProgramController,
+  importProgramsFromJSONController,
+  downloadTemplateController,
+  getProgramCreateScheduleController,
+  // listProgramsController, // Thêm controller cho chức năng liệt kê có bộ lọc
+  // importProgramsFromExcelController, // Thêm controller nếu có nhập từ Excel
 } from "../controllers/programController.js"; // Đảm bảo import .js extension
 
 // Nếu có tính năng import từ Excel, hãy thêm dòng này:
@@ -23,10 +24,29 @@ const programRoutes = express.Router();
  * Yêu cầu quyền admin hoặc training_officer.
  * @access Private
  */
+
 programRoutes.get(
-    "/getAll",
-    authenticateAndAuthorize(["admin", "training_officer"]),
-    getAllProgramsController
+  "/getProgramCreateSchedule",
+  authenticateAndAuthorize(["admin", "training_officer"]),
+  getProgramCreateScheduleController
+);
+
+programRoutes.get(
+  "/getAll",
+  authenticateAndAuthorize(["admin", "training_officer"]),
+  getAllProgramsController
+);
+
+/**
+ * @route GET /api/programs/getProgramCreateSchedule
+ * @desc Lấy danh sách chương trình đào tạo với cấu trúc để tạo thời khóa biểu.
+ * Yêu cầu quyền admin hoặc training_officer.
+ * @access Private
+ */
+programRoutes.get(
+  "/getProgramCreateSchedule",
+  authenticateAndAuthorize(["admin", "training_officer"]),
+  getProgramCreateScheduleController
 );
 
 /**
@@ -36,9 +56,9 @@ programRoutes.get(
  * @access Private
  */
 programRoutes.get(
-    "/:id",
-    authenticateAndAuthorize(["admin", "training_officer"]),
-    getProgramByIdController
+  "/:id",
+  authenticateAndAuthorize(["admin", "training_officer"]),
+  getProgramByIdController
 );
 
 /**
@@ -48,9 +68,9 @@ programRoutes.get(
  * @access Private
  */
 programRoutes.post(
-    "/create",
-    authenticateAndAuthorize(["admin", "training_officer"]),
-    createProgramController
+  "/create",
+  authenticateAndAuthorize(["admin", "training_officer"]),
+  createProgramController
 );
 
 /**
@@ -60,9 +80,9 @@ programRoutes.post(
  * @access Private
  */
 programRoutes.put(
-    "/update/:id",
-    authenticateAndAuthorize(["admin", "training_officer"]),
-    updateProgramController
+  "/update/:id",
+  authenticateAndAuthorize(["admin", "training_officer"]),
+  updateProgramController
 );
 
 /**
@@ -72,9 +92,9 @@ programRoutes.put(
  * @access Private
  */
 programRoutes.delete(
-    "/delete/:id",
-    authenticateAndAuthorize(["admin", "training_officer"]),
-    deleteProgramController
+  "/delete/:id",
+  authenticateAndAuthorize(["admin", "training_officer"]),
+  deleteProgramController
 );
 
 /**
@@ -98,9 +118,9 @@ programRoutes.delete(
  * @access Private
  */
 programRoutes.post(
-    "/importJson",
-    authenticateAndAuthorize(["admin", "training_officer"]),
-    importProgramsFromJSONController
+  "/importJson",
+  authenticateAndAuthorize(["admin", "training_officer"]),
+  importProgramsFromJSONController
 );
 
 /**
@@ -125,9 +145,9 @@ programRoutes.post(
  * @access Public (hoặc Private nếu bạn muốn hạn chế truy cập template)
  */
 programRoutes.get(
-    "/template/download",
-    // authenticateAndAuthorize(["admin", "training_officer"]), // Có thể uncomment nếu muốn bảo vệ template
-    downloadTemplateController
+  "/template/download",
+  // authenticateAndAuthorize(["admin", "training_officer"]), // Có thể uncomment nếu muốn bảo vệ template
+  downloadTemplateController
 );
 
 export default programRoutes;

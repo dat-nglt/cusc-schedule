@@ -1,16 +1,18 @@
-import express from 'express';
-import authMiddleware, { requireRole, authenticateAndAuthorize } from '../middleware/authMiddleware.js';
+import express from "express";
+import authMiddleware, {
+  authenticateAndAuthorize,
+} from "../middleware/authMiddleware.js";
 import {
-    getAllStudentsController,
-    getStudentByIdController,
-    createStudentController,
-    updateStudentController,
-    deleteStudentController,
-    importStudentsFromJSONController,
-    downloadTemplateController,
-    listStudentsController, // Thêm controller cho chức năng liệt kê có bộ lọc
-    importStudentsFromExcelController, // Thêm controller nếu có nhập từ Excel
-} from '../controllers/studentController.js';
+  getAllStudentsController,
+  getStudentByIdController,
+  createStudentController,
+  updateStudentController,
+  deleteStudentController,
+  importStudentsFromJSONController,
+  downloadTemplateController,
+  // listStudentsController, // Thêm controller cho chức năng liệt kê có bộ lọc
+  // importStudentsFromExcelController, // Thêm controller nếu có nhập từ Excel
+} from "../controllers/studentController.js";
 // Nếu có tính năng import từ Excel, hãy thêm dòng này:
 // import { uploadExcel } from '../middleware/excelMiddleware.js';
 
@@ -23,9 +25,9 @@ const studentRoutes = express.Router();
  * @access Private
  */
 studentRoutes.get(
-    '/getAll',
-    authenticateAndAuthorize(['admin', 'training_officer']),
-    getAllStudentsController
+  "/getAll",
+  authenticateAndAuthorize(["admin", "training_officer"]),
+  getAllStudentsController
 );
 
 /**
@@ -35,9 +37,9 @@ studentRoutes.get(
  * @access Private
  */
 studentRoutes.get(
-    '/:id',
-    authenticateAndAuthorize(['admin', 'training_officer']),
-    getStudentByIdController
+  "/:id",
+  authenticateAndAuthorize(["admin", "training_officer"]),
+  getStudentByIdController
 );
 
 /**
@@ -47,9 +49,9 @@ studentRoutes.get(
  * @access Private
  */
 studentRoutes.post(
-    '/create',
-    authenticateAndAuthorize(['admin', 'training_officer']),
-    createStudentController
+  "/create",
+  authenticateAndAuthorize(["admin", "training_officer"]),
+  createStudentController
 );
 
 /**
@@ -59,9 +61,9 @@ studentRoutes.post(
  * @access Private
  */
 studentRoutes.put(
-    '/update/:id',
-    authenticateAndAuthorize(['admin', 'training_officer']),
-    updateStudentController
+  "/update/:id",
+  authenticateAndAuthorize(["admin", "training_officer"]),
+  updateStudentController
 );
 
 /**
@@ -71,9 +73,9 @@ studentRoutes.put(
  * @access Private
  */
 studentRoutes.delete(
-    '/delete/:id',
-    authenticateAndAuthorize(['admin', 'training_officer']),
-    deleteStudentController
+  "/delete/:id",
+  authenticateAndAuthorize(["admin", "training_officer"]),
+  deleteStudentController
 );
 
 /**
@@ -97,9 +99,9 @@ studentRoutes.delete(
  * @access Private
  */
 studentRoutes.post(
-    '/importJson',
-    authenticateAndAuthorize(['admin', 'training_officer']),
-    importStudentsFromJSONController
+  "/importJson",
+  authenticateAndAuthorize(["admin", "training_officer"]),
+  importStudentsFromJSONController
 );
 
 /**
@@ -124,9 +126,9 @@ studentRoutes.post(
  * @access Public (hoặc Private nếu bạn muốn hạn chế truy cập template)
  */
 studentRoutes.get(
-    '/template/download',
-    // authenticateAndAuthorize(['admin', 'training_officer']), // Có thể uncomment nếu muốn bảo vệ template
-    downloadTemplateController
+  "/template/download",
+  // authenticateAndAuthorize(['admin', 'training_officer']), // Có thể uncomment nếu muốn bảo vệ template
+  downloadTemplateController
 );
 
 export default studentRoutes;

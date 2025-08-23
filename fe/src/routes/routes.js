@@ -21,7 +21,7 @@ const routes = [
     exact: true,
     title: "Trình điều khiển",
     isPrivate: true, // Đặt là private
-    roles: ["admin", "lecturer", "student"], // Mọi vai trò đều có thể vào dashboard
+    roles: ["admin", "lecturer", "student", "trainingofficer"], // Mọi vai trò đều có thể vào dashboard
     layout: ScheduleLayout, // Giữ layout hiện tại
   },
   // Trang đăng nhập (luôn công khai)
@@ -62,7 +62,7 @@ const routes = [
     exact: true,
     title: "Bảng điều khiển sinh viên",
     isPrivate: true, // Riêng tư
-    roles: ["student"], // Chỉ sinh viên
+    roles: ["admin", "student"], // Chỉ sinh viên
     layout: StudentLayout,
   },
   {
@@ -93,6 +93,15 @@ const routes = [
     title: "Quản lý Khóa học",
     isPrivate: true, // Riêng tư
     roles: ["admin"], // Chỉ admin
+    layout: AdminLayout,
+  },
+  {
+    path: "/schedules",
+    component: "Schedules",
+    exact: true,
+    title: "Quản lý lịch",
+    isPrivate: true, // Riêng tư
+    roles: ["admin", "trainingofficer"],
     layout: AdminLayout,
   },
   {

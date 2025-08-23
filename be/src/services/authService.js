@@ -1,6 +1,5 @@
 import jwt from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
-import { findUserByEmail, getUserId } from "./userService.js";
 import logger from "../utils/logger.js";
 
 /**

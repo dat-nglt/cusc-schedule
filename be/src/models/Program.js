@@ -16,10 +16,11 @@ const Program = (sequelize) => {
         type: DataTypes.STRING(50),
         allowNull: true,
       },
-      // Thời lượng đào tạo (VD: 3 năm, 4 năm,...)
-      training_duration: {
-        type: DataTypes.STRING(50),
+      // Số tuần của chương trình
+      duration: {
+        type: DataTypes.INTEGER,
         allowNull: true,
+        defaultValue: 15,
       },
       // Mô tả chi tiết chương trình
       description: {
@@ -33,20 +34,27 @@ const Program = (sequelize) => {
       },
     },
     {
-      tableName: "programs", // Tên bảng trong CSDL
-      timestamps: true, // Tự động thêm created_at và updated_at
-      createdAt: "created_at", // Đặt tên cột createdAt
-      updatedAt: "updated_at", // Đặt tên cột updatedAt
+      tableName: "programs",
+      timestamps: true,
+      createdAt: "created_at",
+      updatedAt: "updated_at",
+      deletedAt: "deleted_at",
     }
   );
 
   // Khai báo mối quan hệ (association)
   ProgramModel.associate = (models) => {
-    ProgramModel.hasMany(models.Course, {
+    // Một Chương trình có nhiều Học kỳ. Liên kết với bảng Program_Semesters.
+    ProgramModel.hasMany(models.ProgramSemesters, {
       foreignKey: "program_id",
+      as: "program_semesters",
       onUpdate: "CASCADE",
-      onDelete: "SET NULL",
+      onDelete: "CASCADE", // Xóa tất cả học kỳ thuộc chương trình nếu chương trình bị xóa
     });
+    
+    // Một Chương trình có nhiều Môn học thông qua các học kỳ.
+    // Mối quan hệ này được thiết lập thông qua bảng trung gian Program_Subject_Semesters
+    // Bỏ mối quan hệ trực tiếp với bảng Classes để đảm bảo tính toàn vẹn dữ liệu.
   };
 
   return ProgramModel;

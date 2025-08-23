@@ -1,13 +1,13 @@
 import {
-    getAllSemesters,
-    getSemesterById,
-    createSemester,
-    updateSemester,
-    deleteSemester,
-    importSemestersFromJSON // Giả định có thể có thêm importSemestersFromExcel nếu bạn muốn nhập từ Excel
-} from "../services/semesterService";
-import { APIResponse } from "../utils/APIResponse"; // Sử dụng APIResponse nhất quán
-import ExcelUtils from "../utils/ExcelUtils"; // Được sử dụng để tạo template Excel
+  getAllSemestersService,
+  getSemesterByIdService,
+  createSemesterService,
+  updateSemesterService,
+  deleteSemesterService,
+  importSemestersFromJSONService, // Giả định có thể có thêm importSemestersFromExcel nếu bạn muốn nhập từ Excel
+} from "../services/semesterService.js";
+import { APIResponse } from "../utils/APIResponse.js"; // Sử dụng APIResponse nhất quán
+import ExcelUtils from "../utils/ExcelUtils.js"; // Được sử dụng để tạo template Excel
 
 /**
  * @route GET /api/semesters/
@@ -17,13 +17,18 @@ import ExcelUtils from "../utils/ExcelUtils"; // Được sử dụng để tạ
  * @access Private (admin, training_officer)
  */
 export const getAllSemestersController = async (req, res) => {
-    try {
-        const semesters = await getAllSemesters();
-        return APIResponse(res, 200, semesters, "Lấy danh sách học kỳ thành công.");
-    } catch (error) {
-        console.error("Lỗi khi lấy danh sách học kỳ:", error);
-        return APIResponse(res, 500, null, error.message || "Đã xảy ra lỗi khi lấy danh sách học kỳ.");
-    }
+  try {
+    const semesters = await getAllSemestersService();
+    return APIResponse(res, 200, semesters, "Lấy danh sách học kỳ thành công.");
+  } catch (error) {
+    console.error("Lỗi khi lấy danh sách học kỳ:", error);
+    return APIResponse(
+      res,
+      500,
+      null,
+      error.message || "Đã xảy ra lỗi khi lấy danh sách học kỳ."
+    );
+  }
 };
 
 /**
@@ -34,17 +39,22 @@ export const getAllSemestersController = async (req, res) => {
  * @access Private (admin, training_officer)
  */
 export const getSemesterByIdController = async (req, res) => {
-    const { id } = req.params;
-    try {
-        const semester = await getSemesterById(id);
-        if (!semester) {
-            return APIResponse(res, 404, null, "Không tìm thấy học kỳ.");
-        }
-        return APIResponse(res, 200, semester, "Lấy thông tin học kỳ thành công.");
-    } catch (error) {
-        console.error(`Lỗi khi lấy thông tin học kỳ với ID ${id}:`, error);
-        return APIResponse(res, 500, null, error.message || "Đã xảy ra lỗi khi lấy thông tin học kỳ.");
+  const { id } = req.params;
+  try {
+    const semester = await getSemesterByIdService(id);
+    if (!semester) {
+      return APIResponse(res, 404, null, "Không tìm thấy học kỳ.");
     }
+    return APIResponse(res, 200, semester, "Lấy thông tin học kỳ thành công.");
+  } catch (error) {
+    console.error(`Lỗi khi lấy thông tin học kỳ với ID ${id}:`, error);
+    return APIResponse(
+      res,
+      500,
+      null,
+      error.message || "Đã xảy ra lỗi khi lấy thông tin học kỳ."
+    );
+  }
 };
 
 /**
@@ -55,15 +65,31 @@ export const getSemesterByIdController = async (req, res) => {
  * @access Private (admin, training_officer)
  */
 export const createSemesterController = async (req, res) => {
+  try {
     const semesterData = req.body;
-    try {
-        const semester = await createSemester(semesterData);
-        return APIResponse(res, 201, semester, "Tạo học kỳ thành công.");
-    } catch (error) {
-        console.error("Lỗi khi tạo học kỳ:", error);
-        // Có thể thêm logic kiểm tra lỗi cụ thể hơn từ service (ví dụ: duplicate entry)
-        return APIResponse(res, 500, null, error.message || "Đã xảy ra lỗi khi tạo học kỳ.");
+    const newSemester = await createSemesterService(semesterData);
+    
+    // Sử dụng mã HTTP 201 cho "Tạo mới thành công"
+    return APIResponse(res, 201, newSemester, "Tạo học kỳ thành công.");
+    
+  } catch (error) {
+    // Xử lý lỗi tập trung và chi tiết hơn
+    console.error("Lỗi khi tạo học kỳ:", error);
+    
+    // Gửi lỗi chi tiết đến client nếu cần
+    // Ví dụ: kiểm tra lỗi trùng lặp (nếu bạn sử dụng unique constraint)
+    if (error.name === 'SequelizeUniqueConstraintError' || error.code === 11000) { 
+        return APIResponse(res, 409, null, "Học kỳ này đã tồn tại.");
     }
+
+    // Trả về lỗi 400 cho các lỗi dữ liệu đầu vào không hợp lệ
+    if (error.name === 'ValidationError') {
+        return APIResponse(res, 400, null, "Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.");
+    }
+
+    // Lỗi chung của server
+    return APIResponse(res, 500, null, "Đã xảy ra lỗi khi tạo học kỳ. Vui lòng thử lại sau.");
+  }
 };
 
 /**
@@ -74,18 +100,28 @@ export const createSemesterController = async (req, res) => {
  * @access Private (admin, training_officer)
  */
 export const updateSemesterController = async (req, res) => {
-    const { id } = req.params;
-    const semesterData = req.body;
-    try {
-        const semester = await updateSemester(id, semesterData);
-        if (!semester) {
-            return APIResponse(res, 404, null, "Không tìm thấy học kỳ để cập nhật.");
-        }
-        return APIResponse(res, 200, semester, "Cập nhật thông tin học kỳ thành công.");
-    } catch (error) {
-        console.error(`Lỗi khi cập nhật học kỳ với ID ${id}:`, error);
-        return APIResponse(res, 500, null, error.message || "Đã xảy ra lỗi khi cập nhật thông tin học kỳ.");
+  const { id } = req.params;
+  const semesterData = req.body;
+  try {
+    const semester = await updateSemesterService(id, semesterData);
+    if (!semester) {
+      return APIResponse(res, 404, null, "Không tìm thấy học kỳ để cập nhật.");
     }
+    return APIResponse(
+      res,
+      200,
+      semester,
+      "Cập nhật thông tin học kỳ thành công."
+    );
+  } catch (error) {
+    console.error(`Lỗi khi cập nhật học kỳ với ID ${id}:`, error);
+    return APIResponse(
+      res,
+      500,
+      null,
+      error.message || "Đã xảy ra lỗi khi cập nhật thông tin học kỳ."
+    );
+  }
 };
 
 /**
@@ -96,17 +132,22 @@ export const updateSemesterController = async (req, res) => {
  * @access Private (admin, training_officer)
  */
 export const deleteSemesterController = async (req, res) => {
-    const { id } = req.params;
-    try {
-        const deletedCount = await deleteSemester(id); // Giả định service trả về số lượng bản ghi bị xóa
-        if (deletedCount === 0) {
-            return APIResponse(res, 404, null, "Không tìm thấy học kỳ để xóa.");
-        }
-        return APIResponse(res, 200, null, "Xóa học kỳ thành công.");
-    } catch (error) {
-        console.error(`Lỗi khi xóa học kỳ với ID ${id}:`, error);
-        return APIResponse(res, 500, null, error.message || "Đã xảy ra lỗi khi xóa học kỳ.");
+  const { id } = req.params;
+  try {
+    const deletedCount = await deleteSemesterService(id); // Giả định service trả về số lượng bản ghi bị xóa
+    if (deletedCount === 0) {
+      return APIResponse(res, 404, null, "Không tìm thấy học kỳ để xóa.");
     }
+    return APIResponse(res, 200, null, "Xóa học kỳ thành công.");
+  } catch (error) {
+    console.error(`Lỗi khi xóa học kỳ với ID ${id}:`, error);
+    return APIResponse(
+      res,
+      500,
+      null,
+      error.message || "Đã xảy ra lỗi khi xóa học kỳ."
+    );
+  }
 };
 
 /**
@@ -117,39 +158,54 @@ export const deleteSemesterController = async (req, res) => {
  * @access Private (admin, training_officer)
  */
 export const importSemestersFromJSONController = async (req, res) => {
-    const { semesters } = req.body;
-    try {
-        // Kiểm tra dữ liệu đầu vào
-        if (!semesters || !Array.isArray(semesters)) {
-            return APIResponse(res, 400, null, "Dữ liệu học kỳ không hợp lệ. Yêu cầu một mảng JSON.");
-        }
-
-        if (semesters.length === 0) {
-            return APIResponse(res, 400, null, "Không có dữ liệu học kỳ nào được cung cấp để import.");
-        }
-
-        // Tiến hành import dữ liệu từ JSON
-        const results = await importSemestersFromJSON(semesters);
-
-        const responseData = {
-            success: true, // Chỉ ra rằng request được xử lý
-            imported: results.success, // Các bản ghi đã được import thành công (đối tượng)
-            errors: results.errors, // Các bản ghi lỗi cùng với lý do (đối tượng)
-            message: `Đã thêm thành công ${results.success.length} học kỳ.`
-        };
-
-        if (results.errors.length > 0) {
-            // Nếu có lỗi, cập nhật thông báo và trả về 207 Multi-Status (để báo hiệu một phần thành công)
-            responseData.message = `Thêm hoàn tất với ${results.success.length}/${semesters.length} bản ghi thành công.`;
-            return APIResponse(res, 207, responseData, responseData.message);
-        } else {
-            // Nếu không có lỗi, trả về 200 OK
-            return APIResponse(res, 200, responseData, responseData.message);
-        }
-    } catch (error) {
-        console.error("Lỗi khi import học kỳ từ dữ liệu JSON:", error);
-        return APIResponse(res, 500, null, error.message || "Đã xảy ra lỗi khi thêm dữ liệu.");
+  const { semesters } = req.body;
+  try {
+    // Kiểm tra dữ liệu đầu vào
+    if (!semesters || !Array.isArray(semesters)) {
+      return APIResponse(
+        res,
+        400,
+        null,
+        "Dữ liệu học kỳ không hợp lệ. Yêu cầu một mảng JSON."
+      );
     }
+
+    if (semesters.length === 0) {
+      return APIResponse(
+        res,
+        400,
+        null,
+        "Không có dữ liệu học kỳ nào được cung cấp để import."
+      );
+    }
+
+    // Tiến hành import dữ liệu từ JSON
+    const results = await importSemestersFromJSONService(semesters);
+
+    const responseData = {
+      success: true, // Chỉ ra rằng request được xử lý
+      imported: results.success, // Các bản ghi đã được import thành công (đối tượng)
+      errors: results.errors, // Các bản ghi lỗi cùng với lý do (đối tượng)
+      message: `Đã thêm thành công ${results.success.length} học kỳ.`,
+    };
+
+    if (results.errors.length > 0) {
+      // Nếu có lỗi, cập nhật thông báo và trả về 207 Multi-Status (để báo hiệu một phần thành công)
+      responseData.message = `Thêm hoàn tất với ${results.success.length}/${semesters.length} bản ghi thành công.`;
+      return APIResponse(res, 207, responseData, responseData.message);
+    } else {
+      // Nếu không có lỗi, trả về 200 OK
+      return APIResponse(res, 200, responseData, responseData.message);
+    }
+  } catch (error) {
+    console.error("Lỗi khi import học kỳ từ dữ liệu JSON:", error);
+    return APIResponse(
+      res,
+      500,
+      null,
+      error.message || "Đã xảy ra lỗi khi thêm dữ liệu."
+    );
+  }
 };
 
 /**
@@ -160,20 +216,25 @@ export const importSemestersFromJSONController = async (req, res) => {
  * @access Private (admin, training_officer) - Hoặc Public tùy theo yêu cầu
  */
 export const downloadTemplateController = async (req, res) => {
-    try {
-        // Tạo buffer chứa template Excel. Đảm bảo ExcelUtils có hàm createSemesterTemplate.
-        const buffer = ExcelUtils.createSemesterTemplate();
+  try {
+    // Tạo buffer chứa template Excel. Đảm bảo ExcelUtils có hàm createSemesterTemplate.
+    const buffer = ExcelUtils.createSemesterTemplate();
 
-        // Thiết lập các headers để trình duyệt tải xuống file
-        res.setHeader('Content-Disposition', 'attachment; filename=hoc_ky_mau.xlsx');
-        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        res.setHeader('Content-Length', buffer.length); // Đặt Content-Length
+    // Thiết lập các headers để trình duyệt tải xuống file
+    res.setHeader(
+      "Content-Disposition",
+      "attachment; filename=hoc_ky_mau.xlsx"
+    );
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+    res.setHeader("Content-Length", buffer.length); // Đặt Content-Length
 
-        // Gửi buffer làm phản hồi
-        return res.send(buffer);
-
-    } catch (error) {
-        console.error("Lỗi khi tạo và tải xuống template học kỳ:", error);
-        return APIResponse(res, 500, null, "Đã xảy ra lỗi khi tạo template.");
-    }
+    // Gửi buffer làm phản hồi
+    return res.send(buffer);
+  } catch (error) {
+    console.error("Lỗi khi tạo và tải xuống template học kỳ:", error);
+    return APIResponse(res, 500, null, "Đã xảy ra lỗi khi tạo template.");
+  }
 };

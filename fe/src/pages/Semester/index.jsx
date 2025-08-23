@@ -13,6 +13,7 @@ import {
     InputAdornment,
     IconButton,
     Button,
+    useTheme,
 } from '@mui/material';
 import {
     Add as AddIcon,
@@ -24,13 +25,14 @@ import EditSemesterModal from './EditSemesterModal';
 import DeleteSemesterModal from './DeleteSemesterModal';
 import useResponsive from '../../hooks/useResponsive';
 import SemesterTable from './SemesterTable';
-import { getAllSemesters, getSemesterById, createSemester, updateSemester, deleteSemester } from '../../api/semesterAPI';
+import { getAllSemestersAPI, getSemesterByIdAPI, createSemesterAPI, updateSemesterAPI, deleteSemesterAPI } from '../../api/semesterAPI';
 import { toast } from 'react-toastify';
-import { getAllPrograms } from '../../api/programAPI';
+import { getAllProgramsAPI } from '../../api/programAPI';
+import TablePaginationLayout from '../../components/layout/TablePaginationLayout';
 
 const Semester = () => {
     const { isSmallScreen, isMediumScreen } = useResponsive();
-
+    const theme = useTheme();
     // Dữ liệu mẫu cho danh sách học kỳ
     const [semesters, setSemesters] = useState([]);
     const [programs, setPrograms] = useState([]);
@@ -55,12 +57,12 @@ const Semester = () => {
     //hàm lấy danh sách chương trình từ API
     const fetchPrograms = async () => {
         try {
-            const response = await getAllPrograms();
+            const response = await getAllProgramsAPI();
             if (!response) {
                 console.error("Không có dữ liệu chương trình");
                 return;
             }
-            setPrograms(response.data.data);
+            setPrograms(response.data);
         } catch (error) {
             console.error("Lỗi khi tải danh sách chương trình:", error);
             throw error; // Ném lỗi để xử lý ở nơi gọi hàm
@@ -70,12 +72,12 @@ const Semester = () => {
     const fetchSemesters = async () => {
         try {
             setLoading(true);
-            const response = await getAllSemesters();
+            const response = await getAllSemestersAPI();
             if (!response) {
                 console.error("Không có dữ liệu học kỳ");
                 return;
             }
-            setSemesters(response.data.data);
+            setSemesters(response.data);
         } catch (error) {
             console.error("Lỗi khi tải danh sách học kỳ:", error);
         } finally {
@@ -102,7 +104,7 @@ const Semester = () => {
     const handleAddNewSemester = async (newSemester) => {
         try {
             setLoading(true);
-            const response = await createSemester(newSemester);
+            const response = await createSemesterAPI(newSemester);
             if (response && response.data) {
                 toast.success('Thêm học kỳ thành công!')
                 fetchSemesters(); // Tải lại danh sách học kỳ sau khi thêm thành công
@@ -120,9 +122,9 @@ const Semester = () => {
     const handleEditSemester = async (id) => {
         try {
             setLoading(true);
-            const response = await getSemesterById(id);
+            const response = await getSemesterByIdAPI(id);
             if (response && response.data) {
-                setEditedSemester(response.data.data);
+                setEditedSemester(response.data);
                 setOpenEditModal(true);
             }
         } catch (error) {
@@ -144,7 +146,7 @@ const Semester = () => {
     const handleSaveEditedSemester = async (updatedSemester) => {
         try {
             setLoading(true);
-            const response = await updateSemester(updatedSemester.semester_id, updatedSemester);
+            const response = await updateSemesterAPI(updatedSemester.semester_id, updatedSemester);
             if (response && response.data) {
                 toast.success('Cập nhật học kỳ thành công!');
                 fetchSemesters(); // Tải lại danh sách học kỳ sau khi cập nhật thành công
@@ -167,9 +169,9 @@ const Semester = () => {
     const handleViewSemester = async (id) => {
         try {
             setLoading(true);
-            const response = await getSemesterById(id);
+            const response = await getSemesterByIdAPI(id);
             if (response && response.data) {
-                setSelectedSemester(response.data.data);
+                setSelectedSemester(response.data);
                 setOpenDetail(true);
             }
         } catch (error) {
@@ -192,7 +194,7 @@ const Semester = () => {
     const confirmDeleteSemester = async (id) => {
         try {
             setLoading(true);
-            const response = await deleteSemester(id);
+            const response = await deleteSemesterAPI(id);
             if (response) {
                 toast.success('Xóa học kỳ thành công!');
                 fetchSemesters(); // Tải lại danh sách học kỳ sau khi xóa thành công
@@ -237,48 +239,54 @@ const Semester = () => {
     const displayedSemesters = filteredSemesters.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
     return (
-        <Box sx={{ p: 3, zIndex: 10, height: 'calc(100vh - 64px)', overflowY: 'auto' }}>
+        <Box sx={{ p: 1, zIndex: 10, height: 'calc(100vh - 64px)', overflowY: 'auto' }}>
             {/* Main Content */}
             <Box sx={{ width: '100%', mb: 3 }}>
                 {/* Bảng danh sách học kỳ */}
                 <Card sx={{ flexGrow: 1 }}>
                     <CardContent>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, gap: 2 }}>
-                            <Typography variant="h6">
+                        <Box sx={{
+                            display: 'flex',
+                            flexDirection: isSmallScreen ? 'column' : 'row',
+                            justifyContent: 'space-between',
+                            alignItems: isSmallScreen ? 'stretch' : 'center',
+                            mb: 3,
+                            gap: 2
+                        }}>
+                            <Typography variant="h5" fontWeight="600">
                                 Danh sách học kỳ
                             </Typography>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                {isSmallScreen ? (
-                                    <IconButton
-                                        color="primary"
-                                        onClick={handleAddSemester}
-                                        sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
-                                    >
-                                        <AddIcon sx={{ color: '#fff' }} />
-                                    </IconButton>
-                                ) : (
-                                    <Button
-                                        variant="contained"
-                                        color="primary"
-                                        startIcon={<AddIcon />}
-                                        onClick={handleAddSemester}
-                                        sx={{
-                                            bgcolor: '#1976d2',
-                                            '&:hover': { bgcolor: '#115293' },
-                                            minWidth: isSmallScreen ? 100 : 150,
-                                            height: '56px'
-                                        }}
-                                    >
-                                        Thêm học kỳ
-                                    </Button>
-                                )}
-                                <FormControl sx={{ minWidth: isSmallScreen ? 100 : 150 }} variant="outlined">
-                                    <InputLabel id="status-filter-label">{isSmallScreen ? 'Lọc' : 'Lọc theo trạng thái'}</InputLabel>
+
+                            <Box sx={{
+                                display: 'flex',
+                                gap: 2,
+                                flexDirection: isSmallScreen ? 'column' : 'row',
+                                width: isSmallScreen ? '100%' : 'auto'
+                            }}>
+                                <TextField
+                                    size="small"
+                                    placeholder="Tìm kiếm theo mã, tên học kỳ..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <SearchIcon />
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                    sx={{
+                                        minWidth: 200,
+                                        backgroundColor: theme.palette.background.paper
+                                    }}
+                                />
+
+                                <FormControl size="small" sx={{ minWidth: 120 }}>
+                                    <InputLabel>Trạng thái</InputLabel>
                                     <Select
-                                        labelId="status-filter-label"
                                         value={selectedStatus}
                                         onChange={(e) => setSelectedStatus(e.target.value)}
-                                        label={isSmallScreen ? 'Lọc' : 'Lọc theo trạng thái'}
+                                        label="Trạng thái"
                                     >
                                         <MenuItem value="">Tất cả</MenuItem>
                                         {statuses.map((status) => (
@@ -288,24 +296,16 @@ const Semester = () => {
                                         ))}
                                     </Select>
                                 </FormControl>
+
+                                <Button
+                                    variant="contained"
+                                    startIcon={<AddIcon />}
+                                    onClick={handleAddSemester}
+                                    sx={{ ml: isSmallScreen ? 0 : 'auto' }}
+                                >
+                                    Thêm học kỳ
+                                </Button>
                             </Box>
-                        </Box>
-                        <Box sx={{ mb: 2 }}>
-                            <TextField
-                                fullWidth
-                                variant="outlined"
-                                placeholder="Tìm kiếm theo mã, tên học kỳ..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                sx={{ bgcolor: '#fff' }}
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            <SearchIcon color="action" />
-                                        </InputAdornment>
-                                    ),
-                                }}
-                            />
                         </Box>
                         {filteredSemesters.length === 0 ? (
                             <Typography>Không có học kỳ nào để hiển thị.</Typography>
@@ -321,14 +321,11 @@ const Semester = () => {
                                     loading={loading}
                                     error={error}
                                 />
-                                <TablePagination
-                                    component="div"
+                                <TablePaginationLayout
                                     count={filteredSemesters.length}
                                     page={page}
                                     onPageChange={handleChangePage}
                                     rowsPerPage={rowsPerPage}
-                                    rowsPerPageOptions={[]}
-                                    labelDisplayedRows={({ from, to, count }) => `${from}-${to} trên ${count}`}
                                 />
                             </>
                         )}

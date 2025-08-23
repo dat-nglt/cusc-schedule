@@ -6,19 +6,23 @@ import {
     Button,
     IconButton,
     useMediaQuery,
-    useTheme
+    useTheme,
+    Tooltip,
+    alpha
 } from '@mui/material';
 import {
     ChevronLeft,
-    ChevronRight,
+    ArrowForward,
+    ArrowBack,
     Today,
     Add,
     FileDownload,
-    PostAdd
+    PostAdd,
+    Schedule
 } from '@mui/icons-material';
 import { format, startOfWeek, addDays } from 'date-fns';
 import { vi } from 'date-fns/locale';
-import { DndProvider } from 'react-dnd'; DOMImplementation
+import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { TouchBackend } from 'react-dnd-touch-backend';
 import { useTimetable } from '../../contexts/TimetableContext';
@@ -28,19 +32,17 @@ import TimeSlot from './TimeSlot';
 const HOURS = Array.from({ length: 16 }, (_, i) => i + 7); // 7h - 22h
 const DAYS = Array.from({ length: 7 }, (_, i) => i); // 0-6 (Monday-Sunday)
 
-// Main Component
 const WeeklyCalendar = ({
-    // initialDate = new Date(),
     scheduleItems = [],
     onItemMove,
-    onAddNew
+    onAddNew,
+    onCreateNewSchedule,
+    onExportReport
 }) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
     const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'));
-    const { currentDate, setCurrentDate} = useTimetable();
-    // const [currentDate, setCurrentDate] = useState(startOfWeek(initialDate, { weekStartsOn: 1 }));
-
+    const { currentDate, setCurrentDate } = useTimetable();
     const [weekDays, setWeekDays] = useState([]);
 
     useEffect(() => {
@@ -51,27 +53,16 @@ const WeeklyCalendar = ({
                 name: format(date, 'EEEE', { locale: vi }),
                 shortName: format(date, 'EEE', { locale: vi }),
                 date: format(date, 'dd/MM'),
-                fullDate: date
+                fullDate: date,
+                isToday: format(date, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd')
             };
         });
         setWeekDays(newWeekDays);
     }, [currentDate]);
 
-    const handlePrevWeek = () => {
-        setCurrentDate(addDays(currentDate, -7));
-    };
-
-    const handleNextWeek = () => {
-        setCurrentDate(addDays(currentDate, 7));
-    };
-
-    useEffect(() => {
-
-    }, [currentDate]);
-
-    const handleToday = () => {
-        setCurrentDate(startOfWeek(new Date(), { weekStartsOn: 1 }));
-    };
+    const handlePrevWeek = () => setCurrentDate(addDays(currentDate, -7));
+    const handleNextWeek = () => setCurrentDate(addDays(currentDate, 7));
+    const handleToday = () => setCurrentDate(startOfWeek(new Date(), { weekStartsOn: 1 }));
 
     const handleDrop = (itemId, { day, hour, date }) => {
         const newDate = addDays(date, day);
@@ -79,237 +70,258 @@ const WeeklyCalendar = ({
         onItemMove(itemId, newStartTime);
     };
 
-    // Use touch backend for mobile devices
     const dndBackend = isMobile ? TouchBackend : HTML5Backend;
 
     return (
         <DndProvider backend={dndBackend} options={{ enableMouseEvents: true }}>
             <Paper elevation={2} sx={{
                 p: { xs: 1, sm: 2 },
+                border: `1px solid ${alpha(theme.palette.primary.main, 0.3)}`,
+                borderRadius: '12px',
                 height: '100%',
-                overflow: 'auto',
-                flex: 1,
-                maxWidth: '100vw'
+                overflow: 'hidden',
+                display: 'flex',
+                flexDirection: 'column',
+                maxWidth: '100%',
+                minWidth: '99%'
             }}>
+                {/* Header Section */}
                 <Box sx={{
                     display: 'flex',
                     flexDirection: { xs: 'column', sm: 'row' },
                     justifyContent: 'space-between',
                     alignItems: { xs: 'flex-start', sm: 'center' },
-                    gap: 1,
-                    mb: 2
+                    gap: 2,
+                    mb: 2,
+                    flexShrink: 0
                 }}>
-                    <Typography variant="h6" fontWeight="bold" sx={{ fontSize: { xs: '1rem', sm: '1.25rem' } }}>
-                        {isMobile ? (
-                            `Tuần ${format(currentDate, 'dd/MM')} - ${format(addDays(currentDate, 6), 'dd/MM')}`
-                        ) : (
-                            `Lịch học tuần ${format(currentDate, 'dd/MM/yyyy')} - ${format(addDays(currentDate, 6), 'dd/MM/yyyy')}`
-                        )}
-                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Schedule color="primary" />
+                        <Typography variant="h6" fontWeight="600" sx={{
+                            fontSize: { xs: '1.1rem', sm: '1.25rem' },
+                            color: theme.palette.primary.main
+                        }}>
+                            {isMobile ? (
+                                `Tuần ${format(currentDate, 'dd/MM')} - ${format(addDays(currentDate, 6), 'dd/MM')}`
+                            ) : (
+                                `Lịch học tuần ${format(currentDate, 'dd/MM/yyyy')} - ${format(addDays(currentDate, 6), 'dd/MM/yyyy')}`
+                            )}
+                        </Typography>
+                    </Box>
 
                     <Box sx={{
                         display: 'flex',
                         gap: 1,
-                        alignSelf: { xs: 'flex-end', sm: 'center' }
+                        width: { xs: '100%', sm: 'auto' },
+                        justifyContent: { xs: 'space-between', sm: 'flex-end' }
                     }}>
-                        {!isMobile && (
-                            <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'center' }}>
-                                {/* Nút Thêm lịch - Luôn hiển thị */}
+
+
+                        <Box sx={{ display: 'flex', gap: 1 }}>
+                            {/* <Tooltip title="Thêm lịch học">
                                 <Button
                                     variant="contained"
-                                    startIcon={<Add fontSize="small" />}
+                                    startIcon={<Add />}
                                     onClick={onAddNew}
+                                    size="small"
                                     sx={{
-                                        textTransform: 'none',
-                                        borderRadius: '8px',
-                                        px: 2,
                                         minWidth: 'max-content',
                                         whiteSpace: 'nowrap'
                                     }}
-                                    size={isTablet ? 'small' : 'medium'}
                                 >
-                                    Thêm lịch
+                                    {isMobile ? 'Thêm' : 'Thêm lịch'}
                                 </Button>
+                            </Tooltip> */}
 
-                                {/* Nút Tạo lịch - Ẩn trên mobile */}
-                                <Button
-                                    variant="contained"
-                                    color="success"
-                                    startIcon={<PostAdd fontSize="small" />}
-                                    sx={{
-                                        textTransform: 'none',
-                                        borderRadius: '8px',
-                                        px: 2,
-                                        minWidth: 'max-content',
-                                        whiteSpace: 'nowrap',
-                                        display: { xs: 'none', sm: 'inline-flex' }
-                                    }}
-                                    size={isTablet ? 'small' : 'medium'}
-                                >
-                                    Tạo lịch mới
-                                </Button>
+                            {!isMobile && (
+                                <>
+                                    <Tooltip title="Tạo lịch học mới">
+                                        <Button
+                                            variant="outlined"
+                                            color="success"
+                                            startIcon={<PostAdd />}
+                                            onClick={onCreateNewSchedule}
+                                            size="small"
+                                        >
+                                            Tạo mới
+                                        </Button>
+                                    </Tooltip>
 
-                                {/* Nút Xuất báo cáo - Ẩn trên mobile */}
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    startIcon={<FileDownload fontSize="small" />}
-                                    sx={{
-                                        textTransform: 'none',
-                                        borderRadius: '8px',
-                                        px: 2,
-                                        minWidth: 'max-content',
-                                        whiteSpace: 'nowrap',
-                                        display: { xs: 'none', sm: 'inline-flex' }
-                                    }}
-                                    size={isTablet ? 'small' : 'medium'}
-                                >
-                                    Xuất báo cáo
-                                </Button>
-                            </Box>
-                        )}
-
-                        <Box sx={{ display: 'flex', gap: { xs: 0.5, sm: 1 } }}>
-                            <IconButton onClick={handlePrevWeek} size={isMobile ? 'small' : 'medium'}>
-                                <ChevronLeft fontSize={isMobile ? 'small' : 'medium'} />
-                            </IconButton>
-
-                            <IconButton onClick={handleToday} size={isMobile ? 'small' : 'medium'}>
-                                <Today fontSize={isMobile ? 'small' : 'medium'} />
-                            </IconButton>
-
-                            <IconButton onClick={handleNextWeek} size={isMobile ? 'small' : 'medium'}>
-                                <ChevronRight fontSize={isMobile ? 'small' : 'medium'} />
-                            </IconButton>
+                                    <Tooltip title="Xuất báo cáo">
+                                        <Button
+                                            variant="outlined"
+                                            color="primary"
+                                            startIcon={<FileDownload />}
+                                            onClick={onExportReport}
+                                            size="small"
+                                        >
+                                            Xuất file
+                                        </Button>
+                                    </Tooltip>
+                                </>
+                            )}
                         </Box>
                     </Box>
                 </Box>
 
-                {isMobile && (
-                    <Button
-                        variant="contained"
-                        startIcon={<Add />}
-                        onClick={onAddNew}
-                        sx={{
-                            textTransform: 'none',
-                            mb: 2,
-                            width: '100%'
-                        }}
-                        size="small"
-                    >
-                        Thêm lịch
-                    </Button>
-                )}
-
+                {/* Calendar Grid */}
                 <Box sx={{
-                    display: 'grid',
-                    maxHeight: 'calc(100vh - 350px)',
-                    gridTemplateColumns: {
-                        xs: '50px repeat(7, minmax(60px, 1fr))',
-                        sm: '60px repeat(7, minmax(100px, 1fr))',
-                        md: '70px repeat(7, minmax(120px, 1fr))',
-                        lg: '80px repeat(7, minmax(150px, 1fr))'
-                    },
-                    gap: '1px',
-                    backgroundColor: (theme) => theme.palette.divider,
-                    border: '1px solid',
-                    borderColor: (theme) => theme.palette.divider,
-                    overflowX: 'auto',
-                    '&::-webkit-scrollbar': {
-                        height: '6px'
-                    },
-                    '&::-webkit-scrollbar-thumb': {
-                        backgroundColor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)',
-                        borderRadius: '3px'
-                    }
+                    flexGrow: 1,
+                    overflow: 'scroll',
+                    maxHeight: "580px",
+                    border: `1px solid ${theme.palette.divider}`,
+                    borderRadius: 1,
+                    position: 'relative'
                 }}>
-                    {/* Empty corner */}
                     <Box sx={{
-                        backgroundColor: (theme) => theme.palette.background.default,
-                        padding: '8px',
-                        textAlign: 'center',
-                        position: 'sticky',
-                        left: 0,
-                        zIndex: 2,
-                        borderRight: '1px solid',
-                        borderBottom: '1px solid',
-                        borderColor: (theme) => theme.palette.divider
-                    }} />
-
-                    {/* Day headers */}
-                    {weekDays.map((day) => (
-                        <Box key={day.day} sx={{
-                            backgroundColor: (theme) => theme.palette.mode === 'dark'
-                                ? theme.palette.grey[800]
-                                : theme.palette.grey[100],
-                            padding: '8px',
-                            textAlign: 'center',
+                        display: 'grid',
+                        gridTemplateColumns: {
+                            xs: '50px repeat(7, minmax(80px, 1fr))',
+                            sm: '50px repeat(7, minmax(120px, 1fr))',
+                            md: '60px repeat(7, minmax(150px, 1fr))'
+                        },
+                        minWidth: 'fit-content',
+                        backgroundColor: theme.palette.divider,
+                        borderBottom: `1px solid ${theme.palette.divider}`
+                    }}>
+                        {/* Empty corner */}
+                        <Box sx={{
                             position: 'sticky',
+                            left: 0,
                             top: 0,
-                            zIndex: 1,
-                            minWidth: { xs: '60px', sm: '100px' },
-                            borderBottom: '1px solid',
-                            borderColor: (theme) => theme.palette.divider
+                            zIndex: 1000,
+                            backgroundColor: theme.palette.divider,
+                            borderRight: `1px solid ${theme.palette.divider}`
                         }}>
-                            <Typography variant="subtitle1" sx={{
-                                fontSize: { xs: '0.7rem', sm: '1rem' },
-                                color: (theme) => theme.palette.text.primary
-                            }}>
-                                {isMobile ? day.shortName : day.name}
-                            </Typography>
-                            <Typography variant="subtitle2" sx={{
-                                fontSize: { xs: '0.6rem', sm: '0.9rem' },
-                                color: (theme) => theme.palette.text.secondary
-                            }}>
-                                {day.date}
-                            </Typography>
-                        </Box>
-                    ))}
 
-                    {/* Time slots */}
-                    {HOURS.map((hour) => (
-                        <React.Fragment key={hour}>
                             <Box sx={{
-                                backgroundColor: (theme) => theme.palette.mode === 'dark'
-                                    ? theme.palette.grey[800]
-                                    : theme.palette.grey[100],
-                                padding: '4px',
-                                textAlign: 'center',
-                                position: 'sticky',
-                                left: 0,
-                                zIndex: 1,
                                 display: 'flex',
+                                flexDirection: 'column',
+                                gap: 0.5,
                                 alignItems: 'center',
-                                justifyContent: 'center',
-                                borderRight: '1px solid',
-                                borderColor: (theme) => theme.palette.divider
                             }}>
-                                <Typography variant="subtitle2" sx={{
-                                    fontSize: { xs: '0.6rem', sm: '0.9rem' },
-                                    color: (theme) => theme.palette.text.secondary
-                                }}>
-                                    {hour}:00
-                                </Typography>
-                            </Box>
+                                <Tooltip title="Tuần trước">
+                                    <IconButton
+                                        onClick={handlePrevWeek}
+                                        size="small"
+                                        sx={{
+                                            color: theme.palette.primary.main,
+                                            '&:hover': {
+                                                bgcolor: alpha(theme.palette.primary.main, 0.1)
+                                            }
+                                        }}
+                                    >
+                                        <ArrowBack fontSize="small" />
+                                    </IconButton>
+                                </Tooltip>
 
-                            {weekDays.map((day) => (
-                                <TimeSlot
-                                    key={`${day.day}-${hour}`}
-                                    day={day.day}
-                                    hour={hour}
-                                    date={currentDate}
-                                    onDrop={handleDrop}
-                                    scheduleItems={scheduleItems}
+                                {/* <Button
+                                    onClick={handleToday}
+                                    size="small"
+                                    variant="contained"
                                     sx={{
-                                        backgroundColor: (theme) => theme.palette.background.paper,
+                                        minWidth: 0,
+                                        px: 2,
+                                        borderRadius: '20px',
+                                        textTransform: 'none',
+                                        fontWeight: 500,
+                                        boxShadow: 'none',
                                         '&:hover': {
-                                            backgroundColor: (theme) => theme.palette.action.hover
+                                            boxShadow: 'none',
+                                            bgcolor: theme.palette.primary.dark
                                         }
                                     }}
-                                />
-                            ))}
-                        </React.Fragment>
-                    ))}
+                                >
+                                    Hôm nay
+                                </Button> */}
+
+                                <Tooltip title="Tuần sau">
+                                    <IconButton
+                                        onClick={handleNextWeek}
+                                        size="small"
+                                        sx={{
+                                            color: theme.palette.primary.main,
+                                            '&:hover': {
+                                                bgcolor: alpha(theme.palette.primary.main, 0.1)
+                                            }
+                                        }}
+                                    >
+                                        <ArrowForward fontSize="small" />
+                                    </IconButton>
+                                </Tooltip>
+                            </Box>
+                        </Box>
+
+                        {/* Day headers */}
+                        {weekDays.map((day) => (
+                            <Box key={day.day} sx={{
+                                backgroundColor: theme.palette.background.paper,
+                                p: 1,
+                                textAlign: 'center',
+                                position: 'sticky',
+                                top: 0,
+                                zIndex: 2,
+                                borderRight: `1px solid ${theme.palette.divider}`,
+                                ...(day.isToday ? {
+                                    backgroundColor: theme.palette.primary.dark,
+                                    color: theme.palette.primary.contrastText
+                                } : {
+                                    backgroundColor: theme.palette.primary.light,
+                                    color: theme.palette.primary.contrastText
+                                })
+                            }}>
+                                <Typography variant="subtitle2" fontWeight="medium">
+                                    {isMobile ? day.shortName : day.name}
+                                </Typography>
+                                <Typography variant="caption">
+                                    {day.date}
+                                </Typography>
+                            </Box>
+                        ))}
+
+                        {/* Time slots */}
+                        {HOURS.map((hour) => (
+                            <React.Fragment key={hour}>
+                                <Box sx={{
+                                    position: 'sticky',
+                                    left: 0,
+                                    zIndex: 1,
+                                    backgroundColor: theme.palette.primary.light, p: 0.5,
+                                    color: theme.palette.primary.contrastText,
+                                    textAlign: 'center',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    justifyContent: 'center',
+                                    borderRight: `1px solid ${theme.palette.divider}`,
+                                    borderBottom: `1px solid ${theme.palette.divider}`
+                                }}>
+                                    <Typography variant="caption" fontWeight="medium">
+                                        {hour}:00
+                                    </Typography>
+                                </Box>
+
+                                {weekDays.map((day) => (
+                                    <TimeSlot
+                                        key={`${day.day}-${hour}`}
+                                        day={day.day}
+                                        hour={hour}
+                                        date={currentDate}
+                                        onDrop={handleDrop}
+                                        scheduleItems={scheduleItems}
+                                        sx={{
+                                            backgroundColor: theme.palette.background.paper,
+                                            borderRight: `1px solid ${theme.palette.divider}`,
+                                            borderBottom: `1px solid ${theme.palette.divider}`,
+                                            minHeight: '60px',
+                                            '&:hover': {
+                                                backgroundColor: theme.palette.action.hover
+                                            }
+                                        }}
+                                    />
+                                ))}
+                            </React.Fragment>
+                        ))}
+                    </Box>
                 </Box>
             </Paper>
         </DndProvider>

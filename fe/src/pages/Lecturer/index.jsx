@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from 'react';
+
+import { useState, useEffect } from 'react';
 import {
     Box,
     Typography,
     Card,
     CardContent,
-    TablePagination,
     TextField,
     Select,
     MenuItem,
     FormControl,
     InputLabel,
     InputAdornment,
-    IconButton,
     Button,
+    useTheme,
 } from '@mui/material';
 import {
     Add as AddIcon,
@@ -25,15 +25,17 @@ import DeleteLecturerModal from './DeleteLecturerModal';
 import useResponsive from '../../hooks/useResponsive';
 import LecturerTable from './LecturerTable';
 import { toast } from 'react-toastify';
-import { getAllLecturers, getLecturerById, createLecturer, updateLecturer, deleteLecturer } from '../../api/lecturerAPI';
+import { getAllLecturersAPI, createLecturerAPI, updateLecturerAPI, deleteLecturerAPI } from '../../api/lecturerAPI';
+import { getAllSubjectsAPI } from '../../api/subjectAPI';
+import TablePaginationLayout from '../../components/layout/TablePaginationLayout';
+
 const Lecturer = () => {
     const { isSmallScreen, isMediumScreen } = useResponsive();
-
-    // Dữ liệu mẫu cho danh sách giảng viên
+    const theme = useTheme()
     const [lecturers, setLecturers] = useState([]);
-    // State cho phân trang, tìm kiếm, lọc theo trạng thái và modal
+    const [subjects, setSubjects] = useState([]);
     const [page, setPage] = useState(0);
-    const [rowsPerPage] = useState(8);
+    const [rowsPerPage] = useState(7);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedStatus, setSelectedStatus] = useState('');
     const [openDetail, setOpenDetail] = useState(false);
@@ -46,76 +48,109 @@ const Lecturer = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
-
-    // Danh sách trạng thái để lọc
     const statuses = ['Đang giảng dạy', 'Tạm nghỉ', 'Đã nghỉ việc', 'Nghỉ hưu'];
 
     const fetchLecturers = async () => {
+        setLoading(true);
+        setError(null);
         try {
-            setLoading(true);
-            const response = await getAllLecturers();
-            if (!response) {
-                console.error("Không có dữ liệu giảng viên");
-                return;
+            const response = await getAllLecturersAPI();
+            if (response && response.data) {
+                console.log();
+
+                setLecturers(response.data);
+            } else {
+                setLecturers([]);
             }
-            setLecturers(response.data.data);
         } catch (error) {
             console.error("Lỗi khi tải danh sách giảng viên:", error);
+            setError("Không thể tải danh sách giảng viên. Vui lòng thử lại.");
+            toast.error('Lỗi khi tải danh sách giảng viên. Vui lòng thử lại.');
         } finally {
             setLoading(false);
-            setError('');
+        }
+    };
+
+    const fetchSubjects = async () => {
+        setLoading(true);
+        setError(null); // Đặt lại trạng thái lỗi
+        try {
+            const response = await getAllSubjectsAPI();
+            if (response && response.data) {
+                setSubjects(response.data);
+            } else {
+                setSubjects([]);
+                console.warn("API không trả về dữ liệu môn học.");
+            }
+        } catch (err) {
+            console.error("Lỗi khi tải danh sách môn học:", err);
+            setError("Đã xảy ra lỗi khi tải dữ liệu. Vui lòng thử lại.");
+            setSubjects([]); // Xóa dữ liệu cũ khi có lỗi
+        } finally {
+            setLoading(false);
         }
     };
 
     useEffect(() => {
         fetchLecturers();
+        fetchSubjects();
     }, []);
 
-    // Hàm xử lý khi nhấn nút Thêm giảng viên
     const handleAddLecturer = () => {
         setOpenAddModal(true);
     };
 
-    // Hàm thêm giảng viên mới
-    const handleAddNewLecturer = async (newLecturer) => {
+    const handleAddNewLecturer = async (
+        newLecturerData,
+        newLecturerSubjects,
+        busySlots,
+        semesterBusySlots
+    ) => {
         try {
             setLoading(true);
-            const response = await createLecturer(newLecturer);
+
+            const response = await createLecturerAPI({
+                newLecturerData,
+                newLecturerSubjects,
+                busySlots,
+                semesterBusySlots,
+            });
+
             if (response && response.data) {
-                fetchLecturers(); // Tải lại danh sách giảng viên sau khi thêm thành công
-                toast.success('Thêm giảng viên thành công!');
+                fetchLecturers();
+                toast.success("Thêm giảng viên thành công!");
             }
         } catch (error) {
             console.error("Lỗi khi thêm giảng viên:", error);
-            setError("Không thể thêm giảng viên. Vui lòng kiểm tra lại thông tin.");
-            toast.error('Thêm giảng viên thất bại! Vui lòng kiểm tra lại thông tin.');
+
+            const errorMessage =
+                error.response?.data?.message ||
+                error.message ||
+                "Không thể thêm giảng viên. Vui lòng kiểm tra lại thông tin.";
+
+            setError(errorMessage);
+            toast.error(`Thêm giảng viên thất bại: ${errorMessage}`);
         } finally {
             setLoading(false);
-            setError('');
         }
     };
 
-    // Hàm đóng modal thêm giảng viên
-    const handleCloseAddModal = () => {
-        setOpenAddModal(false);
-    };
 
     // Hàm mở modal chỉnh sửa
-    const handleEditLecturer = async (id) => {
+    const handleEditLecturer = (id) => {
         try {
-            setLoading(true);
-            const response = await getLecturerById(id);
-            if (response && response.data) {
-                setEditedLecturer(response.data.data);
-                setOpenEditModal(true);
+            const lecturerToEdit = lecturers.find(lecturer => lecturer.lecturer_id === id);
+            if (lecturerToEdit) {
+                setEditedLecturer({ ...lecturerToEdit });
+                setOpenEditModal(true); // Mở modal chỉnh sửa
+            } else {
+                setError("Không tìm thấy thông tin giảng viên, vui lòng kiểm tra lại!");
             }
-        } catch (error) {
-            console.error("Lỗi khi lấy thông tin giảng viên để chỉnh sửa:", error);
-            setError("Không thể lấy thông tin giảng viên để chỉnh sửa. Vui lòng thử lại.");
-            toast.error('Lỗi khi lấy thông tin giảng viên để chỉnh sửa. Vui lòng thử lại.');
-        } finally {
-            setLoading(false);
-            setError('');
+        } catch (err) {
+            setEditedLecturer(null);
+            setOpenEditModal(false);
+            setError("Đã xảy ra lỗi khi chuẩn bị chỉnh sửa giảng viên.");
+            toast.error('Lỗi khi chuẩn bị chỉnh sửa giảng viên. Vui lòng thử lại.');
         }
     };
 
@@ -125,53 +160,69 @@ const Lecturer = () => {
         setEditedLecturer(null);
     };
 
+    const handleCloseAddModal = () => {
+        setOpenAddModal(false);
+    };
+
     // Hàm lưu thay đổi sau khi chỉnh sửa
     const handleSaveEditedLecturer = async (updatedLecturer) => {
+        setLoading(true);
+        setError(null); // Đặt lại trạng thái lỗi
         try {
-            setLoading(true);
-            const response = await updateLecturer(updatedLecturer.lecturer_id, updatedLecturer);
+            const response = await updateLecturerAPI(updatedLecturer.lecturer_id, updatedLecturer);
+
             if (response && response.data) {
+                setLecturers(prevLecturers =>
+                    prevLecturers.map(lecturer =>
+                        lecturer.lecturer_id === updatedLecturer.lecturer_id
+                            ? { ...lecturer, ...updatedLecturer } // Cập nhật đối tượng đã chỉnh sửa
+                            : lecturer // Giữ nguyên các đối tượng khác
+                    )
+                );
+                setOpenEditModal(false);
+                setEditedLecturer(null);
                 toast.success('Cập nhật giảng viên thành công!');
-                fetchLecturers(); // Tải lại danh sách giảng viên sau khi cập nhật thành công
+            } else {
+                throw new Error(response.message || 'Cập nhật thất bại');
             }
-        } catch (error) {
-            console.error("Lỗi khi cập nhật giảng viên:", error);
-            setError("Không thể cập nhật giảng viên. Vui lòng kiểm tra lại thông tin.");
-            toast.error('Cập nhật giảng viên thất bại! Vui lòng kiểm tra lại thông tin.');
+        } catch (err) {
+            console.error("Lỗi khi cập nhật giảng viên:", err.response.data.message);
+            setError(err.response.data.message);
+            toast.error(err.response.data.message);
         } finally {
             setLoading(false);
-            setError('');
         }
     };
+
 
     // Hàm xử lý thay đổi trang
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
 
-    // Hàm xử lý xem giảng viên
-    const handleViewLecturer = async (id) => {
+    const handleViewLecturer = (id) => {
         try {
-            setLoading(true);
-            const response = await getLecturerById(id);
-            if (response && response.data) {
-                setSelectedLecturer(response.data.data);
-                setOpenDetail(true);
+            const lecturerFound = lecturers.find(lecturer => lecturer.lecturer_id === id);
+
+            if (lecturerFound) {
+                setSelectedLecturer(lecturerFound);
+                setOpenDetail(true); // Mở modal hoặc panel hiển thị chi tiết
+            } else {
+                setError("Không tìm thấy thông tin giảng viên này.");
             }
-        } catch (error) {
-            console.error("Lỗi khi lấy thông tin chi tiết giảng viên:", error);
-            setError("Không thể lấy thông tin chi tiết giảng viên. Vui lòng thử lại.");
-            toast.error('Lỗi khi lấy thông tin chi tiết giảng viên. Vui lòng thử lại.');
-        } finally {
-            setLoading(false);
-            setError('');
+        } catch (err) {
+            setSelectedLecturer(null);
+            setOpenDetail(false);
+            toast.error('Lỗi khi xem chi tiết giảng viên. Vui lòng thử lại.');
+            setError("Lỗi khi xem chi tiết giảng viên. Vui lòng thử lại.");
         }
     };
 
+
     // Hàm xử lý xóa giảng viên
     const handleDeleteLecturer = (id) => {
-        const lecturer = lecturers.find((l) => l.lecturer_id === id);
-        setLecturerToDelete(lecturer);
+        const lecturerDeletedID = lecturers.find((l) => l.lecturer_id === id);
+        setLecturerToDelete(lecturerDeletedID);
         setOpenDeleteModal(true);
     };
 
@@ -179,13 +230,15 @@ const Lecturer = () => {
     const confirmDeleteLecturer = async (id) => {
         try {
             setLoading(true);
-            const response = await deleteLecturer(id);
+            const response = await deleteLecturerAPI(id);
             if (response) {
+                setLecturers((prevLecturers) =>
+                    prevLecturers.filter((lecturer) => lecturer.lecturer_id !== id)
+                );
                 toast.success('Xóa giảng viên thành công!');
                 fetchLecturers(); // Tải lại danh sách giảng viên sau khi xóa thành công
             }
         } catch (error) {
-            console.error("Lỗi khi xóa giảng viên:", error);
             setError("Không thể xóa giảng viên. Vui lòng thử lại.");
             toast.error('Xóa giảng viên thất bại! Vui lòng thử lại.');
         } finally {
@@ -229,48 +282,54 @@ const Lecturer = () => {
     const displayedLecturers = filteredLecturers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
     return (
-        <Box sx={{ p: 3, zIndex: 10, height: 'calc(100vh - 64px)', overflowY: 'auto' }}>
+        <Box sx={{ p: 1, zIndex: 10, height: 'calc(100vh - 64px)', overflowY: 'auto' }}>
             {/* Main Content */}
             <Box sx={{ width: '100%', mb: 3 }}>
                 {/* Bảng danh sách giảng viên */}
                 <Card sx={{ flexGrow: 1 }}>
                     <CardContent>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, gap: 2 }}>
-                            <Typography variant="h6">
+                        <Box sx={{
+                            display: 'flex',
+                            flexDirection: isSmallScreen ? 'column' : 'row',
+                            justifyContent: 'space-between',
+                            alignItems: isSmallScreen ? 'stretch' : 'center',
+                            mb: 3,
+                            gap: 2
+                        }}>
+                            <Typography variant="h5" fontWeight="600">
                                 Danh sách giảng viên
                             </Typography>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                {isSmallScreen ? (
-                                    <IconButton
-                                        color="primary"
-                                        onClick={handleAddLecturer}
-                                        sx={{ bgcolor: '#1976d2', '&:hover': { bgcolor: '#115293' } }}
-                                    >
-                                        <AddIcon sx={{ color: '#fff' }} />
-                                    </IconButton>
-                                ) : (
-                                    <Button
-                                        variant="contained"
-                                        color="primary"
-                                        startIcon={<AddIcon />}
-                                        onClick={handleAddLecturer}
-                                        sx={{
-                                            bgcolor: '#1976d2',
-                                            '&:hover': { bgcolor: '#115293' },
-                                            minWidth: isSmallScreen ? 100 : 150,
-                                            height: '56px'
-                                        }}
-                                    >
-                                        Thêm giảng viên
-                                    </Button>
-                                )}
-                                <FormControl sx={{ minWidth: isSmallScreen ? 100 : 150 }} variant="outlined">
-                                    <InputLabel id="status-filter-label">{isSmallScreen ? 'Lọc' : 'Lọc theo trạng thái'}</InputLabel>
+
+                            <Box sx={{
+                                display: 'flex',
+                                gap: 2,
+                                flexDirection: isSmallScreen ? 'column' : 'row',
+                                width: isSmallScreen ? '100%' : 'auto'
+                            }}>
+                                <TextField
+                                    size="small"
+                                    placeholder="Tìm kiếm theo mã, tên giảng viên hoặc môn giảng dạy..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <SearchIcon />
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                    sx={{
+                                        minWidth: 200,
+                                        backgroundColor: theme.palette.background.paper
+                                    }}
+                                />
+
+                                <FormControl size="small" sx={{ minWidth: 120 }}>
+                                    <InputLabel>Trạng thái</InputLabel>
                                     <Select
-                                        labelId="status-filter-label"
                                         value={selectedStatus}
                                         onChange={(e) => setSelectedStatus(e.target.value)}
-                                        label={isSmallScreen ? 'Lọc' : 'Lọc theo trạng thái'}
+                                        label="Trạng thái"
                                     >
                                         <MenuItem value="">Tất cả</MenuItem>
                                         {statuses.map((status) => (
@@ -280,24 +339,16 @@ const Lecturer = () => {
                                         ))}
                                     </Select>
                                 </FormControl>
+
+                                <Button
+                                    variant="contained"
+                                    startIcon={<AddIcon />}
+                                    onClick={handleAddLecturer}
+                                    sx={{ ml: isSmallScreen ? 0 : 'auto' }}
+                                >
+                                    Thêm giảng viên
+                                </Button>
                             </Box>
-                        </Box>
-                        <Box sx={{ mb: 2 }}>
-                            <TextField
-                                fullWidth
-                                variant="outlined"
-                                placeholder="Tìm kiếm theo mã, tên giảng viên hoặc môn giảng dạy..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                sx={{ bgcolor: '#fff' }}
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            <SearchIcon color="action" />
-                                        </InputAdornment>
-                                    ),
-                                }}
-                            />
                         </Box>
                         {filteredLecturers.length === 0 ? (
                             <Typography>Không có giảng viên nào để hiển thị.</Typography>
@@ -313,14 +364,12 @@ const Lecturer = () => {
                                     loading={loading}
                                     error={error}
                                 />
-                                <TablePagination
-                                    component="div"
+
+                                <TablePaginationLayout
                                     count={filteredLecturers.length}
                                     page={page}
                                     onPageChange={handleChangePage}
                                     rowsPerPage={rowsPerPage}
-                                    rowsPerPageOptions={[]}
-                                    labelDisplayedRows={({ from, to, count }) => `${from}-${to} trên ${count}`}
                                 />
                             </>
                         )}
@@ -340,6 +389,7 @@ const Lecturer = () => {
                 error={error}
                 loading={loading}
                 fetchLecturers={fetchLecturers}
+                subjects={subjects}
             />
             <EditLecturerModal
                 open={openEditModal}
