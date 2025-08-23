@@ -8,6 +8,7 @@ import {
 } from "../services/lecturerService.js";
 import { APIResponse } from "../utils/APIResponse.js";
 import ExcelUtils from "../utils/ExcelUtils.js"; // Được sử dụng để tạo template Excel
+import logger from "../utils/logger.js";
 
 /**
  * @route GET /api/lecturers/
@@ -53,7 +54,19 @@ export const getAllLecturersController = async (req, res) => {
  * @access Private (admin, training_officer)
  */
 export const createLecturerController = async (req, res) => {
-  const { lecturer_id, email, name, ...restData } = req.body;
+  const { newLecturerData, newLecturerSubjects, busySlots, semesterBusySlots } =
+    req.body;
+
+  if (!newLecturerData) {
+    return APIResponse(
+      res,
+      400,
+      null,
+      "Dữ liệu giảng viên không được cung cấp."
+    );
+  }
+
+  const { lecturer_id, email, name } = newLecturerData;
 
   if (!lecturer_id || !email || !name) {
     return APIResponse(
@@ -64,21 +77,27 @@ export const createLecturerController = async (req, res) => {
     );
   }
 
-  const lecturerData = { lecturer_id, email, name, ...restData };
-
   try {
-    const lecturer = await createLecturerService(lecturerData);
+    const createdLecturer = await createLecturerService(
+      newLecturerData,
+      newLecturerSubjects,
+      busySlots,
+      semesterBusySlots
+    );
 
-    return APIResponse(res, 201, lecturer, "Tạo giảng viên thành công.");
+    return APIResponse(res, 201, createdLecturer, "Tạo giảng viên thành công.");
   } catch (error) {
     console.error("Lỗi khi tạo giảng viên:", error.message);
 
+    // Nếu lỗi do dữ liệu trùng hoặc không tồn tại
     if (
       error.message.includes("đã tồn tại") ||
       error.message.includes("không tồn tại")
     ) {
       return APIResponse(res, 400, null, error.message);
     }
+
+    // Lỗi hệ thống khác
     return APIResponse(
       res,
       500,
@@ -141,11 +160,18 @@ export const updateLecturerController = async (req, res) => {
 export const deleteLecturerController = async (req, res) => {
   const { id } = req.params;
   try {
-    const deletedCount = await deleteLecturerService(id); // Giả định service trả về số lượng bản ghi bị xóa
+    const deletedCount = await deleteLecturerService(id);
+
     if (deletedCount === 0) {
       return APIResponse(res, 404, null, "Không tìm thấy giảng viên để xóa.");
     }
-    return APIResponse(res, 200, null, "Xóa giảng viên thành công.");
+
+    return APIResponse(
+      res,
+      200,
+      null,
+      "Xóa giảng viên và tài khoản thành công."
+    );
   } catch (error) {
     console.error(`Lỗi khi xóa giảng viên với ID ${id}:`, error);
     return APIResponse(

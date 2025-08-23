@@ -14,7 +14,7 @@ import {
     useTheme,
 } from '@mui/material';
 import { Visibility, Edit, Delete, MoreVert } from '@mui/icons-material';
-import { getStatusChip } from '../../components/ui/StatusChip';
+import { getStatusForLectuer } from '../../components/ui/StatusChip';
 
 export default function ProgramTable({
     displayedPrograms,
@@ -161,7 +161,7 @@ export default function ProgramTable({
                                 }}
                             >
                                 <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                                    {getStatusChip(program.status)}
+                                    {getStatusForLectuer(program.status)}
                                 </Box>
                             </TableCell>
                             <TableCell

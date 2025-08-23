@@ -15,16 +15,16 @@ import {
 } from '@mui/material';
 import { Visibility, Edit, Delete, MoreVert } from '@mui/icons-material';
 
-const CourseTable = ({ 
-  displayedCourses, 
-  handleViewCourse, 
-  handleEditCourse, 
-  handleDeleteCourse 
+const CourseTable = ({
+  displayedCourses,
+  handleViewCourse,
+  handleEditCourse,
+  handleDeleteCourse
 }) => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const isMediumScreen = useMediaQuery(theme.breakpoints.down('md'));
-  
+
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedRowId, setSelectedRowId] = useState(null);
 
@@ -49,74 +49,63 @@ const CourseTable = ({
       >
         <TableHead>
           <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
-            <TableCell sx={{ 
-              fontWeight: 'bold', 
-              fontSize: '0.875rem', 
-              textAlign: 'center', 
-              borderRight: '1px solid #e0e0e0', 
+            <TableCell sx={{
+              fontWeight: 'bold',
+              fontSize: '0.875rem',
+              textAlign: 'center',
+              borderRight: '1px solid #e0e0e0',
               width: '8%',
               py: 1.5
             }}>
               STT
             </TableCell>
-            <TableCell sx={{ 
-              fontWeight: 'bold', 
-              fontSize: '0.875rem', 
-              textAlign: 'center', 
-              borderRight: '1px solid #e0e0e0', 
+            <TableCell sx={{
+              fontWeight: 'bold',
+              fontSize: '0.875rem',
+              textAlign: 'center',
+              borderRight: '1px solid #e0e0e0',
               width: '15%',
               display: isSmallScreen ? 'none' : 'table-cell',
               py: 1.5
             }}>
               Mã khóa học
             </TableCell>
-            <TableCell sx={{ 
-              fontWeight: 'bold', 
-              fontSize: '0.875rem', 
-              textAlign: 'left', 
-              borderRight: '1px solid #e0e0e0', 
+            <TableCell sx={{
+              fontWeight: 'bold',
+              fontSize: '0.875rem',
+              textAlign: 'left',
+              borderRight: '1px solid #e0e0e0',
               width: isSmallScreen ? '40%' : '25%',
               py: 1.5
             }}>
               Tên khóa học
             </TableCell>
-            <TableCell sx={{ 
-              fontWeight: 'bold', 
-              fontSize: '0.875rem', 
-              textAlign: 'center', 
-              borderRight: '1px solid #e0e0e0', 
+            <TableCell sx={{
+              fontWeight: 'bold',
+              fontSize: '0.875rem',
+              textAlign: 'center',
+              borderRight: '1px solid #e0e0e0',
               width: '15%',
               display: isSmallScreen ? 'none' : 'table-cell',
               py: 1.5
             }}>
               Bắt đầu
             </TableCell>
-            <TableCell sx={{ 
-              fontWeight: 'bold', 
-              fontSize: '0.875rem', 
-              textAlign: 'center', 
-              borderRight: '1px solid #e0e0e0', 
+            <TableCell sx={{
+              fontWeight: 'bold',
+              fontSize: '0.875rem',
+              textAlign: 'center',
+              borderRight: '1px solid #e0e0e0',
               width: '15%',
               display: isSmallScreen ? 'none' : 'table-cell',
               py: 1.5
             }}>
               Kết thúc
             </TableCell>
-            <TableCell sx={{ 
-              fontWeight: 'bold', 
-              fontSize: '0.875rem', 
-              textAlign: 'center', 
-              borderRight: '1px solid #e0e0e0', 
-              width: '15%',
-              display: isMediumScreen ? 'none' : 'table-cell',
-              py: 1.5
-            }}>
-              Cập nhật
-            </TableCell>
-            <TableCell sx={{ 
-              fontWeight: 'bold', 
-              fontSize: '0.875rem', 
-              textAlign: 'center', 
+            <TableCell sx={{
+              fontWeight: 'bold',
+              fontSize: '0.875rem',
+              textAlign: 'center',
               width: '10%',
               py: 1.5
             }}>
@@ -134,24 +123,24 @@ const CourseTable = ({
                 borderBottom: '1px solid #e0e0e0',
               }}
             >
-              <TableCell sx={{ 
-                textAlign: 'center', 
-                borderRight: '1px solid #e0e0e0', 
-                py: 1.5 
+              <TableCell sx={{
+                textAlign: 'center',
+                borderRight: '1px solid #e0e0e0',
+                py: 1.5
               }}>
                 {index + 1}
               </TableCell>
-              <TableCell sx={{ 
-                textAlign: 'center', 
-                borderRight: '1px solid #e0e0e0', 
+              <TableCell sx={{
+                textAlign: 'center',
+                borderRight: '1px solid #e0e0e0',
                 py: 1.5,
                 display: isSmallScreen ? 'none' : 'table-cell'
               }}>
                 {course.course_id}
               </TableCell>
-              <TableCell sx={{ 
-                textAlign: 'left', 
-                borderRight: '1px solid #e0e0e0', 
+              <TableCell sx={{
+                textAlign: 'left',
+                borderRight: '1px solid #e0e0e0',
                 py: 1.5,
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
@@ -159,41 +148,33 @@ const CourseTable = ({
               }}>
                 {course.course_name}
               </TableCell>
-              <TableCell sx={{ 
-                textAlign: 'center', 
-                borderRight: '1px solid #e0e0e0', 
+              <TableCell sx={{
+                textAlign: 'center',
+                borderRight: '1px solid #e0e0e0',
                 py: 1.5,
                 display: isSmallScreen ? 'none' : 'table-cell'
               }}>
                 {course.start_date}
               </TableCell>
-              <TableCell sx={{ 
-                textAlign: 'center', 
-                borderRight: '1px solid #e0e0e0', 
+              <TableCell sx={{
+                textAlign: 'center',
+                borderRight: '1px solid #e0e0e0',
                 py: 1.5,
                 display: isSmallScreen ? 'none' : 'table-cell'
               }}>
                 {course.end_date}
               </TableCell>
-              <TableCell sx={{ 
-                textAlign: 'center', 
-                borderRight: '1px solid #e0e0e0', 
-                py: 1.5,
-                display: isMediumScreen ? 'none' : 'table-cell'
-              }}>
-                {course.updated_at}
-              </TableCell>
-              <TableCell sx={{ 
-                textAlign: 'center', 
-                py: 1.5 
+                <TableCell sx={{
+                textAlign: 'center',
+                py: 1.5
               }}>
                 <Tooltip title="Thao tác">
                   <IconButton
                     size="small"
                     onClick={(event) => handleOpenMenu(event, course.course_id)}
-                    sx={{ 
+                    sx={{
                       color: 'text.secondary',
-                      '&:hover': { 
+                      '&:hover': {
                         backgroundColor: 'primary.light',
                         color: 'primary.contrastText'
                       }
@@ -202,21 +183,21 @@ const CourseTable = ({
                     <MoreVert />
                   </IconButton>
                 </Tooltip>
-                
+
                 <Menu
                   anchorEl={anchorEl}
                   open={Boolean(anchorEl) && selectedRowId === course.course_id}
                   onClose={handleCloseMenu}
-                  anchorOrigin={{ 
-                    vertical: 'top', 
-                    horizontal: 'left' 
+                  anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'left'
                   }}
-                  transformOrigin={{ 
-                    vertical: 'top', 
-                    horizontal: 'left' 
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'left'
                   }}
                 >
-                  <MenuItem 
+                  <MenuItem
                     onClick={() => {
                       handleViewCourse(course.course_id);
                       handleCloseMenu();
@@ -226,7 +207,7 @@ const CourseTable = ({
                     <Visibility sx={{ mr: 1.5, fontSize: '20px', color: 'info.main' }} />
                     Xem chi tiết
                   </MenuItem>
-                  <MenuItem 
+                  <MenuItem
                     onClick={() => {
                       handleEditCourse(course);
                       handleCloseMenu();
@@ -236,7 +217,7 @@ const CourseTable = ({
                     <Edit sx={{ mr: 1.5, fontSize: '20px', color: 'primary.main' }} />
                     Chỉnh sửa
                   </MenuItem>
-                  <MenuItem 
+                  <MenuItem
                     onClick={() => {
                       handleDeleteCourse(course);
                       handleCloseMenu();

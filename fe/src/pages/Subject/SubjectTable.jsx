@@ -14,7 +14,7 @@ import {
     useTheme,
 } from '@mui/material';
 import { Visibility, Edit, Delete, MoreVert } from '@mui/icons-material';
-import { getStatusChip } from '../../components/ui/StatusChip';
+import { getStatusForLectuer } from '../../components/ui/StatusChip';
 
 export default function SubjectTable({
     displayedSubjects,
@@ -203,7 +203,7 @@ export default function SubjectTable({
                                 }}
                             >
                                 <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                                    {getStatusChip(subject.status)}
+                                    {getStatusForLectuer(subject.status)}
                                 </Box>
                             </TableCell>
                             <TableCell

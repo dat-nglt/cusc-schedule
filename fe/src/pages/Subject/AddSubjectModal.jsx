@@ -227,7 +227,8 @@ export default function AddSubjectModal({ open, onClose, onAddSubject, existingS
                     sx: {
                         borderRadius: '12px',
                         boxShadow: '0px 8px 24px rgba(0, 0, 0, 0.1)',
-                        overflow: 'hidden'
+                        overflow: 'hidden',
+                        maxHeight: '80vh',
                     }
                 }}
             >

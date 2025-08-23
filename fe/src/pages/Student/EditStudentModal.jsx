@@ -40,15 +40,16 @@ import {
 } from '@mui/icons-material';
 
 const statusOptions = [
-  { value: 'Đang học', color: 'success' },
-  { value: 'Đã nghỉ học', color: 'error' },
-  { value: 'Đã tốt nghiệp', color: 'info' },
-  { value: 'Bảo lưu', color: 'warning' }
+  { value: 'Hoạt động', color: 'success', db: 'active' },
+  { value: 'Tạm nghỉ', color: 'warning', db: 'break' },
+  { value: 'Đã nghỉ học', color: 'error', db: 'dropped' },
+  { value: 'Đã tốt nghiệp', color: 'info', db: 'graduated' },
+  { value: 'Bảo lưu', color: 'warning', db: 'reserve' }
 ];
 
 const steps = ['Thông tin cá nhân', 'Thông tin liên hệ', 'Thông tin học tập'];
 
-export default function EditStudentModal({ open, onClose, student, onSave, error, loading }) {
+export default function EditStudentModal({ open, onClose, student, onSave, error, loading, classes }) {
   const [editedStudent, setEditedStudent] = useState({
     student_id: '',
     name: '',
@@ -59,7 +60,7 @@ export default function EditStudentModal({ open, onClose, student, onSave, error
     phone_number: '',
     class: '',
     admission_year: '',
-    status: 'Đang học',
+    status: 'Hoạt động',
   });
 
   const [activeStep, setActiveStep] = useState(0);
@@ -67,17 +68,31 @@ export default function EditStudentModal({ open, onClose, student, onSave, error
 
   useEffect(() => {
     if (student) {
+      // Chuyển trạng thái từ tiếng Anh sang tiếng Việt để hiển thị
+      let viStatus = 'Đang học';
+      const statusMap = {
+        studying: 'Đang học',
+        break: 'Tạm nghỉ',
+        dropped: 'Đã nghỉ học',
+        graduated: 'Đã tốt nghiệp',
+        reserve: 'Bảo lưu'
+      };
+      if (student.status && statusMap[student.status]) {
+        viStatus = statusMap[student.status];
+      } else if (student.status && statusOptions.some(opt => opt.value === student.status)) {
+        viStatus = student.status;
+      }
       setEditedStudent({
         student_id: student.student_id || '',
         name: student.name || '',
-        email: student.email || '',
+        email: student.account.email || '',
         day_of_birth: student.day_of_birth || '',
         gender: student.gender || '',
         address: student.address || '',
         phone_number: student.phone_number || '',
-        class: student.class || '',
+        class: student.class.class_id || '',
         admission_year: student.admission_year || '',
-        status: student.status || 'Đang học',
+        status: viStatus,
       });
       setActiveStep(0);
       setLocalError('');
@@ -144,12 +159,22 @@ export default function EditStudentModal({ open, onClose, student, onSave, error
       return;
     }
 
+    // Chuyển trạng thái sang tiếng Anh trước khi lưu
+    const statusObj = statusOptions.find(opt => opt.value === editedStudent.status);
+    const dbStatus = statusObj ? statusObj.db : 'studying';
+
     const updatedStudentData = {
       ...editedStudent,
+      status: dbStatus,
       updated_at: new Date().toISOString(),
     };
 
-    await onSave(updatedStudentData);
+    try {
+      await onSave(updatedStudentData);
+      onClose(); // Đóng modal sau khi cập nhật thành công
+    } catch (error) {
+      // Error sẽ được xử lý bởi component cha
+    }
   };
 
   return (
@@ -299,9 +324,8 @@ export default function EditStudentModal({ open, onClose, student, onSave, error
                     </InputAdornment>
                   }
                 >
-                  <MenuItem value="Nam">Nam</MenuItem>
-                  <MenuItem value="Nữ">Nữ</MenuItem>
-                  <MenuItem value="Khác">Khác</MenuItem>
+                  <MenuItem value="male">Nam</MenuItem>
+                  <MenuItem value="female">Nữ</MenuItem>
                 </Select>
               </FormControl>
             </Box>
@@ -379,24 +403,26 @@ export default function EditStudentModal({ open, onClose, student, onSave, error
               gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
               gap: 3
             }}>
-              <TextField
-                label="Mã lớp"
-                name="class"
-                value={editedStudent.class}
-                onChange={handleChange}
-                fullWidth
-                variant="outlined"
-                required
-                disabled={loading}
-                InputProps={{
-                  startAdornment: (
+              <FormControl fullWidth required disabled={loading}>
+                <InputLabel>Lớp</InputLabel>
+                <Select
+                  name="class"
+                  value={editedStudent.class}
+                  onChange={handleChange}
+                  label="Lớp"
+                  startAdornment={
                     <InputAdornment position="start">
                       <ClassIcon color="action" />
                     </InputAdornment>
-                  ),
-                }}
-                sx={{ mb: 2 }}
-              />
+                  }
+                >
+                  {classes && classes.map((classItem) => (
+                    <MenuItem key={classItem.class_id} value={classItem.class_id}>
+                      {classItem.class_name || classItem.class_id}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
               <TextField
                 label="Ngày nhập học"
                 name="admission_year"

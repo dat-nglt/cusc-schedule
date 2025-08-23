@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
     Box,
     Typography,
@@ -11,7 +11,6 @@ import {
     FormControl,
     InputLabel,
     InputAdornment,
-    IconButton,
     Button,
     useTheme,
 } from '@mui/material';
@@ -26,7 +25,7 @@ import DeleteLecturerModal from './DeleteLecturerModal';
 import useResponsive from '../../hooks/useResponsive';
 import LecturerTable from './LecturerTable';
 import { toast } from 'react-toastify';
-import { getAllLecturersAPI, getLecturerByIdAPI, createLecturerAPI, updateLecturerAPI, deleteLecturerAPI } from '../../api/lecturerAPI';
+import { getAllLecturersAPI, createLecturerAPI, updateLecturerAPI, deleteLecturerAPI } from '../../api/lecturerAPI';
 import { getAllSubjectsAPI } from '../../api/subjectAPI';
 import TablePaginationLayout from '../../components/layout/TablePaginationLayout';
 
@@ -57,6 +56,8 @@ const Lecturer = () => {
         try {
             const response = await getAllLecturersAPI();
             if (response && response.data) {
+                console.log();
+
                 setLecturers(response.data);
             } else {
                 setLecturers([]);
@@ -99,43 +100,57 @@ const Lecturer = () => {
         setOpenAddModal(true);
     };
 
-    const handleAddNewLecturer = async (newLecturer) => {
+    const handleAddNewLecturer = async (
+        newLecturerData,
+        newLecturerSubjects,
+        busySlots,
+        semesterBusySlots
+    ) => {
         try {
             setLoading(true);
-            const response = await createLecturerAPI(newLecturer);
+
+            const response = await createLecturerAPI({
+                newLecturerData,
+                newLecturerSubjects,
+                busySlots,
+                semesterBusySlots,
+            });
+
             if (response && response.data) {
-                fetchLecturers(); // Tải lại danh sách giảng viên sau khi thêm thành công
-                toast.success('Thêm giảng viên thành công!');
+                fetchLecturers();
+                toast.success("Thêm giảng viên thành công!");
             }
         } catch (error) {
             console.error("Lỗi khi thêm giảng viên:", error);
-            setError("Không thể thêm giảng viên. Vui lòng kiểm tra lại thông tin.");
-            toast.error('Thêm giảng viên thất bại! Vui lòng kiểm tra lại thông tin.');
+
+            const errorMessage =
+                error.response?.data?.message ||
+                error.message ||
+                "Không thể thêm giảng viên. Vui lòng kiểm tra lại thông tin.";
+
+            setError(errorMessage);
+            toast.error(`Thêm giảng viên thất bại: ${errorMessage}`);
         } finally {
             setLoading(false);
-            setError('');
         }
     };
 
-    const handleCloseAddModal = () => {
-        setOpenAddModal(false);
-    };
 
     // Hàm mở modal chỉnh sửa
     const handleEditLecturer = (id) => {
         try {
             const lecturerToEdit = lecturers.find(lecturer => lecturer.lecturer_id === id);
-
             if (lecturerToEdit) {
                 setEditedLecturer({ ...lecturerToEdit });
                 setOpenEditModal(true); // Mở modal chỉnh sửa
             } else {
-                console.error("Không tìm thấy giảng viên để chỉnh sửa với ID:", id);
-                setError("Không tìm thấy thông tin giảng viên này.");
+                setError("Không tìm thấy thông tin giảng viên, vui lòng kiểm tra lại!");
             }
         } catch (err) {
-            console.error("Lỗi khi chuẩn bị chỉnh sửa giảng viên:", err);
-            setError("Đã xảy ra lỗi hệ thống. Vui lòng thử lại.");
+            setEditedLecturer(null);
+            setOpenEditModal(false);
+            setError("Đã xảy ra lỗi khi chuẩn bị chỉnh sửa giảng viên.");
+            toast.error('Lỗi khi chuẩn bị chỉnh sửa giảng viên. Vui lòng thử lại.');
         }
     };
 
@@ -143,6 +158,10 @@ const Lecturer = () => {
     const handleCloseEditModal = () => {
         setOpenEditModal(false);
         setEditedLecturer(null);
+    };
+
+    const handleCloseAddModal = () => {
+        setOpenAddModal(false);
     };
 
     // Hàm lưu thay đổi sau khi chỉnh sửa
@@ -189,20 +208,21 @@ const Lecturer = () => {
                 setSelectedLecturer(lecturerFound);
                 setOpenDetail(true); // Mở modal hoặc panel hiển thị chi tiết
             } else {
-                console.error("Không tìm thấy giảng viên với ID:", id);
                 setError("Không tìm thấy thông tin giảng viên này.");
             }
         } catch (err) {
-            console.error("Lỗi khi xem chi tiết giảng viên:", err);
-            setError("Đã xảy ra lỗi hệ thống.");
+            setSelectedLecturer(null);
+            setOpenDetail(false);
+            toast.error('Lỗi khi xem chi tiết giảng viên. Vui lòng thử lại.');
+            setError("Lỗi khi xem chi tiết giảng viên. Vui lòng thử lại.");
         }
     };
 
 
     // Hàm xử lý xóa giảng viên
     const handleDeleteLecturer = (id) => {
-        const lecturer = lecturers.find((l) => l.lecturer_id === id);
-        setLecturerToDelete(lecturer);
+        const lecturerDeletedID = lecturers.find((l) => l.lecturer_id === id);
+        setLecturerToDelete(lecturerDeletedID);
         setOpenDeleteModal(true);
     };
 
@@ -212,11 +232,13 @@ const Lecturer = () => {
             setLoading(true);
             const response = await deleteLecturerAPI(id);
             if (response) {
+                setLecturers((prevLecturers) =>
+                    prevLecturers.filter((lecturer) => lecturer.lecturer_id !== id)
+                );
                 toast.success('Xóa giảng viên thành công!');
                 fetchLecturers(); // Tải lại danh sách giảng viên sau khi xóa thành công
             }
         } catch (error) {
-            console.error("Lỗi khi xóa giảng viên:", error);
             setError("Không thể xóa giảng viên. Vui lòng thử lại.");
             toast.error('Xóa giảng viên thất bại! Vui lòng thử lại.');
         } finally {

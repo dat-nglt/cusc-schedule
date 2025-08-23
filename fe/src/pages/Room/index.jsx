@@ -310,8 +310,9 @@ const RoomManagement = () => {
                   label="Trạng thái"
                 >
                   <MenuItem value="">Tất cả</MenuItem>
-                  <MenuItem value="Sẵn sàng">Sẵn sàng</MenuItem>
-                  <MenuItem value="Bảo trì">Bảo trì</MenuItem>
+                  <MenuItem value="Hoạt động">Hoạt động</MenuItem>
+                  <MenuItem value="Tạm ngưng">Tạm ngưng</MenuItem>
+                  <MenuItem value="Ngưng hoạt động">Ngưng hoạt động</MenuItem>
                 </Select>
               </FormControl>
 
@@ -437,7 +438,7 @@ const RoomCard = ({ room, onClick, onEdit, onDelete }) => {
       {/* Status bar */}
       <Box sx={{
         height: 6,
-        backgroundColor: room.status === 'Sẵn sàng'
+        backgroundColor: room.status === 'active'
           ? theme.palette.success.main
           : theme.palette.warning.main
       }} />
@@ -448,13 +449,13 @@ const RoomCard = ({ room, onClick, onEdit, onDelete }) => {
             {room.room_name || room.room_id}
           </Typography>
           <Chip
-            label={room.status === 'Sẵn sàng' ? 'Sẵn sàng' : 'Bảo trì'}
+            label={room.status === 'active' ? 'Sẵn sàng' : 'Bảo trì'}
             size="small"
             sx={{
-              backgroundColor: room.status === 'Sẵn sàng'
+              backgroundColor: room.status === 'active'
                 ? alpha(theme.palette.success.main, 0.1)
                 : alpha(theme.palette.warning.main, 0.1),
-              color: room.status === 'Sẵn sàng'
+              color: room.status === 'active'
                 ? theme.palette.success.dark
                 : theme.palette.warning.dark
             }}
@@ -462,7 +463,11 @@ const RoomCard = ({ room, onClick, onEdit, onDelete }) => {
         </Box>
 
         <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-          {room.location} • {room.type} • {room.capacity} chỗ
+          {room.location} • {room.type === 'theory'
+            ? 'Lý thuyết'
+            : room.type === 'practice'
+              ? 'Thực hành'
+              : room.type} • {room.capacity} chỗ
         </Typography>
 
         {/* Room matrix visualization */}
@@ -483,13 +488,13 @@ const RoomCard = ({ room, onClick, onEdit, onDelete }) => {
                   aspectRatio: '1/1', // Đảm bảo ô vuông
                   borderRadius: '4px',
                   backgroundColor: alpha(
-                    room.status === 'Sẵn sàng'
+                    room.status === 'active'
                       ? theme.palette.primary.main
                       : theme.palette.warning.main,
-                    room.status === 'Sẵn sàng' ? 0.2 : 0.1
+                    room.status === 'active' ? 0.2 : 0.1
                   ),
                   border: `1px solid ${alpha(
-                    room.status === 'Sẵn sàng'
+                    room.status === 'active'
                       ? theme.palette.primary.main
                       : theme.palette.warning.main,
                     0.3
@@ -506,7 +511,7 @@ const RoomCard = ({ room, onClick, onEdit, onDelete }) => {
                 {/* Kiểm tra nếu là ô cuối cùng được render */}
                 {i === 29 ? (
                   <Typography variant="caption" sx={{
-                    color: room.status === 'Sẵn sàng' ? theme.palette.primary.dark : theme.palette.warning.dark
+                    color: room.status === 'active' ? theme.palette.primary.dark : theme.palette.warning.dark
                   }}>
                     {
                       room.capacity - 30 === 0 ? "" : `+${room.capacity - 30}`

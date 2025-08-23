@@ -16,6 +16,12 @@ import {
   CircularProgress,
 } from '@mui/material';
 
+const statusOptions = [
+  { value: 'Hoạt động', db: 'active' },
+  { value: 'Tạm ngưng', db: 'suspended' },
+  { value: 'Ngưng hoạt động', db: 'inactive' }
+];
+
 const EditRoomModal = ({ open, onClose, room, onSave, error, loading }) => {
   const [formData, setFormData] = useState({
     room_id: '',
@@ -23,19 +29,31 @@ const EditRoomModal = ({ open, onClose, room, onSave, error, loading }) => {
     location: '',
     capacity: '',
     type: '',
-    status: '',
+    status: 'Hoạt động',
     note: '',
   });
 
   useEffect(() => {
     if (room) {
+      // Chuyển trạng thái từ tiếng Anh sang tiếng Việt để hiển thị
+      let viStatus = 'Hoạt động';
+      const statusMap = {
+        active: 'Hoạt động',
+        inactive: 'Ngưng hoạt động',
+        suspended: 'Tạm ngưng'
+      };
+      if (room.status && statusMap[room.status]) {
+        viStatus = statusMap[room.status];
+      } else if (room.status && statusOptions.some(opt => opt.value === room.status)) {
+        viStatus = room.status;
+      }
       setFormData({
         room_id: room.room_id || '',
         room_name: room.room_name || '',
         location: room.location || '',
         capacity: room.capacity || '',
         type: room.type || '',
-        status: room.status || '',
+        status: viStatus,
         note: room.note || '',
       });
     }
@@ -73,13 +91,17 @@ const EditRoomModal = ({ open, onClose, room, onSave, error, loading }) => {
       return;
     }
 
+    // Chuyển trạng thái sang tiếng Anh trước khi lưu
+    const statusObj = statusOptions.find(opt => opt.value === formData.status);
+    const dbStatus = statusObj ? statusObj.db : 'active';
+
     const updatedRoomData = {
       room_id: formData.room_id,
       room_name: formData.room_name,
       location: formData.location,
       capacity: capacity,
       type: formData.type,
-      status: formData.status,
+      status: dbStatus,
       note: formData.note,
       updated_at: new Date().toISOString(),
     };
@@ -148,8 +170,8 @@ const EditRoomModal = ({ open, onClose, room, onSave, error, loading }) => {
               onChange={handleChange}
               label="Loại phòng học"
             >
-              <MenuItem value="Lý thuyết">Lý thuyết</MenuItem>
-              <MenuItem value="Thực hành">Thực hành</MenuItem>
+              <MenuItem value="theory">Lý thuyết</MenuItem>
+              <MenuItem value="practice">Thực hành</MenuItem>
               {/* <MenuItem value="Phòng hội thảo">Phòng hội thảo</MenuItem> */}
             </Select>
           </FormControl>
@@ -161,8 +183,11 @@ const EditRoomModal = ({ open, onClose, room, onSave, error, loading }) => {
               onChange={handleChange}
               label="Trạng thái"
             >
-              <MenuItem value="Sẵn sàng">Sẵn sàng</MenuItem>
-              <MenuItem value="Bảo trì">Bảo trì</MenuItem>
+              {statusOptions.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.value}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
           <TextField
@@ -196,3 +221,5 @@ const EditRoomModal = ({ open, onClose, room, onSave, error, loading }) => {
 };
 
 export default EditRoomModal;
+
+// Cần sửa

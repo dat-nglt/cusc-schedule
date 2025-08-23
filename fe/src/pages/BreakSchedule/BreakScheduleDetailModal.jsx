@@ -26,7 +26,8 @@ import {
   Update as UpdateIcon,
   ContentCopy as CopyIcon,
   Close as CloseIcon,
-  BeachAccess as BreakIcon
+  BeachAccess as BreakIcon,
+  WorkOff
 } from '@mui/icons-material';
 import { toast } from 'react-toastify';
 
@@ -63,7 +64,7 @@ const InfoCard = ({ title, icon, children, span = 1, minHeight = 220 }) => (
     >
       <CardContent sx={{ p: 2.5, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
-          <Box sx={{ color: 'primary.main' }}>
+          <Box sx={{ color: 'primary.main', mt: 0.5 }}>
             {icon}
           </Box>
           <Typography variant="subtitle2" fontWeight="600" color="primary">
@@ -85,7 +86,7 @@ const InfoItem = ({ label, value, icon }) => (
     </Typography>
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
       {icon && (
-        <Box sx={{ color: 'text.secondary' }}>
+        <Box sx={{ color: 'text.secondary', mt: 1 }}>
           {icon}
         </Box>
       )}
@@ -176,7 +177,7 @@ const BreakScheduleDetailModal = ({ open, onClose, breakSchedule }) => {
               fontWeight: 'bold'
             }}
           >
-            <BreakIcon />
+            <WorkOff />
           </Avatar>
           <Box>
             <Typography variant="h6" fontWeight="600" gutterBottom>
@@ -216,7 +217,7 @@ const BreakScheduleDetailModal = ({ open, onClose, breakSchedule }) => {
       </DialogTitle>
 
       <DialogContent sx={{ p: 3, mt: 3 }}>
-        <Grid container spacing={3}>
+        <Grid container spacing={3} justifyContent={'center'}>
           {/* Hàng 1: 2 cột - Thông tin cơ bản & Thời gian */}
           <Grid item xs={12} md={6}>
             <InfoCard title="Thông tin cơ bản" icon={<CodeIcon />}>
@@ -263,12 +264,12 @@ const BreakScheduleDetailModal = ({ open, onClose, breakSchedule }) => {
             <InfoCard title="Lịch sử hệ thống" icon={<EventIcon />}>
               <InfoItem
                 label="Thời gian tạo"
-                value={formatDateTime(breakSchedule.created_at)}
+                value={""}
                 icon={<EventIcon fontSize="small" />}
               />
               <InfoItem
                 label="Thời gian cập nhật"
-                value={formatDateTime(breakSchedule.updated_at)}
+                value={""}
                 icon={<UpdateIcon fontSize="small" />}
               />
               <InfoItem
@@ -306,6 +307,8 @@ const BreakScheduleDetailModal = ({ open, onClose, breakSchedule }) => {
         <Button
           onClick={onClose}
           variant="outlined"
+          color='secondary'
+          startIcon={<CloseIcon />}
           sx={{
             borderRadius: 1,
             px: 3,

@@ -32,7 +32,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import InfoIcon from '@mui/icons-material/Info';
 import { importStudentsAPI } from '../../api/studentAPI';
-import { getRowStatus, getErrorChip } from '../../components/ui/ErrorChip';
+import { getRowStatus} from '../../components/ui/ErrorChip';
 
 export default function PreviewStudentModal({ open, onClose, previewData, fetchStudents, classes }) {
     const theme = useTheme();
@@ -89,14 +89,14 @@ export default function PreviewStudentModal({ open, onClose, previewData, fetchS
                 }
                 return studentData;
             });
-            
+
             const response = await importStudentsAPI(validData);
 
             if (response.data) {
                 setImportMessage(`✅ Đã thêm thành công ${validRows.length} học viên vào hệ thống`);
                 setImportError('');
                 fetchStudents();
-                
+
                 setTimeout(() => {
                     onClose();
                     setImportMessage("");
@@ -113,10 +113,10 @@ export default function PreviewStudentModal({ open, onClose, previewData, fetchS
     }
 
     return (
-        <Dialog 
-            open={open} 
-            onClose={onClose} 
-            maxWidth="xl" 
+        <Dialog
+            open={open}
+            onClose={onClose}
+            maxWidth="xl"
             fullWidth
             fullScreen={isSmallScreen}
             PaperProps={{
@@ -126,8 +126,8 @@ export default function PreviewStudentModal({ open, onClose, previewData, fetchS
                 }
             }}
         >
-            <DialogTitle sx={{ 
-                bgcolor: theme.palette.primary.main, 
+            <DialogTitle sx={{
+                bgcolor: theme.palette.primary.main,
                 color: 'white',
                 py: 2,
                 display: 'flex',
@@ -156,12 +156,12 @@ export default function PreviewStudentModal({ open, onClose, previewData, fetchS
                 {/* Progress bar khi đang import */}
                 {isImporting && (
                     <Box sx={{ mb: 3 }}>
-                        <LinearProgress 
-                            sx={{ 
-                                height: 8, 
+                        <LinearProgress
+                            sx={{
+                                height: 8,
                                 borderRadius: 4,
-                                mb: 1 
-                            }} 
+                                mb: 1
+                            }}
                         />
                         <Typography variant="body2" color="text.secondary" textAlign="center">
                             Đang thêm dữ liệu học viên...
@@ -172,10 +172,10 @@ export default function PreviewStudentModal({ open, onClose, previewData, fetchS
                 {/* Thống kê tổng quan */}
                 <Grid container spacing={2} sx={{ mb: 3 }}>
                     <Grid item xs={12} sm={4}>
-                        <Paper 
-                            elevation={1} 
-                            sx={{ 
-                                p: 2, 
+                        <Paper
+                            elevation={1}
+                            sx={{
+                                p: 2,
                                 textAlign: 'center',
                                 bgcolor: 'success.light',
                                 color: 'success.contrastText',
@@ -190,10 +190,10 @@ export default function PreviewStudentModal({ open, onClose, previewData, fetchS
                         </Paper>
                     </Grid>
                     <Grid item xs={12} sm={4}>
-                        <Paper 
-                            elevation={1} 
-                            sx={{ 
-                                p: 2, 
+                        <Paper
+                            elevation={1}
+                            sx={{
+                                p: 2,
                                 textAlign: 'center',
                                 bgcolor: errorRows.length > 0 ? 'error.light' : 'grey.100',
                                 color: errorRows.length > 0 ? 'error.contrastText' : 'grey.600',
@@ -208,10 +208,10 @@ export default function PreviewStudentModal({ open, onClose, previewData, fetchS
                         </Paper>
                     </Grid>
                     <Grid item xs={12} sm={4}>
-                        <Paper 
-                            elevation={1} 
-                            sx={{ 
-                                p: 2, 
+                        <Paper
+                            elevation={1}
+                            sx={{
+                                p: 2,
                                 textAlign: 'center',
                                 bgcolor: 'primary.light',
                                 color: 'primary.contrastText',
@@ -229,17 +229,17 @@ export default function PreviewStudentModal({ open, onClose, previewData, fetchS
 
                 {/* Hiển thị dữ liệu hợp lệ */}
                 {validRows.length > 0 && (
-                    <Accordion 
-                        defaultExpanded 
-                        sx={{ 
+                    <Accordion
+                        defaultExpanded
+                        sx={{
                             mb: 2,
                             borderRadius: 2,
                             '&:before': { display: 'none' }
                         }}
                     >
-                        <AccordionSummary 
+                        <AccordionSummary
                             expandIcon={<ExpandMoreIcon />}
-                            sx={{ 
+                            sx={{
                                 bgcolor: 'success.light',
                                 color: 'success.contrastText',
                                 borderRadius: 2,
@@ -254,9 +254,9 @@ export default function PreviewStudentModal({ open, onClose, previewData, fetchS
                             </Box>
                         </AccordionSummary>
                         <AccordionDetails sx={{ p: 0 }}>
-                            <TableContainer 
-                                component={Paper} 
-                                sx={{ 
+                            <TableContainer
+                                component={Paper}
+                                sx={{
                                     maxHeight: 400,
                                     borderRadius: 2,
                                     border: '1px solid',
@@ -281,20 +281,20 @@ export default function PreviewStudentModal({ open, onClose, previewData, fetchS
                                     </TableHead>
                                     <TableBody>
                                         {validRows.map((student, index) => (
-                                            <TableRow 
+                                            <TableRow
                                                 key={index}
                                                 hover
-                                                sx={{ 
+                                                sx={{
                                                     '&:nth-of-type(even)': { bgcolor: 'success.50' },
                                                     '&:last-child td': { borderBottom: 0 }
                                                 }}
                                             >
                                                 <TableCell>
-                                                    <Chip 
-                                                        label={student.student_id} 
-                                                        size="small" 
-                                                        color="success" 
-                                                        variant="outlined" 
+                                                    <Chip
+                                                        label={student.student_id}
+                                                        size="small"
+                                                        color="success"
+                                                        variant="outlined"
                                                     />
                                                 </TableCell>
                                                 <TableCell>
@@ -307,10 +307,16 @@ export default function PreviewStudentModal({ open, onClose, previewData, fetchS
                                                     <>
                                                         <TableCell>{student.phone_number}</TableCell>
                                                         <TableCell>
-                                                            <Chip 
-                                                                label={student.gender || 'Khác'} 
-                                                                size="small" 
-                                                                variant="outlined" 
+                                                            <Chip
+                                                                label={
+                                                                    student.gender === "male"
+                                                                        ? "Nam"
+                                                                        : student.gender === "female"
+                                                                            ? "Nữ"
+                                                                            : student.gender || 'Khác'
+                                                                }
+                                                                size="small"
+                                                                variant="outlined"
                                                             />
                                                         </TableCell>
                                                         <TableCell>
@@ -341,16 +347,16 @@ export default function PreviewStudentModal({ open, onClose, previewData, fetchS
 
                 {/* Hiển thị dữ liệu có lỗi */}
                 {errorRows.length > 0 && (
-                    <Accordion 
-                        defaultExpanded 
-                        sx={{ 
+                    <Accordion
+                        defaultExpanded
+                        sx={{
                             borderRadius: 2,
                             '&:before': { display: 'none' }
                         }}
                     >
-                        <AccordionSummary 
+                        <AccordionSummary
                             expandIcon={<ExpandMoreIcon />}
-                            sx={{ 
+                            sx={{
                                 bgcolor: 'error.light',
                                 color: 'error.contrastText',
                                 borderRadius: 2,
@@ -365,9 +371,9 @@ export default function PreviewStudentModal({ open, onClose, previewData, fetchS
                             </Box>
                         </AccordionSummary>
                         <AccordionDetails sx={{ p: 0 }}>
-                            <TableContainer 
-                                component={Paper} 
-                                sx={{ 
+                            <TableContainer
+                                component={Paper}
+                                sx={{
                                     maxHeight: 400,
                                     borderRadius: 2,
                                     border: '1px solid',
@@ -393,7 +399,7 @@ export default function PreviewStudentModal({ open, onClose, previewData, fetchS
                                             <TableRow
                                                 key={index}
                                                 hover
-                                                sx={{ 
+                                                sx={{
                                                     bgcolor: 'error.50',
                                                     '&:hover': { bgcolor: 'error.100' },
                                                     '&:last-child td': { borderBottom: 0 }
@@ -418,7 +424,7 @@ export default function PreviewStudentModal({ open, onClose, previewData, fetchS
                                                                 size="small"
                                                                 color="error"
                                                                 variant="filled"
-                                                                sx={{ 
+                                                                sx={{
                                                                     fontSize: '0.75rem',
                                                                     height: 'auto',
                                                                     py: 0.5
@@ -459,7 +465,7 @@ export default function PreviewStudentModal({ open, onClose, previewData, fetchS
                 {errorRows.length > 0 && (
                     <Alert severity="info" sx={{ mt: 2, borderRadius: 2 }}>
                         <Typography variant="body2">
-                            <strong>Lưu ý:</strong> Chỉ những học viên hợp lệ sẽ được thêm vào hệ thống. 
+                            <strong>Lưu ý:</strong> Chỉ những học viên hợp lệ sẽ được thêm vào hệ thống.
                             Vui lòng kiểm tra và sửa các lỗi trước khi thử lại.
                         </Typography>
                     </Alert>
@@ -467,11 +473,11 @@ export default function PreviewStudentModal({ open, onClose, previewData, fetchS
             </DialogContent>
 
             <DialogActions sx={{ p: 3, gap: 1 }}>
-                <Button 
-                    onClick={onClose} 
-                    variant="outlined" 
+                <Button
+                    onClick={onClose}
+                    variant="outlined"
                     disabled={isImporting}
-                    sx={{ 
+                    sx={{
                         borderRadius: 2,
                         minWidth: 100
                     }}
@@ -482,7 +488,7 @@ export default function PreviewStudentModal({ open, onClose, previewData, fetchS
                     onClick={handleConfirmImport}
                     variant="contained"
                     disabled={validRows.length === 0 || isImporting || importMessage}
-                    sx={{ 
+                    sx={{
                         borderRadius: 2,
                         minWidth: 200,
                         bgcolor: 'success.main',

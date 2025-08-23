@@ -144,7 +144,6 @@ export default function PreviewRoomModal({ open, onClose, previewData, fetchRoom
                                             <TableCell>Vị trí</TableCell>
                                             <TableCell>Sức chứa</TableCell>
                                             <TableCell>Loại phòng học</TableCell>
-                                            <TableCell>Trạng thái</TableCell>
                                             <TableCell>Ghi chú</TableCell>
                                         </TableRow>
                                     </TableHead>
@@ -155,8 +154,13 @@ export default function PreviewRoomModal({ open, onClose, previewData, fetchRoom
                                                 <TableCell>{room.room_name}</TableCell>
                                                 <TableCell>{room.location}</TableCell>
                                                 <TableCell>{room.capacity}</TableCell>
-                                                <TableCell>{room.type}</TableCell>
-                                                <TableCell>{room.status}</TableCell>
+                                                <TableCell>
+                                                    {room.type === 'theory'
+                                                        ? 'Lý thuyết'
+                                                        : room.type === 'practice'
+                                                            ? 'Thực hành'
+                                                            : room.type}
+                                                </TableCell>
                                                 <TableCell>{room.note}</TableCell>
                                             </TableRow>
                                         ))}
@@ -200,7 +204,13 @@ export default function PreviewRoomModal({ open, onClose, previewData, fetchRoom
                                                 <TableCell>{room.room_name || '-'}</TableCell>
                                                 <TableCell>{room.location || '-'}</TableCell>
                                                 <TableCell>{room.capacity || '-'}</TableCell>
-                                                <TableCell>{room.type || '-'}</TableCell>
+                                                <TableCell>
+                                                    {room.type === 'theory'
+                                                        ? 'Lý thuyết'
+                                                        : room.type === 'practice'
+                                                            ? 'Thực hành'
+                                                            : room.type || '-'}
+                                                </TableCell>
                                                 <TableCell>{room.status || '-'}</TableCell>
                                                 <TableCell>{room.note || '-'}</TableCell>
                                                 <TableCell>

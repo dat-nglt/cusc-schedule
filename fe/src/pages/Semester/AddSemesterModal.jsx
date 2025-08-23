@@ -134,7 +134,7 @@ export default function AddSemesterModal({ open, onClose, onAddSemester, existin
         const isDuplicate = existingSemesters.some(
             (semester) => semester.semester_id === newSemester.semester_id
         );
-        
+
         if (isDuplicate) {
             setLocalError(`Mã học kỳ "${newSemester.semester_id}" đã tồn tại.`);
             return;
@@ -260,7 +260,8 @@ export default function AddSemesterModal({ open, onClose, onAddSemester, existin
                     sx: {
                         borderRadius: '12px',
                         boxShadow: '0px 8px 24px rgba(0, 0, 0, 0.1)',
-                        overflow: 'hidden'
+                        overflow: 'hidden',
+                        maxHeight: '80vh',
                     }
                 }}
             >

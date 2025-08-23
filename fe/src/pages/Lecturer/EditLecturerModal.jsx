@@ -22,7 +22,8 @@ import {
     StepLabel,
     Chip,
     InputAdornment,
-    Fade
+    Fade,
+    Paper
 } from '@mui/material';
 import {
     Close,
@@ -36,7 +37,8 @@ import {
     Work,
     EmojiEvents,
     CheckCircle,
-    Error as ErrorIcon
+    Error as ErrorIcon,
+    Add as AddIcon
 } from '@mui/icons-material';
 
 const availableDepartments = [
@@ -58,13 +60,12 @@ const availableDegrees = [
 ];
 
 const statusOptions = [
-    { value: 'Đang giảng dạy', color: 'success' },
-    { value: 'Tạm nghỉ', color: 'warning' },
-    { value: 'Đã nghỉ việc', color: 'error' },
-    { value: 'Nghỉ hưu', color: 'info' }
+    { value: 'Hoạt động', color: 'success', db: 'active' },
+    { value: 'Tạm nghỉ', color: 'warning', db: 'break' },
+    { value: 'Nghỉ việc', color: 'error', db: 'resigned' },
 ];
 
-const steps = ['Thông tin cá nhân', 'Thông tin liên hệ', 'Thông tin công tác'];
+const steps = ['Thông tin cá nhân', 'Thông tin liên hệ', 'Thông tin công tác', 'Lịch bận'];
 
 export default function EditLecturerModal({ open, onClose, lecturer, onSave, error, loading, subjects }) {
     const [editedLecturer, setEditedLecturer] = useState({
@@ -79,18 +80,33 @@ export default function EditLecturerModal({ open, onClose, lecturer, onSave, err
         hire_date: '',
         degree: '',
         subjects: [],
-        status: 'Đang giảng dạy',
+        status: 'Hoạt động',
     });
 
+    const [busySlots, setBusySlots] = useState([]);
+    const [semesterBusySlots, setSemesterBusySlots] = useState([]);
     const [activeStep, setActiveStep] = useState(0);
     const [localError, setLocalError] = useState('');
 
     useEffect(() => {
         if (lecturer) {
+            // Chuyển trạng thái từ tiếng Anh sang tiếng Việt để hiển thị
+            let viStatus = 'Đang giảng dạy';
+            const statusMap = {
+                teaching: 'Đang giảng dạy',
+                break: 'Tạm nghỉ',
+                resigned: 'Đã nghỉ việc',
+                retired: 'Nghỉ hưu'
+            };
+            if (lecturer.status && statusMap[lecturer.status]) {
+                viStatus = statusMap[lecturer.status];
+            } else if (lecturer.status && statusOptions.some(opt => opt.value === lecturer.status)) {
+                viStatus = lecturer.status;
+            }
             setEditedLecturer({
                 lecturer_id: lecturer.lecturer_id || '',
                 name: lecturer.name || '',
-                email: lecturer.email || '',
+                email: lecturer.account.email || '',
                 day_of_birth: lecturer.day_of_birth || '',
                 gender: lecturer.gender || '',
                 address: lecturer.address || '',
@@ -98,9 +114,11 @@ export default function EditLecturerModal({ open, onClose, lecturer, onSave, err
                 department: lecturer.department || '',
                 hire_date: lecturer.hire_date || '',
                 degree: lecturer.degree || '',
-                subjects: lecturer.subjects || [],
-                status: lecturer.status || 'Đang giảng dạy',
+                subjects: lecturer.subjects?.map(s => s.subject_id) || [],
+                status: viStatus,
             });
+            setBusySlots(lecturer.busy_slots || []);
+            setSemesterBusySlots(lecturer.semester_busy_slots || []);
             setActiveStep(0);
             setLocalError('');
         }
@@ -129,6 +147,11 @@ export default function EditLecturerModal({ open, onClose, lecturer, onSave, err
                 setLocalError('Số điện thoại phải có 10-11 chữ số');
                 return;
             }
+        } else if (activeStep === 2) {
+            if (!editedLecturer.department || !editedLecturer.hire_date || !editedLecturer.degree) {
+                setLocalError('Vui lòng điền đầy đủ thông tin công tác');
+                return;
+            }
         }
 
         setLocalError('');
@@ -147,10 +170,40 @@ export default function EditLecturerModal({ open, onClose, lecturer, onSave, err
 
     };
 
+    const handleAddBusySlot = () => {
+        setBusySlots([...busySlots, { day: '', slot_id: '' }]);
+    };
+
+    const handleRemoveBusySlot = (index) => {
+        setBusySlots(busySlots.filter((_, i) => i !== index));
+    };
+
+    const handleBusySlotChange = (index, field, value) => {
+        const updatedSlots = [...busySlots];
+        updatedSlots[index][field] = value;
+        setBusySlots(updatedSlots);
+    };
+
+    const handleAddSemesterBusySlot = () => {
+        setSemesterBusySlots([...semesterBusySlots, { date: '', slot_id: '' }]);
+    };
+
+    const handleRemoveSemesterBusySlot = (index) => {
+        setSemesterBusySlots(semesterBusySlots.filter((_, i) => i !== index));
+    };
+
+    const handleSemesterBusySlotChange = (index, field, value) => {
+        const updatedSlots = [...semesterBusySlots];
+        updatedSlots[index][field] = value;
+        setSemesterBusySlots(updatedSlots);
+    };
+
     const handleSubmit = async () => {
-        if (!editedLecturer.department || !editedLecturer.hire_date || !editedLecturer.degree) {
-            setLocalError('Vui lòng điền đầy đủ thông tin công tác');
-            return;
+        if (activeStep < steps.length - 1) {
+            if (!editedLecturer.department || !editedLecturer.hire_date || !editedLecturer.degree) {
+                setLocalError('Vui lòng điền đầy đủ thông tin công tác');
+                return;
+            }
         }
 
         const birthDate = new Date(editedLecturer.day_of_birth);
@@ -172,12 +225,17 @@ export default function EditLecturerModal({ open, onClose, lecturer, onSave, err
             return;
         }
 
+        // Chuyển trạng thái sang tiếng Anh trước khi lưu
+        const statusObj = statusOptions.find(opt => opt.value === editedLecturer.status);
+        const dbStatus = statusObj ? statusObj.db : 'teaching';
+
         const updatedLecturerData = {
             ...editedLecturer,
+            status: dbStatus,
             updated_at: new Date().toISOString(),
         };
 
-        await onSave(updatedLecturerData);
+        await onSave(updatedLecturerData, editedLecturer.subjects, busySlots, semesterBusySlots);
     };
 
     return (
@@ -325,9 +383,8 @@ export default function EditLecturerModal({ open, onClose, lecturer, onSave, err
                                         </InputAdornment>
                                     }
                                 >
-                                    <MenuItem value="Nam">Nam</MenuItem>
-                                    <MenuItem value="Nữ">Nữ</MenuItem>
-                                    <MenuItem value="Khác">Khác</MenuItem>
+                                    <MenuItem value="male">Nam</MenuItem>
+                                    <MenuItem value="female">Nữ</MenuItem>
                                 </Select>
                             </FormControl>
                         </Box>
@@ -518,6 +575,141 @@ export default function EditLecturerModal({ open, onClose, lecturer, onSave, err
                                     ))}
                                 </Select>
                             </FormControl>
+                        </Box>
+                    )}
+
+                    {activeStep === 3 && (
+                        <Box sx={{
+                            display: 'grid',
+                            gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+                            gap: 3
+                        }}>
+                            {/* Lịch bận thường xuyên */}
+                            <Paper sx={{ p: 3, borderRadius: 2, boxShadow: 1 }}>
+                                <Typography variant="h6" gutterBottom color="primary">
+                                    Lịch bận thường xuyên
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                                    Các tiết học bận cố định theo tuần
+                                </Typography>
+                                <Button
+                                    variant="outlined"
+                                    onClick={handleAddBusySlot}
+                                    sx={{ mb: 2 }}
+                                    startIcon={<AddIcon />}
+                                    size="small"
+                                >
+                                    Thêm lịch bận
+                                </Button>
+                                {busySlots.map((slot, index) => (
+                                    <Box key={index} sx={{
+                                        display: 'grid',
+                                        gridTemplateColumns: '1fr 1fr auto',
+                                        gap: 1,
+                                        mb: 2,
+                                        alignItems: 'center'
+                                    }}>
+                                        <FormControl fullWidth size="small">
+                                            <InputLabel>Thứ</InputLabel>
+                                            <Select
+                                                value={slot.day}
+                                                onChange={(e) => handleBusySlotChange(index, 'day', e.target.value)}
+                                                label="Thứ"
+                                            >
+                                                <MenuItem value="Mon">Thứ 2</MenuItem>
+                                                <MenuItem value="Tue">Thứ 3</MenuItem>
+                                                <MenuItem value="Wed">Thứ 4</MenuItem>
+                                                <MenuItem value="Thu">Thứ 5</MenuItem>
+                                                <MenuItem value="Fri">Thứ 6</MenuItem>
+                                                <MenuItem value="Sat">Thứ 7</MenuItem>
+                                            </Select>
+                                        </FormControl>
+                                        <FormControl fullWidth size="small">
+                                            <InputLabel>Tiết</InputLabel>
+                                            <Select
+                                                value={slot.slot_id}
+                                                onChange={(e) => handleBusySlotChange(index, 'slot_id', e.target.value)}
+                                                label="Tiết"
+                                            >
+                                                <MenuItem value="S1">Tiết 1 (7:00-09:00)</MenuItem>
+                                                <MenuItem value="S2">Tiết 2 (09:00-11:00)</MenuItem>
+                                                <MenuItem value="C1">Tiết 3 (13:00-15:00)</MenuItem>
+                                                <MenuItem value="C2">Tiết 4 (15:00-17:00)</MenuItem>
+                                                <MenuItem value="T1">Tiết 5 (17:30-19:30)</MenuItem>
+                                                <MenuItem value="T2">Tiết 6 (19:30-21:30)</MenuItem>
+                                            </Select>
+                                        </FormControl>
+                                        <IconButton
+                                            onClick={() => handleRemoveBusySlot(index)}
+                                            color="error"
+                                            size="small"
+                                        >
+                                            <Close />
+                                        </IconButton>
+                                    </Box>
+                                ))}
+                            </Paper>
+
+                            {/* Lịch bận học kỳ */}
+                            <Paper sx={{ p: 3, borderRadius: 2, boxShadow: 1 }}>
+                                <Typography variant="h6" gutterBottom color="secondary">
+                                    Lịch bận học kỳ
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                                    Các ngày bận cụ thể trong học kỳ
+                                </Typography>
+                                <Button
+                                    variant="outlined"
+                                    color="secondary"
+                                    onClick={handleAddSemesterBusySlot}
+                                    sx={{ mb: 2 }}
+                                    startIcon={<AddIcon />}
+                                    size="small"
+                                >
+                                    Thêm lịch bận
+                                </Button>
+                                {semesterBusySlots.map((slot, index) => (
+                                    <Box key={index} sx={{
+                                        display: 'grid',
+                                        gridTemplateColumns: '1fr 1fr auto',
+                                        gap: 1,
+                                        mb: 2,
+                                        alignItems: 'center'
+                                    }}>
+                                        <TextField
+                                            label="Ngày"
+                                            type="date"
+                                            value={slot.date}
+                                            onChange={(e) => handleSemesterBusySlotChange(index, 'date', e.target.value)}
+                                            fullWidth
+                                            size="small"
+                                            InputLabelProps={{ shrink: true }}
+                                        />
+                                        <FormControl fullWidth size="small">
+                                            <InputLabel>Tiết</InputLabel>
+                                            <Select
+                                                value={slot.slot_id}
+                                                onChange={(e) => handleSemesterBusySlotChange(index, 'slot_id', e.target.value)}
+                                                label="Tiết"
+                                            >
+                                                <MenuItem value="S1">Tiết 1 (7:00-09:00)</MenuItem>
+                                                <MenuItem value="S2">Tiết 2 (09:00-11:00)</MenuItem>
+                                                <MenuItem value="C1">Tiết 3 (13:00-15:00)</MenuItem>
+                                                <MenuItem value="C2">Tiết 4 (15:00-17:00)</MenuItem>
+                                                <MenuItem value="T1">Tiết 5 (17:30-19:30)</MenuItem>
+                                                <MenuItem value="T2">Tiết 6 (19:30-21:30)</MenuItem>
+                                            </Select>
+                                        </FormControl>
+                                        <IconButton
+                                            onClick={() => handleRemoveSemesterBusySlot(index)}
+                                            color="error"
+                                            size="small"
+                                        >
+                                            <Close />
+                                        </IconButton>
+                                    </Box>
+                                ))}
+                            </Paper>
                         </Box>
                     )}
                 </Box>

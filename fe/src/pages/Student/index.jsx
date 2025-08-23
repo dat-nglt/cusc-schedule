@@ -24,7 +24,7 @@ import EditStudentModal from './EditStudentModal';
 import DeleteStudentModal from './DeleteStudentModal';
 import useResponsive from '../../hooks/useResponsive';
 import StudentTable from './StudentTable';
-import { getAllStudentsAPI, getStudentByIdAPI, createStudentAPI, updateStudentAPI, deleteStudentAPI } from '../../api/studentAPI';
+import { getAllStudentsAPI, createStudentAPI, updateStudentAPI, deleteStudentAPI } from '../../api/studentAPI';
 import { toast } from 'react-toastify';
 import { getClassesAPI } from '../../api/classAPI';
 import TablePaginationLayout from '../../components/layout/TablePaginationLayout';
@@ -138,7 +138,7 @@ const Student = () => {
 
     // Hàm mở modal chỉnh sửa
     const handleEditStudentModal = async (id) => {
-        
+
         setLoading(true);
         setError(null);
         try {
@@ -200,7 +200,7 @@ const Student = () => {
 
             if (studentToView) {
                 setSelectedStudent(studentToView);
-                
+
                 setOpenDetail(true);
                 console.log(studentToView);
             } else {

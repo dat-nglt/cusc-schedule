@@ -147,7 +147,13 @@ export default function RoomDetailModal({ open, onClose, room }) {
             <CompactInfoCard
               icon={<TypeIcon fontSize="small" />}
               title="Loại phòng"
-              value={room.type}
+              value={
+                room.type === 'theory'
+                  ? 'Lý thuyết'
+                  : room.type === 'practice'
+                    ? 'Thực hành'
+                    : room.type
+              }
               color="warning"
             />
           </Box>
@@ -237,3 +243,5 @@ export default function RoomDetailModal({ open, onClose, room }) {
     </Dialog>
   );
 }
+
+// Cần sửas

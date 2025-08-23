@@ -7,14 +7,10 @@ import QuickStats from './QuickStats';
 import { io } from 'socket.io-client';
 
 import { useEffect } from 'react';
-import { generateSchedule, getInputDataForAlgorithmAPI, stopScheduleGeneration } from '../../api/scheduleAPI';
+import { generateSchedule, stopScheduleGeneration } from '../../api/scheduleAPI';
 import ProgressModal from './ProgressModal';
 import { toast } from 'react-toastify';
 
-import { getAllRoomAPI } from '../../api/roomAPI';
-import { getProgramCreateScheduleAPI } from '../../api/programAPI';
-import { getAllLecturersAPI } from '../../api/lecturerAPI';
-import { getClassesAPI } from '../../api/classAPI';
 import CreateSchedulesAutoModal from './CreateSchedulesAutoModal';
 import { useRef } from 'react';
 

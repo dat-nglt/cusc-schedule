@@ -44,10 +44,11 @@ import PreviewStudentModal from './PreviewStudentModal';
 import { processExcelDataStudent } from '../../utils/ExcelValidation';
 
 const statusOptions = [
-    { value: 'Đang học', color: 'success' },
-    { value: 'Đã nghỉ học', color: 'error' },
-    { value: 'Đã tốt nghiệp', color: 'info' },
-    { value: 'Bảo lưu', color: 'warning' }
+    { value: 'Hoạt động', color: 'success', db: 'active' },
+    { value: 'Tạm nghỉ', color: 'warning', db: 'break' },
+    { value: 'Đã nghỉ học', color: 'error', db: 'dropped' },
+    { value: 'Đã tốt nghiệp', color: 'info', db: 'graduated' },
+    { value: 'Bảo lưu', color: 'warning', db: 'reserve' }
 ];
 
 const steps = ['Thông tin cá nhân', 'Thông tin liên hệ', 'Thông tin học tập'];
@@ -63,7 +64,7 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
         phone_number: '',
         class: '',
         admission_year: '',
-        status: 'Đang học',
+        status: 'Hoạt động',
     });
 
     const [activeStep, setActiveStep] = useState(0);
@@ -170,8 +171,13 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
             return;
         }
 
+        // Chuyển trạng thái sang tiếng Anh trước khi lưu
+        const statusObj = statusOptions.find(opt => opt.value === newStudent.status);
+        const dbStatus = statusObj ? statusObj.db : 'studying';
+
         const studentToAdd = {
             ...newStudent,
+            status: dbStatus,
             google_id: null,
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
@@ -289,7 +295,8 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
                     sx: {
                         borderRadius: '12px',
                         boxShadow: '0px 8px 24px rgba(0, 0, 0, 0.1)',
-                        overflow: 'hidden'
+                        overflow: 'hidden',
+                        maxHeight: '80vh',
                     }
                 }}
             >
@@ -437,9 +444,8 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
                                             </InputAdornment>
                                         }
                                     >
-                                        <MenuItem value="Nam">Nam</MenuItem>
-                                        <MenuItem value="Nữ">Nữ</MenuItem>
-                                        <MenuItem value="Khác">Khác</MenuItem>
+                                        <MenuItem value="male">Nam</MenuItem>
+                                        <MenuItem value="female">Nữ</MenuItem>
                                     </Select>
                                 </FormControl>
                             </Box>
