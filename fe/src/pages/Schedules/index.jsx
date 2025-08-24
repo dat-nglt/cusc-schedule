@@ -522,65 +522,11 @@ const ScheduleManagement = () => {
         setFormTest(transformDataToFormTest(dataToTransform))
     }, [rooms, programs, lecturers, classes, programsResponseData, transformDataToFormTest]);
 
-    // Function to update formTest with selected data from modal
-    // const updateFormTestWithSelections = (selections) => {
-    //     const dataToTransform = { rooms, programs, lecturers, classes };
-
-    //     // Thêm subjects và semesters từ programs response nếu có
-    //     if (programsResponseData) {
-    //         if (programsResponseData.subjects) {
-    //             dataToTransform.subjects = programsResponseData.subjects;
-    //         }
-    //         if (programsResponseData.semesters) {
-    //             dataToTransform.semesters = programsResponseData.semesters;
-    //         }
-    //     }
-
-    //     const transformed = transformDataToFormTest(dataToTransform, selections);
-
-    //     if (transformed) {
-    //         setFormTest(transformed);
-    //         console.log("FormTest updated with selections:", transformed);
-    //     }
-    // };
-
-    // const handleGenerateTimetable = async () => {
-    //     setStatusMessage('Đang gửi yêu cầu tạo thời khóa biểu...');
-    //     setDownloadableFiles([]);
-    //     setError('');
-    //     setGaLogs([]);
-    //     setProgress(0);
-    //     setOpen(true);
-
-    //     // await getInputDataForAlgorithmAPI()
-
-    //     try {
-    //         // const inputData = formTest || actualInputData;
-    //         const inputData = formTest;
-    //         const response = await generateSchedule(inputData);
-
-    //         if (response.aborted) { // Xử lý nếu promise được resolve với trạng thái hủy
-    //             toast.info("Yêu cầu tạo thời khóa biểu đã được hủy.");
-    //             setOpen(false);
-    //         } else if (response.error) { // Xử lý lỗi trả về từ API ngay lập tức
-    //             setError(response.message || response.error);
-    //             setStatusMessage('');
-    //             setOpen(false);
-    //             toast.error(response.message || "Có lỗi khi bắt đầu tiến trình.");
-    //         }
-    //     } catch (err) {
-    //         console.error('Error initiating GA generation:', err);
-    //         setError(err.message || 'Không thể kết nối hoặc lỗi mạng khi gửi yêu cầu.');
-    //         setStatusMessage('');
-    //         setOpen(false); // Đóng thanh tiến độ nếu có lỗi kết nối ban đầu
-    //         toast.error(err.message || 'Lỗi kết nối đến server.');
-    //     }
-    // };
     const handleGenerateFromModal = async (selections) => {
-        // Bước 1: Log dữ liệu lựa chọn nhận được từ modal
+        //Log dữ liệu lựa chọn nhận được từ modal
         console.log("Selections received from modal:", selections);
 
-        // Bước 2: Chuẩn bị và biến đổi dữ liệu thành payload cuối cùng
+        //Chuẩn bị và biến đổi dữ liệu thành payload cuối cùng
         const dataToTransform = { rooms, programs, lecturers, classes };
 
         if (programsResponseData) {
@@ -601,11 +547,11 @@ const ScheduleManagement = () => {
             return; // Dừng lại nếu payload không hợp lệ
         }
 
-        // Cập nhật state formTest (tùy chọn, hữu ích cho việc debug)
+        // Cập nhật state formTest
         setFormTest(finalPayload);
         console.log("Final payload being sent to API:", finalPayload);
 
-        // Bước 3: Thực hiện các hành động gọi API (logic từ handleGenerateTimetable cũ)
+        //Thực hiện các hành động gọi API (logic từ handleGenerateTimetable cũ)
         setStatusMessage('Đang gửi yêu cầu tạo thời khóa biểu...');
         setDownloadableFiles([]);
         setError('');
@@ -1312,11 +1258,6 @@ const ScheduleManagement = () => {
                 rooms={rooms}
                 lecturers={lecturers}
                 classes={classes}
-                // BỎ 2 props cũ này
-                // onGenerate={handleGenerateTimetable}
-                // onSelectionChange={updateFormTestWithSelections}
-
-                // THÊM prop mới này
                 onConfirm={handleGenerateFromModal}
             />
         </Box>
