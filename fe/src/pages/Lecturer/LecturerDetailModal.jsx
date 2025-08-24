@@ -15,7 +15,11 @@ import {
     useTheme,
     useMediaQuery,
     Avatar,
-    Tooltip
+    Tooltip,
+    List,
+    ListItem,
+    ListItemIcon,
+    ListItemText
 } from '@mui/material';
 import {
     Person as PersonIcon,
@@ -32,11 +36,14 @@ import {
     Cake as CakeIcon,
     Transgender as GenderIcon,
     Subject as SubjectIcon,
-    Work as WorkIcon
+    Work as WorkIcon,
+    LabelImportant,
+    Book
 } from '@mui/icons-material';
 import { formatDateTime } from '../../utils/formatDateTime';
 import { toast } from 'react-toastify';
 import { getStatusForLectuer } from '../../components/ui/StatusChip';
+import { useState } from 'react';
 
 const InfoCard = ({ title, icon, children, span = 1, minHeight = 220 }) => (
     <Grid item xs={12} sm={6} md={span}>
@@ -90,7 +97,7 @@ const InfoItem = ({ label, value, icon, chips }) => (
                         value.map((item, idx) => (
                             <Chip
                                 key={idx}
-                                label={item}
+                                label={item.subject_name}   // ✅ chỉ lấy tên môn
                                 size="small"
                                 color="primary"
                                 variant="outlined"
@@ -102,6 +109,7 @@ const InfoItem = ({ label, value, icon, chips }) => (
                             Chưa có dữ liệu
                         </Typography>
                     )}
+
                 </Box>
             ) : (
                 <Typography variant="body2" fontWeight="500">
@@ -274,12 +282,89 @@ export default function LecturerDetailModal({ open, onClose, lecturer }) {
                     {/* Hàng 2: 2 cột - Thông tin giảng dạy & Lịch sử hệ thống */}
                     <Grid item xs={12} md={6}>
                         <InfoCard title="Thông tin giảng dạy" icon={<SchoolIcon />} minHeight={220}>
-                            <InfoItem
-                                label="Môn giảng dạy"
-                                value={lecturer.subjects || []}
-                                icon={<SubjectIcon fontSize="small" />}
-                                chips
-                            />
+                            {/* Môn giảng dạy với popup chi tiết */}
+                            <Box sx={{ mb: 2, '&:last-child': { mb: 0 } }}>
+                                <Typography variant="caption" color="text.secondary" display="block" gutterBottom>
+                                    Môn giảng dạy
+                                </Typography>
+                                <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
+                                    <Box sx={{ color: 'text.secondary', mt: 0.5 }}>
+                                        <SubjectIcon fontSize="small" />
+                                    </Box>
+                                    {lecturer.subjects && lecturer.subjects.length > 0 ? (
+                                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, flexGrow: 1 }}>
+                                            {/* Chuyển đổi object thành string để hiển thị */}
+                                            {(() => {
+                                                // Lấy danh sách tên môn học
+                                                const subjectNames = lecturer.subjects.map(subject =>
+                                                    typeof subject === 'object'
+                                                        ? subject.subject_name || subject.subject_id
+                                                        : subject
+                                                );
+
+                                                // Hiển thị môn đầu tiên
+                                                const firstSubject = subjectNames[0];
+
+                                                return (
+                                                    <>
+                                                        <Chip
+                                                            label={firstSubject}
+                                                            size="small"
+                                                            color="primary"
+                                                            variant="outlined"
+                                                            sx={{ mb: 0.5 }}
+                                                        />
+
+                                                        {/* Hiển thị số lượng môn còn lại */}
+                                                        {subjectNames.length > 1 && (
+                                                            <Tooltip
+                                                                title={
+                                                                    <Box sx={{ px: 1, py: 2 }}>
+                                                                        <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'bold' }}>
+                                                                            Tất cả môn giảng dạy
+                                                                        </Typography>
+                                                                        <List dense>
+                                                                            {subjectNames.map((subject, index) => (
+                                                                                <ListItem key={index} disablePadding>
+                                                                                    <ListItemIcon sx={{ minWidth: 35 }}>
+                                                                                        <Book color="primary" />
+                                                                                    </ListItemIcon>
+                                                                                    <ListItemText primary={subject} />
+                                                                                </ListItem>
+                                                                            ))}
+                                                                        </List>
+                                                                    </Box>
+                                                                }
+                                                                arrow
+                                                                placement="top"
+                                                            >
+                                                                <Chip
+                                                                    label={`+${subjectNames.length - 1}`}
+                                                                    size="small"
+                                                                    color="primary"
+                                                                    variant="filled"
+                                                                    sx={{
+                                                                        mb: 0.5,
+                                                                        cursor: 'pointer',
+                                                                        '&:hover': {
+                                                                            backgroundColor: 'primary.dark'
+                                                                        }
+                                                                    }}
+                                                                />
+                                                            </Tooltip>
+                                                        )}
+                                                    </>
+                                                );
+                                            })()}
+                                        </Box>
+                                    ) : (
+                                        <Typography variant="body2" color="text.secondary" fontStyle="italic">
+                                            Chưa có dữ liệu
+                                        </Typography>
+                                    )}
+                                </Box>
+                            </Box>
+
                             <InfoItem
                                 label="Khoa/Bộ môn"
                                 value={lecturer.department}

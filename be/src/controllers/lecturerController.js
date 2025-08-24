@@ -116,9 +116,17 @@ export const createLecturerController = async (req, res) => {
  */
 export const updateLecturerController = async (req, res) => {
   const { id } = req.params;
-  const lecturerData = req.body;
+  const { lecturerData, subjects, busySlots, semesterBusySlots } = req.body;
+
   try {
-    const lecturer = await updateLecturerService(id, lecturerData);
+    const lecturer = await updateLecturerService(
+      id,
+      lecturerData,
+      subjects,
+      busySlots,
+      semesterBusySlots
+    );
+
     if (!lecturer) {
       return APIResponse(
         res,
@@ -127,6 +135,7 @@ export const updateLecturerController = async (req, res) => {
         "Không tìm thấy giảng viên để cập nhật."
       );
     }
+
     return APIResponse(
       res,
       200,
@@ -135,12 +144,15 @@ export const updateLecturerController = async (req, res) => {
     );
   } catch (error) {
     console.error(`Lỗi khi cập nhật giảng viên với ID ${id}:`, error.message);
+
     if (
-      error.message.includes("không tìm thấy") ||
-      error.message.includes("Email đã tồn tại")
+      error.message.includes("không tồn tại") ||
+      error.message.includes("Email") ||
+      error.message.includes("Các môn học")
     ) {
       return APIResponse(res, 400, null, error.message);
     }
+
     return APIResponse(
       res,
       500,

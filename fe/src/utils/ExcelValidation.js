@@ -69,9 +69,7 @@ const requiredLecturerFields = [
     'address',
     'phone_number',
     'department',
-    'hire_date',
-    'degree',
-    'status'
+    'degree'
 ];
 
 const validateLecturerData = (lecturer, existingLecturers, allImportData = []) => {
@@ -118,15 +116,6 @@ const validateLecturerData = (lecturer, existingLecturers, allImportData = []) =
         }
     }
 
-    if (lecturer.hire_date) {
-        const hireDate = new Date(lecturer.hire_date);
-        const today = new Date();
-
-        if (isNaN(hireDate.getTime()) || hireDate > today) {
-            errors.push('invalid_date');
-        }
-    }
-
     // Kiểm tra giới tính
     if (lecturer.gender && !validGenders.includes(lecturer.gender)) {
         errors.push('invalid_gender');
@@ -165,7 +154,6 @@ export const processExcelDataLecturer = (rawData, existingLecturers) => {
             academic_rank: row['Học hàm']?.trim() || row['academic_rank']?.trim() || '',
             subjectIds: row['Mã học phần'] ? row['Mã học phần'].split(',').map(id => id.trim()) : [],
             department: row['Khoa/Bộ môn']?.trim() || row['department']?.trim() || '',
-            hire_date: formatDate(row['Ngày tuyển dụng'] || row['hire_date']),
             degree: row['Học vị']?.trim() || row['degree']?.trim() || '',
             status: normalizeStatus(row['Trạng thái']?.trim() || row['status']?.trim() || 'Hoạt động'),
             rowIndex: index + 2 // +2 vì Excel bắt đầu từ row 1 và có header

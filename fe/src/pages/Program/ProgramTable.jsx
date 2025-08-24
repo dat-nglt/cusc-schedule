@@ -79,7 +79,7 @@ export default function ProgramTable({
                             sx={{
                                 fontWeight: 'bold',
                                 fontSize: '0.875rem',
-                                textAlign: 'left',
+                                textAlign: 'center',
                                 borderRight: '1px solid #e0e0e0',
                                 width: isSmallScreen ? '50%' : '45%',
                                 py: 1.5
@@ -143,7 +143,7 @@ export default function ProgramTable({
                             </TableCell>
                             <TableCell
                                 sx={{
-                                    textAlign: 'left',
+                                    textAlign: 'center',
                                     borderRight: '1px solid #e0e0e0',
                                     py: 1.5,
                                     overflow: 'hidden',

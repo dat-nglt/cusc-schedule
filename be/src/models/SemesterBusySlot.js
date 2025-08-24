@@ -1,18 +1,15 @@
 import { DataTypes } from "sequelize";
 
-// Định nghĩa model SemesterBusySlot - Đại diện cho khe thời gian bận của giảng viên
 const SemesterBusySlot = (sequelize) => {
     const SemesterBusySlotModel = sequelize.define(
         "SemesterBusySlot",
         {
-            // ID khe thời gian bận (khóa chính)
             semester_busy_slot_id: {
                 type: DataTypes.INTEGER,
                 autoIncrement: true,
                 primaryKey: true,
                 allowNull: false,
             },
-            // Mã giảng viên (khóa ngoại)
             lecturer_id: {
                 type: DataTypes.STRING(30),
                 allowNull: false,
@@ -23,29 +20,30 @@ const SemesterBusySlot = (sequelize) => {
             },
             date: {
                 type: DataTypes.DATEONLY,
-                allowNull: false, // Ngày bận không được để trống
+                allowNull: false,
             },
-            // Mã khe thời gian
             slot_id: {
                 type: DataTypes.STRING(30),
                 allowNull: true,
             },
         },
         {
-            tableName: "semester_busy_slots", // Tên bảng trong CSDL
-            timestamps: true, // Tự động thêm created_at và updated_at
-            createdAt: "createdAt", // Đặt tên cột createdAt
-            updatedAt: "updatedAt", // Đặt tên cột updatedAt
+            tableName: "semester_busy_slots",
+            timestamps: true,
+            createdAt: "created_at",
+            updatedAt: "updated_at",
+            deletedAt: "deleted_at",  // bật soft delete
+            paranoid: true,           // bật paranoid
+            underscored: true,        // đồng bộ snake_case
         }
     );
 
-    // Khai báo mối quan hệ (association)
     SemesterBusySlotModel.associate = (models) => {
         SemesterBusySlotModel.belongsTo(models.Lecturer, {
             foreignKey: "lecturer_id",
             as: "lecturer",
             onUpdate: "CASCADE",
-            onDelete: "SET NULL", // Xóa khe thời gian bận nếu giảng viên bị xó
+            onDelete: "SET NULL",
         });
     };
 

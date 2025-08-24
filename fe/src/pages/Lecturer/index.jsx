@@ -56,7 +56,7 @@ const Lecturer = () => {
         try {
             const response = await getAllLecturersAPI();
             if (response && response.data) {
-                console.log();
+                console.log(response.data);
 
                 setLecturers(response.data);
             } else {
@@ -165,34 +165,53 @@ const Lecturer = () => {
     };
 
     // Hàm lưu thay đổi sau khi chỉnh sửa
-    const handleSaveEditedLecturer = async (updatedLecturer) => {
+    const handleSaveEditedLecturer = async (
+        updatedLecturer,
+        updatedSubjects = [],
+        busySlots = [],
+        semesterBusySlots = []
+    ) => {
         setLoading(true);
-        setError(null); // Đặt lại trạng thái lỗi
-        try {
-            const response = await updateLecturerAPI(updatedLecturer.lecturer_id, updatedLecturer);
+        setError(null);
 
-            if (response && response.data) {
+        try {
+            // Gọi API cập nhật giảng viên
+            const response = await updateLecturerAPI(
+                updatedLecturer.lecturer_id,
+                updatedLecturer,      // lecturerData
+                updatedSubjects,
+                busySlots,
+                semesterBusySlots
+            );
+
+            if (response) {
+                // Cập nhật state danh sách giảng viên
                 setLecturers(prevLecturers =>
                     prevLecturers.map(lecturer =>
                         lecturer.lecturer_id === updatedLecturer.lecturer_id
-                            ? { ...lecturer, ...updatedLecturer } // Cập nhật đối tượng đã chỉnh sửa
-                            : lecturer // Giữ nguyên các đối tượng khác
+                            ? { ...lecturer, ...response, subjects: response.subjects }
+                            : lecturer
                     )
                 );
+
                 setOpenEditModal(false);
                 setEditedLecturer(null);
                 toast.success('Cập nhật giảng viên thành công!');
             } else {
-                throw new Error(response.message || 'Cập nhật thất bại');
+                throw new Error('Cập nhật giảng viên thất bại');
             }
         } catch (err) {
-            console.error("Lỗi khi cập nhật giảng viên:", err.response.data.message);
-            setError(err.response.data.message);
-            toast.error(err.response.data.message);
+            const errorMessage =
+                err.response?.data?.message || err.message || 'Có lỗi xảy ra khi cập nhật giảng viên';
+            console.error("Lỗi khi cập nhật giảng viên:", errorMessage);
+            setError(errorMessage);
+            toast.error(errorMessage);
         } finally {
             setLoading(false);
         }
     };
+
+
 
 
     // Hàm xử lý thay đổi trang
@@ -396,8 +415,10 @@ const Lecturer = () => {
                 onClose={handleCloseEditModal}
                 lecturer={editedLecturer}
                 onSave={handleSaveEditedLecturer}
+                existingLecturers={lecturers}
                 error={error}
                 loading={loading}
+                subjects={subjects}
             />
             <DeleteLecturerModal
                 open={openDeleteModal}

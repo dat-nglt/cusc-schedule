@@ -193,7 +193,6 @@ function createTestExcelFile(filePath) {
             address: '123 Test Street',
             phone_number: '0123456789',
             department: 'Khoa CNTT',
-            hire_date: '2020-09-01',
             degree: 'Tiến sỹ',
             status: 'active'
         },
@@ -206,7 +205,6 @@ function createTestExcelFile(filePath) {
             address: '456 Test Avenue',
             phone_number: '0987654321',
             department: 'Khoa Kinh Tế',
-            hire_date: '2021-02-15',
             degree: 'Thạc sỹ',
             status: 'active'
         }

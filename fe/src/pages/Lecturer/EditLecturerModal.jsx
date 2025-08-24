@@ -14,8 +14,6 @@ import {
     MenuItem,
     Alert,
     CircularProgress,
-    Avatar,
-    Divider,
     IconButton,
     Stepper,
     Step,
@@ -23,7 +21,12 @@ import {
     Chip,
     InputAdornment,
     Fade,
-    Paper
+    Paper,
+    Grid,
+    FormGroup,
+    FormControlLabel,
+    Checkbox,
+    Divider
 } from '@mui/material';
 import {
     Close,
@@ -38,8 +41,15 @@ import {
     EmojiEvents,
     CheckCircle,
     Error as ErrorIcon,
-    Add as AddIcon
+    Cancel,
+    EventRepeat,
+    EventBusy
 } from '@mui/icons-material';
+import { format } from 'date-fns';
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { getDayName } from '../../utils/scheduleUtils';
+import { getSlotLabel } from '../../utils/scheduleUtils';
 
 const availableDepartments = [
     'Khoa Công Nghệ Thông Tin',
@@ -67,7 +77,7 @@ const statusOptions = [
 
 const steps = ['Thông tin cá nhân', 'Thông tin liên hệ', 'Thông tin công tác', 'Lịch bận'];
 
-export default function EditLecturerModal({ open, onClose, lecturer, onSave, error, loading, subjects }) {
+export default function EditLecturerModal({ open, onClose, lecturer, onSave, existingLecturers, error, loading, subjects }) {
     const [editedLecturer, setEditedLecturer] = useState({
         lecturer_id: '',
         name: '',
@@ -77,52 +87,113 @@ export default function EditLecturerModal({ open, onClose, lecturer, onSave, err
         address: '',
         phone_number: '',
         department: '',
-        hire_date: '',
         degree: '',
-        subjects: [],
-        status: 'Hoạt động',
+        subjects: lecturer?.subjects,
+        status: 'active',
     });
 
     const [busySlots, setBusySlots] = useState([]);
     const [semesterBusySlots, setSemesterBusySlots] = useState([]);
     const [activeStep, setActiveStep] = useState(0);
     const [localError, setLocalError] = useState('');
+    const [selectedDate, setSelectedDate] = useState(null);
+    const [selectedSlots, setSelectedSlots] = useState([]);
 
     useEffect(() => {
-        if (lecturer) {
+        if (lecturer && open) {
             // Chuyển trạng thái từ tiếng Anh sang tiếng Việt để hiển thị
-            let viStatus = 'Đang giảng dạy';
+            let viStatus = 'Hoạt động';
             const statusMap = {
-                teaching: 'Đang giảng dạy',
+                active: 'Hoạt động',
                 break: 'Tạm nghỉ',
-                resigned: 'Đã nghỉ việc',
+                resigned: 'Nghỉ việc',
                 retired: 'Nghỉ hưu'
             };
+
             if (lecturer.status && statusMap[lecturer.status]) {
                 viStatus = statusMap[lecturer.status];
             } else if (lecturer.status && statusOptions.some(opt => opt.value === lecturer.status)) {
                 viStatus = lecturer.status;
             }
+
             setEditedLecturer({
                 lecturer_id: lecturer.lecturer_id || '',
                 name: lecturer.name || '',
-                email: lecturer.account.email || '',
+                email: lecturer.email || lecturer.account?.email || '',
                 day_of_birth: lecturer.day_of_birth || '',
                 gender: lecturer.gender || '',
                 address: lecturer.address || '',
                 phone_number: lecturer.phone_number || '',
                 department: lecturer.department || '',
-                hire_date: lecturer.hire_date || '',
                 degree: lecturer.degree || '',
-                subjects: lecturer.subjects?.map(s => s.subject_id) || [],
+                subjects: lecturer.subjects?.map(s => s.subject_id || s) || [],
                 status: viStatus,
             });
+
             setBusySlots(lecturer.busy_slots || []);
             setSemesterBusySlots(lecturer.semester_busy_slots || []);
             setActiveStep(0);
             setLocalError('');
         }
-    }, [lecturer]);
+    }, [lecturer, open]);
+
+    // Hàm nhóm các slot theo ngày
+    const groupSemesterSlotsByDate = () => {
+        const grouped = {};
+        semesterBusySlots.forEach(slot => {
+            if (!grouped[slot.date]) {
+                grouped[slot.date] = { date: slot.date, slots: [] };
+            }
+            grouped[slot.date].slots.push(slot.slot_id);
+        });
+        return Object.values(grouped);
+    };
+
+    // Hàm xóa tất cả slot của một ngày
+    const handleRemoveDateSlots = (date) => {
+        setSemesterBusySlots(semesterBusySlots.filter(slot => slot.date !== date));
+    };
+
+    // Hàm xóa một slot cụ thể trong danh sách bận thường
+    const handleRemoveBusySlot = (index) => {
+        setBusySlots(prevSlots => prevSlots.filter((_, i) => i !== index));
+    };
+
+    // Hàm thêm hoặc xóa một slot trong danh sách bận thường
+    const handleToggleBusySlot = (day, slotId) => {
+        const existingIndex = busySlots.findIndex(s => s.day === day && s.slot_id === slotId);
+
+        if (existingIndex >= 0) {
+            // Nếu đã tồn tại thì xóa
+            handleRemoveBusySlot(existingIndex);
+        } else {
+            // Nếu chưa tồn tại thì thêm
+            setBusySlots([...busySlots, { day, slot_id: slotId }]);
+        }
+    };
+
+    // Hàm xử lý chọn slot trong lịch bận học kỳ
+    const handleToggleSelectedSlot = (slotId) => {
+        setSelectedSlots(prev =>
+            prev.includes(slotId)
+                ? prev.filter(id => id !== slotId)
+                : [...prev, slotId]
+        );
+    };
+
+    // Hàm thêm ngày với các slot đã chọn vào danh sách bận học kỳ
+    const handleAddDateWithSlots = () => {
+        if (!selectedDate || selectedSlots.length === 0) return;
+
+        const newSlots = selectedSlots.map(slotId => ({
+            date: format(selectedDate, 'yyyy-MM-dd'),
+            slot_id: slotId
+        }));
+
+        setSemesterBusySlots([...semesterBusySlots, ...newSlots]);
+        setSelectedSlots([]);
+        setSelectedDate(null);
+    };
 
     const handleNext = () => {
         if (activeStep === 0) {
@@ -148,7 +219,7 @@ export default function EditLecturerModal({ open, onClose, lecturer, onSave, err
                 return;
             }
         } else if (activeStep === 2) {
-            if (!editedLecturer.department || !editedLecturer.hire_date || !editedLecturer.degree) {
+            if (!editedLecturer.department || !editedLecturer.degree) {
                 setLocalError('Vui lòng điền đầy đủ thông tin công tác');
                 return;
             }
@@ -167,76 +238,68 @@ export default function EditLecturerModal({ open, onClose, lecturer, onSave, err
         const { name, value } = e.target;
         setEditedLecturer((prev) => ({ ...prev, [name]: value }));
         setLocalError('');
-
-    };
-
-    const handleAddBusySlot = () => {
-        setBusySlots([...busySlots, { day: '', slot_id: '' }]);
-    };
-
-    const handleRemoveBusySlot = (index) => {
-        setBusySlots(busySlots.filter((_, i) => i !== index));
-    };
-
-    const handleBusySlotChange = (index, field, value) => {
-        const updatedSlots = [...busySlots];
-        updatedSlots[index][field] = value;
-        setBusySlots(updatedSlots);
-    };
-
-    const handleAddSemesterBusySlot = () => {
-        setSemesterBusySlots([...semesterBusySlots, { date: '', slot_id: '' }]);
-    };
-
-    const handleRemoveSemesterBusySlot = (index) => {
-        setSemesterBusySlots(semesterBusySlots.filter((_, i) => i !== index));
-    };
-
-    const handleSemesterBusySlotChange = (index, field, value) => {
-        const updatedSlots = [...semesterBusySlots];
-        updatedSlots[index][field] = value;
-        setSemesterBusySlots(updatedSlots);
     };
 
     const handleSubmit = async () => {
-        if (activeStep < steps.length - 1) {
-            if (!editedLecturer.department || !editedLecturer.hire_date || !editedLecturer.degree) {
-                setLocalError('Vui lòng điền đầy đủ thông tin công tác');
-                return;
-            }
-        }
-
         const birthDate = new Date(editedLecturer.day_of_birth);
-        const hireDate = new Date(editedLecturer.hire_date);
         const today = new Date();
-
         if (birthDate >= today) {
             setLocalError('Ngày sinh không hợp lệ');
             return;
         }
 
-        if (hireDate > today) {
-            setLocalError('Ngày tuyển dụng không hợp lệ');
+        const minBirthDate = new Date();
+        minBirthDate.setFullYear(minBirthDate.getFullYear() - 18);
+        if (birthDate > minBirthDate) {
+            setLocalError('Giảng viên phải đủ 18 tuổi');
             return;
         }
 
-        if (hireDate < birthDate) {
-            setLocalError('Ngày tuyển dụng không thể trước ngày sinh');
+        // Bỏ chính nó ra khỏi danh sách so sánh
+        const otherLecturers = existingLecturers.filter(
+            (lecturer) => lecturer.lecturer_id !== editedLecturer.lecturer_id
+        );
+
+        const isDuplicateId = otherLecturers.some(
+            (lecturer) => lecturer.lecturer_id === editedLecturer.lecturer_id
+        );
+        if (isDuplicateId) {
+            setLocalError(`Mã giảng viên "${editedLecturer.lecturer_id}" đã tồn tại`);
             return;
         }
 
-        // Chuyển trạng thái sang tiếng Anh trước khi lưu
-        const statusObj = statusOptions.find(opt => opt.value === editedLecturer.status);
-        const dbStatus = statusObj ? statusObj.db : 'teaching';
+        // Check duplicate Email
+        const isEmailDuplicate = otherLecturers.some(
+            (lecturer) => lecturer.email === editedLecturer.email
+        );
+        if (isEmailDuplicate) {
+            setLocalError(`Email "${editedLecturer.email}" đã tồn tại`);
+            return;
+        }
+
+        // Check duplicate Phone
+        const isPhoneDuplicate = otherLecturers.some(
+            (lecturer) => lecturer.phone_number === editedLecturer.phone_number
+        );
+        if (isPhoneDuplicate) {
+            setLocalError(`Số điện thoại "${editedLecturer.phone_number}" đã tồn tại`);
+            return;
+        }
 
         const updatedLecturerData = {
             ...editedLecturer,
-            status: dbStatus,
+            status: "active",
             updated_at: new Date().toISOString(),
         };
 
+        console.log(updatedLecturerData);
+        console.log(editedLecturer.subjects);
+        console.log(busySlots);
+        console.log(semesterBusySlots);
+
         await onSave(updatedLecturerData, editedLecturer.subjects, busySlots, semesterBusySlots);
     };
+
 
     return (
         <Dialog
@@ -248,7 +311,8 @@ export default function EditLecturerModal({ open, onClose, lecturer, onSave, err
                 sx: {
                     borderRadius: '12px',
                     boxShadow: '0px 8px 24px rgba(0, 0, 0, 0.1)',
-                    overflow: 'hidden'
+                    overflow: 'hidden',
+                    maxHeight: '80vh',
                 }
             }}
         >
@@ -320,7 +384,6 @@ export default function EditLecturerModal({ open, onClose, lecturer, onSave, err
                                 label="Mã giảng viên"
                                 name="lecturer_id"
                                 value={editedLecturer.lecturer_id}
-                                onChange={handleChange}
                                 fullWidth
                                 variant="outlined"
                                 required
@@ -334,6 +397,7 @@ export default function EditLecturerModal({ open, onClose, lecturer, onSave, err
                                 }}
                                 sx={{ mb: 2 }}
                             />
+
                             <TextField
                                 label="Họ và tên"
                                 name="name"
@@ -440,7 +504,7 @@ export default function EditLecturerModal({ open, onClose, lecturer, onSave, err
                                 variant="outlined"
                                 required
                                 multiline
-                                rows={3}
+                                rows={1}
                                 InputProps={{
                                     startAdornment: (
                                         <InputAdornment position="start">
@@ -479,25 +543,9 @@ export default function EditLecturerModal({ open, onClose, lecturer, onSave, err
                                     ))}
                                 </Select>
                             </FormControl>
-                            <TextField
-                                label="Ngày tuyển dụng"
-                                name="hire_date"
-                                type="date"
-                                value={editedLecturer.hire_date}
-                                onChange={handleChange}
-                                fullWidth
-                                variant="outlined"
-                                required
-                                InputLabelProps={{ shrink: true }}
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            <Work color="action" />
-                                        </InputAdornment>
-                                    ),
-                                }}
-                                sx={{ mb: 2 }}
-                            />
+
+
+
                             <FormControl fullWidth required>
                                 <InputLabel>Bằng cấp</InputLabel>
                                 <Select
@@ -518,197 +566,471 @@ export default function EditLecturerModal({ open, onClose, lecturer, onSave, err
                                     ))}
                                 </Select>
                             </FormControl>
-                            <FormControl fullWidth>
-                                <InputLabel>Môn học giảng dạy</InputLabel>
-                                <Select
-                                    name="subjects"
-                                    multiple
-                                    value={editedLecturer.subjects}
-                                    onChange={(e) => {
-                                        const value = e.target.value;
-                                        setEditedLecturer(prev => ({
-                                            ...prev,
-                                            subjects: typeof value === 'string' ? value.split(',') : value
-                                        }));
-                                        setLocalError('');
+
+                            <Box sx={{ gridColumn: '1 / -1', mt: 1 }}>
+                                <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'medium', color: 'text.primary' }}>
+                                    Chuyên môn giảng dạy
+                                </Typography>
+                                <Paper
+                                    variant="outlined"
+                                    sx={{
+                                        p: 2,
+                                        borderRadius: 2,
+                                        borderColor: 'divider',
+                                        bgcolor: 'background.default'
                                     }}
-                                    label="Môn học giảng dạy"
-                                    renderValue={(selected) => (
-                                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                            {selected.map((value) => {
-                                                const subject = subjects?.find(s => s.subject_id === value);
-                                                return (
-                                                    <Chip
-                                                        key={value}
-                                                        label={subject ? `${subject.subject_id} - ${subject.subject_name}` : value}
-                                                        size="small"
-                                                    />
-                                                );
-                                            })}
+                                >
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                                        <Typography variant="body2" color="text.secondary">
+                                            Chọn môn học từ danh sách dưới đây
+                                        </Typography>
+                                        {editedLecturer.subjects && (
+                                            <Chip
+                                                label={`${editedLecturer.subjects.length} môn đã chọn`}
+                                                size="small"
+                                                color="primary"
+                                                variant="outlined"
+                                            />
+                                        )}
+                                    </Box>
+
+                                    {subjects && subjects.length > 0 ? (
+                                        <>
+                                            <Box sx={{ maxHeight: 280, overflow: 'auto', p: 1, bgcolor: 'grey.50', borderRadius: 1 }}>
+                                                <Grid container spacing={1}>
+                                                    {subjects.map((subject) => (
+                                                        <Grid item xs={12} sm={6} key={subject.subject_id}>
+                                                            <Paper
+                                                                elevation={0}
+                                                                sx={{
+                                                                    px: 1,
+                                                                    borderRadius: 1,
+                                                                    border: '1px solid',
+                                                                    borderColor: editedLecturer.subjects.includes(subject.subject_id) ?
+                                                                        'secondary.main' : 'divider',
+                                                                    bgcolor: 'background.paper',
+                                                                    transition: 'all 0.2s',
+                                                                    '&:hover': {
+                                                                        borderColor: 'primary.main',
+                                                                        bgcolor: 'action.hover'
+                                                                    }
+                                                                }}
+                                                            >
+                                                                <FormControlLabel
+                                                                    control={
+                                                                        <Checkbox
+                                                                            checked={editedLecturer.subjects.includes(subject.subject_id)}
+                                                                            onChange={(e) => {
+                                                                                const subjectId = subject.subject_id;
+                                                                                let newSubjects;
+
+                                                                                if (e.target.checked) {
+                                                                                    newSubjects = [...editedLecturer.subjects, subjectId];
+                                                                                } else {
+                                                                                    newSubjects = editedLecturer.subjects.filter(id => id !== subjectId);
+                                                                                }
+
+                                                                                setEditedLecturer(prev => ({
+                                                                                    ...prev,
+                                                                                    subjects: newSubjects
+                                                                                }));
+                                                                                setLocalError('');
+                                                                            }}
+                                                                            name="subjects"
+                                                                            color="primary"
+                                                                            sx={{
+                                                                                '& .MuiSvgIcon-root': { fontSize: 20 }
+                                                                            }}
+                                                                        />
+                                                                    }
+                                                                    label={
+                                                                        <Box>
+                                                                            <Typography variant="subtitle2" color="text.secondary">
+                                                                                {subject.subject_name}
+                                                                            </Typography>
+                                                                        </Box>
+                                                                    }
+                                                                    sx={{
+                                                                        width: '100%',
+                                                                        m: 0,
+                                                                        alignItems: 'center',
+                                                                    }}
+                                                                />
+                                                            </Paper>
+                                                        </Grid>
+                                                    ))}
+                                                </Grid>
+                                            </Box>
+
+                                            {editedLecturer.subjects.length > 0 && (
+                                                <Box sx={{ mt: 3 }}>
+                                                    <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 'medium' }}>
+                                                        Môn học đã chọn:
+                                                    </Typography>
+                                                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                                                        {editedLecturer.subjects.map((subjectId) => {
+                                                            const subject = subjects.find(s => s.subject_id === subjectId);
+                                                            return (
+                                                                <Chip
+                                                                    key={subjectId}
+                                                                    label={subject ? `${subject.subject_name}` : subjectId}
+                                                                    size="small"
+                                                                    color="primary"
+                                                                    onDelete={() => {
+                                                                        const newSubjects = editedLecturer.subjects.filter(id => id !== subjectId);
+                                                                        setEditedLecturer(prev => ({
+                                                                            ...prev,
+                                                                            subjects: newSubjects
+                                                                        }));
+                                                                    }}
+                                                                    deleteIcon={<Cancel />}
+                                                                    sx={{
+                                                                        borderRadius: 1,
+                                                                        '& .MuiChip-label': {
+                                                                            overflow: 'hidden',
+                                                                            textOverflow: 'ellipsis',
+                                                                            maxWidth: 200
+                                                                        }
+                                                                    }}
+                                                                />
+                                                            );
+                                                        })}
+                                                    </Box>
+                                                </Box>
+                                            )}
+                                        </>
+                                    ) : (
+                                        <Box sx={{
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            py: 4,
+                                            color: 'text.secondary'
+                                        }}>
+                                            <School sx={{ fontSize: 40, mb: 1, opacity: 0.5 }} />
+                                            <Typography variant="body2">Không có môn học nào</Typography>
                                         </Box>
                                     )}
-                                >
-                                    {subjects && subjects.map((subject) => (
-                                        <MenuItem key={subject.subject_id} value={subject.subject_id}>
-                                            {subject.subject_id} - {subject.subject_name}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                            <FormControl fullWidth required>
-                                <InputLabel>Trạng thái</InputLabel>
-                                <Select
-                                    name="status"
-                                    value={editedLecturer.status}
-                                    onChange={handleChange}
-                                    label="Trạng thái"
-                                >
-                                    {statusOptions.map((option) => (
-                                        <MenuItem key={option.value} value={option.value}>
-                                            <Chip
-                                                label={option.value}
-                                                size="small"
-                                                color={option.color}
-                                                sx={{ mr: 1 }}
-                                            />
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
+                                </Paper>
+                            </Box>
                         </Box>
                     )}
 
                     {activeStep === 3 && (
-                        <Box sx={{
-                            display: 'grid',
-                            gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
-                            gap: 3
-                        }}>
-                            {/* Lịch bận thường xuyên */}
-                            <Paper sx={{ p: 3, borderRadius: 2, boxShadow: 1 }}>
-                                <Typography variant="h6" gutterBottom color="primary">
-                                    Lịch bận thường xuyên
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                                    Các tiết học bận cố định theo tuần
-                                </Typography>
-                                <Button
-                                    variant="outlined"
-                                    onClick={handleAddBusySlot}
-                                    sx={{ mb: 2 }}
-                                    startIcon={<AddIcon />}
-                                    size="small"
-                                >
-                                    Thêm lịch bận
-                                </Button>
-                                {busySlots.map((slot, index) => (
-                                    <Box key={index} sx={{
-                                        display: 'grid',
-                                        gridTemplateColumns: '1fr 1fr auto',
-                                        gap: 1,
-                                        mb: 2,
-                                        alignItems: 'center'
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                            {/* Lịch bận thường xuyên - Weekly Schedule */}
+                            <Paper sx={{
+                                p: 1.5, borderRadius: 1, boxShadow: 2, background: 'linear-gradient(to bottom, #f8f9ff, #ffffff)'
+                            }}>
+                                <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                                    <Box sx={{
+                                        width: 40,
+                                        height: 40,
+                                        borderRadius: '50%',
+                                        bgcolor: 'primary.main',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        mr: 2
                                     }}>
-                                        <FormControl fullWidth size="small">
-                                            <InputLabel>Thứ</InputLabel>
-                                            <Select
-                                                value={slot.day}
-                                                onChange={(e) => handleBusySlotChange(index, 'day', e.target.value)}
-                                                label="Thứ"
-                                            >
-                                                <MenuItem value="Mon">Thứ 2</MenuItem>
-                                                <MenuItem value="Tue">Thứ 3</MenuItem>
-                                                <MenuItem value="Wed">Thứ 4</MenuItem>
-                                                <MenuItem value="Thu">Thứ 5</MenuItem>
-                                                <MenuItem value="Fri">Thứ 6</MenuItem>
-                                                <MenuItem value="Sat">Thứ 7</MenuItem>
-                                            </Select>
-                                        </FormControl>
-                                        <FormControl fullWidth size="small">
-                                            <InputLabel>Tiết</InputLabel>
-                                            <Select
-                                                value={slot.slot_id}
-                                                onChange={(e) => handleBusySlotChange(index, 'slot_id', e.target.value)}
-                                                label="Tiết"
-                                            >
-                                                <MenuItem value="S1">Tiết 1 (7:00-09:00)</MenuItem>
-                                                <MenuItem value="S2">Tiết 2 (09:00-11:00)</MenuItem>
-                                                <MenuItem value="C1">Tiết 3 (13:00-15:00)</MenuItem>
-                                                <MenuItem value="C2">Tiết 4 (15:00-17:00)</MenuItem>
-                                                <MenuItem value="T1">Tiết 5 (17:30-19:30)</MenuItem>
-                                                <MenuItem value="T2">Tiết 6 (19:30-21:30)</MenuItem>
-                                            </Select>
-                                        </FormControl>
-                                        <IconButton
-                                            onClick={() => handleRemoveBusySlot(index)}
-                                            color="error"
-                                            size="small"
-                                        >
-                                            <Close />
-                                        </IconButton>
+                                        <EventRepeat sx={{ color: 'white', fontSize: 20 }} />
                                     </Box>
-                                ))}
+                                    <Box>
+                                        <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: 'primary.dark' }}>
+                                            Lịch bận cố định hàng tuần
+                                        </Typography>
+                                        <Typography variant="subtitle2" color="text.secondary">
+                                            Chọn các khung giờ bận cố định theo từng thứ
+                                        </Typography>
+                                    </Box>
+                                </Box>
+
+                                {/* Weekly Schedule Grid */}
+                                <Box sx={{ mb: 3, flex: 2 }}>
+                                    <Box sx={{
+                                        border: '1px solid',
+                                        borderColor: 'divider',
+                                        borderRadius: 2,
+                                        overflow: 'hidden',
+                                        maxWidth: '100%',
+                                        overflowX: 'auto'
+                                    }}>
+                                        {/* Header - Days of Week */}
+                                        <Box sx={{ display: 'flex', bgcolor: 'primary.main', color: 'white' }}>
+                                            <Box sx={{
+                                                width: 120,
+                                                p: 1,
+                                                fontWeight: 'bold',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center'
+                                            }}>
+                                                Khung giờ
+                                            </Box>
+                                            {[
+                                                { value: 'Mon', label: 'T2' },
+                                                { value: 'Tue', label: 'T3' },
+                                                { value: 'Wed', label: 'T4' },
+                                                { value: 'Thu', label: 'T5' },
+                                                { value: 'Fri', label: 'T6' },
+                                                { value: 'Sat', label: 'T7' }
+                                            ].map(day => (
+                                                <Box key={day.value} sx={{
+                                                    flex: 1,
+                                                    minWidth: 60,
+                                                    p: 1,
+                                                    textAlign: 'center',
+                                                    fontWeight: 'medium',
+                                                    fontSize: '0.8rem'
+                                                }}>
+                                                    {day.label}
+                                                </Box>
+                                            ))}
+                                        </Box>
+
+                                        {/* Rows - Time Slots */}
+                                        {[
+                                            { id: 'S1', label: 'S1 (7:00-9:00)' },
+                                            { id: 'S2', label: 'S2 (9:00-11:00)' },
+                                            { id: 'C1', label: 'C1 (13:00-15:00)' },
+                                            { id: 'C2', label: 'C2 (15:00-17:00)' },
+                                            { id: 'T1', label: 'T1 (17:30-19:30)' },
+                                            { id: 'T2', label: 'T2 (19:30-21:30)' }
+                                        ].map(slot => (
+                                            <Box key={slot.id} sx={{
+                                                display: 'flex',
+                                                borderBottom: '1px solid',
+                                                borderColor: 'divider',
+                                                '&:last-child': { borderBottom: 'none' }
+                                            }}>
+                                                <Box sx={{
+                                                    width: 120,
+                                                    p: 1,
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    fontWeight: 'medium',
+                                                    bgcolor: 'grey.50',
+                                                    fontSize: '0.8rem'
+                                                }}>
+                                                    {slot.label}
+                                                </Box>
+                                                {[
+                                                    { value: 'Mon', label: 'T2' },
+                                                    { value: 'Tue', label: 'T3' },
+                                                    { value: 'Wed', label: 'T4' },
+                                                    { value: 'Thu', label: 'T5' },
+                                                    { value: 'Fri', label: 'T6' },
+                                                    { value: 'Sat', label: 'T7' }
+                                                ].map(day => {
+                                                    const isSelected = busySlots.some(s => s.day === day.value && s.slot_id === slot.id);
+                                                    return (
+                                                        <Box
+                                                            key={`${day.value}-${slot.id}`}
+                                                            sx={{
+                                                                flex: 1,
+                                                                minWidth: 60,
+                                                                p: 0.5,
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                justifyContent: 'center',
+                                                                cursor: 'pointer',
+                                                                bgcolor: isSelected ? 'secondary.light' : 'transparent',
+                                                                borderLeft: '1px solid',
+                                                                borderColor: 'divider',
+                                                                transition: 'all 0.2s',
+                                                                '&:hover': {
+                                                                    bgcolor: isSelected ? 'primary.main' : 'action.hover',
+                                                                    '& .MuiCheckbox-root': {
+                                                                        color: isSelected ? 'white' : 'primary.main'
+                                                                    }
+                                                                }
+                                                            }}
+                                                            onClick={() => handleToggleBusySlot(day.value, slot.id)}
+                                                        >
+                                                            <Checkbox
+                                                                checked={isSelected}
+                                                                size="small"
+                                                                sx={{
+                                                                    p: 0,
+                                                                    color: isSelected ? 'primary.main' : 'action.active',
+                                                                    '&.Mui-checked': {
+                                                                        color: 'primary.main'
+                                                                    }
+                                                                }}
+                                                            />
+                                                        </Box>
+                                                    );
+                                                })}
+                                            </Box>
+                                        ))}
+                                    </Box>
+                                </Box>
+
+                                {/* Selected Weekly Slots */}
+                                {busySlots.length > 0 && (
+                                    <Box sx={{ flex: 1 }}>
+                                        <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 'medium', color: 'primary.main', mb: 1 }}>
+                                            Lịch bận đã chọn:
+                                        </Typography>
+                                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                                            {busySlots.map((slot, index) => (
+                                                <Chip
+                                                    key={index}
+                                                    label={`${getDayName(slot.day)} - ${getSlotLabel(slot.slot_id)}`}
+                                                    color="primary"
+                                                    onDelete={() => handleRemoveBusySlot(index)}
+                                                    deleteIcon={<Cancel />}
+                                                    sx={{ borderRadius: 1 }}
+                                                />
+                                            ))}
+                                        </Box>
+                                    </Box>
+                                )}
                             </Paper>
 
-                            {/* Lịch bận học kỳ */}
-                            <Paper sx={{ p: 3, borderRadius: 2, boxShadow: 1 }}>
-                                <Typography variant="h6" gutterBottom color="secondary">
-                                    Lịch bận học kỳ
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                                    Các ngày bận cụ thể trong học kỳ
-                                </Typography>
-                                <Button
-                                    variant="outlined"
-                                    color="secondary"
-                                    onClick={handleAddSemesterBusySlot}
-                                    sx={{ mb: 2 }}
-                                    startIcon={<AddIcon />}
-                                    size="small"
-                                >
-                                    Thêm lịch bận
-                                </Button>
-                                {semesterBusySlots.map((slot, index) => (
-                                    <Box key={index} sx={{
-                                        display: 'grid',
-                                        gridTemplateColumns: '1fr 1fr auto',
-                                        gap: 1,
-                                        mb: 2,
-                                        alignItems: 'center'
+                            {/* Lịch bận học kỳ - Specific Dates */}
+                            <Paper sx={{ p: 1.5, borderRadius: 2, boxShadow: 2, background: 'linear-gradient(to bottom, #f8f2ff, #ffffff)' }}>
+                                <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                                    <Box sx={{
+                                        width: 40,
+                                        height: 40,
+                                        borderRadius: '50%',
+                                        bgcolor: 'secondary.main',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        mr: 2
                                     }}>
-                                        <TextField
-                                            label="Ngày"
-                                            type="date"
-                                            value={slot.date}
-                                            onChange={(e) => handleSemesterBusySlotChange(index, 'date', e.target.value)}
-                                            fullWidth
-                                            size="small"
-                                            InputLabelProps={{ shrink: true }}
-                                        />
-                                        <FormControl fullWidth size="small">
-                                            <InputLabel>Tiết</InputLabel>
-                                            <Select
-                                                value={slot.slot_id}
-                                                onChange={(e) => handleSemesterBusySlotChange(index, 'slot_id', e.target.value)}
-                                                label="Tiết"
-                                            >
-                                                <MenuItem value="S1">Tiết 1 (7:00-09:00)</MenuItem>
-                                                <MenuItem value="S2">Tiết 2 (09:00-11:00)</MenuItem>
-                                                <MenuItem value="C1">Tiết 3 (13:00-15:00)</MenuItem>
-                                                <MenuItem value="C2">Tiết 4 (15:00-17:00)</MenuItem>
-                                                <MenuItem value="T1">Tiết 5 (17:30-19:30)</MenuItem>
-                                                <MenuItem value="T2">Tiết 6 (19:30-21:30)</MenuItem>
-                                            </Select>
-                                        </FormControl>
-                                        <IconButton
-                                            onClick={() => handleRemoveSemesterBusySlot(index)}
-                                            color="error"
-                                            size="small"
-                                        >
-                                            <Close />
-                                        </IconButton>
+                                        <EventBusy sx={{ color: 'white', fontSize: 20 }} />
                                     </Box>
-                                ))}
+                                    <Box>
+                                        <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: 'secondary.dark' }}>
+                                            Lịch bận theo ngày cụ thể
+                                        </Typography>
+                                        <Typography variant="subtitle2" color="text.secondary">
+                                            Chọn các ngày và khung giờ bận cụ thể trong học kỳ
+                                        </Typography>
+                                    </Box>
+                                </Box>
+
+                                <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mb: 3 }}>
+                                    {/* Calendar Picker */}
+                                    <Box sx={{ flex: 1, minWidth: 300 }}>
+                                        <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                            <DatePicker
+                                                label="Chọn ngày bận"
+                                                value={selectedDate}
+                                                onChange={setSelectedDate}
+                                                renderInput={(params) => (
+                                                    <TextField
+                                                        {...params}
+                                                        fullWidth
+                                                    />
+                                                )}
+                                            />
+                                        </LocalizationProvider>
+                                    </Box>
+
+                                    {/* Time Slot Selection */}
+                                    <Box sx={{ flex: 1, minWidth: 300 }}>
+                                        <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 'medium', mb: 1 }}>
+                                            Chọn khung giờ bận
+                                        </Typography>
+                                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                                            {[
+                                                { id: 'S1', label: 'S1' },
+                                                { id: 'S2', label: 'S2' },
+                                                { id: 'C1', label: 'C1' },
+                                                { id: 'C2', label: 'C2' },
+                                                { id: 'T1', label: 'T1' },
+                                                { id: 'T2', label: 'T2' }
+                                            ].map(slot => (
+                                                <Chip
+                                                    key={slot.id}
+                                                    label={slot.label}
+                                                    clickable
+                                                    color={selectedSlots.includes(slot.id) ? 'secondary' : 'default'}
+                                                    variant={selectedSlots.includes(slot.id) ? 'filled' : 'outlined'}
+                                                    onClick={() => handleToggleSelectedSlot(slot.id)}
+                                                    sx={{
+                                                        borderRadius: 1,
+                                                        maxHeight: 25,
+                                                        fontWeight: 'medium'
+                                                    }}
+                                                />
+                                            ))}
+                                        </Box>
+                                    </Box>
+
+                                    {/* Add Button */}
+                                    <Button
+                                        variant="contained"
+                                        color="secondary"
+                                        onClick={handleAddDateWithSlots}
+                                        disabled={!selectedDate || selectedSlots.length === 0}
+                                        startIcon={<EventBusy />}
+                                        sx={{ alignSelf: 'flex-end', height: 40 }}
+                                    >
+                                        Thêm lịch
+                                    </Button>
+                                </Box>
+
+                                {/* Selected Specific Dates */}
+                                {semesterBusySlots.length > 0 && (
+                                    <Box>
+                                        <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 'medium', color: 'secondary.main', mb: 1 }}>
+                                            Ngày bận đã chọn
+                                        </Typography>
+                                        <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 2 }}>
+                                            {groupSemesterSlotsByDate().map((group, index) => (
+                                                <Paper
+                                                    key={index}
+                                                    variant="outlined"
+                                                    sx={{
+                                                        p: 2,
+                                                        borderRadius: 2,
+                                                        borderLeft: '4px solid',
+                                                        borderLeftColor: 'secondary.main',
+                                                        position: 'relative'
+                                                    }}
+                                                >
+                                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+                                                        <Typography variant="subtitle2" fontWeight="bold">
+                                                            {format(new Date(group.date), 'dd/MM/yyyy')}
+                                                        </Typography>
+                                                        <IconButton
+                                                            sx={{
+                                                                position: 'absolute',
+                                                                top: 4,
+                                                                right: 4
+                                                            }}
+                                                            size="small"
+                                                            onClick={() => handleRemoveDateSlots(group.date)}
+                                                            color="error"
+                                                        >
+                                                            <Close />
+                                                        </IconButton>
+                                                    </Box>
+                                                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                                        {group.slots.map(slotId => (
+                                                            <Chip
+                                                                sx={{
+                                                                    borderRadius: 1,
+                                                                }}
+                                                                key={slotId}
+                                                                label={getSlotLabel(slotId)}
+                                                                size="small"
+                                                                color="secondary"
+                                                                variant="outlined"
+                                                            />
+                                                        ))}
+                                                    </Box>
+                                                </Paper>
+                                            ))}
+                                        </Box>
+                                    </Box>
+                                )}
                             </Paper>
                         </Box>
                     )}

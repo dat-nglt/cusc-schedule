@@ -1,21 +1,19 @@
 export default {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable("accounts", {
-      // Tên bảng: accounts
       id: {
-        // Đây sẽ là userId mà các bảng khác liên kết tới
-        type: Sequelize.UUID, // Hoặc Sequelize.INTEGER nếu bạn dùng INT
-        defaultValue: Sequelize.UUIDV4, // Hoặc Sequelize.DataTypes.INTEGER nếu dùng INT
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
         primaryKey: true,
         allowNull: false,
       },
       email: {
         type: Sequelize.STRING(70),
-        allowNull: false, // Email nên là NOT NULL cho bảng chính
+        allowNull: false,
         unique: true,
       },
       role: {
-        type: Sequelize.STRING(30), // Hoặc Sequelize.ENUM nếu bạn muốn định nghĩa rõ các vai trò
+        type: Sequelize.STRING(30),
         allowNull: false,
       },
       google_id: {
@@ -37,6 +35,10 @@ export default {
         type: Sequelize.DATE,
         allowNull: false,
         defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+      },
+      deleted_at: {                  // 👈 thêm cột deleted_at
+        type: Sequelize.DATE,
+        allowNull: true,
       },
     });
   },

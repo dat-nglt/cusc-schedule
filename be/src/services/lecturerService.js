@@ -3,10 +3,16 @@ import models from "../models/index.js";
 import ExcelUtils from "../utils/ExcelUtils.js";
 import { Op } from "sequelize";
 import logger from "../utils/logger.js";
-import SemesterBusySlot from "../models/SemesterBusySlot.js";
 
-const { Lecturer, Account, sequelize, Subject, LecturerAssignment, BusySlot } =
-  models;
+const {
+  Lecturer,
+  Account,
+  sequelize,
+  Subject,
+  LecturerAssignment,
+  BusySlot,
+  SemesterBusySlot,
+} = models;
 /**
  * Lấy tất cả giảng viên.
  * @returns {Promise<Array>} Danh sách tất cả giảng viên.
@@ -230,86 +236,135 @@ export const createLecturerService = async (
  * @returns {Promise<Object>} Giảng viên đã được cập nhật.
  * @throws {Error} Nếu không tìm thấy giảng viên hoặc có lỗi.
  */
-export const updateLecturerService = async (id, lecturerData, subjectIds) => {
-  const transaction = await models.sequelize.transaction();
+export const updateLecturerService = async (
+  lecturerId,
+  updatedLecturerData,
+  updatedSubjects = [],
+  busySlots = [],
+  semesterBusySlots = []
+) => {
+  const transaction = await sequelize.transaction();
 
   try {
-    // 1. Tìm giảng viên cần cập nhật, bao gồm cả tài khoản
-    const lecturer = await models.Lecturer.findByPk(id, {
-      include: [{ model: models.Account, as: "account" }],
+    // --- 1. Tìm giảng viên kèm account
+    const lecturer = await Lecturer.findByPk(lecturerId, {
+      include: [{ model: Account, as: "account" }],
       transaction,
     });
 
     if (!lecturer) {
-      // Trả về null thay vì ném lỗi để controller xử lý 404
       await transaction.rollback();
       return null;
     }
 
-    const { email, ...restOfLecturerData } = lecturerData;
+    const { email, ...restOfLecturerData } = updatedLecturerData;
 
-    // 2. Kiểm tra và cập nhật email nếu có thay đổi
+    // --- 2. Kiểm tra email mới
     if (email && email !== lecturer.account.email) {
-      const existingAccount = await models.Account.findOne({
+      const existingAccount = await Account.findOne({
         where: { email, id: { [Op.ne]: lecturer.account.id } },
         transaction,
       });
 
       if (existingAccount) {
-        throw new Error("Email đã tồn tại.");
+        throw new Error(`Email "${email}" đã tồn tại.`);
       }
+
       await lecturer.account.update({ email }, { transaction });
     }
 
-    // 3. Cập nhật các trường thông tin giảng viên
+    // --- 4. Cập nhật thông tin giảng viên
     await lecturer.update(restOfLecturerData, { transaction });
 
-    // 4. Cập nhật danh sách môn học (nếu có subjectIds)
-    if (subjectIds) {
-      // Xóa tất cả các môn học cũ của giảng viên
-      await models.LecturerAssignment.destroy({
-        where: { lecturer_id: id },
+    // --- 5. Cập nhật danh sách môn học
+    if (updatedSubjects && updatedSubjects.length > 0) {
+      const existingSubjects = await Subject.findAll({
+        where: { subject_id: { [Op.in]: updatedSubjects } },
+        attributes: ["subject_id"],
         transaction,
       });
 
-      // Thêm các môn học mới
-      if (subjectIds.length > 0) {
-        const assignments = subjectIds.map((subjectId) => ({
-          lecturer_id: id,
-          subject_id: subjectId,
-        }));
-        await models.LecturerAssignment.bulkCreate(assignments, {
-          transaction,
-        });
+      const existingSubjectIds = existingSubjects.map((s) => s.subject_id);
+      const invalidSubjectIds = updatedSubjects.filter(
+        (id) => !existingSubjectIds.includes(id)
+      );
+
+      if (invalidSubjectIds.length > 0) {
+        throw new Error(
+          `Các môn học không tồn tại: ${invalidSubjectIds.join(", ")}`
+        );
       }
+
+      await LecturerAssignment.destroy({
+        where: { lecturer_id: lecturerId },
+        transaction,
+      });
+
+      const assignments = updatedSubjects.map((subjectId) => ({
+        lecturer_id: lecturerId,
+        subject_id: subjectId,
+      }));
+      await LecturerAssignment.bulkCreate(assignments, { transaction });
     }
 
+    // --- 6. Cập nhật busySlots
+    if (busySlots && busySlots.length > 0) {
+      await BusySlot.destroy({
+        where: { lecturer_id: lecturerId },
+        transaction,
+      });
+
+      const busy = busySlots.map((slot) => ({
+        lecturer_id: lecturerId,
+        day: slot.day,
+        slot_id: slot.slot_id,
+      }));
+
+      await BusySlot.bulkCreate(busy, { transaction });
+    }
+
+    // --- 7. Cập nhật semesterBusySlots
+    if (Array.isArray(semesterBusySlots) && semesterBusySlots.length > 0) {
+      await models.SemesterBusySlot.destroy({
+        where: { lecturer_id: lecturerId },
+        transaction,
+      });
+
+      const semesterBusy = semesterBusySlots.map((slot) => ({
+        lecturer_id: lecturerId,
+        date: slot.date,
+        slot_id: slot.slot_id || null,
+      }));
+
+      await models.SemesterBusySlot.bulkCreate(semesterBusy, { transaction });
+    }
+
+    // --- 8. Commit transaction
     await transaction.commit();
 
-    // 5. Trả về đối tượng giảng viên đã cập nhật hoàn chỉnh
-    return await models.Lecturer.findByPk(id, {
+    // --- 9. Trả về lecturer đầy đủ
+    const result = await Lecturer.findByPk(lecturerId, {
       include: [
         {
-          model: models.Account,
+          model: Account,
           as: "account",
           attributes: ["email", "role", "status"],
         },
         {
-          model: models.Subject,
+          model: Subject,
           as: "subjects",
           through: { attributes: [] },
           attributes: ["subject_id", "subject_name"],
         },
       ],
     });
+
+    return result;
   } catch (error) {
     if (!transaction.finished) {
       await transaction.rollback();
     }
-    console.error(
-      `Lỗi trong service khi cập nhật giảng viên với ID ${id}:`,
-      error
-    );
+    console.error(`Lỗi khi cập nhật giảng viên ID ${lecturerId}:`, error);
     throw error;
   }
 };
@@ -436,7 +491,6 @@ export const importLecturersFromJsonService = async (lecturersData) => {
           department: lecturerData.department
             ? lecturerData.department.toString().trim()
             : null,
-          hire_date: lecturerData.hire_date || null,
           degree: lecturerData.degree
             ? lecturerData.degree.toString().trim()
             : null,

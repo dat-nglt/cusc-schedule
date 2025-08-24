@@ -22,7 +22,7 @@ export const getLecturerByIdAPI = async (id) => {
 
 export const createLecturerAPI = async (lecturerData) => {
   console.log(lecturerData);
-  
+
   try {
     const response = await axiosInstance.post(
       "/api/lecturers/create",
@@ -35,13 +35,21 @@ export const createLecturerAPI = async (lecturerData) => {
   }
 };
 
-export const updateLecturerAPI = async (id, lecturerData) => {
+export const updateLecturerAPI = async (
+  id,
+  lecturerData,
+  subjects = [],
+  busySlots = [],
+  semesterBusySlots = []
+) => {
   try {
-    const response = await axiosInstance.put(
-      `/api/lecturers/update/${id}`,
-      lecturerData
-    );
-    return response;
+    const response = await axiosInstance.put(`/api/lecturers/update/${id}`, {
+      lecturerData,
+      subjects,
+      busySlots,
+      semesterBusySlots,
+    });
+    return response.data; // trả về data trực tiếp
   } catch (error) {
     console.error("Error updating lecturer:", error);
     throw error;

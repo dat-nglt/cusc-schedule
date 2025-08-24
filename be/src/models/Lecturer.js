@@ -18,10 +18,6 @@ const Lecturer = (sequelize) => {
         type: DataTypes.STRING(100),
         allowNull: true,
       },
-      hire_date: {
-        type: DataTypes.DATEONLY,
-        allowNull: true,
-      },
       degree: {
         type: DataTypes.STRING(100),
         allowNull: true,
@@ -56,8 +52,8 @@ const Lecturer = (sequelize) => {
       timestamps: true,
       createdAt: "created_at",
       updatedAt: "updated_at",
-      paranoid: true, // bật soft delete
-      deletedAt: "deleted_at", // tên cột deletedAt
+      paranoid: true,
+      deletedAt: "deleted_at",
     }
   );
 
