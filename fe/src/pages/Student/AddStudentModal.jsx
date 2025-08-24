@@ -37,7 +37,8 @@ import {
     Class,
     Event,
     CheckCircle,
-    Error as ErrorIcon
+    Error as ErrorIcon,
+    Login
 } from '@mui/icons-material';
 import * as XLSX from 'xlsx';
 import PreviewStudentModal from './PreviewStudentModal';
@@ -136,7 +137,6 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
 
         // 3. Nếu có lỗi, dừng lại và không submit
         if (Object.keys(formErrors).length > 0) {
-            console.log("Form có lỗi, không thể submit.");
             return;
         }
 
@@ -150,7 +150,6 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
                 updated_at: new Date().toISOString(),
             };
 
-            console.log(studentToAdd);
             await onAddStudent(studentToAdd);
 
             if (!error && !loading) {

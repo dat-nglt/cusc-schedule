@@ -68,25 +68,21 @@ export const getStudentByIdController = async (req, res) => {
  * @access Private (admin, training_officer)
  */
 export const createStudentController = async (req, res) => {
-  const studentData = req.body;
   try {
-    const newStudent = await createStudentService(studentData);
+    const newStudent = await createStudentService(req.body);
     return APIResponse(res, 201, newStudent, "Student created successfully.");
   } catch (error) {
-    if (
-      error.message.includes("Mã học viên") ||
-      error.message.includes("Email")
-    ) {
-      return APIResponse(res, 409, null, error.message); // Conflict
+    const message =
+      error.message || "An error occurred while creating the student.";
+
+    // Conflict (409) khi lỗi liên quan đến Email hoặc Mã học viên
+    if (message.includes("Mã học viên") || message.includes("Email")) {
+      return APIResponse(res, 409, null, message);
     }
-    // Lỗi chung
+
+    // Lỗi khác
     console.error("Error creating student:", error);
-    return APIResponse(
-      res,
-      500,
-      null,
-      error.message || "An error occurred while creating the student."
-    );
+    return APIResponse(res, 500, null, message);
   }
 };
 
@@ -100,11 +96,9 @@ export const createStudentController = async (req, res) => {
 export const updateStudentController = async (req, res) => {
   const { id } = req.params;
   const studentData = req.body;
+
   try {
     const updatedStudent = await updateStudentService(id, studentData);
-    if (!updatedStudent) {
-      return APIResponse(res, 404, null, "Không tìm thấy thông tin học vieneF");
-    }
 
     return APIResponse(
       res,
@@ -113,16 +107,25 @@ export const updateStudentController = async (req, res) => {
       "Cập nhật thông tin học viên thành công"
     );
   } catch (error) {
+    // Trường hợp email đã tồn tại
     if (error.message.includes("Email")) {
-      return APIResponse(res, 409, null, error.message); // Conflict
+      return APIResponse(res, 409, null, error.message);
     }
 
-    console.error(`Lỗi khi thực hiện cập nhật Học viên ${id}:`, error.message);
+    // Trường hợp không tìm thấy học viên
+    if (error.message.includes("Không tìm thấy")) {
+      return APIResponse(res, 404, null, error.message);
+    }
+
+    console.error(
+      `❌ Lỗi khi cập nhật Học viên ${id}:`,
+      error.stack || error.message
+    );
     return APIResponse(
       res,
       500,
       null,
-      error.message || "Xảy ra lỗi trong quá trình cập nhật thông tin học viên"
+      "Xảy ra lỗi trong quá trình cập nhật thông tin học viên"
     );
   }
 };
@@ -136,6 +139,10 @@ export const updateStudentController = async (req, res) => {
  */
 export const deleteStudentController = async (req, res) => {
   const { id } = req.params;
+
+  if (!id) {
+    return APIResponse(res, 400, null, "Thiếu ID học viên để xoá");
+  }
   try {
     const isDeleted = await deleteStudentService(id);
 
@@ -143,9 +150,9 @@ export const deleteStudentController = async (req, res) => {
       return APIResponse(res, 404, null, "Không tìm thấy thông tin học viên");
     }
 
-    return APIResponse(res, 200, null, "Xoá học viên thành công");
+    return APIResponse(res, 200, { deleted: true }, "Xoá học viên thành công");
   } catch (error) {
-    console.error(`Lỗi trong quá trình xoá học viên ${id}:`, error.message);
+    console.error(`❌ Lỗi trong quá trình xoá học viên ${id}:`, error);
     return APIResponse(
       res,
       500,

@@ -14,9 +14,8 @@ import {
   MenuItem,
   Alert,
   CircularProgress,
-  Avatar,
-  Divider,
   IconButton,
+  Divider,
   Stepper,
   Step,
   StepLabel,
@@ -41,15 +40,14 @@ import {
 
 const statusOptions = [
   { value: 'Hoạt động', color: 'success', db: 'active' },
-  { value: 'Tạm nghỉ', color: 'warning', db: 'break' },
-  { value: 'Đã nghỉ học', color: 'error', db: 'dropped' },
-  { value: 'Đã tốt nghiệp', color: 'info', db: 'graduated' },
-  { value: 'Bảo lưu', color: 'warning', db: 'reserve' }
+  { value: 'Tạm nghỉ', color: 'warning', db: 'non-active' },
 ];
 
 const steps = ['Thông tin cá nhân', 'Thông tin liên hệ', 'Thông tin học tập'];
 
 export default function EditStudentModal({ open, onClose, student, onSave, error, loading, classes }) {
+  console.log(student);
+
   const [editedStudent, setEditedStudent] = useState({
     student_id: '',
     name: '',
@@ -75,22 +73,24 @@ export default function EditStudentModal({ open, onClose, student, onSave, error
         break: 'Tạm nghỉ',
         dropped: 'Đã nghỉ học',
         graduated: 'Đã tốt nghiệp',
-        reserve: 'Bảo lưu'
+        reserve: 'Bảo lưu',
+        active: 'Hoạt động'
       };
       if (student.status && statusMap[student.status]) {
         viStatus = statusMap[student.status];
       } else if (student.status && statusOptions.some(opt => opt.value === student.status)) {
         viStatus = student.status;
       }
+
       setEditedStudent({
         student_id: student.student_id || '',
         name: student.name || '',
-        email: student.account.email || '',
+        email: student.account?.email || '',
         day_of_birth: student.day_of_birth || '',
         gender: student.gender || '',
         address: student.address || '',
         phone_number: student.phone_number || '',
-        class: student.class.class_id || '',
+        class: student.class?.class_id || '',
         admission_year: student.admission_year || '',
         status: viStatus,
       });
@@ -187,11 +187,12 @@ export default function EditStudentModal({ open, onClose, student, onSave, error
         sx: {
           borderRadius: '12px',
           boxShadow: '0px 8px 24px rgba(0, 0, 0, 0.1)',
-          overflow: 'hidden'
+          overflow: 'hidden',
+          maxHeight: '80vh',
         }
       }}
     >
-      {/* Header with gradient and shadow */}
+      {/* Header với gradient */}
       <DialogTitle sx={{
         background: 'linear-gradient(135deg, #1976d2 0%, #115293 100%)',
         color: 'white',
@@ -205,7 +206,7 @@ export default function EditStudentModal({ open, onClose, student, onSave, error
         <Box display="flex" alignItems="center">
           <SchoolIcon sx={{ fontSize: 28, mr: 2 }} />
           <Typography variant="h6" fontWeight="600">
-            Chỉnh sửa thông tin sinh viên
+            Chỉnh sửa thông tin học viên
           </Typography>
         </Box>
         <IconButton
@@ -234,14 +235,20 @@ export default function EditStudentModal({ open, onClose, student, onSave, error
 
         {/* Error/Success messages */}
         <Box sx={{ px: 3, pt: 2 }}>
-          {(error || localError) && (
-            <Fade in={!!(error || localError)}>
-              <Alert
-                severity="error"
-                icon={<ErrorIcon />}
-                sx={{ mb: 2 }}
-              >
-                {error || localError}
+          {/* Hiển thị lỗi từ server (nếu có) */}
+          {error && (
+            <Fade in={!!error}>
+              <Alert severity="error" icon={<ErrorIcon />} sx={{ mb: 2 }}>
+                {error}
+              </Alert>
+            </Fade>
+          )}
+
+          {/* Hiển thị lỗi local (nếu có) */}
+          {localError && (
+            <Fade in={!!localError}>
+              <Alert severity="error" icon={<ErrorIcon />} sx={{ mb: 2 }}>
+                {localError}
               </Alert>
             </Fade>
           )}
@@ -256,7 +263,7 @@ export default function EditStudentModal({ open, onClose, student, onSave, error
               gap: 3
             }}>
               <TextField
-                label="Mã sinh viên"
+                label="Mã học viên"
                 name="student_id"
                 value={editedStudent.student_id}
                 onChange={handleChange}
@@ -384,7 +391,7 @@ export default function EditStudentModal({ open, onClose, student, onSave, error
                 required
                 disabled={loading}
                 multiline
-                rows={3}
+                rows={1}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -443,26 +450,6 @@ export default function EditStudentModal({ open, onClose, student, onSave, error
                 }}
                 sx={{ mb: 2 }}
               />
-              <FormControl fullWidth required disabled={loading}>
-                <InputLabel>Trạng thái</InputLabel>
-                <Select
-                  name="status"
-                  value={editedStudent.status}
-                  onChange={handleChange}
-                  label="Trạng thái"
-                >
-                  {statusOptions.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      <Chip
-                        label={option.value}
-                        size="small"
-                        color={option.color}
-                        sx={{ mr: 1 }}
-                      />
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
             </Box>
           )}
         </Box>
