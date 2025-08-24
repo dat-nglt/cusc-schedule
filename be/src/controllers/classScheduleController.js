@@ -8,6 +8,14 @@ import {
 export const getAllClassScheduleController = async (req, res) => {
     try {
         const classSchedules = await getAllClassScheduleService();
+        if (!classSchedules.length) {
+            return APIResponse(
+                res,
+                200,
+                [],
+                "Không có lịch học nào được tìm thấy."
+            );
+        }
         return APIResponse(
             res,
             200,
@@ -29,6 +37,14 @@ export const getClassScheduleForLecturerController = async (req, res) => {
     const { lecturerId } = req.params;
     try {
         const classSchedules = await getClassScheduleForLecturerService(lecturerId);
+        if (!classSchedules.length) {
+            return APIResponse(
+                res,
+                200,
+                [],
+                "Giảng viên này không có lịch học."
+            );
+        };
         return APIResponse(
             res,
             200,
@@ -50,6 +66,14 @@ export const getClassScheduleForStudentController = async (req, res) => {
     const { studentId } = req.params;
     try {
         const classSchedules = await getClassScheduleForStudentService(studentId);
+        if (!classSchedules.length) {
+            return APIResponse(
+                res,
+                200,
+                [],
+                "Sinh viên này không có lịch học."
+            );
+        };
         return APIResponse(
             res,
             200,
