@@ -10,24 +10,48 @@ const { Student, Account, Classes, sequelize } = models;
  */
 export const getAllStudentsService = async () => {
   try {
-    const students = await Student.findAll({
+    // Lấy dữ liệu sinh viên kèm account + class
+    const studentsData = await Student.findAll({
       include: [
         {
           model: Account,
-          as: "account", // Giả sử có quan hệ với Account
-          attributes: ["id", "email", "role", "status"], // Chỉ lấy các trường cần thiết từ Account
+          as: "account",
+          attributes: ["id", "email", "role", "status"],
         },
         {
           model: Classes,
-          as: "class", // Giả sử có quan hệ với Class
-          attributes: ["class_id", "class_name"], // Chỉ lấy các trường cần thiết từ Class
+          as: "class",
+          attributes: ["class_id", "class_name"],
         },
       ],
     });
-    return students;
+
+    // Lấy toàn bộ email từ Account
+    const allAccounts = await Account.findAll({
+      attributes: ["id", "email", "role", "status"],
+    });
+
+    // Làm phẳng dữ liệu student
+    const studentsWithExtras = studentsData.map((student) => {
+      const plainStudent = student.get({ plain: true });
+
+      return {
+        ...plainStudent,
+        email: plainStudent.account?.email || null,
+        role: plainStudent.account?.role || null,
+        status: plainStudent.account?.status || null,
+        class_id: plainStudent.class?.class_id || null,
+        class_name: plainStudent.class?.class_name || null,
+      };
+    });
+
+    return {
+      students: studentsWithExtras,
+      allAccounts, // chứa tất cả email trong bảng Account
+    };
   } catch (error) {
-    console.error("Lỗi khi lấy danh sách Học viên:", error);
-    throw new Error(`Lấy danh sách giảng viên không thành công`);
+    logger.error("Lỗi khi lấy danh sách Học viên:", error);
+    throw new Error("Lấy danh sách học viên không thành công");
   }
 };
 
@@ -294,13 +318,22 @@ export const importStudentsFromJSONService = async (studentsData) => {
           student_id: studentData.student_id.toString().trim(),
           name: studentData.name.toString().trim(),
           email: studentData.email ? studentData.email.toString().trim() : null,
-          gender: studentData.gender ? studentData.gender.toString().trim() : null,
-          address: studentData.address ? studentData.address.toString().trim() : null,
+          gender: studentData.gender
+            ? studentData.gender.toString().trim()
+            : null,
+          address: studentData.address
+            ? studentData.address.toString().trim()
+            : null,
           day_of_birth: studentData.day_of_birth || null,
-          phone_number: studentData.phone_number ? studentData.phone_number.toString().trim() : null,
-          class_id: studentData.class_id ? studentData.class_id.toString().trim() : null,
+          phone_number: studentData.phone_number
+            ? studentData.phone_number.toString().trim()
+            : null,
+          class_id: studentData.class_id
+            ? studentData.class_id.toString().trim()
+            : null,
           admission_year: studentData.admission_year || null,
-          gpa: studentData.gpa !== undefined ? parseFloat(studentData.gpa) : null,
+          gpa:
+            studentData.gpa !== undefined ? parseFloat(studentData.gpa) : null,
           status: studentData.status || "Đang học",
         };
 

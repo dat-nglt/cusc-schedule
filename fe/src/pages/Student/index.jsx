@@ -34,9 +34,8 @@ const Student = () => {
 
     // Dữ liệu mẫu cho danh sách học viên
     const [students, setStudents] = useState([]);
-    // Lấy danh sách lớp học để hiển thị trong modal thêm học viên
+    const [existingAccounts, setExistingAccounts] = useState([]);
     const [classes, setClasses] = useState([]);
-    // State cho phân trang, tìm kiếm, lọc theo trạng thái và modal
     const [page, setPage] = useState(0);
     const [rowsPerPage] = useState(8);
     const [searchTerm, setSearchTerm] = useState('');
@@ -60,7 +59,8 @@ const Student = () => {
         try {
             const response = await getAllStudentsAPI();
             if (response && response.data) {
-                setStudents(response.data);
+                setStudents(response.data.students);
+                setExistingAccounts(response.data.allAccounts);
             } else {
                 setStudents([]);
             }
@@ -390,6 +390,7 @@ const Student = () => {
                 error={error}
                 loading={loading}
                 fetchStudents={fetchStudents}
+                existingAccounts={existingAccounts}
                 classes={classes}
             />
             <EditStudentModal

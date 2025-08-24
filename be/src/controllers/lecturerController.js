@@ -1,6 +1,5 @@
 import {
   getAllLecturersService,
-  getLecturerByIdService,
   createLecturerService,
   updateLecturerService,
   deleteLecturerService,
@@ -20,7 +19,8 @@ import logger from "../utils/logger.js";
 export const getAllLecturersController = async (req, res) => {
   try {
     const lecturers = await getAllLecturersService();
-    if (!lecturers.length) {
+    
+    if (!lecturers) {
       return APIResponse(
         res,
         200,
@@ -28,7 +28,7 @@ export const getAllLecturersController = async (req, res) => {
         "Không có giảng viên nào được tìm thấy."
       );
     }
-
+    
     return APIResponse(
       res,
       200,

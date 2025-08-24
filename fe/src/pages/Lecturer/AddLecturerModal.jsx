@@ -58,6 +58,7 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { generateLecturerId } from '../../utils/generateLecturerId';
 import { getDayName } from '../../utils/scheduleUtils.JS';
 import { getSlotLabel } from '../../utils/scheduleUtils.JS';
+import { validateLecturerField } from '../../utils/addValidation';
 
 const availableDepartments = [
     'Khoa Công Nghệ Thông Tin',
@@ -79,7 +80,7 @@ const availableDegrees = [
 
 const steps = ['Thông tin cá nhân', 'Thông tin liên hệ', 'Thông tin công tác', 'Lịch bận'];
 
-const AddLecturerModal = ({ open, onClose, onAddLecturer, existingLecturers, error, loading, message, fetchLecturers, subjects }) => {
+const AddLecturerModal = ({ open, onClose, onAddLecturer, existingLecturers, error, loading, message, fetchLecturers, existingAccounts, subjects }) => {
 
     const [newLecturer, setNewLecturer] = useState({
         lecturer_id: '',
@@ -172,39 +173,50 @@ const AddLecturerModal = ({ open, onClose, onAddLecturer, existingLecturers, err
 
     // Hàm chuyển bước
     const handleNext = () => {
-        // Validate current step before proceeding
-        // if (activeStep === 0) {
-        //     if (!newLecturer.lecturer_id || !newLecturer.name || !newLecturer.day_of_birth || !newLecturer.gender) {
-        //         setLocalError('Vui lòng điền đầy đủ thông tin cá nhân');
-        //         return;
-        //     }
-        // } else if (activeStep === 1) {
-        //     if (!newLecturer.email || !newLecturer.phone_number || !newLecturer.address) {
-        //         setLocalError('Vui lòng điền đầy đủ thông tin liên hệ');
-        //         return;
-        //     }
+        let hasError = false;
+        let errors = {};
 
-        //     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        //     if (!emailRegex.test(newLecturer.email)) {
-        //         setLocalError('Email không hợp lệ');
-        //         return;
-        //     }
+        if (activeStep === 0) {
+            // Lấy các lỗi liên quan đến thông tin cá nhân
+            const allErrors = validateLecturerField(newLecturer, existingLecturers, existingAccounts);
 
-        //     const phoneRegex = /^[0-9]{10,11}$/;
-        //     if (!phoneRegex.test(newLecturer.phone_number)) {
-        //         setLocalError('Số điện thoại phải có 10-11 chữ số');
-        //         return;
-        //     }
-        // } else if (activeStep === 2) {
-        //     if (!newLecturer.department || !newLecturer.degree) {
-        //         setLocalError('Vui lòng điền đầy đủ thông tin công tác');
-        //         return;
-        //     }
-        // }
+            // Kiểm tra các trường của bước 1
+            const step1Fields = ["lecturer_id", "name", "day_of_birth", "gender"];
+            step1Fields.forEach((field) => {
+                if (allErrors[field]) {
+                    errors[field] = allErrors[field];
+                    hasError = true;
+                }
+            });
+        } else if (activeStep === 1) {
+            // Lấy các lỗi liên quan đến thông tin liên hệ
+            const allErrors = validateLecturerField(newLecturer, existingLecturers, existingAccounts);
 
-        setLocalError('');
-        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+            // Kiểm tra các trường của bước 2
+            const step2Fields = ["email", "phone_number", "address"];
+            step2Fields.forEach((field) => {
+                if (allErrors[field]) {
+                    errors[field] = allErrors[field];
+                    hasError = true;
+                }
+            });
+        } else if (activeStep === 2) {
+            // Kiểm tra thông tin công tác
+            if (!newLecturer.department || !newLecturer.degree) {
+                errors.department = "Vui lòng điền đầy đủ thông tin công tác";
+                hasError = true;
+            }
+        }
+
+        // Cập nhật trạng thái lỗi
+        setLocalError(errors);
+
+        // Nếu không có lỗi, chuyển sang bước tiếp theo
+        if (!hasError) {
+            setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        }
     };
+
 
     // Hàm quay lại bước trước
     const handleBack = () => {
@@ -217,63 +229,41 @@ const AddLecturerModal = ({ open, onClose, onAddLecturer, existingLecturers, err
         const { name, value } = e.target;
         setNewLecturer((prev) => ({ ...prev, [name]: value }));
         setLocalError('');
+
     };
+
     // Hàm xử lý submit form
     const handleSubmit = async () => {
-        const birthDate = new Date(newLecturer.day_of_birth);
-        const today = new Date();
-        if (birthDate >= today) {
-            setLocalError('Ngày sinh không hợp lệ');
-            return;
-        }
-        const minBirthDate = new Date();
-        minBirthDate.setFullYear(minBirthDate.getFullYear() - 18);
-        if (birthDate > minBirthDate) {
-            setLocalError('Giảng viên phải đủ 18 tuổi');
-            return;
-        }
-        // Kiểm tra trùng lặp mã giảng viên, email, số điện thoại
-        const isDuplicateId = existingLecturers.some(
-            (lecturer) => lecturer.lecturer_id === newLecturer.lecturer_id
-        );
-        if (isDuplicateId) {
-            setLocalError(`Mã giảng viên "${newLecturer.lecturer_id}" đã tồn tại`);
-            return;
+        // 1. Chạy xác thực toàn bộ form
+        const formErrors = validateLecturerField(newLecturer, existingLecturers);
+
+        // 2. Cập nhật trạng thái lỗi
+        setLocalError(formErrors);
+
+        // 3. Kiểm tra xem có lỗi nào không
+        // Nếu đối tượng lỗi rỗng, tức là không có lỗi nào
+        if (Object.keys(formErrors).length > 0) {
+            return; // Dừng hàm nếu có lỗi
         }
 
-        const isEmailDuplicate = existingLecturers.some(
-            (lecturer) => lecturer.email === newLecturer.email
-        );
-        if (isEmailDuplicate) {
-            setLocalError(`Email "${newLecturer.email}" đã tồn tại`);
-            return;
-        }
+        try {
+            const newLecturerData = {
+                ...newLecturer,
+                status: "active",
+                google_id: null,
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString(),
+            };
 
-        const isPhoneDuplicate = existingLecturers.some(
-            (lecturer) => lecturer.phone_number === newLecturer.phone_number
-        );
-        if (isPhoneDuplicate) {
-            setLocalError(`Số điện thoại "${newLecturer.phone_number}" đã tồn tại`);
-            return;
-        }
+            await onAddLecturer(newLecturerData, newLecturer.subjects, busySlots, semesterBusySlots);
 
-        // Chuyển trạng thái sang tiếng Anh trước khi lưu
-        const newLecturerData = {
-            ...newLecturer,
-            status: "active",
-            google_id: null,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-        };
-
-        console.log(newLecturerData);
-
-
-        await onAddLecturer(newLecturerData, newLecturer.subjects, busySlots, semesterBusySlots);
-
-        if (!error && !loading) {
-            resetForm();
-            onClose();
+            if (!error && !loading) {
+                resetForm();
+                onClose();
+            }
+        } catch (submitError) {
+            console.error("Lỗi khi thêm giảng viên:", submitError);
+            setLocalError({ submit: "Có lỗi xảy ra khi thêm giảng viên." });
         }
     };
     // Hàm reset form về trạng thái ban đầu
@@ -436,24 +426,34 @@ const AddLecturerModal = ({ open, onClose, onAddLecturer, existingLecturers, err
 
                     {/* Error/Success messages */}
                     <Box sx={{ px: 3, pt: 2 }}>
-                        {(error || localError) && (
-                            <Fade in={!!(error || localError)}>
-                                <Alert
-                                    severity="error"
-                                    icon={<ErrorIcon />}
-                                    sx={{ mb: 2 }}
-                                >
-                                    {error || localError}
+                        {/* Hiển thị lỗi từ server (nếu có) */}
+                        {error && (
+                            <Fade in={!!error}>
+                                <Alert severity="error" icon={<ErrorIcon />} sx={{ mb: 2 }}>
+                                    {error}
                                 </Alert>
                             </Fade>
                         )}
+
+                        {/* Hiển thị các lỗi local từ đối tượng localError */}
+                        {Object.keys(localError).length > 0 && (
+                            <Fade in={Object.keys(localError).length > 0}>
+                                <Alert severity="error" icon={<ErrorIcon />} sx={{ mb: 2 }}>
+                                    {/* Dùng Object.values() để lấy mảng các chuỗi lỗi và hiển thị chúng */}
+                                    <ul>
+                                        {Object.values(localError).map((err, index) => (
+                                            // Đảm bảo mỗi lỗi là một chuỗi
+                                            typeof err === 'string' && <li key={index}>{err}</li>
+                                        ))}
+                                    </ul>
+                                </Alert>
+                            </Fade>
+                        )}
+
+                        {/* Hiển thị thông báo thành công */}
                         {message && (
                             <Fade in={!!message}>
-                                <Alert
-                                    severity="success"
-                                    icon={<CheckCircle />}
-                                    sx={{ mb: 2 }}
-                                >
+                                <Alert severity="success" icon={<CheckCircle />} sx={{ mb: 2 }}>
                                     {message}
                                 </Alert>
                             </Fade>

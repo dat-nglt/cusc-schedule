@@ -19,7 +19,7 @@ import ExcelUtils from "../utils/ExcelUtils.js"; // Được sử dụng để t
 export const getAllStudentsController = async (req, res) => {
   try {
     const students = await getAllStudentsService();
-    if (!students || students.length === 0) {
+    if (!students) {
       return APIResponse(res, 200, [], "No students found.");
     }
     return APIResponse(res, 200, students, "Successfully retrieved students.");
