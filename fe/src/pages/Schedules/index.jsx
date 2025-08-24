@@ -128,7 +128,7 @@ const ScheduleManagement = () => {
             if (!response) {
                 throw new Error("Không có dữ liệu giảng viên");
             }
-            setLecturers(response.data);
+            setLecturers(response.data.lecturers);
         } catch (error) {
             console.error("Error fetching lecturers:", error);
         }
@@ -170,212 +170,6 @@ const ScheduleManagement = () => {
         // fetchAllSchedules();
     }, []);
 
-    useEffect(() => {
-        // Khởi tạo kết nối socket chỉ một lần
-        if (!socketRef.current) {
-            console.log('Creating new socket connection...');
-            const socket = io(import.meta.env.VITE_API_URL || 'http://localhost:3000', {
-                withCredentials: true,
-            });
-            socketRef.current = socket;
-        }
-
-        const socket = socketRef.current;
-
-        // --- Hàm xử lý cập nhật trạng thái GA (từ sự kiện 'ga_status') ---
-        const handleGAStatus = (data) => {
-            // console.log('GA Status:', data);
-            setStatusMessage(data.message);
-            setProgress(data.progress);
-
-            switch (data.stage) {
-                case 'START':
-                case 'LOADING_DATA':
-                case 'PROCESSING_DATA':
-                case 'INITIALIZING_POPULATION':
-                case 'RUNNING_GA':
-                case 'GENERATING_SEMESTER_SCHEDULE':
-                case 'EXPORTING_EXCEL':
-                case 'GENERATING_VIEWS':
-                case 'STOPPING':
-                    setOpen(true);
-                    break;
-                case 'ABORTED':
-                    setOpen(false);
-                    toast.info('Tiến trình tạo thời khóa biểu đã bị hủy.');
-                    setDownloadableFiles([]);
-                    setError('');
-                    break;
-                case 'COMPLETED':
-                    setOpen(false);
-                    toast.success('Thời khóa biểu đã được tạo thành công!');
-                    setError('');
-                    // Yêu cầu danh sách file mới nhất
-                    socket.emit('get_results');
-                    break;
-                case 'ERROR':
-                    setOpen(false);
-                    toast.error('Đã xảy ra lỗi trong quá trình tạo thời khóa biểu.');
-                    setError(data.message || 'Lỗi không xác định.');
-                    setDownloadableFiles([]);
-                    break;
-                case 'IDLE':
-                    setOpen(false);
-                    setStatusMessage('Sẵn sàng nhận yêu cầu mới');
-                    setProgress(0);
-                    break;
-                default:
-                    console.warn('Unknown GA stage:', data.stage);
-                    break;
-            }
-        };
-
-        // --- Hàm xử lý tiến trình GA chi tiết (từ sự kiện 'ga_progress') ---
-        const handleGAProgress = (data) => {
-            // console.log('GA Progress Detail:', data);
-            setGaProgressData(data); // Lưu toàn bộ dữ liệu tiến trình chi tiết
-
-            // Cập nhật log chi tiết
-            const generationInfo = data.generation_info;
-            const fitnessInfo = data.fitness_metrics;
-            const violationInfo = data.violation_analysis;
-
-            const logEntry = `Gen ${generationInfo.current}/${generationInfo.max}: ` +
-                `Fitness ${fitnessInfo.current_best} ` +
-                `(Best: ${fitnessInfo.overall_best}) ` +
-                `Violations: ${violationInfo.current.total_violations}`;
-
-            setGaLogs(prevLogs => {
-                if (prevLogs.length > 100) { // Giới hạn số lượng log
-                    return [...prevLogs.slice(50), logEntry];
-                }
-                return [...prevLogs, logEntry];
-            });
-
-            // Thông báo khi có cải thiện
-            if (fitnessInfo.has_improvement === 'true' && generationInfo.current > 0) {
-                toast.success(`Cải thiện mới ở thế hệ ${generationInfo.current}! ` +
-                    `Fitness: ${fitnessInfo.overall_best}`);
-            }
-        };
-
-        // --- Hàm xử lý các sự kiện xuất file (từ sự kiện 'ga_export') ---
-        const handleGAExport = (data) => {
-            // console.log('GA Export Event:', data);
-
-            switch (data.event_type) {
-                case 'EXPORT_STARTED':
-                    toast.info(`Bắt đầu xuất file cho ${data.metadata?.total_semesters || 'nhiều'} học kỳ.`);
-                    break;
-
-                case 'SEMESTER_EXPORT_START':
-                    toast.info(`Đang xử lý học kỳ ${data.semester_id} (${data.current}/${data.total})...`);
-                    break;
-
-                case 'SEMESTER_PROCESSING_START':
-                    toast.info(`Bắt đầu xử lý học kỳ ${data.semester_id}`);
-                    break;
-
-                case 'EXCEL_EXPORT_SUCCESS':
-                    toast.success(`Đã xuất file Excel: ${data.file_name}`);
-                    setDownloadableFiles(prevFiles => [
-                        ...prevFiles,
-                        {
-                            name: data.file_name,
-                            path: data.file_path,
-                            type: 'excel',
-                            semester: data.semester_id,
-                            timestamp: data.timestamp
-                        }
-                    ]);
-                    break;
-
-                case 'COMBINED_JSON_EXPORT_SUCCESS':
-                    toast.success(`Đã xuất file JSON tổng hợp: ${data.file_name}`);
-                    setDownloadableFiles(prevFiles => [
-                        ...prevFiles,
-                        {
-                            name: data.file_name,
-                            path: data.file_path,
-                            type: 'json',
-                            timestamp: data.timestamp
-                        }
-                    ]);
-                    break;
-
-                case 'EXPORT_COMPLETE':
-                    toast.success(`Hoàn thành xuất file! Đã xử lý ${data.metadata?.successful_semesters || 0} học kỳ.`);
-                    break;
-
-                case 'SEMESTER_PROCESSING_ERROR':
-                    toast.error(`Lỗi xử lý học kỳ ${data.semester_id}: ${data.error}`);
-                    break;
-
-                case 'EXCEL_EXPORT_ERROR':
-                    toast.error(`Lỗi xuất Excel cho học kỳ ${data.semester_id}: ${data.error}`);
-                    break;
-
-                default:
-                    console.log('Export event:', data.event_type, data);
-                    break;
-            }
-        };
-
-        // --- Hàm xử lý log thông thường ---
-        const handleGALog = (data) => {
-            setGaLogs(prevLogs => {
-                const newLog = `${data.timestamp || new Date().toISOString()} [${data.type}]: ${data.message}`;
-                if (prevLogs.length > 200) {
-                    return [...prevLogs.slice(100), newLog];
-                }
-                return [...prevLogs, newLog];
-            });
-        };
-
-        // --- Hàm xử lý lỗi ---
-        const handleGAError = (data) => {
-            console.error('GA Error:', data);
-            setOpen(false);
-            setError(data.message || 'Lỗi không xác định.');
-            setStatusMessage('Đã xảy ra lỗi');
-            setProgress(0);
-            setDownloadableFiles([]);
-            toast.error(data.message || 'Lỗi nghiêm trọng trong thuật toán GA!');
-        };
-
-        // --- Hàm nhận kết quả file ---
-        const handleGAResults = (data) => {
-            console.log('GA Results:', data);
-            if (data.excelFiles && data.jsonFiles) {
-                const allFiles = [
-                    ...data.excelFiles.map(file => ({ name: file, type: 'excel' })),
-                    ...data.jsonFiles.map(file => ({ name: file, type: 'json' }))
-                ];
-                setDownloadableFiles(allFiles);
-            }
-        };
-
-        // --- Lắng nghe các sự kiện ---
-        socket.on('ga_status', handleGAStatus);
-        socket.on('ga_progress', handleGAProgress);
-        socket.on('ga_export', handleGAExport);
-        socket.on('ga_log', handleGALog);
-        socket.on('ga_error', handleGAError);
-        socket.on('ga_results', handleGAResults);
-
-        // Yêu cầu danh sách file hiện có khi component mount
-        socket.emit('get_results');
-
-        // --- Cleanup Function ---
-        return () => {
-            socket.off('ga_status', handleGAStatus);
-            socket.off('ga_progress', handleGAProgress);
-            socket.off('ga_export', handleGAExport);
-            socket.off('ga_log', handleGALog);
-            socket.off('ga_error', handleGAError);
-            socket.off('ga_results', handleGAResults);
-        };
-    }, []);
 
     useEffect(() => {
         // Khởi tạo kết nối socket chỉ một lần
@@ -729,10 +523,66 @@ const ScheduleManagement = () => {
     }, [rooms, programs, lecturers, classes, programsResponseData, transformDataToFormTest]);
 
     // Function to update formTest with selected data from modal
-    const updateFormTestWithSelections = (selections) => {
+    // const updateFormTestWithSelections = (selections) => {
+    //     const dataToTransform = { rooms, programs, lecturers, classes };
+
+    //     // Thêm subjects và semesters từ programs response nếu có
+    //     if (programsResponseData) {
+    //         if (programsResponseData.subjects) {
+    //             dataToTransform.subjects = programsResponseData.subjects;
+    //         }
+    //         if (programsResponseData.semesters) {
+    //             dataToTransform.semesters = programsResponseData.semesters;
+    //         }
+    //     }
+
+    //     const transformed = transformDataToFormTest(dataToTransform, selections);
+
+    //     if (transformed) {
+    //         setFormTest(transformed);
+    //         console.log("FormTest updated with selections:", transformed);
+    //     }
+    // };
+
+    // const handleGenerateTimetable = async () => {
+    //     setStatusMessage('Đang gửi yêu cầu tạo thời khóa biểu...');
+    //     setDownloadableFiles([]);
+    //     setError('');
+    //     setGaLogs([]);
+    //     setProgress(0);
+    //     setOpen(true);
+
+    //     // await getInputDataForAlgorithmAPI()
+
+    //     try {
+    //         // const inputData = formTest || actualInputData;
+    //         const inputData = formTest;
+    //         const response = await generateSchedule(inputData);
+
+    //         if (response.aborted) { // Xử lý nếu promise được resolve với trạng thái hủy
+    //             toast.info("Yêu cầu tạo thời khóa biểu đã được hủy.");
+    //             setOpen(false);
+    //         } else if (response.error) { // Xử lý lỗi trả về từ API ngay lập tức
+    //             setError(response.message || response.error);
+    //             setStatusMessage('');
+    //             setOpen(false);
+    //             toast.error(response.message || "Có lỗi khi bắt đầu tiến trình.");
+    //         }
+    //     } catch (err) {
+    //         console.error('Error initiating GA generation:', err);
+    //         setError(err.message || 'Không thể kết nối hoặc lỗi mạng khi gửi yêu cầu.');
+    //         setStatusMessage('');
+    //         setOpen(false); // Đóng thanh tiến độ nếu có lỗi kết nối ban đầu
+    //         toast.error(err.message || 'Lỗi kết nối đến server.');
+    //     }
+    // };
+    const handleGenerateFromModal = async (selections) => {
+        // Bước 1: Log dữ liệu lựa chọn nhận được từ modal
+        console.log("Selections received from modal:", selections);
+
+        // Bước 2: Chuẩn bị và biến đổi dữ liệu thành payload cuối cùng
         const dataToTransform = { rooms, programs, lecturers, classes };
 
-        // Thêm subjects và semesters từ programs response nếu có
         if (programsResponseData) {
             if (programsResponseData.subjects) {
                 dataToTransform.subjects = programsResponseData.subjects;
@@ -742,15 +592,20 @@ const ScheduleManagement = () => {
             }
         }
 
-        const transformed = transformDataToFormTest(dataToTransform, selections);
+        const finalPayload = transformDataToFormTest(dataToTransform, selections);
 
-        if (transformed) {
-            setFormTest(transformed);
-            console.log("FormTest updated with selections:", transformed);
+        // Kiểm tra payload trước khi gửi
+        if (!finalPayload || !finalPayload.classes?.length || !finalPayload.programs?.length || !finalPayload.rooms?.length || !finalPayload.lecturers?.length) {
+            toast.error("Dữ liệu đầu vào không hợp lệ hoặc bị thiếu. Vui lòng chọn đủ thông tin.");
+            console.error("Invalid payload generated:", finalPayload);
+            return; // Dừng lại nếu payload không hợp lệ
         }
-    };
 
-    const handleGenerateTimetable = async () => {
+        // Cập nhật state formTest (tùy chọn, hữu ích cho việc debug)
+        setFormTest(finalPayload);
+        console.log("Final payload being sent to API:", finalPayload);
+
+        // Bước 3: Thực hiện các hành động gọi API (logic từ handleGenerateTimetable cũ)
         setStatusMessage('Đang gửi yêu cầu tạo thời khóa biểu...');
         setDownloadableFiles([]);
         setError('');
@@ -758,17 +613,14 @@ const ScheduleManagement = () => {
         setProgress(0);
         setOpen(true);
 
-        // await getInputDataForAlgorithmAPI()
-
         try {
-            // const inputData = formTest || actualInputData;
-            const inputData = formTest;
-            const response = await generateSchedule(inputData);
+            // Gửi trực tiếp payload vừa tạo, không đọc từ state
+            const response = await generateSchedule(finalPayload);
 
-            if (response.aborted) { // Xử lý nếu promise được resolve với trạng thái hủy
+            if (response.aborted) {
                 toast.info("Yêu cầu tạo thời khóa biểu đã được hủy.");
                 setOpen(false);
-            } else if (response.error) { // Xử lý lỗi trả về từ API ngay lập tức
+            } else if (response.error) {
                 setError(response.message || response.error);
                 setStatusMessage('');
                 setOpen(false);
@@ -778,7 +630,7 @@ const ScheduleManagement = () => {
             console.error('Error initiating GA generation:', err);
             setError(err.message || 'Không thể kết nối hoặc lỗi mạng khi gửi yêu cầu.');
             setStatusMessage('');
-            setOpen(false); // Đóng thanh tiến độ nếu có lỗi kết nối ban đầu
+            setOpen(false);
             toast.error(err.message || 'Lỗi kết nối đến server.');
         }
     };
@@ -1460,8 +1312,12 @@ const ScheduleManagement = () => {
                 rooms={rooms}
                 lecturers={lecturers}
                 classes={classes}
-                onGenerate={handleGenerateTimetable}
-                onSelectionChange={updateFormTestWithSelections}
+                // BỎ 2 props cũ này
+                // onGenerate={handleGenerateTimetable}
+                // onSelectionChange={updateFormTestWithSelections}
+
+                // THÊM prop mới này
+                onConfirm={handleGenerateFromModal}
             />
         </Box>
     );

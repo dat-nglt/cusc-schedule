@@ -42,12 +42,11 @@ export default function CreateSchedulesAutoModal({
     rooms = [],
     lecturers = [],
     classes = [],
-    onGenerate,
-    onSelectionChange
+    onConfirm // <-- Thay onGenerate và onSelectionChange bằng onConfirm
 }) {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-    const [activeStep, setActiveStep] = useState(3);
+    const [activeStep, setActiveStep] = useState(0);
     const [selectedPrograms, setSelectedPrograms] = useState([]);
     const [selectedRooms, setSelectedRooms] = useState([]);
     const [selectedLecturers, setSelectedLecturers] = useState([]);
@@ -62,7 +61,7 @@ export default function CreateSchedulesAutoModal({
     };
 
     const handleReset = () => {
-        setActiveStep(3);
+        setActiveStep(0);
         setSelectedPrograms([]);
         setSelectedRooms([]);
         setSelectedLecturers([]);
@@ -75,17 +74,17 @@ export default function CreateSchedulesAutoModal({
     };
 
     const handleGenerate = () => {
-
         const selections = {
             programs: selectedPrograms,
             rooms: selectedRooms,
             lecturers: selectedLecturers,
             classes: selectedClasses
-        }
+        };
 
-        onSelectionChange(selections)
+        // Chỉ gọi một hàm duy nhất và truyền dữ liệu selections
+        onConfirm(selections);
 
-        onGenerate();
+        // Đóng modal sau khi đã gửi yêu cầu
         handleClose();
     };
 
