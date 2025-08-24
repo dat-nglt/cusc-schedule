@@ -64,7 +64,7 @@ export default function AddClassModal({
     class_id: '',
     class_name: '',
     class_size: '',
-    status: 'Hoạt động',
+    status: 'active',
     course_id: '',
     program_id: '',
   });

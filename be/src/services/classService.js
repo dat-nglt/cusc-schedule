@@ -26,14 +26,7 @@ import logger from "../utils/logger.js";
 const { Classes, Course, sequelize } = models;
 export const getAllClassesService = async () => {
   try {
-    const classes = await models.Classes.findAll({
-      include: [
-        {
-          model: models.Course,
-          attributes: ["course_id", "course_name"],
-        },
-      ],
-    });
+    const classes = await models.Classes.findAll({});
     return classes;
   } catch (error) {
     console.error("Lỗi service khi lấy danh sách lớp học:", error);

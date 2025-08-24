@@ -87,7 +87,7 @@ const StudentDetailModal = ({ openModal, handleCloseModal, studentInfo }) => {
                         fontSize: { xs: '0.875rem', sm: '0.9375rem' } // Adjust font size for readability
                     }}
                 >
-                    {value || '---'}
+                    {value || 'Chưa cập nhật'}
                 </Typography>
             </Box>
         </Box>
@@ -208,7 +208,7 @@ const StudentDetailModal = ({ openModal, handleCloseModal, studentInfo }) => {
                                         color: theme.palette.info.dark,
                                         fontSize: { xs: '0.6rem', sm: '0.75rem' }
                                     }} />
-                                <Chip
+                                {/* <Chip
                                     label={studentInfo.major}
                                     size="small"
                                     sx={{
@@ -224,7 +224,7 @@ const StudentDetailModal = ({ openModal, handleCloseModal, studentInfo }) => {
                                         color: theme.palette.info.dark,
                                         fontSize: { xs: '0.6rem', sm: '0.75rem' }
                                     }}
-                                />
+                                /> */}
                             </Box>
                         </Box>
                     </Box>

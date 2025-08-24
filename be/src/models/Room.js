@@ -26,7 +26,7 @@ const Room = (sequelize) => {
             status: {
                 type: DataTypes.STRING(30),
                 allowNull: true,
-                defaultValue: 'available'
+                defaultValue: 'active'
             },
             type: {
                 type: DataTypes.STRING(30),

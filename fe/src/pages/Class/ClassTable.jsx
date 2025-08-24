@@ -16,16 +16,16 @@ import {
 } from '@mui/material';
 import { Visibility, Edit, Delete, MoreVert } from '@mui/icons-material';
 
-const ClassTable = ({ 
-  displayedClasses, 
-  handleViewClass, 
-  handleEditClass, 
-  handleDeleteClass 
+const ClassTable = ({
+  displayedClasses,
+  handleViewClass,
+  handleEditClass,
+  handleDeleteClass
 }) => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const isMediumScreen = useMediaQuery(theme.breakpoints.down('md'));
-  
+
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedRowId, setSelectedRowId] = useState(null);
 
@@ -50,63 +50,63 @@ const ClassTable = ({
       >
         <TableHead>
           <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
-            <TableCell sx={{ 
-              fontWeight: 'bold', 
-              fontSize: '0.875rem', 
-              textAlign: 'center', 
-              borderRight: '1px solid #e0e0e0', 
+            <TableCell sx={{
+              fontWeight: 'bold',
+              fontSize: '0.875rem',
+              textAlign: 'center',
+              borderRight: '1px solid #e0e0e0',
               width: '8%',
               py: 1.5
             }}>
               STT
             </TableCell>
-            <TableCell sx={{ 
-              fontWeight: 'bold', 
-              fontSize: '0.875rem', 
-              textAlign: 'center', 
-              borderRight: '1px solid #e0e0e0', 
+            <TableCell sx={{
+              fontWeight: 'bold',
+              fontSize: '0.875rem',
+              textAlign: 'center',
+              borderRight: '1px solid #e0e0e0',
               width: '15%',
               display: isSmallScreen ? 'none' : 'table-cell',
               py: 1.5
             }}>
               Mã lớp
             </TableCell>
-            <TableCell sx={{ 
-              fontWeight: 'bold', 
-              fontSize: '0.875rem', 
-              textAlign: 'center', 
-              borderRight: '1px solid #e0e0e0', 
+            <TableCell sx={{
+              fontWeight: 'bold',
+              fontSize: '0.875rem',
+              textAlign: 'center',
+              borderRight: '1px solid #e0e0e0',
               width: isSmallScreen ? '35%' : '25%',
               py: 1.5
             }}>
               Tên lớp
             </TableCell>
-            <TableCell sx={{ 
-              fontWeight: 'bold', 
-              fontSize: '0.875rem', 
-              textAlign: 'center', 
-              borderRight: '1px solid #e0e0e0', 
+            <TableCell sx={{
+              fontWeight: 'bold',
+              fontSize: '0.875rem',
+              textAlign: 'center',
+              borderRight: '1px solid #e0e0e0',
               width: '12%',
               display: isSmallScreen ? 'none' : 'table-cell',
               py: 1.5
             }}>
               Sĩ số
             </TableCell>
-            <TableCell sx={{ 
-              fontWeight: 'bold', 
-              fontSize: '0.875rem', 
-              textAlign: 'center', 
-              borderRight: '1px solid #e0e0e0', 
+            <TableCell sx={{
+              fontWeight: 'bold',
+              fontSize: '0.875rem',
+              textAlign: 'center',
+              borderRight: '1px solid #e0e0e0',
               width: '20%',
               display: isMediumScreen ? 'none' : 'table-cell',
               py: 1.5
             }}>
               Khóa học
             </TableCell>
-            <TableCell sx={{ 
-              fontWeight: 'bold', 
-              fontSize: '0.875rem', 
-              textAlign: 'center', 
+            <TableCell sx={{
+              fontWeight: 'bold',
+              fontSize: '0.875rem',
+              textAlign: 'center',
               width: '10%',
               py: 1.5
             }}>
@@ -124,24 +124,24 @@ const ClassTable = ({
                 borderBottom: '1px solid #e0e0e0',
               }}
             >
-              <TableCell sx={{ 
-                textAlign: 'center', 
-                borderRight: '1px solid #e0e0e0', 
-                py: 1.5 
+              <TableCell sx={{
+                textAlign: 'center',
+                borderRight: '1px solid #e0e0e0',
+                py: 1.5
               }}>
                 {index + 1}
               </TableCell>
-              <TableCell sx={{ 
-                textAlign: 'center', 
-                borderRight: '1px solid #e0e0e0', 
+              <TableCell sx={{
+                textAlign: 'center',
+                borderRight: '1px solid #e0e0e0',
                 py: 1.5,
                 display: isSmallScreen ? 'none' : 'table-cell'
               }}>
                 {classItem.class_id}
               </TableCell>
-              <TableCell sx={{ 
-                textAlign: 'center', 
-                borderRight: '1px solid #e0e0e0', 
+              <TableCell sx={{
+                textAlign: 'center',
+                borderRight: '1px solid #e0e0e0',
                 py: 1.5,
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
@@ -149,9 +149,9 @@ const ClassTable = ({
               }}>
                 {classItem.class_name || 'N/A'}
               </TableCell>
-              <TableCell sx={{ 
-                textAlign: 'center', 
-                borderRight: '1px solid #e0e0e0', 
+              <TableCell sx={{
+                textAlign: 'center',
+                borderRight: '1px solid #e0e0e0',
                 py: 1.5,
                 display: isSmallScreen ? 'none' : 'table-cell'
               }}>
@@ -162,28 +162,28 @@ const ClassTable = ({
                   variant="outlined"
                 />
               </TableCell>
-              <TableCell sx={{ 
-                textAlign: 'center', 
-                borderRight: '1px solid #e0e0e0', 
+              <TableCell sx={{
+                textAlign: 'center',
+                borderRight: '1px solid #e0e0e0',
                 py: 1.5,
                 display: isMediumScreen ? 'none' : 'table-cell',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap'
               }}>
-                {classItem.course ? classItem.course.course_name : 'N/A'}
+                {classItem.course_id ? classItem.course_id : 'N/A'}
               </TableCell>
-              <TableCell sx={{ 
-                textAlign: 'center', 
-                py: 1.5 
+              <TableCell sx={{
+                textAlign: 'center',
+                py: 1.5
               }}>
                 <Tooltip title="Thao tác">
                   <IconButton
                     size="small"
                     onClick={(event) => handleOpenMenu(event, classItem.class_id)}
-                    sx={{ 
+                    sx={{
                       color: 'text.secondary',
-                      '&:hover': { 
+                      '&:hover': {
                         backgroundColor: 'primary.light',
                         color: 'primary.contrastText'
                       }
@@ -192,21 +192,21 @@ const ClassTable = ({
                     <MoreVert />
                   </IconButton>
                 </Tooltip>
-                
+
                 <Menu
                   anchorEl={anchorEl}
                   open={Boolean(anchorEl) && selectedRowId === classItem.class_id}
                   onClose={handleCloseMenu}
-                  anchorOrigin={{ 
-                    vertical: 'top', 
-                    horizontal: 'left' 
+                  anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'left'
                   }}
-                  transformOrigin={{ 
-                    vertical: 'top', 
-                    horizontal: 'left' 
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'left'
                   }}
                 >
-                  <MenuItem 
+                  <MenuItem
                     onClick={() => {
                       handleViewClass(classItem.class_id);
                       handleCloseMenu();
@@ -216,7 +216,7 @@ const ClassTable = ({
                     <Visibility sx={{ mr: 1.5, fontSize: '20px', color: 'info.main' }} />
                     Xem chi tiết
                   </MenuItem>
-                  <MenuItem 
+                  <MenuItem
                     onClick={() => {
                       handleEditClass(classItem);
                       handleCloseMenu();
@@ -226,7 +226,7 @@ const ClassTable = ({
                     <Edit sx={{ mr: 1.5, fontSize: '20px', color: 'primary.main' }} />
                     Chỉnh sửa
                   </MenuItem>
-                  <MenuItem 
+                  <MenuItem
                     onClick={() => {
                       handleDeleteClass(classItem);
                       handleCloseMenu();

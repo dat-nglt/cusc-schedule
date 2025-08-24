@@ -29,8 +29,26 @@ import { useTimetable } from '../../contexts/TimetableContext';
 import TimeSlot from './TimeSlot';
 
 // Constants
-const HOURS = Array.from({ length: 16 }, (_, i) => i + 7); // 7h - 22h
 const DAYS = Array.from({ length: 7 }, (_, i) => i); // 0-6 (Monday-Sunday)
+
+// Map hour to slot_id
+const HOUR_TO_SLOT_ID = {
+    7: "S1",
+    9: "S2",
+    13: "C1",
+    15: "C2",
+    17: "T1",
+    19: "T2"
+};
+const SLOT_IDS = ["S1", "S2", "C1", "C2", "T1", "T2"];
+const SLOT_LABELS = {
+    S1: "07:00-09:00",
+    S2: "09:00-11:00",
+    C1: "13:00-15:00",
+    C2: "15:00-17:00",
+    T1: "17:30-19:30",
+    T2: "19:30-21:30"
+};
 
 const WeeklyCalendar = ({
     scheduleItems = [],
@@ -280,8 +298,8 @@ const WeeklyCalendar = ({
                         ))}
 
                         {/* Time slots */}
-                        {HOURS.map((hour) => (
-                            <React.Fragment key={hour}>
+                        {SLOT_IDS.map((slotId) => (
+                            <React.Fragment key={slotId}>
                                 <Box sx={{
                                     position: 'sticky',
                                     left: 0,
@@ -296,15 +314,15 @@ const WeeklyCalendar = ({
                                     borderBottom: `1px solid ${theme.palette.divider}`
                                 }}>
                                     <Typography variant="caption" fontWeight="medium">
-                                        {hour}:00
+                                        {SLOT_LABELS[slotId]}
                                     </Typography>
                                 </Box>
 
                                 {weekDays.map((day) => (
                                     <TimeSlot
-                                        key={`${day.day}-${hour}`}
+                                        key={`${day.day}-${slotId}`}
                                         day={day.day}
-                                        hour={hour}
+                                        slotId={slotId}
                                         date={currentDate}
                                         onDrop={handleDrop}
                                         scheduleItems={scheduleItems}

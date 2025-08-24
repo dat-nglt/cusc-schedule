@@ -1,8 +1,16 @@
 // components/WeeklyCalendar/ScheduleItem.jsx
 import React from 'react';
 import { Box, Typography, useTheme, alpha } from '@mui/material';
-import { format, parseISO } from 'date-fns';
 import { useDrag } from 'react-dnd';
+
+const SLOT_TIME_MAP = {
+    S1: { start: "07:00", end: "09:00" },
+    S2: { start: "09:00", end: "11:00" },
+    C1: { start: "13:00", end: "15:00" },
+    C2: { start: "15:00", end: "17:00" },
+    T1: { start: "17:30", end: "19:30" },
+    T2: { start: "19:30", end: "21:30" }
+};
 
 const ScheduleItem = ({ item, onDrop }) => {
     const theme = useTheme();
@@ -10,9 +18,9 @@ const ScheduleItem = ({ item, onDrop }) => {
     // Define colors for each type, using theme's palette for consistency
     const getColorForType = (type) => {
         switch (type) {
-            case 'Lý thuyết':
+            case 'theory':
                 return theme.palette.info.main; // A calm blue
-            case 'Thực hành':
+            case 'practice':
                 return theme.palette.success.main; // A vibrant green
             case 'Seminar':
                 return theme.palette.warning.main; // A warm orange/yellow
@@ -21,7 +29,7 @@ const ScheduleItem = ({ item, onDrop }) => {
         }
     };
 
-    const itemAccentColor = getColorForType(item.type);
+    const itemAccentColor = getColorForType(item.room.type);
     // Create a light background using the accent color with transparency
     const bgColor = alpha(itemAccentColor, theme.palette.mode === 'light' ? 0.15 : 0.25);
     // Text color for main titles and bold labels will be the accent color
@@ -30,8 +38,12 @@ const ScheduleItem = ({ item, onDrop }) => {
     // const secondaryTextColor = theme.palette.text.secondary;
 
     // Format times for display
-    const formattedStartTime = item.startTime ? format(parseISO(item.startTime), 'HH:mm') : 'N/A';
-    const formattedEndTime = item.endTime ? format(parseISO(item.endTime), 'HH:mm') : 'N/A';
+    const formattedStartTime = item.slot_id && SLOT_TIME_MAP[item.slot_id]
+        ? SLOT_TIME_MAP[item.slot_id].start
+        : 'N/A';
+    const formattedEndTime = item.slot_id && SLOT_TIME_MAP[item.slot_id]
+        ? SLOT_TIME_MAP[item.slot_id].end
+        : 'N/A';
 
     // React DND hook for drag functionality
     const [{ isDragging }, drag] = useDrag(() => ({
@@ -81,20 +93,17 @@ const ScheduleItem = ({ item, onDrop }) => {
                     color: primaryTextColor, // Use accent color for the main title
                 }}
             >
-                {item.course}
+                {item.subject.subject_name}
             </Typography>
             {/* Details with secondary text color and bold labels using accent color */}
             <Typography variant="subtitle2" sx={{ mb: 0.3, lineHeight: 1.4, color: theme.palette.text.primary }}>
-                <Typography component="span" sx={{ color: primaryTextColor }}>Phòng:</Typography> {item.room}
+                <Typography component="span" sx={{ color: primaryTextColor }}>Phòng:</Typography> {item.room.room_name}
             </Typography>
             <Typography variant="subtitle2" sx={{ mb: 0.3, lineHeight: 1.4, color: 'primary' }}>
-                <Typography component="span" sx={{ color: primaryTextColor }}>GV:</Typography> {item.lecturer}
+                <Typography component="span" sx={{ color: primaryTextColor }}>GV:</Typography> {item.lecturer.name}
             </Typography>
             <Typography variant="subtitle2" sx={{ mb: 0.3, lineHeight: 1.4, color: 'primary' }}>
                 <Typography component="span" sx={{ color: primaryTextColor }}>Giờ:</Typography> {formattedStartTime} - {formattedEndTime}
-            </Typography>
-            <Typography variant="subtitle2" sx={{ lineHeight: 1.4, color: 'primary' }}>
-                <Typography component="span" sx={{ color: primaryTextColor }}>Loại:</Typography> {item.type}
             </Typography>
         </Box>
     );

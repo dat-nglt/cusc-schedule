@@ -10,26 +10,25 @@ import {
     FileDownload,
     PostAdd
 } from '@mui/icons-material';
-import { format, addDays, isSameDay, parseISO } from 'date-fns';
+import { format, addDays } from 'date-fns';
 import { useDrop } from 'react-dnd';
 import ScheduleItem from './ScheduleItem';
 
-function TimeSlot({ day, hour, date, onDrop, scheduleItems }) {
+function TimeSlot({ day, slotId, date, onDrop, scheduleItems }) {
     const theme = useTheme()
     const [{ isOver }, drop] = useDrop(() => ({
         accept: 'SCHEDULE_ITEM',
-        drop: () => ({ day, hour, date }),
+        drop: () => ({ day, slotId, date }),
         collect: (monitor) => ({
             isOver: !!monitor.isOver(),
         }),
     }));
 
     const slotDate = addDays(date, day);
-    const slotDateTime = parseISO(format(slotDate, 'yyyy-MM-dd') + `T${hour.toString().padStart(2, '0')}:00:00`);
 
-    const itemsInSlot = scheduleItems.filter(item =>
-        isSameDay(parseISO(item.startTime), slotDate) &&
-        format(parseISO(item.startTime), 'H') === hour.toString()
+    const itemsInSlot = (scheduleItems || []).filter(item =>
+        item.date === format(slotDate, 'yyyy-MM-dd') &&
+        item.slot_id === slotId
     );
 
     return (
@@ -46,8 +45,15 @@ function TimeSlot({ day, hour, date, onDrop, scheduleItems }) {
                 overflow: 'hidden',
             }}
         >
+            {/* Ensure ScheduleItem renders only string/number, not object */}
             {itemsInSlot.map(item => (
-                <ScheduleItem key={item.id} item={item} onDrop={onDrop} />
+                <ScheduleItem
+                    key={item.class_schedule_id}
+                    item={{
+                        ...item
+                    }}
+                    onDrop={onDrop}
+                />
             ))}
         </Box>
     );

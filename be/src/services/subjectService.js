@@ -45,7 +45,7 @@ export const createSubjectService = async (subjectData) => {
   try {
     // 1. Kiểm tra tính hợp lệ của dữ liệu đầu vào
     console.log("Kiểm tra tính hợp lệ của dữ liệu môn học:", subjectData);
-    
+
     if (
       !subjectData.subject_id ||
       !subjectData.subject_name ||
@@ -180,14 +180,6 @@ export const importSubjectsFromJSONService = async (subjectsData) => {
           });
           continue;
         }
-        if (!subjectData.credit) {
-          results.errors.push({
-            index: index,
-            subject_id: subjectData.subject_id || "N/A",
-            error: "Số tín chỉ là bắt buộc",
-          });
-          continue;
-        }
 
         // Clean và format data (chuyển sang kiểu chuỗi và xóa khoảng cách thừa ở đầu chuỗi và cuối chuỗi)
         const cleanedData = {
@@ -200,10 +192,7 @@ export const importSubjectsFromJSONService = async (subjectsData) => {
           practice_hours: subjectData.practice_hours
             ? parseInt(subjectData.practice_hours)
             : null,
-          semester_id: subjectData.semester_id
-            ? subjectData.semester_id.toString().trim()
-            : null,
-          status: subjectData.status || "Hoạt động", // Mặc định là 'hoạt động' nếu không có giá trị,
+          status: subjectData.status || "active", // Mặc định là 'hoạt động' nếu không có giá trị,
         };
 
         // Validate credit, theory_hours, practice_hours

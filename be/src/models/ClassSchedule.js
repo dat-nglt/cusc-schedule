@@ -15,28 +15,52 @@ const ClassSchedule = (sequelize) => {
             // Khóa ngoại tham chiếu đến học kỳ
             semester_id: {
                 type: DataTypes.STRING(30),
-                allowNull: false,
+                allowNull: false, // đồng bộ với migration
             },
             // Khóa ngoại tham chiếu đến lớp học
             class_id: {
                 type: DataTypes.STRING(30),
-                allowNull: false,
+                allowNull: true,
             },
             // Khóa ngoại tham chiếu đến chương trình học
             program_id: {
                 type: DataTypes.STRING(30),
-                allowNull: false,
+                allowNull: true,
+            },
+            // Tuần học trong học kỳ
+            week: {
+                type: DataTypes.INTEGER,
+                allowNull: true,
+                comment: 'Week number in the semester'
+            },
+            // Sĩ số lớp
+            size: {
+                type: DataTypes.INTEGER,
+                allowNull: true,
+                comment: 'Number of students attending this class schedule'
+            },
+            // Mã nhóm (nếu có)
+            group_id: {
+                type: DataTypes.STRING(100),
+                allowNull: true,
+                comment: 'Group identifier if applicable'
+            },
+            // Loại buổi học (Lý thuyết, Thực hành, ...)
+            lesson_type: {
+                type: DataTypes.STRING(50),
+                allowNull: true,
+                comment: 'Type of lesson (e.g., Lecture, Lab, Tutorial)'
             },
             // Ngày học cụ thể
             date: {
                 type: DataTypes.DATEONLY,
-                allowNull: false,
+                allowNull: true, // Changed to match migration
                 comment: 'Date in YYYY-MM-DD format'
             },
             // Thứ trong tuần
             day: {
                 type: DataTypes.ENUM('Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'),
-                allowNull: false,
+                allowNull: true, // Changed to match migration
             },
             // Khung giờ học
             slot_id: {
@@ -80,67 +104,71 @@ const ClassSchedule = (sequelize) => {
 
     // Khai báo mối quan hệ (association)
     ClassScheduleModel.associate = (models) => {
-        // Quan hệ với Semester
-        ClassScheduleModel.belongsTo(models.Semester, {
-            foreignKey: "semester_id",
-            as: "semester",
-            onUpdate: "CASCADE",
-            onDelete: "CASCADE",
-        });
+        // Quan hệ với ProgramSemesters
+        if (models.ProgramSemesters) {
+            ClassScheduleModel.belongsTo(models.ProgramSemesters, {
+                foreignKey: "semester_id", // đổi từ program_semester_id sang semester_id
+                as: "program_semester",
+                onUpdate: "CASCADE",
+                onDelete: "CASCADE",
+            });
+        }
 
         // Quan hệ với Class
-        ClassScheduleModel.belongsTo(models.Classes, {
-            foreignKey: "class_id",
-            as: "class",
-            onUpdate: "CASCADE",
-            onDelete: "CASCADE",
-        });
+        if (models.Classes) {
+            ClassScheduleModel.belongsTo(models.Classes, {
+                foreignKey: "class_id",
+                as: "class",
+                onUpdate: "CASCADE",
+                onDelete: "CASCADE",
+            });
+        }
 
         // Quan hệ với Program
-        ClassScheduleModel.belongsTo(models.Program, {
-            foreignKey: "program_id",
-            as: "program",
-            onUpdate: "CASCADE",
-            onDelete: "CASCADE",
-        });
+        if (models.Program) {
+            ClassScheduleModel.belongsTo(models.Program, {
+                foreignKey: "program_id",
+                as: "program",
+                onUpdate: "CASCADE",
+                onDelete: "CASCADE",
+            });
+        }
 
         // Quan hệ với Subject
-        ClassScheduleModel.belongsTo(models.Subject, {
-            foreignKey: "subject_id",
-            as: "subject",
-            onUpdate: "CASCADE",
-            onDelete: "SET NULL",
-        });
+        if (models.Subject) {
+            ClassScheduleModel.belongsTo(models.Subject, {
+                foreignKey: "subject_id",
+                as: "subject",
+                onUpdate: "CASCADE",
+                onDelete: "SET NULL",
+            });
+        }
 
         // Quan hệ với Lecturer
-        ClassScheduleModel.belongsTo(models.Lecturer, {
-            foreignKey: "lecturer_id",
-            as: "lecturer",
-            onUpdate: "CASCADE",
-            onDelete: "SET NULL",
-        });
+        if (models.Lecturer) {
+            ClassScheduleModel.belongsTo(models.Lecturer, {
+                foreignKey: "lecturer_id",
+                as: "lecturer",
+                onUpdate: "CASCADE",
+                onDelete: "SET NULL",
+            });
+        }
 
         // Quan hệ với Room
-        ClassScheduleModel.belongsTo(models.Room, {
-            foreignKey: "room_id",
-            as: "requestedRoom",
-            onUpdate: "CASCADE",
-            onDelete: "SET NULL",
-        });
+        if (models.Room) {
+            ClassScheduleModel.belongsTo(models.Room, {
+                foreignKey: "room_id",
+                as: "room",
+                onUpdate: "CASCADE",
+                onDelete: "SET NULL",
+            });
+        }
 
         // Quan hệ với ScheduleChangeRequest
         if (models.ScheduleChangeRequest) {
             ClassScheduleModel.hasMany(models.ScheduleChangeRequest, {
                 foreignKey: "class_schedule_id",
                 as: "scheduleChangeRequests"
-            });
-        }
-
-        // Quan hệ với Room (thêm quan hệ mới với alias 'room')
-        if (models.Room) {
-            ClassScheduleModel.belongsTo(models.Room, {
-                foreignKey: 'room_id',
-                as: 'room'
             });
         }
     };

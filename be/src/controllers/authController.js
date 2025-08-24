@@ -214,6 +214,18 @@ export const getCurrentUserDataController = async (req, res) => {
     success: true,
     id: req.user.id,
     role: req.user.role,
+    email: req.user.email,
+    code: req.user.code,
+    name: req.user.name,
+    day_of_birth: req.user.day_of_birth,
+    phone_number: req.user.phone_number,
+    address: req.user.address,
+    gender: req.user.gender,
+    department: req.user.department,
+    hire_date: req.user.hire_date,
+    class: req.user.class,
+    status: req.user.status,
+
   });
 };
 

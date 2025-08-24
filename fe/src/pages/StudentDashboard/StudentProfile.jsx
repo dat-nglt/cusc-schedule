@@ -150,7 +150,7 @@ function StudentProfile({ studentInfo }) {
                             }}
                                 src="https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png"
                             >
-                                {studentInfo.name.charAt(0)}
+                                {studentInfo.name}
                             </Avatar>
                             {/* IconButton mới ở góc dưới bên phải của Avatar */}
                             <IconButton
@@ -223,7 +223,7 @@ function StudentProfile({ studentInfo }) {
                                         color: theme.palette.info.dark
                                     }}
                                 />
-                                <Chip
+                                {/* <Chip
                                     label={studentInfo.major}
                                     size="small"
                                     sx={{
@@ -238,7 +238,7 @@ function StudentProfile({ studentInfo }) {
                                         bgcolor: alpha(theme.palette.info.main, 0.1),
                                         color: theme.palette.info.dark
                                     }}
-                                />
+                                /> */}
                                 <IconButton onClick={handleOpenModal} size="small" color="primary"
                                     sx={{
                                         mt: { xs: -0.5, md: -0.5 }, // Adjust margin top to align with title

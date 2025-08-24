@@ -1,18 +1,15 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
     Box,
 } from '@mui/material';
 import WeeklyCalendar from './WeeklyCalendar';
 import QuickStats from './QuickStats';
 import { io } from 'socket.io-client';
-
-import { useEffect } from 'react';
 import { generateSchedule, stopScheduleGeneration } from '../../api/scheduleAPI';
 import ProgressModal from './ProgressModal';
 import { toast } from 'react-toastify';
-
+import { getAllSchedulesAPI } from '../../api/classscheduleAPI';
 import CreateSchedulesAutoModal from './CreateSchedulesAutoModal';
-import { useRef } from 'react';
 
 
 const Dashboard = () => {
@@ -30,6 +27,7 @@ const Dashboard = () => {
     const [classes, setClasses] = useState([]);
     const [formTest, setFormTest] = useState(null);
     const [gaProgressData, setGaProgressData] = useState(null);
+    const [scheduleItems, setScheduleItems] = useState();
 
     const days_of_week = useState({
         "days_of_week": [
@@ -42,7 +40,7 @@ const Dashboard = () => {
             "Sun"
         ]
     });
-    
+
     const timeslot = useState({
         "time_slots": [
             {
@@ -444,9 +442,27 @@ const Dashboard = () => {
         ],
         "days_of_week": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
     }
+    console.log("scheduleItems", scheduleItems);
 
+    //lấy lịch
+    const fetchClassSchedule = async () => {
+        setError(null);
+        try {
+            const response = await getAllSchedulesAPI();
+            if (response && response.data) {
+                setScheduleItems(response.data);
+            } else {
+                setLecturers([]);
+            }
+        } catch (error) {
+            console.error("Lỗi khi tải thời khóa biểu:", error);
+            setError("Không thể tải thời khóa biểu. Vui lòng thử lại.");
+        }
+    };
 
     useEffect(() => {
+        // fetch lịch 
+        fetchClassSchedule();
         // Khởi tạo kết nối socket chỉ một lần
         if (!socketRef.current) {
             console.log('Creating new socket connection...');
@@ -677,7 +693,7 @@ const Dashboard = () => {
 
         const transformedRooms = rooms.map(room => ({
             room_id: room.room_id,
-            type: room.type === "Lý thuyết" ? "theory" : "practice",
+            type: room.type,
             capacity: room.capacity
         }));
 
@@ -775,64 +791,6 @@ const Dashboard = () => {
     //     window.open(downloadUrl, '_blank');
     // };
 
-
-    const [scheduleItems, setScheduleItems] = useState([
-        {
-            id: '3',
-            course: 'Hóa học cơ bản',
-            room: 'P.102',
-            lecturer: 'TS. Nguyễn Văn A',
-            type: 'Lý thuyết',
-            startTime: '2025-06-09T09:00:00',
-            endTime: '2025-06-09T11:00:00',
-            checkInTime: '2025-06-09T08:50:00',
-            checkOutTime: '2025-06-09T11:10:00'
-        },
-        {
-            id: '4',
-            course: 'Giải tích 1',
-            room: 'P.204',
-            lecturer: 'ThS. Trần Thị B',
-            type: 'Lý thuyết',
-            startTime: '2025-06-10T08:00:00',
-            endTime: '2025-06-10T10:00:00',
-            checkInTime: '2025-06-10T07:55:00',
-            checkOutTime: '2025-06-10T10:05:00'
-        },
-        {
-            id: '5',
-            course: 'Tin học đại cương',
-            room: 'P.105',
-            lecturer: 'ThS. Lê Văn C',
-            type: 'Thực hành',
-            startTime: '2025-06-11T13:00:00',
-            endTime: '2025-06-11T15:00:00',
-            checkInTime: '2025-06-11T12:50:00',
-            checkOutTime: '2025-06-11T15:10:00'
-        },
-        {
-            id: '6',
-            course: 'Kỹ thuật lập trình',
-            room: 'P.306',
-            lecturer: 'TS. Phạm Thị D',
-            type: 'Thực hành',
-            startTime: '2025-06-12T10:00:00',
-            endTime: '2025-06-12T12:00:00',
-            checkInTime: '2025-06-12T09:50:00',
-            checkOutTime: '2025-06-12T12:10:00'
-        },
-        {
-            id: '7',
-            course: 'Xác suất thống kê',
-            room: 'P.103',
-            lecturer: 'ThS. Đỗ Văn E',
-            type: 'Lý thuyết',
-            startTime: '2025-06-13T14:00:00',
-            endTime: '2025-06-13T16:00:00',
-            checkInTime: '2025-06-13T13:55:00',
-            checkOutTime: '2025-06-13T16:05:00'
-        }
-    ]);
 
     const handleItemMove = (itemId, newStartTime) => {
         setScheduleItems(prevItems =>

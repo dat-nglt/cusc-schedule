@@ -1,6 +1,6 @@
 import axiosInstance from "./axiosConfig";
 
-export const getAllSchedules = async () => {
+export const getAllSchedulesAPI = async () => {
     try {
         const response = await axiosInstance.get("/api/classSchedules/getAll");
         return response.data;

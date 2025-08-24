@@ -14,8 +14,8 @@ export default {
         type: Sequelize.STRING(30),
         allowNull: false,
         references: {
-          model: 'semesters',
-          key: 'semester_id'
+          model: 'program_semesters',
+          key: 'program_semester_id'
         },
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE'
@@ -39,6 +39,26 @@ export default {
         },
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE'
+      },
+      week: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+        comment: 'Week number in the semester'
+      },
+      size: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+        comment: 'Number of students attending this class schedule'
+      },
+      group_id: {
+        type: Sequelize.STRING(100),
+        allowNull: true,
+        comment: 'Group identifier if applicable'
+      },
+      lesson_type: {
+        type: Sequelize.STRING(50),
+        allowNull: true,
+        comment: 'Type of lesson (e.g., Lecture, Lab, Tutorial)'
       },
       date: {
         type: Sequelize.DATEONLY,
@@ -106,7 +126,6 @@ export default {
     });
 
     // Add indexes for better query performance
-    await queryInterface.addIndex('class_schedules', ['semester_id']);
     await queryInterface.addIndex('class_schedules', ['class_id']);
     await queryInterface.addIndex('class_schedules', ['date']);
     await queryInterface.addIndex('class_schedules', ['day']);
@@ -115,7 +134,6 @@ export default {
     await queryInterface.addIndex('class_schedules', ['room_id']);
 
     // Compound indexes for common queries
-    await queryInterface.addIndex('class_schedules', ['semester_id', 'class_id']);
     await queryInterface.addIndex('class_schedules', ['class_id', 'date']);
   },
 

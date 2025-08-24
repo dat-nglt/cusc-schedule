@@ -18,11 +18,14 @@ export const AuthProvider = ({ children }) => {
     localStorage.getItem(USER_ROLE_KEY) || null
   );
   const [loading, setLoading] = useState(true); // Trạng thái loading khi xác minh phiên
+  const [userData, setUserData] = useState({});
 
   // Hàm để đặt trạng thái đăng nhập và vai trò
-  const login = useCallback((role) => {
+  const login = useCallback(async (role) => {
     setIsLoggedIn(true);
     setUserRole(role);
+    const response = await getCurrentUserData();
+    setUserData(response)
     localStorage.setItem(IS_LOGGED_IN_KEY, 'true');
     localStorage.setItem(USER_ROLE_KEY, role);
   }, []);
@@ -72,6 +75,7 @@ export const AuthProvider = ({ children }) => {
     isLoggedIn,
     userRole,
     loading, // Trạng thái loading khi đang xác minh phiên
+    userData,
     login,
     logout,
     verifySession, // Hàm có thể gọi lại nếu cần

@@ -147,7 +147,7 @@ export const processExcelDataLecturer = (rawData, existingLecturers) => {
             subjectIds: row['Mã học phần'] ? row['Mã học phần'].split(',').map(id => id.trim()) : [],
             department: row['Khoa/Bộ môn']?.trim() || row['department']?.trim() || '',
             degree: row['Học vị']?.trim() || row['degree']?.trim() || '',
-            status: row['Trạng thái']?.trim() || row['status']?.trim() || 'Hoạt động',
+            status: row['Trạng thái']?.trim() || row['status']?.trim() || 'active',
             rowIndex: index + 2 // +2 vì Excel bắt đầu từ row 1 và có header
         };
 
@@ -324,7 +324,7 @@ export const processExcelDataProgram = (rawData, existingPrograms) => {
             program_name: row['Tên chương trình']?.trim() || row['program_name']?.trim() || '',
             training_duration: row['Thời gian đào tạo'] || row['training_duration'] || '',
             description: row['Mô tả']?.trim() || row['description']?.trim() || '',
-            status: row['Trạng thái']?.trim() || row['status']?.trim() || 'Hoạt động',
+            status: row['Trạng thái']?.trim() || row['status']?.trim() || 'active',
             rowIndex: index + 2 // +2 vì Excel bắt đầu từ row 1 và có header
         };
 
@@ -349,7 +349,6 @@ const requiredSemesterFields = [
     'start_date',
     'end_date',
     'status',
-    'program_id',
 ];
 
 const validateSemesterData = (semester, existingSemesters, allImportData = []) => {
@@ -417,8 +416,8 @@ export const processExcelDataSemester = (rawData, existingSemesters) => {
             semester_name: row['Tên học kỳ']?.trim() || row['semester_name']?.trim() || '',
             start_date: formatDate(row['Ngày bắt đầu'] || row['start_date']),
             end_date: formatDate(row['Ngày kết thúc'] || row['end_date']),
-            status: row['Trạng thái']?.trim() || row['status']?.trim() || 'Hoạt động',
-            program_id: row['Mã chương trình đào tạo']?.trim() || row['Mã chương trình']?.trim() || row['program_id'] || '',
+            duration_weeks: row['Số tuần'],
+            status: row['Trạng thái']?.trim() || row['status']?.trim() || 'active',
             rowIndex: index + 2 // +2 vì Excel bắt đầu từ row 1 và có header
         };
 
@@ -439,11 +438,9 @@ export const processExcelDataSemester = (rawData, existingSemesters) => {
 const requiredSubjectFields = [
     'subject_id',
     'subject_name',
-    'credit',
     'theory_hours',
     'practice_hours',
     'status',
-    'semester_id',
 ];
 
 const validateSubjectData = (subject, existingSubjects, allImportData = []) => {
@@ -512,8 +509,7 @@ export const processExcelDataSubject = (rawData, existingSubjects) => {
             credit: row['Số tín chỉ'] ?? row['credit'] ?? '',
             theory_hours: row['Số giờ lý thuyết'] ?? row['theory_hours'] ?? '',
             practice_hours: row['Số giờ thực hành'] ?? row['practice_hours'] ?? '',
-            status: row['Trạng thái']?.trim() || row['status']?.trim() || 'Hoạt động',
-            semester_id: row['Mã học kỳ']?.trim() || row['semester_id']?.trim() || '',
+            status: row['Trạng thái']?.trim() || row['status']?.trim() || 'active',
             rowIndex: index + 2 // +2 vì Excel bắt đầu từ row 1 và có header
         };
 
@@ -700,6 +696,15 @@ const validateRoomData = (room, existingRooms, allImportData = []) => {
     return errors;
 };
 
+// Helper function để chuẩn hóa type phòng
+const normalizeRoomType = (type) => {
+    if (!type) return '';
+    const t = type.trim().toLowerCase();
+    if (t === 'lý thuyết') return 'theory';
+    if (t === 'thực hành') return 'practice';
+    return type.trim();
+};
+
 export const processExcelDataRoom = (rawData, existingRooms) => {
     // Xử lý dữ liệu thô từ Excel
     const processedData = rawData.map((row, index) => {
@@ -712,10 +717,10 @@ export const processExcelDataRoom = (rawData, existingRooms) => {
 
             // Giữ nguyên với các giá trị không phải chuỗi hoặc có logic mặc định
             capacity: row['Sức chứa'] || row['capacity'] || '',
-            status: row['Trạng thái'] || row['status'] || 'available',
+            status: row['Trạng thái'] || row['status'] || 'active',
 
             // Áp dụng trim cho các trường chuỗi còn lại
-            type: row['Loại phòng']?.trim() || row['type']?.trim() || '',
+            type: normalizeRoomType((row['Loại phòng']?.trim()) || row['type']?.trim() || ''),
             note: row['Ghi chú']?.trim() || row['note']?.trim() || '',
 
             rowIndex: index + 2

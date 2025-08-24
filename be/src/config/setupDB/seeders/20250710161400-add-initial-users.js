@@ -12,7 +12,7 @@ export default {
         admin: [
           {
             name: "Nguyễn Lê Tấn Đạt",
-            email: "nguyenletandat.contact@gmail.com",
+            email: "ptvu2100761@student.ctuet.edu.vn",
             type: "Super Admin",
           },
         ],
@@ -28,7 +28,7 @@ export default {
           {
             id: "GV001",
             name: "Trần Thị B",
-            email: "lecturer1@example.com",
+            email: "tuanvukg601@gmail.com",
             department: "Khoa Công nghệ thông tin",
             degree: "Tiến sĩ",
             academic_rank: "Phó Giáo sư",
@@ -54,7 +54,7 @@ export default {
           {
             student_id: "SV001",
             name: "Lê Văn C (Sinh viên)",
-            email: "student@example.com",
+            email: "nhox.kenny.vans@gmail.com",
             admission_year: "2023-09-01",
             gpa: 3.5,
             class_id: "DH23CS",
@@ -450,7 +450,7 @@ export default {
         "class_schedules",
         [
           {
-            semester_id: "HK1_2025",
+            semester_id: "PS_CT001_HK1_2025",
             class_id: "DH23CS",
             program_id: "CT001",
             date: "2025-08-19",
@@ -464,7 +464,7 @@ export default {
             updated_at: new Date(),
           },
           {
-            semester_id: "HK1_2025",
+            semester_id: "PS_CT001_HK1_2025",
             class_id: "DH23AI",
             program_id: "CT002",
             date: "2025-08-20",
@@ -478,7 +478,7 @@ export default {
             updated_at: new Date(),
           },
           {
-            semester_id: "HK1_2025",
+            semester_id: "PS_CT001_HK1_2025",
             class_id: "DH22IT",
             program_id: "CT002",
             date: "2025-08-20",

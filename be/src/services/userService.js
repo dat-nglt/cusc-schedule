@@ -80,20 +80,98 @@ export const findUserByGoogleId = async (googleId) => {
  */
 export const findExistsUserByIdService = async (id) => {
   try {
-    const account = await Account.findByPk(id);
-    if (account) {
-      return {
-        userData: account.dataValues, // Trả về toàn bộ đối tượng account
-        id: account.dataValues.id, // ID của người dùng
-        role: account.dataValues.role, // Vai trò của người dùng (lấy từ trường 'role' trong bảng Account)
-      };
+    const account = await Account.findByPk(id, {
+      attributes: ['id', 'role', 'email']
+    });
+
+    if (!account) return null;
+
+    switch (account.role) {
+      case 'student': {
+        const student = await Student.findOne({
+          where: { account_id: id },
+          attributes: [
+            'student_id', 'name', 'day_of_birth', 'address',
+            'phone_number', 'gender', 'class_id'
+          ]
+        });
+
+        return student ? {
+          id: account.id,
+          role: account.role,
+          email: account.email,
+          code: student.student_id,
+          name: student.name,
+          day_of_birth: student.day_of_birth,
+          address: student.address,
+          phone_number: student.phone_number,
+          gender: student.gender,
+          class: student.class_id
+        } : {
+          id: account.id,
+          role: account.role,
+          email: account.email
+        };
+      }
+
+      case 'lecturer': {
+        const lecturer = await Lecturer.findOne({
+          where: { account_id: id },
+          attributes: [
+            'lecturer_id', 'name', 'day_of_birth', 'address', 'gender',
+            'phone_number', 'department', 'hire_date', 'status'
+          ]
+        });
+
+        return lecturer ? {
+          id: account.id,
+          role: account.role,
+          email: account.email,
+          code: lecturer.lecturer_id,
+          name: lecturer.name,
+          day_of_birth: lecturer.day_of_birth,
+          address: lecturer.address,
+          gender: lecturer.gender,
+          phone_number: lecturer.phone_number,
+          department: lecturer.department,
+          hire_date: lecturer.hire_date,
+          status: lecturer.status
+        } : {
+          id: account.id,
+          role: account.role,
+          email: account.email
+        };
+      }
+
+      case 'training_officer': {
+        const officer = await TrainingOfficer.findOne({
+          where: { account_id: id },
+          attributes: ['training_officer_id']
+        });
+
+        return {
+          id: account.id,
+          role: account.role,
+          email: account.email,
+          code: officer ? officer.training_officer_id : null
+        };
+      }
+
+      default:
+        return {
+          id: account.id,
+          role: account.role,
+          email: account.email
+        };
     }
-    return null;
+
   } catch (error) {
-    console.error("Lỗi khi tìm người dùng trong bảng Account:", error);
+    console.error("Lỗi khi tìm người dùng:", error);
     throw new Error("Không thể tìm kiếm thông tin người dùng.");
   }
 };
+
+
 
 /**
  * Cập nhật Google ID cho một người dùng.

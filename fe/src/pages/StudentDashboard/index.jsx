@@ -13,45 +13,30 @@ import SubjectGPAChart from './SubjectGPAChart';
 import Features from './Features';
 import StudentProfile from './StudentProfile';
 import DashboardGrid from './DashboardGrid';
-
+import { useAuth } from '../../contexts/AuthContext';
 
 
 
 const StudentDashboard = () => {
     // const theme = useTheme();
-
-    const sampleStudentInfo = {
-        name: "Nguyễn Lê Tấn Đạt",
-        id: "SV20230001",
-        class: "KTPM0121",
-        major: "Kỹ thuật phần mềm",
-        email: "nguyenvana@university.edu",
-        gender: "Nam",
-        dob: "15/03/2000",
-        phone: "0987654321",
-        ethnicity: "Kinh",
-        religion: "Không",
-        nationality: "Việt Nam",
-        region: "Khu vực 1",
-        cccd: "091203003164",
-        issuedDate: "17/04/2021",
-        issuedPlace: "Tỉnh An Giang",
-        unionJoinDate: "26/03/2019",
-        partyJoinDate: "", // chưa có
-        contactAddress: "TT. Óc Eo, Thoại Sơn, An Giang",
-        placeOfBirth: "Tỉnh An Giang",
-        permanentAddress: "Óc Eo, Thoại Sơn, An Giang",
-        bankName: "Vietcombank",
-        bankBranch: "",
-        bankAccountHolder: "",
-        bankAccountNumber: "1025004053",
-        trainingLevel: "Chính quy",
+    const { userData, loading } = useAuth();
+    // Create student info from actual userData, removing fields not available in API
+    const studentInfo = userData ? {
+        name: userData.name,
+        id: userData.code,
+        class: userData.class,
+        email: userData.email,
+        gender: userData.gender,
+        dob: new Date(userData.day_of_birth).toLocaleDateString('vi-VN'),
+        phone: userData.phone_number,
+        contactAddress: userData.address,
+        // Keep only essential UI functionality fields
         unreadNotifications: 3,
         upcomingEvents: 2,
         currentCourses: 5,
         earnedCredits: 120,
         totalCredits: 150
-    };
+    } : null;
 
 
 
@@ -109,7 +94,7 @@ const StudentDashboard = () => {
                 <Divider />
 
                 {/* Profile and Notifications */}
-                <StudentProfile studentInfo={sampleStudentInfo} />
+                {studentInfo && <StudentProfile studentInfo={studentInfo} />}
 
                 {/* Features */}
                 <Features features={features} />
