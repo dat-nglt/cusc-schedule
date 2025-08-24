@@ -49,6 +49,8 @@ export default function PreviewClassModal({
       'missing_required': 'Thiếu dữ liệu bắt buộc',
       'invalid_size': 'Sĩ số không hợp lệ',
       'invalid_status': 'Trạng thái không hợp lệ',
+      'invalid_course_id': 'Mã khóa học không tồn tại',
+      'invalid_program_id': 'Mã chương trình không tồn tại',
     };
 
     return (
@@ -179,6 +181,7 @@ export default function PreviewClassModal({
                       <TableCell>Sĩ số</TableCell>
                       <TableCell>Trạng thái</TableCell>
                       <TableCell>Mã khóa học</TableCell>
+                      <TableCell>Mã CT</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -189,6 +192,7 @@ export default function PreviewClassModal({
                         <TableCell>{classItem.class_size}</TableCell>
                         <TableCell>{classItem.status}</TableCell>
                         <TableCell>{classItem.course_id}</TableCell>
+                        <TableCell>{classItem.program_id}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -215,6 +219,7 @@ export default function PreviewClassModal({
                       <TableCell>Sĩ số</TableCell>
                       <TableCell>Trạng thái</TableCell>
                       <TableCell>Mã khóa học</TableCell>
+                      <TableCell>Mã CT</TableCell>
                       <TableCell>Lỗi</TableCell>
                     </TableRow>
                   </TableHead>
@@ -229,6 +234,7 @@ export default function PreviewClassModal({
                         <TableCell>{classItem.class_size || '-'}</TableCell>
                         <TableCell>{classItem.status || '-'}</TableCell>
                         <TableCell>{classItem.course_id || '-'}</TableCell>
+                        <TableCell>{classItem.program_id || '-'}</TableCell>
                         <TableCell>
                           <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
                             {classItem.errors.map((error) => getErrorChip(error))}

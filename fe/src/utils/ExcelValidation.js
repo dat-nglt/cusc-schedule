@@ -737,3 +737,105 @@ export const processExcelDataRoom = (rawData, existingRooms) => {
 
     return processedData;
 };
+
+// Validate class data
+const requiredClassFields = [
+    'class_id',
+    'class_name',
+    'class_size',
+    'status',
+    'course_id',
+    'program_id'
+];
+
+const validClassStatus = [
+    'Hoạt động',
+    'Ngừng hoạt động',
+    'active',
+    'inactive'
+];
+
+const validateClassData = (classItem, existingClasses, existingCourses, existingPrograms, allImportData = []) => {
+    const errors = [];
+
+    // Kiểm tra trùng lặp mã lớp với dữ liệu hiện có
+    const isDuplicateExisting = (existingClasses || []).some(
+        existing => existing.class_id === classItem.class_id
+    );
+    // Kiểm tra trùng lặp trong dữ liệu import
+    const isDuplicateImport = (allImportData || []).filter(
+        item => item.class_id === classItem.class_id
+    ).length > 1;
+
+    if (isDuplicateExisting || isDuplicateImport) {
+        errors.push('duplicate_id');
+    }
+
+    // Kiểm tra các trường bắt buộc
+    const missingFields = requiredClassFields.filter(field => {
+        const value = classItem[field];
+        return value === null || value === undefined || (typeof value === 'string' && value.trim() === '');
+    });
+    if (missingFields.length > 0) {
+        errors.push('missing_required');
+    }
+
+    // Kiểm tra class_size là số nguyên dương
+    if (classItem.class_size) {
+        const size = parseInt(classItem.class_size, 10);
+        if (isNaN(size) || size <= 0) {
+            errors.push('invalid_size');
+        }
+    }
+
+    // Kiểm tra status hợp lệ
+    if (classItem.status && !validClassStatus.includes(classItem.status)) {
+        errors.push('invalid_status');
+    }
+
+    // Kiểm tra course_id tồn tại
+    if (classItem.course_id && !(existingCourses || []).some(course => course.course_id === classItem.course_id)) {
+        errors.push('invalid_course_id');
+    }
+
+    // Kiểm tra program_id tồn tại
+    if (classItem.program_id && !(existingPrograms || []).some(program => program.program_id === classItem.program_id)) {
+        errors.push('invalid_program_id');
+    }
+
+    return errors;
+};
+
+export const processExcelDataClass = (rawData, existingClasses, existingCourses, existingPrograms) => {
+    // Xử lý dữ liệu thô từ Excel
+    const processedData = rawData.map((row, index) => {
+        // Chuẩn hóa dữ liệu
+        const classItem = {
+            class_id: row['Mã lớp học']?.trim() || row['class_id']?.trim() || '',
+            class_name: row['Tên lớp học']?.trim() || row['class_name']?.trim() || '',
+            class_size: row['Sĩ số'] || row['class_size'] || '',
+            status: row['Trạng thái']?.trim() || row['status']?.trim() || 'Hoạt động',
+            course_id: row['Mã khóa học']?.trim() || row['course_id']?.trim() || '',
+            program_id: row['Mã chương trình']?.trim() || row['program_id']?.trim() || '',
+            rowIndex: index + 2 // +2 vì Excel bắt đầu từ row 1 và có header
+        };
+
+        // Validate dữ liệu
+        const errors = validateClassData(
+            classItem,
+            existingClasses,
+            existingCourses,
+            existingPrograms,
+            rawData.map(r => ({
+                class_id: r['Mã lớp học']?.trim() || r['class_id']?.trim() || ''
+            }))
+        );
+
+        return {
+            ...classItem,
+            errors
+        };
+    });
+
+    return processedData;
+};

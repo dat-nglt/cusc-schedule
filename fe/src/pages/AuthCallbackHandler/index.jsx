@@ -42,12 +42,22 @@ function AuthCallbackHandler() {
     const handleAuthProcess = async () => {
       try {
         const response = await getCurrentUserData();
-
         if (response?.success) {
           setProgress(100);
           login(response.role);
           setMessage('Xác thực thành công!');
-          setTimeout(() => navigate('/dashboard', { replace: true }), 1000);
+
+          // Điều hướng dựa trên vai trò người dùng
+          let redirectPath = '/dashboard'; // Default path
+          if (response.role === 'student') {
+            redirectPath = '/student';
+          } else if (response.role === 'lecturer') {
+            redirectPath = '/lecturer';
+          } else if (response.role === 'admin') {
+            redirectPath = '/dashboard';
+          }
+
+          setTimeout(() => navigate(redirectPath, { replace: true }), 1000);
         } else {
           const errorMessage = response?.message || 'Xác thực không thành công';
           throw new Error(errorMessage);
@@ -161,7 +171,7 @@ function AuthCallbackHandler() {
               backgroundColor: 'divider'
             }}
           />
-          </Box>
+        </Box>
       </Fade>
     </Container >
   );

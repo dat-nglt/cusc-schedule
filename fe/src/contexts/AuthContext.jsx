@@ -35,6 +35,7 @@ export const AuthProvider = ({ children }) => {
     try {
       setIsLoggedIn(false);
       setUserRole(null);
+      setUserData(null);
       localStorage.removeItem(USER_ROLE_KEY);
       localStorage.removeItem(IS_LOGGED_IN_KEY);
       await logoutUser();
@@ -49,6 +50,7 @@ export const AuthProvider = ({ children }) => {
     try {
       if (isLoggedIn) {
         const response = await getCurrentUserData();
+        setUserData(response)
         if (response.success === 200) {
           login(response.role); // Cập nhật trạng thái đăng nhập từ dữ liệu backend
           return true;
@@ -56,6 +58,7 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       console.error('Lỗi khi xác minh phiên đăng nhập:', error.response?.data?.message || error.message);
+      setUserData(null);
       logout(); // Xóa trạng thái đăng nhập cục bộ
       return false;
     } finally {

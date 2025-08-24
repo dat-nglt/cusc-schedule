@@ -40,6 +40,7 @@ import {
 } from '@mui/icons-material';
 import * as XLSX from 'xlsx';
 import PreviewClassModal from './PreviewClassModal';
+import { processExcelDataClass } from '../../utils/ExcelValidation'; // Thêm dòng này
 
 const statusOptions = [
   { value: 'Hoạt động', color: 'success', icon: <PlayCircleFilled /> },
@@ -152,22 +153,6 @@ export default function AddClassModal({
       return;
     }
 
-    const validationErrors = validateClassData(newClass);
-    if (validationErrors.length > 0) {
-      if (validationErrors.includes('missing_required')) {
-        setLocalError('Vui lòng điền đầy đủ thông tin');
-      } else if (validationErrors.includes('invalid_size')) {
-        setLocalError('Sĩ số phải là số nguyên dương!');
-      } else if (validationErrors.includes('invalid_status')) {
-        setLocalError('Trạng thái không hợp lệ');
-      } else if (validationErrors.includes('invalid_course_id')) {
-        setLocalError('Mã khóa học không tồn tại!');
-      } else if (validationErrors.includes('invalid_program_id')) {
-        setLocalError('Mã chương trình không tồn tại!');
-      }
-      return;
-    }
-
     const isDuplicate = (existingClasses || []).some(
       (classItem) => classItem.class_id === newClass.class_id
     );
@@ -238,62 +223,25 @@ export default function AddClassModal({
       }
 
       const headers = rawData[0];
-      const expectedHeader = ['Mã lớp học', 'Tên lớp học', 'Sĩ số', 'Trạng thái', 'Mã khóa học', 'Mã chương trình'];
-
-      const lowerCaseHeaders = headers.map(h => String(h).toLowerCase().trim());
-      const lowerCaseExpectedHeader = expectedHeader.map(h => String(h).toLowerCase().trim());
-
-      if (!lowerCaseExpectedHeader.every(expectedH => lowerCaseHeaders.includes(expectedH))) {
-        setLocalError(`Định dạng cột không đúng! Cần các cột: ${expectedHeader.join(', ')}`);
-        e.target.value = '';
-        setFileUploaded(false);
-        return;
-      }
-
       const dataRows = rawData.slice(1);
+
+      // Chuyển dữ liệu thành dạng object {header: value}
       const jsonData = dataRows.map(row => {
         const obj = {};
         headers.forEach((header, index) => {
-          obj[String(header).trim()] = row[index] || '';
+          obj[header] = row[index] || '';
         });
         return obj;
       });
 
-      const processedData = jsonData.map((row, index) => {
-        const classItem = {
-          class_id: row['Mã lớp học'] || '',
-          class_name: row['Tên lớp học'] || '',
-          class_size: row['Sĩ số'] || '',
-          status: row['Trạng thái'] || 'Hoạt động',
-          course_id: row['Mã khóa học'] || '',
-          program_id: row['Mã chương trình'] || '',
-          rowIndex: index + 2,
-          errors: [],
-        };
+      // Sử dụng processExcelDataClass để validate dữ liệu
+      const processedData = processExcelDataClass(
+        jsonData,
+        existingClasses || [],
+        existingCourses || [],
+        existingPrograms || []
+      );
 
-        const validationErrors = validateClassData(classItem);
-
-        const isDuplicateExisting = (existingClasses || []).some(c => c.class_id === classItem.class_id);
-        if (isDuplicateExisting) {
-          validationErrors.push('duplicate_id_existing');
-        }
-
-        const isDuplicateInPreview = processedData.slice(0, index).some(c => c.class_id === classItem.class_id);
-        if (isDuplicateInPreview) {
-          validationErrors.push('duplicate_id_in_file');
-        }
-
-        return { ...classItem, errors: validationErrors };
-      });
-
-      const validPreviewData = processedData.filter(item => item.errors.length === 0);
-
-      if (validPreviewData.length === 0) {
-        setLocalError('Không có dữ liệu hợp lệ nào trong file Excel');
-        e.target.value = '';
-        setFileUploaded(false);
-        return;
-      }
 
       setPreviewData(processedData);
       setShowPreview(true);

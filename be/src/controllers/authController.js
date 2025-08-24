@@ -222,7 +222,6 @@ export const getCurrentUserDataController = async (req, res) => {
     address: req.user.address,
     gender: req.user.gender,
     department: req.user.department,
-    hire_date: req.user.hire_date,
     class: req.user.class,
     status: req.user.status,
 

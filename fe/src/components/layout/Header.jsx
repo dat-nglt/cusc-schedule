@@ -50,14 +50,13 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
 
 const Header = ({ onMenuToggle }) => {
     const theme = useTheme();
-    const { logout, userRole } = useAuth();
+    const { logout, userRole, userData } = useAuth();
     const { isDarkMode, toggleTheme } = useThemeContext();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
     // State for dropdown menus
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [notificationsAnchorEl, setNotificationsAnchorEl] = React.useState(null);
-
     const open = Boolean(anchorEl);
     const notificationsOpen = Boolean(notificationsAnchorEl);
 
@@ -381,7 +380,7 @@ const Header = ({ onMenuToggle }) => {
                     toggleTheme={toggleTheme}
                     userRole={userRole}
                     // userEmail={userEmail}
-                    userEmail={"Tài khoản người dùng"} // Thay thế bằng email thực tế nếu có
+                    userEmail={userData.email} // Thay thế bằng email thực tế nếu có
                 />
             </Toolbar>
         </StyledAppBar>

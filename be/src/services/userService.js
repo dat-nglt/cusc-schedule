@@ -119,7 +119,7 @@ export const findExistsUserByIdService = async (id) => {
           where: { account_id: id },
           attributes: [
             'lecturer_id', 'name', 'day_of_birth', 'address', 'gender',
-            'phone_number', 'department', 'hire_date', 'status'
+            'phone_number', 'department', 'status'
           ]
         });
 
@@ -134,7 +134,6 @@ export const findExistsUserByIdService = async (id) => {
           gender: lecturer.gender,
           phone_number: lecturer.phone_number,
           department: lecturer.department,
-          hire_date: lecturer.hire_date,
           status: lecturer.status
         } : {
           id: account.id,
