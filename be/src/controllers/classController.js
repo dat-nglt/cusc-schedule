@@ -168,6 +168,7 @@ export const updateClassController = async (req, res) => {
  */
 export const deleteClassController = async (req, res) => {
   const { class_id } = req.params;
+
   try {
     const isDeleted = await deleteClassService(class_id);
 
@@ -175,10 +176,8 @@ export const deleteClassController = async (req, res) => {
       return APIResponse(res, 404, null, "Không tìm thấy lớp học để xóa.");
     }
 
-    return APIResponse(res, 200, null, "Xóa lớp học thành công.");
+    return APIResponse(res, 200, null, "Xóa lớp học (soft delete) thành công.");
   } catch (error) {
-    // Xử lý các lỗi cụ thể từ service
-    // Ví dụ: lỗi do ràng buộc khóa ngoại
     if (error.name === "SequelizeForeignKeyConstraintError") {
       return APIResponse(
         res,
@@ -188,7 +187,6 @@ export const deleteClassController = async (req, res) => {
       );
     }
 
-    // Lỗi chung
     console.error(`Lỗi khi xóa lớp học với ID ${class_id}:`, error);
     return APIResponse(res, 500, null, "Đã xảy ra lỗi khi xóa lớp học.");
   }
@@ -241,20 +239,31 @@ export const listClassesController = async (req, res) => {
 export const importClassesController = async (req, res) => {
   try {
     if (!req.file) {
-      return APIResponse(res, 400, null, 'Vui lòng chọn file Excel để import.');
+      return APIResponse(res, 400, null, "Vui lòng chọn file Excel để import.");
     }
 
     const fileBuffer = req.file.buffer;
     const fileExtension = path.extname(req.file.originalname).toLowerCase();
-    const allowedExtensions = ['.xlsx', '.xls'];
+    const allowedExtensions = [".xlsx", ".xls"];
 
     if (!allowedExtensions.includes(fileExtension)) {
-      return APIResponse(res, 400, null, 'Chỉ chấp nhận file Excel (.xlsx, .xls).');
+      return APIResponse(
+        res,
+        400,
+        null,
+        "Chỉ chấp nhận file Excel (.xlsx, .xls)."
+      );
     }
 
     const templateValidation = validateExcelTemplate(fileBuffer);
     if (!templateValidation.valid) {
-      return APIResponse(res, 400, null, templateValidation.error || 'Cấu trúc template không hợp lệ. Vui lòng sử dụng template mẫu.');
+      return APIResponse(
+        res,
+        400,
+        null,
+        templateValidation.error ||
+          "Cấu trúc template không hợp lệ. Vui lòng sử dụng template mẫu."
+      );
     }
 
     const results = await importClassesFromExcelService(fileBuffer);
@@ -274,8 +283,13 @@ export const importClassesController = async (req, res) => {
       return APIResponse(res, 200, responseData, message);
     }
   } catch (error) {
-    console.error('Lỗi khi import lớp học từ file Excel:', error);
-    return APIResponse(res, 500, null, error.message || 'Đã xảy ra lỗi trong quá trình import file Excel.');
+    console.error("Lỗi khi import lớp học từ file Excel:", error);
+    return APIResponse(
+      res,
+      500,
+      null,
+      error.message || "Đã xảy ra lỗi trong quá trình import file Excel."
+    );
   }
 };
 

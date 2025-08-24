@@ -153,17 +153,17 @@ export const updateClassService = async (class_id, data) => {
  * @returns {Promise<number>} Số hàng đã bị xóa.
  * @throws {Error} Nếu không tìm thấy lớp học.
  */
-export const deleteClassService = async (class_id) => {
+export const deleteClassService = async (class_id, force = false) => {
   try {
     const deletedCount = await Classes.destroy({
       where: { class_id },
+      force, // 👈 false = soft delete, true = hard delete
     });
 
-    // `deletedCount` sẽ là 1 nếu xóa thành công, 0 nếu không tìm thấy.
     return deletedCount > 0;
   } catch (error) {
     console.error("Lỗi service khi xóa lớp học:", error);
-    throw new Error("Lỗi khi truy vấn cơ sở dữ liệu để xóa lớp học.");
+    throw error; // để controller phân loại lỗi
   }
 };
 

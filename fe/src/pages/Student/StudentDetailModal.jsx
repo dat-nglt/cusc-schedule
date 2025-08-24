@@ -69,29 +69,57 @@ const InfoCard = ({ title, icon, children, span = 1, minHeight = 220 }) => (
     </Grid>
 );
 
-const InfoItem = ({ label, value, icon }) => (
-    <Box sx={{ mb: 2, '&:last-child': { mb: 0 } }}>
-        <Typography variant="caption" color="text.secondary" display="block" gutterBottom>
-            {label}
-        </Typography>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            {icon && (
-                <Box sx={{ color: 'text.secondary', mt: 1 }}>
-                    {icon}
-                </Box>
-            )}
-            <Typography variant="body2" fontWeight="500">
-                {value || (
-                    <Typography component="span" variant="body2" color="text.secondary" fontStyle="italic">
-                        Chưa cập nhật
-                    </Typography>
-                )}
+const InfoItem = ({ label, value, icon }) => {
+    const [isHovered, setIsHovered] = React.useState(false);
+
+    return (
+        <Box sx={{ mb: 2, '&:last-child': { mb: 0 } }}>
+            <Typography variant="caption" color="text.secondary" display="block" gutterBottom>
+                {label}
             </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                {icon && (
+                    <Box sx={{ color: 'text.secondary', mt: 1, flexShrink: 0 }}>
+                        {icon}
+                    </Box>
+                )}
+                <Tooltip
+                    title={value || "Chưa cập nhật"}
+                    placement="top-start"
+                    disableHoverListener={!value || value.length < 30}
+                >
+                    <Typography
+                        variant="body2"
+                        fontWeight="500"
+                        sx={{
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                            maxWidth: 150,
+                            cursor: value && value.length >= 30 ? 'help' : 'default',
+                            backgroundColor: isHovered && value && value.length >= 30 ? 'rgba(0, 0, 0, 0.04)' : 'transparent',
+                            borderRadius: '4px',
+                            padding: isHovered && value && value.length >= 30 ? '4px 8px' : 0,
+                            transition: 'all 0.2s ease'
+                        }}
+                        onMouseEnter={() => setIsHovered(true)}
+                        onMouseLeave={() => setIsHovered(false)}
+                    >
+                        {value || (
+                            <Typography component="span" variant="body2" color="text.secondary" fontStyle="italic">
+                                Chưa cập nhật
+                            </Typography>
+                        )}
+                    </Typography>
+                </Tooltip>
+            </Box>
         </Box>
-    </Box>
-);
+    );
+};
 
 export default function StudentDetailModal({ open, onClose, student }) {
+    console.log(student);
+
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
