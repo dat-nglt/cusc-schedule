@@ -10,24 +10,48 @@ const { Student, Account, Classes, sequelize } = models;
  */
 export const getAllStudentsService = async () => {
   try {
-    const students = await Student.findAll({
+    // Lấy dữ liệu sinh viên kèm account + class
+    const studentsData = await Student.findAll({
       include: [
         {
           model: Account,
-          as: "account", // Giả sử có quan hệ với Account
-          attributes: ["id", "email", "role", "status"], // Chỉ lấy các trường cần thiết từ Account
+          as: "account",
+          attributes: ["id", "email", "role", "status"],
         },
         {
           model: Classes,
-          as: "class", // Giả sử có quan hệ với Class
-          attributes: ["class_id", "class_name"], // Chỉ lấy các trường cần thiết từ Class
+          as: "class",
+          attributes: ["class_id", "class_name"],
         },
       ],
     });
-    return students;
+
+    // Lấy toàn bộ email từ Account
+    const allAccounts = await Account.findAll({
+      attributes: ["id", "email", "role", "status"],
+    });
+
+    // Làm phẳng dữ liệu student
+    const studentsWithExtras = studentsData.map((student) => {
+      const plainStudent = student.get({ plain: true });
+
+      return {
+        ...plainStudent,
+        email: plainStudent.account?.email || null,
+        role: plainStudent.account?.role || null,
+        status: plainStudent.account?.status || null,
+        class_id: plainStudent.class?.class_id || null,
+        class_name: plainStudent.class?.class_name || null,
+      };
+    });
+
+    return {
+      students: studentsWithExtras,
+      allAccounts, // chứa tất cả email trong bảng Account
+    };
   } catch (error) {
-    console.error("Lỗi khi lấy danh sách Học viên:", error);
-    throw new Error(`Lấy danh sách giảng viên không thành công`);
+    logger.error("Lỗi khi lấy danh sách Học viên:", error);
+    throw new Error("Lấy danh sách học viên không thành công");
   }
 };
 
@@ -70,31 +94,36 @@ export const getStudentByIdService = async (id) => {
  * @throws {Error} Nếu có lỗi khi tạo Học viên.
  */
 export const createStudentService = async (studentData) => {
+  console.log("Creating student with data:", studentData);
+
   const transaction = await sequelize.transaction();
+
   try {
+    // Kiểm tra trùng
     const [existingStudent, existingAccount] = await Promise.all([
       Student.findByPk(studentData.student_id),
       Account.findOne({ where: { email: studentData.email } }),
     ]);
 
     if (existingStudent) {
-      throw new Error(`Mã học viên ${studentData.student_id} đã tồn tại`);
+      throw new Error(`Mã học viên "${studentData.student_id}" đã tồn tại`);
     }
     if (existingAccount) {
-      throw new Error("Email đã tồn tại");
+      throw new Error(`Email "${studentData.email}" đã tồn tại`);
     }
 
-    // 2. Tạo tài khoản
+    // Tạo Account
     const account = await Account.create(
       {
         email: studentData.email,
         role: "student",
         status: "active",
-        password: "student_default_password", // Nên thêm một mật khẩu mặc định an toàn
+        password: "student_default_password", // TODO: hash
       },
       { transaction }
     );
 
+    // Tạo Student
     const student = await Student.create(
       {
         student_id: studentData.student_id,
@@ -104,7 +133,7 @@ export const createStudentService = async (studentData) => {
         address: studentData.address,
         day_of_birth: studentData.day_of_birth,
         phone_number: studentData.phone_number,
-        class_id: studentData.class_id,
+        class_id: studentData.class,
         admission_year: studentData.admission_year,
         gpa: studentData.gpa,
         status: studentData.status || "Đang học",
@@ -114,21 +143,43 @@ export const createStudentService = async (studentData) => {
 
     await transaction.commit();
 
-    const result = await Student.findByPk(student.student_id, {
-      include: [
-        {
-          model: Account,
-          as: "account",
-          attributes: ["email", "role", "status"],
-        },
-      ],
-    });
-    return result;
+    // Query lại student kèm Account + Class
+    const studentDataWithRelations = await Student.findByPk(
+      student.student_id,
+      {
+        include: [
+          {
+            model: Account,
+            as: "account",
+            attributes: ["id", "email", "role", "status"],
+          },
+          {
+            model: Classes,
+            as: "class",
+            attributes: ["class_id", "class_name"],
+          },
+        ],
+      }
+    );
+
+    console.log(studentDataWithRelations);
+
+    // Flatten dữ liệu cho đồng bộ với getAllStudentsService
+    const plainStudent = studentDataWithRelations.get({ plain: true });
+
+    return {
+      ...plainStudent,
+      email: plainStudent.account?.email || null,
+      role: plainStudent.account?.role || null,
+      status: plainStudent.account?.status || null,
+      class_id: plainStudent.class?.class_id || null,
+      class_name: plainStudent.class?.class_name || null,
+    };
   } catch (error) {
     if (transaction && !transaction.finished) {
       await transaction.rollback();
     }
-    throw new Error("Không thể tạo học viên: " + error.message);
+    throw error;
   }
 };
 
@@ -142,58 +193,67 @@ export const createStudentService = async (studentData) => {
 export const updateStudentService = async (id, studentData) => {
   const transaction = await sequelize.transaction();
   try {
+    // 1. Tìm Student + Account
     const student = await Student.findByPk(id, {
-      include: [
-        {
-          model: Account,
-          as: "account", // Giả sử có quan hệ với Account
-        },
-      ],
+      include: [{ model: Account, as: "account" }],
+      transaction,
     });
+
     if (!student) {
       throw new Error(`Không tìm thấy Học viên với ID ${id}`);
     }
-    // Kiểm tra xem email đã tồn tại chưa (nếu có)
-    if (studentData.email && studentData.email !== student.account.email) {
+
+    // 2. Kiểm tra email (nếu có cập nhật)
+    if (studentData.email && studentData.email !== student.account?.email) {
       const existingAccount = await Account.findOne({
         where: {
           email: studentData.email,
-          id: { [Op.ne]: student.account.id }, // Tránh trùng với tài khoản hiện tại
+          id: { [Op.ne]: student.account?.id }, // bỏ qua account hiện tại
         },
+        transaction,
       });
       if (existingAccount) {
         throw new Error("Email đã tồn tại");
       }
     }
-    await student.account.update(
-      {
-        email: studentData.email,
-      },
-      { transaction }
-    );
 
-    // Cập nhật thông tin Học viên
-    const updateData = {};
-    if (studentData.name) updateData.name = studentData.name;
-    if (studentData.day_of_birth !== undefined)
-      updateData.day_of_birth = studentData.day_of_birth;
-    if (studentData.gender !== undefined)
-      updateData.gender = studentData.gender; // Fixed: use studentData.gender instead of student.gender
-    if (studentData.address !== undefined)
-      updateData.address = studentData.address;
-    if (studentData.phone_number !== undefined)
-      updateData.phone_number = studentData.phone_number;
-    if (studentData.class_id !== undefined || studentData.class !== undefined)
-      updateData.class_id = studentData.class_id || studentData.class; // Use class_id
-    if (studentData.admission_year !== undefined)
-      updateData.admission_year = studentData.admission_year;
-    if (studentData.gpa !== undefined) updateData.gpa = studentData.gpa;
-    if (studentData.status !== undefined)
-      updateData.status = studentData.status;
+    // 3. Cập nhật Account (nếu có)
+    if (student.account) {
+      await student.account.update(
+        {
+          ...(studentData.email && { email: studentData.email }),
+          ...(studentData.status && { status: studentData.status }), // nếu muốn đồng bộ status
+        },
+        { transaction }
+      );
+    }
 
+    // 4. Chuẩn bị dữ liệu Student để update
+    const updateData = {
+      ...(studentData.name && { name: studentData.name }),
+      ...(studentData.day_of_birth && {
+        day_of_birth: studentData.day_of_birth,
+      }),
+      ...(studentData.gender && { gender: studentData.gender }),
+      ...(studentData.address && { address: studentData.address }),
+      ...(studentData.phone_number && {
+        phone_number: studentData.phone_number,
+      }),
+      ...(studentData.class_id && { class_id: studentData.class_id }),
+      ...(studentData.admission_year && {
+        admission_year: studentData.admission_year,
+      }),
+      ...(studentData.gpa !== undefined && { gpa: studentData.gpa }),
+      ...(studentData.status && { status: studentData.status }),
+    };
+
+    // 5. Cập nhật Student
     await student.update(updateData, { transaction });
+
+    // 6. Commit
     await transaction.commit();
 
+    // 7. Trả về bản ghi mới nhất
     return await Student.findByPk(id, {
       include: [
         {
@@ -205,10 +265,8 @@ export const updateStudentService = async (id, studentData) => {
     });
   } catch (error) {
     if (!transaction.finished) {
-      // Kiểm tra xem transaction đã hoàn thành chưa
-      await transaction.rollback(); // Rollback transaction nếu có lỗi
+      await transaction.rollback();
     }
-    console.error(`Lỗi khi cập nhật Học viên với ID ${id}:`, error);
     throw error;
   }
 };
@@ -220,35 +278,34 @@ export const updateStudentService = async (id, studentData) => {
  * @throws {Error} Nếu không tìm thấy Học viên hoặc có lỗi.
  */
 export const deleteStudentService = async (id) => {
-  const transaction = await sequelize.transaction();
+  const transaction = await models.sequelize.transaction();
+
   try {
-    // 1. Tìm học viên và tài khoản liên kết
     const student = await Student.findByPk(id, {
       include: [{ model: Account, as: "account" }],
       transaction,
+      paranoid: false, // lấy cả record đã bị soft delete nếu có
     });
 
-    // 2. Nếu không tìm thấy, trả về false
     if (!student) {
-      return false;
+      return false; // Không tìm thấy
     }
 
-    const accountId = student.account.id;
+    // Soft delete account
+    if (student.account) {
+      await student.account.destroy({ transaction });
+    }
 
-    // 3. Xóa học viên và tài khoản trong cùng một transaction
-    // Sử dụng tùy chọn cascade delete của Sequelize là một lựa chọn tốt hơn,
-    // nhưng nếu không có, cách này vẫn đảm bảo.
+    // Soft delete student
     await student.destroy({ transaction });
-    await student.account.destroy({ transaction });
 
     await transaction.commit();
-
     return true;
   } catch (error) {
-    if (transaction && !transaction.finished) {
+    if (!transaction.finished) {
       await transaction.rollback();
     }
-    throw new Error(`Không thể xóa học viên với ID ${id}: ${error.message}`);
+    throw new Error(`Không thể xoá học viên với ID ${id}: ${error.message}`);
   }
 };
 
@@ -294,13 +351,22 @@ export const importStudentsFromJSONService = async (studentsData) => {
           student_id: studentData.student_id.toString().trim(),
           name: studentData.name.toString().trim(),
           email: studentData.email ? studentData.email.toString().trim() : null,
-          gender: studentData.gender ? studentData.gender.toString().trim() : null,
-          address: studentData.address ? studentData.address.toString().trim() : null,
+          gender: studentData.gender
+            ? studentData.gender.toString().trim()
+            : null,
+          address: studentData.address
+            ? studentData.address.toString().trim()
+            : null,
           day_of_birth: studentData.day_of_birth || null,
-          phone_number: studentData.phone_number ? studentData.phone_number.toString().trim() : null,
-          class_id: studentData.class_id ? studentData.class_id.toString().trim() : null,
+          phone_number: studentData.phone_number
+            ? studentData.phone_number.toString().trim()
+            : null,
+          class_id: studentData.class_id
+            ? studentData.class_id.toString().trim()
+            : null,
           admission_year: studentData.admission_year || null,
-          gpa: studentData.gpa !== undefined ? parseFloat(studentData.gpa) : null,
+          gpa:
+            studentData.gpa !== undefined ? parseFloat(studentData.gpa) : null,
           status: studentData.status || "Đang học",
         };
 

@@ -20,6 +20,7 @@ const {
  */
 export const getAllLecturersService = async () => {
   try {
+    // Lấy dữ liệu giảng viên kèm account, môn học và busy_slots
     const allLecturersData = await Lecturer.findAll({
       include: [
         {
@@ -41,19 +42,31 @@ export const getAllLecturersService = async () => {
       ],
     });
 
-    // Gộp email từ account vào lecturer object
-    const lecturersWithEmail = allLecturersData.map((lecturer) => {
+    // Lấy toàn bộ email từ bảng Account
+    // Điều này giúp bạn có thể kiểm tra trùng lặp email cho cả giảng viên và sinh viên
+    const allAccounts = await Account.findAll({
+      attributes: ["id", "email", "role", "status"],
+    });
+
+    // Làm phẳng dữ liệu giảng viên
+    const lecturersWithExtras = allLecturersData.map((lecturer) => {
       const plainLecturer = lecturer.get({ plain: true });
+
       return {
         ...plainLecturer,
-        email: plainLecturer.account?.email || null, // thêm trực tiếp email
+        email: plainLecturer.account?.email || null,
+        role: plainLecturer.account?.role || null,
+        status: plainLecturer.account?.status || null,
       };
     });
 
-    return lecturersWithEmail;
+    return {
+      lecturers: lecturersWithExtras,
+      allAccounts, // Trả về danh sách tất cả tài khoản
+    };
   } catch (error) {
     logger.error("Lỗi khi lấy danh sách giảng viên:", error);
-    throw error;
+    throw new Error("Lấy danh sách giảng viên không thành công");
   }
 };
 

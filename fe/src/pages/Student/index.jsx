@@ -34,9 +34,8 @@ const Student = () => {
 
     // Dữ liệu mẫu cho danh sách học viên
     const [students, setStudents] = useState([]);
-    // Lấy danh sách lớp học để hiển thị trong modal thêm học viên
+    const [existingAccounts, setExistingAccounts] = useState([]);
     const [classes, setClasses] = useState([]);
-    // State cho phân trang, tìm kiếm, lọc theo trạng thái và modal
     const [page, setPage] = useState(0);
     const [rowsPerPage] = useState(8);
     const [searchTerm, setSearchTerm] = useState('');
@@ -60,7 +59,10 @@ const Student = () => {
         try {
             const response = await getAllStudentsAPI();
             if (response && response.data) {
-                setStudents(response.data);
+                console.log(response.data.students);
+                
+                setStudents(response.data.students);
+                setExistingAccounts(response.data.allAccounts);
             } else {
                 setStudents([]);
             }
@@ -108,28 +110,34 @@ const Student = () => {
     const handleAddNewStudent = async (newStudent) => {
         setLoading(true);
         setError(null);
+
         try {
-            const response = await createStudentAPI(newStudent);
-            if (response && response.data) {
-                toast.success('Thêm học viên thành công!');
-                await fetchStudents(); // Tải lại danh sách học viên sau khi thêm thành công
+            const { data } = await createStudentAPI(newStudent);
+
+            if (!data) {
+                throw new Error("Không thể thêm học viên. Vui lòng thử lại.");
             }
-            else {
-                const errorMessage = response?.data?.message || "Không thể thêm học viên. Vui lòng thử lại.";
-                setError(errorMessage);
-                toast.error(errorMessage);
-            }
+
+            toast.success("Thêm học viên thành công!");
+            await fetchStudents();
+
+            // Chỉ reset và đóng modal khi thêm thành công
+            setOpenAddModal(false);
+            setEditedStudent(null);
         } catch (error) {
-            const errorMessage = error.response?.data?.message || "Không thể thêm học viên. Vui lòng thử lại.";
+            const errorMessage =
+                error.response?.data?.message ||
+                error.message ||
+                "Không thể thêm học viên. Vui lòng thử lại.";
             console.error("Lỗi khi thêm học viên:", errorMessage);
+
             setError(errorMessage);
             toast.error(errorMessage);
         } finally {
             setLoading(false);
-            setOpenAddModal(false); // Đóng modal sau khi thêm thành công
-            setEditedStudent(null); // Đặt lại state editedStudent để tránh lỗi khi mở modal chỉnh sửa sau này
         }
-    }
+    };
+
 
     // Hàm đóng modal thêm học viên
     const handleCloseAddModal = () => {
@@ -390,6 +398,7 @@ const Student = () => {
                 error={error}
                 loading={loading}
                 fetchStudents={fetchStudents}
+                existingAccounts={existingAccounts}
                 classes={classes}
             />
             <EditStudentModal

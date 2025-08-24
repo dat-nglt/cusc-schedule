@@ -37,23 +37,19 @@ import {
     Class,
     Event,
     CheckCircle,
-    Error as ErrorIcon
+    Error as ErrorIcon,
+    Login
 } from '@mui/icons-material';
 import * as XLSX from 'xlsx';
 import PreviewStudentModal from './PreviewStudentModal';
 import { processExcelDataStudent } from '../../utils/ExcelValidation';
-
-const statusOptions = [
-    { value: 'Hoạt động', color: 'success', db: 'active' },
-    { value: 'Tạm nghỉ', color: 'warning', db: 'break' },
-    { value: 'Đã nghỉ học', color: 'error', db: 'dropped' },
-    { value: 'Đã tốt nghiệp', color: 'info', db: 'graduated' },
-    { value: 'Bảo lưu', color: 'warning', db: 'reserve' }
-];
+import { useEffect } from 'react';
+import { generateStudentId } from '../../utils/generateLecturerId';
+import { validateStudentField } from '../../utils/addValidation';
 
 const steps = ['Thông tin cá nhân', 'Thông tin liên hệ', 'Thông tin học tập'];
 
-export default function AddStudentModal({ open, onClose, onAddStudent, existingStudents, error, loading, message, fetchStudents, classes }) {
+export default function AddStudentModal({ open, onClose, onAddStudent, existingStudents, error, loading, message, fetchStudents, existingAccounts, classes }) {
     const [newStudent, setNewStudent] = useState({
         student_id: '',
         name: '',
@@ -74,122 +70,98 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
     const [fileUploaded, setFileUploaded] = useState(false);
 
     const handleNext = () => {
-        // Validate current step before proceeding
+        let hasError = false;
+        let errors = {};
+
         if (activeStep === 0) {
-            if (!newStudent.student_id || !newStudent.name || !newStudent.day_of_birth || !newStudent.gender) {
-                setLocalError('Vui lòng điền đầy đủ thông tin cá nhân');
-                return;
-            }
+            const step1Fields = ["student_id", "name", "day_of_birth", "gender"];
+            const allErrors = validateStudentField(newStudent, existingStudents, existingAccounts);
+
+            step1Fields.forEach((field) => {
+                if (allErrors[field]) {
+                    errors[field] = allErrors[field];
+                    hasError = true;
+                }
+            });
         } else if (activeStep === 1) {
-            if (!newStudent.email || !newStudent.phone_number || !newStudent.address) {
-                setLocalError('Vui lòng điền đầy đủ thông tin liên hệ');
-                return;
-            }
+            const step2Fields = ["email", "phone_number", "address"];
+            const allErrors = validateStudentField(newStudent, existingStudents, existingAccounts);
 
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(newStudent.email)) {
-                setLocalError('Email không hợp lệ');
-                return;
-            }
-
-            const phoneRegex = /^[0-9]{10,11}$/;
-            if (!phoneRegex.test(newStudent.phone_number)) {
-                setLocalError('Số điện thoại phải có 10-11 chữ số');
-                return;
-            }
+            step2Fields.forEach((field) => {
+                if (allErrors[field]) {
+                    errors[field] = allErrors[field];
+                    hasError = true;
+                }
+            });
         }
 
-        setLocalError('');
-        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        // Cập nhật trạng thái lỗi
+        setLocalError(errors);
+
+        // Nếu không có lỗi, chuyển sang bước tiếp theo
+        if (!hasError) {
+            setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        }
     };
+
+
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setNewStudent((prev) => ({ ...prev, [name]: value }));
+        setLocalError('');
+
+    };
+
+
 
     const handleBack = () => {
         setLocalError('');
         setActiveStep((prevActiveStep) => prevActiveStep - 1);
     };
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setNewStudent((prev) => ({ ...prev, [name]: value }));
-        setLocalError('');
-    };
+
+    useEffect(() => {
+        if (open) {
+            const studentID = generateStudentId();
+            setNewStudent((prev) => ({ ...prev, student_id: studentID }));
+        }
+    }, [open]);
 
     const handleSubmit = async () => {
-        // Final validation
-        if (!newStudent.class || !newStudent.admission_year) {
-            setLocalError('Vui lòng điền đầy đủ thông tin học tập');
+        // 1. Chạy xác thực toàn bộ form
+        const formErrors = validateStudentField(newStudent, existingStudents);
+
+        // 2. Cập nhật trạng thái lỗi
+        setLocalError(formErrors);
+
+        // 3. Nếu có lỗi, dừng lại và không submit
+        if (Object.keys(formErrors).length > 0) {
             return;
         }
 
-        const birthDate = new Date(newStudent.day_of_birth);
-        const admissionDate = new Date(newStudent.admission_year);
-        const today = new Date();
+        // 4. Nếu không có lỗi, tiến hành submit
+        try {
+            const studentToAdd = {
+                ...newStudent,
+                status: "active",
+                google_id: null,
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString(),
+            };
 
-        if (birthDate >= today) {
-            setLocalError('Ngày sinh không hợp lệ');
-            return;
-        }
+            await onAddStudent(studentToAdd);
 
-        const minBirthDate = new Date();
-        minBirthDate.setFullYear(minBirthDate.getFullYear() - 6);
-        if (birthDate > minBirthDate) {
-            setLocalError('Học viên phải đủ 6 tuổi');
-            return;
-        }
-
-        if (admissionDate > today) {
-            setLocalError('Ngày nhập học không hợp lệ');
-            return;
-        }
-
-        if (admissionDate < birthDate) {
-            setLocalError('Ngày nhập học không thể trước ngày sinh');
-            return;
-        }
-
-        const isDuplicateId = existingStudents.some(
-            (student) => student.student_id === newStudent.student_id
-        );
-        if (isDuplicateId) {
-            setLocalError(`Mã học viên "${newStudent.student_id}" đã tồn tại`);
-            return;
-        }
-
-        const isEmailDuplicate = existingStudents.some(
-            (student) => student.email === newStudent.email
-        );
-        if (isEmailDuplicate) {
-            setLocalError(`Email "${newStudent.email}" đã tồn tại`);
-            return;
-        }
-
-        const isPhoneDuplicate = existingStudents.some(
-            (student) => student.phone_number === newStudent.phone_number
-        );
-        if (isPhoneDuplicate) {
-            setLocalError(`Số điện thoại "${newStudent.phone_number}" đã tồn tại`);
-            return;
-        }
-
-        // Chuyển trạng thái sang tiếng Anh trước khi lưu
-        const statusObj = statusOptions.find(opt => opt.value === newStudent.status);
-        const dbStatus = statusObj ? statusObj.db : 'studying';
-
-        const studentToAdd = {
-            ...newStudent,
-            status: dbStatus,
-            google_id: null,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-        };
-
-        await onAddStudent(studentToAdd);
-
-        if (!error && !loading) {
-            resetForm();
-            onClose();
+            if (!error && !loading) {
+                resetForm();
+                onClose();
+            }
+        } catch (err) {
+            console.error("Lỗi khi thêm học viên:", err);
+            setLocalError({ submit: "Không thể thêm học viên, vui lòng thử lại." });
         }
     };
+
 
     const resetForm = () => {
         setNewStudent({
@@ -346,24 +318,34 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
 
                     {/* Error/Success messages */}
                     <Box sx={{ px: 3, pt: 2 }}>
-                        {(error || localError) && (
-                            <Fade in={!!(error || localError)}>
-                                <Alert
-                                    severity="error"
-                                    icon={<ErrorIcon />}
-                                    sx={{ mb: 2 }}
-                                >
-                                    {error || localError}
+                        {/* Hiển thị lỗi từ server (nếu có) */}
+                        {error && (
+                            <Fade in={!!error}>
+                                <Alert severity="error" icon={<ErrorIcon />} sx={{ mb: 2 }}>
+                                    {error}
                                 </Alert>
                             </Fade>
                         )}
+
+                        {/* Hiển thị các lỗi local từ đối tượng localError */}
+                        {Object.keys(localError).length > 0 && (
+                            <Fade in={Object.keys(localError).length > 0}>
+                                <Alert severity="error" icon={<ErrorIcon />} sx={{ mb: 2 }}>
+                                    {/* Dùng Object.values() để lấy mảng các chuỗi lỗi và hiển thị chúng */}
+                                    <ul>
+                                        {Object.values(localError).map((err, index) => (
+                                            // Đảm bảo mỗi lỗi là một chuỗi
+                                            typeof err === 'string' && <li key={index}>{err}</li>
+                                        ))}
+                                    </ul>
+                                </Alert>
+                            </Fade>
+                        )}
+
+                        {/* Hiển thị thông báo thành công */}
                         {message && (
                             <Fade in={!!message}>
-                                <Alert
-                                    severity="success"
-                                    icon={<CheckCircle />}
-                                    sx={{ mb: 2 }}
-                                >
+                                <Alert severity="success" icon={<CheckCircle />} sx={{ mb: 2 }}>
                                     {message}
                                 </Alert>
                             </Fade>
@@ -387,6 +369,7 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
                                     variant="outlined"
                                     required
                                     InputProps={{
+                                        readOnly: true,
                                         startAdornment: (
                                             <InputAdornment position="start">
                                                 <PersonAdd color="action" />
@@ -501,7 +484,7 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
                                     variant="outlined"
                                     required
                                     multiline
-                                    rows={3}
+                                    rows={1}
                                     InputProps={{
                                         startAdornment: (
                                             <InputAdornment position="start">
@@ -559,26 +542,6 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
                                     }}
                                     sx={{ mb: 2 }}
                                 />
-                                <FormControl fullWidth required>
-                                    <InputLabel>Trạng thái</InputLabel>
-                                    <Select
-                                        name="status"
-                                        value={newStudent.status}
-                                        onChange={handleChange}
-                                        label="Trạng thái"
-                                    >
-                                        {statusOptions.map((option) => (
-                                            <MenuItem key={option.value} value={option.value}>
-                                                <Chip
-                                                    label={option.value}
-                                                    size="small"
-                                                    color={option.color}
-                                                    sx={{ mr: 1 }}
-                                                />
-                                            </MenuItem>
-                                        ))}
-                                    </Select>
-                                </FormControl>
                             </Box>
                         )}
                     </Box>

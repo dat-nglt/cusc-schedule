@@ -33,6 +33,7 @@ const Lecturer = () => {
     const { isSmallScreen, isMediumScreen } = useResponsive();
     const theme = useTheme()
     const [lecturers, setLecturers] = useState([]);
+    const [existingAccounts, setExistingAccounts] = useState([]);
     const [subjects, setSubjects] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage] = useState(7);
@@ -56,9 +57,8 @@ const Lecturer = () => {
         try {
             const response = await getAllLecturersAPI();
             if (response && response.data) {
-                console.log(response.data);
-
-                setLecturers(response.data);
+                setLecturers(response.data.lecturers);
+                setExistingAccounts(response.data.allAccounts);
             } else {
                 setLecturers([]);
             }
@@ -408,6 +408,7 @@ const Lecturer = () => {
                 error={error}
                 loading={loading}
                 fetchLecturers={fetchLecturers}
+                existingAccounts={existingAccounts}
                 subjects={subjects}
             />
             <EditLecturerModal
