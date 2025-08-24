@@ -136,7 +136,7 @@ export const createStudentService = async (studentData) => {
         class_id: studentData.class,
         admission_year: studentData.admission_year,
         gpa: studentData.gpa,
-        status: studentData.status || "Đang học",
+        status: studentData.status || "active",
       },
       { transaction }
     );
@@ -176,6 +176,7 @@ export const createStudentService = async (studentData) => {
       class_name: plainStudent.class?.class_name || null,
     };
   } catch (error) {
+    console.error("Error in createStudentService:", error);
     if (transaction && !transaction.finished) {
       await transaction.rollback();
     }
@@ -361,13 +362,14 @@ export const importStudentsFromJSONService = async (studentsData) => {
           phone_number: studentData.phone_number
             ? studentData.phone_number.toString().trim()
             : null,
-          class_id: studentData.class_id
-            ? studentData.class_id.toString().trim()
+          // Sử dụng 'class' thay vì 'class_id' để đồng bộ với createStudentService
+          class: studentData.class
+            ? studentData.class.toString().trim()
             : null,
           admission_year: studentData.admission_year || null,
           gpa:
             studentData.gpa !== undefined ? parseFloat(studentData.gpa) : null,
-          status: studentData.status || "Đang học",
+          status: studentData.status || "active",
         };
 
         // Validate GPA nếu có
@@ -421,7 +423,7 @@ export const importStudentsFromJSONService = async (studentsData) => {
           }
         }
 
-        // Tạo student mới
+        // Tạo student mới (truyền đúng trường class)
         const newStudent = await createStudentService(cleanedData);
         results.success.push(newStudent);
       } catch (error) {

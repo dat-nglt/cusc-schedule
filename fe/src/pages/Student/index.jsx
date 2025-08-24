@@ -28,6 +28,7 @@ import { getAllStudentsAPI, createStudentAPI, updateStudentAPI, deleteStudentAPI
 import { toast } from 'react-toastify';
 import { getClassesAPI } from '../../api/classAPI';
 import TablePaginationLayout from '../../components/layout/TablePaginationLayout';
+import { getAllEmails } from '../../api/authAPI';
 const Student = () => {
     const { isSmallScreen, isMediumScreen } = useResponsive();
     const theme = useTheme();
@@ -38,6 +39,7 @@ const Student = () => {
     const [classes, setClasses] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage] = useState(8);
+    const [listEmail, setListEmail] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedStatus, setSelectedStatus] = useState('');
     const [openDetail, setOpenDetail] = useState(false);
@@ -60,7 +62,7 @@ const Student = () => {
             const response = await getAllStudentsAPI();
             if (response && response.data) {
                 console.log(response.data.students);
-                
+
                 setStudents(response.data.students);
                 setExistingAccounts(response.data.allAccounts);
             } else {
@@ -96,9 +98,25 @@ const Student = () => {
         }
     };
 
+    const fetchAllEmails = async () => {
+        try {
+            const response = await getAllEmails();
+            if (response && response.data) {
+                setListEmail(response.data);
+            } else {
+                setListEmail([]);
+            }
+        } catch (error) {
+            console.error("Lỗi khi tải danh sách email:", error);
+            // Không cần thiết phải hiển thị lỗi cho người dùng trong trường hợp này
+        }
+    };
+console.log("listEmail:", listEmail);
+
     useEffect(() => {
         fetchStudents();
         fetchClasses();
+        fetchAllEmails();
     }, [])
 
     // Hàm mở modal Thêm 
@@ -400,6 +418,7 @@ const Student = () => {
                 fetchStudents={fetchStudents}
                 existingAccounts={existingAccounts}
                 classes={classes}
+                listEmail={listEmail}
             />
             <EditStudentModal
                 open={openEditModal}

@@ -1,5 +1,5 @@
 import express from 'express';
-import { getAllUsersController, getCurrentUserData } from '../controllers/userController.js';
+import { getAllEmailsController, getAllUsersController, getCurrentUserData } from '../controllers/userController.js';
 import authMiddleware, { authenticateAndAuthorize } from '../middleware/authMiddleware.js';
 
 const userRoutes = express.Router();
@@ -20,5 +20,7 @@ userRoutes.get('/me', authMiddleware, getCurrentUserData);
  * @access Private (yêu cầu quyền admin hoặc training_officer)
  */
 userRoutes.get('/getAll', authenticateAndAuthorize(['admin', 'training_officer']), getAllUsersController);
+
+userRoutes.get('/getAllEmails', authenticateAndAuthorize(['admin', 'training_officer']), getAllEmailsController);
 
 export default userRoutes;

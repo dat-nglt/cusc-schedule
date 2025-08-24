@@ -231,13 +231,13 @@ export default function StudentTable({
                                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 0.5, justifyContent: 'center' }}>
                                         <Email sx={{ fontSize: '1rem', mr: 0.5, color: 'text.secondary' }} />
                                         <Box sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                            {student.account?.email || 'N/A'}
+                                            {student.account?.email || 'chưa có dữ liệu'}
                                         </Box>
                                     </Box>
                                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                         <Phone sx={{ fontSize: '1rem', mr: 0.5, color: 'text.secondary' }} />
                                         <Box>
-                                            {student.account?.phone_number || 'N/A'}
+                                            {student.phone_number || 'chưa có dữ liệu'}
                                         </Box>
                                     </Box>
                                 </Box>

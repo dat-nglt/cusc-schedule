@@ -1,4 +1,4 @@
-import { getAllUsers } from "../services/userService.js";
+import { findExistsUserByIdService, getAllEmailsService, getAllUsers } from "../services/userService.js";
 import { APIResponse } from "../utils/APIResponse.js";
 
 /**
@@ -50,5 +50,15 @@ export const getCurrentUserData = async (req, res) => {
     } catch (error) {
         console.error("Lỗi khi lấy thông tin người dùng hiện tại:", error); // Thêm log lỗi
         return APIResponse(res, 500, null, error.message || "Đã xảy ra lỗi khi lấy thông tin người dùng hiện tại.");
+    }
+};
+
+export const getAllEmailsController = async (req, res) => {
+    try {
+        const users = await getAllEmailsService();
+        return APIResponse(res, 200, users, "Lấy danh sách email người dùng thành công.");
+    } catch (error) {
+        console.error("Lỗi khi lấy danh sách email người dùng:", error); // Thêm log lỗi để dễ debug
+        return APIResponse(res, 500, null, error.message || "Đã xảy ra lỗi khi lấy danh sách email người dùng.");
     }
 };

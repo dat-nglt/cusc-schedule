@@ -1,4 +1,4 @@
-const validGenders = ['Nam', 'Nữ'];
+const validGenders = ['male', 'female'];
 // Helper function để format date từ Excel
 const formatDate = (dateValue) => {
     if (!dateValue) return '';
@@ -131,16 +131,28 @@ const validateLecturerData = (lecturer, existingLecturers, allImportData = []) =
     return errors;
 };
 
+// Helper function để chuẩn hóa gender
+const formatGender = (genderValue) => {
+    if (!genderValue) return '';
+    const g = genderValue.toString().trim().toLowerCase();
+    if (g === 'nam') return 'male';
+    if (g === 'nữ') return 'female';
+    return genderValue.toString().trim();
+};
+
 export const processExcelDataLecturer = (rawData, existingLecturers) => {
     // Xử lý dữ liệu thô từ Excel
     const processedData = rawData.map((row, index) => {
+        // Chuẩn hóa gender
+        const gender = formatGender(row['Giới tính'] || row['gender']);
+
         // Chuẩn hóa dữ liệu
         const lecturer = {
             lecturer_id: row['Mã giảng viên']?.trim() || row['lecturer_id']?.trim() || '',
             name: row['Họ tên']?.trim() || row['name']?.trim() || '',
             email: row['Email']?.trim() || row['email']?.trim() || '',
             day_of_birth: formatDate(row['Ngày sinh'] || row['day_of_birth']),
-            gender: row['Giới tính']?.trim() || row['gender']?.trim() || '',
+            gender,
             address: row['Địa chỉ']?.trim() || row['address']?.trim() || '',
             phone_number: row['Số điện thoại'] || row['phone_number'] || '',
             academic_rank: row['Học hàm']?.trim() || row['academic_rank']?.trim() || '',
@@ -240,19 +252,23 @@ const validateStudentData = (student, existingStudents, allImportData = []) => {
 export const processExcelDataStudent = (rawData, existingStudents) => {
     // Xử lý dữ liệu thô từ Excel
     const processedData = rawData.map((row, index) => {
+        // Chuẩn hóa gender
+        const gender = formatGender(row['Giới tính'] || row['gender']);
+
         // Chuẩn hóa dữ liệu
         const student = {
             student_id: row['Mã học viên']?.trim() || row['student_id']?.trim() || '',
             name: row['Họ tên']?.trim() || row['name']?.trim() || '',
             email: row['Email']?.trim() || row['email']?.trim() || '',
             day_of_birth: formatDate(row['Ngày sinh'] || row['day_of_birth']),
-            gender: row['Giới tính']?.trim() || row['gender']?.trim() || '',
+            gender,
             address: row['Địa chỉ']?.trim() || row['address']?.trim() || '',
             phone_number: row['Số điện thoại'] || row['phone_number'] || '',
             class: row['Lớp'] || row['class'] || '',
             admission_year: formatDate(row['Năm nhập học'] || row['admission_year']),
-            gpa: row['Điểm trung bình'] || row['gpa'] || '',
-            status: row['Trạng thái']?.trim() || row['status']?.trim() || 'Đang học',
+            gpa: row['Điểm trung bình'] !== undefined && row['Điểm trung bình'] !== ''
+                ? parseFloat(row['Điểm trung bình'])
+                : (row['gpa'] !== undefined && row['gpa'] !== '' ? parseFloat(row['gpa']) : ''),
             rowIndex: index + 2 // +2 vì Excel bắt đầu từ row 1 và có header
         };
 
@@ -748,12 +764,7 @@ const requiredClassFields = [
     'program_id'
 ];
 
-const validClassStatus = [
-    'Hoạt động',
-    'Ngừng hoạt động',
-    'active',
-    'inactive'
-];
+
 
 const validateClassData = (classItem, existingClasses, existingCourses, existingPrograms, allImportData = []) => {
     const errors = [];
@@ -788,10 +799,6 @@ const validateClassData = (classItem, existingClasses, existingCourses, existing
         }
     }
 
-    // Kiểm tra status hợp lệ
-    if (classItem.status && !validClassStatus.includes(classItem.status)) {
-        errors.push('invalid_status');
-    }
 
     // Kiểm tra course_id tồn tại
     if (classItem.course_id && !(existingCourses || []).some(course => course.course_id === classItem.course_id)) {
@@ -814,7 +821,7 @@ export const processExcelDataClass = (rawData, existingClasses, existingCourses,
             class_id: row['Mã lớp học']?.trim() || row['class_id']?.trim() || '',
             class_name: row['Tên lớp học']?.trim() || row['class_name']?.trim() || '',
             class_size: row['Sĩ số'] || row['class_size'] || '',
-            status: row['Trạng thái']?.trim() || row['status']?.trim() || 'Hoạt động',
+            status: row['Trạng thái']?.trim() || row['status']?.trim() || 'active',
             course_id: row['Mã khóa học']?.trim() || row['course_id']?.trim() || '',
             program_id: row['Mã chương trình']?.trim() || row['program_id']?.trim() || '',
             rowIndex: index + 2 // +2 vì Excel bắt đầu từ row 1 và có header

@@ -170,6 +170,20 @@ export const findExistsUserByIdService = async (id) => {
   }
 };
 
+export const getAllEmailsService = async () => {
+  try {
+    const accounts = await Account.findAll({
+      attributes: ['email'],
+      paranoid: false // Lấy cả bản ghi đã xóa mềm
+    });
+
+    return accounts.map(acc => acc.email);
+  } catch (error) {
+    logger.error("Lỗi khi lấy danh sách email người dùng:", error);
+    throw new Error("Không thể lấy danh sách email người dùng.");
+  }
+};
+
 
 
 /**

@@ -28,7 +28,7 @@ import { toast } from 'react-toastify';
 import { getAllLecturersAPI, createLecturerAPI, updateLecturerAPI, deleteLecturerAPI } from '../../api/lecturerAPI';
 import { getAllSubjectsAPI } from '../../api/subjectAPI';
 import TablePaginationLayout from '../../components/layout/TablePaginationLayout';
-
+import { getAllEmails } from '../../api/authAPI';
 const Lecturer = () => {
     const { isSmallScreen, isMediumScreen } = useResponsive();
     const theme = useTheme()
@@ -48,6 +48,7 @@ const Lecturer = () => {
     const [lecturerToDelete, setLecturerToDelete] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [listEmail, setListEmail] = useState([]);
 
     const statuses = ['Đang giảng dạy', 'Tạm nghỉ', 'Đã nghỉ việc', 'Nghỉ hưu'];
 
@@ -68,6 +69,20 @@ const Lecturer = () => {
             toast.error('Lỗi khi tải danh sách giảng viên. Vui lòng thử lại.');
         } finally {
             setLoading(false);
+        }
+    };
+
+    const fetchAllEmails = async () => {
+        try {
+            const response = await getAllEmails();
+            if (response && response.data) {
+                setListEmail(response.data);
+            } else {
+                setListEmail([]);
+            }
+        } catch (error) {
+            console.error("Lỗi khi tải danh sách email người dùng:", error);
+            // Không cần thiết phải hiển thị lỗi cho người dùng trong trường hợp này
         }
     };
 
@@ -94,6 +109,7 @@ const Lecturer = () => {
     useEffect(() => {
         fetchLecturers();
         fetchSubjects();
+        fetchAllEmails();
     }, []);
 
     const handleAddLecturer = () => {
@@ -410,6 +426,7 @@ const Lecturer = () => {
                 fetchLecturers={fetchLecturers}
                 existingAccounts={existingAccounts}
                 subjects={subjects}
+                listEmail={listEmail}
             />
             <EditLecturerModal
                 open={openEditModal}

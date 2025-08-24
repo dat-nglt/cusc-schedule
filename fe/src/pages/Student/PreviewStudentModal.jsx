@@ -32,16 +32,16 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import InfoIcon from '@mui/icons-material/Info';
 import { importStudentsAPI } from '../../api/studentAPI';
-import { getRowStatus} from '../../components/ui/ErrorChip';
+import { getRowStatus } from '../../components/ui/ErrorChip';
 
-export default function PreviewStudentModal({ open, onClose, previewData, fetchStudents, classes }) {
+export default function PreviewStudentModal({ open, onClose, previewData, fetchStudents, classes, listEmail }) {
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
     const [isImporting, setIsImporting] = useState(false);
     const [importError, setImportError] = useState('');
     const [importMessage, setImportMessage] = useState('');
 
-    // Validate preview data with class checking
+    // Validate preview data with class checking and email checking
     const validatePreviewData = (data) => {
         return data.map(row => {
             let errors = row.errors || [];
@@ -56,6 +56,14 @@ export default function PreviewStudentModal({ open, onClose, previewData, fetchS
                     if (!classExists) {
                         errors = [`Mã lớp "${row.class}" không tồn tại trong hệ thống`];
                     }
+                }
+                // Check duplicate email with listEmail
+                if (
+                    row.email &&
+                    Array.isArray(listEmail) &&
+                    listEmail.includes(row.email.trim())
+                ) {
+                    errors = ['Email đã tồn tại trong hệ thống'];
                 }
             }
 
@@ -84,9 +92,6 @@ export default function PreviewStudentModal({ open, onClose, previewData, fetchS
         try {
             const validData = validRows.map(row => {
                 const { errors: _errors, rowIndex: _rowIndex, ...studentData } = row;
-                if (studentData.class) {
-                    studentData.class_id = studentData.class;
-                }
                 return studentData;
             });
 

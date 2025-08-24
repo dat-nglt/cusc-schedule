@@ -9,6 +9,7 @@ import LecturerProfile from './LecturerProfile';
 import TeachingSection from './TeachingSection';
 import Features from './Features';
 
+
 const LecturerDashboard = () => {
   const sampleLecturerInfo = {
     name: "Nguyễn Văn A",

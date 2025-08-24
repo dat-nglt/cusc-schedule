@@ -80,7 +80,7 @@ const availableDegrees = [
 
 const steps = ['Thông tin cá nhân', 'Thông tin liên hệ', 'Thông tin công tác', 'Lịch bận'];
 
-const AddLecturerModal = ({ open, onClose, onAddLecturer, existingLecturers, error, loading, message, fetchLecturers, existingAccounts, subjects }) => {
+const AddLecturerModal = ({ open, onClose, onAddLecturer, existingLecturers, error, loading, message, fetchLecturers, existingAccounts, subjects, listEmail }) => {
 
     const [newLecturer, setNewLecturer] = useState({
         lecturer_id: '',
@@ -1197,6 +1197,7 @@ const AddLecturerModal = ({ open, onClose, onAddLecturer, existingLecturers, err
                 previewData={previewData}
                 fetchLecturers={fetchLecturers}
                 subjects={subjects}
+                listEmail={listEmail}
             />
         </>
     );

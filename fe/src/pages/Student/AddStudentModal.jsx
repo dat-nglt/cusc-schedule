@@ -49,7 +49,7 @@ import { validateStudentField } from '../../utils/addValidation';
 
 const steps = ['Thông tin cá nhân', 'Thông tin liên hệ', 'Thông tin học tập'];
 
-export default function AddStudentModal({ open, onClose, onAddStudent, existingStudents, error, loading, message, fetchStudents, existingAccounts, classes }) {
+export default function AddStudentModal({ open, onClose, onAddStudent, existingStudents, error, loading, message, fetchStudents, existingAccounts, classes, listEmail }) {
     const [newStudent, setNewStudent] = useState({
         student_id: '',
         name: '',
@@ -60,7 +60,7 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
         phone_number: '',
         class: '',
         admission_year: '',
-        status: 'Hoạt động',
+        status: 'active',
     });
 
     const [activeStep, setActiveStep] = useState(0);
@@ -613,6 +613,7 @@ export default function AddStudentModal({ open, onClose, onAddStudent, existingS
                 previewData={previewData}
                 fetchStudents={fetchStudents}
                 classes={classes}
+                listEmail={listEmail}
             />
         </>
     );

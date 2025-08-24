@@ -27,7 +27,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { importLecturersAPI } from '../../api/lecturerAPI';
 import { getRowStatus, getErrorChip } from '../../components/ui/ErrorChip';
 
-export default function PreviewLecturerModal({ open, onClose, previewData, fetchLecturers, subjects }) {
+export default function PreviewLecturerModal({ open, onClose, previewData, fetchLecturers, subjects, listEmail }) {
   const [isImporting, setIsImporting] = useState(false);
   const [importError, setImportError] = useState('');
   const [importMessage, setImportMessage] = useState('');
@@ -49,6 +49,13 @@ export default function PreviewLecturerModal({ open, onClose, previewData, fetch
           // Nếu có mã môn giảng dạy không hợp lệ, tạo thông báo lỗi
           if (invalidSubjects.length > 0) {
             errors = [`Mã môn giảng dạy "${invalidSubjects.join(', ')}" không tồn tại trong hệ thống`];
+          }
+          if (
+            row.email &&
+            Array.isArray(listEmail) &&
+            listEmail.includes(row.email.trim())
+          ) {
+            errors = ['Email đã tồn tại trong hệ thống'];
           }
         }
       }

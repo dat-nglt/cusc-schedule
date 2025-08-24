@@ -78,3 +78,33 @@ export const loginWithGoogle = (role) => {
   // Thêm role làm query parameter
   window.location.href = `http://localhost:3000/auth/google?role=${role}`;
 };
+
+export const getAllEmails = async () => {
+  try {
+    const response = await axiosInstance.get(
+      `${API_BASE_URL}/api/user/getAllEmails`,
+      {
+        withCredentials: true,
+      }
+    );
+    return response.data; // Axios tự động parse JSON
+  } catch (error) {
+    // Xử lý lỗi từ response của server (ví dụ: 401 Unauthorized)
+    if (error.response) {
+      // Lỗi từ server (có status code)
+      throw new Error(
+        error.response.data.message || "Lỗi khi lấy danh sách email người dùng."
+      );
+    } else if (error.request) {
+      // Yêu cầu đã được gửi nhưng không nhận được phản hồi
+      throw new Error(
+        "Không có phản hồi từ máy chủ. Vui lòng kiểm tra kết nối mạng."
+      );
+    } else {
+      // Lỗi khác khi thiết lập request
+      throw new Error(
+        "Lỗi trong quá trình thiết lập yêu cầu: " + error.message
+      );
+    }
+  }
+};

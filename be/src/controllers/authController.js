@@ -4,7 +4,7 @@ import {
   generateRefreshTokenService,
   verifyTokenService,
 } from "../services/authService.js";
-import { findExistsUserByIdService } from "../services/userService.js";
+import { findExistsUserByIdService, findUserByEmail } from "../services/userService.js";
 import { APIResponse } from "../utils/APIResponse.js";
 import logger from "../utils/logger.js";
 import models from "../models/index.js";
@@ -290,5 +290,32 @@ export const logoutController = async (req, res) => {
     );
 
     return res.status(200).json("Đăng xuất thành công");
+  }
+};
+
+
+export const checkEmailController = async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return APIResponse(res, 400, null, "Email is required.");
+  }
+
+  try {
+    const user = await findUserByEmail(email);
+
+    if (user) {
+      return APIResponse(res, 200, { exists: true }, "Email already exists.");
+    } else {
+      return APIResponse(res, 200, { exists: false }, "Email is available.");
+    }
+  } catch (error) {
+    logger.error("Error checking email existence:", error);
+    return APIResponse(
+      res,
+      500,
+      null,
+      "An error occurred while checking the email."
+    );
   }
 };
