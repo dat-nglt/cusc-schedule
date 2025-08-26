@@ -233,3 +233,39 @@ export const validateRoomField = (room, existingRooms = []) => {
 
   return errors;
 };
+
+export const validateSubjectField = (subject, existingSubjects) => {
+  const errors = {};
+
+  // Step 1: subject_id, subject_name
+  if (!subject.subject_id) {
+    errors.subject_id = "Mã học phần không được để trống.";
+  } else if (
+    existingSubjects.some((s) => s.subject_id === subject.subject_id)
+  ) {
+    errors.subject_id = `Mã học phần "${subject.subject_id}" đã tồn tại!`;
+  }
+
+  if (!subject.subject_name) {
+    errors.subject_name = "Tên học phần không được để trống.";
+  }
+
+  // Step 2: credit, theory_hours, practice_hours, semester_id
+  if (subject.credit <= 0) {
+    errors.credit = "Số tín chỉ phải lớn hơn 0.";
+  }
+
+  if (subject.theory_hours < 0) {
+    errors.theory_hours = "Số giờ lý thuyết không được nhỏ hơn 0.";
+  }
+
+  if (subject.practice_hours < 0) {
+    errors.practice_hours = "Số giờ thực hành không được nhỏ hơn 0.";
+  }
+
+  if (!subject.semester_id) {
+    errors.semester_id = "Vui lòng chọn học kỳ.";
+  }
+
+  return errors;
+};

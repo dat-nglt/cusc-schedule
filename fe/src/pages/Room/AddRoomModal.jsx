@@ -118,26 +118,26 @@ export default function AddRoomModal({ open, onClose, onAddRoom, existingRooms, 
   const [currentBuilding, setCurrentBuilding] = useState(Object.keys(locationGroups)[0]);
 
   const handleNext = () => {
-    // let hasError = false;
-    // let errors = {};
+    let hasError = false;
+    let errors = {};
 
-    // if (activeStep === 0) {
-    //   const step1Fields = ["room_id", "room_name", "location"];
-    //   const allErrors = validateRoomField(newRoom, existingRooms);
+    if (activeStep === 0) {
+      const step1Fields = ["room_id", "room_name", "location"];
+      const allErrors = validateRoomField(newRoom, existingRooms);
 
-    //   step1Fields.forEach((field) => {
-    //     if (allErrors[field]) {
-    //       errors[field] = allErrors[field];
-    //       hasError = true;
-    //     }
-    //   });
-    // }
+      step1Fields.forEach((field) => {
+        if (allErrors[field]) {
+          errors[field] = allErrors[field];
+          hasError = true;
+        }
+      });
+    }
 
-    // setLocalError(errors);
+    setLocalError(errors);
 
-    // if (!hasError) {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    // }
+    if (!hasError) {
+      setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    }
   };
 
   const handleChange = (e) => {
@@ -183,6 +183,9 @@ export default function AddRoomModal({ open, onClose, onAddRoom, existingRooms, 
 
       // Xóa custom_location khỏi object trước khi gửi
       delete roomToAdd.custom_location;
+
+      console.log(roomToAdd);
+
 
       await onAddRoom(roomToAdd);
 
@@ -287,18 +290,34 @@ export default function AddRoomModal({ open, onClose, onAddRoom, existingRooms, 
 
   // Hàm xử lý khi chọn một vị trí từ danh sách
   const handleLocationSelect = (locationValue) => {
+    // Tìm option tương ứng theo value
+    const selectedOption = locationOptions.find(
+      (option) => option.value === locationValue
+    );
+
+    if (!selectedOption) return; // Nếu không tìm thấy thì thoát luôn
+
     // Nếu đang ở chế độ custom location, tắt nó đi
     if (showCustomLocation) {
       setShowCustomLocation(false);
     }
 
-    // Cập nhật giá trị location
+    // Nếu chọn lại cùng 1 location thì reset
+    const isSameLocation = newRoom.location === locationValue;
+
+    // Cập nhật giá trị location + label + building
     setNewRoom({
       ...newRoom,
-      location: newRoom.location === locationValue ? '' : locationValue,
-      custom_location: '' // Reset custom location khi chọn vị trí từ danh sách
+      location: isSameLocation ? '' : selectedOption.value,
+      location_label: isSameLocation ? '' : selectedOption.label,
+      building: isSameLocation ? '' : selectedOption.building,
+      custom_location: isSameLocation
+        ? ''
+        : `${selectedOption.label} - ${selectedOption.building}` // label - building
     });
   };
+
+
 
   // Hàm xử lý khi bật/tắt chế độ nhập vị trí tùy chỉnh
   const handleCustomLocationToggle = (event) => {
@@ -502,7 +521,6 @@ export default function AddRoomModal({ open, onClose, onAddRoom, existingRooms, 
                 </Box>
                 <InputLabel>Vị trí phòng học</InputLabel>
                 <FormControl fullWidth required>
-
                   <Box>
                     {/* Tabs cho các tòa nhà */}
                     <Tabs

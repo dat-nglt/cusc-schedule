@@ -22,7 +22,10 @@ import {
     Chip,
     InputAdornment,
     Fade,
-    Paper
+    Paper,
+    Stack,
+    ToggleButtonGroup,
+    ToggleButton
 } from '@mui/material';
 import {
     Close,
@@ -42,6 +45,7 @@ import {
 import * as XLSX from 'xlsx';
 import PreviewSubjectModal from './PreviewSubjectModal';
 import { processExcelDataSubject } from '../../utils/ExcelValidation';
+import { validateSubjectField } from '../../utils/addValidation';
 
 // Define status options with colors and icons, similar to semester modal
 const subjectStatusOptions = [
@@ -71,38 +75,56 @@ export default function AddSubjectModal({ open, onClose, onAddSubject, existingS
     const [fileUploaded, setFileUploaded] = useState(false); // To track if a file was selected for import
 
     const handleNext = () => {
-        if (activeStep === 0) {
-            if (!newSubject.subject_id || !newSubject.subject_name) {
-                setLocalError('Vui lòng điền đầy đủ Mã học phần và Tên học phần.');
-                return;
-            }
-            const isDuplicate = existingSubjects.some(subject => subject.subject_id === newSubject.subject_id);
-            if (isDuplicate) {
-                setLocalError(`Mã học phần "${newSubject.subject_id}" đã tồn tại!`);
-                return;
-            }
-        }
-        if (activeStep === 1) {
-            if (newSubject.credit <= 0 || newSubject.theory_hours < 0 || newSubject.practice_hours < 0 || !newSubject.semester_id) {
-                setLocalError('Vui lòng điền đầy đủ thông tin chi tiết hợp lệ.');
-                return;
-            }
-        }
-        setLocalError('');
-        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        // let hasError = false;
+        // let errors = {};
+
+        // // gọi 1 lần để lấy tất cả lỗi
+        // const allErrors = validateSubjectField(newSubject, existingSubjects);
+
+        // // mapping step -> các field cần kiểm tra
+        // const stepFields = {
+        //     0: ["subject_id", "subject_name"],
+        //     1: ["credit", "theory_hours", "practice_hours", "semester_id"],
+        // };
+
+        // const fieldsToCheck = stepFields[activeStep] || [];
+
+        // fieldsToCheck.forEach((field) => {
+        //     if (allErrors[field]) {
+        //         errors[field] = allErrors[field];
+        //         hasError = true;
+        //     }
+        // });
+
+        // setLocalError(errors);
+
+        // if (!hasError) {
+        setActiveStep((prev) => prev + 1);
+        // }
     };
 
-    const handleBack = () => {
-        setLocalError('');
-        setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    const handleToggleChange = (event, value) => {
+        if (value !== null) {
+            // Cập nhật giá trị nếu người dùng chọn ToggleButton
+            handleChange({
+                target: {
+                    name: event.currentTarget.name,
+                    value: value
+                }
+            });
+        }
     };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setNewSubject((prev) => ({ ...prev, [name]: value }));
-        setLocalError('');
-    };
+        setLocalError({});
+    }
 
+    const handleBack = () => {
+        setLocalError('');
+        setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    };
     const handleSubmit = async () => {
         if (!newSubject.subject_id || !newSubject.subject_name || newSubject.theory_hours <= 0 || newSubject.practice_hours <= 0) {
             setLocalError('Vui lòng điền đầy đủ thông tin chi tiết hợp lệ trước khi thêm.');
@@ -276,29 +298,39 @@ export default function AddSubjectModal({ open, onClose, onAddSubject, existingS
                     <Divider />
 
                     <Box sx={{ px: 3, pt: 2 }}>
-                        {(error || localError) && (
-                            <Fade in={!!(error || localError)}>
-                                <Alert
-                                    severity="error"
-                                    icon={<ErrorIcon />}
-                                    sx={{ mb: 2 }}
-                                >
-                                    {error || localError}
+                        {/* Error dạng string (API, server, v.v.) */}
+                        {error && (
+                            <Fade in={!!error}>
+                                <Alert severity="error" icon={<ErrorIcon />} sx={{ mb: 2 }}>
+                                    {error}
                                 </Alert>
                             </Fade>
                         )}
+
+                        {/* Error dạng object (validate ở client, nhiều field) */}
+                        {Object.keys(localError).length > 0 && (
+                            <Fade in={Object.keys(localError).length > 0}>
+                                <Alert severity="error" icon={<ErrorIcon />} sx={{ mb: 2 }}>
+                                    <ul style={{ margin: 0, paddingLeft: "1.2rem" }}>
+                                        {Object.values(localError).map(
+                                            (err, index) =>
+                                                typeof err === "string" && <li key={index}>{err}</li>
+                                        )}
+                                    </ul>
+                                </Alert>
+                            </Fade>
+                        )}
+
+                        {/* Message thành công */}
                         {message && (
                             <Fade in={!!message}>
-                                <Alert
-                                    severity="success"
-                                    icon={<CheckCircle />}
-                                    sx={{ mb: 2 }}
-                                >
+                                <Alert severity="success" icon={<CheckCircle />} sx={{ mb: 2 }}>
                                     {message}
                                 </Alert>
                             </Fade>
                         )}
                     </Box>
+
 
                     <Box sx={{ p: 3 }}>
                         {activeStep === 0 && (
@@ -347,52 +379,88 @@ export default function AddSubjectModal({ open, onClose, onAddSubject, existingS
                         )}
 
                         {activeStep === 1 && (
-                            <Box sx={{
-                                display: 'grid',
-                                gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
-                                gap: 3
-                            }}>
-                                <TextField
-                                    label="Số giờ lý thuyết"
-                                    name="theory_hours"
-                                    type="number"
-                                    value={newSubject.theory_hours}
-                                    onChange={handleChange}
-                                    fullWidth
-                                    variant="outlined"
-                                    required
-                                    inputProps={{ min: 0 }}
-                                    disabled={loading}
-                                    InputProps={{
-                                        startAdornment: (
-                                            <InputAdornment position="start">
-                                                <School color="action" />
-                                            </InputAdornment>
-                                        ),
-                                    }}
-                                    sx={{ mb: 2 }}
-                                />
-                                <TextField
-                                    label="Số giờ thực hành"
-                                    name="practice_hours"
-                                    type="number"
-                                    value={newSubject.practice_hours}
-                                    onChange={handleChange}
-                                    fullWidth
-                                    variant="outlined"
-                                    required
-                                    inputProps={{ min: 0 }}
-                                    disabled={loading}
-                                    InputProps={{
-                                        startAdornment: (
-                                            <InputAdornment position="start">
-                                                <HourglassEmpty color="action" /> {/* Changed icon here */}
-                                            </InputAdornment>
-                                        ),
-                                    }}
-                                    sx={{ mb: 2 }}
-                                />
+                            <Box>
+                                {/* Box cho Số giờ lý thuyết */}
+                                <Box sx={{ mb: 3 }}>
+                                    <Typography variant="subtitle2" sx={{ mb: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
+                                        <School fontSize="small" color="primary" />
+                                        Số giờ lý thuyết
+                                    </Typography>
+                                    <Stack direction="row" spacing={2} alignItems="center" useFlexGap flexWrap="wrap">
+                                        <ToggleButtonGroup
+                                            value={newSubject.theory_hours || 0}
+                                            exclusive
+                                            onChange={(e, value) => handleToggleChange(e, value)}
+                                            aria-label="Số giờ lý thuyết"
+                                            name="theory_hours"
+                                            disabled={loading}
+                                        >
+                                            {[10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60].map((hours) => (
+                                                <ToggleButton
+                                                    key={hours}
+                                                    value={hours}
+                                                    sx={{ minWidth: 60, fontWeight: 'bold' }}
+                                                >
+                                                    {hours}
+                                                </ToggleButton>
+                                            ))}
+                                        </ToggleButtonGroup>
+                                        <TextField
+                                            label="Tùy chỉnh"
+                                            name="theory_hours"
+                                            type="number"
+                                            value={newSubject.theory_hours}
+                                            onChange={handleChange}
+                                            variant="outlined"
+                                            size="small"
+                                            required
+                                            disabled={loading}
+                                            sx={{ width: '120px', flex: 1 }}
+                                            inputProps={{ min: 0, style: { textAlign: 'center' } }}
+                                        />
+                                    </Stack>
+                                </Box>
 
+                                {/* Box cho Số giờ thực hành */}
+                                <Box>
+                                    <Typography variant="subtitle2" sx={{ mb: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
+                                        <AccessTime fontSize="small" color="secondary" />
+                                        Số giờ thực hành
+                                    </Typography>
+                                    <Stack direction="row" spacing={2} alignItems="center" useFlexGap flexWrap="wrap">
+                                        <ToggleButtonGroup
+                                            value={newSubject.practice_hours || 0}
+                                            exclusive
+                                            onChange={(e, value) => handleToggleChange(e, value)}
+                                            aria-label="Số giờ thực hành"
+                                            name="practice_hours"
+                                            disabled={loading}
+                                        >
+                                            {[10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60].map((hours) => (
+                                                <ToggleButton
+                                                    key={hours}
+                                                    value={hours}
+                                                    sx={{ minWidth: 60, fontWeight: 'bold' }}
+                                                >
+                                                    {hours}
+                                                </ToggleButton>
+                                            ))}
+                                        </ToggleButtonGroup>
+                                        <TextField
+                                            label="Tùy chỉnh"
+                                            name="practice_hours"
+                                            type="number"
+                                            value={newSubject.practice_hours}
+                                            onChange={handleChange}
+                                            variant="outlined"
+                                            size="small"
+                                            required
+                                            disabled={loading}
+                                            sx={{ width: '120px', flex: 1 }}
+                                            inputProps={{ min: 0, style: { textAlign: 'center' } }}
+                                        />
+                                    </Stack>
+                                </Box>
                             </Box>
                         )}
                     </Box>
