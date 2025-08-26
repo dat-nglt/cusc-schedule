@@ -5,6 +5,7 @@ import {
     createScheduleChangeRequestController,
     approveScheduleChangeRequestController,
     rejectScheduleChangeRequestController,
+    getScheduleChangeRequestByLecturerController
 } from "../controllers/schedulechangerequestController.js"
 const schedulechangerequestRouter = express.Router();
 
@@ -12,5 +13,5 @@ schedulechangerequestRouter.get("/getAll", authenticateAndAuthorize(["admin", "t
 schedulechangerequestRouter.post("/create", authenticateAndAuthorize(["admin", "lecturer"]), createScheduleChangeRequestController);
 schedulechangerequestRouter.put("/approve/:requestId", authenticateAndAuthorize(["admin"]), approveScheduleChangeRequestController);
 schedulechangerequestRouter.put("/reject/:requestId", authenticateAndAuthorize(["admin"]), rejectScheduleChangeRequestController);
-
+schedulechangerequestRouter.get("/lecturer/:lecturerId", authenticateAndAuthorize(["admin", "lecturer"]), getScheduleChangeRequestByLecturerController);
 export default schedulechangerequestRouter;

@@ -254,3 +254,36 @@ export const rejectScheduleChangeRequestService = async (requestId, rejectionRea
         throw error;
     }
 };
+
+
+export const getScheduleChangeRequestByLecturerService = async (lecturerId) => {
+    try {
+        const scheduleChangeRequests = await ScheduleChangeRequest.findAll({
+            where: {
+                lecturer_id: lecturerId // Thêm điều kiện lọc ở đây
+            },
+            include: [
+                {
+                    model: models.ClassSchedule,
+                    as: 'classSchedule',
+                    attributes: ['class_schedule_id', 'semester_id', 'class_id', 'program_id', 'date', 'day', 'slot_id', 'subject_id', 'lecturer_id', 'room_id'],
+                },
+                {
+                    model: models.Lecturer,
+                    as: 'lecturer',
+                    attributes: ['lecturer_id', 'name']
+                },
+                {
+                    model: models.Room,
+                    as: 'requestedRoom',
+                    attributes: ['room_id', 'room_name']
+                }
+            ],
+        });
+        return scheduleChangeRequests;
+    }
+    catch (error) {
+        console.error("Error fetching schedule change requests:", error);
+        throw error;
+    }
+};
