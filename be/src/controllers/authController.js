@@ -224,7 +224,8 @@ export const getCurrentUserDataController = async (req, res) => {
     department: req.user.department,
     class: req.user.class,
     status: req.user.status,
-
+    subjects: req.user.subjects || [],
+    degree: req.user.degree,
   });
 };
 

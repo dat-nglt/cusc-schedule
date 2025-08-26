@@ -1,6 +1,6 @@
 import models from "../models/index.js";
 import logger from "../utils/logger.js";
-const { Student, Lecturer, Admin, TrainingOfficer, Account } = models;
+const { Student, Lecturer, Admin, TrainingOfficer, Account, Subject } = models;
 
 /**
  * Lấy tất cả người dùng từ các mô hình Student, Lecturer, Admin, và TrainingOfficer.
@@ -119,7 +119,15 @@ export const findExistsUserByIdService = async (id) => {
           where: { account_id: id },
           attributes: [
             'lecturer_id', 'name', 'day_of_birth', 'address', 'gender',
-            'phone_number', 'department', 'status'
+            'phone_number', 'department', 'degree', 'status'
+          ],
+          include: [
+            {
+              model: Subject,
+              as: "subjects",
+              through: { attributes: [] },
+              attributes: ["subject_id", "subject_name"],
+            },
           ]
         });
 
@@ -134,6 +142,8 @@ export const findExistsUserByIdService = async (id) => {
           gender: lecturer.gender,
           phone_number: lecturer.phone_number,
           department: lecturer.department,
+          subjects: lecturer.subjects || [],
+          degree: lecturer.degree,
           status: lecturer.status
         } : {
           id: account.id,

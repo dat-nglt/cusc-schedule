@@ -58,11 +58,6 @@ const SidebarJustForLecturer = () => {
 
   return (
     <StyledSidebarContainer>
-      <Box sx={{ p: 2, borderBottom: `1px solid ${alpha(theme.palette.divider, 0.3)}` }}>
-        <Typography variant="h6" sx={{ fontWeight: 700, color: theme.palette.primary.main }}>
-          Quản lý giảng viên
-        </Typography>
-      </Box>
       <Divider sx={{ borderColor: alpha(theme.palette.common.white, 0.3) }} />
       <List disablePadding sx={{ mt: 1, ml: 1 }}>
         {navItems.map((item) => (

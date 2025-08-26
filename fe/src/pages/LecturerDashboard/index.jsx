@@ -13,6 +13,8 @@ import { useAuth } from '../../contexts/AuthContext';
 
 const LecturerDashboard = () => {
   const { userData, loading } = useAuth();
+  console.log('userData in LecturerDashboard:', userData);
+
 
 
   // Create lecturer info from actual userData, removing fields not available in API
@@ -75,7 +77,7 @@ const LecturerDashboard = () => {
 
       <Features />
 
-      <TeachingSection />
+      <TeachingSection data={userData.subjects} />
     </Box>
   );
 };

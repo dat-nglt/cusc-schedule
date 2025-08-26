@@ -232,8 +232,20 @@ const LecturerDetailModal = ({ openModal, handleCloseModal, lecturerInfo }) => {
             }}>
               <SectionTitle icon={<Person />} title="Thông tin cá nhân" />
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 1, sm: 1.5 } }}>
+                <InfoItem icon={<Person />} label="Giới tính" value={lecturerInfo.gender === 'male' ? 'Nam' : 'Nữ'} />
+                <InfoItem icon={<AccessTime />} label="Ngày sinh" value={lecturerInfo.dob} />
+              </Box>
+            </Box>
+            <Box sx={{
+              flex: 1,
+              p: { xs: 1, sm: 1.5 },
+              bgcolor: alpha(theme.palette.background.paper, 0.9),
+              borderRadius: 2,
+              border: `1px solid ${theme.palette.divider}`,
+            }}>
+              <SectionTitle icon={<Person />} title="Thông tin nghiệp vụ" />
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 1, sm: 1.5 } }}>
                 <InfoItem icon={<School />} label="Học vị" value={lecturerInfo.degree} />
-                <InfoItem icon={<Business />} label="Phòng làm việc" value={lecturerInfo.office} />
                 <InfoItem icon={<LocationOn />} label="Khoa" value={lecturerInfo.department} />
               </Box>
             </Box>
@@ -249,22 +261,8 @@ const LecturerDetailModal = ({ openModal, handleCloseModal, lecturerInfo }) => {
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 1, sm: 1.5 } }}>
                 <InfoItem icon={<Email />} label="Email" value={lecturerInfo.email} />
                 <InfoItem icon={<Phone />} label="Điện thoại" value={lecturerInfo.phone} />
+                <InfoItem icon={<LocationOn />} label="Địa chỉ liên hệ" value={lecturerInfo.contactAddress} />
               </Box>
-            </Box>
-          </Box>
-
-          <Box sx={{ mt: 2 }}>
-            <SectionTitle icon={<AccessTime />} title="Lịch làm việc" />
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 1, sm: 1.5 } }}>
-              <InfoItem icon={<AccessTime />} label="Giờ làm việc" value={lecturerInfo.officeHours} />
-            </Box>
-          </Box>
-
-          <Box sx={{ mt: 2 }}>
-            <SectionTitle icon={<Assignment />} title="Thống kê" />
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 1, sm: 1.5 } }}>
-              <InfoItem icon={<Assignment />} label="Số khóa học đang dạy" value={lecturerInfo.teachingCourses} />
-              <InfoItem icon={<Notifications />} label="Số lớp học sắp tới" value={lecturerInfo.upcomingClasses} />
             </Box>
           </Box>
         </Box>
