@@ -8,20 +8,25 @@ import {
 import LecturerProfile from './LecturerProfile';
 import TeachingSection from './TeachingSection';
 import Features from './Features';
+import { useAuth } from '../../contexts/AuthContext';
 
 
 const LecturerDashboard = () => {
+  const { userData, loading } = useAuth();
+
+
+  // Create lecturer info from actual userData, removing fields not available in API
   const sampleLecturerInfo = {
-    name: "Nguyễn Văn A",
-    id: "GV20230001",
-    department: "Khoa Công nghệ Thông tin",
-    email: "nguyenvana@university.edu",
-    phone: "0987654321",
-    degree: "Tiến sĩ",
-    office: "Phòng A203",
-    teachingCourses: 3,
-    upcomingClasses: 2,
-    officeHours: "Thứ 3, Thứ 5: 14:00 - 16:00",
+    name: userData.name,
+    id: userData.code,
+    class: userData.class,
+    email: userData.email,
+    gender: userData.gender,
+    dob: new Date(userData.day_of_birth).toLocaleDateString('vi-VN'),
+    phone: userData.phone_number,
+    department: userData.department,
+    degree: userData.degree,
+    contactAddress: userData.address,
   };
 
   return (
