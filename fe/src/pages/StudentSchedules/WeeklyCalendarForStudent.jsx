@@ -25,7 +25,7 @@ import { useTimetable } from '../../contexts/TimetableContext';
 import CalendarModal from './CalendarModal'; // Adjust path as necessary
 
 import ScheduleItem from './ScheduleItem';
-import { transformScheduleForCalendar, isScheduleItemInTimeSlot } from '../../utils/scheduleUtils';
+import { isScheduleItemInTimeSlot } from '../../utils/scheduleUtils';
 
 // Constants - Updated to include schedule hours
 const HOURS = [7, 9, 13, 15, 17, 19]; // Hours corresponding to slot starts: S1(7), S2(9), C1(13), C2(15), T1(17), T2(19)
@@ -74,14 +74,7 @@ const WeeklyCalendar = ({
 
     const [weekDays, setWeekDays] = useState([]);
     const [isCalendarModalOpen, setIsCalendarModalOpen] = useState(false); // State for modal
-    const [transformedScheduleItems, setTransformedScheduleItems] = useState([]);
 
-    // Transform schedule items when they change
-    useEffect(() => {
-        const transformed = transformScheduleForCalendar(scheduleItems);
-        setTransformedScheduleItems(transformed);
-        console.log('Transformed schedule items:', transformed);
-    }, [scheduleItems]);
 
     // Ensure currentDate from context is initialized to a Monday for week-based display
     useEffect(() => {
@@ -313,7 +306,7 @@ const WeeklyCalendar = ({
                                 day={day.day}
                                 hour={hour}
                                 date={currentDate}
-                                scheduleItems={transformedScheduleItems}
+                                scheduleItems={scheduleItems}
                                 sx={{
                                     backgroundColor: (theme) => theme.palette.background.paper,
                                 }}

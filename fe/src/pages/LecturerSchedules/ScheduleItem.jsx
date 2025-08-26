@@ -6,6 +6,7 @@ import FormChangeScheduleRequest from './FormChangeScheduleRequest';
 const ScheduleItem = ({ item }) => {
     const theme = useTheme();
     const [modalOpen, setModalOpen] = useState(false);
+    console.log('Rendering ScheduleItem for:', item);
     // Định nghĩa màu sắc dựa trên type hoặc một thuộc tính khác
     // Đây là một ví dụ đơn giản, bạn có thể mở rộng logic này
     const getColorForType = (type) => {
@@ -21,12 +22,8 @@ const ScheduleItem = ({ item }) => {
     const handleItemClick = () => {
         setModalOpen(true);
     };
-    const handleSubmitRequest = (formData) => {
-        // Xử lý dữ liệu form ở đây
-        console.log('Form data:', formData);
-    };
 
-    const itemAccentColor = getColorForType(item.type);
+    const itemAccentColor = getColorForType(item.lesson_type);
     // Create a light background using the accent color with transparency
     const bgColor = alpha(itemAccentColor, theme.palette.mode === 'light' ? 0.15 : 0.25);
     // Text color for main titles and bold labels will be the accent color
@@ -72,17 +69,17 @@ const ScheduleItem = ({ item }) => {
                         color: primaryTextColor, // Use accent color for the main title
                     }}
                 >
-                    {item.subject}
+                    {item.subject.subject_name}
                 </Typography>
                 {/* Details with secondary text color and bold labels using accent color */}
                 <Typography variant="subtitle2" sx={{ mb: 0.3, lineHeight: 1.4, color: 'primary' }}>
                     {formattedTime}
                 </Typography>
                 <Typography variant="subtitle2" sx={{ mb: 0.3, lineHeight: 1.4, color: theme.palette.text.primary }}>
-                    <Typography component="span" sx={{ color: primaryTextColor }}>Phòng:</Typography> {item.room}
+                    <Typography component="span" sx={{ color: primaryTextColor }}>Phòng:</Typography> {item.room_id}
                 </Typography>
                 <Typography variant="subtitle2" sx={{ mb: 0.3, lineHeight: 1.4, color: 'primary' }}>
-                    <Typography component="span" sx={{ color: primaryTextColor }}>GV:</Typography> {item.lecturer}
+                    <Typography component="span" sx={{ color: primaryTextColor }}>GV:</Typography> {item.lecturer.name}
                 </Typography>
                 <Typography variant="subtitle2" sx={{ mb: 0.3, lineHeight: 1.4, color: 'primary' }}>
                     <Typography component="span" sx={{ color: primaryTextColor }}>Lớp:</Typography> {item.class_id}
@@ -95,7 +92,6 @@ const ScheduleItem = ({ item }) => {
                 open={modalOpen}
                 onClose={() => setModalOpen(false)}
                 scheduleItem={item}
-                onSubmit={handleSubmitRequest}
             />
         </>
     );

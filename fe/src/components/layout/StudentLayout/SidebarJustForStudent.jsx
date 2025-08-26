@@ -24,7 +24,6 @@ import {
 } from '@mui/icons-material';
 
 const navItems = [
-    { text: 'Trang Chủ', icon: <Home />, path: '/dashboard' },
     { text: 'Sinh Viên', icon: <People />, path: '/student' },
     { text: 'Kết Quả', icon: <Assessment />, path: '/student/results' },
     { text: 'Chương Trình ĐT', icon: <School />, path: '/chuong-trinh' },
