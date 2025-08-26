@@ -153,18 +153,6 @@ const WeeklyCalendar = ({
 
                             {!isMobile && (
                                 <>
-                                    <Tooltip title="Tạo lịch học mới">
-                                        <Button
-                                            variant="outlined"
-                                            color="success"
-                                            startIcon={<PostAdd />}
-                                            onClick={onCreateNewSchedule}
-                                            size="small"
-                                        >
-                                            Tạo mới
-                                        </Button>
-                                    </Tooltip>
-
                                     <Tooltip title="Xuất báo cáo">
                                         <Button
                                             variant="outlined"
