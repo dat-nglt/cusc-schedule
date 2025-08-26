@@ -118,26 +118,26 @@ export default function AddRoomModal({ open, onClose, onAddRoom, existingRooms, 
   const [currentBuilding, setCurrentBuilding] = useState(Object.keys(locationGroups)[0]);
 
   const handleNext = () => {
-    // let hasError = false;
-    // let errors = {};
+    let hasError = false;
+    let errors = {};
 
-    // if (activeStep === 0) {
-    //   const step1Fields = ["room_id", "room_name", "location"];
-    //   const allErrors = validateRoomField(newRoom, existingRooms);
+    if (activeStep === 0) {
+      const step1Fields = ["room_id", "room_name", "location"];
+      const allErrors = validateRoomField(newRoom, existingRooms);
 
-    //   step1Fields.forEach((field) => {
-    //     if (allErrors[field]) {
-    //       errors[field] = allErrors[field];
-    //       hasError = true;
-    //     }
-    //   });
-    // }
+      step1Fields.forEach((field) => {
+        if (allErrors[field]) {
+          errors[field] = allErrors[field];
+          hasError = true;
+        }
+      });
+    }
 
-    // setLocalError(errors);
+    setLocalError(errors);
 
-    // if (!hasError) {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    // }
+    if (!hasError) {
+      setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    }
   };
 
   const handleChange = (e) => {
