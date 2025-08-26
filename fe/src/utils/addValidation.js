@@ -196,3 +196,40 @@ export const validateClass = (classData, existingClasses, step = "all") => {
   return errors;
 };
 
+export const validateRoomField = (room, existingRooms = []) => {
+  const errors = {};
+
+  // Room ID
+  if (!room.room_id || room.room_id.trim() === "") {
+    errors.room_id = "Mã phòng không được để trống";
+  } else if (existingRooms.some((r) => r.room_id === room.room_id)) {
+    errors.room_id = "Mã phòng đã tồn tại";
+  }
+
+  // Room name
+  if (!room.room_name || room.room_name.trim() === "") {
+    errors.room_name = "Tên phòng không được để trống";
+  } else if (
+    existingRooms.some(
+      (r) => r.room_name.toLowerCase() === room.room_name.trim().toLowerCase()
+    )
+  ) {
+    errors.room_name = "Tên phòng đã tồn tại";
+  }
+
+  // Location
+  if (!room.location || room.location.trim() === "") {
+    errors.location = "Vị trí không được để trống";
+  }
+
+  // Capacity
+  if (!room.capacity || room.capacity.toString().trim() === "") {
+    errors.capacity = "Sức chứa không được để trống";
+  } else if (isNaN(room.capacity)) {
+    errors.capacity = "Sức chứa phải là một số";
+  } else if (parseInt(room.capacity, 10) <= 0) {
+    errors.capacity = "Sức chứa phải lớn hơn 0";
+  }
+
+  return errors;
+};

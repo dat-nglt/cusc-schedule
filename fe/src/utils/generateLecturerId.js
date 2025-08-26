@@ -17,3 +17,9 @@ export const generateClassId = () => {
   const timestamp = Date.now().toString().slice(-6); // lấy 6 số cuối của mili-giây
   return `${year}${prefix}${timestamp}`;
 };
+
+export const generateRoomId = () => {
+  const prefix = "P";
+  const timestamp = Date.now().toString().slice(-6); // lấy 6 số cuối của mili-giây
+  return `${prefix}${timestamp}`;
+};
