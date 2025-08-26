@@ -105,6 +105,15 @@ const routes = [
     layout: AdminLayout,
   },
   {
+    path: "/change-schedule-request",
+    component: "ScheduleChangeRequests",
+    exact: true,
+    title: "Quản yêu cầu thay đổi lịch",
+    isPrivate: true, // Riêng tư
+    roles: ["admin", "trainingofficer"],
+    layout: AdminLayout,
+  },
+  {
     path: "/courses/add",
     component: "AddCourseModal", // Lưu ý: thường là modal, có thể không cần route riêng
     exact: true,
@@ -243,7 +252,7 @@ const routes = [
   },
   {
     path: "/lecturer/schedule",
-    component: "LecturerSchedule",
+    component: "LecturerSchedules",
     exact: true,
     title: "Thời khóa biểu (Giảng viên)",
     isPrivate: true, // Riêng tư

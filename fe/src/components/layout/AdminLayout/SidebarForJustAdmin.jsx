@@ -42,8 +42,9 @@ const navItems = [
     { text: 'Quản lý học phần', icon: <MenuBook />, path: '/subjects' },
     { text: 'Quản lý khóa học', icon: <Class />, path: '/courses' },
     { text: 'Quản lý học kỳ', icon: <ViewWeek />, path: '/semesters' },
-    { text: 'Quản lý lịch nghỉ', icon: <WorkOff />, path: '/braekschedules' },
-    { text: 'Quản lý khung giờ', icon: <AccessTime />, path: '/slottime' },
+    // { text: 'Quản lý lịch nghỉ', icon: <WorkOff />, path: '/braekschedules' },
+    // { text: 'Quản lý khung giờ', icon: <AccessTime />, path: '/slottime' },
+    { text: 'Quản lý yêu cầu đổi lịch', icon: <AccessTime />, path: '/change-schedule-request' },
 ];
 
 const drawerWidth = 350;

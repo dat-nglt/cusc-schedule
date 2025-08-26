@@ -77,6 +77,8 @@ export const transformScheduleForCalendar = (scheduleItems) => {
       subject: item.subject?.subject_name || 'Unknown Subject',
       room: item.room?.room_id || 'Unknown room',
       lecturer: item.lecturer?.name || 'Unknown Lecturer',
+      lecturer_id: item.lecturer?.lecturer_id || null,
+      class_id: item.class?.class_id || 'Unknown Class',
       type: getSubjectType(item.notes), // Extract type from notes or determine from other fields
       startTime: startTime,
       endTime: endTime,
