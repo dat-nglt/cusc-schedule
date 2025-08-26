@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Typography, useTheme, alpha } from '@mui/material';
-import { format, parseISO } from 'date-fns';
+import { formatScheduleTime } from '../../utils/scheduleUtils';
 
 const ScheduleItem = ({ item }) => {
     const theme = useTheme();
@@ -9,12 +9,10 @@ const ScheduleItem = ({ item }) => {
     // Đây là một ví dụ đơn giản, bạn có thể mở rộng logic này
     const getColorForType = (type) => {
         switch (type) {
-            case 'Lý thuyết':
+            case 'theory':
                 return theme.palette.info.main; // A calm blue
-            case 'Thực hành':
+            case 'practice':
                 return theme.palette.success.main; // A vibrant green
-            case 'Seminar':
-                return theme.palette.warning.main; // A warm orange/yellow
             default:
                 return theme.palette.primary.main; // Default theme color
         }
@@ -28,9 +26,8 @@ const ScheduleItem = ({ item }) => {
     // Text color for details, using theme's secondary text color for readability
     // const secondaryTextColor = theme.palette.text.secondary;
 
-    // Format times for display
-    const formattedStartTime = item.startTime ? format(parseISO(item.startTime), 'HH:mm') : 'N/A';
-    const formattedEndTime = item.endTime ? format(parseISO(item.endTime), 'HH:mm') : 'N/A';
+    // Format times for display using slot_id
+    const formattedTime = item.slot_id ? formatScheduleTime(item.slot_id) : 'N/A';
 
     return (
         <Box
@@ -65,21 +62,21 @@ const ScheduleItem = ({ item }) => {
                     color: primaryTextColor, // Use accent color for the main title
                 }}
             >
-                {item.course}
+                {item.subject}
             </Typography>
             {/* Details with secondary text color and bold labels using accent color */}
+            <Typography variant="subtitle2" sx={{ mb: 0.3, lineHeight: 1.4, color: 'primary' }}>
+                {formattedTime}
+            </Typography>
             <Typography variant="subtitle2" sx={{ mb: 0.3, lineHeight: 1.4, color: theme.palette.text.primary }}>
                 <Typography component="span" sx={{ color: primaryTextColor }}>Phòng:</Typography> {item.room}
             </Typography>
             <Typography variant="subtitle2" sx={{ mb: 0.3, lineHeight: 1.4, color: 'primary' }}>
                 <Typography component="span" sx={{ color: primaryTextColor }}>GV:</Typography> {item.lecturer}
             </Typography>
-            <Typography variant="subtitle2" sx={{ mb: 0.3, lineHeight: 1.4, color: 'primary' }}>
-                <Typography component="span" sx={{ color: primaryTextColor }}>Giờ:</Typography> {formattedStartTime} - {formattedEndTime}
-            </Typography>
-            <Typography variant="subtitle2" sx={{ lineHeight: 1.4, color: 'primary' }}>
+            {/* <Typography variant="subtitle2" sx={{ lineHeight: 1.4, color: 'primary' }}>
                 <Typography component="span" sx={{ color: primaryTextColor }}>Loại:</Typography> {item.type}
-            </Typography>
+            </Typography> */}
         </Box>
     );
 };

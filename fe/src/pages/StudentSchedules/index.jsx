@@ -1,71 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Box, Grid, Typography, Paper, useTheme, useMediaQuery, Divider } from '@mui/material';
 import WeeklyCalendarForStudent from './WeeklyCalendarForStudent';
 import ScheduleFilterBar from './ScheduleFilterBar';
 import StudentDashboardSidebar from './StudentDashboardSidebar';
-
-
+import { getClassScheduleForStudentAPI } from '../../api/classscheduleAPI';
+import { useAuth } from '../../contexts/AuthContext';
 
 function StudentSchedules() {
+    const { userData } = useAuth();
+    const [scheduleItems, setScheduleItems] = useState([]);
 
-    const [scheduleItems, setScheduleItems] = useState([
-        {
-            id: '3',
-            course: 'Hóa học cơ bản',
-            room: 'P.102',
-            lecturer: 'TS. Nguyễn Văn A',
-            type: 'Lý thuyết',
-            startTime: '2025-06-09T09:00:00',
-            endTime: '2025-06-09T11:00:00',
-            checkInTime: '2025-06-09T08:50:00',
-            checkOutTime: '2025-06-09T11:10:00'
-        },
-        {
-            id: '4',
-            course: 'Giải tích 1',
-            room: 'P.204',
-            lecturer: 'ThS. Trần Thị B',
-            type: 'Lý thuyết',
-            startTime: '2025-06-10T08:00:00',
-            endTime: '2025-06-10T10:00:00',
-            checkInTime: '2025-06-10T07:55:00',
-            checkOutTime: '2025-06-10T10:05:00'
-        },
-        {
-            id: '5',
-            course: 'Tin học đại cương',
-            room: 'P.105',
-            lecturer: 'ThS. Lê Văn C',
-            type: 'Thực hành',
-            startTime: '2025-06-11T13:00:00',
-            endTime: '2025-06-11T15:00:00',
-            checkInTime: '2025-06-11T12:50:00',
-            checkOutTime: '2025-06-11T15:10:00'
-        },
-        {
-            id: '6',
-            course: 'Kỹ thuật lập trình',
-            room: 'P.306',
-            lecturer: 'TS. Phạm Thị D',
-            type: 'Thực hành',
-            startTime: '2025-06-12T10:00:00',
-            endTime: '2025-06-12T12:00:00',
-            checkInTime: '2025-06-12T09:50:00',
-            checkOutTime: '2025-06-12T12:10:00'
-        },
-        {
-            id: '7',
-            course: 'Xác suất thống kê',
-            room: 'P.103',
-            lecturer: 'ThS. Đỗ Văn E',
-            type: 'Lý thuyết',
-            startTime: '2025-06-13T14:00:00',
-            endTime: '2025-06-13T16:00:00',
-            checkInTime: '2025-06-13T13:55:00',
-            checkOutTime: '2025-06-13T16:05:00'
+    const fetchClassScheduleForStudent = useCallback(async () => {
+        try {
+            const studentId = userData.code;
+            const response = await getClassScheduleForStudentAPI(studentId);
+            if (!response) {
+                throw new Error("Không có dữ liệu thời khóa biểu");
+            }
+            console.log("Raw API response:", response.data);
+            setScheduleItems(response.data || []);
+        } catch (error) {
+            console.error("Error fetching class schedule for student:", error);
+            // For development - use test data when API fails
+            console.log("Using test data for development");
+            setScheduleItems([]);
         }
-    ]);
-
+    }, [userData.code]);
+    useEffect(() => {
+        if (userData?.code) {
+            fetchClassScheduleForStudent();
+        }
+    }, [userData?.code, fetchClassScheduleForStudent]); // Fix dependency
+    console.log("Schedule Items:", scheduleItems);
 
     const theme = useTheme();
     // const isMobile = useMediaQuery(theme.breakpoints.down('md')); // Dùng để điều chỉnh layout trên mobile/tablet
@@ -132,7 +98,7 @@ function StudentSchedules() {
                     }}
                 >
                     {/* Left Sidebar for Filters and Overview */}
-                    <StudentDashboardSidebar />
+                    {/* <StudentDashboardSidebar /> */}
 
                     {/* Main Calendar Area */}
                     <Box

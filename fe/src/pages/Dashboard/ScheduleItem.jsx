@@ -97,13 +97,16 @@ const ScheduleItem = ({ item, onDrop }) => {
             </Typography>
             {/* Details with secondary text color and bold labels using accent color */}
             <Typography variant="subtitle2" sx={{ mb: 0.3, lineHeight: 1.4, color: theme.palette.text.primary }}>
+                <Typography variant="subtitle2" sx={{ mb: 0.3, lineHeight: 1.4, color: 'primary' }}>
+                    {formattedStartTime} - {formattedEndTime}
+                </Typography>
                 <Typography component="span" sx={{ color: primaryTextColor }}>Phòng:</Typography> {item.room.room_name}
             </Typography>
             <Typography variant="subtitle2" sx={{ mb: 0.3, lineHeight: 1.4, color: 'primary' }}>
                 <Typography component="span" sx={{ color: primaryTextColor }}>GV:</Typography> {item.lecturer.name}
             </Typography>
             <Typography variant="subtitle2" sx={{ mb: 0.3, lineHeight: 1.4, color: 'primary' }}>
-                <Typography component="span" sx={{ color: primaryTextColor }}>Giờ:</Typography> {formattedStartTime} - {formattedEndTime}
+                <Typography component="span" sx={{ color: primaryTextColor }}>GV:</Typography> {item.class_id}
             </Typography>
         </Box>
     );

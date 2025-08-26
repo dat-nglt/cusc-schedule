@@ -50,7 +50,7 @@ import {
 import { useEffect, useCallback, useState } from 'react';
 import { io } from 'socket.io-client';
 
-import { generateSchedule, stopScheduleGeneration } from '../../api/scheduleAPI';
+import { generateSchedule, saveGeneratedScheduleAPI, stopScheduleGeneration } from '../../api/scheduleAPI';
 import ProgressModal from '../Dashboard/ProgressModal';
 import { toast } from 'react-toastify';
 
@@ -61,6 +61,7 @@ import { getClassesAPI } from '../../api/classAPI';
 import CreateSchedulesAutoModal from '../Dashboard/CreateSchedulesAutoModal';
 // import { getAllSchedules } from '../../api/classschedule';
 import { useRef } from 'react';
+import ConfirmSaveModal from './ConfirmSaveModal';
 // import { getAllSchedules } from '../../api/classschedule';
 
 const ScheduleManagement = () => {
@@ -78,12 +79,31 @@ const ScheduleManagement = () => {
     const [rooms, setRooms] = useState([]);
     const [programs, setPrograms] = useState([]);
     const [lecturers, setLecturers] = useState([]);
-    const [subjects, setSubjects] = useState([]);
-    const [semesters, setSemesters] = useState([]);
     const [classes, setClasses] = useState([]);
     const [formTest, setFormTest] = useState(null);
     const [gaProgressData, setGaProgressData] = useState(null);
     const [programsResponseData, setProgramsResponseData] = useState(null);
+
+    const [saveModalOpen, setSaveModalOpen] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
+
+    const handleSaveConfirm = async () => {
+        setIsSaving(true);
+        try {
+            const response = await saveGeneratedScheduleAPI();
+            if (response.success) {
+                toast.success('Lịch học đã được lưu trữ thành công!');
+                // Cập nhật trạng thái lịch học nếu cần
+            } else {
+                toast.error(response.message || 'Lỗi khi lưu lịch học.');
+            }
+        } catch (error) {
+            console.error('Lỗi khi lưu lịch học:', error);
+        } finally {
+            setIsSaving(false);
+            setSaveModalOpen(false);
+        }
+    };
 
 
 
@@ -144,7 +164,6 @@ const ScheduleManagement = () => {
             console.error("Error fetching classes:", error);
         }
     };
-    console.log("formTest data:", formTest);
 
     // Fetch all schedules
     // const fetchAllSchedules = async () => {
@@ -209,9 +228,9 @@ const ScheduleManagement = () => {
                     break;
                 case 'COMPLETED':
                     setOpen(false);
+                    setSaveModalOpen(true);
                     toast.success('Thời khóa biểu đã được tạo thành công!');
                     setError('');
-                    // Yêu cầu danh sách file mới nhất
                     socket.emit('get_results');
                     break;
                 case 'ERROR':
@@ -422,7 +441,7 @@ const ScheduleManagement = () => {
 
         const transformedRooms = filteredRooms.map(room => ({
             room_id: room.room_id,
-            type: room.type === "Lý thuyết" ? "theory" : "practice",
+            type: room.type,
             capacity: room.capacity
         }));
 
@@ -510,7 +529,7 @@ const ScheduleManagement = () => {
                 { "slot_id": "T1", "start": "17:30", "end": "19:30", "type": "evening" },
                 { "slot_id": "T2", "start": "19:30", "end": "21:30", "type": "evening" }
             ],
-            days_of_week: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+            days_of_week: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
         };
     }, []);
 
@@ -560,8 +579,8 @@ const ScheduleManagement = () => {
         setOpen(true);
 
         try {
-            // Gửi trực tiếp payload vừa tạo, không đọc từ state
             const response = await generateSchedule(finalPayload);
+            console.log("done");
 
             if (response.aborted) {
                 toast.info("Yêu cầu tạo thời khóa biểu đã được hủy.");
@@ -1251,6 +1270,12 @@ const ScheduleManagement = () => {
                     </CardContent>
                 </Card>
             </Box>
+            <ConfirmSaveModal
+                open={saveModalOpen}
+                onClose={() => setSaveModalOpen(false)}
+                onConfirm={handleSaveConfirm}
+                isLoading={isSaving}
+            />
             <CreateSchedulesAutoModal
                 open={createScheduleModalOpen}
                 onClose={() => setCreateScheduleModalOpen(false)}

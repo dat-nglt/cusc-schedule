@@ -7,6 +7,7 @@ import {
   downloadScheduleController,
   stopScheduleGenerationController,
   getInputDataForAlgorithmController,
+  processResultsController,
 } from "../controllers/scheduleController.js";
 
 // Đây là hàm factory sẽ nhận đối tượng `io` và trả về một Express Router
@@ -34,7 +35,7 @@ const createScheduleRouter = (io) => {
 
   // Route GET để tải file kết quả
   router.get("/download/:filename", downloadScheduleController); // Không cần `io` ở đây
-
+  router.post('/process-results', processResultsController);
   return router;
 };
 

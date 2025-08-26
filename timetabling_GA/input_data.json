@@ -1,10 +1,381 @@
 {
-  "classes": [],
-  "rooms": [],
-  "lecturers": [],
-  "programs": [],
-  "semesters": [],
-  "subjects": [],
-  "time_slots": [],
-  "days_of_week": []
+  "classes": [
+    {
+      "class_id": "L1",
+      "size": 30,
+      "program_id": "CT001"
+    },
+    {
+      "class_id": "L2",
+      "size": 30,
+      "program_id": "CT002"
+    }
+  ],
+  "rooms": [
+    {
+      "room_id": "LT1",
+      "type": "theory",
+      "capacity": 50
+    },
+    {
+      "room_id": "TH1",
+      "type": "practice",
+      "capacity": 30
+    },
+    {
+      "room_id": "LT2",
+      "type": "theory",
+      "capacity": 45
+    },
+    {
+      "room_id": "TH2",
+      "type": "practice",
+      "capacity": 35
+    },
+    {
+      "room_id": "LT3",
+      "type": "theory",
+      "capacity": 40
+    },
+    {
+      "room_id": "TH3",
+      "type": "practice",
+      "capacity": 30
+    },
+    {
+      "room_id": "LT4",
+      "type": "theory",
+      "capacity": 30
+    },
+    {
+      "room_id": "TH4",
+      "type": "practice",
+      "capacity": 25
+    }
+  ],
+  "lecturers": [
+    {
+      "lecturer_id": "GV001",
+      "lecturer_name": "Nguyễn Văn A",
+      "subjects": [
+        "MH001",
+        "MH002",
+        "MH003"
+      ],
+      "busy_slots": [],
+      "semester_busy_slots": []
+    },
+    {
+      "lecturer_id": "GV002",
+      "lecturer_name": "Trần Thị B",
+      "subjects": [
+        "MH004",
+        "MH005",
+        "MH006"
+      ],
+      "busy_slots": [],
+      "semester_busy_slots": []
+    },
+    {
+      "lecturer_id": "GV003",
+      "lecturer_name": "Lê Minh C",
+      "subjects": [
+        "MH007",
+        "MH008",
+        "MH009"
+      ],
+      "busy_slots": [],
+      "semester_busy_slots": []
+    },
+    {
+      "lecturer_id": "GV005",
+      "lecturer_name": "Hoàng Văn E",
+      "subjects": [
+        "MH010",
+        "MH011",
+        "MH012",
+        "MH013"
+      ],
+      "busy_slots": [],
+      "semester_busy_slots": []
+    },
+    {
+      "lecturer_id": "GV006",
+      "lecturer_name": "Đỗ Thị F",
+      "subjects": [
+        "MH014",
+        "MH015",
+        "MH016"
+      ],
+      "busy_slots": [],
+      "semester_busy_slots": []
+    },
+    {
+      "lecturer_id": "GV007",
+      "lecturer_name": "Vũ Văn G",
+      "subjects": [
+        "MH003",
+        "MH005",
+        "MH010"
+      ],
+      "busy_slots": [],
+      "semester_busy_slots": []
+    },
+    {
+      "lecturer_id": "GV008",
+      "lecturer_name": "Vũ Văn G1",
+      "subjects": [
+        "MH015",
+        "MH013",
+        "MH002"
+      ],
+      "busy_slots": [],
+      "semester_busy_slots": []
+    }
+  ],
+  "programs": [
+    {
+      "program_id": "CT001",
+      "program_name": "Chương trình Đào tạo CNTT13321",
+      "duration": 15,
+      "semesters": [
+        {
+          "semester_id": "PS_CT001_HK1",
+          "subject_ids": [
+            "MH001",
+            "MH002"
+          ]
+        },
+        {
+          "semester_id": "PS_CT001_HK2",
+          "subject_ids": [
+            "MH009",
+            "MH006"
+          ]
+        },
+        {
+          "semester_id": "PS_CT001_HK3",
+          "subject_ids": [
+            "MH003",
+            "MH004"
+          ]
+        },
+        {
+          "semester_id": "PS_CT001_HK4",
+          "subject_ids": [
+            "MH005",
+            "MH007"
+          ]
+        }
+      ]
+    },
+    {
+      "program_id": "CT002",
+      "program_name": "Chương trình Đào tạo CNTT13321",
+      "duration": 15,
+      "semesters": [
+        {
+          "semester_id": "PS_CT002_HK1",
+          "subject_ids": [
+            "MH001",
+            "MH002"
+          ]
+        },
+        {
+          "semester_id": "PS_CT002_HK2",
+          "subject_ids": [
+            "MH009"
+          ]
+        },
+        {
+          "semester_id": "PS_CT002_HK3",
+          "subject_ids": [
+            "MH003"
+          ]
+        },
+        {
+          "semester_id": "PS_CT002_HK4",
+          "subject_ids": [
+            "MH004"
+          ]
+        }
+      ]
+    }
+  ],
+  "semesters": [
+    {
+      "semester_id": "PS_CT001_HK1",
+      "subject_ids": [
+        "MH001",
+        "MH002"
+      ],
+      "start_date": "2025-08-15",
+      "end_date": "2025-11-28",
+      "duration_weeks": 15
+    },
+    {
+      "semester_id": "PS_CT001_HK2",
+      "subject_ids": [
+        "MH009",
+        "MH006"
+      ],
+      "start_date": "2025-12-05",
+      "end_date": "2026-03-20",
+      "duration_weeks": 15
+    },
+    {
+      "semester_id": "PS_CT001_HK3",
+      "subject_ids": [
+        "MH003",
+        "MH004"
+      ],
+      "start_date": "2026-03-27",
+      "end_date": "2026-07-10",
+      "duration_weeks": 15
+    },
+    {
+      "semester_id": "PS_CT001_HK4",
+      "subject_ids": [
+        "MH005",
+        "MH007"
+      ],
+      "start_date": "2026-07-17",
+      "end_date": "2026-10-30",
+      "duration_weeks": 15
+    },
+    {
+      "semester_id": "PS_CT002_HK1",
+      "subject_ids": [
+        "MH001",
+        "MH002"
+      ],
+      "start_date": "2025-08-15",
+      "end_date": "2025-11-28",
+      "duration_weeks": 15
+    },
+    {
+      "semester_id": "PS_CT002_HK2",
+      "subject_ids": [
+        "MH009"
+      ],
+      "start_date": "2025-12-05",
+      "end_date": "2026-03-20",
+      "duration_weeks": 15
+    },
+    {
+      "semester_id": "PS_CT002_HK3",
+      "subject_ids": [
+        "MH003"
+      ],
+      "start_date": "2026-03-27",
+      "end_date": "2026-07-10",
+      "duration_weeks": 15
+    },
+    {
+      "semester_id": "PS_CT002_HK4",
+      "subject_ids": [
+        "MH004"
+      ],
+      "start_date": "2026-07-17",
+      "end_date": "2026-10-30",
+      "duration_weeks": 15
+    }
+  ],
+  "subjects": [
+    {
+      "subject_id": "MH001",
+      "name": "Lập trình cơ bản",
+      "theory_hours": 30,
+      "practice_hours": 15
+    },
+    {
+      "subject_id": "MH002",
+      "name": "Cấu trúc dữ liệu và giải thuật",
+      "theory_hours": 45,
+      "practice_hours": 15
+    },
+    {
+      "subject_id": "MH009",
+      "name": "Toán rời rạc",
+      "theory_hours": 30,
+      "practice_hours": 15
+    },
+    {
+      "subject_id": "MH006",
+      "name": "Powerful and Rich Applications with Microsoft Azure",
+      "theory_hours": 45,
+      "practice_hours": 15
+    },
+    {
+      "subject_id": "MH003",
+      "name": "Data Processing with XML and JSON",
+      "theory_hours": 30,
+      "practice_hours": 15
+    },
+    {
+      "subject_id": "MH004",
+      "name": "OOAD with UML",
+      "theory_hours": 30,
+      "practice_hours": 10
+    },
+    {
+      "subject_id": "MH005",
+      "name": "ASP.NET Core MVC-The Framework for Future Web Innovations",
+      "theory_hours": 45,
+      "practice_hours": 15
+    },
+    {
+      "subject_id": "MH007",
+      "name": "Deployment System and Containerize with Docker and Kubernetes",
+      "theory_hours": 30,
+      "practice_hours": 10
+    }
+  ],
+  "time_slots": [
+    {
+      "slot_id": "S1",
+      "start": "07:00",
+      "end": "09:00",
+      "type": "morning"
+    },
+    {
+      "slot_id": "S2",
+      "start": "09:00",
+      "end": "11:00",
+      "type": "morning"
+    },
+    {
+      "slot_id": "C1",
+      "start": "13:00",
+      "end": "15:00",
+      "type": "afternoon"
+    },
+    {
+      "slot_id": "C2",
+      "start": "15:00",
+      "end": "17:00",
+      "type": "afternoon"
+    },
+    {
+      "slot_id": "T1",
+      "start": "17:30",
+      "end": "19:30",
+      "type": "evening"
+    },
+    {
+      "slot_id": "T2",
+      "start": "19:30",
+      "end": "21:30",
+      "type": "evening"
+    }
+  ],
+  "days_of_week": [
+    "Mon",
+    "Tue",
+    "Wed",
+    "Thu",
+    "Fri",
+    "Sat",
+    "Sun"
+  ]
 }

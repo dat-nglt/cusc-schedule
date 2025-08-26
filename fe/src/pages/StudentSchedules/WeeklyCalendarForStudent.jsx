@@ -17,7 +17,7 @@ import {
     FileDownload,
     PostAdd
 } from '@mui/icons-material';
-import { format, startOfWeek, addDays, isSameDay, parseISO } from 'date-fns';
+import { format, startOfWeek, addDays } from 'date-fns';
 import { vi } from 'date-fns/locale';
 import { useTimetable } from '../../contexts/TimetableContext';
 
@@ -25,33 +25,11 @@ import { useTimetable } from '../../contexts/TimetableContext';
 import CalendarModal from './CalendarModal'; // Adjust path as necessary
 
 import ScheduleItem from './ScheduleItem';
+import { transformScheduleForCalendar, isScheduleItemInTimeSlot } from '../../utils/scheduleUtils';
 
-// Constants (remain the same)
-const HOURS = Array.from({ length: 16 }, (_, i) => i + 7); // 7h - 22h
+// Constants - Updated to include schedule hours
+const HOURS = [7, 9, 13, 15, 17, 19]; // Hours corresponding to slot starts: S1(7), S2(9), C1(13), C2(15), T1(17), T2(19)
 const DAYS = Array.from({ length: 7 }, (_, i) => i); // 0-6 (Monday-Sunday)
-
-// Schedule Item Component (remains the same)
-// <<<<<<< chuong
-// const ScheduleItem = ({ item }) => {
-//     return (
-//         <Box
-//             sx={{
-//                 backgroundColor: '#4a90e2',
-//                 color: 'white',
-//                 borderRadius: '4px',
-//                 padding: '4px 8px',
-//                 margin: '2px 0',
-//                 fontSize: '0.8rem',
-//                 overflow: 'hidden',
-//                 textOverflow: 'ellipsis',
-//                 whiteSpace: 'nowrap'
-//             }}
-//         >
-//             {item.course} - {item.room}
-//         </Box>
-//     );
-// };
-// =======
 
 
 // Time Slot Component (remains the same)
@@ -60,9 +38,9 @@ const TimeSlot = ({ day, hour, date, scheduleItems }) => {
 
     const slotDate = addDays(date, day);
 
+    // Filter schedule items that belong to this time slot
     const itemsInSlot = scheduleItems.filter(item =>
-        isSameDay(parseISO(item.startTime), slotDate) &&
-        format(parseISO(item.startTime), 'H') === hour.toString()
+        isScheduleItemInTimeSlot(item, slotDate, hour)
     );
 
     return (
@@ -96,6 +74,14 @@ const WeeklyCalendar = ({
 
     const [weekDays, setWeekDays] = useState([]);
     const [isCalendarModalOpen, setIsCalendarModalOpen] = useState(false); // State for modal
+    const [transformedScheduleItems, setTransformedScheduleItems] = useState([]);
+
+    // Transform schedule items when they change
+    useEffect(() => {
+        const transformed = transformScheduleForCalendar(scheduleItems);
+        setTransformedScheduleItems(transformed);
+        console.log('Transformed schedule items:', transformed);
+    }, [scheduleItems]);
 
     // Ensure currentDate from context is initialized to a Monday for week-based display
     useEffect(() => {
@@ -178,24 +164,7 @@ const WeeklyCalendar = ({
                         <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'center' }}>
                             <Button
                                 variant="contained"
-                                startIcon={<Add fontSize="small" />}
-                                onClick={onAddNew}
-                                sx={{
-                                    textTransform: 'none',
-                                    borderRadius: '8px',
-                                    px: 2,
-                                    minWidth: 'max-content',
-                                    whiteSpace: 'nowrap'
-                                }}
-                                size={isTablet ? 'small' : 'medium'}
-                            >
-                                Thêm lịch
-                            </Button>
-
-                            <Button
-                                variant="contained"
                                 color="success"
-                                startIcon={<PostAdd fontSize="small" />}
                                 sx={{
                                     textTransform: 'none',
                                     borderRadius: '8px',
@@ -206,25 +175,10 @@ const WeeklyCalendar = ({
                                 }}
                                 size={isTablet ? 'small' : 'medium'}
                             >
-                                Tạo lịch mới
+                                Xuất lịch học
                             </Button>
 
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                startIcon={<FileDownload fontSize="small" />}
-                                sx={{
-                                    textTransform: 'none',
-                                    borderRadius: '8px',
-                                    px: 2,
-                                    minWidth: 'max-content',
-                                    whiteSpace: 'nowrap',
-                                    display: { xs: 'none', sm: 'inline-flex' }
-                                }}
-                                size={isTablet ? 'small' : 'medium'}
-                            >
-                                Xuất báo cáo
-                            </Button>
+
                         </Box>
                     )}
 
@@ -359,7 +313,7 @@ const WeeklyCalendar = ({
                                 day={day.day}
                                 hour={hour}
                                 date={currentDate}
-                                scheduleItems={scheduleItems}
+                                scheduleItems={transformedScheduleItems}
                                 sx={{
                                     backgroundColor: (theme) => theme.palette.background.paper,
                                 }}

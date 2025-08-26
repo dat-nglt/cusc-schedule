@@ -7,14 +7,21 @@ import { fileURLToPath } from "url";
 import logger from "../utils/logger.js";
 import models from "../models/index.js";
 
+
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __dirname = path.dirname(__filename)
+
+const BACKEND_DIR = path.join(__dirname, '../..');;
 
 // Cấu hình đường dẫn và file
 const CONFIG = {
-  GA_ALGORITHM_DIR: path.join(__dirname, "../../../timetabling_GA"),
+  // Đường dẫn đến thư mục thuật toán vẫn như cũ
+  GA_ALGORITHM_DIR: path.join(BACKEND_DIR, "../timetabling_GA"),
+
+  // Đường dẫn đến thư mục kết quả NẰM BÊN TRONG BACKEND
+  RESULTS_DIR: path.join(BACKEND_DIR, "results"),
+
   INPUT_DATA_FILENAME: "input_data.json",
-  RESULTS_DIR_NAME: "results",
   PYTHON_SCRIPT: "main.py",
 };
 
@@ -65,6 +72,8 @@ const {
   BusySlot,
   Classes,
   TimeSlot,
+  ClassSchedule, // Import the ClassSchedule model
+  sequelize
 } = models;
 
 export const getInputDataForAlgorithmService = async () => {
@@ -112,10 +121,6 @@ export const getInputDataForAlgorithmService = async () => {
     // 7. Khung giờ học
     const timeSlots = await TimeSlot.findAll();
     console.log("✅ [Service] TimeSlots:", timeSlots.length);
-
-    // 8. Ngày trong tuần
-    // const daysOfWeek = await DayOfWeek.findAll();
-    // console.log("✅ [Service] DaysOfWeek:", daysOfWeek.length);
 
     // --- Chuẩn hóa dữ liệu ---
     const formattedClasses = classes.map((c) => ({
@@ -170,8 +175,6 @@ export const getInputDataForAlgorithmService = async () => {
       type: t.type,
     }));
 
-    // const formattedDaysOfWeek = daysOfWeek.map((d) => d.name);
-
     // --- Kết quả cuối cùng ---
     const result = {
       classes: formattedClasses,
@@ -181,7 +184,6 @@ export const getInputDataForAlgorithmService = async () => {
       semesters: formattedSemesters,
       subjects: formattedSubjects,
       time_slots: formattedTimeSlots,
-      // days_of_week: formattedDaysOfWeek,
     };
 
     console.log("🎯 [Service] Dữ liệu đầu vào cuối cùng:", JSON.stringify(result, null, 2));
@@ -195,8 +197,7 @@ export const getInputDataForAlgorithmService = async () => {
 /**
  * Lấy đường dẫn đến thư mục kết quả
  */
-const getResultsDir = () =>
-  path.join(CONFIG.GA_ALGORITHM_DIR, CONFIG.RESULTS_DIR_NAME);
+const getResultsDir = () => CONFIG.RESULTS_DIR;
 
 /**
  * Lấy đường dẫn đến file input data
@@ -217,10 +218,6 @@ const ensureResultsDirectory = () => {
 
 /**
  * Gửi trạng thái cập nhật tới client qua Socket.IO
- * @param {Object} io - Socket.IO instance
- * @param {string} stage - Giai đoạn hiện tại
- * @param {string} message - Thông báo trạng thái
- * @param {number} progress - Phần trăm tiến độ
  */
 const emitStatus = (io, stage, message, progress) => {
   currentStage = stage;
@@ -239,9 +236,6 @@ const emitStatus = (io, stage, message, progress) => {
 
 /**
  * Gửi thông tin lỗi tới client
- * @param {Object} io - Socket.IO instance
- * @param {string} message - Thông báo lỗi
- * @param {Error} error - Đối tượng lỗi (nếu có)
  */
 const emitError = (io, message, error = null) => {
   const errorData = {
@@ -256,9 +250,6 @@ const emitError = (io, message, error = null) => {
 
 /**
  * Dọn dẹp tài nguyên và giải quyết promise
- * @param {Object} io - Socket.IO instance
- * @param {number} code - Mã thoát của process
- * @param {boolean} killedByUser - Có phải bị dừng bởi user không
  */
 const cleanupAndResolve = (io, code, killedByUser = false) => {
   if (pythonProcess) {
@@ -290,18 +281,15 @@ const cleanupAndResolve = (io, code, killedByUser = false) => {
 
 /**
  * Xử lý khi thuật toán chạy thành công
- * @param {Object} io - Socket.IO instance
  */
 const handleSuccess = (io) => {
   logger.info("Thuật toán Python chạy thành công.");
   emitStatus(io, "COMPLETED", PROGRESS_STAGES.COMPLETED.message, 100);
-  readResultsDirectory(io);
+  // This now calls the async version which includes saving to the DB
 };
 
 /**
  * Xử lý khi thuật toán thất bại
- * @param {Object} io - Socket.IO instance
- * @param {number} code - Mã thoát của process
  */
 const handleFailure = (io, code) => {
   logger.error(`Thuật toán Python thoát với mã lỗi ${code}.`);
@@ -318,38 +306,113 @@ const handleFailure = (io, code) => {
 };
 
 /**
- * Đọc thư mục kết quả và trả về danh sách file
- * @param {Object} io - Socket.IO instance
+ * [MỚI] Đọc file JSON kết quả và lưu vào DB (ClassSchedule)
+ * @param {string} jsonFilePath - Đường dẫn file JSON kết quả
  */
-const readResultsDirectory = (io) => {
-  fs.readdir(getResultsDir(), (err, files) => {
-    if (err) {
-      logger.error("Lỗi đọc thư mục kết quả:", err);
-      emitError(io, "Không thể lấy kết quả từ thuật toán.", err);
-      if (currentReject) {
-        currentReject(new Error("Không thể lấy kết quả từ thuật toán."));
-      }
-      return;
-    }
+export const processAndSaveResults = async (io, resolve, reject) => {
+  // Bắt đầu một transaction
+  const t = await sequelize.transaction();
 
-    const excelFiles = files.filter((file) => file.endsWith(".xlsx"));
+  try {
+    const files = await fs.promises.readdir(getResultsDir());
     const jsonFiles = files.filter((file) => file.endsWith(".json"));
+    const excelFiles = files.filter((file) => file.endsWith(".xlsx"));
 
-    if (currentResolve) {
-      currentResolve({
-        excelFiles,
-        jsonFiles,
-        pythonConsoleOutput: outputBuffer,
-        totalFiles: excelFiles.length + jsonFiles.length,
-        timestamp: new Date().toISOString(),
-      });
+    // Ưu tiên file combined_timetables.json nếu có
+    const targetJsonFile = jsonFiles.find(f => f === "combined_timetables.json") || jsonFiles[0];
+
+    if (targetJsonFile) {
+      const jsonFilePath = path.join(getResultsDir(), targetJsonFile);
+      logger.info(`Phát hiện file JSON. Bắt đầu lưu vào DB từ: ${jsonFilePath}`);
+
+      // Bắt đầu logic của saveClassSchedulesToDb
+      const rawData = fs.readFileSync(jsonFilePath, "utf-8");
+      const data = JSON.parse(rawData);
+
+      if (!data.semesters || !Array.isArray(data.semesters)) {
+        logger.error("File JSON không đúng định dạng.");
+        await t.rollback();
+        reject(new Error("File JSON không đúng định dạng."));
+        return;
+      }
+
+      let totalInserted = 0;
+      const semesterIdsInFile = data.semesters.map(s => s.semester_id).filter(id => id);
+
+      if (semesterIdsInFile.length > 0) {
+        const deletedRows = await ClassSchedule.destroy({
+          where: { semester_id: semesterIdsInFile },
+          transaction: t
+        });
+        logger.info(`Đã xóa ${deletedRows} lịch học cũ của ${semesterIdsInFile.length} học kỳ.`);
+      }
+
+      const allLessonsToInsert = [];
+      for (const semester of data.semesters) {
+        const semesterId = semester.semester_id;
+        if (!semesterId) continue;
+
+        if (semester.classes && Array.isArray(semester.classes)) {
+          for (const classObj of semester.classes) {
+            if (classObj.schedule && Array.isArray(classObj.schedule)) {
+              classObj.schedule.forEach(lesson => {
+                if (lesson.date) {
+                  allLessonsToInsert.push({
+                    semester_id: lesson.semester_id || semesterId,
+                    class_id: lesson.class_id || classObj.id || null,
+                    program_id: lesson.program_id || null,
+                    slot_id: lesson.slot_id || null,
+                    subject_id: lesson.subject_id || null,
+                    room_id: lesson.room_id || null,
+                    lecturer_id: lesson.lecturer_id || null,
+                    date: lesson.date,
+                    lesson_id: lesson.lesson_id || null,
+                    lesson_type: lesson.lesson_type || null,
+                    group_id: lesson.group_id || null,
+                    day: lesson.day || null,
+                    week: lesson.week || null,
+                    size: lesson.size || null
+                  });
+                }
+              });
+            }
+          }
+        }
+      }
+
+      if (allLessonsToInsert.length > 0) {
+        await ClassSchedule.bulkCreate(allLessonsToInsert, { transaction: t });
+        totalInserted = allLessonsToInsert.length;
+        logger.info(`Thêm thành công ${totalInserted} lịch học mới vào DB.`);
+      } else {
+        logger.info("Không có lịch học nào để thêm.");
+      }
+    } else {
+      logger.warn("Không tìm thấy file JSON kết quả nào để lưu vào DB.");
     }
-  });
+
+    // Nếu mọi thứ thành công, commit transaction
+    await t.commit();
+    logger.info(`[HOÀN TẤT] Transaction thành công.`);
+
+    resolve({
+      excelFiles,
+      jsonFiles,
+      pythonConsoleOutput: outputBuffer, // Đảm bảo biến này tồn tại trong phạm vi
+      totalFiles: excelFiles.length + jsonFiles.length,
+      timestamp: new Date().toISOString(),
+    });
+
+  } catch (err) {
+    // Nếu có lỗi, rollback transaction
+    await t.rollback();
+    logger.error("Lỗi khi xử lý kết quả. Đã rollback transaction:", err);
+    reject(new Error("Không thể xử lý kết quả từ thuật toán."));
+  }
 };
 
 /**
  * Ghi dữ liệu đầu vào vào file JSON
- * @param {Object} inputData - Dữ liệu đầu vào từ client
  */
 const writeInputData = (inputData) => {
   fs.writeFileSync(getInputDataPath(), JSON.stringify(inputData, null, 2));
@@ -358,8 +421,6 @@ const writeInputData = (inputData) => {
 
 /**
  * Xử lý lỗi khi khởi chạy process Python
- * @param {Error} err - Lỗi
- * @param {Object} io - Socket.IO instance
  */
 const handleProcessError = (err, io) => {
   logger.error("Lỗi khởi chạy process Python:", err);
@@ -382,8 +443,6 @@ const handleProcessError = (err, io) => {
 
 /**
  * Xử lý dữ liệu stderr từ Python process
- * @param {Buffer} data - Dữ liệu stderr
- * @param {Object} io - Socket.IO instance
  */
 const handlePythonError = (data, io) => {
   const errorOutput = data.toString();
@@ -398,8 +457,6 @@ const handlePythonError = (data, io) => {
 
 /**
  * Phân tích và xử lý output từ Python process
- * @param {Buffer} data - Dữ liệu stdout
- * @param {Object} io - Socket.IO instance
  */
 const handlePythonOutput = (data, io) => {
   const output = data.toString();
@@ -410,7 +467,6 @@ const handlePythonOutput = (data, io) => {
     if (!line.trim()) continue;
 
     try {
-      // Xử lý các sự kiện từ GA algorithm
       if (line.startsWith("GA_EVENT:") || line.startsWith("EXPORT_EVENT:")) {
         const prefix = line.startsWith("GA_EVENT:")
           ? "GA_EVENT:"
@@ -419,33 +475,25 @@ const handlePythonOutput = (data, io) => {
         const parsedData = JSON.parse(jsonString);
 
         if (parsedData.event_type === "GA_PROGRESS") {
-          // Cập nhật thông tin học kỳ hiện tại
           currentSemesterInfo = parsedData.semester_info;
-
           io.emit("ga_progress", parsedData);
           logger.info(
             `GA Progress: Generation ${parsedData.generation_info.current}/${parsedData.generation_info.max}`
           );
-
-          // Cập nhật trạng thái tổng thể
           const progress = parsedData.generation_info.progress_percentage;
-          const scaledProgress = 20 + progress * 0.6; // Scale từ 20-80%
-
+          const scaledProgress = 20 + progress * 0.6;
           emitStatus(
             io,
             "RUNNING_GA",
-            `Đang tạo lịch cho ${
-              parsedData.semester_info.semester_name || "học kỳ"
+            `Đang tạo lịch cho ${parsedData.semester_info.semester_name || "học kỳ"
             }...`,
             scaledProgress
           );
         } else if (parsedData.event_type === "EXPORT_STARTED") {
-          // Bắt đầu giai đoạn export
           emitStatus(io, "EXPORTING_EXCEL", "Đang xuất file Excel...", 85);
           io.emit("ga_export", parsedData);
         } else if (parsedData.event_type === "SEMESTER_EXPORT_START") {
-          // Xử lý export từng semester
-          const progress = 85 + (parsedData.current / parsedData.total) * 10; // 85-95%
+          const progress = 85 + (parsedData.current / parsedData.total) * 10;
           emitStatus(
             io,
             "EXPORTING_EXCEL",
@@ -454,12 +502,10 @@ const handlePythonOutput = (data, io) => {
           );
           io.emit("ga_export", parsedData);
         } else if (parsedData.event_type === "EXPORT_COMPLETE") {
-          // Hoàn thành export
           emitStatus(io, "COMPLETED", "Hoàn thành xuất file!", 100);
           io.emit("ga_export", parsedData);
         }
       } else {
-        // Gửi log thông thường cho debug
         io.emit("ga_log", {
           type: "stdout",
           message: line,
@@ -479,19 +525,26 @@ const handlePythonOutput = (data, io) => {
 
 /**
  * Khởi chạy Python process với thuật toán di truyền
- * @param {Object} io - Socket.IO instance
  */
 const startPythonProcess = (io) => {
   logger.info("Đang khởi chạy thuật toán Python...");
 
+  const pythonScriptPath = path.join(CONFIG.GA_ALGORITHM_DIR, CONFIG.PYTHON_SCRIPT);
+  const inputDataDir = CONFIG.GA_ALGORITHM_DIR;
+  const resultsDir = CONFIG.RESULTS_DIR; // Lấy đường dẫn kết quả đã được cấu hình
+
+  logger.info(`Tham số 1 (Input Dir): ${inputDataDir}`);
+  logger.info(`Tham số 2 (Results Dir): ${resultsDir}`);
+
   pythonProcess = spawn(
     "python",
     [
-      path.join(CONFIG.GA_ALGORITHM_DIR, CONFIG.PYTHON_SCRIPT),
-      CONFIG.GA_ALGORITHM_DIR,
+      pythonScriptPath,
+      inputDataDir, // Argv[1]: Thư mục chứa file input_data.json
+      resultsDir,   // Argv[2]: Thư mục để lưu file results
     ],
     {
-      cwd: CONFIG.GA_ALGORITHM_DIR,
+      cwd: CONFIG.GA_ALGORITHM_DIR, // Vẫn chạy từ thư mục của thuật toán
       stdio: ["pipe", "pipe", "pipe"],
     }
   );
@@ -509,9 +562,6 @@ const startPythonProcess = (io) => {
 
 /**
  * Chạy thuật toán di truyền với dữ liệu đầu vào
- * @param {Object} inputData - Dữ liệu đầu vào từ client
- * @param {Object} io - Socket.IO instance
- * @returns {Promise} Promise trả về kết quả hoặc lỗi
  */
 export const runGeneticAlgorithm = (inputData, io) => {
   if (pythonProcess) {
@@ -528,40 +578,11 @@ export const runGeneticAlgorithm = (inputData, io) => {
     errorBuffer = "";
 
     try {
-      // Cập nhật các giai đoạn ban đầu
       emitStatus(io, "START", PROGRESS_STAGES.START.message, 0);
-      setTimeout(
-        () =>
-          emitStatus(
-            io,
-            "LOADING_DATA",
-            PROGRESS_STAGES.LOADING_DATA.message,
-            5
-          ),
-        500
-      );
-      setTimeout(
-        () =>
-          emitStatus(
-            io,
-            "PROCESSING_DATA",
-            PROGRESS_STAGES.PROCESSING_DATA.message,
-            10
-          ),
-        1000
-      );
-      setTimeout(
-        () =>
-          emitStatus(
-            io,
-            "INITIALIZING_POPULATION",
-            PROGRESS_STAGES.INITIALIZING_POPULATION.message,
-            15
-          ),
-        1500
-      );
+      setTimeout(() => emitStatus(io, "LOADING_DATA", PROGRESS_STAGES.LOADING_DATA.message, 5), 500);
+      setTimeout(() => emitStatus(io, "PROCESSING_DATA", PROGRESS_STAGES.PROCESSING_DATA.message, 10), 1000);
+      setTimeout(() => emitStatus(io, "INITIALIZING_POPULATION", PROGRESS_STAGES.INITIALIZING_POPULATION.message, 15), 1500);
 
-      // Chuẩn bị và chạy thuật toán
       ensureResultsDirectory();
       writeInputData(inputData);
       startPythonProcess(io);
@@ -575,7 +596,6 @@ export const runGeneticAlgorithm = (inputData, io) => {
 
 /**
  * Dừng thuật toán đang chạy
- * @param {Object} io - Socket.IO instance
  */
 export const stopGeneticAlgorithm = (io) => {
   if (pythonProcess && !pythonProcess.killed) {
@@ -588,7 +608,6 @@ export const stopGeneticAlgorithm = (io) => {
     );
     pythonProcess.kill("SIGTERM");
 
-    // Force kill sau 3 giây nếu không tự dừng
     setTimeout(() => {
       if (pythonProcess && !pythonProcess.killed) {
         pythonProcess.kill("SIGKILL");
@@ -607,8 +626,6 @@ export const stopGeneticAlgorithm = (io) => {
 
 /**
  * Lấy đường dẫn file để download
- * @param {string} filename - Tên file
- * @returns {string} Đường dẫn đầy đủ
  */
 export const getDownloadFilePath = (filename) => {
   const filePath = path.join(getResultsDir(), filename);
@@ -620,7 +637,6 @@ export const getDownloadFilePath = (filename) => {
 
 /**
  * Lấy trạng thái hiện tại của GA service
- * @returns {Object} Trạng thái hiện tại
  */
 export const getCurrentGaStatus = () => ({
   message:

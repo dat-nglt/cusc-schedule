@@ -26,10 +26,10 @@ export const generateSchedule = async (scheduleData) => {
       "/api/schedule/generate",
       scheduleData,
       {
-        timeout: 30000, // Tăng timeout cho request này nếu cần (mặc định là 30s từ axiosConfig)
+        timeout: 30000,
       }
     );
-    return response.data; // Trả về data từ response
+    return response.data;
   } catch (error) {
     console.error("Error in scheduleApiService.generateSchedule:", error);
     if (error instanceof Error) {
@@ -57,4 +57,22 @@ export const stopScheduleGeneration = async () => {
 
 export const getDownloadUrl = (filename) => {
   return `${API_BASE_URL}/api/schedule/download/${filename}`;
+};
+
+export const saveGeneratedScheduleAPI = async () => {
+  try {
+    const response = await axiosInstance.post(
+      "/api/schedule/process-results"
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error in saveGeneratedSchedule API call:", error);
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw (
+      error.response?.data ||
+      new Error("An unknown error occurred while saving the schedule.")
+    );
+  }
 };

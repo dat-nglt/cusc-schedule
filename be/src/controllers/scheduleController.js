@@ -5,6 +5,7 @@ import {
   getDownloadFilePath,
   stopGeneticAlgorithm,
   getInputDataForAlgorithmService,
+  processAndSaveResults,
 } from "../services/scheduleService.js";
 import logger from "../utils/logger.js";
 import fs from "fs";
@@ -31,7 +32,7 @@ export const generateScheduleController = async (req, res, io) => {
     const result = await runGeneticAlgorithm(inputDataFromFrontend, io);
 
     io.emit("ga_status", {
-      message: "Thời khóa biểu đã được tạo thành công!",
+      message: "dd!",
       stage: "COMPLETED",
       progress: 100,
       excelFiles: result.excelFiles,
@@ -89,6 +90,30 @@ export const getInputDataForAlgorithmController = async (req, res) => {
   try {
     const inputData = await getInputDataForAlgorithmService();
   } catch (error) {
-    
+
   }
 };
+
+
+export const processResultsController = async (req, res) => {
+
+  try {
+    await new Promise((resolve, reject) => {
+      processAndSaveResults(null, resolve, reject);
+    });
+    // Nếu promise resolve thành công, gửi phản hồi thành công về client.
+    logger.info('Quá trình xử lý và lưu trữ kết quả hoàn tất.');
+    res.status(200).json({
+      success: true,
+      message: 'Quá trình xử lý và lưu trữ kết quả lịch học đã hoàn tất thành công.',
+    });
+  } catch (error) {
+    // Nếu có lỗi xảy ra, gửi phản hồi lỗi về client.
+    logger.error('Lỗi khi xử lý yêu cầu:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Lỗi server khi xử lý yêu cầu.',
+      error: error.message,
+    });
+  }
+}
