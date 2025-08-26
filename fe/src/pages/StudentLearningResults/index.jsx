@@ -11,13 +11,14 @@ import AcademicFilter from './AcademicFilter';
 import ResultsTable from './ResultsTable';
 import PerformanceComparison from './PerformanceComparison';
 import AcademicFilterAndActions from './AcademicFilter';
-
+import { useAuth } from '../../contexts/AuthContext';
 const StudentLearningResults = () => {
     const [semester, setSemester] = useState('');
     const [academicYear, setAcademicYear] = useState('');
     const [loading, setLoading] = useState(true);
     const [studentData, setStudentData] = useState(null);
     const [results, setResults] = useState([]);
+    const { userData } = useAuth();
 
     const handleViewResults = () => {
         console.log('cần thiết kế logic để lấy kết quả học tập theo năm học và học kỳ');
@@ -27,14 +28,15 @@ const StudentLearningResults = () => {
     useEffect(() => {
         const fetchData = async () => {
             // Giả lập thời gian load API
-            await new Promise(resolve => setTimeout(resolve, 1000));
-
             const mockStudentData = {
-                id: 'SV20210001',
-                name: 'Nguyễn Văn A',
+                id: userData.code,
+                name: userData.name,
                 avatar: '/path/to/avatar.jpg',
                 program: 'Lập trình viên Quốc tế',
-                class: 'K20',
+                birthday: userData.day_of_birth,
+                class: userData.class,
+                faculty: "Công nghệ thông tin",
+                enrollmentYear: 2021,
                 gpa: 3.2,
                 creditsCompleted: 45,
                 creditsTotal: 120
