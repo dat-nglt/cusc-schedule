@@ -106,7 +106,7 @@ const ScheduleItem = ({ item, onDrop }) => {
                 <Typography component="span" sx={{ color: primaryTextColor }}>GV:</Typography> {item.lecturer.name}
             </Typography>
             <Typography variant="subtitle2" sx={{ mb: 0.3, lineHeight: 1.4, color: 'primary' }}>
-                <Typography component="span" sx={{ color: primaryTextColor }}>class:</Typography> {item.class_id}
+                <Typography component="span" sx={{ color: primaryTextColor }}>Lớp:</Typography> {item.class_id}
             </Typography>
         </Box>
     );
