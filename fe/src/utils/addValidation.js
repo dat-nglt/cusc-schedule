@@ -233,3 +233,4 @@ export const validateRoomField = (room, existingRooms = []) => {
 
   return errors;
 };
+

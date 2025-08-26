@@ -13,25 +13,27 @@ import {
   IconButton,
   Button,
   Chip,
-  Avatar,
   Paper,
-  Modal,
-  Divider,
+  Grid,
+  Tabs,
+  Tab,
   useTheme,
-  alpha
+  alpha,
+  CircularProgress,
+  ToggleButtonGroup,
+  ToggleButton,
 } from '@mui/material';
+
 import {
   Add as AddIcon,
   Search as SearchIcon,
   MeetingRoom as RoomIcon,
   Computer as ComputerIcon,
-  School as SchoolIcon,
-  Groups as GroupsIcon,
-  Construction as MaintenanceIcon,
-  Close as CloseIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
-  Visibility as ViewIcon
+  ViewModule as GridIcon,
+  ViewList as ListIcon,
+  FilterList as FilterIcon
 } from '@mui/icons-material';
 import useResponsive from '../../hooks/useResponsive';
 import AddRoomModal from './AddRoomModal';
@@ -66,7 +68,8 @@ const RoomManagement = () => {
   const [roomToDelete, setRoomToDelete] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-
+  const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'list'
+  const [activeTab, setActiveTab] = useState(0);
 
   const fetchRooms = async () => {
     try {
@@ -104,22 +107,16 @@ const RoomManagement = () => {
     return matchesSearch && matchesBuilding && matchesType && matchesStatus;
   });
 
-  // Group rooms by building and floor (optional feature if needed)
+  // Group rooms by building
   const groupedRooms = filteredRooms.reduce((acc, room) => {
-    // Extract building from location string (assuming format like "Tầng 2, Tòa A")
-    const locationParts = room.location?.split(',') || [];
-    const building = locationParts.length > 1 ? locationParts[1]?.trim() : 'Unknown';
-    const floor = locationParts.length > 0 ? locationParts[0]?.trim() : 'Unknown';
+    // Extract building from location string
+    const buildingMatch = room.location?.match(/(Tòa|Khu) [A-Z]/i);
+    const building = buildingMatch ? buildingMatch[0] : 'Khác';
 
-    const key = `${building}-${floor}`;
-    if (!acc[key]) {
-      acc[key] = {
-        building,
-        floor,
-        rooms: []
-      };
+    if (!acc[building]) {
+      acc[building] = [];
     }
-    acc[key].rooms.push(room);
+    acc[building].push(room);
     return acc;
   }, {});
 
@@ -196,6 +193,12 @@ const RoomManagement = () => {
     }
   };
 
+  const handleChangeLayout = (event, newView) => {
+    if (newView !== null) {
+      setViewMode(newView);
+    }
+  };
+
   // Open delete confirmation modal
   const handleOpenDeleteModal = (room) => {
     setRoomToDelete(room);
@@ -233,188 +236,272 @@ const RoomManagement = () => {
     setSelectedRoom(null);
   };
 
+  // Handle tab change
+  const handleTabChange = (event, newValue) => {
+    setActiveTab(newValue);
+    // Set building filter based on tab selection
+    const buildings = Object.keys(groupedRooms);
+    if (newValue === 0) {
+      setBuildingFilter('');
+    } else if (newValue <= buildings.length) {
+      setBuildingFilter(buildings[newValue - 1]);
+    }
+  };
+
   return (
     <Box sx={{ p: 1, zIndex: 10, height: 'calc(100vh - 64px)', overflowY: 'auto' }}>
       {/* Header and Filters */}
-      <Card sx={{ width: '100%', boxShadow: 1 }}>
-        <CardContent>
+      <Paper sx={{ width: '100%', p: 2, mb: 2 }}>
+        <Box sx={{
+          display: 'flex',
+          flexDirection: isSmallScreen ? 'column' : 'row',
+          justifyContent: 'space-between',
+          alignItems: isSmallScreen ? 'stretch' : 'center',
+          mb: 2,
+          gap: 2
+        }}>
+          <Typography variant="h5" fontWeight="600">
+            Danh sách phòng học
+          </Typography>
+
           <Box sx={{
             display: 'flex',
-            flexDirection: isSmallScreen ? 'column' : 'row',
-            justifyContent: 'space-between',
-            alignItems: isSmallScreen ? 'stretch' : 'center',
-            mb: 3,
-            gap: 2
+            gap: 1,
+            alignItems: 'center'
           }}>
-            <Typography variant="h5" fontWeight="600">
-              Quản lý Phòng học
-            </Typography>
+            <TextField
+              size="small"
+              placeholder="Tìm phòng..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+              }}
+              sx={{
+                minWidth: 200,
+                backgroundColor: theme.palette.background.paper
+              }}
+            />
 
-            <Box sx={{
-              display: 'flex',
-              gap: 2,
-              flexDirection: isSmallScreen ? 'column' : 'row',
-              width: isSmallScreen ? '100%' : 'auto'
-            }}>
-              <TextField
-                size="small"
-                placeholder="Tìm phòng..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon />
-                    </InputAdornment>
-                  ),
-                }}
-                sx={{
-                  minWidth: 200,
-                  backgroundColor: theme.palette.background.paper
-                }}
-              />
-
-              <FormControl size="small" sx={{ minWidth: 120 }}>
-                <InputLabel>Tòa nhà</InputLabel>
-                <Select
-                  value={buildingFilter}
-                  onChange={(e) => setBuildingFilter(e.target.value)}
-                  label="Tòa nhà"
-                >
-                  <MenuItem value="">Tất cả</MenuItem>
-                  <MenuItem value="A">Tòa A</MenuItem>
-                  <MenuItem value="B">Tòa B</MenuItem>
-                  <MenuItem value="C">Tòa C</MenuItem>
-                </Select>
-              </FormControl>
-
-              <FormControl size="small" sx={{ minWidth: 120 }}>
-                <InputLabel>Loại phòng</InputLabel>
-                <Select
-                  value={typeFilter}
-                  onChange={(e) => setTypeFilter(e.target.value)}
-                  label="Loại phòng"
-                >
-                  <MenuItem value="">Tất cả</MenuItem>
-                  <MenuItem value="Lý thuyết">Lý thuyết</MenuItem>
-                  <MenuItem value="Thực hành">Thực hành</MenuItem>
-                  {/* <MenuItem value="Phòng hội thảo">Phòng hội thảo</MenuItem> */}
-                </Select>
-              </FormControl>
-
-              <FormControl size="small" sx={{ minWidth: 120 }}>
-                <InputLabel>Trạng thái</InputLabel>
-                <Select
-                  value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value)}
-                  label="Trạng thái"
-                >
-                  <MenuItem value="">Tất cả</MenuItem>
-                  <MenuItem value="Hoạt động">Hoạt động</MenuItem>
-                  <MenuItem value="Tạm ngưng">Tạm ngưng</MenuItem>
-                  <MenuItem value="Ngưng hoạt động">Ngưng hoạt động</MenuItem>
-                </Select>
-              </FormControl>
-
-              <Button
-                variant="contained"
-                startIcon={<AddIcon />}
-                onClick={handleAddRoomClick}
-                sx={{ ml: isSmallScreen ? 0 : 'auto' }}
+            <FormControl size="small" sx={{ minWidth: 120 }}>
+              <InputLabel>Loại phòng</InputLabel>
+              <Select
+                value={typeFilter}
+                onChange={(e) => setTypeFilter(e.target.value)}
+                label="Loại phòng"
               >
-                Thêm phòng
-              </Button>
-            </Box>
-          </Box>
+                <MenuItem value="">Tất cả</MenuItem>
+                <MenuItem value="theory">Lý thuyết</MenuItem>
+                <MenuItem value="practice">Thực hành</MenuItem>
+                <MenuItem value="lab">Phòng Lab</MenuItem>
+              </Select>
+            </FormControl>
 
-          {/* Room Matrix Visualization */}
-          {loading ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
-              <Typography>Đang tải dữ liệu phòng học...</Typography>
-            </Box>
-          ) : error ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
-              <Typography color="error">{error}</Typography>
-            </Box>
-          ) : filteredRooms.length === 0 ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
-              <Typography>Không có phòng học nào để hiển thị.</Typography>
-            </Box>
-          ) : (
+            <FormControl size="small" sx={{ minWidth: 120 }}>
+              <InputLabel>Trạng thái</InputLabel>
+              <Select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                label="Trạng thái"
+              >
+                <MenuItem value="">Tất cả</MenuItem>
+                <MenuItem value="active">Hoạt động</MenuItem>
+                <MenuItem value="maintenance">Bảo trì</MenuItem>
+                <MenuItem value="inactive">Ngưng hoạt động</MenuItem>
+              </Select>
+            </FormControl>
+
+            <Button
+              variant="contained"
+              startIcon={<AddIcon />}
+              onClick={handleAddRoomClick}
+              sx={{ ml: 1 }}
+            >
+              Thêm phòng
+            </Button>
+          </Box>
+        </Box>
+
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap', // Cho phép flex wrap để đảm bảo responsive
+            width: '100%',
+          }}
+        >
+          {/* Tabs chọn tòa nhà */}
+          <Tabs
+            value={activeTab}
+            onChange={handleTabChange}
+            variant="scrollable"
+            scrollButtons="auto"
+            allowScrollButtonsMobile
+            sx={{
+              flexGrow: 1,
+              minHeight: 48,
+              '& .MuiTabs-scroller': {
+                display: 'flex',
+                alignItems: 'center'
+              }
+            }}
+          >
+            <Tab label="Tất cả" sx={{ minWidth: 'auto', px: 1 }} />
+            {Object.keys(groupedRooms).map((building) => (
+              <Tab key={building} label={building} sx={{ minWidth: 'auto', px: 1 }} />
+            ))}
+          </Tabs>
+
+          {/* Toggle view (grid / list) - Hiển thị trên mọi kích thước */}
+          <ToggleButtonGroup
+            value={viewMode}
+            exclusive
+            onChange={handleChangeLayout}
+            aria-label="View mode"
+            size="small"
+            sx={{ ml: 2, height: 36 }}
+          >
+            <ToggleButton value="grid" aria-label="Grid view">
+              <GridIcon />
+              Lưới
+            </ToggleButton>
+            <ToggleButton value="list" aria-label="List view">
+              <ListIcon />
+              Danh sách
+            </ToggleButton>
+          </ToggleButtonGroup>
+        </Box>
+      </Paper>
+
+      {/* Room Content */}
+      {loading ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+          <CircularProgress />
+        </Box>
+      ) : error ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+          <Typography color="error">{error}</Typography>
+        </Box>
+      ) : filteredRooms.length === 0 ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+          <Typography>Không có phòng học nào để hiển thị.</Typography>
+        </Box>
+      ) : (
+        <Box>
+          {/* Grid View */}
+          {viewMode === 'grid' && (
             <Box sx={{
               display: 'flex',
               flexDirection: 'column',
-              gap: 4,
-              mt: 3
+              gap: 3
             }}>
-              {Object.values(groupedRooms).map(group => (
-                <Box key={`${group.building}-${group.floor}`}>
-                  <Typography variant="body1" sx={{ mb: 2, bgcolor: theme.palette.primary.light, color: theme.palette.primary.contrastText, p: 1, borderRadius: 1 }}>
-                    {group.floor}
+              {Object.entries(groupedRooms).map(([building, buildingRooms]) => (
+                <Box key={building}>
+                  <Typography variant="h6" sx={{
+                    mb: 2,
+                    p: 1,
+                    backgroundColor: alpha(theme.palette.primary.main, 0.1),
+                    borderRadius: 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1
+                  }}>
+                    <RoomIcon color="primary" />
+                    {building}
+                    <Chip
+                      label={`${buildingRooms.length} phòng`}
+                      size="small"
+                      color="primary"
+                      variant="outlined"
+                    />
                   </Typography>
 
-                  <Box sx={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-                    gap: 3
-                  }}>
-                    {group.rooms.map(room => (
-                      <RoomCard
-                        key={room.room_id}
-                        room={room}
-                        onClick={() => handleRoomClick(room)}
-                        onEdit={() => handleEditRoomClick(room)}
-                        onDelete={() => handleDeleteRoom(room.room_id)}
-                      />
+                  <Grid container spacing={2}>
+                    {buildingRooms.map(room => (
+                      <Grid item xs={12} sm={6} md={4} lg={3} key={room.room_id}>
+                        <RoomCard
+                          room={room}
+                          onClick={() => handleRoomClick(room)}
+                          onEdit={() => handleEditRoomClick(room)}
+                          onDelete={() => handleDeleteRoom(room.room_id)}
+                        />
+                      </Grid>
                     ))}
-                  </Box>
+                  </Grid>
                 </Box>
               ))}
             </Box>
           )}
 
-          {/* Room Detail Modal */}
-          <RoomDetailModal
-            open={openDetailModal}
-            onClose={handleCloseDetailModal}
-            room={selectedRoom}
-          />
+          {/* List View */}
+          {viewMode === 'list' && (
+            <Paper sx={{ p: 2 }}>
+              <Box sx={{
+                display: 'grid',
+                gridTemplateColumns: '1fr',
+                gap: 1
+              }}>
+                {filteredRooms.map(room => (
+                  <RoomListItem
+                    key={room.room_id}
+                    room={room}
+                    onClick={() => handleRoomClick(room)}
+                    onEdit={() => handleEditRoomClick(room)}
+                    onDelete={() => handleDeleteRoom(room.room_id)}
+                  />
+                ))}
+              </Box>
+            </Paper>
+          )}
+        </Box>
+      )}
 
-          {/* Add Room Modal */}
-          <AddRoomModal
-            open={openAddModal}
-            onClose={handleCloseAddModal}
-            onAddRoom={handleAddRoom}
-            existingRooms={rooms}
-            error={error}
-            loading={loading}
-            fetchRooms={fetchRooms}
-          />
+      {/* Room Detail Modal */}
+      <RoomDetailModal
+        open={openDetailModal}
+        onClose={handleCloseDetailModal}
+        room={selectedRoom}
+      />
 
-          {/* Edit Room Modal */}
-          <EditRoomModal
-            open={openEditModal}
-            onClose={handleCloseEditModal}
-            room={selectedRoom}
-            onSave={handleEditRoom}
-            error={error}
-            loading={loading}
-          />
+      {/* Add Room Modal */}
+      <AddRoomModal
+        open={openAddModal}
+        onClose={handleCloseAddModal}
+        onAddRoom={handleAddRoom}
+        existingRooms={rooms}
+        error={error}
+        loading={loading}
+        fetchRooms={fetchRooms}
+      />
 
-          {/* Delete Room Modal */}
-          <DeleteRoomModal
-            open={openDeleteModal}
-            onClose={handleCloseDeleteModal}
-            room={roomToDelete}
-            onDelete={confirmDeleteRoom}
-          />
-        </CardContent>
-      </Card>
+      {/* Edit Room Modal */}
+      <EditRoomModal
+        open={openEditModal}
+        onClose={handleCloseEditModal}
+        roomData={selectedRoom}
+        existingRooms={rooms}
+        onSave={handleEditRoom}
+        error={error}
+        loading={loading}
+      />
+
+      {/* Delete Room Modal */}
+      <DeleteRoomModal
+        open={openDeleteModal}
+        onClose={handleCloseDeleteModal}
+        room={roomToDelete}
+        onDelete={confirmDeleteRoom}
+      />
     </Box>
   );
 };
 
-// Room Card Component
+// Room Card Component (Giữ nguyên từ bản trước)
 const RoomCard = ({ room, onClick, onEdit, onDelete }) => {
   const theme = useTheme();
 
@@ -440,7 +527,9 @@ const RoomCard = ({ room, onClick, onEdit, onDelete }) => {
         height: 6,
         backgroundColor: room.status === 'active'
           ? theme.palette.success.main
-          : theme.palette.warning.main
+          : room.status === 'maintenance'
+            ? theme.palette.warning.main
+            : theme.palette.error.main
       }} />
 
       <CardContent sx={{ p: 2.5 }}>
@@ -449,15 +538,22 @@ const RoomCard = ({ room, onClick, onEdit, onDelete }) => {
             {room.room_name || room.room_id}
           </Typography>
           <Chip
-            label={room.status === 'active' ? 'Sẵn sàng' : 'Bảo trì'}
+            label={
+              room.status === 'active' ? 'Sẵn sàng' :
+                room.status === 'maintenance' ? 'Bảo trì' : 'Ngưng hoạt động'
+            }
             size="small"
             sx={{
               backgroundColor: room.status === 'active'
                 ? alpha(theme.palette.success.main, 0.1)
-                : alpha(theme.palette.warning.main, 0.1),
+                : room.status === 'maintenance'
+                  ? alpha(theme.palette.warning.main, 0.1)
+                  : alpha(theme.palette.error.main, 0.1),
               color: room.status === 'active'
                 ? theme.palette.success.dark
-                : theme.palette.warning.dark
+                : room.status === 'maintenance'
+                  ? theme.palette.warning.dark
+                  : theme.palette.error.dark
             }}
           />
         </Box>
@@ -467,7 +563,9 @@ const RoomCard = ({ room, onClick, onEdit, onDelete }) => {
             ? 'Lý thuyết'
             : room.type === 'practice'
               ? 'Thực hành'
-              : room.type} • {room.capacity} chỗ
+              : room.type === 'lab'
+                ? 'Phòng Lab'
+                : room.type} • {room.capacity} chỗ
         </Typography>
 
         {/* Room matrix visualization */}
@@ -481,52 +579,53 @@ const RoomCard = ({ room, onClick, onEdit, onDelete }) => {
           borderRadius: '8px'
         }}>
           {[...Array(Math.min(room.capacity || 0, 30))].map((_, i) => (
-            <>
-              <Box
-                key={i}
-                sx={{
-                  aspectRatio: '1/1', // Đảm bảo ô vuông
-                  borderRadius: '4px',
-                  backgroundColor: alpha(
-                    room.status === 'active'
-                      ? theme.palette.primary.main
-                      : theme.palette.warning.main,
-                    room.status === 'active' ? 0.2 : 0.1
-                  ),
-                  border: `1px solid ${alpha(
-                    room.status === 'active'
-                      ? theme.palette.primary.main
-                      : theme.palette.warning.main,
-                    0.3
-                  )}`,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  // Thêm style cho text nếu có
-                  color: alpha(theme.palette.text.primary, 0.7), // Màu chữ cho 'OK'
-                  fontWeight: 'bold',
-                  fontSize: '0.75rem', // Kích thước chữ cho 'OK'
-                }}
-              >
-                {/* Kiểm tra nếu là ô cuối cùng được render */}
-                {i === 29 ? (
-                  <Typography variant="caption" sx={{
-                    color: room.status === 'active' ? theme.palette.primary.dark : theme.palette.warning.dark
-                  }}>
-                    {
-                      room.capacity - 30 === 0 ? "" : `+${room.capacity - 30}`
-                    }
-                  </Typography>
-                ) : (
-                  // Nếu không phải ô cuối cùng, hiển thị ComputerIcon nếu là phòng thực hành
-                  i === 0 && room.type?.toLowerCase().includes('thực hành') && (
-                    <ComputerIcon fontSize="small" sx={{
-                      color: alpha(theme.palette.text.secondary, 0.6)
-                    }} />
-                  )
-                )}
-              </Box>
-            </>
+            <Box
+              key={i}
+              sx={{
+                aspectRatio: '1/1',
+                borderRadius: '4px',
+                backgroundColor: alpha(
+                  room.status === 'active'
+                    ? theme.palette.primary.main
+                    : room.status === 'maintenance'
+                      ? theme.palette.warning.main
+                      : theme.palette.error.main,
+                  room.status === 'active' ? 0.2 : 0.1
+                ),
+                border: `1px solid ${alpha(
+                  room.status === 'active'
+                    ? theme.palette.primary.main
+                    : room.status === 'maintenance'
+                      ? theme.palette.warning.main
+                      : theme.palette.error.main,
+                  0.3
+                )}`,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: alpha(theme.palette.text.primary, 0.7),
+                fontWeight: 'bold',
+                fontSize: '0.75rem',
+              }}
+            >
+              {i === 29 && room.capacity > 30 ? (
+                <Typography variant="caption" sx={{
+                  color: room.status === 'active'
+                    ? theme.palette.primary.dark
+                    : room.status === 'maintenance'
+                      ? theme.palette.warning.dark
+                      : theme.palette.error.dark
+                }}>
+                  +{room.capacity - 30}
+                </Typography>
+              ) : (
+                i === 0 && room.type === 'practice' && (
+                  <ComputerIcon fontSize="small" sx={{
+                    color: alpha(theme.palette.text.secondary, 0.6)
+                  }} />
+                )
+              )}
+            </Box>
           ))}
         </Box>
 
@@ -586,6 +685,103 @@ const RoomCard = ({ room, onClick, onEdit, onDelete }) => {
         </Box>
       </CardContent>
     </Card>
+  );
+};
+
+// Room List Item Component for List View
+const RoomListItem = ({ room, onClick, onEdit, onDelete }) => {
+  const theme = useTheme();
+
+  return (
+    <Paper
+      elevation={0}
+      onClick={onClick}
+      sx={{
+        p: 2,
+        border: `1px solid ${alpha(theme.palette.divider, 0.2)}`,
+        borderRadius: '8px',
+        cursor: 'pointer',
+        transition: 'all 0.2s ease',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        '&:hover': {
+          backgroundColor: alpha(theme.palette.primary.main, 0.05),
+          borderColor: alpha(theme.palette.primary.main, 0.3)
+        }
+      }}
+    >
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flex: 1 }}>
+        <Box sx={{
+          width: 12,
+          height: 40,
+          borderRadius: 1,
+          backgroundColor: room.status === 'active'
+            ? theme.palette.success.main
+            : room.status === 'maintenance'
+              ? theme.palette.warning.main
+              : theme.palette.error.main
+        }} />
+
+        <Box sx={{ flex: 1 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+            <Typography variant="subtitle1" fontWeight="600">
+              {room.room_name || room.room_id}
+            </Typography>
+            <Chip
+              label={
+                room.status === 'active' ? 'Sẵn sàng' :
+                  room.status === 'maintenance' ? 'Bảo trì' : 'Ngưng hoạt động'
+              }
+              size="small"
+              sx={{
+                backgroundColor: room.status === 'active'
+                  ? alpha(theme.palette.success.main, 0.1)
+                  : room.status === 'maintenance'
+                    ? alpha(theme.palette.warning.main, 0.1)
+                    : alpha(theme.palette.error.main, 0.1),
+                color: room.status === 'active'
+                  ? theme.palette.success.dark
+                  : room.status === 'maintenance'
+                    ? theme.palette.warning.dark
+                    : theme.palette.error.dark
+              }}
+            />
+          </Box>
+
+          <Typography variant="body2" color="text.secondary">
+            {room.location} • {room.type === 'theory'
+              ? 'Lý thuyết'
+              : room.type === 'practice'
+                ? 'Thực hành'
+                : room.type === 'lab'
+                  ? 'Phòng Lab'
+                  : room.type} • {room.capacity} chỗ
+          </Typography>
+        </Box>
+      </Box>
+
+      <Box sx={{ display: 'flex', gap: 1 }}>
+        <IconButton
+          size="small"
+          onClick={(e) => {
+            e.stopPropagation();
+            onEdit();
+          }}
+        >
+          <EditIcon fontSize="small" />
+        </IconButton>
+        <IconButton
+          size="small"
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete();
+          }}
+        >
+          <DeleteIcon fontSize="small" />
+        </IconButton>
+      </Box>
+    </Paper>
   );
 };
 
