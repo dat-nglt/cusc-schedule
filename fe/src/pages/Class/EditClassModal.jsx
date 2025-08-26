@@ -66,6 +66,7 @@ export default function EditClassModal({
 
   const [activeStep, setActiveStep] = useState(0);
   const [localError, setLocalError] = useState({});
+  
 
   useEffect(() => {
     if (open && classItem) {

@@ -73,7 +73,6 @@ const Class = () => {
     try {
       setLoading(true);
       const response = await getClassesAPI();
-      console.log('Phản hồi từ API (danh sách):', response);
 
       let classesData = [];
       if (Array.isArray(response)) {
@@ -86,6 +85,7 @@ const Class = () => {
           course_id: classItem.course_id,
           created_at: formatTimestamp(classItem.created_at),
           updated_at: formatTimestamp(classItem.updated_at),
+          program_id: classItem.program_id,
           course: classItem.Course ? { course_name: classItem.Course.course_name } : null,
         }));
       } else if (response && typeof response === 'object' && Array.isArray(response.data)) {
@@ -98,6 +98,7 @@ const Class = () => {
           course_id: classItem.course_id,
           created_at: formatTimestamp(classItem.created_at),
           updated_at: formatTimestamp(classItem.updated_at),
+          program_id: classItem.program_id,
           course: classItem.Course ? { course_name: classItem.Course.course_name } : null,
         }));
       } else {
@@ -117,7 +118,6 @@ const Class = () => {
     try {
       setLoading(true);
       const response = await getCoursesAPI();
-      console.log('Phản hồi từ API (khóa học):', response);
       let coursesData = [];
       if (Array.isArray(response)) {
         coursesData = response.map((course) => ({
@@ -176,6 +176,7 @@ const Class = () => {
           course_id: classToView.course_id,
           created_at: formatDateTime(classToView.created_at),
           updated_at: formatDateTime(classToView.updated_at),
+          program_id: classToView.program_id,
           course: classToView.Course ? { course_name: classToView.Course.course_name } : null,
         });
 
@@ -241,7 +242,6 @@ const Class = () => {
   const handleSaveEditedClass = async (classData) => {
     try {
       setLoading(true);
-      console.log('Gửi dữ liệu chỉnh sửa lớp học:', classData);
       const response = await updateClassAPI(classData.class_id, {
         class_id: classData.class_id,
         class_name: classData.class_name,
@@ -251,9 +251,14 @@ const Class = () => {
         program_id: classData.program_id,
         updated_at: new Date().toISOString(),
       });
-      console.log('Phản hồi từ API (chỉnh sửa):', response);
 
-      await fetchClasses();
+      if (response.success) {
+        await fetchClasses();
+        toast.success("Cập nhật lớp học thành công")
+      }else {
+        toast.error("Cập nhật lớp học không thành côngPhản hồi từ API")
+      }
+
     } catch (err) {
       console.error('Lỗi khi chỉnh sửa lớp học:', err.message);
       setError(`Lỗi khi chỉnh sửa lớp học: ${err.message}`);
@@ -434,8 +439,11 @@ const Class = () => {
           setOpenEdit(false);
           setSelectedClass(null);
         }}
+        onEditClass={handleSaveEditedClass}
         classItem={selectedClass}
-        onSave={handleSaveEditedClass}
+        existingClasses={classes}
+        existingCourses={courses}
+        existingPrograms={programs}
       />
       <DeleteClassModal
         open={openDelete}

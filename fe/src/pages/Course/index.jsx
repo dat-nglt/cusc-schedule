@@ -29,6 +29,7 @@ import useResponsive from '../../hooks/useResponsive';
 import CourseTable from './CourseTable';
 import { getCoursesAPI, getCourseByIdAPI, addCourseAPI, updateCourseAPI, deleteCourseAPI } from '../../api/courseAPI';
 import TablePaginationLayout from '../../components/layout/TablePaginationLayout';
+import { toast } from 'react-toastify';
 
 // Hàm định dạng timestamp thành YYYY-MM-DD HH:MM:SS.sss+07
 const formatTimestamp = (timestamp) => {
@@ -66,7 +67,6 @@ const Course = () => {
     try {
       setLoading(true);
       const response = await getCoursesAPI();
-      console.log('Phản hồi từ API (danh sách):', response);
 
       let coursesData = [];
       if (Array.isArray(response)) {
@@ -110,7 +110,6 @@ const Course = () => {
     try {
       setLoading(true);
       const response = await getCourseByIdAPI(course_id);
-      console.log('Phản hồi từ API (chi tiết):', response);
 
       let courseData = {};
       if (response && typeof response === 'object') {
@@ -155,7 +154,6 @@ const Course = () => {
         end_date: courseData.end_date,
         status: courseData.status || 'inactive',
       });
-      console.log('Phản hồi từ API (thêm):', response);
 
       const newCourse = response.data || response;
       setCourses((prev) => [
@@ -195,9 +193,15 @@ const Course = () => {
         status: courseData.status,
         updated_at: new Date().toISOString(),
       });
-      console.log('Phản hồi từ API (chỉnh sửa):', response);
 
-      await fetchCourses();
+      if (response.success) {
+        toast.success("Cập nhật khoá học thành công")
+        await fetchCourses();
+      }
+      else {
+        toast.error("Cập nhật khoá học không thành công")
+      }
+
     } catch (err) {
       console.error('Lỗi khi chỉnh sửa khóa học:', err.message);
       setError(`Lỗi khi chỉnh sửa khóa học: ${err.message}`);
