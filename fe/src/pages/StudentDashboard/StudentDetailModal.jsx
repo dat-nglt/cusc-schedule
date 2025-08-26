@@ -250,7 +250,7 @@ const StudentDetailModal = ({ openModal, handleCloseModal, studentInfo }) => {
                                 gap: { xs: 1.5, sm: 2 }, // Adjust gap between InfoItems
                             }}>
                                 <InfoItem icon={<CalendarToday />} label="Ngày sinh" value={studentInfo.dob} />
-                                <InfoItem icon={<Wc />} label="Giới tính" value={studentInfo.gender} />
+                                <InfoItem icon={<Wc />} label="Giới tính" value={studentInfo.gender === 'male' ? 'Nam' : "Nữ"} />
                                 <InfoItem
                                     icon={<LocationOn />}
                                     label="Địa chỉ"
@@ -278,7 +278,6 @@ const StudentDetailModal = ({ openModal, handleCloseModal, studentInfo }) => {
                                 gap: { xs: 1.5, sm: 2 },
                             }}>
                                 <InfoItem icon={<Class />} label="Lớp" value={studentInfo.class} />
-                                <InfoItem icon={<Grade />} label="Trình độ" value={studentInfo.trainingLevel} />
                                 <InfoItem icon={<Home />} label="Chuyên ngành" value={studentInfo.major} />
                             </Box>
                         </Box>

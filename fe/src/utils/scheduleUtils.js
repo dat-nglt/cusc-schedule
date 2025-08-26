@@ -40,58 +40,6 @@ export const formatScheduleTime = (slot_id) => {
   return `${slotInfo.start} - ${slotInfo.end}`;
 };
 
-//====================
-export const getSubjectType = (notes) => {
-  if (!notes) return 'Lý thuyết';
-
-  const notesLower = notes.toLowerCase();
-
-  if (notesLower.includes('thực hành') || notesLower.includes('lab') || notesLower.includes('practice')) {
-    return 'Thực hành';
-  } else {
-    return 'Lý thuyết';
-  }
-};
-
-//====================
-export const transformScheduleForCalendar = (scheduleItems) => {
-  if (!Array.isArray(scheduleItems)) {
-    console.warn('scheduleItems is not an array:', scheduleItems);
-    return [];
-  }
-
-  return scheduleItems.map(item => {
-    const slotInfo = SLOT_TIME_MAP[item.slot_id];
-
-    if (!slotInfo) {
-      console.warn('Unknown slot_id:', item.slot_id);
-      return null;
-    }
-
-    // Create full datetime strings for startTime and endTime
-    const startTime = `${item.date}T${slotInfo.start}:00`;
-    const endTime = `${item.date}T${slotInfo.end}:00`;
-
-    return {
-      id: item.class_schedule_id,
-      subject: item.subject?.subject_name || 'Unknown Subject',
-      room: item.room?.room_id || 'Unknown room',
-      lecturer: item.lecturer?.name || 'Unknown Lecturer',
-      lecturer_id: item.lecturer?.lecturer_id || null,
-      class_id: item.class?.class_id || 'Unknown Class',
-      type: getSubjectType(item.notes), // Extract type from notes or determine from other fields
-      startTime: startTime,
-      endTime: endTime,
-      date: item.date,
-      slot_id: item.slot_id,
-      semester: item.semester?.semester_name || '',
-      class_name: item.class?.class_name || '',
-      program: item.program?.program_name || '',
-      status: item.status,
-      notes: item.notes
-    };
-  }).filter(item => item !== null); // Remove null items
-};
 //===================
 // Get hour from slot_id for calendar grid positioning
 export const getHourFromSlotId = (slot_id) => {

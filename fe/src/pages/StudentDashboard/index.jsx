@@ -29,6 +29,7 @@ const StudentDashboard = () => {
         gender: userData.gender,
         dob: new Date(userData.day_of_birth).toLocaleDateString('vi-VN'),
         phone: userData.phone_number,
+        address: userData.address,
         contactAddress: userData.address,
         // Keep only essential UI functionality fields
         unreadNotifications: 3,
