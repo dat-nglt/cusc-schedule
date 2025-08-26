@@ -27,10 +27,12 @@ import EditClassModal from './EditClassModal';
 import DeleteClassModal from './DeleteClassModal';
 import useResponsive from '../../hooks/useResponsive';
 import ClassTable from './ClassTable';
-import { getClassesAPI, getClassByIdAPI, addClassAPI, updateClassAPI, deleteClassAPI } from '../../api/classAPI';
+import { getClassesAPI, addClassAPI, updateClassAPI, deleteClassAPI } from '../../api/classAPI';
 import { getCoursesAPI } from '../../api/courseAPI';
 import { getAllProgramsAPI } from '../../api/programAPI';
 import TablePaginationLayout from '../../components/layout/TablePaginationLayout';
+import { toast } from 'react-toastify';
+import { formatDateTime } from '../../utils/formatDateTime';
 
 // Hàm định dạng timestamp thành YYYY-MM-DD HH:MM:SS.sss+07
 const formatTimestamp = (timestamp) => {
@@ -63,6 +65,7 @@ const Class = () => {
   const [openEdit, setOpenEdit] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const [selectedClass, setSelectedClass] = useState(null);
+  const [classToDelete, setClassToDelete] = useState(null);
 
   const years = ['2021', '2022', '2023', '2024', '2025'];
 
@@ -157,81 +160,78 @@ const Class = () => {
     fetchPrograms();
   }, []);
 
-  const handleViewClass = async (class_id) => {
+  const handleViewClass = (class_id) => {
+    setLoading(true);
+    setError(null);
+
     try {
-      setLoading(true);
-      const response = await getClassByIdAPI(class_id);
-      console.log('Phản hồi từ API (chi tiết):', response);
+      const classToView = classes.find(cls => cls.class_id === class_id);
 
-      let classData = {};
-      if (response && typeof response === 'object') {
-        if (Array.isArray(response.data)) {
-          classData = response.data[0] || {};
-        } else if (response.data) {
-          classData = response.data;
-        } else {
-          classData = response;
-        }
+      if (classToView) {
+        setSelectedClass({
+          class_id: classToView.class_id,
+          class_name: classToView.class_name,
+          class_size: classToView.class_size,
+          status: classToView.status || 'Không có dữ liệu',
+          course_id: classToView.course_id,
+          created_at: formatDateTime(classToView.created_at),
+          updated_at: formatDateTime(classToView.updated_at),
+          course: classToView.Course ? { course_name: classToView.Course.course_name } : null,
+        });
+
+        setOpenDetail(true);
+        console.log(classToView);
       } else {
-        throw new Error('Dữ liệu từ API không phải là object hợp lệ');
+        const errorMessage = `Không tìm thấy lớp học với ID: ${class_id}`;
+        setError(errorMessage);
+        toast.error(`Lỗi: ${errorMessage}`);
       }
-
-      setSelectedClass({
-        class_id: classData.class_id,
-        class_name: classData.class_name,
-        class_size: classData.class_size,
-        status: classData.status || 'Không có dữ liệu',
-        course_id: classData.course_id,
-        created_at: formatTimestamp(classData.created_at),
-        updated_at: formatTimestamp(classData.updated_at),
-        course: classData.Course ? { course_name: classData.Course.course_name } : null,
-      });
-      setOpenDetail(true);
-    } catch (err) {
-      console.error('Lỗi khi lấy chi tiết:', err.message);
-      setError(`Lỗi khi lấy chi tiết lớp học: ${err.message}`);
-      setOpenDetail(false);
+    } catch (error) {
+      const errorMessage = error.message || 'Đã xảy ra lỗi không xác định.';
+      setError(errorMessage);
+      toast.error(`Lỗi: ${errorMessage}`);
+      console.error('Lỗi khi lấy thông tin lớp học:', error);
     } finally {
       setLoading(false);
     }
   };
 
   const handleAddClass = async (classData) => {
+    setLoading(true);
+    setError(null);
+
     try {
-      setLoading(true);
-      console.log('Gửi dữ liệu thêm lớp học:', classData);
-      const response = await addClassAPI({
+      const { data } = await addClassAPI({
         class_id: classData.class_id,
         class_name: classData.class_name,
         class_size: classData.class_size,
-        status: classData.status || 'Hoạt động',
+        status: classData.status || "Hoạt động",
         course_id: classData.course_id,
         program_id: classData.program_id,
       });
-      console.log('Phản hồi từ API (thêm):', response);
 
-      const newClass = response.data || response;
-      setClasses((prev) => [
-        ...prev,
-        {
-          class_id: newClass.class_id,
-          class_name: newClass.class_name,
-          class_size: newClass.class_size,
-          status: newClass.status,
-          course_id: newClass.course_id,
-          program_id: newClass.program_id,
-          created_at: formatTimestamp(newClass.created_at),
-          updated_at: formatTimestamp(newClass.updated_at),
-          course: newClass.Course ? { course_name: newClass.Course.course_name } : null,
-        },
-      ]);
-    } catch (err) {
-      console.error('Lỗi khi thêm lớp học:', err.message, err.response?.data);
-      setError(`Lỗi khi thêm lớp học: ${err.message} - ${err.response?.data?.message || 'Kiểm tra định dạng dữ liệu'}`);
+      if (!data) {
+        throw new Error("Không thể thêm lớp học. Vui lòng thử lại.");
+      }
+
+      toast.success("Thêm lớp học thành công!");
+      await fetchClasses(); // đồng bộ lại danh sách lớp học
+      // Reset + đóng modal khi thêm thành công
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message ||
+        error.message ||
+        "Không thể thêm lớp học. Vui lòng thử lại.";
+
+      console.error("Lỗi khi thêm lớp học:", errorMessage);
+
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
   };
+
 
   const handleEditClass = (classItem) => {
     setSelectedClass(classItem);
@@ -262,38 +262,47 @@ const Class = () => {
     }
   };
 
-  const handleOpenDeleteModal = (classItem) => {
-    if (!classItem || !classItem.class_id) {
-      console.error('Invalid class data in handleOpenDeleteModal:', classItem);
-      setError('Dữ liệu lớp học không hợp lệ');
-      return;
-    }
-    setSelectedClass(classItem);
+  // Hàm mở modal xác nhận xóa lớp
+  const handleOpenDeleteModal = (selectedClass) => {
+    console.log('Chuẩn bị xóa lớp:', selectedClass);
+
+    const classItem = classes.find((c) => c.class_id === (selectedClass.class_id));
+    // if (!classItem) {
+    //   console.error("Không tìm thấy lớp với id:", selectedClass.class_id);
+    //   setError("Dữ liệu lớp học không hợddp lệ");
+    //   return;
+    // }
+
+    setClassToDelete(classItem);
     setOpenDelete(true);
   };
 
+
   const handleDeleteClass = async (class_id) => {
+    console.log('Xóa lớp với id:', class_id);
+
     try {
       setLoading(true);
       if (!class_id) {
-        console.error('Invalid classId for deletion:', class_id);
-        setError('Dữ liệu lớp học không hợp lệ');
+        toast.error("Dữ liệu lớp học không hợp lệ rồi!");
         return;
       }
-      console.log('Attempting to delete class with class_id:', class_id);
-      const response = await deleteClassAPI(class_id);
-      console.log('Response from API (delete):', response);
 
-      await fetchClasses();
-    } catch (err) {
-      console.error('Lỗi khi xóa lớp học:', err.message);
-      setError(`Lỗi khi xóa lớp học: ${err.message}`);
+      const response = await deleteClassAPI(class_id);
+
+      if (response) {
+        toast.success("Xóa lớp học thành công!");
+        fetchClasses(); // Load lại danh sách lớp học sau khi xóa
+      }
+    } catch (error) {
+      console.error("Lỗi khi xóa lớp học:", error);
+      toast.error("Xóa lớp học thất bại! Vui lòng thử lại.");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleChangePage = (event, newPage) => {
+  const handleChangePage = (newPage) => {
     setPage(newPage);
   };
 
@@ -435,7 +444,7 @@ const Class = () => {
           setSelectedClass(null);
         }}
         onDelete={handleDeleteClass}
-        classItem={selectedClass}
+        classItem={classToDelete}
       />
     </Box>
   );

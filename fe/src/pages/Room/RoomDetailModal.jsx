@@ -1,247 +1,339 @@
 import React from 'react';
 import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  Button,
-  Typography,
-  Box,
-  IconButton,
-  Avatar,
-  Chip,
-  Divider,
-  Stack,
-  Paper,
-  Tooltip
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    Button,
+    Typography,
+    Box,
+    IconButton,
+    Chip,
+    Divider,
+    Grid,
+    Card,
+    CardContent,
+    useTheme,
+    useMediaQuery,
+    Avatar,
+    Tooltip
 } from '@mui/material';
 import {
-  MeetingRoom as RoomIcon,
-  Groups as CapacityIcon,
-  Place as LocationIcon,
-  Category as TypeIcon,
-  Power as StatusIcon,
-  Notes as NoteIcon,
-  Schedule as TimeIcon,
-  ContentCopy as CopyIcon,
-  Close as CloseIcon
+    MeetingRoom as RoomIcon,
+    Groups as CapacityIcon,
+    Place as LocationIcon,
+    Category as TypeIcon,
+    Power as StatusIcon,
+    Notes as NoteIcon,
+    Schedule as TimeIcon,
+    ContentCopy as CopyIcon,
+    Close as CloseIcon,
+    Update as UpdateIcon,
+    Event as EventIcon
 } from '@mui/icons-material';
 import { formatDateTime } from '../../utils/formatDateTime';
 import { toast } from 'react-toastify';
 
-const CompactInfoCard = ({ icon, title, value, color = 'primary' }) => (
-  <Paper
-    elevation={0}
-    sx={{
-      p: 1.5,
-      borderRadius: 1.5,
-      border: '1px solid',
-      borderColor: 'divider',
-      flex: 1,
-      minWidth: 100
-    }}
-  >
-    <Box sx={{ display: 'flex', alignItems: 'center', mb: 0.5 }}>
-      <Avatar
-        sx={{
-          bgcolor: `${color}.light`,
-          color: `${color}.dark`,
-          width: 28,
-          height: 28,
-          mr: 1,
-          fontSize: '0.8rem'
-        }}
-      >
-        {icon}
-      </Avatar>
-      <Typography variant="caption" color="text.secondary">
-        {title}
-      </Typography>
-    </Box>
-    <Typography variant="subtitle1" fontWeight="medium" sx={{ fontSize: '0.9rem' }}>
-      {value || '-'}
-    </Typography>
-  </Paper>
+const InfoCard = ({ title, icon, children, span = 1, minHeight = 220 }) => (
+    <Grid item xs={12} sm={6} md={span}>
+        <Card
+            variant="outlined"
+            sx={{
+                height: '100%',
+                minHeight: minHeight,
+                borderRadius: 2,
+                borderColor: 'divider',
+                display: 'flex',
+                flexDirection: 'column',
+                '&:hover': {
+                    boxShadow: 1
+                }
+            }}
+        >
+            <CardContent sx={{ p: 2.5, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
+                    <Box sx={{ color: 'primary.main', mt: 0.5 }}>
+                        {icon}
+                    </Box>
+                    <Typography variant="subtitle2" fontWeight="600" color="primary">
+                        {title}
+                    </Typography>
+                </Box>
+                <Box sx={{ flexGrow: 1 }}>
+                    {children}
+                </Box>
+            </CardContent>
+        </Card>
+    </Grid>
 );
 
-export default function RoomDetailModal({ open, onClose, room }) {
-  if (!room) return null;
+const InfoItem = ({ label, value, icon }) => {
+    const [isHovered, setIsHovered] = React.useState(false);
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(room.room_id);
-    toast.success(`Đã sao chép mã phòng: ${room.room_id}`);
-  };
-
-  return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      maxWidth="sm"
-      fullWidth
-      sx={{
-        '& .MuiDialog-paper': {
-          borderRadius: 2,
-          maxWidth: 600
-        }
-      }}
-    >
-      <DialogTitle
-        sx={{
-          bgcolor: 'primary.main',
-          color: 'white',
-          py: 1.5,
-          px: 2,
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center'
-        }}
-      >
-        <Box>
-          <Typography variant="subtitle1" fontWeight="bold">
-            {room.room_name || 'Chi tiết phòng'}
-          </Typography>
-          <Typography variant="caption" sx={{ opacity: 0.9 }}>
-            {room.room_id}
-          </Typography>
-        </Box>
-        <Box>
-          <Tooltip title="Sao chép mã">
-            <IconButton onClick={handleCopy} size="small" sx={{ color: 'white', p: 0.5 }}>
-              <CopyIcon fontSize="small" />
-            </IconButton>
-          </Tooltip>
-          <IconButton onClick={onClose} size="small" sx={{ color: 'white', ml: 0.5, p: 0.5 }}>
-            <CloseIcon fontSize="small" />
-          </IconButton>
-        </Box>
-      </DialogTitle>
-
-      <DialogContent sx={{ p: 2 }}>
-        <Stack spacing={2}>
-          {/* Compact Info Cards */}
-          <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
-              gap: 1.5,
-              py: 1
-            }}
-          >
-            <CompactInfoCard
-              icon={<RoomIcon fontSize="small" />}
-              title="Tên phòng"
-              value={room.room_name}
-              color="primary"
-            />
-            <CompactInfoCard
-              icon={<LocationIcon fontSize="small" />}
-              title="Vị trí"
-              value={room.location}
-              color="secondary"
-            />
-            <CompactInfoCard
-              icon={<CapacityIcon fontSize="small" />}
-              title="Sức chứa"
-              value={room.capacity}
-              color="success"
-            />
-            <CompactInfoCard
-              icon={<TypeIcon fontSize="small" />}
-              title="Loại phòng"
-              value={
-                room.type === 'theory'
-                  ? 'Lý thuyết'
-                  : room.type === 'practice'
-                    ? 'Thực hành'
-                    : room.type
-              }
-              color="warning"
-            />
-          </Box>
-
-          {/* Status Section */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-            <Typography variant="caption" color="text.secondary">
-              Trạng thái:
+    return (
+        <Box sx={{ mb: 2, '&:last-child': { mb: 0 } }}>
+            <Typography variant="caption" color="text.secondary" display="block" gutterBottom>
+                {label}
             </Typography>
-            <Chip
-              label={room.status === 'active' ? 'Hoạt động' : 'Không hoạt động'}
-              color={room.status === 'active' ? 'success' : 'error'}
-              size="small"
-              icon={<StatusIcon sx={{ fontSize: '0.8rem' }} />}
-              sx={{ fontWeight: 'medium' }}
-            />
-          </Box>
-
-          {/* Note Section */}
-          {room.note && (
-            <Box>
-              <Typography variant="caption" color="text.secondary" display="block" sx={{ mb: 0.5 }}>
-                Ghi chú:
-              </Typography>
-              <Paper
-                elevation={0}
-                sx={{
-                  p: 1.5,
-                  bgcolor: 'grey.50',
-                  borderRadius: 1,
-                  borderLeft: '2px solid',
-                  borderColor: 'primary.main'
-                }}
-              >
-                <Typography variant="body2">{room.note}</Typography>
-              </Paper>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                {icon && (
+                    <Box sx={{ color: 'text.secondary', mt: 1, flexShrink: 0 }}>
+                        {icon}
+                    </Box>
+                )}
+                <Tooltip
+                    title={value || "Chưa cập nhật"}
+                    placement="top-start"
+                    disableHoverListener={!value || value.length < 30}
+                >
+                    <Typography
+                        variant="body2"
+                        fontWeight="500"
+                        sx={{
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                            maxWidth: 150,
+                            cursor: value && value.length >= 30 ? 'help' : 'default',
+                            backgroundColor: isHovered && value && value.length >= 30 ? 'rgba(0, 0, 0, 0.04)' : 'transparent',
+                            borderRadius: '4px',
+                            padding: isHovered && value && value.length >= 30 ? '4px 8px' : 0,
+                            transition: 'all 0.2s ease'
+                        }}
+                        onMouseEnter={() => setIsHovered(true)}
+                        onMouseLeave={() => setIsHovered(false)}
+                    >
+                        {value || (
+                            <Typography component="span" variant="body2" color="text.secondary" fontStyle="italic">
+                                Chưa cập nhật
+                            </Typography>
+                        )}
+                    </Typography>
+                </Tooltip>
             </Box>
-          )}
+        </Box>
+    );
+};
 
-          {/* Timeline Section */}
-          <Box sx={{ mt: 1 }}>
-            <Stack spacing={1}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                <TimeIcon color="action" fontSize="small" />
-                <Box>
-                  <Typography variant="caption" color="text.secondary">
-                    Tạo lúc:
-                  </Typography>
-                  <Typography variant="body2" display="block">
-                    {formatDateTime(room.created_at)}
-                  </Typography>
-                </Box>
-              </Box>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                <TimeIcon color="action" fontSize="small" />
-                <Box>
-                  <Typography variant="caption" color="text.secondary">
-                    Cập nhật:
-                  </Typography>
-                  <Typography variant="body2" display="block">
-                    {formatDateTime(room.updated_at)}
-                  </Typography>
-                </Box>
-              </Box>
-            </Stack>
-          </Box>
-        </Stack>
-      </DialogContent>
+export default function RoomDetailModal({ open, onClose, room }) {
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-      <Divider />
-      <Box sx={{ p: 1.5, display: 'flex', justifyContent: 'flex-end' }}>
-        <Button
-          onClick={onClose}
-          variant="contained"
-          color="primary"
-          size="small"
-          sx={{
-            borderRadius: 1,
-            px: 2,
-            fontSize: '0.8rem',
-            textTransform: 'none'
-          }}
+    if (!room) return null;
+
+    const handleCopyRoomId = () => {
+        navigator.clipboard.writeText(room.room_id);
+        toast.success(`Đã sao chép mã phòng: ${room.room_id}`);
+    };
+
+    const getTypeText = (type) => {
+        switch (type?.toLowerCase()) {
+            case 'theory': return 'Lý thuyết';
+            case 'practice': return 'Thực hành';
+            case 'lab': return 'Phòng lab';
+            case 'conference': return 'Hội nghị';
+            default: return type || 'Chưa xác định';
+        }
+    };
+
+    const getStatusColor = (status) => {
+        switch (status?.toLowerCase()) {
+            case 'active': return 'success';
+            case 'inactive': return 'error';
+            case 'maintenance': return 'warning';
+            default: return 'default';
+        }
+    };
+
+    const getStatusText = (status) => {
+        switch (status?.toLowerCase()) {
+            case 'active': return 'Hoạt động';
+            case 'inactive': return 'Không hoạt động';
+            case 'maintenance': return 'Bảo trì';
+            default: return status || 'Không xác định';
+        }
+    };
+
+    return (
+        <Dialog
+            open={open}
+            onClose={onClose}
+            maxWidth="lg"
+            fullWidth
+            fullScreen={isMobile}
+            sx={{
+                '& .MuiDialog-paper': {
+                    borderRadius: isMobile ? 0 : 2,
+                    maxWidth: 950,
+                    overflow: 'hidden'
+                }
+            }}
         >
-          Đóng
-        </Button>
-      </Box>
-    </Dialog>
-  );
-}
+            <DialogTitle
+                sx={{
+                    p: 3,
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    borderBottom: '1px solid',
+                    borderColor: 'divider',
+                    bgcolor: 'grey.50'
+                }}
+            >
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <Avatar
+                        sx={{
+                            width: 48,
+                            height: 48,
+                            bgcolor: 'primary.main',
+                            fontSize: '1.2rem',
+                            fontWeight: 'bold'
+                        }}
+                    >
+                        {room.room_name?.[0]?.toUpperCase() || 'P'}
+                    </Avatar>
+                    <Box>
+                        <Typography variant="h6" fontWeight="600" gutterBottom>
+                            {room.room_name || 'Chi tiết phòng học'}
+                        </Typography>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <Typography variant="body2" color="text.secondary">
+                                {room.room_id}
+                            </Typography>
+                            <Tooltip title="Sao chép mã phòng">
+                                <IconButton
+                                    onClick={handleCopyRoomId}
+                                    size="small"
+                                    sx={{ p: 0.5 }}
+                                >
+                                    <CopyIcon fontSize="small" />
+                                </IconButton>
+                            </Tooltip>
+                            <Chip
+                                label={getStatusText(room.status)}
+                                color={getStatusColor(room.status)}
+                                size="small"
+                                sx={{ ml: 1 }}
+                            />
+                        </Box>
+                    </Box>
+                </Box>
+                <IconButton
+                    onClick={onClose}
+                    sx={{
+                        bgcolor: 'background.paper',
+                        '&:hover': { bgcolor: 'grey.100' }
+                    }}
+                >
+                    <CloseIcon />
+                </IconButton>
+            </DialogTitle>
 
-// Cần sửas
+            <DialogContent sx={{ p: 3, mt: 3 }}>
+                <Grid container spacing={3} justifyContent={"center"}>
+                    {/* Hàng 1: 2 cột - Thông tin cơ bản & Thông tin bổ sung */}
+                    <Grid item xs={12} md={6}>
+                        <InfoCard title="Thông tin cơ bản" icon={<RoomIcon />}>
+                            <InfoItem
+                                label="Mã phòng"
+                                value={room.room_id}
+                                icon={<RoomIcon fontSize="small" />}
+                            />
+                            <InfoItem
+                                label="Loại phòng"
+                                value={getTypeText(room.type)}
+                                icon={<TypeIcon fontSize="small" />}
+                            />
+                            <InfoItem
+                                label="Sức chứa"
+                                value={room.capacity ? `${room.capacity} người` : 'Chưa xác định'}
+                                icon={<CapacityIcon fontSize="small" />}
+                            />
+                        </InfoCard>
+                    </Grid>
+
+                    <Grid item xs={12} md={6}>
+                        <InfoCard title="Thông tin bổ sung" icon={<LocationIcon />}>
+                            <InfoItem
+                                label="Vị trí"
+                                value={room.location}
+                                icon={<LocationIcon fontSize="small" />}
+                            />
+                            <InfoItem
+                                label="Trạng thái"
+                                value={getStatusText(room.status)}
+                                icon={<StatusIcon fontSize="small" />}
+                            />
+                            <InfoItem
+                                label="Thiết bị"
+                                value={room.equipment || 'Chưa cập nhật'}
+                                icon={<NoteIcon fontSize="small" />}
+                            />
+                        </InfoCard>
+                    </Grid>
+
+                    {/* Hàng 2: 1 cột rộng - Ghi chú */}
+                    <Grid item xs={12}>
+                        <InfoCard title="Ghi chú" icon={<NoteIcon />} span={2}>
+                            <Typography 
+                                variant="body2" 
+                                sx={{ 
+                                    p: 1.5, 
+                                    bgcolor: 'grey.50', 
+                                    borderRadius: 1,
+                                    minHeight: 100
+                                }}
+                            >
+                                {room.note || 'Không có ghi chú'}
+                            </Typography>
+                        </InfoCard>
+                    </Grid>
+
+                    {/* Hàng 3: 2 cột - Lịch sử hệ thống */}
+                    <Grid item xs={12} md={6}>
+                        <InfoCard title="Lịch sử hệ thống" icon={<EventIcon />}>
+                            <InfoItem
+                                label="Ngày tạo"
+                                value={formatDateTime(room.created_at)}
+                                icon={<EventIcon fontSize="small" />}
+                            />
+                            <InfoItem
+                                label="Cập nhật cuối"
+                                value={formatDateTime(room.updated_at)}
+                                icon={<UpdateIcon fontSize="small" />}
+                            />
+                        </InfoCard>
+                    </Grid>
+                </Grid>
+            </DialogContent>
+
+            <Divider />
+            <Box sx={{ p: 2.5, display: 'flex', justifyContent: 'flex-end', gap: 1.5 }}>
+                <Button
+                    onClick={onClose}
+                    variant="outlined"
+                    color='secondary'
+                    startIcon={<CloseIcon />}
+                    sx={{
+                        borderRadius: 1,
+                        px: 3,
+                        textTransform: 'none',
+                        fontWeight: '500'
+                    }}
+                >
+                    Đóng
+                </Button>
+                <Button
+                    variant="contained"
+                    sx={{
+                        borderRadius: 1,
+                        px: 3,
+                        textTransform: 'none',
+                        fontWeight: '500'
+                    }}
+                >
+                    Chỉnh sửa thông tin
+                </Button>
+            </Box>
+        </Dialog>
+    );
+}

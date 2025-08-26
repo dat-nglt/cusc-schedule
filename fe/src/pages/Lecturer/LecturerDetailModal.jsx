@@ -80,49 +80,53 @@ const InfoCard = ({ title, icon, children, span = 1, minHeight = 220 }) => (
     </Grid>
 );
 
-const InfoItem = ({ label, value, icon, chips }) => (
-    <Box sx={{ mb: 2, '&:last-child': { mb: 0 } }}>
-        <Typography variant="caption" color="text.secondary" display="block" gutterBottom>
-            {label}
-        </Typography>
-        <Box sx={{ display: 'flex', alignItems: chips ? 'flex-start' : 'center', gap: 1 }}>
-            {icon && (
-                <Box sx={{ color: 'text.secondary', mt: 1 }}>
-                    {icon}
-                </Box>
-            )}
-            {chips ? (
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, flexGrow: 1 }}>
-                    {value && value.length > 0 ? (
-                        value.map((item, idx) => (
-                            <Chip
-                                key={idx}
-                                label={item.subject_name}   // ✅ chỉ lấy tên môn
-                                size="small"
-                                color="primary"
-                                variant="outlined"
-                                sx={{ mb: 0.5 }}
-                            />
-                        ))
-                    ) : (
-                        <Typography variant="body2" color="text.secondary" fontStyle="italic" sx={{ mt: 1 }}>
-                            Chưa có dữ liệu
-                        </Typography>
-                    )}
+const InfoItem = ({ label, value, icon }) => {
+    const [isHovered, setIsHovered] = React.useState(false);
 
-                </Box>
-            ) : (
-                <Typography variant="body2" fontWeight="500">
-                    {value || (
-                        <Typography component="span" variant="body2" color="text.secondary" fontStyle="italic">
-                            Chưa cập nhật
-                        </Typography>
-                    )}
-                </Typography>
-            )}
+    return (
+        <Box sx={{ mb: 2, '&:last-child': { mb: 0 } }}>
+            <Typography variant="caption" color="text.secondary" display="block" gutterBottom>
+                {label}
+            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                {icon && (
+                    <Box sx={{ color: 'text.secondary', mt: 1, flexShrink: 0 }}>
+                        {icon}
+                    </Box>
+                )}
+                <Tooltip
+                    title={value || "Chưa cập nhật"}
+                    placement="top-start"
+                    disableHoverListener={!value || value.length < 30}
+                >
+                    <Typography
+                        variant="body2"
+                        fontWeight="500"
+                        sx={{
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                            maxWidth: 150,
+                            cursor: value && value.length >= 30 ? 'help' : 'default',
+                            backgroundColor: isHovered && value && value.length >= 30 ? 'rgba(0, 0, 0, 0.04)' : 'transparent',
+                            borderRadius: '4px',
+                            padding: isHovered && value && value.length >= 30 ? '4px 8px' : 0,
+                            transition: 'all 0.2s ease'
+                        }}
+                        onMouseEnter={() => setIsHovered(true)}
+                        onMouseLeave={() => setIsHovered(false)}
+                    >
+                        {value || (
+                            <Typography component="span" variant="body2" color="text.secondary" fontStyle="italic">
+                                Chưa cập nhật
+                            </Typography>
+                        )}
+                    </Typography>
+                </Tooltip>
+            </Box>
         </Box>
-    </Box>
-);
+    );
+};
 
 export default function LecturerDetailModal({ open, onClose, lecturer }) {
     const theme = useTheme();

@@ -151,3 +151,85 @@ export const validateStudentField = (
 
   return errors;
 };
+
+export const validateClass = (classData, existingClasses, step = "all") => {
+  const errors = {};
+
+  // Step 0: Thông tin cơ bản
+  if (step === "step0" || step === "all") {
+    if (!classData.class_id) {
+      errors.class_id = "Mã lớp không được để trống";
+    }
+
+    if (!classData.class_name) {
+      errors.class_name = "Tên lớp không được để trống";
+    }
+
+    if (!classData.class_size) {
+      errors.class_size = "Sĩ số không được để trống";
+    } else {
+      const classSize = parseInt(classData.class_size, 10);
+      if (isNaN(classSize) || classSize <= 0) {
+        errors.class_size = "Sĩ số phải là số nguyên dương!";
+      }
+    }
+  }
+
+  // Step 1: Liên kết
+  if (step === "step1" || step === "all") {
+    if (!classData.course_id) {
+      errors.course_id = "Vui lòng chọn khóa học";
+    }
+
+    if (!classData.program_id) {
+      errors.program_id = "Vui lòng chọn chương trình";
+    }
+
+    const isDuplicate = (existingClasses || []).some(
+      (classItem) => classItem.class_id === classData.class_id
+    );
+    if (isDuplicate) {
+      errors.class_id = `Mã lớp học "${classData.class_id}" đã tồn tại!`;
+    }
+  }
+
+  return errors;
+};
+
+export const validateRoomField = (room, existingRooms = []) => {
+  const errors = {};
+
+  // Room ID
+  if (!room.room_id || room.room_id.trim() === "") {
+    errors.room_id = "Mã phòng không được để trống";
+  } else if (existingRooms.some((r) => r.room_id === room.room_id)) {
+    errors.room_id = "Mã phòng đã tồn tại";
+  }
+
+  // Room name
+  if (!room.room_name || room.room_name.trim() === "") {
+    errors.room_name = "Tên phòng không được để trống";
+  } else if (
+    existingRooms.some(
+      (r) => r.room_name.toLowerCase() === room.room_name.trim().toLowerCase()
+    )
+  ) {
+    errors.room_name = "Tên phòng đã tồn tại";
+  }
+
+  // Location
+  if (!room.location || room.location.trim() === "") {
+    errors.location = "Vị trí không được để trống";
+  }
+
+  // Capacity
+  if (!room.capacity || room.capacity.toString().trim() === "") {
+    errors.capacity = "Sức chứa không được để trống";
+  } else if (isNaN(room.capacity)) {
+    errors.capacity = "Sức chứa phải là một số";
+  } else if (parseInt(room.capacity, 10) <= 0) {
+    errors.capacity = "Sức chứa phải lớn hơn 0";
+  }
+
+  return errors;
+};

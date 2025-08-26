@@ -7,44 +7,48 @@ export default {
       class_id: {
         type: Sequelize.STRING(30),
         primaryKey: true,
-        allowNull: false
+        allowNull: false,
       },
       class_name: {
         type: Sequelize.STRING(50),
-        allowNull: true
+        allowNull: true,
       },
       class_size: {
         type: Sequelize.SMALLINT,
-        allowNull: true
+        allowNull: true,
       },
       status: {
         type: Sequelize.STRING(30),
-        allowNull: true
+        allowNull: true,
       },
       course_id: {
         type: Sequelize.STRING(30),
         allowNull: true,
         references: {
           model: 'courses',
-          key: 'course_id'
+          key: 'course_id',
         },
         onUpdate: 'CASCADE',
-        onDelete: 'SET NULL'
+        onDelete: 'SET NULL',
       },
       created_at: {
         type: Sequelize.DATE,
         defaultValue: Sequelize.NOW,
-        allowNull: false
+        allowNull: false,
       },
       updated_at: {
         type: Sequelize.DATE,
         defaultValue: Sequelize.NOW,
-        allowNull: false
-      }
+        allowNull: false,
+      },
+      deleted_at: {                 // 👈 thêm cột để hỗ trợ soft delete
+        type: Sequelize.DATE,
+        allowNull: true,
+      },
     });
   },
 
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('classes');
-  }
+  },
 };

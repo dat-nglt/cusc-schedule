@@ -14,183 +14,222 @@ import {
   MenuItem,
   Alert,
   CircularProgress,
-  IconButton,
+  Avatar,
   Divider,
+  IconButton,
   Stepper,
   Step,
   StepLabel,
   Chip,
   InputAdornment,
   Fade,
-  Paper,
+  ToggleButtonGroup,
+  ToggleButton,
+  FormControlLabel,
+  Checkbox,
+  Tabs,
+  Tab,
+  Paper
 } from '@mui/material';
 import {
   Close,
   CloudUpload,
-  MeetingRoom, // Icon for room
-  LocationOn,  // Icon for location
-  AirlineSeatReclineExtra, // Icon for capacity
-  Category,    // Icon for type
-  Info,        // Icon for note
+  MeetingRoom,
+  LocationOn,
+  AirlineSeatReclineExtra,
+  Category,
+  Info,
   CheckCircle,
   Error as ErrorIcon,
-  PlayCircleFilled,
-  PauseCircleFilled,
-  Add, // For the Add button
+  PlayArrow,
+  Pause,
+  Stop,
+  Add,
+  Notes
 } from '@mui/icons-material';
 import * as XLSX from 'xlsx';
-import { processExcelDataRoom } from '../../utils/ExcelValidation'; // Assuming this utility is robust
 import PreviewRoomModal from './PreviewRoomModal';
-
-// Define options for room types and statuses
-const roomTypeOptions = [
-  { value: 'theory', label: 'Lý thuyết' },
-  { value: 'practice', label: 'Thực hành' },
-];
-
-const roomStatusOptions = [
-  { value: 'Hoạt động', color: 'success', icon: <PlayCircleFilled />, db: 'active' },
-  { value: 'Tạm ngưng', color: 'warning', icon: <PauseCircleFilled />, db: 'suspended' },
-  { value: 'Ngưng hoạt động', color: 'error', icon: <PauseCircleFilled />, db: 'inactive' }
-];
+import { processExcelDataRoom } from '../../utils/ExcelValidation';
+import { generateRoomId } from '../../utils/generateLecturerId';
+import { validateRoomField } from '../../utils/addValidation';
 
 const steps = ['Thông tin cơ bản', 'Thông tin bổ sung'];
 
-const AddRoomModal = ({ open, onClose, onAddRoom, existingRooms, apiError, loading, message, fetchRooms }) => {
-  const [formData, setFormData] = useState({
+const roomTypeOptions = [
+  { value: 'theory', label: 'Lý thuyết' },
+  { value: 'practice', label: 'Thực hành' },
+  { value: 'lab', label: 'Phòng lab' },
+  { value: 'conference', label: 'Hội nghị' }
+];
+
+const roomStatusOptions = [
+  { value: 'active', label: 'Hoạt động', color: 'success', icon: <PlayArrow /> },
+  { value: 'maintenance', label: 'Bảo trì', color: 'warning', icon: <Pause /> },
+  { value: 'inactive', label: 'Không hoạt động', color: 'error', icon: <Stop /> }
+];
+
+// Bộ dữ liệu vị trí phòng học
+const locationOptions = [
+  { value: 'tầng_1', label: 'Tầng 1', building: 'Tòa A' },
+  { value: 'tầng_2', label: 'Tầng 2', building: 'Tòa A' },
+  { value: 'tầng_3', label: 'Tầng 3', building: 'Tòa A' },
+  { value: 'tầng_4', label: 'Tầng 4', building: 'Tòa A' },
+  { value: 'tầng_5', label: 'Tầng 5', building: 'Tòa A' },
+  { value: 'tầng_1_b', label: 'Tầng 1', building: 'Tòa B' },
+  { value: 'tầng_2_b', label: 'Tầng 2', building: 'Tòa B' },
+  { value: 'tầng_3_b', label: 'Tầng 3', building: 'Tòa B' },
+  { value: 'tầng_4_b', label: 'Tầng 4', building: 'Tòa B' },
+  { value: 'tầng_1_c', label: 'Tầng 1', building: 'Tòa C' },
+  { value: 'tầng_2_c', label: 'Tầng 2', building: 'Tòa C' },
+  { value: 'tầng_3_c', label: 'Tầng 3', building: 'Tòa C' },
+  { value: 'khu_thực_hành', label: 'Khu thực hành', building: 'Tòa D' },
+  { value: 'khu_giảng_đường', label: 'Khu giảng đường', building: 'Tòa E' },
+  { value: 'khu_hội_thảo', label: 'Khu hội thảo', building: 'Tòa F' }
+];
+
+// Nhóm vị trí theo tòa nhà
+const locationGroups = {
+  'Tòa A': locationOptions.filter(loc => loc.building === 'Tòa A'),
+  'Tòa B': locationOptions.filter(loc => loc.building === 'Tòa B'),
+  'Tòa C': locationOptions.filter(loc => loc.building === 'Tòa C'),
+  'Khu chức năng': locationOptions.filter(loc =>
+    ['Tòa D', 'Tòa E', 'Tòa F'].includes(loc.building)
+  )
+};
+
+export default function AddRoomModal({ open, onClose, onAddRoom, existingRooms, error, loading, message, fetchRooms }) {
+  const [newRoom, setNewRoom] = useState({
     room_id: '',
     room_name: '',
     location: '',
+    custom_location: '',
     capacity: '',
     type: '',
-    status: 'Hoạt động', // Default status
+    status: 'active',
     note: '',
   });
 
   const [activeStep, setActiveStep] = useState(0);
-  const [localError, setLocalError] = useState('');
-  const [fileUploaded, setFileUploaded] = useState(false);
+  const [localError, setLocalError] = useState({});
   const [showPreview, setShowPreview] = useState(false);
   const [previewData, setPreviewData] = useState([]);
-  // Effect to reset form/errors when modal opens/closes
-  useEffect(() => {
-    if (open) {
-      setLocalError('');
-      // apiError and message are handled by parent, so don't clear here.
-    } else {
-      resetForm();
-    }
-  }, [open]);
+  const [fileUploaded, setFileUploaded] = useState(false);
+  const [showCustomLocation, setShowCustomLocation] = useState(false);
+  const [currentBuilding, setCurrentBuilding] = useState(Object.keys(locationGroups)[0]);
 
   const handleNext = () => {
-    if (activeStep === 0) {
-      if (!formData.room_id || !formData.room_name || !formData.location) {
-        setLocalError('Vui lòng điền đầy đủ thông tin cơ bản!');
-        return;
-      }
-      const isDuplicate = existingRooms.some(
-        (room) => room.room_id === formData.room_id
-      );
-      if (isDuplicate) {
-        setLocalError(`Mã phòng học "${formData.room_id}" đã tồn tại!`);
-        return;
-      }
-    }
-    setLocalError('');
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-  };
+    // let hasError = false;
+    // let errors = {};
 
-  const handleBack = () => {
-    setLocalError('');
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    // if (activeStep === 0) {
+    //   const step1Fields = ["room_id", "room_name", "location"];
+    //   const allErrors = validateRoomField(newRoom, existingRooms);
+
+    //   step1Fields.forEach((field) => {
+    //     if (allErrors[field]) {
+    //       errors[field] = allErrors[field];
+    //       hasError = true;
+    //     }
+    //   });
+    // }
+
+    // setLocalError(errors);
+
+    // if (!hasError) {
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    // }
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    setLocalError(''); // Clear local error on input change
+    setNewRoom((prev) => ({ ...prev, [name]: value }));
+    setLocalError({});
   };
 
-  const validateRoom = () => {
-    if (!formData.capacity || !formData.type || !formData.status) {
-      setLocalError('Vui lòng điền đầy đủ thông tin bổ sung!');
-      return false;
-    }
-
-    const capacity = parseInt(formData.capacity, 10);
-    if (isNaN(capacity) || capacity <= 0) {
-      setLocalError('Sức chứa phải là số nguyên dương!');
-      return false;
-    }
-    return true;
+  const handleBack = () => {
+    setLocalError({});
+    setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
+
+  useEffect(() => {
+    if (open) {
+      const roomID = generateRoomId();
+      setNewRoom((prev) => ({ ...prev, room_id: roomID }));
+      setShowCustomLocation(false);
+    }
+  }, [open]);
 
   const handleSubmit = async () => {
-    if (!validateRoom()) {
+    // Sử dụng custom_location nếu có, ngược lại dùng location
+    const finalLocation = newRoom.custom_location || newRoom.location;
+    const roomToValidate = { ...newRoom, location: finalLocation };
+
+    const formErrors = validateRoomField(roomToValidate, existingRooms);
+
+    setLocalError(formErrors);
+
+    if (Object.keys(formErrors).length > 0) {
       return;
     }
 
-    // Chuyển trạng thái sang tiếng Anh trước khi lưu
-    const statusObj = roomStatusOptions.find(opt => opt.value === formData.status);
-    const dbStatus = statusObj ? statusObj.db : 'active';
+    try {
+      const roomToAdd = {
+        ...newRoom,
+        location: finalLocation,
+        capacity: parseInt(newRoom.capacity),
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
 
-    const roomToAdd = {
-      ...formData,
-      status: dbStatus,
-      capacity: parseInt(formData.capacity, 10),
-      id: Date.now(), // Ensure a unique ID for new entries
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    };
+      // Xóa custom_location khỏi object trước khi gửi
+      delete roomToAdd.custom_location;
 
-    // The onAddRoom function from parent should handle setting loading and message/error
-    await onAddRoom(roomToAdd);
+      await onAddRoom(roomToAdd);
 
-    // If onAddRoom is successful and `loading` becomes false (after API call completes),
-    // and there is no `apiError`, then reset the form and close.
-    // This assumes `onAddRoom` updates `loading` and `apiError` props.
-    // We might need to check the outcome directly if `onAddRoom` doesn't provide it
-    // or rely on `useEffect` to react to `message` or `apiError` changes.
-    // For now, let's assume parent handles closing on success.
-    // If not, you might need a local success state.
-    if (!apiError && !loading) { // This check might be tricky if `onAddRoom` is async and doesn't update props immediately
-      resetForm();
-      onClose();
+      if (!error && !loading) {
+        resetForm();
+        onClose();
+      }
+    } catch (err) {
+      console.error("Lỗi khi thêm phòng học:", err);
+      setLocalError({ submit: "Không thể thêm phòng học, vui lòng thử lại." });
     }
   };
 
   const resetForm = () => {
-    setFormData({
+    setNewRoom({
       room_id: '',
       room_name: '',
       location: '',
+      custom_location: '',
       capacity: '',
       type: '',
-      status: 'Hoạt động',
+      status: 'active',
       note: '',
     });
     setActiveStep(0);
-    setLocalError('');
+    setLocalError({});
     setFileUploaded(false);
+    setShowCustomLocation(false);
   };
 
   const handleImportExcel = async (e) => {
     const file = e.target.files[0];
     if (!file) {
-      setLocalError('Vui lòng chọn một file Excel');
+      setLocalError({ file: 'Vui lòng chọn một file Excel' });
       return;
     }
 
     const validExtensions = ['.xlsx', '.xls'];
     const fileExtension = file.name.slice(file.name.lastIndexOf('.')).toLowerCase();
     if (!validExtensions.includes(fileExtension)) {
-      setLocalError('Chỉ hỗ trợ file Excel (.xlsx, .xls)');
+      setLocalError({ file: 'Chỉ hỗ trợ file Excel (.xlsx, .xls)' });
       e.target.value = '';
       return;
     }
 
     try {
-      setLocalError('');
+      setLocalError({});
       setFileUploaded(true);
 
       const arrayBuffer = await file.arrayBuffer();
@@ -201,7 +240,7 @@ const AddRoomModal = ({ open, onClose, onAddRoom, existingRooms, apiError, loadi
       const rawData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
       if (rawData.length < 2) {
-        setLocalError('File Excel phải có ít nhất 2 dòng (header + dữ liệu)');
+        setLocalError({ file: 'File Excel phải có ít nhất 2 dòng (header + dữ liệu)' });
         e.target.value = '';
         setFileUploaded(false);
         return;
@@ -219,9 +258,10 @@ const AddRoomModal = ({ open, onClose, onAddRoom, existingRooms, apiError, loadi
       });
 
       const processedData = processExcelDataRoom(jsonData, existingRooms);
+      onClose();
 
       if (processedData.length === 0) {
-        setLocalError('Không có dữ liệu hợp lệ nào trong file Excel');
+        setLocalError({ file: 'Không có dữ liệu hợp lệ nào trong file Excel' });
         e.target.value = '';
         setFileUploaded(false);
         return;
@@ -229,11 +269,10 @@ const AddRoomModal = ({ open, onClose, onAddRoom, existingRooms, apiError, loadi
 
       setPreviewData(processedData);
       setShowPreview(true);
-      onClose();
 
     } catch (error) {
       console.error('Error reading Excel file:', error);
-      setLocalError('Lỗi khi đọc file Excel. Vui lòng kiểm tra lại');
+      setLocalError({ file: 'Lỗi khi đọc file Excel. Vui lòng kiểm tra lại' });
       setFileUploaded(false);
     } finally {
       e.target.value = '';
@@ -243,10 +282,87 @@ const AddRoomModal = ({ open, onClose, onAddRoom, existingRooms, apiError, loadi
   const handleClosePreview = () => {
     setShowPreview(false);
     setPreviewData([]);
-    // After preview, if no rooms were added, you might want to re-open AddRoomModal
-    // or handle success/error messages at a higher level.
-    // For now, we just close the preview.
-    fetchRooms(); // Re-fetch rooms to update the list after potential additions from preview
+    setFileUploaded(false);
+  };
+
+  // Hàm xử lý khi chọn một vị trí từ danh sách
+  const handleLocationSelect = (locationValue) => {
+    // Nếu đang ở chế độ custom location, tắt nó đi
+    if (showCustomLocation) {
+      setShowCustomLocation(false);
+    }
+
+    // Cập nhật giá trị location
+    setNewRoom({
+      ...newRoom,
+      location: newRoom.location === locationValue ? '' : locationValue,
+      custom_location: '' // Reset custom location khi chọn vị trí từ danh sách
+    });
+  };
+
+  // Hàm xử lý khi bật/tắt chế độ nhập vị trí tùy chỉnh
+  const handleCustomLocationToggle = (event) => {
+    const isChecked = event.target.checked;
+    setShowCustomLocation(isChecked);
+
+    if (isChecked) {
+      // Khi bật chế độ custom, reset location đã chọn trước đó
+      setNewRoom({
+        ...newRoom,
+        location: '',
+        custom_location: newRoom.custom_location || ''
+      });
+    } else {
+      // Khi tắt chế độ custom, giữ nguyên location đã chọn hoặc reset cả hai
+      setNewRoom({
+        ...newRoom,
+        custom_location: ''
+      });
+    }
+  };
+
+  // Xử lý thay đổi sức chứa từ toggle button
+  const handleCapacityChange = (capacity) => {
+    setNewRoom({
+      ...newRoom,
+      capacity: capacity
+    });
+  };
+
+  // Xử lý thay đổi loại phòng từ toggle button
+  const handleTypeChange = (type) => {
+    setNewRoom({
+      ...newRoom,
+      type: type
+    });
+  };
+
+  // Xử lý thay đổi trạng thái từ toggle button
+  const handleStatusChange = (status) => {
+    setNewRoom({
+      ...newRoom,
+      status: status
+    });
+  };
+
+  // Hàm xử lý khi thay đổi giá trị custom location
+  const handleCustomLocationChange = (event) => {
+    setNewRoom({
+      ...newRoom,
+      custom_location: event.target.value
+    });
+  };
+
+  // Hàm lấy nhãn hiển thị cho vị trí đã chọn
+  const getLocationLabel = (locationValue) => {
+    for (const building of Object.values(locationGroups)) {
+      for (const location of building) {
+        if (location.value === locationValue) {
+          return location.label;
+        }
+      }
+    }
+    return locationValue;
   };
 
   return (
@@ -264,26 +380,24 @@ const AddRoomModal = ({ open, onClose, onAddRoom, existingRooms, apiError, loadi
             borderRadius: '12px',
             boxShadow: '0px 8px 24px rgba(0, 0, 0, 0.1)',
             overflow: 'hidden',
-            maxHeight: '80vh',
-          },
+            maxHeight: '90vh',
+          }
         }}
       >
-        <DialogTitle
-          sx={{
-            background: 'linear-gradient(135deg, #1976d2 0%, #115293 100%)',
-            color: 'white',
-            py: 2,
-            px: 3,
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-          }}
-        >
+        <DialogTitle sx={{
+          background: 'linear-gradient(135deg, #1976d2 0%, #115293 100%)',
+          color: 'white',
+          py: 2,
+          px: 3,
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+        }}>
           <Box display="flex" alignItems="center">
             <MeetingRoom sx={{ fontSize: 28, mr: 2 }} />
             <Typography variant="h6" fontWeight="600">
-              Thêm Phòng Học
+              Thêm Phòng Học Mới
             </Typography>
           </Box>
           <IconButton
@@ -294,7 +408,6 @@ const AddRoomModal = ({ open, onClose, onAddRoom, existingRooms, apiError, loadi
               onClose();
             }}
             aria-label="close"
-            disabled={loading}
           >
             <Close />
           </IconButton>
@@ -314,13 +427,26 @@ const AddRoomModal = ({ open, onClose, onAddRoom, existingRooms, apiError, loadi
           <Divider />
 
           <Box sx={{ px: 3, pt: 2 }}>
-            {(apiError || localError) && (
-              <Fade in={!!(apiError || localError)}>
+            {error && (
+              <Fade in={!!error}>
                 <Alert severity="error" icon={<ErrorIcon />} sx={{ mb: 2 }}>
-                  {apiError || localError}
+                  {error}
                 </Alert>
               </Fade>
             )}
+
+            {Object.keys(localError).length > 0 && (
+              <Fade in={Object.keys(localError).length > 0}>
+                <Alert severity="error" icon={<ErrorIcon />} sx={{ mb: 2 }}>
+                  <ul>
+                    {Object.values(localError).map((err, index) => (
+                      typeof err === 'string' && <li key={index}>{err}</li>
+                    ))}
+                  </ul>
+                </Alert>
+              </Fade>
+            )}
+
             {message && (
               <Fade in={!!message}>
                 <Alert severity="success" icon={<CheckCircle />} sx={{ mb: 2 }}>
@@ -332,159 +458,283 @@ const AddRoomModal = ({ open, onClose, onAddRoom, existingRooms, apiError, loadi
 
           <Box sx={{ p: 3 }}>
             {activeStep === 0 && (
-              <Box
-                sx={{
-                  display: 'grid',
-                  gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
-                  gap: 3,
-                }}
-              >
-                <TextField
-                  label="Mã phòng học"
-                  name="room_id"
-                  value={formData.room_id}
-                  onChange={handleChange}
-                  fullWidth
-                  variant="outlined"
-                  required
-                  disabled={loading}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <MeetingRoom color="action" />
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-                <TextField
-                  label="Tên phòng học"
-                  name="room_name"
-                  value={formData.room_name}
-                  onChange={handleChange}
-                  fullWidth
-                  variant="outlined"
-                  required
-                  disabled={loading}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <MeetingRoom color="action" />
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-                <TextField
-                  label="Vị trí"
-                  name="location"
-                  placeholder="Ví dụ: Tầng 2, Tòa A"
-                  value={formData.location}
-                  onChange={handleChange}
-                  fullWidth
-                  variant="outlined"
-                  required
-                  disabled={loading}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <LocationOn color="action" />
-                      </InputAdornment>
-                    ),
-                  }}
-                />
+              <Box sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 3
+              }}>
+                <Box
+                  sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 3 }}
+                >
+                  <TextField
+                    label="Mã phòng học"
+                    name="room_id"
+                    value={newRoom.room_id}
+                    onChange={handleChange}
+                    fullWidth
+                    variant="outlined"
+                    required
+                    InputProps={{
+                      readOnly: true,
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <MeetingRoom color="action" />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                  <TextField
+                    label="Tên phòng học"
+                    name="room_name"
+                    value={newRoom.room_name}
+                    onChange={handleChange}
+                    fullWidth
+                    variant="outlined"
+                    required
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <MeetingRoom color="action" />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Box>
+                <InputLabel>Vị trí phòng học</InputLabel>
+                <FormControl fullWidth required>
+
+                  <Box>
+                    {/* Tabs cho các tòa nhà */}
+                    <Tabs
+                      value={currentBuilding}
+                      onChange={(e, newValue) => setCurrentBuilding(newValue)}
+                      variant="scrollable"
+                      scrollButtons="auto"
+                      sx={{
+                        mb: 1,
+                        '& .MuiTab-root': {
+                          minWidth: 'auto',
+                          px: 1,
+                          fontSize: '0.8rem'
+                        }
+                      }}
+                    >
+                      {Object.keys(locationGroups).map((building) => (
+                        <Tab key={building} label={building} value={building} />
+                      ))}
+                      <Tab label="Khác" value="custom" />
+                    </Tabs>
+
+                    {/* Nội dung cho tab được chọn */}
+                    {currentBuilding !== 'custom' ? (
+                      <Box sx={{
+                        display: 'flex',
+                        maxHeight: '200px',
+                        overflow: 'auto',
+                        gap: 1,
+                      }}>
+                        {locationGroups[currentBuilding]?.map((location) => (
+                          <Paper
+                            key={location.value}
+                            elevation={newRoom.location === location.value ? 2 : 0}
+                            onClick={() => handleLocationSelect(location.value)}
+                            sx={{
+                              flex: 1,
+                              p: 1,
+                              textAlign: 'center',
+                              cursor: 'pointer',
+                              border: '1px solid',
+                              borderColor: newRoom.location === location.value ? 'primary.main' : 'divider',
+                              backgroundColor: newRoom.location === location.value ? 'primary.light' : 'background.paper',
+                              color: newRoom.location === location.value ? 'primary.contrastText' : 'text.primary',
+                              '&:hover': {
+                                backgroundColor: newRoom.location === location.value ? 'primary.light' : 'action.hover',
+                              },
+                              transition: 'all 0.2s ease',
+                            }}
+                          >
+                            <Typography variant="body2">{location.label}</Typography>
+                          </Paper>
+                        ))}
+                      </Box>
+                    ) : (
+                      <TextField
+                        label="Nhập vị trí tùy chỉnh"
+                        value={newRoom.custom_location || ''}
+                        onChange={handleCustomLocationChange}
+                        fullWidth
+                        required
+                        sx={{ mt: 1 }}
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <LocationOn />
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
+                    )}
+
+                    {/* Hiển thị vị trí đã chọn */}
+                    {(newRoom.location || newRoom.custom_location) && (
+                      <Alert
+                        severity="success"
+                        icon={<LocationOn />}
+                        sx={{ mt: 2 }}
+                      >
+                        Đã chọn: {newRoom.custom_location || getLocationLabel(newRoom.location)}
+                      </Alert>
+                    )}
+                  </Box>
+                </FormControl>
               </Box>
             )}
 
             {activeStep === 1 && (
-              <Box
-                sx={{
-                  display: 'grid',
-                  gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
-                  gap: 3,
-                }}
-              >
-                <TextField
-                  label="Sức chứa"
-                  name="capacity"
-                  type="number"
-                  value={formData.capacity}
-                  onChange={handleChange}
-                  fullWidth
-                  variant="outlined"
-                  required
-                  disabled={loading}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <AirlineSeatReclineExtra color="action" />
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-                <FormControl fullWidth required>
-                  <InputLabel>Loại phòng học</InputLabel>
-                  <Select
-                    name="type"
-                    value={formData.type}
-                    onChange={handleChange}
-                    label="Loại phòng học"
-                    disabled={loading}
-                    startAdornment={
-                      <InputAdornment position="start">
-                        <Category color="action" />
-                      </InputAdornment>
-                    }
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                {/* Sức chứa với toggle buttons */}
+                <Box>
+                  <Typography variant="subtitle2" sx={{ mb: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <AirlineSeatReclineExtra fontSize="small" />
+                    Sức chứa
+                  </Typography>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <ToggleButtonGroup
+                      value={newRoom.capacity}
+                      exclusive
+                      onChange={(e, value) => value !== null && handleCapacityChange(value)}
+                      aria-label="sức chứa"
+                    >
+                      {[20, 25, 30, 35, 40, 45, 50, 55, 60].map((capacity) => (
+                        <ToggleButton
+                          key={capacity}
+                          value={capacity}
+                          sx={{
+                            minWidth: '60px',
+                            py: 1,
+                            fontWeight: newRoom.capacity === capacity ? 'bold' : 'normal'
+                          }}
+                        >
+                          {capacity}
+                        </ToggleButton>
+                      ))}
+                    </ToggleButtonGroup>
+
+                    <TextField
+                      name="capacity"
+                      type="number"
+                      value={newRoom.capacity}
+                      onChange={handleChange}
+                      variant="outlined"
+                      size="small"
+                      required
+                      sx={{
+                        width: '100px',
+                        flex: 1,
+
+                      }}
+                      inputProps={{
+                        min: 1,
+                        style: { textAlign: 'center' }
+                      }}
+                    />
+                  </Box>
+                </Box>
+
+                {/* Loại phòng với toggle buttons */}
+                <Box>
+                  <Typography variant="subtitle2" sx={{ mb: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Category fontSize="small" />
+                    Loại phòng
+                  </Typography>
+                  <ToggleButtonGroup
+                    value={newRoom.type}
+                    exclusive
+                    onChange={(e, value) => value !== null && handleTypeChange(value)}
+                    aria-label="loại phòng"
+                    fullWidth
                   >
-                    {roomTypeOptions.map((option) => (
-                      <MenuItem key={option.value} value={option.value}>
-                        {option.label}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-                <FormControl fullWidth required sx={{ gridColumn: { xs: 'span 1', md: 'span 2' } }}>
-                  <InputLabel>Trạng thái</InputLabel>
-                  <Select
-                    name="status"
-                    value={formData.status}
-                    onChange={handleChange}
-                    label="Trạng thái"
-                    disabled={loading}
-                    startAdornment={
-                      <InputAdornment position="start">
-                        <Info color="action" />
-                      </InputAdornment>
-                    }
+                    <ToggleButton
+                      value="practice"
+                      sx={{
+                        fontWeight: newRoom.type === 'practice' ? 'bold' : 'normal'
+                      }}
+                    >
+                      Phòng thực hành
+                    </ToggleButton>
+                    <ToggleButton
+                      value="theory"
+                      sx={{
+                        fontWeight: newRoom.type === 'theory' ? 'bold' : 'normal'
+                      }}
+                    >
+                      Phòng lý thuyết
+                    </ToggleButton>
+                  </ToggleButtonGroup>
+                </Box>
+
+                {/* Trạng thái */}
+                <Box>
+                  <Typography variant="subtitle2" sx={{ mb: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Info fontSize="small" />
+                    Trạng thái
+                  </Typography>
+                  <ToggleButtonGroup
+                    value={newRoom.status}
+                    exclusive
+                    onChange={(e, value) => value !== null && handleStatusChange(value)}
+                    aria-label="trạng thái phòng"
+                    fullWidth
                   >
                     {roomStatusOptions.map((option) => (
-                      <MenuItem key={option.value} value={option.value}>
-                        <Box display="flex" alignItems="center">
-                          {option.icon}
-                          <Chip
-                            label={option.value}
-                            size="small"
-                            color={option.color}
-                            sx={{ ml: 1 }}
-                          />
-                        </Box>
-                      </MenuItem>
+                      <ToggleButton
+                        key={option.value}
+                        value={option.value}
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 1,
+                          fontWeight: newRoom.status === option.value ? 'bold' : 'normal',
+                          borderColor: option.color + '.main',
+                          '&.Mui-selected': {
+                            backgroundColor: option.color + '.light',
+                            color: option.color + '.dark',
+                            '&:hover': {
+                              backgroundColor: option.color + '.light',
+                            }
+                          }
+                        }}
+                      >
+                        {option.icon}
+                        <Chip
+                          label={option.label}
+                          size="small"
+                          color={option.color}
+                          variant={newRoom.status === option.value ? "filled" : "outlined"}
+                          sx={{
+                            fontWeight: 'medium',
+                            backgroundColor: newRoom.status === option.value ? option.color + '.main' : 'transparent',
+                            color: newRoom.status === option.value ? option.color + '.contrastText' : 'inherit'
+                          }}
+                        />
+                      </ToggleButton>
                     ))}
-                  </Select>
-                </FormControl>
+                  </ToggleButtonGroup>
+                </Box>
+                {/* Ghi chú */}
                 <TextField
-                  fullWidth
                   label="Ghi chú"
                   name="note"
-                  multiline
-                  rows={2}
-                  value={formData.note}
+                  value={newRoom.note}
                   onChange={handleChange}
+                  fullWidth
                   variant="outlined"
-                  disabled={loading}
-                  sx={{ gridColumn: { xs: 'span 1', md: 'span 2' } }}
+                  multiline
+                  rows={1}
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <Info color="action" />
+                        <Notes fontSize="small" />
                       </InputAdornment>
                     ),
                   }}
@@ -494,14 +744,12 @@ const AddRoomModal = ({ open, onClose, onAddRoom, existingRooms, apiError, loadi
           </Box>
         </DialogContent>
 
-        <DialogActions
-          sx={{
-            p: 3,
-            display: 'flex',
-            justifyContent: 'space-between',
-            borderTop: '1px solid #eee',
-          }}
-        >
+        <DialogActions sx={{
+          p: 3,
+          display: 'flex',
+          justifyContent: 'space-between',
+          borderTop: '1px solid #eee'
+        }}>
           <Box>
             {activeStep === 0 && (
               <Button
@@ -509,7 +757,6 @@ const AddRoomModal = ({ open, onClose, onAddRoom, existingRooms, apiError, loadi
                 color="primary"
                 startIcon={<CloudUpload />}
                 component="label"
-                disabled={loading}
               >
                 Nhập từ Excel
                 <input
@@ -517,7 +764,6 @@ const AddRoomModal = ({ open, onClose, onAddRoom, existingRooms, apiError, loadi
                   hidden
                   accept=".xlsx, .xls"
                   onChange={handleImportExcel}
-                  disabled={loading}
                 />
               </Button>
             )}
@@ -525,7 +771,11 @@ const AddRoomModal = ({ open, onClose, onAddRoom, existingRooms, apiError, loadi
 
           <Box sx={{ display: 'flex', gap: 2 }}>
             {activeStep > 0 && (
-              <Button onClick={handleBack} variant="outlined" disabled={loading}>
+              <Button
+                onClick={handleBack}
+                variant="outlined"
+                disabled={loading}
+              >
                 Quay lại
               </Button>
             )}
@@ -545,28 +795,21 @@ const AddRoomModal = ({ open, onClose, onAddRoom, existingRooms, apiError, loadi
                 variant="contained"
                 color="primary"
                 disabled={loading}
-                startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <Add />}
+                startIcon={loading ? <CircularProgress size={20} /> : <Add />}
               >
-                {loading ? 'Đang thêm...' : 'Thêm phòng học'}
+                {loading ? 'Đang xử lý...' : 'Thêm phòng học'}
               </Button>
             )}
           </Box>
         </DialogActions>
       </Dialog>
 
-      {/* Preview Modal for Excel Import */}
       <PreviewRoomModal
         open={showPreview}
         onClose={handleClosePreview}
         previewData={previewData}
-        fetchRooms={fetchRooms} // Pass fetchRooms to refresh list after import
-      // You might need to pass onAddRoom or a specific import function here
-      // depending on how PreviewRoomModal is designed to confirm adding.
+        fetchRooms={fetchRooms}
       />
     </>
   );
-};
-
-export default AddRoomModal;
-
-// Cần sửa
+}
