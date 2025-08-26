@@ -12,8 +12,8 @@ const ScheduleLayout = ({ children }) => {
   const isSmallScreen = useMediaQuery(theme.breakpoints.down(900));
 
   // State muốn truyền xuống
-  const [filterOption, setFilterOption] = useState("all");
-  const [filterValue, setFilterValue] = useState(null);
+  const [filterOption, setFilterOption] = useState("classes");
+  const [filterValue, setFilterValue] = useState();
 
   return (
     <ScheduleContext.Provider value={{ filterOption, filterValue, setFilterValue, setFilterOption }}>

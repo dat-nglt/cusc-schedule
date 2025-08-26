@@ -21,13 +21,13 @@ import { getAllRoomAPI } from '../../../api/roomAPI';
 const FilterComponent = () => {
     const { setFilterOption, setFilterValue } = useContext(ScheduleContext);
     const theme = useTheme();
-    const [filterType, setFilterType] = useState('all');
-    const [selectedItem, setSelectedItem] = useState('');
+    const [filterType, setFilterType] = useState('classes');
 
     // Dữ liệu mẫu - trong thực tế sẽ lấy từ API ho props
     const [lecturers, setLecturers] = useState([]);
     const [classes, setClasses] = useState([]);
     const [rooms, setRooms] = useState([]);
+    const [selectedItem, setSelectedItem] = useState('');
 
     const fetchLecturers = async () => {
         try {
@@ -61,6 +61,7 @@ const FilterComponent = () => {
             console.error('Lỗi khi lấy danh sách lớp:', error);
         }
     }
+
     const fetchRooms = async () => {
         try {
             const response = await getAllRoomAPI();
@@ -83,6 +84,12 @@ const FilterComponent = () => {
         fetchClasses();
         fetchRooms();
     }, []);
+    useEffect(() => {
+        if (classes.length > 0) {
+            setSelectedItem(classes[0].id);
+            setFilterValue(classes[0].id);
+        }
+    }, [classes]);
 
     const handleFilterTypeChange = (event) => {
         const newFilterType = event.target.value;
@@ -209,24 +216,6 @@ const FilterComponent = () => {
                         }
                     }}
                 >
-                    <MenuItem
-                        value="all"
-                        sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            '&:before': {
-                                content: '""',
-                                display: 'inline-block',
-                                width: 12,
-                                height: 12,
-                                borderRadius: '2px',
-                                backgroundColor: theme.palette.primary.main,
-                                mr: 1.5
-                            }
-                        }}
-                    >
-                        Tất cả
-                    </MenuItem>
                     <MenuItem
                         value="classes"
                         sx={{
