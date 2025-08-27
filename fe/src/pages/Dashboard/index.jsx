@@ -11,6 +11,10 @@ import { toast } from 'react-toastify';
 import { getAllSchedulesAPI } from '../../api/classscheduleAPI';
 import CreateSchedulesAutoModal from './CreateSchedulesAutoModal';
 import { ScheduleContext } from '../../contexts/ScheduleContext';
+import { getClassesAPI } from '../../api/classAPI';
+import { getAllLecturersAPI } from '../../api/lecturerAPI';
+import { getAllRoomAPI } from '../../api/roomAPI';
+import { getAllSubjectsAPI } from '../../api/subjectAPI';
 
 
 const Dashboard = () => {
@@ -24,6 +28,7 @@ const Dashboard = () => {
     const [progress, setProgress] = useState(0);
     const [rooms, setRooms] = useState([]);
     const [programs, setPrograms] = useState([]);
+    const [subjects, setSubjects] = useState([]);
     const [lecturers, setLecturers] = useState([]);
     const [classes, setClasses] = useState([]);
     const [scheduleItems, setScheduleItems] = useState();
@@ -39,13 +44,75 @@ const Dashboard = () => {
                 setScheduleItems([]);
             }
         } catch (error) {
-            console.error("Lỗi khi tải thời khóa biểu:", error);
-            setError("Không thể tải thời khóa biểu. Vui lòng thử lại.");
+            console.error("Lỗi khi tải lớp:", error);
+            setError("Không thể tải lớp. Vui lòng thử lại.");
+        }
+    };
+
+    const fetchClasses = async () => {
+        setError(null);
+        try {
+            const response = await getClassesAPI();
+            if (response && response.data) {
+                setClasses(response.data);
+            } else {
+                setClasses([]);
+            }
+        } catch (error) {
+            console.error("Lỗi khi tải lớp:", error);
+            setError("Không thể tải lớp. Vui lòng thử lại.");
+        }
+    };
+
+    const fetchLecturer = async () => {
+        setError(null);
+        try {
+            const response = await getAllLecturersAPI();
+            if (response && response.data) {
+                setLecturers(response.data.lecturers);
+            } else {
+                setLecturers([]);
+            }
+        } catch (error) {
+            console.error("Lỗi khi tải giảng viên:", error);
+            setError("Không thể tải giảng viên. Vui lòng thử lại.");
+        }
+    };
+    const fetchRoom = async () => {
+        setError(null);
+        try {
+            const response = await getAllRoomAPI();
+            if (response && response.data) {
+                setRooms(response.data);
+            } else {
+                setRooms([]);
+            }
+        } catch (error) {
+            console.error("Lỗi khi tải phòng:", error);
+            setError("Không thể tải phòng. Vui lòng thử lại.");
+        }
+    };
+    const fetchSubject = async () => {
+        setError(null);
+        try {
+            const response = await getAllSubjectsAPI();
+            if (response && response.data) {
+                setSubjects(response.data);
+            } else {
+                setSubjects([]);
+            }
+        } catch (error) {
+            console.error("Lỗi khi tải môn:", error);
+            setError("Không thể tải môn. Vui lòng thử lại.");
         }
     };
 
     useEffect(() => {
         fetchClassSchedule();
+        fetchClasses();
+        fetchLecturer();
+        fetchRoom();
+        fetchSubject();
     }, []);
 
     // Logic lọc đã được cập nhật
@@ -89,13 +156,12 @@ const Dashboard = () => {
             )
         );
     };
-
+    console.log("lecturers", lecturers);
     const stats = {
-        classes: 42,
-        teachers: 28,
-        rooms: 15,
-        course: 15,
-        conflicts: 3
+        classes: classes.length,
+        teachers: lecturers.length,
+        rooms: rooms.length,
+        course: subjects.length,
     };
 
     return (
@@ -105,7 +171,25 @@ const Dashboard = () => {
                 value={progress}
                 message={statusMessage}
             />
-            <QuickStats stats={stats} />
+            <QuickStats
+                stats={stats}
+                lecturers={lecturers}
+                classes={classes}
+                rooms={rooms}
+                subjects={subjects}
+            />
+            <CreateSchedulesAutoModal
+                open={createScheduleModalOpen}
+                onClose={() => setCreateScheduleModalOpen(false)}
+                onSuccess={() => {
+                    fetchClassSchedule();
+                }}
+                lecturers={lecturers}
+                classes={classes}
+                rooms={rooms}
+                programs={programs}
+                subjects={subjects}
+            />
             <Box sx={
                 {
                     width: 'calc(100vw - 400px)',

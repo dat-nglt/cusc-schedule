@@ -1,60 +1,74 @@
-import sys
-import os
-import json
-from typing import Dict, Any
+from datetime import datetime, timedelta
+import random
+from utils.get_date_from_week_day import get_date_from_week_day
 
-def check_hard_constraints(date_str, day_of_week_eng, slot_id, room_id, lecturer_id, class_id, occupied_slots, processed_data):
+def check_hard_constraints(date_str, day_of_week_eng, 
+slot_id, room_id, lecturer_id, class_id, subject_id, occupied_slots, processed_data):
     """
-    Checks all hard constraints for a given lesson.
-    Returns True if there are no conflicts, otherwise returns False and prints the reason.
+    Kiểm tra tất cả các ràng buộc cứng cho một buổi học.
+    Trả về True nếu không có xung đột, ngược lại trả về False.
 
     Args:
-        date_str (str): The date of the lesson (e.g., "2025-10-27").
-        day_of_week_eng (str): The name of the day of the week (e.g., "Monday").
-        slot_id (int): The ID of the time slot.
-        room_id (int): The ID of the room.
-        lecturer_id (int): The ID of the lecturer.
-        class_id (int): The ID of the class.
-        occupied_slots (dict): The current schedule, storing assigned slots.
-        processed_data (object): An object containing processed data (lecturer_map, etc.).
+        date_str (str): Ngày của buổi học (ví dụ: "2025-10-27").
+        day_of_week_eng (str): Tên thứ trong tuần (ví dụ: "Monday").
+        slot_id (int): ID của khung giờ.
+        room_id (int): ID của phòng.
+        lecturer_id (int): ID của giảng viên.
+        class_id (int): ID của lớp.
+        subject_id (int): ID của môn học.
+        occupied_slots (dict): Lịch trình hiện tại, lưu các slot đã được gán.
+        processed_data (object): Đối tượng chứa dữ liệu đã xử lý.
 
     Returns:
-        bool: True if there are no conflicts, False otherwise.
+        bool: True nếu không có xung đột, False nếu có.
     """
     reasons = []
 
-    # Constraint 1: Lecturer, room, and class cannot have scheduling conflicts
-    # Check if the lecturer is already busy in this slot
-    if lecturer_id in occupied_slots.get(date_str, {}).get(slot_id, {}).get('lecturers', set()):
-        reasons.append("Lecturer is already assigned to another lesson.")
-    
-    # Check if the room is already in use in this slot
-    if room_id in occupied_slots.get(date_str, {}).get(slot_id, {}).get('rooms', set()):
-        reasons.append("Room is already assigned to another lesson.")
-        
-    # Check if the class already has a schedule in this slot
-    if class_id in occupied_slots.get(date_str, {}).get(slot_id, {}).get('classes', set()):
-        reasons.append("Class is already assigned to another lesson.")
+    # Kiểm tra nếu slot này đã tồn tại trong occupied_slots
+    if date_str not in occupied_slots:
+        occupied_slots[date_str] = {}
+    if slot_id not in occupied_slots[date_str]:
+        occupied_slots[date_str][slot_id] = {
+            'lecturers': set(),
+            'rooms': set(),
+            'classes': set(),
+            'subjects': set()
+        }
 
-    # Constraint 2: Lecturer is busy according to a fixed weekly schedule
+    current_slot = occupied_slots[date_str][slot_id]
+
+    # Ràng buộc 1: Giảng viên, phòng, lớp và môn học không được xung đột lịch
+    if lecturer_id in current_slot['lecturers']:
+        reasons.append("Giảng viên đã được phân công cho buổi học khác.")
+    
+    if room_id in current_slot['rooms']:
+        reasons.append("Phòng đã được phân công cho buổi học khác.")
+        
+    if class_id in current_slot['classes']:
+        reasons.append("Lớp đã được phân công cho buổi học khác.")
+        
+    if subject_id in current_slot['subjects']:
+        reasons.append("Môn học đã được dạy trong khung giờ này.")
+
+    # Ràng buộc 2: Giảng viên bận theo lịch cố định hàng tuần
     lecturer_info = processed_data.lecturer_map.get(lecturer_id, {})
     busy_weekly_slots = lecturer_info.get('busy_slots', [])
     for busy_slot in busy_weekly_slots:
         if busy_slot.get('day') == day_of_week_eng and busy_slot.get('slot_id') == slot_id:
-            reasons.append("Lecturer is busy according to a fixed weekly schedule.")
+            reasons.append("Giảng viên bận theo lịch cố định hàng tuần.")
             break
 
-    # Constraint 3: Lecturer is busy on a specific date (semester_busy_slots)
+    # Ràng buộc 3: Giảng viên bận vào ngày cụ thể (semester_busy_slots)
     semester_busy_slots = lecturer_info.get('semester_busy_slots', [])
     for busy_slot in semester_busy_slots:
         if busy_slot.get('date') == date_str and busy_slot.get('slot_id') == slot_id:
-            reasons.append("Lecturer is busy on a specific date.")
+            reasons.append("Giảng viên bận vào ngày cụ thể này.")
             break
     
-    # Return result
+    # Trả về kết quả
     if reasons:
-        # print(f"Failed: {', '.join(reasons)}")
+        # In ra lý do nếu cần debug
+        # print(f"Xung đột: {', '.join(reasons)}")
         return False
     
-    # print("Valid!")
     return True

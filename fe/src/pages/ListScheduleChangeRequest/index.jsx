@@ -111,7 +111,7 @@ const ListScheduleChangeRequests = () => {
                             gap: 2
                         }}>
                             <Typography variant="h5" fontWeight="600">
-                                Danh sách yêu cầu thay đổi lịch
+                                Danh sách yêu cầu thay đổi lịch đã gửi
                             </Typography>
 
                             <Box sx={{

@@ -12,22 +12,10 @@ from utils.get_date_from_week_day import get_date_from_week_day
 from utils.check_hard_constraints import check_hard_constraints
 
 def generate_semester_schedule(best_weekly_chromosome: Any, processed_data: Any) -> tuple:
-    """
-    Generates a full semester schedule based on the best weekly chromosome.
-    
-    Args:
-        best_weekly_chromosome: The best chromosome found by the GA.
-        processed_data: A pre-processed data object containing all necessary information.
-    
-    Returns:
-        A tuple containing:
-        - The generated schedule structured by class and week.
-        - A list of lessons that could not be assigned.
-    """
     unassignable_lessons = []
     semester_schedule_by_class = defaultdict(lambda: [[] for _ in range(16)])
     
-    # SỬA LỖI QUAN TRỌNG: Khởi tạo defaultdict với khóa 'classes' để lưu trữ thông tin về các lớp đã được xếp lịch.
+    # SỬA LỖI: Cập nhật defaultdict để bao gồm khóa 'classes'
     occupied_slots = defaultdict(lambda: defaultdict(lambda: {'lecturers': set(), 'rooms': set(), 'classes': set()}))
     
     days_of_week_index_map = {
@@ -70,7 +58,7 @@ def generate_semester_schedule(best_weekly_chromosome: Any, processed_data: Any)
                 day_of_week_eng = new_lesson['day']
                 day_index_from_gene = days_of_week_index_map.get(day_of_week_eng)
                 
-                if day_index_from_gene is None or day_index_from_gene == 6: # Avoid Sunday
+                if day_index_from_gene is None or day_index_from_gene == 6:
                     continue
                 
                 lesson_date = get_date_from_week_day(week_num, day_index_from_gene, semester_start_date)
@@ -92,7 +80,6 @@ def generate_semester_schedule(best_weekly_chromosome: Any, processed_data: Any)
         lecturer = lesson['lecturer_id']
         room = lesson['room_id']
         cls_id = lesson['class_id']
-        subject_id = lesson['subject_id'] # Thêm subject_id
         
         is_clash = False
         
@@ -103,30 +90,29 @@ def generate_semester_schedule(best_weekly_chromosome: Any, processed_data: Any)
             semester_info = processed_data.semester_map.get(lesson['semester_id'], {})
             semester_start_date = datetime.strptime(semester_info['start_date'], '%Y-%m-%d')
             
-            # Check if the lesson falls before the semester starts
+            # Kiểm tra nếu ngày rơi vào trước khai giảng
             if date_obj < semester_start_date:
                 is_clash = True
             
-            # SỬA LỖI: Gọi hàm check_hard_constraints với đủ các tham số, bao gồm cả 'subject_id'
+            # SỬA LỖI: Sử dụng hàm check_hard_constraints để kiểm tra tất cả các ràng buộc
             if not is_clash:
-                if not check_hard_constraints(date_str, day_of_week_name, slot, room, lecturer, cls_id, subject_id, occupied_slots, processed_data):
+                if not check_hard_constraints(date_str, day_of_week_name, slot, room, lecturer, cls_id, occupied_slots, processed_data):
                     is_clash = True
-
+            
             if is_clash:
                 print(f"❌ Xung đột: Lớp {cls_id}, Môn {lesson['subject_id']}. Tìm vị trí mới...")
                 
                 program_duration_weeks = processed_data.program_map.get(processed_data.class_map.get(cls_id)['program_id'])['duration']
-                
-                # SỬA LỖI: Hàm find_new_valid_slot đã được cập nhật để trả về 5 giá trị
-                new_date, new_day, new_slot, new_room, new_lecturer = find_new_valid_slot(
+                new_slot_info = find_new_valid_slot(
                     lesson, processed_data, occupied_slots, program_duration_weeks, semester_start_date
                 )
                 
-                if new_date and new_slot and new_room and new_lecturer:
+                if new_slot_info:
+                    new_date, new_slot, new_room, new_lecturer = new_slot_info
+                    
                     reassigned_lesson = lesson.copy()
                     reassigned_lesson.update({
                         'date': new_date,
-                        'day': new_day,
                         'slot_id': new_slot,
                         'room_id': new_room,
                         'lecturer_id': new_lecturer,
@@ -134,28 +120,29 @@ def generate_semester_schedule(best_weekly_chromosome: Any, processed_data: Any)
                         'is_reassigned': True
                     })
                     
-                    # Update the schedule and occupied slots with the new, valid information
                     semester_schedule_by_class[cls_id][reassigned_lesson['week'] - 1].append(reassigned_lesson)
+                    
+                    # CẬP NHẬT occupied_slots CHO VỊ TRÍ MỚI - Đã bao gồm 'classes'
                     occupied_slots[new_date][new_slot]['lecturers'].add(new_lecturer)
                     occupied_slots[new_date][new_slot]['rooms'].add(new_room)
-                    occupied_slots[new_date][new_slot]['classes'].add(cls_id) 
+                    occupied_slots[new_date][new_slot]['classes'].add(cls_id)
                     
                 else:
                     print(f"❌ Không tìm thấy vị trí mới cho lớp {cls_id}, môn {lesson['subject_id']}. Buổi học không thể xếp lịch.")
                     unassignable_lessons.append(lesson)
                     
             else:
-                # Lesson is valid, add to the schedule
                 week_num = int((date_obj - semester_start_date).days / 7)
                 if 0 <= week_num < len(semester_schedule_by_class[cls_id]):
                     semester_schedule_by_class[cls_id][week_num].append(lesson)
-                
-                    # CẬP NHẬT occupied_slots CHO VỊ TRÍ GỐC
+                    
+                    # CẬP NHẬT occupied_slots CHO VỊ TRÍ GỐC - Đã bao gồm 'classes'
                     occupied_slots[date_str][slot]['lecturers'].add(lecturer)
                     occupied_slots[date_str][slot]['rooms'].add(room)
                     occupied_slots[date_str][slot]['classes'].add(cls_id)
                 else:
                     unassignable_lessons.append(lesson)
+        
         except Exception as e:
             print(f"Lỗi xử lý buổi học: {e}")
             unassignable_lessons.append(lesson)

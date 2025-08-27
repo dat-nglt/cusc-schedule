@@ -37,15 +37,13 @@ def find_new_valid_slot(lesson, processed_data, occupied_slots, program_duration
 
     original_date = datetime.strptime(lesson['date'], '%Y-%m-%d')
     days_diff = (original_date - semester_start_date).days
-    start_week_offset = days_diff // 7  # Sử dụng offset tuần (bắt đầu từ 0)
-    
-    # FIX: ĐẢM BẢO KHÔNG TÌM KIẾM TRONG TUẦN ÂM
-    start_week_offset = max(0, start_week_offset)  # Quan trọng: không cho phép tuần âm
+    start_week_offset = days_diff // 7
+
+    start_week_offset = max(0, start_week_offset)
 
     search_limit = 1000
     max_weeks_to_search = 3
 
-    # Lấy danh sách chỉ số ngày (0-6)
     days_to_search = list(range(7))
     random.shuffle(days_to_search)
 
@@ -65,8 +63,7 @@ def find_new_valid_slot(lesson, processed_data, occupied_slots, program_duration
     for week_offset in range(max_weeks_to_search):
         current_week = start_week_offset + week_offset
 
-        # FIX: THÊM KIỂM TRA TUẦN HIỆN TẠI CÓ HỢP LỆ KHÔNG
-        if current_week < 0:  # Bỏ qua tuần âm
+        if current_week < 0:
             continue
         if current_week >= program_duration_weeks:
             print(f" - Dừng: Vượt quá thời lượng chương trình ({program_duration_weeks} tuần)")
@@ -75,38 +72,44 @@ def find_new_valid_slot(lesson, processed_data, occupied_slots, program_duration
         print(f" - Đang tìm trong tuần {current_week + 1}...")
 
         for day_index in days_to_search:
-            # Bỏ qua Chủ nhật (index = 6)
             if day_index == 6:
                 continue
 
-            # Sử dụng hàm get_date_from_week_day đã được sửa
             date = get_date_from_week_day(current_week, day_index, semester_start_date)
-            date_str = date.strftime('%Y-%m-%d')
             
-            # Lấy tên ngày trong tuần tiếng Anh để truyền vào check_hard_constraints
+            # Bỏ qua ngày nếu nó rơi vào trước ngày bắt đầu học kỳ
+            if date < semester_start_date:
+                continue
+
+            date_str = date.strftime('%Y-%m-%d')
             day_of_week_name = date.strftime('%a')
 
             for slot_id in slots_to_search:
                 for room in valid_rooms_copy:
                     for lecturer in valid_lecturers_copy:
+                        # SỬA LẠI CÁCH GỌI HÀM - ĐÚNG THỨ TỰ THAM SỐ
                         if check_hard_constraints(date_str, day_of_week_name, slot_id, room,
-                                                  lecturer, class_id, occupied_slots, processed_data):
+                                                 lecturer, class_id, subject_id, occupied_slots, processed_data):
                             candidate_slots.append({
                                 'date': date_str,
                                 'slot_id': slot_id,
                                 'room_id': room,
                                 'lecturer_id': lecturer,
                                 'week': current_week,
-                                'day_of_week': day_of_week_name  # THÊM THÔNG TIN NGÀY VÀO ĐÂY
+                                'day_of_week': day_of_week_name
                             })
                             if len(candidate_slots) >= search_limit:
                                 stop_flag = True
                                 break
-                    if stop_flag: break
-                if stop_flag: break
-            if stop_flag: break
+                    if stop_flag: 
+                        break
+                if stop_flag: 
+                    break
+            if stop_flag: 
+                break
+        if stop_flag: 
+            break
 
-    # FIX: LỌC CÁC ỨNG VIÊN TRONG PHẠM VI HỢP LỆ (0 đến program_duration_weeks-1)
     valid_candidates = [c for c in candidate_slots if 0 <= c['week'] < program_duration_weeks]
     
     if not valid_candidates:
@@ -122,14 +125,15 @@ def find_new_valid_slot(lesson, processed_data, occupied_slots, program_duration
         print(f" - Chọn ứng viên từ tuần {best_candidate['week'] + 1}")
 
     print(" - ✅ Tìm thấy vị trí mới:")
-    print(f"      Ngày: {best_candidate['date']}")
-    print(f"      Thứ: {best_candidate['day_of_week']}")
-    print(f"      Slot: {best_candidate['slot_id']}")
-    print(f"      Phòng: {best_candidate['room_id']}")
-    print(f"      Giảng viên: {best_candidate['lecturer_id']}")
+    print(f"     Ngày: {best_candidate['date']}")
+    print(f"     Thứ: {best_candidate['day_of_week']}")
+    print(f"     Slot: {best_candidate['slot_id']}")
+    print(f"     Phòng: {best_candidate['room_id']}")
+    print(f"     Giảng viên: {best_candidate['lecturer_id']}")
 
     return (
         best_candidate['date'],
+        best_candidate['day_of_week'],
         best_candidate['slot_id'],
         best_candidate['room_id'],
         best_candidate['lecturer_id']

@@ -182,151 +182,12 @@ const DetailModal = ({ open, onClose, title, children }) => {
     );
 };
 
-const QuickStats = ({ stats }) => {
+const QuickStats = ({ stats, lecturers, classes, subjects, rooms }) => {
     const theme = useTheme();
     const [showStats, setShowStats] = useState(false);
     const [openModal, setOpenModal] = useState(null);
 
     // Sample data
-    const roomData = [
-        {
-            id: 1,
-            code: 'A101',
-            name: 'Phòng học A101',
-            type: 'Lý thuyết',
-            capacity: 50,
-            equipment: ['Máy chiếu', 'Điều hòa', 'Loa'],
-            status: 'available',
-            building: 'Tòa nhà A'
-        },
-        {
-            id: 2,
-            code: 'B202',
-            name: 'Phòng thực hành B202',
-            type: 'Thực hành',
-            capacity: 30,
-            equipment: ['Máy tính', 'Bảng tương tác', 'Microscope'],
-            status: 'maintenance',
-            building: 'Tòa nhà B'
-        },
-        {
-            id: 3,
-            code: 'A102',
-            name: 'Phòng học A102',
-            type: 'Lý thuyết',
-            capacity: 40,
-            equipment: ['Máy chiếu', 'Điều hòa'],
-            status: 'available',
-            building: 'Tòa nhà A'
-        },
-        {
-            id: 4,
-            code: 'C301',
-            name: 'Phòng Lab C301',
-            type: 'Thực hành',
-            capacity: 25,
-            equipment: ['Máy tính', 'Màn hình tương tác', 'Kính hiển vi'],
-            status: 'available',
-            building: 'Tòa nhà C'
-        },
-        {
-            id: 5,
-            code: 'B201',
-            name: 'Phòng học B201',
-            type: 'Lý thuyết',
-            capacity: 60,
-            equipment: ['Máy chiếu', 'Điều hòa', 'Bảng trắng'],
-            status: 'available',
-            building: 'Tòa nhà B'
-        },
-        {
-            id: 6,
-            code: 'D401',
-            name: 'Hội trường D401',
-            type: 'Đa năng',
-            capacity: 150,
-            equipment: ['Hệ thống âm thanh', 'Màn hình lớn', 'Điều hòa', 'Micro'],
-            status: 'booked',
-            building: 'Tòa nhà D'
-        },
-        {
-            id: 7,
-            code: 'C302',
-            name: 'Phòng thực hành C302',
-            type: 'Thực hành',
-            capacity: 35,
-            equipment: ['Máy tính', 'Bảng tương tác'],
-            status: 'available',
-            building: 'Tòa nhà C'
-        },
-        {
-            id: 8,
-            code: 'A103',
-            name: 'Phòng học A103',
-            type: 'Lý thuyết',
-            capacity: 45,
-            equipment: ['Máy chiếu', 'Điều hòa', 'Loa'],
-            status: 'available',
-            building: 'Tòa nhà A'
-        }
-    ];
-
-    const teacherData = [
-        {
-            id: 1,
-            code: 'GV001',
-            name: 'TS. Nguyễn Văn A',
-            department: 'Công nghệ thông tin',
-            subjects: ['Lập trình Java', 'Cấu trúc dữ liệu'],
-            status: 'active',
-            email: 'nguyenvana@university.edu.vn'
-        },
-        {
-            id: 2,
-            code: 'GV002',
-            name: 'ThS. Trần Thị B',
-            department: 'Kế toán',
-            subjects: ['Kế toán tài chính', 'Kế toán quản trị'],
-            status: 'on_leave',
-            email: 'tranthib@university.edu.vn'
-        }
-    ];
-
-    const classData = [
-        {
-            id: 1,
-            code: 'IT101',
-            name: 'Lập trình hướng đối tượng',
-            students: 45,
-            teacher: 'TS. Nguyễn Văn A',
-            schedule: 'Thứ 2, 7:30-9:30'
-        },
-        {
-            id: 2,
-            code: 'ACC201',
-            name: 'Kế toán tài chính',
-            students: 50,
-            teacher: 'ThS. Trần Thị B',
-            schedule: 'Thứ 3, 9:30-11:30'
-        }
-    ];
-
-    const conflictData = [
-        {
-            id: 1,
-            type: 'Trùng giảng viên',
-            description: 'Giảng viên có 2 lớp cùng giờ',
-            teacher: 'TS. Nguyễn Văn A',
-            time: 'Thứ 2, 7:30-9:30'
-        },
-        {
-            id: 2,
-            type: 'Trùng phòng học',
-            description: '2 lớp cùng phòng cùng giờ',
-            room: 'A101',
-            time: 'Thứ 3, 13:30-15:30'
-        }
-    ];
 
     const DetailItem = ({ icon, label, value, color }) => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -364,19 +225,15 @@ const QuickStats = ({ stats }) => {
                                 <TableRow sx={{ backgroundColor: theme.palette.grey[100] }}>
                                     <TableCell>Mã lớp</TableCell>
                                     <TableCell>Tên môn học</TableCell>
-                                    <TableCell>Số SV</TableCell>
-                                    <TableCell>Giảng viên</TableCell>
-                                    <TableCell>Lịch học</TableCell>
+                                    <TableCell>Sĩ số</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {classData.map((cls) => (
+                                {classes.map((cls) => (
                                     <TableRow key={cls.id}>
-                                        <TableCell>{cls.code}</TableCell>
-                                        <TableCell>{cls.name}</TableCell>
-                                        <TableCell>{cls.students}</TableCell>
-                                        <TableCell>{cls.teacher}</TableCell>
-                                        <TableCell>{cls.schedule}</TableCell>
+                                        <TableCell>{cls.class_id}</TableCell>
+                                        <TableCell>{cls.class_name}</TableCell>
+                                        <TableCell>{cls.class_size}</TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>
@@ -386,14 +243,14 @@ const QuickStats = ({ stats }) => {
             case 'teachers':
                 return (
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                        {teacherData.map((teacher) => (
-                            <Paper key={teacher.id} elevation={0} sx={{
+                        {lecturers.map((teacher) => (
+                            <Paper key={teacher.lecturer_id} elevation={0} sx={{
                                 p: 2,
                                 borderRadius: '8px',
                                 border: `1px solid ${alpha(theme.palette.divider, 0.2)}`
                             }}>
                                 <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                                    <Avatar sx={{ mr: 2 }}>{teacher.name.charAt(0)}</Avatar>
+                                    <Avatar sx={{ mr: 2 }}>{teacher.name}</Avatar>
                                     <Box>
                                         <Typography fontWeight="600">{teacher.name}</Typography>
                                         <Typography variant="body2" color="text.secondary">
@@ -409,7 +266,8 @@ const QuickStats = ({ stats }) => {
                                 </Box>
                                 <Divider sx={{ my: 1.5 }} />
                                 <Typography variant="body2" sx={{ mb: 1 }}>
-                                    <strong>Môn giảng dạy:</strong> {teacher.subjects.join(', ')}
+                                    <strong>Môn giảng dạy:</strong>{' '}
+                                    {teacher.subjects.map(subject => subject.subject_id).join(', ')}
                                 </Typography>
                                 <Typography variant="body2">
                                     <strong>Email:</strong> {teacher.email}
@@ -427,9 +285,9 @@ const QuickStats = ({ stats }) => {
                         mt: 2,
                         maxHeight: '500px',
                     }}>
-                        {roomData.map((room) => (
+                        {rooms.map((room) => (
                             <Paper
-                                key={room.id}
+                                key={room.room_id}
                                 elevation={0}
                                 sx={{
                                     border: `1px solid ${alpha(theme.palette.divider, 0.2)}`,
@@ -466,7 +324,7 @@ const QuickStats = ({ stats }) => {
                                         mr: 1.5
                                     }} />
                                     <Typography variant="subtitle2" fontWeight="600">
-                                        {room.code}
+                                        {room.room_id}
                                     </Typography>
                                     <Chip
                                         label={room.status === 'available' ? 'Sẵn sàng' : 'Bảo trì'}
@@ -596,35 +454,6 @@ const QuickStats = ({ stats }) => {
                         ))}
                     </Box>
                 );
-            case 'conflicts':
-                return (
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                        {conflictData.map((conflict) => (
-                            <Paper key={conflict.id} elevation={0} sx={{
-                                p: 2,
-                                borderRadius: '8px',
-                                borderLeft: `4px solid ${theme.palette.error.main}`
-                            }}>
-                                <Typography fontWeight="600" color="error" sx={{ mb: 0.5 }}>
-                                    {conflict.type}
-                                </Typography>
-                                <Typography variant="body2" sx={{ mb: 1 }}>
-                                    {conflict.description}
-                                </Typography>
-                                <Box sx={{ display: 'flex', gap: 2 }}>
-                                    <Typography variant="body2" color="text.secondary">
-                                        <InfoIcon fontSize="small" sx={{ verticalAlign: 'middle', mr: 0.5 }} />
-                                        {conflict.teacher || conflict.room}
-                                    </Typography>
-                                    <Typography variant="body2" color="text.secondary">
-                                        <InfoIcon fontSize="small" sx={{ verticalAlign: 'middle', mr: 0.5 }} />
-                                        {conflict.time}
-                                    </Typography>
-                                </Box>
-                            </Paper>
-                        ))}
-                    </Box>
-                );
             default:
                 return null;
         }
@@ -691,26 +520,6 @@ const QuickStats = ({ stats }) => {
                                 onClick={() => setOpenModal('classes')}
                             />
                         </Grid>
-
-                        {stats.conflicts > 0 && (
-                            <Grid item xs={12} sm={6} lg={3}>
-                                <StatCard
-                                    icon={<WarningIcon color="warning" />}
-                                    title="Xung đột"
-                                    value={stats.conflicts}
-                                    maxValue={10}
-                                    tooltip={`${stats.conflicts} xung đột lịch chưa giải quyết`}
-                                    onClick={() => setOpenModal('conflicts')}
-                                    sx={{
-                                        backgroundColor: theme => theme.palette.warning.light,
-                                        '&:hover': {
-                                            backgroundColor: theme => theme.palette.warning.lighter,
-                                            transform: 'translateY(-2px)'
-                                        }
-                                    }}
-                                />
-                            </Grid>
-                        )}
                     </Grid>
                 </Collapse>
             </Box>

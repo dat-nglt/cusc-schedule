@@ -174,7 +174,6 @@ const WeeklyCalendar = ({
                 <Box sx={{
                     flexGrow: 1,
                     overflow: 'scroll',
-                    maxHeight: "580px",
                     border: `1px solid ${theme.palette.divider}`,
                     borderRadius: 1,
                     position: 'relative'
