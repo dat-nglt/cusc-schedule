@@ -29,63 +29,47 @@ import {
 import { alpha, useTheme } from '@mui/material/styles';
 import { formatDistanceToNow } from 'date-fns';
 import { vi } from 'date-fns/locale';
-
-// Mock data - trong thực tế sẽ fetch từ API
-const mockNotifications = [
-    {
-        id: '1',
-        title: 'Xung đột lịch dạy',
-        content: 'Môn Toán A1 trùng lịch với Lý B2',
-        type: 'urgent',
-        recipients: 'lecturers',
-        expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-        created_at: new Date(Date.now() - 10 * 60 * 1000),
-        isRead: false
-    },
-    {
-        id: '2',
-        title: 'Bảo trì phòng học',
-        content: 'Phòng 301 sẽ đóng cửa để bảo trì từ 15/10',
-        type: 'scheduled',
-        recipients: 'all',
-        expires_at: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
-        created_at: new Date(Date.now() - 2 * 60 * 60 * 1000),
-        isRead: false
-    },
-    {
-        id: '3',
-        title: 'Giảng viên mới',
-        content: 'TS. Nguyễn Văn A đã đăng ký tài khoản',
-        type: 'general',
-        recipients: 'admins',
-        expires_at: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
-        created_at: new Date(Date.now() - 24 * 60 * 60 * 1000),
-        isRead: true
-    },
-    {
-        id: '4',
-        title: 'Lịch họp khoa',
-        content: 'Cuộc họp khoa định kỳ sẽ diễn ra vào thứ 6 tuần này',
-        type: 'general',
-        recipients: 'lecturers',
-        expires_at: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000),
-        created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-        isRead: true
-    }
-];
+import { getUserNotificationsAPI, markAsReadAPI } from '../../api/notificationAPI';
 
 const NotificationComponent = () => {
-    const [notifications, setNotifications] = useState(mockNotifications);
+    const [notifications, setNotifications] = useState([]);
     const [anchorEl, setAnchorEl] = useState(null);
     const [unreadCount, setUnreadCount] = useState(0);
     const theme = useTheme();
     const open = Boolean(anchorEl);
 
     useEffect(() => {
+        // Fetch notifications từ API
+        const fetchNotifications = async () => {
+            try {
+                const res = await getUserNotificationsAPI();
+                const notis = (res?.data || []).map(item => ({
+                    id: item.id,
+                    isRead: item.isRead,
+                    readAt: item.readAt,
+                    created_at: item.notificationInfo?.created_at || item.created_at,
+                    expires_at: item.notificationInfo?.expires_at,
+                    title: item.notificationInfo?.title || '',
+                    content: item.notificationInfo?.content || '',
+                    type: item.notificationInfo?.type || 'general',
+                    recipients: item.notificationInfo?.recipients || 'all',
+                    raw: item
+                }));
+                setNotifications(notis);
+            } catch (err) {
+                setNotifications([]);
+            }
+        };
+        fetchNotifications();
+    }, []);
+
+    useEffect(() => {
         // Tính số thông báo chưa đọc
         const count = notifications.filter(notification => !notification.isRead).length;
         setUnreadCount(count);
     }, [notifications]);
+
+    console.log(notifications);
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);

@@ -1,5 +1,6 @@
 import models from "../models/index.js";
 import { Op } from "sequelize";
+import { createNotification, sendScheduleChangeNotification } from "./notificationService.js";
 const { ScheduleChangeRequest, ClassSchedule } = models;
 
 export const getAllScheduleChangeRequestService = async () => {
@@ -151,6 +152,16 @@ export const CreateScheduleChangeRequestService = async (data) => {
         }
 
         const scheduleChangeRequest = await ScheduleChangeRequest.create(requestData);
+
+        const notificationTitle = `Yêu cầu thay đổi lịch học mới từ Giảng viên`;
+        const notificationContent = `Giảng viên ${data.lecturer_id} đã gửi một yêu cầu thay đổi lịch học. Mã yêu cầu: ${requestId}. Vui lòng xem xét và xử lý.`;
+
+        await createNotification({
+            title: notificationTitle,
+            content: notificationContent,
+            type: 'scheduled',
+            recipients: 'admin', // Gửi đến tất cả tài khoản có vai trò là 'admins'
+        });
         return scheduleChangeRequest;
     }
     catch (error) {
@@ -219,6 +230,9 @@ export const approveScheduleChangeRequestService = async (requestId, adminData) 
             approved_at: new Date()
         });
 
+        //notification
+        await sendScheduleChangeNotification(scheduleChangeRequest, 'APPROVED');
+
         return scheduleChangeRequest;
     }
     catch (error) {
@@ -230,7 +244,15 @@ export const approveScheduleChangeRequestService = async (requestId, adminData) 
 // Từ chối yêu cầu thay đổi lịch học (Admin)
 export const rejectScheduleChangeRequestService = async (requestId, rejectionReason) => {
     try {
-        const scheduleChangeRequest = await ScheduleChangeRequest.findByPk(requestId);
+        const scheduleChangeRequest = await ScheduleChangeRequest.findByPk(requestId, {
+            include: [
+                {
+                    model: models.ClassSchedule,
+                    as: 'classSchedule',
+                    attributes: ['class_schedule_id', 'semester_id', 'class_id', 'program_id', 'date', 'day', 'slot_id', 'subject_id', 'lecturer_id', 'room_id']
+                }
+            ]
+        });
 
         if (!scheduleChangeRequest) {
             throw new Error("Yêu cầu thay đổi lịch học không tồn tại");
@@ -246,6 +268,9 @@ export const rejectScheduleChangeRequestService = async (requestId, rejectionRea
             reason: rejectionReason || scheduleChangeRequest.reason,
             updated_at: new Date()
         });
+
+        //notification
+        await sendScheduleChangeNotification(scheduleChangeRequest, 'REJECTED');
 
         return scheduleChangeRequest;
     }

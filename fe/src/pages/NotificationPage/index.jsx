@@ -36,82 +36,10 @@ import {
     AdminPanelSettings as AdminIcon,
     Groups as AllUsersIcon
 } from '@mui/icons-material';
+import { getUserNotificationsAPI } from '../../api/notificationAPI';
 
 // Mock data dựa trên model Notification
-const mockNotifications = [
-    {
-        id: '1',
-        title: 'Thông báo bảo trì hệ thống',
-        content: 'Hệ thống sẽ được bảo trì từ 22h00 ngày 15/10 đến 02h00 ngày 16/10. Trong thời gian này, hệ thống có thể gián đoạn. Vui lòng lưu lại công việc và đăng xuất trước thời gian bảo trì.',
-        type: 'scheduled',
-        recipients: 'all',
-        created_at: '2023-10-10T08:30:00Z',
-        expires_at: '2023-10-16T02:00:00Z'
-    },
-    {
-        id: '2',
-        title: 'CẢNH BÁO: Yêu cầu thay đổi mật khẩu khẩn cấp',
-        content: 'Phát hiện lỗ hổng bảo mật trong hệ thống. Yêu cầu tất cả người dùng thay đổi mật khẩu ngay lập tức. Truy cập trang cá nhân > Bảo mật để thực hiện thay đổi.',
-        type: 'urgent',
-        recipients: 'all',
-        created_at: '2023-10-09T15:45:00Z',
-        expires_at: '2023-10-12T23:59:59Z'
-    },
-    {
-        id: '3',
-        title: 'Lịch học kỳ mới đã được cập nhật',
-        content: 'Lịch học kỳ mới cho tất cả các ngành đã được cập nhật trên hệ thống. Sinh viên vui lòng kiểm tra lịch học trong trang cá nhân và báo cáo sai sót (nếu có) cho phòng đào tạo trước ngày 20/10.',
-        type: 'general',
-        recipients: 'students',
-        created_at: '2023-10-08T10:15:00Z',
-        expires_at: null
-    },
-    {
-        id: '4',
-        title: 'Họp giảng viên định kỳ tháng 10/2023',
-        content: 'Thông báo lịch họp giảng viên định kỳ tháng 10. Tất cả giảng viên có mặt tại phòng họp A lúc 14h00 ngày 20/10/2023. Nội dung: Đánh giá chất lượng giảng dạy và triển khai kế hoạch học kỳ mới.',
-        type: 'general',
-        recipients: 'lecturers',
-        created_at: '2023-10-07T14:20:00Z',
-        expires_at: '2023-10-20T14:00:00Z'
-    },
-    {
-        id: '5',
-        title: 'Triển khai quy chế đào tạo mới',
-        content: 'Quy chế đào tạo mới đã được ban hành theo quyết định số 1234/QĐ-ĐH. Cán bộ đào tạo vui lòng nắm bắt các thay đổi và hướng dẫn sinh viên thực hiện theo quy chế mới. Tài liệu chi tiết đã được gửi qua email.',
-        type: 'general',
-        recipients: 'training_officers',
-        created_at: '2023-10-05T09:00:00Z',
-        expires_at: null
-    },
-    {
-        id: '6',
-        title: 'Nâng cấp hệ thống quản lý phiên bản 3.2',
-        content: 'Hệ thống quản lý sẽ được nâng cấp lên phiên bản 3.2 vào Chủ nhật tuần tới (15/10). Admin vui lòng chuẩn bị cho công tác sao lưu dữ liệu và kiểm tra tính tương thích. Liên hệ đội kỹ thuật để được hỗ trợ.',
-        type: 'scheduled',
-        recipients: 'admins',
-        created_at: '2023-10-01T11:30:00Z',
-        expires_at: '2023-10-15T23:59:59Z'
-    },
-    {
-        id: '7',
-        title: 'Đăng ký học phần học kỳ Spring 2024',
-        content: 'Từ ngày 16/10/2023, sinh viên có thể đăng ký học phần cho học kỳ Spring 2024. Vui lòng kiểm tra email để xem hướng dẫn chi tiết và lịch trình đăng ký theo từng khoa.',
-        type: 'general',
-        recipients: 'students',
-        created_at: '2023-09-28T09:15:00Z',
-        expires_at: '2023-10-16T00:00:00Z'
-    },
-    {
-        id: '8',
-        title: 'Tập huấn sử dụng hệ thống thi trực tuyến',
-        content: 'Tổ chức tập huấn sử dụng hệ thống thi trực tuyến cho giảng viên vào ngày 12/10/2023. Giảng viên vui lòng đăng ký tham gia qua trang web phòng đào tạo trước ngày 10/10.',
-        type: 'general',
-        recipients: 'lecturers',
-        created_at: '2023-09-25T14:30:00Z',
-        expires_at: '2023-10-10T23:59:59Z'
-    }
-];
+
 
 // Hàm chuyển đổi giá trị ENUM thành nhãn tiếng Việt
 const getRecipientLabel = (recipient) => {
@@ -173,8 +101,8 @@ const formatDateTime = (dateString) => {
 };
 
 const NotificationPage = () => {
-    const [notifications, setNotifications] = useState(mockNotifications);
-    const [filteredNotifications, setFilteredNotifications] = useState(mockNotifications);
+    const [notifications, setNotifications] = useState([]);
+    const [filteredNotifications, setFilteredNotifications] = useState([]);
     const [tabValue, setTabValue] = useState('all');
     const [selectedNotification, setSelectedNotification] = useState(null);
     const [detailDialogOpen, setDetailDialogOpen] = useState(false);
@@ -187,6 +115,35 @@ const NotificationPage = () => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
     const isSmallMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
+    // Fetch notifications từ API
+    useEffect(() => {
+        const fetchNotifications = async () => {
+            try {
+                const res = await getUserNotificationsAPI();
+                // Map lại dữ liệu để flatten notificationInfo vào notification
+                const notis = (res?.data || []).map(item => ({
+                    id: item.id,
+                    isRead: item.isRead,
+                    readAt: item.readAt,
+                    created_at: item.notificationInfo?.created_at || item.created_at,
+                    expires_at: item.notificationInfo?.expires_at,
+                    title: item.notificationInfo?.title || '',
+                    content: item.notificationInfo?.content || '',
+                    type: item.notificationInfo?.type || 'general',
+                    recipients: item.notificationInfo?.recipients || 'all',
+                    // giữ lại các trường khác nếu cần
+                    raw: item
+                }));
+                setNotifications(notis);
+                setFilteredNotifications(notis);
+            } catch (err) {
+                setNotifications([]);
+                setFilteredNotifications([]);
+            }
+        };
+        fetchNotifications();
+    }, []);
 
     // Lọc thông báo theo tab và bộ lọc
     useEffect(() => {

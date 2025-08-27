@@ -54,14 +54,33 @@ const routes = [
     roles: ["admin", "lecturer", "student"], // Mọi người dùng đăng nhập đều có hồ sơ
     layout: AdminLayout, // Có thể cần thay đổi layout này tùy thuộc vào người dùng
   },
+  // ==== NOTIFICATION ROUTES ====
+  {
+    path: "/notifications/lecturer",
+    component: "NotificationPage",
+    exact: true,
+    title: "Thông báo hệ thống",
+    isPrivate: true, // Riêng tư
+    roles: ["lecturer"], // Mọi người dùng đăng nhập đều có hồ sơ
+    layout: LecturerLayout, // Có thể cần thay đổi layout này tùy thuộc vào người dùng
+  },
   {
     path: "/notifications",
     component: "NotificationPage",
     exact: true,
     title: "Thông báo hệ thống",
     isPrivate: true, // Riêng tư
-    roles: ["admin", "lecturer", "student"], // Mọi người dùng đăng nhập đều có hồ sơ
+    roles: ["admin"], // Mọi người dùng đăng nhập đều có hồ sơ
     layout: AdminLayout, // Có thể cần thay đổi layout này tùy thuộc vào người dùng
+  },
+  {
+    path: "/notifications/student",
+    component: "NotificationPage",
+    exact: true,
+    title: "Thông báo hệ thống",
+    isPrivate: true, // Riêng tư
+    roles: ["student"], // Mọi người dùng đăng nhập đều có hồ sơ
+    layout: StudentLayout, // Có thể cần thay đổi layout này tùy thuộc vào người dùng
   },
   // --- STUDENT ROUTES ---
   {
