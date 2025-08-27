@@ -19,7 +19,7 @@ def export_combined_results(all_semester_results: Dict[str, Any], processed_data
     Exports the generated timetables for all semesters to JSON and Excel files.
     Optimized for FE processing with clear structure and progress tracking.
     """
-    
+    print(all_semester_results)
     # Tạo thư mục output nếu chưa tồn tại
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)

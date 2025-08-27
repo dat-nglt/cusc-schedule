@@ -1,28 +1,38 @@
-from datetime import timedelta
+from datetime import datetime, timedelta
+from typing import Dict
 
 
-def get_date_from_week_day(week: int, day_of_week_str: str, start_date: datetime, days_of_week_map: Dict[str, int]) -> datetime:
+def get_date_from_week_day(week_offset: int, day_of_week_index: int, semester_start_date: datetime) -> datetime:
     """
-    Calculates the specific date from the week number, day of the week, and semester start date.
+    Calculates the specific date based on the week offset, day of the week index, and semester start date.
+
+    Args:
+        week_offset (int): The week offset from the start of the semester (0 for the first week).
+        day_of_week_index (int): The index of the day (0=Mon, 1=Tue, ..., 6=Sun).
+        semester_start_date (datetime): The first day of the semester.
+
+    Returns:
+        datetime: The calculated date.
     """
-    if day_of_week_str not in days_of_week_map:
-        return start_date  # Fallback
-    
-    # Xác định thứ của ngày bắt đầu học kỳ (0=Mon, 1=Tue, ..., 6=Sun)
-    start_weekday = start_date.weekday()
-    
-    # Xác định index của target day trong map
-    target_index = days_of_week_map[day_of_week_str]
-    
-    # Tính số ngày cần thêm để đến target day trong tuần ĐẦU TIÊN
-    days_to_add = target_index - start_weekday
-    if days_to_add < 0:
-        days_to_add += 7  # Chuyển sang tuần sau nếu target day đã qua trong tuần này
-    
-    # Tính ngày đầu tiên xảy ra target day
-    first_occurrence = start_date + timedelta(days=days_to_add)
-    
-    # Tính ngày trong tuần mong muốn
-    target_date = first_occurrence + timedelta(weeks=week)
+    # Tìm ngày Thứ Hai đầu tiên của tuần chứa ngày bắt đầu học kỳ
+    # weekday() trả về 0=Mon, 1=Tue, ..., 6=Sun
+    # Lấy timedelta để lùi về thứ Hai
+    start_monday_offset = semester_start_date.weekday()
+    start_monday = semester_start_date - timedelta(days=start_monday_offset)
+
+    # Tính ngày mục tiêu: start_monday + tuần học + ngày trong tuần
+    target_date = start_monday + timedelta(weeks=week_offset, days=day_of_week_index)
     
     return target_date
+
+# semester_start = datetime(2025, 8, 27)
+
+# # Ta muốn tìm ngày Thứ Hai của tuần thứ 2 (offset = 1)
+# # Thứ Hai có index là 0
+# date_for_week_2_monday = get_date_from_week_day(week_offset=1, day_of_week_index=0, semester_start_date=semester_start)
+# print(f"Ngày Thứ Hai của tuần học thứ 2 là: {date_for_week_2_monday.strftime('%A, %Y-%m-%d')}")
+
+# # Ta muốn tìm ngày Thứ Sáu của tuần đầu tiên (offset = 0)
+# # Thứ Sáu có index là 4
+# date_for_week_1_friday = get_date_from_week_day(week_offset=0, day_of_week_index=4, semester_start_date=semester_start)
+# print(f"Ngày Thứ Sáu của tuần học thứ 1 là: {date_for_week_1_friday.strftime('%A, %Y-%m-%d')}")

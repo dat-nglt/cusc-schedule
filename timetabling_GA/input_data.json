@@ -1,12 +1,17 @@
 {
   "classes": [
     {
-      "class_id": "L1",
+      "class_id": "DH23CS",
       "size": 30,
       "program_id": "CT001"
     },
     {
-      "class_id": "L2",
+      "class_id": "DH22IT",
+      "size": 30,
+      "program_id": "CT001"
+    },
+    {
+      "class_id": "DH23AI",
       "size": 30,
       "program_id": "CT002"
     }
@@ -54,28 +59,6 @@
     }
   ],
   "lecturers": [
-    {
-      "lecturer_id": "GV001",
-      "lecturer_name": "Nguyễn Văn A",
-      "subjects": [
-        "MH001",
-        "MH002",
-        "MH003"
-      ],
-      "busy_slots": [],
-      "semester_busy_slots": []
-    },
-    {
-      "lecturer_id": "GV002",
-      "lecturer_name": "Trần Thị B",
-      "subjects": [
-        "MH004",
-        "MH005",
-        "MH006"
-      ],
-      "busy_slots": [],
-      "semester_busy_slots": []
-    },
     {
       "lecturer_id": "GV003",
       "lecturer_name": "Lê Minh C",
@@ -131,72 +114,140 @@
       ],
       "busy_slots": [],
       "semester_busy_slots": []
+    },
+    {
+      "lecturer_id": "GV001",
+      "lecturer_name": "Trần Thị B",
+      "subjects": [
+        "MH001",
+        "MH002",
+        "MH009",
+        "MH003",
+        "MH004",
+        "MH005",
+        "MH006",
+        "MH007",
+        "MH008",
+        "MH010"
+      ],
+      "busy_slots": [
+        {
+          "day": "Tue",
+          "slot_id": "S2"
+        },
+        {
+          "day": "Wed",
+          "slot_id": "C1"
+        }
+      ],
+      "semester_busy_slots": []
+    },
+    {
+      "lecturer_id": "GV002",
+      "lecturer_name": "Nguyễn Văn A",
+      "subjects": [
+        "MH011",
+        "MH012",
+        "MH014",
+        "MH013",
+        "MH015"
+      ],
+      "busy_slots": [
+        {
+          "day": "Tue",
+          "slot_id": "C2"
+        },
+        {
+          "day": "Wed",
+          "slot_id": "T1"
+        },
+        {
+          "day": "Fri",
+          "slot_id": "S2"
+        }
+      ],
+      "semester_busy_slots": []
     }
   ],
   "programs": [
     {
       "program_id": "CT001",
-      "program_name": "Chương trình Đào tạo CNTT13321",
+      "program_name": "Chương trình Đào tạo CNTT",
       "duration": 15,
       "semesters": [
         {
           "semester_id": "PS_CT001_HK1",
           "subject_ids": [
             "MH001",
-            "MH002"
+            "MH002",
+            "MH009"
           ]
         },
         {
           "semester_id": "PS_CT001_HK2",
           "subject_ids": [
-            "MH009",
-            "MH006"
+            "MH003",
+            "MH004",
+            "MH005"
           ]
         },
         {
           "semester_id": "PS_CT001_HK3",
           "subject_ids": [
-            "MH003",
-            "MH004"
+            "MH006",
+            "MH012",
+            "MH011"
           ]
         },
         {
           "semester_id": "PS_CT001_HK4",
           "subject_ids": [
-            "MH005",
-            "MH007"
+            "MH007",
+            "MH008",
+            "MH013",
+            "MH014"
           ]
         }
       ]
     },
     {
       "program_id": "CT002",
-      "program_name": "Chương trình Đào tạo CNTT13321",
+      "program_name": "Chương trình Đào tạo2",
       "duration": 15,
       "semesters": [
         {
           "semester_id": "PS_CT002_HK1",
           "subject_ids": [
             "MH001",
-            "MH002"
+            "MH002",
+            "MH009",
+            "MH016",
+            "MH015"
           ]
         },
         {
           "semester_id": "PS_CT002_HK2",
           "subject_ids": [
-            "MH009"
+            "MH003",
+            "MH004",
+            "MH010",
+            "MH011"
           ]
         },
         {
           "semester_id": "PS_CT002_HK3",
           "subject_ids": [
-            "MH003"
+            "MH008",
+            "MH007",
+            "MH006"
           ]
         },
         {
           "semester_id": "PS_CT002_HK4",
           "subject_ids": [
-            "MH004"
+            "MH005",
+            "MH013",
+            "MH012"
           ]
         }
       ]
@@ -207,7 +258,8 @@
       "semester_id": "PS_CT001_HK1",
       "subject_ids": [
         "MH001",
-        "MH002"
+        "MH002",
+        "MH009"
       ],
       "start_date": "2025-08-15",
       "end_date": "2025-11-28",
@@ -216,8 +268,9 @@
     {
       "semester_id": "PS_CT001_HK2",
       "subject_ids": [
-        "MH009",
-        "MH006"
+        "MH003",
+        "MH004",
+        "MH005"
       ],
       "start_date": "2025-12-05",
       "end_date": "2026-03-20",
@@ -226,8 +279,9 @@
     {
       "semester_id": "PS_CT001_HK3",
       "subject_ids": [
-        "MH003",
-        "MH004"
+        "MH006",
+        "MH012",
+        "MH011"
       ],
       "start_date": "2026-03-27",
       "end_date": "2026-07-10",
@@ -236,8 +290,10 @@
     {
       "semester_id": "PS_CT001_HK4",
       "subject_ids": [
-        "MH005",
-        "MH007"
+        "MH007",
+        "MH008",
+        "MH013",
+        "MH014"
       ],
       "start_date": "2026-07-17",
       "end_date": "2026-10-30",
@@ -247,7 +303,10 @@
       "semester_id": "PS_CT002_HK1",
       "subject_ids": [
         "MH001",
-        "MH002"
+        "MH002",
+        "MH009",
+        "MH016",
+        "MH015"
       ],
       "start_date": "2025-08-15",
       "end_date": "2025-11-28",
@@ -256,7 +315,10 @@
     {
       "semester_id": "PS_CT002_HK2",
       "subject_ids": [
-        "MH009"
+        "MH003",
+        "MH004",
+        "MH010",
+        "MH011"
       ],
       "start_date": "2025-12-05",
       "end_date": "2026-03-20",
@@ -265,7 +327,9 @@
     {
       "semester_id": "PS_CT002_HK3",
       "subject_ids": [
-        "MH003"
+        "MH008",
+        "MH007",
+        "MH006"
       ],
       "start_date": "2026-03-27",
       "end_date": "2026-07-10",
@@ -274,7 +338,9 @@
     {
       "semester_id": "PS_CT002_HK4",
       "subject_ids": [
-        "MH004"
+        "MH005",
+        "MH013",
+        "MH012"
       ],
       "start_date": "2026-07-17",
       "end_date": "2026-10-30",
@@ -301,12 +367,6 @@
       "practice_hours": 15
     },
     {
-      "subject_id": "MH006",
-      "name": "Powerful and Rich Applications with Microsoft Azure",
-      "theory_hours": 45,
-      "practice_hours": 15
-    },
-    {
       "subject_id": "MH003",
       "name": "Data Processing with XML and JSON",
       "theory_hours": 30,
@@ -325,8 +385,62 @@
       "practice_hours": 15
     },
     {
+      "subject_id": "MH006",
+      "name": "Powerful and Rich Applications with Microsoft Azure",
+      "theory_hours": 45,
+      "practice_hours": 15
+    },
+    {
+      "subject_id": "MH012",
+      "name": "Tạo giao diện tương tác cao cho người dùng",
+      "theory_hours": 30,
+      "practice_hours": 5
+    },
+    {
+      "subject_id": "MH011",
+      "name": "Tạo hoạt hình 2D cho Web",
+      "theory_hours": 30,
+      "practice_hours": 10
+    },
+    {
       "subject_id": "MH007",
       "name": "Deployment System and Containerize with Docker and Kubernetes",
+      "theory_hours": 30,
+      "practice_hours": 10
+    },
+    {
+      "subject_id": "MH008",
+      "name": "Project-Robust Java Applications for Enterprises",
+      "theory_hours": 30,
+      "practice_hours": 10
+    },
+    {
+      "subject_id": "MH013",
+      "name": "Tạo chất liệu (texture) cho mô hình 3D trong game 3D",
+      "theory_hours": 30,
+      "practice_hours": 10
+    },
+    {
+      "subject_id": "MH014",
+      "name": "Thiết kế màn chơi với Unity 3D",
+      "theory_hours": 30,
+      "practice_hours": 10
+    },
+    {
+      "subject_id": "MH016",
+      "name": "Sử dụng Black Magic Fusion biên tập hình ảnh nâng cao",
+      "theory_hours": 30,
+      "practice_hours": 10
+    },
+    {
+      "subject_id": "MH015",
+      "name": "Tạo chuyển động cho nhân vật",
+      "theory_hours": 30,
+      "practice_hours": 10
+    },
+    {
+      "subject_id": "MH010",
+      "name": "Nhiếp ảnh kỹ thuật số và xử lý hậu kỳ với Lightroom",
       "theory_hours": 30,
       "practice_hours": 10
     }
