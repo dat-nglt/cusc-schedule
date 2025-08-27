@@ -250,6 +250,15 @@ const routes = [
     layout: LecturerLayout,
   },
   {
+    path: "/lecturer/listRequest",
+    component: "ListScheduleChangeRequest",
+    exact: true,
+    title: "Danh sách yêu cầu thay đổi lịch",
+    isPrivate: true, // Riêng tư
+    roles: ["lecturer"], // Chỉ giảng viên
+    layout: LecturerLayout,
+  },
+  {
     path: "/lecturer/courses",
     component: "Course", // Có thể là Course riêng cho giảng viên, hoặc dùng chung component Course nhưng với data lọc
     exact: true,

@@ -45,3 +45,16 @@ export const rejectScheduleChangeRequestAPI = async (requestId, rejectionReason)
         throw error;
     }
 };
+
+
+export const getScheduleChangeRequestByLecturerAPI = async (lecturerId) => {
+    approveScheduleChangeRequestAPI
+    try {
+        const response = await axiosInstance.get(`/api/scheduleChangeRequests/lecturer/${lecturerId}`);
+        return response.data;
+    }
+    catch (error) {
+        console.error("Error fetching schedule change requests by lecturer:", error);
+        throw error;
+    }
+};

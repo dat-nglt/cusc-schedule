@@ -115,7 +115,7 @@ const FormChangeScheduleRequest = ({ open, onClose, scheduleItem }) => {
     useEffect(() => {
         if (scheduleItem) {
             setFormData({
-                class_schedule_id: scheduleItem.id || '',
+                class_schedule_id: scheduleItem.class_schedule_id || '',
                 lecturer_id: scheduleItem.lecturer_id || '',
                 requested_date: null,
                 requested_room_id: '',
@@ -170,7 +170,8 @@ const FormChangeScheduleRequest = ({ open, onClose, scheduleItem }) => {
                                             Môn học
                                         </Typography>
                                         <Chip
-                                            label={scheduleItem.subject}
+                                            label={scheduleItem.subject.subject_name}
+                                            variant="outlined"
                                             color="primary"
                                             sx={{ width: 'fit-content' }}
                                         />
@@ -181,7 +182,17 @@ const FormChangeScheduleRequest = ({ open, onClose, scheduleItem }) => {
                                         <Typography variant="body2" color="textSecondary" sx={{ fontWeight: '500', mb: 0.5 }}>
                                             Giảng viên
                                         </Typography>
-                                        <Typography variant="body1" fontWeight="500">{scheduleItem.lecturer}</Typography>
+                                        <Typography variant="body1" fontWeight="500">{scheduleItem.lecturer.name}</Typography>
+                                    </Box>
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <Box sx={{ display: 'flex', flexDirection: 'column', mb: 2 }}>
+                                        <Typography variant="body2" color="textSecondary" sx={{ fontWeight: '500', mb: 0.5 }}>
+                                            Ngày
+                                        </Typography>
+                                        <Typography variant="body1" fontWeight="500">
+                                            {scheduleItem.date ? new Date(scheduleItem.date).toLocaleDateString('vi-VN') : ''}
+                                        </Typography>
                                     </Box>
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
@@ -189,7 +200,7 @@ const FormChangeScheduleRequest = ({ open, onClose, scheduleItem }) => {
                                         <Typography variant="body2" color="textSecondary" sx={{ fontWeight: '500', mb: 0.5 }}>
                                             Phòng hiện tại
                                         </Typography>
-                                        <Typography variant="body1" fontWeight="500">{scheduleItem.room}</Typography>
+                                        <Typography variant="body1" fontWeight="500">{scheduleItem.room_id}</Typography>
                                     </Box>
                                 </Grid>
                                 <Grid item xs={12} sm={6}>

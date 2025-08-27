@@ -1257,7 +1257,7 @@ const ScheduleManagement = () => {
                                             <Button
                                                 variant="contained"
                                                 startIcon={<AddIcon />}
-                                                onClick={handleCreateNewSchedule}
+                                                onClick={setCreateScheduleModalOpen}
                                                 sx={{ borderRadius: 4 }}
                                             >
                                                 Tạo thời khóa biểu mới
