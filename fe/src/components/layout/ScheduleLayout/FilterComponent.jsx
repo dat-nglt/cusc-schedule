@@ -14,76 +14,39 @@ import {
 import FilterIcon from '@mui/icons-material/FilterList';
 import { useTheme } from '@mui/material/styles';
 import { ScheduleContext } from '../../../contexts/ScheduleContext';
-import { getClassesAPI } from '../../../api/classAPI';
-import { getAllLecturersAPI } from '../../../api/lecturerAPI';
-import { getAllRoomAPI } from '../../../api/roomAPI';
+import { getScheduledEntitiesAPI } from '../../../api/scheduleAPI';
 
 const FilterComponent = () => {
     const { setFilterOption, setFilterValue } = useContext(ScheduleContext);
     const theme = useTheme();
     const [filterType, setFilterType] = useState('classes');
 
-    // Dữ liệu mẫu - trong thực tế sẽ lấy từ API ho props
     const [lecturers, setLecturers] = useState([]);
     const [classes, setClasses] = useState([]);
     const [rooms, setRooms] = useState([]);
     const [selectedItem, setSelectedItem] = useState('');
 
-    const fetchLecturers = async () => {
+    // Hàm fetch mới chỉ gọi một API duy nhất
+    const fetchScheduledEntities = async () => {
         try {
-            const response = await getAllLecturersAPI();
-            if (response.success === true) {
-                setLecturers(
-                    response.data.lecturers.map(lecturer => ({
-                        id: lecturer.lecturer_id,
-                        name: lecturer.name
-                    }))
-                );
-            }
-
-        } catch (error) {
-            console.error('Lỗi khi lấy danh sách giảng viên:', error);
-        }
-    }
-    const fetchClasses = async () => {
-        try {
-            const response = await getClassesAPI();
-            if (response.success === true) {
-                setClasses(
-                    response.data.map(classes => ({
-                        id: classes.class_id,
-                        name: classes.class_name
-                    }))
-                );
-            }
-
-        } catch (error) {
-            console.error('Lỗi khi lấy danh sách lớp:', error);
-        }
-    }
-
-    const fetchRooms = async () => {
-        try {
-            const response = await getAllRoomAPI();
-            if (response.success === true) {
-                // Map dữ liệu phòng học về dạng { id, name }
-                setRooms(
-                    response.data.map(room => ({
-                        id: room.room_id,
-                        name: room.room_name
-                    }))
-                );
+            const response = await getScheduledEntitiesAPI();
+            if (response.success) {
+                const { class_ids, room_ids, lecturer_ids } = response.data;
+                setClasses(class_ids.map(id => ({ id: id, name: id })));
+                setRooms(room_ids.map(id => ({ id: id, name: id })));
+                setLecturers(lecturer_ids.map(id => ({ id: id, name: id })));
             }
         } catch (error) {
-            console.error('Lỗi khi lấy danh sách lớp:', error);
+            console.error('Lỗi khi lấy dữ liệu lịch trình:', error);
         }
-    }
-    // Giả lập dữ liệu (trong thực tế sẽ fetch từ API)
+    };
+
+    // Chỉ gọi một hàm duy nhất trong useEffect
     useEffect(() => {
-        fetchLecturers();
-        fetchClasses();
-        fetchRooms();
+        fetchScheduledEntities();
     }, []);
+
+    // Logic để set giá trị mặc định sau khi classes được load
     useEffect(() => {
         if (classes.length > 0) {
             setSelectedItem(classes[0].id);

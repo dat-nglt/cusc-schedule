@@ -1,5 +1,6 @@
 from collections import defaultdict
 from datetime import datetime, timedelta
+import pprint
 import random
 
 from utils.find_new_valid_slot import find_new_valid_slot
@@ -25,15 +26,13 @@ def generate_semester_schedule(best_weekly_chromosome, processed_data):
         3: "Thu", 4: "Fri", 5: "Sat", 6: "Sun"
     }
 
-    # =========================
-    # GIAI ĐOẠN 1: Tạo danh sách tiết học cho cả học kỳ
-    # =========================
     all_semester_lessons_to_distribute = []
 
     for gene in best_weekly_chromosome.genes:
         cls_id = gene['class_id']
         subject_id = gene['subject_id']
         lesson_type = gene['lesson_type']
+        print(f"______________Đây là gene {gene}")
 
         cls_info = processed_data.class_map.get(cls_id)
         if not cls_info:

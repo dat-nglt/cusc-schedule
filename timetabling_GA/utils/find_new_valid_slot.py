@@ -14,6 +14,9 @@ def find_new_valid_slot(lesson, processed_data, occupied_slots, program_duration
 
     print(f"\n[BẮT ĐẦU] Tìm vị trí mới cho buổi học lớp {lesson['class_id']}, môn {lesson.get('subject_id')}")
 
+    # DEBUG: In thông tin lesson đầu vào
+    print(f"  - Lesson input: {lesson}")
+
     candidate_slots = []
     class_id = lesson['class_id']
     subject_id = lesson.get('subject_id') or lesson.get('subject')
@@ -28,8 +31,10 @@ def find_new_valid_slot(lesson, processed_data, occupied_slots, program_duration
         print(f"  ❌ Lỗi: Không tìm thấy thông tin môn {subject_id}.")
         return None
 
-    # Xác định loại buổi học
+    # Xác định loại buổi học - DEBUG THÊM
+    print(f"  - Thông tin môn học: practice_hours={subject_info.get('practice_hours', 0)}, theory_hours={subject_info.get('theory_hours', 0)}")
     lesson_type = 'practice' if subject_info.get('practice_hours', 0) > 0 else 'theory'
+    print(f"  - Loại buổi học xác định: {lesson_type}")
     lesson['type'] = lesson_type
 
     # Lấy giảng viên phù hợp
@@ -37,25 +42,33 @@ def find_new_valid_slot(lesson, processed_data, occupied_slots, program_duration
     if not valid_lecturers:
         print(f"  ❌ Lỗi: Không tìm thấy giảng viên dạy môn {subject_id}")
         return None
+    print(f"  - Giảng viên hợp lệ: {valid_lecturers}")
 
     # Lấy phòng phù hợp
     valid_rooms = processed_data.get_rooms_for_type_and_capacity(lesson_type, lesson.get('size', 30))
     if not valid_rooms:
         print("  ❌ Lỗi: Không tìm thấy phòng học phù hợp.")
         return None
+    print(f"  - Phòng hợp lệ: {valid_rooms}")
 
-    # Tuần bắt đầu tìm
+    # Tuần bắt đầu tìm - DEBUG THÊM
     original_date = datetime.strptime(lesson['date'], '%Y-%m-%d')
     start_week = int((original_date - semester_start_date).days / 7)
+    print(f"  - Ngày gốc: {original_date}, Tuần bắt đầu: {start_week}")
 
     # Tham số tìm kiếm
     search_limit = 1000
     max_weeks_to_search = 3
     days_of_week_map = {day: i for i, day in enumerate(processed_data.data.get('days_of_week', []))}
 
+    # DEBUG: Kiểm tra mapping
+    print(f"  - days_of_week_map: {days_of_week_map}")
+    print(f"  - Ngày bắt đầu học kỳ: {semester_start_date}")
+
     # Chuẩn bị dữ liệu
     days_to_search = processed_data.data.get('days_of_week', [])[:]
     random.shuffle(days_to_search)
+    print(f"  - Days to search: {days_to_search}")
 
     slots_to_search = [s['slot_id'] for s in processed_data.data['time_slots']]
     random.shuffle(slots_to_search)
@@ -74,6 +87,7 @@ def find_new_valid_slot(lesson, processed_data, occupied_slots, program_duration
 
         # Nếu vượt thời lượng chương trình thì dừng
         if current_week >= program_duration_weeks:
+            print(f"  - Dừng: Vượt quá thời lượng chương trình ({program_duration_weeks} tuần)")
             break
 
         print(f"  - Đang tìm trong tuần {current_week + 1}...")
@@ -85,6 +99,16 @@ def find_new_valid_slot(lesson, processed_data, occupied_slots, program_duration
                 continue
 
             date = get_date_from_week_day(current_week, day_of_week_eng, semester_start_date, days_of_week_map)
+            
+            # DEBUG QUAN TRỌNG: Kiểm tra ngày và thứ
+            actual_day_name = date.strftime('%a')
+            expected_day_short = day_of_week_eng[:3]
+            print(f"    - Tính: Tuần {current_week}, thứ '{day_of_week_eng}' -> {date} (thực tế: {actual_day_name})")
+            
+            if actual_day_name != expected_day_short:
+                print(f"    ❌ LỖI NGHIÊM TRỌNG: Không khớp! Mong đợi {expected_day_short}, thực tế {actual_day_name}")
+                # Có thể cần sửa hàm get_date_from_week_day hoặc logic mapping
+
             date_str = date.strftime('%Y-%m-%d')
 
             for slot_id in slots_to_search:

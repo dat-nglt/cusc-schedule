@@ -4,6 +4,24 @@ import axiosInstance from "./axiosConfig";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
+export const getScheduledEntitiesAPI = async () => {
+  try {
+    const response = await axiosInstance.get(
+      "/api/schedule/get-data-filter-schedule"
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error in getDataForFilterSchedule:", error);
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw (
+      error.response?.data ||
+      new Error("An unknown error occurred while fetching input data.")
+    );
+  }
+};
+
 export const getInputDataForAlgorithmAPI = async () => {
   try {
     const response = await axiosInstance.get("/api/schedule/get-input-data");
@@ -61,9 +79,7 @@ export const getDownloadUrl = (filename) => {
 
 export const saveGeneratedScheduleAPI = async () => {
   try {
-    const response = await axiosInstance.post(
-      "/api/schedule/process-results"
-    );
+    const response = await axiosInstance.post("/api/schedule/process-results");
     return response.data;
   } catch (error) {
     console.error("Error in saveGeneratedSchedule API call:", error);

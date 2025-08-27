@@ -1,103 +1,85 @@
-import React from 'react';
+// components/Header.js
+import React, { useState } from 'react';
 import {
     AppBar,
     Toolbar,
     Typography,
-    Button,
     Box,
     IconButton,
     Avatar,
-    Menu,
-    MenuItem,
-    Divider,
-    ListItemIcon,
-    Badge,
-    Switch,
-    Chip
+    useMediaQuery,
+    Badge
 } from '@mui/material';
 import {
-    Add as AddIcon,
-    FileDownload as ExportIcon,
-    Notifications as NotificationsIcon,
     AccountCircle as AccountIcon,
-    Settings as SettingsIcon,
-    Logout as LogoutIcon,
     Menu as MenuIcon,
-    Warning,
-    LightMode,
-    DarkMode,
-    WarningAmber,
-    Construction,
-    PersonAdd,
-    ArrowForward
+    Notifications as NotificationsIcon
 } from '@mui/icons-material';
 import { alpha, styled } from '@mui/material/styles';
 import { useTheme } from '@mui/material/styles';
-import useMediaQuery from '@mui/material/useMediaQuery';
 import { Link } from 'react-router-dom';
 import { useThemeContext } from '../../contexts/ThemeContext';
 import { useAuth } from '../../contexts/AuthContext';
 import UserMenu from './UserMenu';
+import NotificationComponent from './NotificationComponent';
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
-    backgroundColor: theme.palette.background.default,
+    backgroundColor: theme.palette.mode === 'dark'
+        ? alpha(theme.palette.background.default, 0.95)
+        : alpha(theme.palette.background.paper, 0.98),
     color: theme.palette.text.primary,
-    boxShadow: 'none',
-    borderBottom: `1px solid ${theme.palette.divider}`,
-    backdropFilter: 'blur(8px)',
-    backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9))',
+    boxShadow: '0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.08)',
+    borderBottom: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+    backdropFilter: 'blur(12px)',
 }));
 
 const Header = ({ onMenuToggle }) => {
     const theme = useTheme();
-    const { logout, userRole, userData } = useAuth();
+    const { userRole, userData, logout } = useAuth();
+    const [userMenuAnchor, setUserMenuAnchor] = useState(null);
+    const [notificationsAnchor, setNotificationsAnchor] = useState(null);
+    const userMenuOpen = Boolean(userMenuAnchor);
+    const notificationsOpen = Boolean(notificationsAnchor);
     const { isDarkMode, toggleTheme } = useThemeContext();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
-    // State for dropdown menus
-    const [anchorEl, setAnchorEl] = React.useState(null);
-    const [notificationsAnchorEl, setNotificationsAnchorEl] = React.useState(null);
-    const open = Boolean(anchorEl);
-    const notificationsOpen = Boolean(notificationsAnchorEl);
+    // Giả lập dữ liệu thông báo
+    const [unreadNotifications] = useState(3);
 
-    const handleClick = (event) => {
-        setAnchorEl(event.currentTarget);
+    const handleUserMenuOpen = (event) => {
+        setUserMenuAnchor(event.currentTarget);
     };
 
-    const handleNotificationsClick = (event) => {
-        setNotificationsAnchorEl(event.currentTarget);
+    const handleUserMenuClose = () => {
+        setUserMenuAnchor(null);
     };
 
-    const handleClose = () => {
-        setAnchorEl(null);
-        setNotificationsAnchorEl(null);
+    const handleNotificationsOpen = (event) => {
+        setNotificationsAnchor(event.currentTarget);
+    };
+
+    const handleNotificationsClose = () => {
+        setNotificationsAnchor(null);
     };
 
     const handleLogout = async () => {
         try {
-            logout()
+            await logout();
+            handleUserMenuClose();
         } catch (error) {
             console.error("Lỗi khi đăng xuất:", error);
         }
-    }
+    };
 
     return (
-        <StyledAppBar position="fixed" sx={{ zIndex: 10000 }}>
+        <StyledAppBar position="fixed" sx={{ zIndex: theme.zIndex.drawer + 1 }}>
             <Toolbar sx={{
                 justifyContent: 'space-between',
                 padding: theme.spacing(0, 2),
-                backgroundColor: theme.palette.primary.main,
-                minHeight: '64px',
+                minHeight: '70px',
             }}>
                 {/* Left section - Logo and Menu Button */}
-                <Box
-                    component={Link}
-                    to="/dashboard"
-                    sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: theme.spacing(2)
-                    }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: theme.spacing(2) }}>
                     {isMobile && (
                         <IconButton
                             color="inherit"
@@ -110,278 +92,116 @@ const Header = ({ onMenuToggle }) => {
                         </IconButton>
                     )}
 
-                    <Box sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        cursor: 'pointer'
-                    }}>
+                    <Box
+                        component={Link}
+                        to="/dashboard"
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: theme.spacing(1.5),
+                            textDecoration: 'none',
+                            color: 'inherit'
+                        }}
+                    >
                         <Avatar
                             src="https://arena.cusc.vn/logo_cusc.png"
                             alt="Logo"
                             sx={{
-                                borderRadius: '0',
-                                width: 'fit-content',
-                                height: 36,
-                                mr: 1,
-                                backgroundColor: theme.palette.primary.main
+                                borderRadius: '8px',
+                                width: 'auto',
+                                height: 40,
+                                backgroundColor: 'transparent'
                             }}
                         />
-                        <Typography
-                            variant="h6"
-                            component="h1"
-                            color="secondary"
-                            sx={{
-                                fontWeight: 700,
-                                display: { xs: 'none', sm: 'block' },
-                                textShadow: '2px 2px 4px rgba(0, 0, 0, 0.3)' // 👈 thêm bóng chữ
-                            }}
-                        >
-                            TRUNG TÂM CÔNG NGHỆ PHẦN MỀM - ĐẠI HỌC CẦN THƠ
-                        </Typography>
-
+                        {!isMobile && (
+                            <Box>
+                                <Typography
+                                    variant="h6"
+                                    component="h1"
+                                    sx={{
+                                        fontWeight: 700,
+                                        fontSize: '1.1rem',
+                                        background: theme.palette.mode === 'dark'
+                                            ? 'linear-gradient(45deg, #90caf9, #42a5f5)'
+                                            : 'linear-gradient(45deg, #1976d2, #0d47a1)',
+                                        backgroundClip: 'text',
+                                        textFillColor: 'transparent',
+                                        WebkitBackgroundClip: 'text',
+                                        WebkitTextFillColor: 'transparent',
+                                        lineHeight: 1.2
+                                    }}
+                                >
+                                    TRUNG TÂM CÔNG NGHỆ PHẦN MỀM
+                                </Typography>
+                                {/* <Typography
+                                    variant="caption"
+                                    sx={{
+                                        color: 'text.secondary',
+                                        fontWeight: 500
+                                    }}
+                                >
+                                    Hệ thống quản lý đào tạo
+                                </Typography> */}
+                            </Box>
+                        )}
                     </Box>
                 </Box>
-
-
 
                 {/* Right section - Actions and User Menu */}
                 <Box sx={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: theme.spacing(1)
+                    gap: theme.spacing(0.5)
                 }}>
+                    <NotificationComponent />
+                    {/* User Avatar */}
                     <IconButton
-                        size="large"
-                        aria-label="show notifications"
-                        color="inherit"
-                        onClick={handleNotificationsClick}
-                        sx={{ ml: 1 }}
-                    >
-                        <Badge badgeContent={3} color="error">
-                            <NotificationsIcon />
-                        </Badge>
-                    </IconButton>
-
-                    <IconButton
-                        onClick={handleClick}
-                        size="small"
-                        sx={{ ml: 1 }}
-                        aria-controls={open ? 'account-menu' : undefined}
+                        onClick={handleUserMenuOpen}
+                        size="medium"
+                        sx={{
+                            ml: 0.5,
+                            p: 0.5,
+                            border: `2px solid ${userMenuOpen ? theme.palette.primary.main : 'transparent'}`,
+                            transition: 'all 0.2s ease',
+                            '&:hover': {
+                                borderColor: theme.palette.primary.main,
+                                backgroundColor: alpha(theme.palette.primary.main, 0.1)
+                            }
+                        }}
+                        aria-controls={userMenuOpen ? 'user-menu' : undefined}
                         aria-haspopup="true"
-                        aria-expanded={open ? 'true' : undefined}
+                        aria-expanded={userMenuOpen ? 'true' : undefined}
                     >
                         <Avatar
                             sx={{
-                                width: 32,
-                                height: 32,
-                                bgcolor: theme.palette.primary.main
+                                width: 38,
+                                height: 38,
+                                bgcolor: theme.palette.primary.main,
+                                fontSize: '1rem',
+                                fontWeight: 'bold',
+                                boxShadow: theme.shadows[2]
                             }}
+                            src={userData?.avatar}
                         >
-                            <AccountIcon />
+                            {userData?.avatar ? null : (userData?.name?.[0]?.toUpperCase() || <AccountIcon />)}
                         </Avatar>
                     </IconButton>
                 </Box>
 
-                {/* Notifications Menu */}
-                <Menu
-                    anchorEl={notificationsAnchorEl}
-                    open={notificationsOpen}
-                    onClose={handleClose}
-                    onClick={handleClose}
-                    PaperProps={{
-                        elevation: 8,
-                        sx: {
-                            minWidth: 360,
-                            maxHeight: 480,
-                            overflow: 'hidden',
-                            mt: 1.5,
-                            py: 0.5,
-                            borderRadius: 2,
-                            border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
-                            boxShadow: theme.shadows[16],
-                            '& .MuiMenuItem-root': {
-                                py: 1.5,
-                                px: 2,
-                                mx: 1,
-                                my: 0.25,
-                                borderRadius: 1,
-                                transition: 'all 0.2s ease',
-                                '&:hover': {
-                                    backgroundColor: alpha(theme.palette.primary.main, 0.08),
-                                },
-                                '&.Mui-selected': {
-                                    backgroundColor: alpha(theme.palette.primary.main, 0.15),
-                                }
-                            },
-                            '& .MuiDivider-root': {
-                                my: 1,
-                                borderColor: alpha(theme.palette.divider, 0.08),
-                            },
-                        },
-                    }}
-                    transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-                    anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-                >
-                    {/* Header */}
-                    <MenuItem dense sx={{
-                        pointerEvents: 'none',
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        py: 1.5,
-                    }}>
-                        <Typography variant="subtitle1" fontWeight="bold">
-                            Thông báo
-                        </Typography>
-                        <Chip
-                            label="3 mới"
-                            size="small"
-                            color="primary"
-                            sx={{
-                                height: 20,
-                                fontSize: '0.75rem',
-                                fontWeight: 600,
-                            }}
-                        />
-                    </MenuItem>
-
-                    <Divider />
-
-                    {/* Notification Items */}
-                    <MenuItem sx={{ alignItems: 'flex-start' }}>
-                        <ListItemIcon sx={{
-                            minWidth: 40,
-                            mt: 0.5
-                        }}>
-                            <WarningAmber
-                                fontSize="small"
-                                sx={{
-                                    color: theme.palette.error.main,
-                                    backgroundColor: alpha(theme.palette.error.main, 0.1),
-                                    borderRadius: '50%',
-                                    p: 0.5,
-                                }}
-                            />
-                        </ListItemIcon>
-                        <Box>
-                            <Typography variant="subtitle2" fontWeight="medium">
-                                Xung đột lịch dạy
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
-                                Môn Toán A1 trùng lịch với Lý B2
-                            </Typography>
-                            <Typography variant="caption" sx={{
-                                display: 'block',
-                                mt: 0.5,
-                                color: theme.palette.primary.main,
-                            }}>
-                                10 phút trước
-                            </Typography>
-                        </Box>
-                    </MenuItem>
-
-                    <MenuItem sx={{ alignItems: 'flex-start' }}>
-                        <ListItemIcon sx={{
-                            minWidth: 40,
-                            mt: 0.5
-                        }}>
-                            <Construction
-                                fontSize="small"
-                                sx={{
-                                    color: theme.palette.warning.main,
-                                    backgroundColor: alpha(theme.palette.warning.main, 0.1),
-                                    borderRadius: '50%',
-                                    p: 0.5,
-                                }}
-                            />
-                        </ListItemIcon>
-                        <Box>
-                            <Typography variant="subtitle2" fontWeight="medium">
-                                Bảo trì phòng học
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
-                                Phòng 301 sẽ đóng cửa để bảo trì từ 15/10
-                            </Typography>
-                            <Typography variant="caption" sx={{
-                                display: 'block',
-                                mt: 0.5,
-                                color: theme.palette.primary.main,
-                            }}>
-                                2 giờ trước
-                            </Typography>
-                        </Box>
-                    </MenuItem>
-
-                    <MenuItem sx={{ alignItems: 'flex-start' }}>
-                        <ListItemIcon sx={{
-                            minWidth: 40,
-                            mt: 0.5
-                        }}>
-                            <PersonAdd
-                                fontSize="small"
-                                sx={{
-                                    color: theme.palette.info.main,
-                                    backgroundColor: alpha(theme.palette.info.main, 0.1),
-                                    borderRadius: '50%',
-                                    p: 0.5,
-                                }}
-                            />
-                        </ListItemIcon>
-                        <Box>
-                            <Typography variant="subtitle2" fontWeight="medium">
-                                Giảng viên mới
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
-                                TS. Nguyễn Văn A đã đăng ký tài khoản
-                            </Typography>
-                            <Typography variant="caption" sx={{
-                                display: 'block',
-                                mt: 0.5,
-                                color: theme.palette.primary.main,
-                            }}>
-                                Hôm qua
-                            </Typography>
-                        </Box>
-                    </MenuItem>
-
-                    <Divider />
-
-                    {/* Footer */}
-                    <MenuItem sx={{
-                        justifyContent: 'center',
-                        py: 1,
-                        '&:hover': {
-                            backgroundColor: 'transparent',
-                        }
-                    }}>
-                        <Button
-                            variant="text"
-                            size="small"
-                            color="primary"
-                            endIcon={<ArrowForward fontSize="small" />}
-                            sx={{
-                                fontSize: '0.75rem',
-                                fontWeight: 500,
-                                textTransform: 'none',
-                            }}
-                        >
-                            Xem tất cả thông báo
-                        </Button>
-                    </MenuItem>
-                </Menu>
-
                 {/* User Menu */}
                 <UserMenu
-                    anchorEl={anchorEl}
-                    open={open}
-                    handleClose={handleClose}
+                    anchorEl={userMenuAnchor}
+                    open={userMenuOpen}
+                    handleClose={handleUserMenuClose}
                     handleLogout={handleLogout}
                     isDarkMode={isDarkMode}
                     toggleTheme={toggleTheme}
                     userRole={userRole}
-                    // userEmail={userEmail}
-                    userEmail={userData.email} // Thay thế bằng email thực tế nếu có
+                    userEmail={userData?.email || ''}
+                    userName={userData?.name || ''}
+                    unreadNotifications={unreadNotifications}
                 />
+
             </Toolbar>
         </StyledAppBar>
     );

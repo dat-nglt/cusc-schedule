@@ -54,7 +54,15 @@ const routes = [
     roles: ["admin", "lecturer", "student"], // Mọi người dùng đăng nhập đều có hồ sơ
     layout: AdminLayout, // Có thể cần thay đổi layout này tùy thuộc vào người dùng
   },
-
+  {
+    path: "/notifications",
+    component: "NotificationPage",
+    exact: true,
+    title: "Thông báo hệ thống",
+    isPrivate: true, // Riêng tư
+    roles: ["admin", "lecturer", "student"], // Mọi người dùng đăng nhập đều có hồ sơ
+    layout: AdminLayout, // Có thể cần thay đổi layout này tùy thuộc vào người dùng
+  },
   // --- STUDENT ROUTES ---
   {
     path: "/student",

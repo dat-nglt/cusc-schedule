@@ -27,7 +27,6 @@ const navItems = [
     { text: 'Sinh Viên', icon: <People />, path: '/student' },
     { text: 'Kết Quả', icon: <Assessment />, path: '/student/results' },
     { text: 'Chương Trình ĐT', icon: <School />, path: '/chuong-trinh' },
-    { text: 'Đăng Ký Học Phần', icon: <HowToReg />, path: '/dang-ky' },
     { text: 'Lịch Học', icon: <Schedule />, path: '/student/schedules' },
     { text: 'Thống Kê', icon: <BarChartOutlined />, path: '/thong-ke' },
     { text: 'Cài Đặt', icon: <Settings />, path: '/cai-dat' }

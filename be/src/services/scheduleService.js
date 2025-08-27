@@ -7,11 +7,10 @@ import { fileURLToPath } from "url";
 import logger from "../utils/logger.js";
 import models from "../models/index.js";
 
-
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename)
+const __dirname = path.dirname(__filename);
 
-const BACKEND_DIR = path.join(__dirname, '../..');;
+const BACKEND_DIR = path.join(__dirname, "../..");
 
 // Cấu hình đường dẫn và file
 const CONFIG = {
@@ -73,7 +72,7 @@ const {
   Classes,
   TimeSlot,
   ClassSchedule, // Import the ClassSchedule model
-  sequelize
+  sequelize,
 } = models;
 
 export const getInputDataForAlgorithmService = async () => {
@@ -186,7 +185,10 @@ export const getInputDataForAlgorithmService = async () => {
       time_slots: formattedTimeSlots,
     };
 
-    console.log("🎯 [Service] Dữ liệu đầu vào cuối cùng:", JSON.stringify(result, null, 2));
+    console.log(
+      "🎯 [Service] Dữ liệu đầu vào cuối cùng:",
+      JSON.stringify(result, null, 2)
+    );
     return result;
   } catch (error) {
     console.error("❌ [Service] Lỗi khi lấy dữ liệu đầu vào:", error);
@@ -319,11 +321,14 @@ export const processAndSaveResults = async (io, resolve, reject) => {
     const excelFiles = files.filter((file) => file.endsWith(".xlsx"));
 
     // Ưu tiên file combined_timetables.json nếu có
-    const targetJsonFile = jsonFiles.find(f => f === "combined_timetables.json") || jsonFiles[0];
+    const targetJsonFile =
+      jsonFiles.find((f) => f === "combined_timetables.json") || jsonFiles[0];
 
     if (targetJsonFile) {
       const jsonFilePath = path.join(getResultsDir(), targetJsonFile);
-      logger.info(`Phát hiện file JSON. Bắt đầu lưu vào DB từ: ${jsonFilePath}`);
+      logger.info(
+        `Phát hiện file JSON. Bắt đầu lưu vào DB từ: ${jsonFilePath}`
+      );
 
       // Bắt đầu logic của saveClassSchedulesToDb
       const rawData = fs.readFileSync(jsonFilePath, "utf-8");
@@ -337,14 +342,18 @@ export const processAndSaveResults = async (io, resolve, reject) => {
       }
 
       let totalInserted = 0;
-      const semesterIdsInFile = data.semesters.map(s => s.semester_id).filter(id => id);
+      const semesterIdsInFile = data.semesters
+        .map((s) => s.semester_id)
+        .filter((id) => id);
 
       if (semesterIdsInFile.length > 0) {
         const deletedRows = await ClassSchedule.destroy({
           where: { semester_id: semesterIdsInFile },
-          transaction: t
+          transaction: t,
         });
-        logger.info(`Đã xóa ${deletedRows} lịch học cũ của ${semesterIdsInFile.length} học kỳ.`);
+        logger.info(
+          `Đã xóa ${deletedRows} lịch học cũ của ${semesterIdsInFile.length} học kỳ.`
+        );
       }
 
       const allLessonsToInsert = [];
@@ -355,7 +364,7 @@ export const processAndSaveResults = async (io, resolve, reject) => {
         if (semester.classes && Array.isArray(semester.classes)) {
           for (const classObj of semester.classes) {
             if (classObj.schedule && Array.isArray(classObj.schedule)) {
-              classObj.schedule.forEach(lesson => {
+              classObj.schedule.forEach((lesson) => {
                 if (lesson.date) {
                   allLessonsToInsert.push({
                     semester_id: lesson.semester_id || semesterId,
@@ -371,7 +380,7 @@ export const processAndSaveResults = async (io, resolve, reject) => {
                     group_id: lesson.group_id || null,
                     day: lesson.day || null,
                     week: lesson.week || null,
-                    size: lesson.size || null
+                    size: lesson.size || null,
                   });
                 }
               });
@@ -402,7 +411,6 @@ export const processAndSaveResults = async (io, resolve, reject) => {
       totalFiles: excelFiles.length + jsonFiles.length,
       timestamp: new Date().toISOString(),
     });
-
   } catch (err) {
     // Nếu có lỗi, rollback transaction
     await t.rollback();
@@ -485,7 +493,8 @@ const handlePythonOutput = (data, io) => {
           emitStatus(
             io,
             "RUNNING_GA",
-            `Đang tạo lịch cho ${parsedData.semester_info.semester_name || "học kỳ"
+            `Đang tạo lịch cho ${
+              parsedData.semester_info.semester_name || "học kỳ"
             }...`,
             scaledProgress
           );
@@ -529,7 +538,10 @@ const handlePythonOutput = (data, io) => {
 const startPythonProcess = (io) => {
   logger.info("Đang khởi chạy thuật toán Python...");
 
-  const pythonScriptPath = path.join(CONFIG.GA_ALGORITHM_DIR, CONFIG.PYTHON_SCRIPT);
+  const pythonScriptPath = path.join(
+    CONFIG.GA_ALGORITHM_DIR,
+    CONFIG.PYTHON_SCRIPT
+  );
   const inputDataDir = CONFIG.GA_ALGORITHM_DIR;
   const resultsDir = CONFIG.RESULTS_DIR; // Lấy đường dẫn kết quả đã được cấu hình
 
@@ -541,7 +553,7 @@ const startPythonProcess = (io) => {
     [
       pythonScriptPath,
       inputDataDir, // Argv[1]: Thư mục chứa file input_data.json
-      resultsDir,   // Argv[2]: Thư mục để lưu file results
+      resultsDir, // Argv[2]: Thư mục để lưu file results
     ],
     {
       cwd: CONFIG.GA_ALGORITHM_DIR, // Vẫn chạy từ thư mục của thuật toán
@@ -579,9 +591,36 @@ export const runGeneticAlgorithm = (inputData, io) => {
 
     try {
       emitStatus(io, "START", PROGRESS_STAGES.START.message, 0);
-      setTimeout(() => emitStatus(io, "LOADING_DATA", PROGRESS_STAGES.LOADING_DATA.message, 5), 500);
-      setTimeout(() => emitStatus(io, "PROCESSING_DATA", PROGRESS_STAGES.PROCESSING_DATA.message, 10), 1000);
-      setTimeout(() => emitStatus(io, "INITIALIZING_POPULATION", PROGRESS_STAGES.INITIALIZING_POPULATION.message, 15), 1500);
+      setTimeout(
+        () =>
+          emitStatus(
+            io,
+            "LOADING_DATA",
+            PROGRESS_STAGES.LOADING_DATA.message,
+            5
+          ),
+        500
+      );
+      setTimeout(
+        () =>
+          emitStatus(
+            io,
+            "PROCESSING_DATA",
+            PROGRESS_STAGES.PROCESSING_DATA.message,
+            10
+          ),
+        1000
+      );
+      setTimeout(
+        () =>
+          emitStatus(
+            io,
+            "INITIALIZING_POPULATION",
+            PROGRESS_STAGES.INITIALIZING_POPULATION.message,
+            15
+          ),
+        1500
+      );
 
       ensureResultsDirectory();
       writeInputData(inputData);
@@ -664,6 +703,44 @@ export const resetServiceState = () => {
   currentReject = null;
   currentSemesterInfo = null;
   logger.info("Service state đã được reset.");
+};
+
+export const getDistinctScheduleEntities = async () => {
+  try {
+    // Truy vấn tất cả các bản ghi từ bảng ClassSchedule
+    const schedules = await ClassSchedule.findAll({
+      attributes: ["class_id", "room_id", "lecturer_id"],
+      // Sử dụng group để lấy các giá trị duy nhất
+      group: ["class_id", "room_id", "lecturer_id"],
+    });
+
+    console.log(schedules);
+    
+
+    // Tạo Set để lưu trữ các giá trị duy nhất
+    const classIds = new Set();
+    const roomIds = new Set();
+    const lecturerIds = new Set();
+
+    // Lặp qua kết quả để thêm vào các Set
+    schedules.forEach((schedule) => {
+      if (schedule.class_id) classIds.add(schedule.class_id);
+      if (schedule.room_id) roomIds.add(schedule.room_id);
+      if (schedule.lecturer_id) lecturerIds.add(schedule.lecturer_id);
+    });
+
+    // Chuyển Set thành Array để trả về
+    return {
+      class_ids: [...classIds],
+      room_ids: [...roomIds],
+      lecturer_ids: [...lecturerIds],
+    };
+  } catch (error) {
+    console.error("Error getting distinct schedule entities:", error);
+    throw new Error(
+      "Could not retrieve distinct class, room, and lecturer IDs."
+    );
+  }
 };
 
 // Khởi tạo thư mục kết quả khi import

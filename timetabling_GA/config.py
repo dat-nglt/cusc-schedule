@@ -2,7 +2,7 @@
 
 # GA Parameters
 POPULATION_SIZE = 1500  # Kích thước quần thể
-MAX_GENERATIONS = 1
+MAX_GENERATIONS = 5
 MUTATION_RATE = 0.1
 CROSSOVER_RATE = 0.8
 ELITISM_COUNT = 10      # Giữ lại N cá thể tốt nhất cho thế hệ sau
