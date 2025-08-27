@@ -15,6 +15,7 @@ import roomRoutes from "./roomRoutes.js";
 import busySlotRoutes from "./busySlotRoute.js";
 import classScheduleRoutes from "./classScheduleRoutes.js";
 import schedulechangerequestRouter from "./schedulechangerequestRoutes.js";
+import notificationRoutes from "./notificationRoutes.js";
 const router = express.Router();
 
 const setupRoutes = (app, io) => {
@@ -33,6 +34,7 @@ const setupRoutes = (app, io) => {
   app.use("/api/rooms", roomRoutes);
   app.use("/api/classSchedules", classScheduleRoutes);
   app.use("/api/schedulechangerequests", schedulechangerequestRouter);
+  app.use("/api/notifications", notificationRoutes);
   app.use("/api/schedule", createScheduleRouter(io));
 
 };

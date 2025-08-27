@@ -119,6 +119,7 @@ export const authenticateAndAuthorize = (allowedRoles) => {
       req.userId = decoded.id;
       req.userRole = decoded.role || userInfo.role;
       req.userInfo = userInfo;
+      req.userCode = userInfo.code;
 
       // Bước 2: Phân quyền (Authorization)
       const rolesArray = Array.isArray(allowedRoles)

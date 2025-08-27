@@ -1,7 +1,7 @@
 // src/services/notificationService.js
-import db from "../models";
+import db from "../models/index.js";
 
-const { Notification, Account, UserNotification } = db;
+const { Notification, Account, UserNotification, Lecturer } = db;
 
 /**
  * Creates a new notification and associates it with the correct recipients.
@@ -9,14 +9,19 @@ const { Notification, Account, UserNotification } = db;
  * @returns {Promise<object>} The newly created notification object.
  */
 export const createNotification = async (notificationData) => {
-  const { recipients, ...data } = notificationData;
+  const { recipients, recipientId, ...data } = notificationData; // Add recipientId
 
   const transaction = await db.sequelize.transaction();
   try {
     const newNotification = await Notification.create(data, { transaction });
 
     let accountsToNotify = [];
-    if (recipients === "all") {
+    if (recipientId) {
+      const lecturer = await Lecturer.findByPk(recipientId, { include: [{ model: Account, as: 'account' }], transaction });
+      if (lecturer && lecturer.account) {
+        accountsToNotify.push(lecturer.account);
+      }
+    } else if (recipients === "all") {
       accountsToNotify = await Account.findAll({ transaction });
     } else {
       accountsToNotify = await Account.findAll({
@@ -64,7 +69,7 @@ export const getUserNotifications = async (accountId, queryOptions = {}) => {
     include: [
       {
         model: Notification,
-        as: "notification",
+        as: "notificationInfo",
         attributes: ["title", "content", "type", "recipients", "created_at"],
       },
     ],
@@ -90,3 +95,31 @@ export const markNotificationsAsRead = async (accountId, notificationIds) => {
     }
   );
 };
+
+// A simple service or utility function to send notifications
+export const sendScheduleChangeNotification = async (request, status) => {
+  const { lecturer_id, classSchedule } = request;
+  const { subject_id, date, room_id } = classSchedule;
+
+  let title = '';
+  let content = '';
+
+  if (status === 'APPROVED') {
+    title = `Yêu cầu thay đổi lịch học được phê duyệt`;
+    content = `Yêu cầu của bạn về lịch học môn ${subject_id} vào ngày ${date} đã được phê duyệt. Lịch học đã được cập nhật.`;
+  } else if (status === 'REJECTED') {
+    title = `Yêu cầu thay đổi lịch học bị từ chối`;
+    content = `Yêu cầu của bạn về lịch học môn ${subject_id} vào ngày ${date} đã bị từ chối. Vui lòng kiểm tra lại.`;
+  }
+
+  // Call the createNotification function from the notification service
+  await createNotification({
+    title,
+    content,
+    type: 'scheduled', // Urgent notifications are good for immediate changes
+    recipients: 'lecturers',
+    recipientId: lecturer_id // The specific lecturer to notify
+  });
+};
+
+

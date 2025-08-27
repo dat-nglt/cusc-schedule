@@ -25,7 +25,8 @@ import SemesterBusySlotModel from "./SemesterBusySlot.js";
 import ScheduleChangeRequestModel from "./ScheduleChangeRequest.js";
 import ProgramSemestersModel from "./ProgramSemesters.js";
 import ProgramSubjectSemestersModel from "./ProgramSubjectSemesters.js";
-
+import NotificationModel from "./Notification.js";
+import UserNotificationModel from "./UserNotification.js";
 // Khởi tạo từng model với instance của Sequelize
 const Account = AccountModel(sequelize, DataTypes);
 const ProgramSubjectSemesters = ProgramSubjectSemestersModel(sequelize, DataTypes);
@@ -48,6 +49,8 @@ const Room = RoomModel(sequelize, DataTypes);
 const BusySlot = BusySlotModel(sequelize, DataTypes);
 const SemesterBusySlot = SemesterBusySlotModel(sequelize, DataTypes);
 const ScheduleChangeRequest = ScheduleChangeRequestModel(sequelize, DataTypes);
+const Notification = NotificationModel(sequelize, DataTypes);
+const UserNotification = UserNotificationModel(sequelize, DataTypes);
 
 // Gom tất cả model vào object `models`
 const models = {
@@ -72,6 +75,8 @@ const models = {
   BusySlot,
   SemesterBusySlot,
   ScheduleChangeRequest,
+  Notification,
+  UserNotification,
   sequelize, // export luôn cả instance Sequelize
 };
 

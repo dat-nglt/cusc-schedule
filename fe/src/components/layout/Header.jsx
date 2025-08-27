@@ -200,6 +200,7 @@ const Header = ({ onMenuToggle }) => {
                     userEmail={userData?.email || ''}
                     userName={userData?.name || ''}
                     unreadNotifications={unreadNotifications}
+
                 />
 
             </Toolbar>

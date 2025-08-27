@@ -192,7 +192,13 @@ const UserMenu = ({
 
             <MenuItem
                 component={Link}
-                to="/notifications"
+                to={
+                    userRole === "lecturer"
+                        ? "/notifications/lecturer"
+                        : userRole === "student"
+                            ? "/notifications/student"
+                            : "/notifications"
+                }
                 onClick={handleClose}
                 sx={{
                     py: 1.5,

@@ -99,9 +99,10 @@ export default function CreateSchedulesAutoModal({
     };
 
     // Hàm xử lý "Chọn tất cả" cho từng loại dữ liệu
-    const handleSelectAll = (items, selectedItems, setSelectedItems, idKey) => (event) => {
+    const handleSelectAll = (items, selectedItems, setSelectedItems, idKey, filterCondition = null) => (event) => {
+        const filteredItems = filterCondition ? items.filter(filterCondition) : items;
         if (event.target.checked) {
-            setSelectedItems(items.map(item => item[idKey]));
+            setSelectedItems(filteredItems.map(item => item[idKey]));
         } else {
             setSelectedItems([]);
         }
@@ -429,9 +430,15 @@ export default function CreateSchedulesAutoModal({
                             <FormControlLabel
                                 control={
                                     <Checkbox
-                                        checked={selectedClasses.length === classes.length && classes.length > 0}
-                                        indeterminate={selectedClasses.length > 0 && selectedClasses.length < classes.length}
-                                        onChange={handleSelectAll(classes, selectedClasses, setSelectedClasses, 'class_id')}
+                                        checked={selectedClasses.length === classes.filter(cls => selectedPrograms.includes(cls.program_id)).length && classes.length > 0}
+                                        indeterminate={selectedClasses.length > 0 && selectedClasses.length < classes.filter(cls => selectedPrograms.includes(cls.program_id)).length}
+                                        onChange={handleSelectAll(
+                                            classes,
+                                            selectedClasses,
+                                            setSelectedClasses,
+                                            'class_id',
+                                            cls => selectedPrograms.includes(cls.program_id)
+                                        )}
                                     />
                                 }
                                 label="Chọn tất cả lớp"
@@ -446,7 +453,7 @@ export default function CreateSchedulesAutoModal({
                             borderColor: 'divider',
                             borderRadius: 1
                         }}>
-                            {classes.map((cls) => (
+                            {classes.filter(cls => selectedPrograms.includes(cls.program_id)).map((cls) => (
                                 <Box
                                     key={cls.class_id}
                                     sx={{

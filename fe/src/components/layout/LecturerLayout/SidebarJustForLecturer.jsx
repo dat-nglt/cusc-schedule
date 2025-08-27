@@ -25,9 +25,8 @@ import {
 const navItems = [
   { text: 'Tổng quan', icon: <Dashboard />, path: '/lecturer' },
   { text: 'Lịch dạy', icon: <CalendarToday />, path: '/lecturer/schedule' },
-  { text: 'Sinh viên', icon: <People />, path: '/lecturer/students' },
   // { text: 'Khóa học', icon: <Book />, path: '/lecturer/courses' },
-  { text: 'Lớp học phần', icon: <School />, path: '/lecturer/classsection' },
+  { text: 'Danh sách yêu cầu thay đổi', icon: <School />, path: '/lecturer/listRequest' },
   { text: 'Cài đặt', icon: <Settings />, path: '/lecturer/settings' },
 ];
 
