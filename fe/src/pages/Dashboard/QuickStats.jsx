@@ -250,7 +250,6 @@ const QuickStats = ({ stats, lecturers, classes, subjects, rooms }) => {
                                 border: `1px solid ${alpha(theme.palette.divider, 0.2)}`
                             }}>
                                 <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                                    <Avatar sx={{ mr: 2 }}>{teacher.name}</Avatar>
                                     <Box>
                                         <Typography fontWeight="600">{teacher.name}</Typography>
                                         <Typography variant="body2" color="text.secondary">
@@ -307,7 +306,7 @@ const QuickStats = ({ stats, lecturers, classes, subjects, rooms }) => {
                                     alignItems: 'center',
                                     p: 2,
                                     backgroundColor: alpha(
-                                        room.status === 'available'
+                                        room.status === 'active'
                                             ? theme.palette.success.light
                                             : theme.palette.warning.light,
                                         0.2
@@ -318,7 +317,7 @@ const QuickStats = ({ stats, lecturers, classes, subjects, rooms }) => {
                                         width: 10,
                                         height: 10,
                                         borderRadius: '50%',
-                                        backgroundColor: room.status === 'available'
+                                        backgroundColor: room.status === 'active'
                                             ? theme.palette.success.main
                                             : theme.palette.warning.main,
                                         mr: 1.5
@@ -327,14 +326,14 @@ const QuickStats = ({ stats, lecturers, classes, subjects, rooms }) => {
                                         {room.room_id}
                                     </Typography>
                                     <Chip
-                                        label={room.status === 'available' ? 'Sẵn sàng' : 'Bảo trì'}
+                                        label={room.status === 'active' ? 'Sẵn sàng' : 'Bảo trì'}
                                         size="small"
                                         sx={{
                                             ml: 'auto',
-                                            backgroundColor: room.status === 'available'
+                                            backgroundColor: room.status === 'active'
                                                 ? alpha(theme.palette.success.main, 0.1)
                                                 : alpha(theme.palette.warning.main, 0.1),
-                                            color: room.status === 'available'
+                                            color: room.status === 'active'
                                                 ? theme.palette.success.dark
                                                 : theme.palette.warning.dark
                                         }}
@@ -344,7 +343,7 @@ const QuickStats = ({ stats, lecturers, classes, subjects, rooms }) => {
                                 {/* Room matrix visualization */}
                                 <Box sx={{ p: 2 }}>
                                     <Typography variant="h6" fontWeight="600" gutterBottom>
-                                        {room.name}
+                                        {room.room_name}
                                     </Typography>
 
                                     <Box sx={{
@@ -363,13 +362,13 @@ const QuickStats = ({ stats, lecturers, classes, subjects, rooms }) => {
                                                     aspectRatio: '1/1',
                                                     borderRadius: '4px',
                                                     backgroundColor: alpha(
-                                                        room.status === 'available'
+                                                        room.status === 'active'
                                                             ? theme.palette.primary.main
                                                             : theme.palette.warning.main,
-                                                        room.status === 'available' ? 0.2 : 0.1
+                                                        room.status === 'active' ? 0.2 : 0.1
                                                     ),
                                                     border: `1px solid ${alpha(
-                                                        room.status === 'available'
+                                                        room.status === 'active'
                                                             ? theme.palette.primary.main
                                                             : theme.palette.warning.main,
                                                         0.3
@@ -426,29 +425,12 @@ const QuickStats = ({ stats, lecturers, classes, subjects, rooms }) => {
                                         <DetailItem
                                             icon={<Construction fontSize="small" />}
                                             label="Tình trạng"
-                                            value={room.status === 'available' ? 'Sẵn sàng' : 'Bảo trì'}
-                                            color={room.status === 'available' ? 'success' : 'warning'}
+                                            value={room.status === 'active' ? 'Sẵn sàng' : 'Bảo trì'}
+                                            color={room.status === 'active' ? 'success' : 'warning'}
                                         />
                                     </Box>
 
                                     {/* Equipment */}
-                                    <Typography variant="caption" color="text.secondary">
-                                        Thiết bị:
-                                    </Typography>
-                                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1 }}>
-                                        {room.equipment.map((item, index) => (
-                                            <Chip
-                                                key={index}
-                                                label={item}
-                                                size="small"
-                                                variant="outlined"
-                                                sx={{
-                                                    borderRadius: '4px',
-                                                    backgroundColor: alpha(theme.palette.grey[100], 0.5)
-                                                }}
-                                            />
-                                        ))}
-                                    </Box>
                                 </Box>
                             </Paper>
                         ))}
@@ -507,17 +489,6 @@ const QuickStats = ({ stats, lecturers, classes, subjects, rooms }) => {
                                 maxValue={20}
                                 tooltip={`${stats.rooms} phòng học đang sử dụng`}
                                 onClick={() => setOpenModal('rooms')}
-                            />
-                        </Grid>
-
-                        <Grid item xs={12} sm={6} lg={3}>
-                            <StatCard
-                                icon={<CourseIcon />}
-                                title="Học phần"
-                                value={stats.course}
-                                maxValue={40}
-                                tooltip={`${stats.course} học phần đang mở`}
-                                onClick={() => setOpenModal('classes')}
                             />
                         </Grid>
                     </Grid>
